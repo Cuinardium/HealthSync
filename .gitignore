@@ -19,6 +19,11 @@ dist/
 # Package files
 *.jar
 
+# Java hidden directories
+**/.classpath
+**/.settings
+**/.project
+
 # Maven
 target/
 dist/
