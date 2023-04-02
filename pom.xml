@@ -11,7 +11,11 @@
 
     <properties>
 
+        <!-- Dependency versions -->
         <spring.version>4.2.5.RELEASE</spring.version>
+        <servlet-api.version>2.5</servlet-api.version>
+        <jstl.version>1.2</jstl.version>
+        <javax-mail.version>1.6.2</javax-mail.version>
 
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>1.8</maven.compiler.source>
@@ -22,6 +26,8 @@
 
     <dependencyManagement>
         <dependencies>
+
+            <!-- Spring dependencies -->
             <dependency>
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-webmvc</artifactId>
@@ -34,18 +40,32 @@
                 <version>${spring.version}</version>
             </dependency>
 
+            <!-- Servlet dependencies -->
             <dependency>
                 <groupId>javax.servlet</groupId>
                 <artifactId>servlet-api</artifactId>
-                <version>2.5</version>
-                <!-- <scope>provided</scope> -->
+                <version>${servlet-api.version}</version>
+                <scope>provided</scope>
             </dependency>
 
             <dependency>
                 <groupId>javax.servlet</groupId>
                 <artifactId>jstl</artifactId>
-                <version>1.2</version>
+                <version>${jstl.version}</version>
             </dependency>
+
+            <!-- Mailing Dependencies -->
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-context-support</artifactId>
+                <version>${spring.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.sun.mail</groupId>
+                <artifactId>javax.mail</artifactId>
+                <version>${javax-mail.version}</version>
+            </dependency>
+
         </dependencies>
     </dependencyManagement>
 
