@@ -1,0 +1,13 @@
+repos:
+  - repo: https://github.com/compilerla/conventional-pre-commit
+    rev : 04a088444c7fc019c9f9c4cea4420b67e3f3dac3
+    hooks:
+      - id: conventional-pre-commit
+        stages: [commit-msg]
+        args: [] # optional: list of Conventional Commits types to allow e.g. [feat, fix, ci, chore, test]
+  
+
+  - repo: https://github.com/maltzj/google-style-precommit-hook
+    rev : b7e9e7fcba4a5aea463e72fe9964c14877bd8130
+    hooks:
+      - id: google-style-java
