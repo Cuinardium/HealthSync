@@ -50,4 +50,7 @@ public class HelloWorldController {
     public ModelAndView registerForm() {
         return new ModelAndView("helloworld/register");
     }
+
+    @RequestMapping(value = "/appointment", method = RequestMethod.GET)
+    public ModelAndView appointmentForm(){ return new ModelAndView("helloworld/appointment");}
 }
