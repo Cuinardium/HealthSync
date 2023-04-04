@@ -25,7 +25,7 @@
         <label for="desc">Appointment description</label>
         <input id="desc" type="text" name="Appointment description"/>
     </div>
-
+    <input type="hidden" id="email" name="email" value=${email}/>
     <div>
         <input type="submit" value="Create appointment"/>
     </div>

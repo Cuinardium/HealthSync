@@ -52,16 +52,24 @@ public class HelloWorldController {
         return new ModelAndView("helloworld/register");
     }
 
-    @RequestMapping(value = "/appointment", method = RequestMethod.GET)
-    public ModelAndView appointmentForm(){ return new ModelAndView("helloworld/appointment");}
+    @RequestMapping(value = "/{id}/appointment", method = RequestMethod.GET)
+    public ModelAndView appointmentForm(@PathVariable("id") final int medicId){
+        String email = userService.getEmail(medicId);
+        final ModelAndView mav= new ModelAndView("helloworld/appointment");
+
+        mav.addObject("email", email);
+
+        return mav;
+    }
 
     //this function will return void for now until we figure if we make a new view or use a popup
     @RequestMapping(value= "/appointment", method= RequestMethod.POST)
-    public void appointmentSubmit(@RequestParam(value = "First Name", required = true) final String name,
+    public void appointmentSubmit(@RequestParam(value= "email", required = true) final String email,
+                                            @RequestParam(value = "First Name", required = true) final String name,
                                             @RequestParam(value = "Last Name",required = true) final String lastname,
                                             @RequestParam(value = "Healthcare System",required = true) final String healthcare,
                                             @RequestParam(value = "Appointment date",required = true) final Date date,
-                                            @RequestParam(value = "Appointment description",required = true) final String desc){
-
+                                            @RequestParam(value = "Appointment description",required = true) final String desc)
+    {
     }
 }
