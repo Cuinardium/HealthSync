@@ -12,6 +12,9 @@ public class UserDaoImpl implements UserDao {
         return new User(email, password);
     }
 
+    @Override
+    public String getEmail(int id){return "sballerini@itba.edu.ar";}
+    //for testing purposes the static email will be sballerini@itba.edu.ar for the time being
 }
 
 
