@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
+import java.util.Date;
 
 @Controller
 public class HelloWorldController {
@@ -53,4 +54,14 @@ public class HelloWorldController {
 
     @RequestMapping(value = "/appointment", method = RequestMethod.GET)
     public ModelAndView appointmentForm(){ return new ModelAndView("helloworld/appointment");}
+
+    //this function will return void for now until we figure if we make a new view or use a popup
+    @RequestMapping(value= "/appointment", method= RequestMethod.POST)
+    public void appointmentSubmit(@RequestParam(value = "First Name", required = true) final String name,
+                                            @RequestParam(value = "Last Name",required = true) final String lastname,
+                                            @RequestParam(value = "Healthcare System",required = true) final String healthcare,
+                                            @RequestParam(value = "Appointment date",required = true) final Date date,
+                                            @RequestParam(value = "Appointment description",required = true) final String desc){
+
+    }
 }

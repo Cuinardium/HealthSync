@@ -1,13 +1,13 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
-
+<jsp:include page="/resources/externalResources.jsp"/>
 <html>
 <body>
 <h2> Appointment Form </h2>
 <c:url value="/appointment" var="appointmentUrl" />
 <form action="${appointmentUrl}" method="post">
     <div>
-        <label for="name">First Name</label>
-        <input id="name" type="text" name="First Name"/>
+        <label for="name" class="form-label">First Name</label>
+        <input id="name"  class="form-control" type="text" name="First Name"/>
     </div>
     <div>
         <label for="lastname">Last Name</label>
