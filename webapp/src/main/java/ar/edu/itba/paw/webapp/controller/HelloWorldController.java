@@ -2,7 +2,6 @@ package ar.edu.itba.paw.webapp.controller;
 
 import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.services.UserService;
-import java.util.Date;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -71,7 +70,7 @@ public class HelloWorldController {
       @RequestParam(value = "First name", required = true) final String name,
       @RequestParam(value = "Last name", required = true) final String lastname,
       @RequestParam(value = "Healthcare system", required = true) final String healthcare,
-      @RequestParam(value = "Appointment date", required = true) final Date date,
+      @RequestParam(value = "Appointment date", required = true) final String date,
       @RequestParam(value = "Appointment description", required = true) final String desc,
-      @RequestParam(value = "Doctor Email", required = true) final String docEmail) {}
+      @RequestParam(value = "Doctor email", required = true) final String docEmail) {}
 }
