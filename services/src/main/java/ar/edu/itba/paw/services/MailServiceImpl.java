@@ -1,13 +1,9 @@
 package ar.edu.itba.paw.services;
 
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
-
-import ar.edu.itba.paw.models.User;
 
 @Service
 public class MailServiceImpl implements MailService {
@@ -32,22 +28,24 @@ public class MailServiceImpl implements MailService {
     }
 
     @Override
-    public void sendAppointmentRequestMail(User client, User doctor, List<String> possibleDates, String reason) {
+    public void sendAppointmentRequestMail(String clientEmail, String doctorEmail, String clientName, String healthCare, String date, String description) {
 
-        String to = doctor.getEmail();
+        String to = doctorEmail;
         String subject = "TurnosYa - Solicitud de turno";
 
         // Create mail body
         StringBuilder body = new StringBuilder();
 
-        body.append("El usuario ").append(client.getEmail()).append(" ha solicitado un turno de ser posible en las siguientes fechas:\n");
-        for (String date : possibleDates) {
-            body.append(date).append('\n');
-        }
+        body.append("El usuario ").append(clientName).append(" ha solicitado un turno de ser posible en la siguiente fecha: ");
+        body.append(date).append("\n\n");
 
-        body.append("Motivo:\n");
-        body.append(reason);
+        body.append("Descripcion:\n").append(description).append("\n\n");
 
+        body.append("Datos del paciente:").append("\n\n");
+        body.append("Nombre: ").append(clientName).append('\n');
+        body.append("Obra social: ").append(healthCare).append('\n');
+        body.append("Email: ").append(clientEmail).append('\n');
+        
         sendMail(to, subject, body.toString());
     }
 }

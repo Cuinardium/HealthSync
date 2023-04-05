@@ -1,6 +1,7 @@
 package ar.edu.itba.paw.webapp.controller;
 
 import ar.edu.itba.paw.models.User;
+import ar.edu.itba.paw.services.MailService;
 import ar.edu.itba.paw.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -14,10 +15,12 @@ import org.springframework.web.servlet.ModelAndView;
 public class HelloWorldController {
 
   private final UserService userService;
+  private final MailService mailService;
 
   @Autowired
-  public HelloWorldController(final UserService userService) {
+  public HelloWorldController(final UserService userService, final MailService mailService) {
     this.userService = userService;
+    this.mailService = mailService;
   }
 
   @RequestMapping(value = "/hello", method = RequestMethod.GET)
@@ -72,5 +75,8 @@ public class HelloWorldController {
       @RequestParam(value = "Healthcare system", required = true) final String healthcare,
       @RequestParam(value = "Appointment date", required = true) final String date,
       @RequestParam(value = "Appointment description", required = true) final String desc,
-      @RequestParam(value = "Doctor email", required = true) final String docEmail) {}
+      @RequestParam(value = "Doctor email", required = true) final String docEmail) {
+
+    mailService.sendAppointmentRequestMail(email, docEmail, name + " " + lastname, healthcare, date, desc);
+  }
 }
