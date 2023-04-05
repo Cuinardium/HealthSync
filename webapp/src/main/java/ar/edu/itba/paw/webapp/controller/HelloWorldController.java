@@ -13,41 +13,64 @@ import org.springframework.web.servlet.ModelAndView;
 @Controller
 public class HelloWorldController {
 
-    private final UserService userService;
+  private final UserService userService;
 
-    @Autowired
-    public HelloWorldController(final UserService userService) {
-        this.userService = userService;
-    }
+  @Autowired
+  public HelloWorldController(final UserService userService) {
+    this.userService = userService;
+  }
 
-    @RequestMapping(value = "/hello", method = RequestMethod.GET)
-    public ModelAndView helloWorld() {
-        final ModelAndView mav = new ModelAndView("helloworld/hello");
-        mav.addObject("user", userService.createUser("pepe@pepe.com", "secreta"));
+  @RequestMapping(value = "/hello", method = RequestMethod.GET)
+  public ModelAndView helloWorld() {
+    final ModelAndView mav = new ModelAndView("helloworld/hello");
+    mav.addObject("user", userService.createUser("pepe@pepe.com", "secreta"));
 
-        return mav;
-    }
+    return mav;
+  }
 
-    @RequestMapping("/{id}")
-    public ModelAndView profile(@PathVariable("id") final long userId) {
-        final ModelAndView mav = new ModelAndView("helloworld/profile");
-        mav.addObject("userId", userId);
+  @RequestMapping("/{id}")
+  public ModelAndView profile(@PathVariable("id") final long userId) {
+    final ModelAndView mav = new ModelAndView("helloworld/profile");
+    mav.addObject("userId", userId);
 
-        return mav;
-    }
+    return mav;
+  }
 
-    @RequestMapping(value = "/register", method = RequestMethod.POST)
-    public ModelAndView register(@RequestParam(value = "email", required = true) final String email,
-                                 @RequestParam(value = "password", required = true) final String password) {
-        final User user = userService.createUser(email, password);
+  @RequestMapping(value = "/register", method = RequestMethod.POST)
+  public ModelAndView register(
+      @RequestParam(value = "email", required = true) final String email,
+      @RequestParam(value = "password", required = true) final String password) {
+    final User user = userService.createUser(email, password);
 
-        final ModelAndView mav = new ModelAndView("helloworld/hello");
-        mav.addObject("user", user);
-        return mav;
-    }
+    final ModelAndView mav = new ModelAndView("helloworld/hello");
+    mav.addObject("user", user);
+    return mav;
+  }
 
-    @RequestMapping(value = "/register", method = RequestMethod.GET)
-    public ModelAndView registerForm() {
-        return new ModelAndView("helloworld/register");
-    }
+  @RequestMapping(value = "/register", method = RequestMethod.GET)
+  public ModelAndView registerForm() {
+    return new ModelAndView("helloworld/register");
+  }
+
+  @RequestMapping(value = "/{id}/appointment", method = RequestMethod.GET)
+  public ModelAndView appointmentForm(@PathVariable("id") final int medicId) {
+    String email = userService.getEmail(medicId);
+    final ModelAndView mav = new ModelAndView("helloworld/appointment");
+
+    mav.addObject("email", email);
+
+    return mav;
+  }
+
+  // this function will return void for now until we figure if we make a new view
+  // or use a popup
+  @RequestMapping(value = "/appointment", method = RequestMethod.POST)
+  public void appointmentSubmit(
+      @RequestParam(value = "Email", required = true) final String email,
+      @RequestParam(value = "First name", required = true) final String name,
+      @RequestParam(value = "Last name", required = true) final String lastname,
+      @RequestParam(value = "Healthcare system", required = true) final String healthcare,
+      @RequestParam(value = "Appointment date", required = true) final String date,
+      @RequestParam(value = "Appointment description", required = true) final String desc,
+      @RequestParam(value = "Doctor email", required = true) final String docEmail) {}
 }
