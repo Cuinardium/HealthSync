@@ -3,6 +3,7 @@ package ar.edu.itba.paw.webapp.controller;
 import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.services.MailService;
 import ar.edu.itba.paw.services.UserService;
+import ar.edu.itba.paw.webapp.exceptions.UserNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -34,7 +35,7 @@ public class HelloWorldController {
   @RequestMapping("/{id}")
   public ModelAndView profile(@PathVariable("id") final long userId) {
     final ModelAndView mav = new ModelAndView("helloworld/profile");
-    mav.addObject("userId", userId);
+    mav.addObject("user", userService.findById(userId).orElseThrow(UserNotFoundException::new));
 
     return mav;
   }

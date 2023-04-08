@@ -6,6 +6,8 @@ import org.springframework.stereotype.Service;
 import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.persistence.UserDao;
 
+import java.util.Optional;
+
 @Service
 public class UserServiceImpl implements UserService {
 
@@ -23,4 +25,11 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public String getEmail(int id){return userDao.getEmail(id);}
+
+    @Override
+    public Optional<User> findById(long id) {
+        return userDao.findById(id);
+    }
+
+
 }
