@@ -1,4 +1,4 @@
-package ar.edu.itba.paw.services;
+package ar.edu.itba.paw.interfaces.services;
 
 public interface MailService {
 

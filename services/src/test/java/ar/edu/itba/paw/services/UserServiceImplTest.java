@@ -1,7 +1,7 @@
 package ar.edu.itba.paw.services;
 
+import ar.edu.itba.paw.interfaces.persistence.UserDao;
 import ar.edu.itba.paw.models.User;
-import ar.edu.itba.paw.persistence.UserDao;
 import java.util.Optional;
 import org.junit.Assert;
 import org.junit.Test;
