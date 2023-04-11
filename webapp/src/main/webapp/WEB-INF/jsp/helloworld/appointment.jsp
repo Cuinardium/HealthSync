@@ -2,38 +2,68 @@
 <jsp:include page="/resources/externalResources.jsp"/>
 <html>
 <body>
-<h2> Appointment Form </h2>
+<div align="center">
+    <h2> Appointment Form </h2>
 <c:url value="/appointment" var="appointmentUrl" />
+
 <form action="${appointmentUrl}" method="post">
-    <div>
-        <label for="name" class="form-label">First Name</label>
-        <input id="name"  class="form-control" type="text" name="First name"/>
+    <div class="form">
+    <div class="container">
+        <label for="name" class="tag">First Name</label>
+        <input id="name" class="label" type="text" name="First name" placeholder="Enter first name"/>
     </div>
-    <div>
-        <label for="lastname">Last Name</label>
-        <input id="lastname" type="text" name="Last name"/>
+    <div class="container">
+        <label for="lastname" class="tag">Last Name</label>
+        <input id="lastname" class="label" type="text" name="Last name" placeholder="Enter last name"/>
     </div>
-    <div>
-        <label for="email">Email</label>
-        <input id="email" type="text" name="Email"/>
-    <div>
-        <label for="healthcare">Healthcare System</label>
-        <input id="healthcare" type="text" name="Healthcare system"/>
+    <div class="container">
+        <label for="email" class="tag">Email</label>
+        <input id="email" class="label" type="text" name="Email" placeholder="Enter email"/>
     </div>
-    <div>
-        <label for="date">Appointment Date</label>
-        <input id="date" type="date" name="Appointment date"/>
+    <div class="container">
+        <label for="healthcare" class="tag">Healthcare System</label>
+        <div>
+        <input id="healthcare" class="label" type="text" name="Healthcare system" placeholder="Enter healthcare system"/>
+        </div>
     </div>
-    <div>
-        <label for="desc">Appointment description</label>
-        <input id="desc" type="text" name="Appointment description"/>
+    <div class="container">
+        <label for="date" class="tag">Appointment Date</label>
+        <div>
+        <input id="date" class="label" type="date" name="Appointment date"/>
+        </div>
+    </div>
+    <div class="container">
+        <label for="desc" class="tag">Appointment description</label>
+        <div>
+        <input id="desc" class="label" type="text" name="Appointment description" placeholder="Enter appointment description"/>
+        </div>
     </div>
         <input type="hidden" id="doctor-email" value=${email} name="Doctor email">
     <div>
-        <input type="submit" value="Create appointment"/>
+        <button type="submit" class="btn btn-primary" value="Create appointment">Create appointment</button>
     </div>
-
-
+    </div>
 </form>
+</div>
 </body>
 </html>
+
+<style>
+    .form{
+        display: flex;
+        flex-direction: column;
+        row-gap: 10px;
+    }
+    .container{
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+
+    }
+    .tag{
+        align-self: flex-start;
+    }
+    .label{
+        align-self: center;
+    }
+</style>
