@@ -56,6 +56,30 @@ public class HelloWorldController {
     return new ModelAndView("helloworld/register");
   }
 
+  // TODO: revisar campos
+  @RequestMapping(value = "/register_medic", method = RequestMethod.POST)
+  public ModelAndView registerMedicForm(
+      @RequestParam(value = "name", required = true) final String name,
+      @RequestParam(value = "lastname", required = true) final String lastname,
+      @RequestParam(value = "address", required = true) final String address,
+      @RequestParam(value = "city", required = true) final String city,
+      @RequestParam(value = "specialization", required = true) final String specialization,
+      // TODO: buscar nombre para "obra social" :D
+      @RequestParam(value = "obra_social", required = true) final String obra_social,
+      @RequestParam(value = "email", required = true) final String email,
+      @RequestParam(value = "password", required = true) final String password) {
+    final User user = userService.createUser(email, password);
+
+    final ModelAndView mav = new ModelAndView("helloworld/hello");
+    mav.addObject("user", user);
+    return mav;
+  }
+
+  @RequestMapping(value = "/register_medic", method = RequestMethod.GET)
+  public ModelAndView registerMedicForm() {
+    return new ModelAndView("helloworld/register_medic");
+  }
+
   @RequestMapping(value = "/{id}/appointment", method = RequestMethod.GET)
   public ModelAndView appointmentForm(@PathVariable("id") final int medicId) {
     String email = userService.getEmail(medicId);
