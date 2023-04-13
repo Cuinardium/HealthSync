@@ -1,54 +1,70 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 <jsp:include page="/resources/externalResources.jsp"/>
 <html>
 <body>
 <div align="center">
-    <h2> Appointment Form </h2>
+    <h2> <spring:message code="appointment.title"/> </h2>
 <c:url value="/appointment" var="appointmentUrl" />
 
-<form action="${appointmentUrl}" method="post">
+<form:form modelAttribute="appointmentForm"  action="${appointmentUrl}" method="post">
     <div class="form">
     <div class="container">
-        <label for="name" class="tag">First Name</label>
-        <input id="name" class="label" type="text" name="First name" placeholder="Enter first name"/>
-    </div>
-    <div class="container">
-        <label for="lastname" class="tag">Last Name</label>
-        <input id="lastname" class="label" type="text" name="Last name" placeholder="Enter last name"/>
-    </div>
-    <div class="container">
-        <label for="email" class="tag">Email</label>
-        <input id="email" class="label" type="text" name="Email" placeholder="Enter email"/>
-    </div>
-    <div class="container">
-        <label for="healthcare" class="tag">Healthcare System</label>
+        <form:label path="name" class="tag"><spring:message code="appointment.name"/></form:label>
         <div>
-        <input id="healthcare" class="label" type="text" name="Healthcare system" placeholder="Enter healthcare system"/>
+        <form:input path="name" class="label" type="text" placeholder='<spring:message code="appointment.name_hint"/>'/>
+        <form:errors path="name" cssClass="error" element="p"/>
         </div>
     </div>
     <div class="container">
-        <label for="date" class="tag">Appointment Date</label>
+        <form:label path="lastname" class="tag"><spring:message code="appointment.lastname"/></form:label>
         <div>
-        <input id="date" class="label" type="date" name="Appointment date"/>
+        <form:input path="lastname" class="label" type="text" placeholder='<spring:message code="appointment.lastname_hint"/>'/>
+        <form:errors path="lastname" cssClass="error" element="p"/>
         </div>
     </div>
     <div class="container">
-        <label for="desc" class="tag">Appointment description</label>
+        <form:label path="email" class="tag"><spring:message code="appointment.email"/></form:label>
         <div>
-        <input id="desc" class="label" type="text" name="Appointment description" placeholder="Enter appointment description"/>
+        <form:input path="email" class="label" type="text" placeholder='<spring:message code="appointment.email_hint"/>'/>
+        <form:errors path="email" cssClass="error" element="p"/>
         </div>
     </div>
-        <input type="hidden" id="doctor-email" value=${email} name="Doctor email">
+    <div class="container">
+        <form:label path="healthcare" class="tag"><spring:message code="appointment.healthcare"/></form:label>
+        <div>
+        <form:input path="healthcare" class="label" type="text" placeholder='<spring:message code="appointment.healthcare_hint"/>'/>
+            <form:errors path="healthcare" cssClass="error" element="p"/>
+        </div>
+    </div>
+    <div class="container">
+        <form:label path="date" class="tag"><spring:message code="appointment.date"/></form:label>
+        <div>
+        <form:input path="date" class="label" type="date"/>
+        </div>
+    </div>
+    <div class="container">
+        <form:label path="description" class="tag"><spring:message code="appointment.desc"/></form:label>
+        <div>
+        <form:input path="description" class="label" type="text" placeholder='<spring:message code="appointment.desc_hint"/>'/>
+            <form:errors path="description" cssClass="error" element="p"/>
+        </div>
+    </div>
+        <form:input type="hidden" path="docEmail" value="${email}" />
     <div>
-        <button type="submit" class="btn btn-primary" value="Create appointment">Create appointment</button>
+        <button type="submit" class="btn btn-primary" value="Create appointment"><spring:message code="appointment.submit"/></button>
     </div>
     </div>
-</form>
+</form:form>
 </div>
 </body>
 </html>
 
 <style>
+    .error{
+        color:red;
+    }
     .form{
         display: flex;
         flex-direction: column;
