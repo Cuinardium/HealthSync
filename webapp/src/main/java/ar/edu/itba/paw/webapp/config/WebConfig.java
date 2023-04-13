@@ -1,5 +1,7 @@
 package ar.edu.itba.paw.webapp.config;
 
+import java.sql.*;
+import javax.sql.DataSource;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -16,61 +18,64 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
 import org.springframework.web.servlet.view.JstlView;
 
-import javax.sql.DataSource;
-import java.sql.*;
-
 @EnableWebMvc
-@ComponentScan(basePackages = { "ar.edu.itba.paw.webapp.controller", "ar.edu.itba.paw.services", "ar.edu.itba.paw.persistence" })
+@ComponentScan(
+  basePackages = {
+    "ar.edu.itba.paw.webapp.controller",
+    "ar.edu.itba.paw.services",
+    "ar.edu.itba.paw.persistence"
+  }
+)
 @Configuration
 public class WebConfig extends WebMvcConfigurerAdapter {
 
-    @Value("classpath:schema.sql")
-    private Resource schemaSql;
-    
-    @Bean
-    public ViewResolver viewResolver() {
-        InternalResourceViewResolver viewResolver = new InternalResourceViewResolver();
+  @Value("classpath:schema.sql")
+  private Resource schemaSql;
 
-        viewResolver.setViewClass(JstlView.class);
-        viewResolver.setPrefix("/WEB-INF/jsp/");
-        viewResolver.setSuffix(".jsp");
+  @Bean
+  public ViewResolver viewResolver() {
+    InternalResourceViewResolver viewResolver = new InternalResourceViewResolver();
 
-        return viewResolver;
-    }
+    viewResolver.setViewClass(JstlView.class);
+    viewResolver.setPrefix("/WEB-INF/jsp/");
+    viewResolver.setSuffix(".jsp");
 
-    @Bean
-    public DataSource dataSource(){
-        final SimpleDriverDataSource ds = new SimpleDriverDataSource();
+    return viewResolver;
+  }
 
-        ds.setDriverClass(org.postgresql.Driver.class);
-        ds.setUrl("jdbc:postgresql://localhost/paw");
-        ds.setUsername("root");
-        ds.setPassword("root");
+  @Bean
+  public DataSource dataSource() {
+    final SimpleDriverDataSource ds = new SimpleDriverDataSource();
 
-        return ds;
-    }
+    ds.setDriverClass(org.postgresql.Driver.class);
+    ds.setUrl("jdbc:postgresql://localhost/paw-2023a-02");
+    ds.setUsername("paw-2023a-02");
+    ds.setPassword("63imijdOC");
 
-    @Bean
-    public DataSourceInitializer dataSourceInitializer(final DataSource ds){
-        final DataSourceInitializer dsi = new DataSourceInitializer();
+    return ds;
+  }
 
-        dsi.setDataSource(ds);
-        dsi.setDatabasePopulator(databasePopulator());
+  @Bean
+  public DataSourceInitializer dataSourceInitializer(final DataSource ds) {
+    final DataSourceInitializer dsi = new DataSourceInitializer();
 
-        return dsi;
-    }
+    dsi.setDataSource(ds);
+    dsi.setDatabasePopulator(databasePopulator());
 
-    private DatabasePopulator databasePopulator(){
-        final ResourceDatabasePopulator populator = new ResourceDatabasePopulator();
-        populator.addScript(schemaSql);
+    return dsi;
+  }
 
-        return populator;
-    }
+  private DatabasePopulator databasePopulator() {
+    final ResourceDatabasePopulator populator = new ResourceDatabasePopulator();
+    populator.addScript(schemaSql);
 
-    @Override
-    public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        super.addResourceHandlers(registry);
+    return populator;
+  }
 
-        registry.addResourceHandler("/css/**").addResourceLocations("/css/");
-    }
+  @Override
+  public void addResourceHandlers(ResourceHandlerRegistry registry) {
+    super.addResourceHandlers(registry);
+
+    registry.addResourceHandler("/css/**").addResourceLocations("/css/");
+  }
 }
