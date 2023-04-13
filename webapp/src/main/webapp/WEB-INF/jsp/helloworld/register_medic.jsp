@@ -1,6 +1,6 @@
 <html lang="en">
     <head>
-        <title>Registration</title>
+        <title>Medic Registration</title>
         <link href="/css/register_medic.css" rel="stylesheet"/>
     </head>
 
