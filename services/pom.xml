@@ -16,6 +16,7 @@
   <url>http://www.example.com</url>
 
   <dependencies>
+      <!-- Module dependencies -->
       <dependency>
           <groupId>${project.groupId}</groupId>
           <artifactId>models</artifactId>
@@ -26,10 +27,36 @@
           <artifactId>interfaces</artifactId>
           <version>${project.version}</version>
       </dependency>
+
+
+    
+      <!-- Spring dependencies --> 
       <dependency>
           <groupId>org.springframework</groupId>
           <artifactId>spring-context</artifactId>
       </dependency>
+
+
+      <!-- Mailing dependencies -->
+      <dependency>
+          <groupId>org.springframework</groupId>
+          <artifactId>spring-context-support</artifactId>
+      </dependency>
+      <dependency>
+          <groupId>com.sun.mail</groupId>
+          <artifactId>javax.mail</artifactId>
+      </dependency>
+
+
+      <dependency>
+          <groupId>junit</groupId>
+          <artifactId>junit</artifactId>
+      </dependency>
+      <dependency>
+          <groupId>org.mockito</groupId>
+          <artifactId>mockito-core</artifactId>
+      </dependency>
+      
   </dependencies>
 
   <build>
