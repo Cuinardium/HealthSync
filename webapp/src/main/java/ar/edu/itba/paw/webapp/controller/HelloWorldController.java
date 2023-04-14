@@ -4,7 +4,7 @@ import ar.edu.itba.paw.interfaces.services.MailService;
 import ar.edu.itba.paw.interfaces.services.UserService;
 import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.webapp.exceptions.UserNotFoundException;
-import ar.edu.itba.paw.webapp.form.AppointmentForm;
+import ar.edu.itba.paw.webapp.form.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -42,10 +42,12 @@ public class HelloWorldController {
   }
 
   @RequestMapping(value = "/register", method = RequestMethod.POST)
-  public ModelAndView register(
-      @RequestParam(value = "email", required = true) final String email,
-      @RequestParam(value = "password", required = true) final String password) {
-    final User user = userService.createUser(email, password);
+  public ModelAndView register(@Valid @ModelAttribute("registerForm") final RegisterForm registerForm,final BindingResult errors) {
+    if(errors.hasErrors()){
+      return registerForm(registerForm);
+    }
+
+    final User user = userService.createUser(registerForm.getEmail(), registerForm.getPassword());
 
     final ModelAndView mav = new ModelAndView("helloworld/hello");
     mav.addObject("user", user);
@@ -53,24 +55,22 @@ public class HelloWorldController {
   }
 
   @RequestMapping(value = "/register", method = RequestMethod.GET)
-  public ModelAndView registerForm() {
-    return new ModelAndView("helloworld/register");
+  public ModelAndView registerForm(@ModelAttribute("registerForm") final RegisterForm registerForm) {
+    final ModelAndView mav= new ModelAndView("helloworld/register");
+    mav.addObject("form", registerForm);
+
+    return mav;
   }
 
 
   // TODO: revisar campos
   @RequestMapping(value = "/register_medic", method = RequestMethod.POST)
-  public ModelAndView registerMedicForm(
-      @RequestParam(value = "name", required = true) final String name,
-      @RequestParam(value = "lastname", required = true) final String lastname,
-      @RequestParam(value = "address", required = true) final String address,
-      @RequestParam(value = "city", required = true) final String city,
-      @RequestParam(value = "specialization", required = true) final String specialization,
-      // TODO: buscar nombre para "obra social" :D
-      @RequestParam(value = "obra_social", required = true) final String obra_social,
-      @RequestParam(value = "email", required = true) final String email,
-      @RequestParam(value = "password", required = true) final String password) {
-    final User user = userService.createUser(email, password);
+  public ModelAndView registerMedicSubmit(@Valid @ModelAttribute("medicRegisterForm") final MedicRegisterForm medicRegisterForm ,final BindingResult errors) {
+    if(errors.hasErrors()){
+      return registerMedicForm(medicRegisterForm);
+    }
+
+    final User user = userService.createUser(medicRegisterForm.getEmail(), medicRegisterForm.getPassword());
 
     final ModelAndView mav = new ModelAndView("helloworld/hello");
     mav.addObject("user", user);
@@ -78,8 +78,10 @@ public class HelloWorldController {
   }
 
   @RequestMapping(value = "/register_medic", method = RequestMethod.GET)
-  public ModelAndView registerMedicForm() {
-    return new ModelAndView("helloworld/register_medic");
+  public ModelAndView registerMedicForm(@ModelAttribute("medicRegisterForm") final MedicRegisterForm medicRegisterForm ) {
+    final ModelAndView mav= new ModelAndView("helloworld/register_medic");
+    mav.addObject("form", medicRegisterForm);
+    return mav;
   }
 
   @RequestMapping(value = "/{id}/appointment", method = RequestMethod.GET)
