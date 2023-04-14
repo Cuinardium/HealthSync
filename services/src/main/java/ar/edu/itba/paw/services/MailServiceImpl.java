@@ -1,30 +1,65 @@
 package ar.edu.itba.paw.services;
 
 import ar.edu.itba.paw.interfaces.services.MailService;
+import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
+import javax.mail.MessagingException;
+import javax.mail.internet.MimeMessage;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.mail.SimpleMailMessage;
+import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
+import org.thymeleaf.context.Context;
+import org.thymeleaf.spring4.SpringTemplateEngine;
 
 @Service
 public class MailServiceImpl implements MailService {
 
   private static final String FROM = "noreply@turnosya.com";
 
+  // TODO Correct locale handling
+  private static final Locale LOCALE = Locale.ENGLISH;
+
   private final JavaMailSender mailSender;
 
+  private final SpringTemplateEngine templateEngine;
+
+  private final ResourceBundleMessageSource messageSource;
+
   @Autowired
-  public MailServiceImpl(JavaMailSender mailSender) {
+  public MailServiceImpl(
+      JavaMailSender mailSender,
+      SpringTemplateEngine templateEngine,
+      ResourceBundleMessageSource messageSource) {
     this.mailSender = mailSender;
+    this.templateEngine = templateEngine;
+    this.messageSource = messageSource;
   }
 
-  private void sendMail(String to, String subject, String text) {
-    SimpleMailMessage message = new SimpleMailMessage();
-    message.setFrom(FROM);
-    message.setTo(to);
-    message.setSubject(subject);
-    message.setText(text);
-    mailSender.send(message);
+  private void sendHtmlMessage(String to, String subject, String htmlBody) {
+    MimeMessage message = mailSender.createMimeMessage();
+
+    try {
+      MimeMessageHelper helper =
+          new MimeMessageHelper(message, true, StandardCharsets.UTF_8.displayName());
+      helper.setTo(to);
+      helper.setFrom(FROM);
+      helper.setSubject(subject);
+      helper.setText(htmlBody, true);
+      mailSender.send(message);
+    } catch (MessagingException e) {
+      // TODO: error handling
+    }
+  }
+
+  private String getHtmlBody(String template, Map<String, Object> templateModel) {
+    Context context = new Context();
+
+    context.setVariables(templateModel);
+    return templateEngine.process(template, context);
   }
 
   @Override
@@ -36,24 +71,19 @@ public class MailServiceImpl implements MailService {
       String date,
       String description) {
 
-    String to = doctorEmail;
-    String subject = "TurnosYa - Solicitud de turno";
+    Map<String, Object> templateModel = new HashMap<>();
 
-    // Create mail body
-    StringBuilder body = new StringBuilder();
+    // Load model
+    templateModel.put("userName", clientName);
+    templateModel.put("date", date);
+    templateModel.put("description", description);
+    templateModel.put("userHealthcare", healthCare);
+    templateModel.put("userMail", clientEmail);
 
-    body.append("El usuario ")
-        .append(clientName)
-        .append(" ha solicitado un turno de ser posible en la siguiente fecha: ");
-    body.append(date).append("\n\n");
+    String htmlBody = getHtmlBody("appointmentRequest", templateModel);
 
-    body.append("Descripcion:\n").append(description).append("\n\n");
+    String subject = messageSource.getMessage("appointmentRequest.subject", null, LOCALE);
 
-    body.append("Datos del paciente:").append("\n\n");
-    body.append("Nombre: ").append(clientName).append('\n');
-    body.append("Obra social: ").append(healthCare).append('\n');
-    body.append("Email: ").append(clientEmail).append('\n');
-
-    sendMail(to, subject, body.toString());
+    sendHtmlMessage(doctorEmail, subject, htmlBody);
   }
 }
