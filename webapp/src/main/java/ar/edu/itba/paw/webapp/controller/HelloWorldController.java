@@ -105,7 +105,7 @@ public class HelloWorldController {
     }
 
     mailService.sendAppointmentRequestMail(
-            appointmentForm.getEmail(), appointmentForm.getDocEmail(), appointmentForm.getName() + " " + appointmentForm.getLastname(), appointmentForm.getHealthcare(), appointmentForm.getDate().toString(), appointmentForm.getDescription());
+            appointmentForm.getEmail(), appointmentForm.getDocEmail(), appointmentForm.getName() + " " + appointmentForm.getLastname(), appointmentForm.getHealthcare(), appointmentForm.getDate(), appointmentForm.getDescription());
 
     return helloWorld();//TODO create a view for email send confirmation
   }
