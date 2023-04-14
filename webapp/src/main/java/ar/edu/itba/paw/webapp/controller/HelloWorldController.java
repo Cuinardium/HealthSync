@@ -98,7 +98,7 @@ public class HelloWorldController {
   @RequestMapping(value = "/appointment", method = RequestMethod.POST)
   public ModelAndView appointmentSubmit(@Valid @ModelAttribute("appointmentForm") final AppointmentForm appointmentForm, final BindingResult errors) {
 
-    if(errors.hasErrors()){
+    if (errors.hasErrors()) {
       return appointmentForm(appointmentForm.getDocId(), appointmentForm);
     }
 
@@ -106,5 +106,10 @@ public class HelloWorldController {
             appointmentForm.getEmail(), appointmentForm.getDocEmail(), appointmentForm.getName() + " " + appointmentForm.getLastname(), appointmentForm.getHealthcare(), appointmentForm.getDate().toString(), appointmentForm.getDescription());
 
     return helloWorld();//TODO create a view for email send confirmation
+  }
+
+  @RequestMapping(value = "/doctorDashboard", method = RequestMethod.GET)
+  public ModelAndView doctorDashboard() {
+    return new ModelAndView("helloworld/doctorDashboard");
   }
 }
