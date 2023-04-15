@@ -1,3 +1,8 @@
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
+<jsp:include page="/resources/externalResources.jsp"/>
+
 <html lang="en">
     <head>
         <title>Medic Registration</title>
@@ -5,52 +10,70 @@
     </head>
 
     <body>
-        <h1>REGISTER MEDIC</h1>
+        <h1><spring:message code="registerMedic.title"/></h1>
         <c:url value="/register_medic" var="registerMedicUrl" />
-        <form class="form-container" action="${register_medic}" method="POST">
+        <form:form modelAttribute="medicRegisterForm" class="form-container" action="${register_medic}" method="POST">
             <div class="form-item">
-                <label for="name">Name</label>
-                <input type="text" name="name" placeholder="Juan" id="name" required/>
+                <form:label path="name"><spring:message code="form.name"/></form:label>
+                <spring:message code="form.name_hint" var="name_hint"/>
+                <form:input type="text" placeholder="${name_hint}" path="name"/>
+                <form:errors path="name" cssClass="error" element="p"/>
             </div>
             <div class="form-item">
-                <label for="lastname">Lastname</label>
-                <input id="lastname"type="text" name="lastname" placeholder="Bafico" required/>
+                <form:label path="lastname"><spring:message code="form.lastname"/></form:label>
+                <spring:message code="form.lastname_hint" var="lastname_hint"/>
+                <form:input path="lastname" type="text" placeholder="${lastname_hint}"/>
+                <form:errors path="lastname" cssClass="error" element="p"/>
             </div>
             <div class="form-item">
                 <div>
-                    <label for="city">City</label>
-                    <input id="city" type="text" name="city" placeholder="CABA" required/>
+                    <form:label path="city"><spring:message code="form.city"/></form:label>
+                    <spring:message code="form.city_hint" var="city_hint"/>
+                    <form:input path="city" type="text" placeholder="${city_hint}" />
+                    <form:errors path="city" cssClass="error" element="p"/>
                 </div>
                 <div>
-                    <label for="address">Address</label>
-                    <input id="address" type="text" name="address" placeholder="Libertador 1234" required/>
+                    <form:label path="address"><spring:message code="form.address"/></form:label>
+                    <spring:message code="form.address_hint" var="address_hint"/>
+                    <form:input path="address" type="text" placeholder="${address_hint}"/>
+                    <form:errors path="address" cssClass="error" element="p"/>
                 </div>
             </div>
             <!-- dropdown menu -->
             <div class="form-item">
-                <label for="specialization">Specialization</label>
-                <input id="specialization" type="text" name="specialization" required/>
+                <form:label path="specialization"><spring:message code="form.specialization"/></form:label>
+                <spring:message code="form.specialization_hint" var="specialization_hint"/>
+                <form:input path="specialization" type="text" placeholder="${specialization_hint}"/>
+                <form:errors path="specialization" cssClass="error" element="p"/>
             </div>
 
             <!-- multiple option buttons -->
             <!-- TODO: buscar otro nombre para obra social -->
             <div class="form-item" >
-                <label for="obra_social">Obra Social</label>
-                <input id="obra_social" type="text" name="obra_social" required/>
+                <form:label path="healthcare"><spring:message code="form.healthcare"/></form:label>
+                <spring:message code="form.healthcare_hint" var="healthcare_hint"/>
+                <form:input path="healthcare" type="text" placeholder="${healthcare_hint}"/>
+                <form:errors path="healthcare" cssClass="error" element="p"/>
             </div>
             <div class="form-item">
-                <label for="email">Email</label>
-                <input id="email" type="text" name="email" placeholder="juan.bafico@email.com" required/>
+                <form:label path="email"><spring:message code="form.email"/></form:label>
+                <spring:message code="form.email_hint" var="email_hint"/>
+                <form:input path="email" type="text" placeholder="${email_hint}"/>
+                <form:errors path="email" cssClass="error" element="p"/>
             </div>
             <div class="form-item">
-                <label for="password">Password</label>
-                <input id="password" type="password" name="password" required/>
+                <form:label path="password"><spring:message code="form.password"/></form:label>
+                <spring:message code="form.password_hint" var="password_hint"/>
+                <form:input path="password" type="password" placeholder="${password_hint}"/>
+                <form:errors path="password" cssClass="error" element="p"/>
             </div>
             <div class="form-item">
-                <label for="confirmpassword">Confirm Password</label>
-                <input id="confirmpassword" type="password" name="confirm_password" required/>
+                <form:label path="confirmPassword"><spring:message code="form.cpassword"/></form:label>
+                <spring:message code="form.cpassword_hint" var="cpassword_hint"/>
+                <form:input path="confirmPassword" type="password" placehodler="${cpassword_hint}"/>
+                <form:errors path="confirmPassword" cssClass="error" element="p"/>
             </div>
-            <button type="submit">Register</button>
-        </form>
+            <button type="submit"><spring:message code="registerMedic.submit"/></button>
+        </form:form>
     </body>
 </html>
