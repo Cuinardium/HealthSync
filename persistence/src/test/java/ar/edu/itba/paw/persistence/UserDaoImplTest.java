@@ -21,6 +21,10 @@ public class UserDaoImplTest {
   private static final long ID = 1;
   private static final String EMAIL = "email";
   private static final String PASSWORD = "password";
+  private static final String FIRST_NAME = "firstname";
+  private static final String LAST_NAME = "lastname";
+  private static final long PFP_ID = 1;
+  private static final boolean IS_DOCTOR = false;
 
   @Autowired private DataSource ds;
 
@@ -38,12 +42,28 @@ public class UserDaoImplTest {
   public void testFindById() throws SQLException {
     // 1. Precondiciones
     jdbcTemplate.execute(
-        "INSERT INTO users (userid, email, password) VALUES ("
+        "INSERT INTO profile_picture (profile_picture_id, profile_picture) VALUES ("
+            + PFP_ID
+            + ", "
+            + "CAST('30' AS BINARY)"
+            + ");");
+
+    jdbcTemplate.execute(
+        "INSERT INTO users (user_id, email, password, first_name, last_name, profile_picture_id,"
+            + " is_doctor) VALUES ("
             + ID
             + ", '"
             + EMAIL
             + "', '"
             + PASSWORD
+            + "', '"
+            + FIRST_NAME
+            + "', '"
+            + LAST_NAME
+            + "', '"
+            + PFP_ID
+            + "', '"
+            + IS_DOCTOR
             + "');");
 
     // 2. Ejercitar la class under test

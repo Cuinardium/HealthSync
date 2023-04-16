@@ -17,7 +17,7 @@ public class UserDaoImpl implements UserDao {
   private final SimpleJdbcInsert jdbcInsert;
   private static final RowMapper<User> ROW_MAPPER =
       (rs, rowNum) ->
-          new User(rs.getLong("userid"), rs.getString("email"), rs.getString("password"));
+          new User(rs.getLong("user_id"), rs.getString("email"), rs.getString("password"));
 
   @Autowired
   public UserDaoImpl(final DataSource ds) {
@@ -46,7 +46,7 @@ public class UserDaoImpl implements UserDao {
   public Optional<User> findById(final long id) {
     // el ? "sanitiza" el parametro para evitar SQL Injection
     return jdbcTemplate
-        .query("SELECT * FROM users WHERE userid = ?", ROW_MAPPER, id)
+        .query("SELECT * FROM users WHERE user_id = ?", ROW_MAPPER, id)
         .stream()
         .findFirst();
   }
