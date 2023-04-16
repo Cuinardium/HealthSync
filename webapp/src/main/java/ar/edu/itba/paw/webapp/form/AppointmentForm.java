@@ -22,7 +22,7 @@ public class AppointmentForm{
     @Pattern(regexp = "[a-zA-Z]+")
     private String healthcare;
 
-    private Date date;
+    private String date;
 
     @Size(min = 1, max = 100)
     private String description;
@@ -58,10 +58,10 @@ public class AppointmentForm{
         this.healthcare = healthcare;
     }
 
-    public Date getDate() {
+    public String getDate() {
         return date;
     }
-    public void setDate(Date date) {
+    public void setDate(String date) {
         this.date = date;
     }
 

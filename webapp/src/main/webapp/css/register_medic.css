@@ -27,3 +27,7 @@ input {
     box-sizing: border-box;
 }
 
+.error{
+    color:red;
+}
+
