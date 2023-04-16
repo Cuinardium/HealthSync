@@ -6,10 +6,13 @@
 <html lang="en">
     <head>
         <title>Medic Registration</title>
+        <link href="/css/main.css" rel="stylesheet"/>
         <link href="/css/register_medic.css" rel="stylesheet"/>
     </head>
 
     <body>
+    <jsp:include page="../components/navBar.jsp"/>
+    <div class="page-content p-5" id="content">
         <h1><spring:message code="registerMedic.title"/></h1>
         <c:url value="/register_medic" var="registerMedicUrl" />
         <form:form modelAttribute="medicRegisterForm" class="form-container" action="${register_medic}" method="POST">
@@ -73,7 +76,8 @@
                 <form:input path="confirmPassword" type="password" placehodler="${cpassword_hint}"/>
                 <form:errors path="confirmPassword" cssClass="error" element="p"/>
             </div>
-            <button type="submit"><spring:message code="registerMedic.submit"/></button>
+            <button type="submit" class="btn btn-primary"><spring:message code="registerMedic.submit"/></button>
         </form:form>
+    </div>
     </body>
 </html>
