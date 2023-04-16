@@ -20,9 +20,6 @@ public class MailServiceImpl implements MailService {
 
   private static final String FROM = "noreply@turnosya.com";
 
-  // TODO Correct locale handling
-  private static final Locale LOCALE = Locale.ENGLISH;
-
   private final JavaMailSender mailSender;
 
   private final SpringTemplateEngine templateEngine;
@@ -45,6 +42,7 @@ public class MailServiceImpl implements MailService {
     try {
       MimeMessageHelper helper =
           new MimeMessageHelper(message, true, StandardCharsets.UTF_8.displayName());
+
       helper.setTo(to);
       helper.setFrom(FROM);
       helper.setSubject(subject);
@@ -55,8 +53,8 @@ public class MailServiceImpl implements MailService {
     }
   }
 
-  private String getHtmlBody(String template, Map<String, Object> templateModel) {
-    Context context = new Context();
+  private String getHtmlBody(String template, Map<String, Object> templateModel, Locale locale) {
+    Context context = new Context(locale);
 
     context.setVariables(templateModel);
     return templateEngine.process(template, context);
@@ -69,7 +67,8 @@ public class MailServiceImpl implements MailService {
       String clientName,
       String healthCare,
       String date,
-      String description) {
+      String description,
+      Locale locale) {
 
     Map<String, Object> templateModel = new HashMap<>();
 
@@ -80,9 +79,9 @@ public class MailServiceImpl implements MailService {
     templateModel.put("userHealthcare", healthCare);
     templateModel.put("userMail", clientEmail);
 
-    String htmlBody = getHtmlBody("appointmentRequest", templateModel);
+    String htmlBody = getHtmlBody("appointmentRequest", templateModel, locale);
 
-    String subject = messageSource.getMessage("appointmentRequest.subject", null, LOCALE);
+    String subject = messageSource.getMessage("appointmentRequest.subject", null, locale);
 
     sendHtmlMessage(doctorEmail, subject, htmlBody);
   }

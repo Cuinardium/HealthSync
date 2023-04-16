@@ -1,5 +1,7 @@
 package ar.edu.itba.paw.interfaces.services;
 
+import java.util.Locale;
+
 public interface MailService {
 
   // Mail to request an appointment
@@ -9,5 +11,6 @@ public interface MailService {
       String clientName,
       String healthCare,
       String date,
-      String description);
+      String description,
+      Locale locale);
 }

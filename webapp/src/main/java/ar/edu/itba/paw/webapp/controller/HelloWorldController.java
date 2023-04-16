@@ -11,6 +11,8 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
+import java.util.Locale;
+
 import javax.validation.Valid;
 
 @Controller
@@ -28,7 +30,7 @@ public class HelloWorldController {
   @RequestMapping(value = "/hello", method = RequestMethod.GET)
   public ModelAndView helloWorld() {
     final ModelAndView mav = new ModelAndView("helloworld/hello");
-    mav.addObject("user", userService.createUser("pepe@pepe.com", "secreta"));
+    mav.addObject("user", new User(0, "hello hello", "hello"));
 
     return mav;
   }
@@ -98,14 +100,20 @@ public class HelloWorldController {
   // this function will return void for now until we figure if we make a new view
   // or use a popup
   @RequestMapping(value = "/appointment", method = RequestMethod.POST)
-  public ModelAndView appointmentSubmit(@Valid @ModelAttribute("appointmentForm") final AppointmentForm appointmentForm, final BindingResult errors) {
+  public ModelAndView appointmentSubmit(@Valid @ModelAttribute("appointmentForm") final AppointmentForm appointmentForm, final BindingResult errors, Locale locale) {
 
     if (errors.hasErrors()) {
       return appointmentForm(appointmentForm.getDocId(), appointmentForm);
     }
 
     mailService.sendAppointmentRequestMail(
-            appointmentForm.getEmail(), appointmentForm.getDocEmail(), appointmentForm.getName() + " " + appointmentForm.getLastname(), appointmentForm.getHealthcare(), appointmentForm.getDate(), appointmentForm.getDescription());
+            appointmentForm.getEmail(), 
+            appointmentForm.getDocEmail(),
+            appointmentForm.getName() + " " + appointmentForm.getLastname(),
+            appointmentForm.getHealthcare(), 
+            appointmentForm.getDate(), 
+            appointmentForm.getDescription(), 
+            locale);
 
     return helloWorld();//TODO create a view for email send confirmation
   }
