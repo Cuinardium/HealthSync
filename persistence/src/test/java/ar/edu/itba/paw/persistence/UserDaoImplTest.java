@@ -36,17 +36,20 @@ public class UserDaoImplTest {
   public void setUp() {
     jdbcTemplate = new JdbcTemplate(ds);
     JdbcTestUtils.deleteFromTables(jdbcTemplate, "users");
-  }
+    JdbcTestUtils.deleteFromTables(jdbcTemplate, "profile_picture");
 
-  @Test
-  public void testFindById() throws SQLException {
-    // 1. Precondiciones
-    jdbcTemplate.execute(
+     jdbcTemplate.execute(
         "INSERT INTO profile_picture (profile_picture_id, profile_picture) VALUES ("
             + PFP_ID
             + ", "
             + "CAST('30' AS BINARY)"
             + ");");
+  }
+
+  @Test
+  public void testFindById() throws SQLException {
+    // 1. Precondiciones
+   
 
     jdbcTemplate.execute(
         "INSERT INTO users (user_id, email, password, first_name, last_name, profile_picture_id,"
@@ -73,6 +76,10 @@ public class UserDaoImplTest {
     Assert.assertEquals(ID, maybeUser.get().getId());
     Assert.assertEquals(EMAIL, maybeUser.get().getEmail());
     Assert.assertEquals(PASSWORD, maybeUser.get().getPassword());
+    Assert.assertEquals(FIRST_NAME, maybeUser.get().getFirstName());
+    Assert.assertEquals(LAST_NAME, maybeUser.get().getLastName());
+    Assert.assertEquals(PFP_ID, maybeUser.get().getProfilePictureId());
+    Assert.assertEquals(IS_DOCTOR, maybeUser.get().isDoctor());
   }
 
   @Test
@@ -87,16 +94,35 @@ public class UserDaoImplTest {
   }
 
   @Test
-  public void testCreate() {
+  public void testCreateClient() {
     // 1. Precondiciones
 
     // 2. Ejercitar la class under test
-    User user = userDao.create(EMAIL, PASSWORD);
+    User user = userDao.createClient(EMAIL, PASSWORD, FIRST_NAME, LAST_NAME);
 
     // 3. Meaningful assertions
     Assert.assertNotNull(user);
     Assert.assertEquals(EMAIL, user.getEmail());
     Assert.assertEquals(PASSWORD, user.getPassword());
+    Assert.assertEquals(FIRST_NAME, user.getFirstName());
+    Assert.assertEquals(LAST_NAME, user.getLastName());
+
+    Assert.assertEquals(1, JdbcTestUtils.countRowsInTable(jdbcTemplate, "users"));
+  }
+
+  @Test
+  public void testCreateDoctor() {
+    // 1. Precondiciones
+
+    // 2. Ejercitar la class under test
+    User user = userDao.createDoctor(EMAIL, PASSWORD, FIRST_NAME, LAST_NAME);
+
+    // 3. Meaningful assertions
+    Assert.assertNotNull(user);
+    Assert.assertEquals(EMAIL, user.getEmail());
+    Assert.assertEquals(PASSWORD, user.getPassword());
+    Assert.assertEquals(FIRST_NAME, user.getFirstName());
+    Assert.assertEquals(LAST_NAME, user.getLastName());
 
     Assert.assertEquals(1, JdbcTestUtils.countRowsInTable(jdbcTemplate, "users"));
   }

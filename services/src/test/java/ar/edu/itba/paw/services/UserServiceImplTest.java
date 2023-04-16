@@ -16,24 +16,29 @@ import org.mockito.junit.MockitoJUnitRunner;
 @RunWith(MockitoJUnitRunner.class)
 public class UserServiceImplTest {
 
-  private static final int ID = 1;
+  private static final long ID = 1;
   private static final String EMAIL = "email";
+  private static final String FIRST_NAME = "firstname";
+  private static final String LAST_NAME = "lastname";
+  private static final long PFP_ID = 1;
+  private static final boolean IS_DOCTOR = false;
   private static final String PASSWORD = "password";
-  // private final UserServiceImpl us = new UserServiceImpl(null);
 
   @Mock private UserDao userDao;
 
   @InjectMocks private UserServiceImpl us;
 
   @Test
-  public void testCreate() {
+  public void testCreateClient() {
     // 1. Precondiciones
     // UserDao mock = Mockito.mock(UserDao.class);
-    Mockito.when(userDao.create(Mockito.anyString(), Mockito.anyString()))
-        .thenReturn(new User(0, EMAIL, PASSWORD));
+    Mockito.when(
+            userDao.createClient(
+                Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyString()))
+        .thenReturn(new User(0, EMAIL, PASSWORD, FIRST_NAME, LAST_NAME, IS_DOCTOR, PFP_ID));
 
     // 2. Ejercitar la class under test
-    User newUser = us.createUser(EMAIL, PASSWORD);
+    User newUser = us.createClient(EMAIL, PASSWORD, FIRST_NAME, LAST_NAME);
 
     // 3. Meaningful assertions
     Assert.assertNotNull(newUser);
@@ -44,11 +49,11 @@ public class UserServiceImplTest {
   @Test(expected = RuntimeException.class)
   public void testCreateAlreadyExists() {
     // 1. Precondiciones
-    Mockito.when(userDao.create(Mockito.eq(EMAIL), Mockito.eq(PASSWORD)))
+    Mockito.when(userDao.createClient(Mockito.eq(EMAIL), Mockito.eq(PASSWORD), Mockito.eq(FIRST_NAME), Mockito.eq(LAST_NAME)))
         .thenThrow(RuntimeException.class);
 
     // 2. Ejercitar la class under test
-    User newUser = us.createUser(EMAIL, PASSWORD);
+    us.createClient(EMAIL, PASSWORD, FIRST_NAME, LAST_NAME);
   }
 
   @Test
@@ -56,7 +61,7 @@ public class UserServiceImplTest {
     // 1. Precondiciones
     // UserDao mock = Mockito.mock(UserDao.class);
     Mockito.when(userDao.findById(Mockito.eq(ID)))
-        .thenReturn(Optional.of(new User(ID, EMAIL, PASSWORD)));
+        .thenReturn(Optional.of(new User(ID, EMAIL, PASSWORD, FIRST_NAME, LAST_NAME, IS_DOCTOR, PFP_ID)));
     // .thenThrow(SQLException.class);
 
     // 2. Ejercitar la class under test

@@ -30,7 +30,7 @@ public class HelloWorldController {
   @RequestMapping(value = "/hello", method = RequestMethod.GET)
   public ModelAndView helloWorld() {
     final ModelAndView mav = new ModelAndView("helloworld/hello");
-    mav.addObject("user", new User(0, "hello hello", "hello"));
+    mav.addObject("user", new User(0, "hello hello", "hello", "hrlo", "hello", true, 1));
 
     return mav;
   }
@@ -49,7 +49,7 @@ public class HelloWorldController {
       return registerForm(registerForm);
     }
 
-    final User user = userService.createUser(registerForm.getEmail(), registerForm.getPassword());
+    final User user = userService.createClient(registerForm.getEmail(), registerForm.getPassword(), "", "");
 
     final ModelAndView mav = new ModelAndView("helloworld/hello");
     mav.addObject("user", user);
@@ -72,7 +72,7 @@ public class HelloWorldController {
       return registerMedicForm(medicRegisterForm);
     }
 
-    final User user = userService.createUser(medicRegisterForm.getEmail(), medicRegisterForm.getPassword());
+    final User user = userService.createDoctor(medicRegisterForm.getEmail(), medicRegisterForm.getPassword(), medicRegisterForm.getName(), medicRegisterForm.getLastname());
 
     final ModelAndView mav = new ModelAndView("helloworld/hello");
     mav.addObject("user", user);
@@ -88,7 +88,10 @@ public class HelloWorldController {
 
   @RequestMapping(value = "/{id}/appointment", method = RequestMethod.GET)
   public ModelAndView appointmentForm(@PathVariable("id") final int medicId,@ModelAttribute("appointmentForm") final AppointmentForm appointmentForm) {
-    String email = userService.getEmail(medicId);
+    
+    // TODO: cuando este todo conectado podmeos hacer la query, mientras mi mail :)
+    // String email = userService.findById(medicId).orElseThrow(UserNotFoundException::new).getEmail();
+    String email = "sballerini@itba.edu.ar";
     final ModelAndView mav = new ModelAndView("helloworld/appointment");
 
     mav.addObject("form", appointmentForm);
