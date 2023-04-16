@@ -118,11 +118,14 @@ public class HelloWorldController {
             appointmentForm.getDescription(), 
             locale);
 
-    return helloWorld();//TODO create a view for email send confirmation
+    return appointmentSent();
   }
 
   @RequestMapping(value = "/doctorDashboard", method = RequestMethod.GET)
   public ModelAndView doctorDashboard() {
     return new ModelAndView("helloworld/doctorDashboard");
   }
+
+  @RequestMapping(value= "/appointment_sent", method = RequestMethod.GET)
+  public ModelAndView appointmentSent() {return new ModelAndView("helloworld/appointmentSent");}
 }
