@@ -2,7 +2,6 @@ package ar.edu.itba.paw.webapp.config;
 
 import java.nio.charset.StandardCharsets;
 import java.sql.*;
-import java.util.concurrent.TimeUnit;
 import javax.sql.DataSource;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
@@ -35,6 +34,9 @@ public class WebConfig extends WebMvcConfigurerAdapter {
 
   @Value("classpath:schema.sql")
   private Resource schemaSql;
+
+  @Value("classpath:insertDefaults.sql")
+  private Resource insertDefaultsSql;
 
   @Bean
   public ViewResolver viewResolver() {
@@ -72,7 +74,7 @@ public class WebConfig extends WebMvcConfigurerAdapter {
   private DatabasePopulator databasePopulator() {
     final ResourceDatabasePopulator populator = new ResourceDatabasePopulator();
     populator.addScript(schemaSql);
-
+    populator.addScript(insertDefaultsSql);
     return populator;
   }
 
@@ -84,14 +86,12 @@ public class WebConfig extends WebMvcConfigurerAdapter {
   }
 
   @Bean
-  public MessageSource messageSource(){
+  public MessageSource messageSource() {
     final ReloadableResourceBundleMessageSource ms = new ReloadableResourceBundleMessageSource();
 
     ms.setCacheSeconds(5);
     ms.setBasename("classpath:i18n/messages");
     ms.setDefaultEncoding(StandardCharsets.UTF_8.displayName());
-
-
 
     return ms;
   }
