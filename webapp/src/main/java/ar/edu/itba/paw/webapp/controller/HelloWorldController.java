@@ -3,9 +3,12 @@ package ar.edu.itba.paw.webapp.controller;
 import ar.edu.itba.paw.interfaces.services.DoctorService;
 import ar.edu.itba.paw.interfaces.services.MailService;
 import ar.edu.itba.paw.interfaces.services.UserService;
+import ar.edu.itba.paw.models.Doctor;
 import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.webapp.exceptions.UserNotFoundException;
 import ar.edu.itba.paw.webapp.form.*;
+
+import java.util.List;
 import java.util.Locale;
 import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -110,10 +113,7 @@ public class HelloWorldController {
       @PathVariable("id") final int medicId,
       @ModelAttribute("appointmentForm") final AppointmentForm appointmentForm) {
 
-    // TODO: cuando este todo conectado podmeos hacer la query, mientras mi mail :)
-    // String email =
-    // doctorService.getDoctorById(medicId).orElseThrow(UserNotFoundException::new).getEmail();
-    String email = "sballerini@itba.edu.ar";
+    String email = doctorService.getDoctorById(medicId).orElseThrow(UserNotFoundException::new).getEmail();
     final ModelAndView mav = new ModelAndView("helloworld/appointment");
 
     mav.addObject("form", appointmentForm);
@@ -148,7 +148,12 @@ public class HelloWorldController {
 
   @RequestMapping(value = "/doctorDashboard", method = RequestMethod.GET)
   public ModelAndView doctorDashboard() {
-    return new ModelAndView("helloworld/doctorDashboard");
+    final ModelAndView mav = new ModelAndView("helloworld/doctorDashboard");
+
+    List<Doctor> doctors = doctorService.getDoctors();
+    mav.addObject("doctors", doctors);
+
+    return mav;
   }
 
   @RequestMapping(value= "/appointment_sent", method = RequestMethod.GET)
