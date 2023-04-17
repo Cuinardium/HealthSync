@@ -8,6 +8,8 @@ import ar.edu.itba.paw.interfaces.services.SpecialtyService;
 import ar.edu.itba.paw.interfaces.services.UserService;
 import ar.edu.itba.paw.models.Doctor;
 import ar.edu.itba.paw.models.User;
+
+import java.util.List;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -88,5 +90,10 @@ public class DoctorServiceImpl implements DoctorService {
   @Override
   public Optional<Doctor> getDoctorById(long id) {
     return doctorDao.getDoctorById(id);
+  }
+
+  @Override
+  public List<Doctor> getDoctors() {
+    return doctorDao.getDoctors();
   }
 }

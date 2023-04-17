@@ -3,6 +3,7 @@ package ar.edu.itba.paw.persistence;
 import ar.edu.itba.paw.interfaces.persistence.DoctorDao;
 import ar.edu.itba.paw.models.Doctor;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import javax.sql.DataSource;
@@ -34,9 +35,9 @@ public class DoctorDaoImpl implements DoctorDao {
   // medic_id, email, password, first_name, last_name, profile_picture_id, health_insurance_name,
   // medical_specialty_name, medic_location_city, medic_location_address
   private static final String GET_DOCTOR_BY_ID =
-      "SELECT medic_id, email, password, first_name, last_name, profile_picture_id,"
+      "SELECT medic.medic_id, email, password, first_name, last_name, profile_picture_id,"
           + " health_insurance_name, medical_specialty_name, medic_location_city,"
-          + " medic_location_address FROM medic INNER JOIN user ON medic.user_id = user.user_id"
+          + " medic_location_address FROM medic INNER JOIN users ON medic.user_id = users.user_id"
           + " INNER JOIN medical_specialty ON medic.medical_specialty_id ="
           + " medical_specialty.medical_specialty_id INNER JOIN medic_location_for_medic ON"
           + " medic.medic_id = medic_location_for_medic.medic_id INNER JOIN medic_location ON"
@@ -45,6 +46,19 @@ public class DoctorDaoImpl implements DoctorDao {
           + " health_insurance_accepted_by_medic.medic_id INNER JOIN health_insurance ON"
           + " health_insurance_accepted_by_medic.health_insurance_id ="
           + " health_insurance.health_insurance_id WHERE medic.medic_id = ?";
+
+  private static final String GET_DOCTORS =
+      "SELECT medic.medic_id, email, password, first_name, last_name, profile_picture_id,"
+          + " health_insurance_name, medical_specialty_name, medic_location_city,"
+          + " medic_location_address FROM medic INNER JOIN users ON medic.user_id = users.user_id"
+          + " INNER JOIN medical_specialty ON medic.medical_specialty_id ="
+          + " medical_specialty.medical_specialty_id INNER JOIN medic_location_for_medic ON"
+          + " medic.medic_id = medic_location_for_medic.medic_id INNER JOIN medic_location ON"
+          + " medic_location_for_medic.medic_location_id = medic_location.medic_location_id INNER"
+          + " JOIN health_insurance_accepted_by_medic ON medic.medic_id ="
+          + " health_insurance_accepted_by_medic.medic_id INNER JOIN health_insurance ON"
+          + " health_insurance_accepted_by_medic.health_insurance_id ="
+          + " health_insurance.health_insurance_id";
 
   private final JdbcTemplate jdbcTemplate;
   private final SimpleJdbcInsert doctorInsert;
@@ -105,5 +119,10 @@ public class DoctorDaoImpl implements DoctorDao {
   @Override
   public Optional<Doctor> getDoctorById(long id) {
     return jdbcTemplate.query(GET_DOCTOR_BY_ID, DOCTOR_MAPPER, id).stream().findFirst();
+  }
+
+  @Override
+  public List<Doctor> getDoctors() {
+    return jdbcTemplate.query(GET_DOCTORS, DOCTOR_MAPPER);
   }
 }
