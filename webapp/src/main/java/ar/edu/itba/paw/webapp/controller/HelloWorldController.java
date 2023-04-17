@@ -7,7 +7,6 @@ import ar.edu.itba.paw.models.Doctor;
 import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.webapp.exceptions.UserNotFoundException;
 import ar.edu.itba.paw.webapp.form.*;
-
 import java.util.List;
 import java.util.Locale;
 import java.util.UUID;
@@ -114,7 +113,8 @@ public class HelloWorldController {
       @PathVariable("id") final int medicId,
       @ModelAttribute("appointmentForm") final AppointmentForm appointmentForm) {
 
-    String email = doctorService.getDoctorById(medicId).orElseThrow(UserNotFoundException::new).getEmail();
+    String email =
+        doctorService.getDoctorById(medicId).orElseThrow(UserNotFoundException::new).getEmail();
     final ModelAndView mav = new ModelAndView("helloworld/appointment");
 
     mav.addObject("form", appointmentForm);
@@ -135,13 +135,15 @@ public class HelloWorldController {
       return appointmentForm(appointmentForm.getDocId(), appointmentForm);
     }
 
-    // TODO: check no email collitions
-    userService.createUser(
-        appointmentForm.getEmail(),
-        UUID.randomUUID().toString().replace("-", ""),
-        appointmentForm.getName(),
-        appointmentForm.getLastname());
-
+    try {
+      userService.createUser(
+          appointmentForm.getEmail(),
+          UUID.randomUUID().toString().replace("-", ""),
+          appointmentForm.getName(),
+          appointmentForm.getLastname());
+    } catch (RuntimeException e) {
+      // TODO: CORRECT exception handling
+    }
     mailService.sendAppointmentRequestMail(
         appointmentForm.getEmail(),
         appointmentForm.getDocEmail(),
