@@ -94,11 +94,11 @@ public class UserDaoImplTest {
   }
 
   @Test
-  public void testCreateClient() {
+  public void testCreateUser() {
     // 1. Precondiciones
 
     // 2. Ejercitar la class under test
-    User user = userDao.createClient(EMAIL, PASSWORD, FIRST_NAME, LAST_NAME);
+    User user = userDao.createUser(EMAIL, PASSWORD, FIRST_NAME, LAST_NAME, IS_DOCTOR);
 
     // 3. Meaningful assertions
     Assert.assertNotNull(user);
@@ -106,24 +106,9 @@ public class UserDaoImplTest {
     Assert.assertEquals(PASSWORD, user.getPassword());
     Assert.assertEquals(FIRST_NAME, user.getFirstName());
     Assert.assertEquals(LAST_NAME, user.getLastName());
+    Assert.assertEquals(IS_DOCTOR, user.isDoctor());
 
     Assert.assertEquals(1, JdbcTestUtils.countRowsInTable(jdbcTemplate, "users"));
   }
 
-  @Test
-  public void testCreateDoctor() {
-    // 1. Precondiciones
-
-    // 2. Ejercitar la class under test
-    User user = userDao.createDoctor(EMAIL, PASSWORD, FIRST_NAME, LAST_NAME);
-
-    // 3. Meaningful assertions
-    Assert.assertNotNull(user);
-    Assert.assertEquals(EMAIL, user.getEmail());
-    Assert.assertEquals(PASSWORD, user.getPassword());
-    Assert.assertEquals(FIRST_NAME, user.getFirstName());
-    Assert.assertEquals(LAST_NAME, user.getLastName());
-
-    Assert.assertEquals(1, JdbcTestUtils.countRowsInTable(jdbcTemplate, "users"));
-  }
 }

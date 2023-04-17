@@ -13,8 +13,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public class UserDaoImpl implements UserDao {
 
-  private final JdbcTemplate jdbcTemplate;
-  private final SimpleJdbcInsert jdbcInsert;
+  private static final long DEFAULT_PFP_ID = 1;
   private static final RowMapper<User> ROW_MAPPER =
       (rs, rowNum) ->
           new User(
@@ -26,6 +25,13 @@ public class UserDaoImpl implements UserDao {
               rs.getBoolean("is_doctor"),
               rs.getLong("profile_picture_id"));
 
+  private static final String FIND_BY_ID =
+      "SELECT * FROM users WHERE user_id = ?";
+
+
+  private final JdbcTemplate jdbcTemplate;
+  private final SimpleJdbcInsert jdbcInsert;
+  
   @Autowired
   public UserDaoImpl(final DataSource ds) {
     this.jdbcTemplate = new JdbcTemplate(ds);
@@ -33,8 +39,9 @@ public class UserDaoImpl implements UserDao {
         new SimpleJdbcInsert(ds).withTableName("users").usingGeneratedKeyColumns("user_id");
   }
 
-  private User createUser(
-      String email, String password, String firstName, String lastName, Boolean isDoctor) {
+  @Override
+  public User createUser(
+      String email, String password, String firstName, String lastName, boolean isDoctor) {
     Map<String, Object> data = new HashMap<>();
 
     data.put("email", email);
@@ -42,30 +49,20 @@ public class UserDaoImpl implements UserDao {
     data.put("first_name", firstName);
     data.put("last_name", lastName);
     data.put("is_doctor", isDoctor);
-    data.put("profile_picture_id", 1);
+    data.put("profile_picture_id", DEFAULT_PFP_ID);
 
     // Profile Picture is default for now
 
     final Number key = jdbcInsert.executeAndReturnKey(data);
-    return new User(key.longValue(), email, password, firstName, lastName, isDoctor, 1);
-  }
-
-  @Override
-  public User createClient(String email, String password, String firstName, String lastName) {
-    return createUser(email, password, firstName, lastName, false);
-  }
-
-  @Override
-  public User createDoctor(String email, String password, String firstName, String lastName) {
-    // TODO: agregar el resto de los campos de medico (lugar y eso)
-    return createUser(email, password, firstName, lastName, true);
+    return new User(
+        key.longValue(), email, password, firstName, lastName, isDoctor, DEFAULT_PFP_ID);
   }
 
   // Optional garantiza que no va a ser null, pero no significa q se vaya a devolver un usuario
   @Override
   public Optional<User> findById(final long id) {
     // el ? "sanitiza" el parametro para evitar SQL Injection
-    return jdbcTemplate.query("SELECT * FROM users WHERE user_id = ?", ROW_MAPPER, id).stream()
+    return jdbcTemplate.query(FIND_BY_ID, ROW_MAPPER, id).stream()
         .findFirst();
   }
 }
