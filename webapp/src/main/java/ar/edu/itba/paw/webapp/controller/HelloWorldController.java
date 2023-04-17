@@ -123,6 +123,7 @@ public class HelloWorldController {
     final ModelAndView mav = new ModelAndView("helloworld/appointment");
 
     mav.addObject("form", appointmentForm);
+    mav.addObject("medicId", medicId);
     mav.addObject("email", email);
 
     return mav;
@@ -130,14 +131,14 @@ public class HelloWorldController {
 
   // this function will return void for now until we figure if we make a new view
   // or use a popup
-  @RequestMapping(value = "/appointment", method = RequestMethod.POST)
-  public ModelAndView appointmentSubmit(
+  @RequestMapping(value = "/{id}/appointment", method = RequestMethod.POST)
+  public ModelAndView appointmentSubmit(@PathVariable("id") final int medicId,
       @Valid @ModelAttribute("appointmentForm") final AppointmentForm appointmentForm,
       final BindingResult errors,
       Locale locale) {
 
     if (errors.hasErrors()) {
-      return appointmentForm(appointmentForm.getDocId(), appointmentForm);
+      return appointmentForm(medicId, appointmentForm);
     }
 
     try {
