@@ -22,4 +22,28 @@ SELECT insert_health_insurance_entry('Omint');
 SELECT insert_health_insurance_entry('Osde');
 SELECT insert_health_insurance_entry('Swiss medical');
 
+-- Function to insert a new medical specialy entry
+CREATE OR REPLACE FUNCTION insert_medical_specialty_entry(medical_specialty_name varchar(100)) RETURNS void AS $$
+DECLARE
+    -- Declare a variable to store the medical specialty name, because the parameter is not accessible inside select otherwise
+    medical_specialty_name_var varchar(100);
+BEGIN
+    medical_specialty_name_var := medical_specialty_name;
+    INSERT INTO medical_specialty(medical_specialty_name)
+        SELECT (medical_specialty_name_var)
+        WHERE NOT EXISTS(SELECT * FROM medical_specialty m1 WHERE medical_specialty_name_var = m1.medical_specialty_name);
+END;
+$$ LANGUAGE plpgsql;
 
+-- Using insert_medical_specialty_entry function
+SELECT insert_medical_specialty_entry('Cardiologist');
+SELECT insert_medical_specialty_entry('Dermatologist');
+SELECT insert_medical_specialty_entry('Gynecologist');
+SELECT insert_medical_specialty_entry('Neurologist');
+SELECT insert_medical_specialty_entry('Ophthalmologist');
+SELECT insert_medical_specialty_entry('Otolaryngologist');
+SELECT insert_medical_specialty_entry('Pediatrician');
+SELECT insert_medical_specialty_entry('Psychiatrist');
+SELECT insert_medical_specialty_entry('Surgeon');
+SELECT insert_medical_specialty_entry('Urologist');
+SELECT insert_medical_specialty_entry('Traumatologist');
