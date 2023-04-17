@@ -12,7 +12,7 @@
 <body>
 <!-- NavBar-->
 <jsp:include page="../components/navBar.jsp"/>
-
+<c:url value="/doctorDashboard" var="doctorDashboard"/>
 <!-- Content -->
 <div class="page-content p-5" id="content">
     <div class = "row">
@@ -68,7 +68,7 @@
 <script>
     let search = () => {
         let element = document.getElementById("input").value;
-        window.location='/doctorDashboard?name=' + element;
+        window.location='${doctorDashboard}?name=' + element;
     }
 </script>
 </html>
