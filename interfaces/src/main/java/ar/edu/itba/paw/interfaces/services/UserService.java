@@ -7,5 +7,7 @@ public interface UserService {
 
   User createUser(String email, String password, String firstName, String lastName);
 
+  User createUser(String email, String firstName, String lastName);
+
   Optional<User> findById(long id);
 }

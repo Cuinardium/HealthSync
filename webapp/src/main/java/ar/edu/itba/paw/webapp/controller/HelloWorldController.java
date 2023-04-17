@@ -9,7 +9,6 @@ import ar.edu.itba.paw.webapp.exceptions.UserNotFoundException;
 import ar.edu.itba.paw.webapp.form.*;
 import java.util.List;
 import java.util.Locale;
-import java.util.UUID;
 import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -137,10 +136,7 @@ public class HelloWorldController {
 
     try {
       userService.createUser(
-          appointmentForm.getEmail(),
-          UUID.randomUUID().toString().replace("-", ""),
-          appointmentForm.getName(),
-          appointmentForm.getLastname());
+          appointmentForm.getEmail(), appointmentForm.getName(), appointmentForm.getLastname());
     } catch (RuntimeException e) {
       // TODO: CORRECT exception handling
     }
