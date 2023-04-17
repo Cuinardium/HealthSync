@@ -1,11 +1,14 @@
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 
 <html>
 <head>
     <title>Home</title>
 
-    <link href="/css/main.css" rel="stylesheet"/>
-    <link href="/css/home.css" rel="stylesheet"/>
+    <c:url value="/css/main.css" var="mainCss" />
+    <c:url value="/css/home.css" var="homeCss" />
+    <link href="${mainCss}" rel="stylesheet"/>
+    <link href="${homeCss}" rel="stylesheet"/>
     <jsp:include page="/resources/externalResources.jsp"/>
 </head>
 <body>
@@ -40,10 +43,11 @@
         </div>
     </div>
 </section>
-
+    
+<c:url value="/" var="home" />
 <footer class="border-top">
     <div class="container foot">
-        <a class="title navbar-brand" href="/">
+      <a class="title navbar-brand" href="${home}">
             <div class="health">Health</div>
             <div class="sync">Sync</div>
         </a>

@@ -6,8 +6,11 @@
 <html lang="en">
     <head>
         <title>Medic Registration</title>
-        <link href="/css/main.css" rel="stylesheet"/>
-        <link href="/css/register_medic.css" rel="stylesheet"/>
+        <c:url value="/css/main.css" var="mainCss" />
+  <c:url value="/css/register_medic.css" var="registerMedicCss" />
+  <link href="${mainCss}" rel="stylesheet"/>
+  <link href="${registerMedicCss}" rel="stylesheet"/>
+
     </head>
 
     <body>

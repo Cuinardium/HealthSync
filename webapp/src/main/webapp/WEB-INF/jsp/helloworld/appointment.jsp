@@ -6,8 +6,10 @@
 <html>
 <head>
     <title>Appointment</title>
-    <link href="/css/main.css" rel="stylesheet"/>
-    <link href="/css/register_medic.css" rel="stylesheet"/>
+    <c:url value="/css/main.css" var="mainCss"/>
+    <c:url value="/css/register_medic.css" var="registerCss"/>
+    <link href="${mainCss}" rel="stylesheet"/>
+    <link href="${registerCss}" rel="stylesheet"/>
 </head>
 <body>
 <jsp:include page="../components/navBar.jsp"/>

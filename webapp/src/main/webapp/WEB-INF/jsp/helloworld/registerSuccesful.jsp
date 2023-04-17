@@ -6,13 +6,15 @@
 <html>
 <head>
     <title>Register Succesfull</title>
-    <link href="/css/main.css" rel="stylesheet"/>
-    <link href="/css/appointmentSent.css" rel="stylesheet"/>
+    <c:url value="/css/main.css" var="mainCss" />
+    <c:url value="/css/appointmentSent.css" var="appointmentSentCss" />
+    <link href="${mainCss}" rel="stylesheet"/>
+    <link href="${appointmentSentCss}" rel="stylesheet"/>
 </head>
 <body>
 <jsp:include page="../components/navBar.jsp"/>
 <div class="page-content p-5" id="content">
-    <c:url value="/appointment_sent" var="appointmentSent" />
+    <c:url value="/" var="home" />
     <div class="card media">
         <h5 class="card-title media-body">
             <spring:message code="registerMedic.registerSuccesful"/>
@@ -21,7 +23,7 @@
             <spring:message code="registerMedic.registerSuccesful2"/>
         </h5>
         <h6 class="card-text media-body">
-            <a href="/" class="link-info"><spring:message code="appointmentSent.home"/></a>
+          <a href="${home}" class="link-info"><spring:message code="appointmentSent.home"/></a>
         </h6>
     </div>
 </div>

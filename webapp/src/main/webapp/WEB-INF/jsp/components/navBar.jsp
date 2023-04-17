@@ -1,10 +1,17 @@
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 <html>
 <head>
-  <link href="/css/main.css" rel="stylesheet"/>
-  <link href="/css/navBar.css" rel="stylesheet"/>
+  <c:url value="/css/main.css" var="mainCss" />
+  <c:url value="/css/navBar.css" var="navBarCss" />
+  <link href="${mainCss}" rel="stylesheet"/>
+  <link href="${navBarCss}" rel="stylesheet"/>
 </head>
 <body>
+    <c:url value="/" var="home" />
+        <c:url value="/doctorDashboard" var="dashboard" />
+
+
 <div class="vertical-nav bg-white" id="sidebar">
   <div class="identity">
     <div class="media">
@@ -19,14 +26,15 @@
   <p class="text-gray font-weight-bold text-uppercase px-3 small pb-4 mb-0"><spring:message code="navbar.main"/></p>
 
   <ul class="nav flex-column bg-white mb-0">
+
     <li class="nav-item">
-      <a href="/" class="nav-link text-dark font-italic bg-light">
+      <a href="${home}" class="nav-link text-dark font-italic bg-light">
         <i class="fa fa-house mr-3 text-primary fa-fw"></i>
         <spring:message code="navbar.home"/>
       </a>
     </li>
     <li class="nav-item">
-      <a href="/doctorDashboard" class="nav-link text-dark font-italic bg-light">
+      <a href="${dashboard}" class="nav-link text-dark font-italic bg-light">
         <i class="fa-solid fa-user-doctor mr-3 text-primary fa-fw"></i>
         <spring:message code="navbar.checkDoc"/>
       </a>

@@ -2,9 +2,10 @@
 <html>
 <head>
     <title>Doctor Dashboard</title>
-
-    <link href="/css/main.css" rel="stylesheet"/>
-    <link href="/css/doctorDasboard.css" rel="stylesheet"/>
+    <c:url value="/css/main.css" var="mainCss" />
+    <c:url value="/css/doctorDashboard.css" var="doctorDashboardCss" />
+    <link href="${mainCss}" rel="stylesheet"/>
+    <link href="${doctorDashboardCss}" rel="stylesheet"/>
     <jsp:include page="/resources/externalResources.jsp"/>
 </head>
 
