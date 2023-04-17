@@ -24,7 +24,7 @@
             </button>
         </div>
     </div>
-    <form method="get" id="filters" action="doctorDashboard">
+    <form method="get" id="filters" action="${doctorDashboard}">
       <div class="row pt-3">
         <div class="col">
             <input type="text" class="form-control" id="city" name="city" placeholder="City"/>
