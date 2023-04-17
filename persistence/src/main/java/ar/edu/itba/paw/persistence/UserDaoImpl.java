@@ -30,13 +30,16 @@ public class UserDaoImpl implements UserDao {
 
 
   private final JdbcTemplate jdbcTemplate;
-  private final SimpleJdbcInsert jdbcInsert;
+  private final SimpleJdbcInsert userInsert;
+  private final SimpleJdbcInsert userHealthInsuranceInsert;
   
   @Autowired
   public UserDaoImpl(final DataSource ds) {
     this.jdbcTemplate = new JdbcTemplate(ds);
-    this.jdbcInsert =
+    this.userInsert =
         new SimpleJdbcInsert(ds).withTableName("users").usingGeneratedKeyColumns("user_id");
+    this.userHealthInsuranceInsert =
+        new SimpleJdbcInsert(ds).withTableName("health_insurance_for_user");
   }
 
   @Override
@@ -53,9 +56,20 @@ public class UserDaoImpl implements UserDao {
 
     // Profile Picture is default for now
 
-    final Number key = jdbcInsert.executeAndReturnKey(data);
+    final Number key = userInsert.executeAndReturnKey(data);
     return new User(
         key.longValue(), email, password, firstName, lastName, isDoctor, DEFAULT_PFP_ID);
+  }
+
+
+  @Override
+  public void addHealthInsuranceToUser(long userId, long healthInsuranceId) {
+    
+    Map<String, Object> data = new HashMap<>();
+    data.put("user_id", userId);
+    data.put("health_insurance_id", healthInsuranceId);
+
+    userHealthInsuranceInsert.execute(data);
   }
 
   // Optional garantiza que no va a ser null, pero no significa q se vaya a devolver un usuario

@@ -149,7 +149,7 @@ public class HelloWorldController {
 
     try {
       userService.createUser(
-          appointmentForm.getEmail(), appointmentForm.getName(), appointmentForm.getLastname());
+          appointmentForm.getEmail(), appointmentForm.getName(), appointmentForm.getLastname(), appointmentForm.getHealthcare());
     } catch (RuntimeException e) {
       // TODO: CORRECT exception handling
     }
