@@ -34,7 +34,7 @@
 
         </div>
         <div class="col">
-            <input type="text" class="form-control" id="healthcare" name="healthcare" placeholder="Healthcare">
+            <input type="text" class="form-control" id="healthcare" name="healthcare" placeholder="Health Insurance">
 
         </div>
         <div class="col-auto">
