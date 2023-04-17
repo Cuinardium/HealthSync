@@ -4,10 +4,10 @@
 
     <modelVersion>4.0.0</modelVersion>
     <groupId>ar.edu.itba.paw</groupId>
-    <artifactId>tutorialpaw</artifactId>
+    <artifactId>healthSync</artifactId>
     <version>1.0-SNAPSHOT</version>
     <packaging>pom</packaging>
-    <name>tutorialpaw</name>
+    <name>healthSync</name>
 
     <properties>
 
