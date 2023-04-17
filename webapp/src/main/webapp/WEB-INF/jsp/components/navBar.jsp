@@ -7,9 +7,9 @@
 <div class="vertical-nav bg-white" id="sidebar">
   <div class="identity">
     <div class="media">
-      <img src="https://bootstrapious.com/i/snippets/sn-v-nav/avatar.png" alt="..." width="65" class="mr-3 rounded-circle img-thumbnail shadow-sm">
+      <img src="https://w7.pngwing.com/pngs/419/473/png-transparent-computer-icons-user-profile-login-user-heroes-sphere-black-thumbnail.png" alt="..." width="65" class="mr-3 rounded-circle img-thumbnail shadow-sm">
       <div class="media-body">
-        <h4 class="m-0">Jason Doe</h4>
+        <h4 class="m-0">Welcome,</h4>
         <p class="font-weight-light text-muted mb-0">Patient</p>
       </div>
     </div>
