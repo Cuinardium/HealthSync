@@ -16,7 +16,12 @@
 <div class="page-content p-5" id="content">
     <div class = "row">
         <!-- Search Bar -->
-        <jsp:include page="../components/searchBar.jsp"/>
+        <div class="input-group">
+            <input type="text" id="input" class="form-control" placeholder="Search" aria-label="Search" aria-describedby="basic-addon2">
+            <button type="button" class="btn btn-primary" onclick="search();">
+                <i class="fas fa-search"></i>
+            </button>
+        </div>
     </div>
     <div class="flex-container bcontent">
       <c:forEach items="${doctors}" var="doctor">
@@ -39,5 +44,10 @@
             </div>
 </div>
 </body>
-
+<script>
+    let search = () => {
+        let element = document.getElementById("input").value;
+        window.location='/doctorDashboard?name=' + element;
+    }
+</script>
 </html>

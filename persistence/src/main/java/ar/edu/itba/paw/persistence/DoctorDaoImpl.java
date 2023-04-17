@@ -2,6 +2,8 @@ package ar.edu.itba.paw.persistence;
 
 import ar.edu.itba.paw.interfaces.persistence.DoctorDao;
 import ar.edu.itba.paw.models.Doctor;
+
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -58,14 +60,10 @@ public class DoctorDaoImpl implements DoctorDao {
 
   private static final String GET_DOCTOR_BY_ID = GET_DOCTORS + " " + "WHERE medic.medic_id = ?";
 
-  private static final String GET_DOCTORS_BY_HEALTH_INSURANCE =
-      GET_DOCTORS + " " + "WHERE health_insurance_name = ?";
-
-  private static final String GET_DOCTORS_BY_CITY =
-      GET_DOCTORS + " " + "WHERE medic_location_city = ?";
-
-  private static final String GET_DOCTORS_BY_SPECIALTY =
-      GET_DOCTORS + " " + "WHERE medical_specialty_name = ?";
+  private static final String MATCHES_PART_NAME = "CONCAT(first_name, ' ', last_name) ILIKE CONCAT(?, '%')";
+  private static final String MATCHES_CITY = "medic_location_city = ?"; 
+  private static final String MATCHES_SPECIALTY = "medical_specialty_name = ?";
+  private static final String MATCHES_HEALTH_INSURANCE = "health_insurance_name = ?";
 
   private final JdbcTemplate jdbcTemplate;
   private final SimpleJdbcInsert doctorInsert;
@@ -126,18 +124,39 @@ public class DoctorDaoImpl implements DoctorDao {
   }
 
   @Override
-  public List<Doctor> getDoctorsByHealthInsurance(String healthInsurance) {
-    return jdbcTemplate.query(GET_DOCTORS_BY_HEALTH_INSURANCE, DOCTOR_MAPPER, healthInsurance);
-  }
+  public List<Doctor> getFilteredDoctors(String name, String specialty, String city, String healthInsurance) {
 
-  @Override
-  public List<Doctor> getDoctorsByCity(String city) {
-    return jdbcTemplate.query(GET_DOCTORS_BY_CITY, DOCTOR_MAPPER, city);
-  }
+    // If no filters are applied, return all doctors
+    if (name==null && specialty == null && city == null && healthInsurance == null) {
+      return getDoctors();
+    }
 
-  @Override
-  public List<Doctor> getDoctorsBySpecialty(String specialty) {
-    return jdbcTemplate.query(GET_DOCTORS_BY_SPECIALTY, DOCTOR_MAPPER, specialty);
+    // Start building the query
+    String sql = GET_DOCTORS + " WHERE";
+    List<Object> params = new ArrayList<>();
+
+    // Add the filters to the query, if it is the first filter, don't add AND
+    if (name != null) {
+      sql += (params.isEmpty()? " " : " AND ") + MATCHES_PART_NAME;
+      params.add(name);
+    }
+
+    if (specialty != null) {
+      sql += (params.isEmpty()? " " : " AND ") + MATCHES_SPECIALTY;
+      params.add(specialty);
+    }
+
+    if (city != null) {
+      sql += (params.isEmpty()? " " : " AND ") + MATCHES_CITY;
+      params.add(city);
+    }
+
+    if (healthInsurance != null) {
+      sql += (params.isEmpty()? " " : " AND ") + MATCHES_HEALTH_INSURANCE;
+      params.add(healthInsurance);
+    }
+
+    return jdbcTemplate.query(sql, DOCTOR_MAPPER, params.toArray());
   }
 
   @Override
