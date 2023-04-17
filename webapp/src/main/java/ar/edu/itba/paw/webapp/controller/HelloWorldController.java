@@ -7,6 +7,7 @@ import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.webapp.exceptions.UserNotFoundException;
 import ar.edu.itba.paw.webapp.form.*;
 import java.util.Locale;
+import java.util.UUID;
 import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -134,6 +135,13 @@ public class HelloWorldController {
       return appointmentForm(appointmentForm.getDocId(), appointmentForm);
     }
 
+    // TODO: check no email collitions
+    userService.createUser(
+        appointmentForm.getEmail(),
+        UUID.randomUUID().toString().replace("-", ""),
+        appointmentForm.getName(),
+        appointmentForm.getLastname());
+
     mailService.sendAppointmentRequestMail(
         appointmentForm.getEmail(),
         appointmentForm.getDocEmail(),
@@ -151,6 +159,8 @@ public class HelloWorldController {
     return new ModelAndView("helloworld/doctorDashboard");
   }
 
-  @RequestMapping(value= "/appointment_sent", method = RequestMethod.GET)
-  public ModelAndView appointmentSent() {return new ModelAndView("helloworld/appointmentSent");}
+  @RequestMapping(value = "/appointment_sent", method = RequestMethod.GET)
+  public ModelAndView appointmentSent() {
+    return new ModelAndView("helloworld/appointmentSent");
+  }
 }
