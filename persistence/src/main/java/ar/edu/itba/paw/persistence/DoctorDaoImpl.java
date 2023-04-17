@@ -60,6 +60,45 @@ public class DoctorDaoImpl implements DoctorDao {
           + " health_insurance_accepted_by_medic.health_insurance_id ="
           + " health_insurance.health_insurance_id";
 
+  private static final String GET_DOCTORS_BY_HEALTH_INSURANCE =
+      "SELECT medic.medic_id, email, password, first_name, last_name, profile_picture_id,"
+          + " health_insurance_name, medical_specialty_name, medic_location_city,"
+          + " medic_location_address FROM medic INNER JOIN users ON medic.user_id = users.user_id"
+          + " INNER JOIN medical_specialty ON medic.medical_specialty_id ="
+          + " medical_specialty.medical_specialty_id INNER JOIN medic_location_for_medic ON"
+          + " medic.medic_id = medic_location_for_medic.medic_id INNER JOIN medic_location ON"
+          + " medic_location_for_medic.medic_location_id = medic_location.medic_location_id INNER"
+          + " JOIN health_insurance_accepted_by_medic ON medic.medic_id ="
+          + " health_insurance_accepted_by_medic.medic_id INNER JOIN health_insurance ON"
+          + " health_insurance_accepted_by_medic.health_insurance_id ="
+          + " health_insurance.health_insurance_id WHERE health_insurance_name = ?";
+
+  private static final String GET_DOCTORS_BY_CITY =
+      "SELECT medic.medic_id, email, password, first_name, last_name, profile_picture_id,"
+          + " health_insurance_name, medical_specialty_name, medic_location_city,"
+          + " medic_location_address FROM medic INNER JOIN users ON medic.user_id = users.user_id"
+          + " INNER JOIN medical_specialty ON medic.medical_specialty_id ="
+          + " medical_specialty.medical_specialty_id INNER JOIN medic_location_for_medic ON"
+          + " medic.medic_id = medic_location_for_medic.medic_id INNER JOIN medic_location ON"
+          + " medic_location_for_medic.medic_location_id = medic_location.medic_location_id INNER"
+          + " JOIN health_insurance_accepted_by_medic ON medic.medic_id ="
+          + " health_insurance_accepted_by_medic.medic_id INNER JOIN health_insurance ON"
+          + " health_insurance_accepted_by_medic.health_insurance_id ="
+          + " health_insurance.health_insurance_id WHERE medic_location_city = ?";
+
+  private static final String GET_DOCTORS_BY_SPECIALTY =
+      "SELECT medic.medic_id, email, password, first_name, last_name, profile_picture_id,"
+          + " health_insurance_name, medical_specialty_name, medic_location_city,"
+          + " medic_location_address FROM medic INNER JOIN users ON medic.user_id = users.user_id"
+          + " INNER JOIN medical_specialty ON medic.medical_specialty_id ="
+          + " medical_specialty.medical_specialty_id INNER JOIN medic_location_for_medic ON"
+          + " medic.medic_id = medic_location_for_medic.medic_id INNER JOIN medic_location ON"
+          + " medic_location_for_medic.medic_location_id = medic_location.medic_location_id INNER"
+          + " JOIN health_insurance_accepted_by_medic ON medic.medic_id ="
+          + " health_insurance_accepted_by_medic.medic_id INNER JOIN health_insurance ON"
+          + " health_insurance_accepted_by_medic.health_insurance_id ="
+          + " health_insurance.health_insurance_id WHERE medical_specialty_name = ?";
+
   private final JdbcTemplate jdbcTemplate;
   private final SimpleJdbcInsert doctorInsert;
   private final SimpleJdbcInsert doctorLocationInsert;
@@ -119,6 +158,21 @@ public class DoctorDaoImpl implements DoctorDao {
   @Override
   public Optional<Doctor> getDoctorById(long id) {
     return jdbcTemplate.query(GET_DOCTOR_BY_ID, DOCTOR_MAPPER, id).stream().findFirst();
+  }
+
+  @Override
+  public List<Doctor> getDoctorsByHealthInsurance(String healthInsurance) {
+    return jdbcTemplate.query(GET_DOCTORS_BY_HEALTH_INSURANCE, DOCTOR_MAPPER, healthInsurance);
+  }
+
+  @Override
+  public List<Doctor> getDoctorsByCity(String city) {
+    return jdbcTemplate.query(GET_DOCTORS_BY_CITY, DOCTOR_MAPPER, city);
+  }
+
+  @Override
+  public List<Doctor> getDoctorsBySpecialty(String specialty) {
+    return jdbcTemplate.query(GET_DOCTORS_BY_SPECIALTY, DOCTOR_MAPPER, specialty);
   }
 
   @Override

@@ -2,10 +2,10 @@ package ar.edu.itba.paw.models;
 
 public class Doctor extends User {
 
-  private String healthInsurance;
-  private String specialty;
-  private String city;
-  private String address;
+  private final String healthInsurance;
+  private final String specialty;
+  private final String city;
+  private final String address;
 
   public Doctor(
       long id,

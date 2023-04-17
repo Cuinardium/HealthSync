@@ -93,6 +93,21 @@ public class DoctorServiceImpl implements DoctorService {
   }
 
   @Override
+  public List<Doctor> getDoctorsByCity(String city) {
+    return doctorDao.getDoctorsByCity(city);
+  }
+
+  @Override
+  public List<Doctor> getDoctorsByHealthInsurance(String healthInsurance) {
+    return doctorDao.getDoctorsByHealthInsurance(healthInsurance);
+  }
+
+  @Override
+  public List<Doctor> getDoctorsBySpecialty(String specialty) {
+    return doctorDao.getDoctorsBySpecialty(specialty);
+  }
+
+  @Override
   public List<Doctor> getDoctors() {
     return doctorDao.getDoctors();
   }
