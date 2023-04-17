@@ -38,8 +38,8 @@ CREATE TABLE IF NOT EXISTS medical_specialty (
 
 CREATE TABLE IF NOT EXISTS medic_location (
     medic_location_id SERIAL PRIMARY KEY ,
-    medic_location_city VARCHAR(100) NOT NULL UNIQUE,
-    medic_location_address VARCHAR(100) NOT NULL UNIQUE
+    medic_location_city VARCHAR(100) NOT NULL,
+    medic_location_address VARCHAR(100) NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS medic (
