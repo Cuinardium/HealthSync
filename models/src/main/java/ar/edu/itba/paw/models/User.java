@@ -6,9 +6,9 @@ public class User {
 
   private final String email;
   private String password;
-  private String firstName;
-  private String lastName;
-  private Boolean isDoctor;
+  private final String firstName;
+  private final String lastName;
+  private final Boolean isDoctor;
 
   public User(
       long id,

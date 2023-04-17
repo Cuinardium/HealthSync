@@ -1,30 +1,36 @@
 package ar.edu.itba.paw.webapp.controller;
 
+import ar.edu.itba.paw.interfaces.services.DoctorService;
 import ar.edu.itba.paw.interfaces.services.MailService;
 import ar.edu.itba.paw.interfaces.services.UserService;
+import ar.edu.itba.paw.models.Doctor;
 import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.webapp.exceptions.UserNotFoundException;
 import ar.edu.itba.paw.webapp.form.*;
+import java.util.List;
+import java.util.Locale;
+import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
-import java.util.Locale;
-
-import javax.validation.Valid;
-
 @Controller
 public class HelloWorldController {
 
   private final UserService userService;
+  private final DoctorService doctorService;
   private final MailService mailService;
 
   @Autowired
-  public HelloWorldController(final UserService userService, final MailService mailService) {
+  public HelloWorldController(
+      final UserService userService,
+      final MailService mailService,
+      final DoctorService doctorService) {
     this.userService = userService;
     this.mailService = mailService;
+    this.doctorService = doctorService;
   }
 
   @RequestMapping(value = "/hello", method = RequestMethod.GET)
@@ -44,12 +50,15 @@ public class HelloWorldController {
   }
 
   @RequestMapping(value = "/register", method = RequestMethod.POST)
-  public ModelAndView register(@Valid @ModelAttribute("registerForm") final RegisterForm registerForm,final BindingResult errors) {
-    if(errors.hasErrors()){
+  public ModelAndView register(
+      @Valid @ModelAttribute("registerForm") final RegisterForm registerForm,
+      final BindingResult errors) {
+    if (errors.hasErrors()) {
       return registerForm(registerForm);
     }
 
-    final User user = userService.createClient(registerForm.getEmail(), registerForm.getPassword(), "", "");
+    final User user =
+        userService.createUser(registerForm.getEmail(), registerForm.getPassword(), "", "");
 
     final ModelAndView mav = new ModelAndView("helloworld/hello");
     mav.addObject("user", user);
@@ -57,22 +66,33 @@ public class HelloWorldController {
   }
 
   @RequestMapping(value = "/register", method = RequestMethod.GET)
-  public ModelAndView registerForm(@ModelAttribute("registerForm") final RegisterForm registerForm) {
-    final ModelAndView mav= new ModelAndView("helloworld/register");
+  public ModelAndView registerForm(
+      @ModelAttribute("registerForm") final RegisterForm registerForm) {
+    final ModelAndView mav = new ModelAndView("helloworld/register");
     mav.addObject("form", registerForm);
 
     return mav;
   }
 
-
   // TODO: revisar campos
   @RequestMapping(value = "/register_medic", method = RequestMethod.POST)
-  public ModelAndView registerMedicSubmit(@Valid @ModelAttribute("medicRegisterForm") final MedicRegisterForm medicRegisterForm ,final BindingResult errors) {
-    if(errors.hasErrors()){
+  public ModelAndView registerMedicSubmit(
+      @Valid @ModelAttribute("medicRegisterForm") final MedicRegisterForm medicRegisterForm,
+      final BindingResult errors) {
+    if (errors.hasErrors()) {
       return registerMedicForm(medicRegisterForm);
     }
 
-    final User user = userService.createDoctor(medicRegisterForm.getEmail(), medicRegisterForm.getPassword(), medicRegisterForm.getName(), medicRegisterForm.getLastname());
+    final User user =
+        doctorService.createDoctor(
+            medicRegisterForm.getEmail(),
+            medicRegisterForm.getPassword(),
+            medicRegisterForm.getName(),
+            medicRegisterForm.getLastname(),
+            medicRegisterForm.getHealthcare(),
+            medicRegisterForm.getSpecialization(),
+            medicRegisterForm.getCity(),
+            medicRegisterForm.getAddress());
 
     final ModelAndView mav = new ModelAndView("helloworld/hello");
     mav.addObject("user", user);
@@ -80,18 +100,20 @@ public class HelloWorldController {
   }
 
   @RequestMapping(value = "/register_medic", method = RequestMethod.GET)
-  public ModelAndView registerMedicForm(@ModelAttribute("medicRegisterForm") final MedicRegisterForm medicRegisterForm ) {
-    final ModelAndView mav= new ModelAndView("helloworld/register_medic");
+  public ModelAndView registerMedicForm(
+      @ModelAttribute("medicRegisterForm") final MedicRegisterForm medicRegisterForm) {
+    final ModelAndView mav = new ModelAndView("helloworld/register_medic");
     mav.addObject("form", medicRegisterForm);
     return mav;
   }
 
   @RequestMapping(value = "/{id}/appointment", method = RequestMethod.GET)
-  public ModelAndView appointmentForm(@PathVariable("id") final int medicId,@ModelAttribute("appointmentForm") final AppointmentForm appointmentForm) {
-    
-    // TODO: cuando este todo conectado podmeos hacer la query, mientras mi mail :)
-    // String email = userService.findById(medicId).orElseThrow(UserNotFoundException::new).getEmail();
-    String email = "sballerini@itba.edu.ar";
+  public ModelAndView appointmentForm(
+      @PathVariable("id") final int medicId,
+      @ModelAttribute("appointmentForm") final AppointmentForm appointmentForm) {
+
+    String email =
+        doctorService.getDoctorById(medicId).orElseThrow(UserNotFoundException::new).getEmail();
     final ModelAndView mav = new ModelAndView("helloworld/appointment");
 
     mav.addObject("form", appointmentForm);
@@ -103,29 +125,45 @@ public class HelloWorldController {
   // this function will return void for now until we figure if we make a new view
   // or use a popup
   @RequestMapping(value = "/appointment", method = RequestMethod.POST)
-  public ModelAndView appointmentSubmit(@Valid @ModelAttribute("appointmentForm") final AppointmentForm appointmentForm, final BindingResult errors, Locale locale) {
+  public ModelAndView appointmentSubmit(
+      @Valid @ModelAttribute("appointmentForm") final AppointmentForm appointmentForm,
+      final BindingResult errors,
+      Locale locale) {
 
     if (errors.hasErrors()) {
       return appointmentForm(appointmentForm.getDocId(), appointmentForm);
     }
 
+    try {
+      userService.createUser(
+          appointmentForm.getEmail(), appointmentForm.getName(), appointmentForm.getLastname());
+    } catch (RuntimeException e) {
+      // TODO: CORRECT exception handling
+    }
     mailService.sendAppointmentRequestMail(
-            appointmentForm.getEmail(), 
-            appointmentForm.getDocEmail(),
-            appointmentForm.getName() + " " + appointmentForm.getLastname(),
-            appointmentForm.getHealthcare(), 
-            appointmentForm.getDate(), 
-            appointmentForm.getDescription(), 
-            locale);
+        appointmentForm.getEmail(),
+        appointmentForm.getDocEmail(),
+        appointmentForm.getName() + " " + appointmentForm.getLastname(),
+        appointmentForm.getHealthcare(),
+        appointmentForm.getDate(),
+        appointmentForm.getDescription(),
+        locale);
 
     return appointmentSent();
   }
 
   @RequestMapping(value = "/doctorDashboard", method = RequestMethod.GET)
   public ModelAndView doctorDashboard() {
-    return new ModelAndView("helloworld/doctorDashboard");
+    final ModelAndView mav = new ModelAndView("helloworld/doctorDashboard");
+
+    List<Doctor> doctors = doctorService.getDoctors();
+    mav.addObject("doctors", doctors);
+
+    return mav;
   }
 
-  @RequestMapping(value= "/appointment_sent", method = RequestMethod.GET)
-  public ModelAndView appointmentSent() {return new ModelAndView("helloworld/appointmentSent");}
+  @RequestMapping(value = "/appointment_sent", method = RequestMethod.GET)
+  public ModelAndView appointmentSent() {
+    return new ModelAndView("helloworld/appointmentSent");
+  }
 }

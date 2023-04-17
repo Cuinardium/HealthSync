@@ -29,31 +29,34 @@ public class UserServiceImplTest {
   @InjectMocks private UserServiceImpl us;
 
   @Test
-  public void testCreateClient() {
+  public void testCreateUser() {
     // 1. Precondiciones
     // UserDao mock = Mockito.mock(UserDao.class);
     Mockito.when(
-            userDao.createClient(
-                Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyString()))
-        .thenReturn(new User(0, EMAIL, PASSWORD, FIRST_NAME, LAST_NAME, IS_DOCTOR, PFP_ID));
+            userDao.createUser(
+                Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyBoolean()))
+        .thenReturn(new User(ID, EMAIL, PASSWORD, FIRST_NAME, LAST_NAME, IS_DOCTOR, PFP_ID));
 
     // 2. Ejercitar la class under test
-    User newUser = us.createClient(EMAIL, PASSWORD, FIRST_NAME, LAST_NAME);
+    User newUser = us.createUser(EMAIL, PASSWORD, FIRST_NAME, LAST_NAME);
 
     // 3. Meaningful assertions
     Assert.assertNotNull(newUser);
     Assert.assertEquals(EMAIL, newUser.getEmail());
     Assert.assertEquals(PASSWORD, newUser.getPassword());
+    Assert.assertEquals(FIRST_NAME, newUser.getFirstName());
+    Assert.assertEquals(LAST_NAME, newUser.getLastName());
+    Assert.assertEquals(IS_DOCTOR, newUser.isDoctor());
   }
 
   @Test(expected = RuntimeException.class)
   public void testCreateAlreadyExists() {
     // 1. Precondiciones
-    Mockito.when(userDao.createClient(Mockito.eq(EMAIL), Mockito.eq(PASSWORD), Mockito.eq(FIRST_NAME), Mockito.eq(LAST_NAME)))
+    Mockito.when(userDao.createUser(Mockito.eq(EMAIL), Mockito.eq(PASSWORD), Mockito.eq(FIRST_NAME), Mockito.eq(LAST_NAME), Mockito.eq(IS_DOCTOR)))
         .thenThrow(RuntimeException.class);
 
     // 2. Ejercitar la class under test
-    us.createClient(EMAIL, PASSWORD, FIRST_NAME, LAST_NAME);
+    us.createUser(EMAIL, PASSWORD, FIRST_NAME, LAST_NAME);
   }
 
   @Test

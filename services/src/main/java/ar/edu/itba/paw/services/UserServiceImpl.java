@@ -4,6 +4,7 @@ import ar.edu.itba.paw.interfaces.persistence.UserDao;
 import ar.edu.itba.paw.interfaces.services.UserService;
 import ar.edu.itba.paw.models.User;
 import java.util.Optional;
+import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -18,13 +19,14 @@ public class UserServiceImpl implements UserService {
   }
 
   @Override
-  public User createClient(String email, String password, String firstName, String lastName) {
-    return userDao.createClient(email, password, firstName, lastName);
+  public User createUser(String email, String password, String firstName, String lastName) {
+    return userDao.createUser(email, password, firstName, lastName, false);
   }
 
   @Override
-  public User createDoctor(String email, String password, String firstName, String lastName) {
-    return userDao.createDoctor(email, password, firstName, lastName);
+  public User createUser(String email, String firstName, String lastName) {
+    String password = UUID.randomUUID().toString().replace("-", "");
+    return this.createUser(email, password, firstName, lastName);
   }
 
   @Override
