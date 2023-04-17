@@ -33,6 +33,11 @@ public class HelloWorldController {
     this.doctorService = doctorService;
   }
 
+  @RequestMapping(value = "/", method = RequestMethod.GET)
+  public ModelAndView landingPage() {
+    return new ModelAndView("helloworld/home");
+  }
+
   @RequestMapping(value = "/hello", method = RequestMethod.GET)
   public ModelAndView helloWorld() {
     final ModelAndView mav = new ModelAndView("helloworld/hello");
@@ -114,6 +119,7 @@ public class HelloWorldController {
 
     String email =
         doctorService.getDoctorById(medicId).orElseThrow(UserNotFoundException::new).getEmail();
+
     final ModelAndView mav = new ModelAndView("helloworld/appointment");
 
     mav.addObject("form", appointmentForm);
