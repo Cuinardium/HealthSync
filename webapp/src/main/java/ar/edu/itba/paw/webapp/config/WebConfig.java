@@ -2,6 +2,7 @@ package ar.edu.itba.paw.webapp.config;
 
 import java.nio.charset.StandardCharsets;
 import java.sql.*;
+import java.util.concurrent.TimeUnit;
 import javax.sql.DataSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -96,9 +97,9 @@ public class WebConfig extends WebMvcConfigurerAdapter {
   public MessageSource messageSource() {
     final ReloadableResourceBundleMessageSource ms = new ReloadableResourceBundleMessageSource();
 
-    ms.setCacheSeconds(5);
+    ms.setCacheSeconds((int) TimeUnit.MINUTES.toSeconds(5));
     ms.setBasename("classpath:i18n/messages");
-    ms.setDefaultEncoding(StandardCharsets.UTF_8.displayName());
+    ms.setDefaultEncoding(StandardCharsets.UTF_8.name());
 
     return ms;
   }

@@ -14,7 +14,7 @@
 <div class="page-content p-5" id="content">
     <div class="bcontent">
     <h1> <spring:message code="appointment.title"/> </h1>
-<c:url value="/appointment" var="appointmentUrl" />
+<c:url value="/${medicId}/appointment" var="appointmentUrl" />
 
 
 
