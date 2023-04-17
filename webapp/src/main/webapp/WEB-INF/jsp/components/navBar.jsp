@@ -1,4 +1,8 @@
 <html>
+<head>
+  <link href="/css/main.css" rel="stylesheet"/>
+  <link href="/css/navBar.css" rel="stylesheet"/>
+</head>
 <body>
 <div class="vertical-nav bg-white" id="sidebar">
   <div class="identity">
