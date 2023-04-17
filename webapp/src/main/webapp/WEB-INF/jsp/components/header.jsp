@@ -1,3 +1,5 @@
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
+
 <html>
 <head>
   <link href="/css/main.css" rel="stylesheet"/>
@@ -12,12 +14,12 @@
     </a>
 
     <div class="buttons">
-      <a href="/" class="nav-link px-2 link-secondary">Home</a>
-      <a href="/doctorDashboard" class="nav-link px-2 link-dark">Check Doctors</a>
+      <a href="/" class="nav-link px-2 link-secondary"><spring:message code="home.home"/></a>
+      <a href="/doctorDashboard" class="nav-link px-2 link-dark"><spring:message code="home.checkDoctor"/></a>
     </div>
 
     <div class="buttons">
-      <button type="button" class="btn btn-primary" onclick="window.location='/register_medic';">Doctor Sign-Up</button>
+      <button type="button" class="btn btn-primary" onclick="window.location='/register_medic';"><spring:message code="home.doctorSignUp"/></button>
     </div>
   </div>
 </header>
