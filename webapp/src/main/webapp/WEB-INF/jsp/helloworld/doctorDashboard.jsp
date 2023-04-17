@@ -34,7 +34,7 @@
 
         </div>
         <div class="col">
-            <input type="text" class="form-control" id="healthcare" name="healthcare" placeholder="Healthcare">
+            <input type="text" class="form-control" id="healthcare" name="healthcare" placeholder="Health Insurance">
 
         </div>
         <div class="col-auto">
@@ -52,9 +52,10 @@
                 </div>
                 <div class="col-sm-7">
                     <div class="card-body">
-                      <h5 class="card-title">${doctor.firstName} ${doctor.lastName}</h5>
-                      <p class="card-text">${doctor.specialty}. ${doctor.address}, ${doctor.city}</p>
-                      <a href="<c:url value="/${doctor.id}/appointment"/>" class="btn btn-primary">Book appointment</a>
+                        <h5 class="card-title">${doctor.firstName} ${doctor.lastName}</h5>
+                        <p class="card-text">${doctor.specialty}. ${doctor.address}, ${doctor.city}</p>
+                        <p class="card-text">${doctor.healthInsurance}</p>
+                        <a href="<c:url value="/${doctor.id}/appointment"/>" class="btn btn-primary">Book appointment</a>
                     </div>
                 </div>
             </div>
