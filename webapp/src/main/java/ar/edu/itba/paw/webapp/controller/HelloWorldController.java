@@ -123,6 +123,7 @@ public class HelloWorldController {
     final ModelAndView mav = new ModelAndView("helloworld/appointment");
 
     mav.addObject("form", appointmentForm);
+    mav.addObject("medicId", medicId);
     mav.addObject("email", email);
 
     return mav;
@@ -130,14 +131,14 @@ public class HelloWorldController {
 
   // this function will return void for now until we figure if we make a new view
   // or use a popup
-  @RequestMapping(value = "/appointment", method = RequestMethod.POST)
-  public ModelAndView appointmentSubmit(
+  @RequestMapping(value = "/{id}/appointment", method = RequestMethod.POST)
+  public ModelAndView appointmentSubmit(@PathVariable("id") final int medicId,
       @Valid @ModelAttribute("appointmentForm") final AppointmentForm appointmentForm,
       final BindingResult errors,
       Locale locale) {
 
     if (errors.hasErrors()) {
-      return appointmentForm(appointmentForm.getDocId(), appointmentForm);
+      return appointmentForm(medicId, appointmentForm);
     }
 
     try {
@@ -160,6 +161,7 @@ public class HelloWorldController {
 
   @RequestMapping(value = "/doctorDashboard", method = RequestMethod.GET)
   public ModelAndView doctorDashboard(
+    @RequestParam(value = "name", required = false) final String name,
     @RequestParam(value = "city", required = false) String city,
     @RequestParam(value = "specialty", required = false) String specialty,
     @RequestParam(value = "healthcare", required = false) String healthcare
@@ -167,11 +169,12 @@ public class HelloWorldController {
     final ModelAndView mav = new ModelAndView("helloworld/doctorDashboard");
 
     // If the parameter is empty, set it to null
+    name = name == null || name.isEmpty() ? null : name;
     specialty = specialty == null || specialty.isEmpty() ? null : specialty;
     city = city == null || city.isEmpty() ? null : city;
     healthcare = healthcare == null || healthcare.isEmpty() ? null : healthcare;
 
-    List<Doctor> doctors = doctorService.getFilteredDoctors(specialty, city, healthcare);
+    List<Doctor> doctors = doctorService.getFilteredDoctors(name, specialty, city, healthcare);
 
     mav.addObject("doctors", doctors);
 

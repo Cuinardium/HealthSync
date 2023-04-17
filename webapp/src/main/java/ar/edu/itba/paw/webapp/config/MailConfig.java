@@ -16,6 +16,11 @@ import org.thymeleaf.templateresolver.ITemplateResolver;
 @ComponentScan({"ar.edu.itba.paw.interfaces.services"})
 public class MailConfig {
 
+  // TODO: NO SE PORQUE ESTO NO ANDA AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+  // get property from application.properties
+  // @Autowired
+  // private Environment env;
+
   @Bean
   public JavaMailSender javaMailSender() {
     JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
@@ -24,6 +29,8 @@ public class MailConfig {
 
     mailSender.setUsername("paw.turnosya@gmail.com");
     mailSender.setPassword("wgfcaezyfjpuxapo");
+    // mailSender.setUsername(env.getProperty("mail.username").toString());
+    // mailSender.setPassword(env.getProperty("mail.password").toString());
 
     Properties properties = mailSender.getJavaMailProperties();
     properties.put("mail.transport.protocol", "smtp");

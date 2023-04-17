@@ -9,7 +9,8 @@ public interface DoctorDao {
 
   public Optional<Doctor> getDoctorById(long id);
 
-  public List<Doctor> getFilteredDoctors(String specialty, String city, String healthInsurance);
+  public List<Doctor> getFilteredDoctors(
+      String name, String specialty, String city, String healthInsurance);
 
   public List<Doctor> getDoctors();
 
