@@ -47,3 +47,9 @@ SELECT insert_medical_specialty_entry('Psychiatrist');
 SELECT insert_medical_specialty_entry('Surgeon');
 SELECT insert_medical_specialty_entry('Urologist');
 SELECT insert_medical_specialty_entry('Traumatologist');
+
+-- in case of emergency
+/*
+DROP FUNCTION IF EXISTS insert_health_insurance_entry;
+DROP FUNCTION IF EXISTS insert_medical_specialty_entry;
+*/
