@@ -160,13 +160,14 @@ public class HelloWorldController {
 
   @RequestMapping(value = "/doctorDashboard", method = RequestMethod.GET)
   public ModelAndView doctorDashboard(
-    @RequestParam(value = "city", required = false) final String city,
-    @RequestParam(value = "specialty", required = false) final String specialty,
-    @RequestParam(value = "healthcare", required = false) final String healthcare
+          @RequestParam(value = "name", required = false) final String name,
+          @RequestParam(value = "city", required = false) final String city,
+          @RequestParam(value = "specialty", required = false) final String specialty,
+          @RequestParam(value = "healthcare", required = false) final String healthcare
   ) {
     final ModelAndView mav = new ModelAndView("helloworld/doctorDashboard");
 
-    List<Doctor> doctors = doctorService.getFilteredDoctors(specialty, city, healthcare);
+    List<Doctor> doctors = doctorService.getFilteredDoctors(name, specialty, city, healthcare);
 
     mav.addObject("doctors", doctors);
 

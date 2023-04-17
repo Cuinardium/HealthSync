@@ -60,6 +60,7 @@ public class DoctorDaoImpl implements DoctorDao {
 
   private static final String GET_DOCTOR_BY_ID = GET_DOCTORS + " " + "WHERE medic.medic_id = ?";
 
+  private static final String MATCHES_PART_NAME = "CONCAT(first_name, ' ', last_name) ILIKE CONCAT(?, '%')";
   private static final String MATCHES_CITY = "medic_location_city = ?"; 
   private static final String MATCHES_SPECIALTY = "medical_specialty_name = ?";
   private static final String MATCHES_HEALTH_INSURANCE = "health_insurance_name = ?";
@@ -123,18 +124,23 @@ public class DoctorDaoImpl implements DoctorDao {
   }
 
   @Override
-  public List<Doctor> getFilteredDoctors(String specialty, String city, String healthInsurance) {
+  public List<Doctor> getFilteredDoctors(String name, String specialty, String city, String healthInsurance) {
 
     // If no filters are applied, return all doctors
-    if (specialty == null && city == null && healthInsurance == null) {
+    if (name==null && specialty == null && city == null && healthInsurance == null) {
       return getDoctors();
     }
-    
+
     // Start building the query
     String sql = GET_DOCTORS + " WHERE";
     List<Object> params = new ArrayList<>();
 
     // Add the filters to the query, if it is the first filter, don't add AND
+    if (name != null) {
+      sql += (params.isEmpty()? " " : " AND ") + MATCHES_PART_NAME;
+      params.add(name);
+    }
+
     if (specialty != null) {
       sql += (params.isEmpty()? " " : " AND ") + MATCHES_SPECIALTY;
       params.add(specialty);
