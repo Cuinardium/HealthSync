@@ -87,17 +87,22 @@ public class HelloWorldController {
     if (errors.hasErrors()) {
       return registerMedicForm(medicRegisterForm);
     }
-
-    final User user =
-        doctorService.createDoctor(
-            medicRegisterForm.getEmail(),
-            medicRegisterForm.getPassword(),
-            medicRegisterForm.getName(),
-            medicRegisterForm.getLastname(),
-            medicRegisterForm.getHealthcare(),
-            medicRegisterForm.getSpecialization(),
-            medicRegisterForm.getCity(),
-            medicRegisterForm.getAddress());
+    final User user;
+    try {
+      user =
+          doctorService.createDoctor(
+              medicRegisterForm.getEmail(),
+              medicRegisterForm.getPassword(),
+              medicRegisterForm.getName(),
+              medicRegisterForm.getLastname(),
+              medicRegisterForm.getHealthcare(),
+              medicRegisterForm.getSpecialization(),
+              medicRegisterForm.getCity(),
+              medicRegisterForm.getAddress());
+    } catch (RuntimeException e) {
+      // TODO: coorect exception handling and show error msg for repeated medic email
+      return registerMedicForm(medicRegisterForm);
+    }
 
     final ModelAndView mav = new ModelAndView("helloworld/registerSuccesful");
     mav.addObject("user", user);
@@ -132,7 +137,8 @@ public class HelloWorldController {
   // this function will return void for now until we figure if we make a new view
   // or use a popup
   @RequestMapping(value = "/{id}/appointment", method = RequestMethod.POST)
-  public ModelAndView appointmentSubmit(@PathVariable("id") final int medicId,
+  public ModelAndView appointmentSubmit(
+      @PathVariable("id") final int medicId,
       @Valid @ModelAttribute("appointmentForm") final AppointmentForm appointmentForm,
       final BindingResult errors,
       Locale locale) {
@@ -161,11 +167,10 @@ public class HelloWorldController {
 
   @RequestMapping(value = "/doctorDashboard", method = RequestMethod.GET)
   public ModelAndView doctorDashboard(
-    @RequestParam(value = "name", required = false) String name,
-    @RequestParam(value = "city", required = false) String city,
-    @RequestParam(value = "specialty", required = false) String specialty,
-    @RequestParam(value = "healthcare", required = false) String healthcare
-  ) {
+      @RequestParam(value = "name", required = false) String name,
+      @RequestParam(value = "city", required = false) String city,
+      @RequestParam(value = "specialty", required = false) String specialty,
+      @RequestParam(value = "healthcare", required = false) String healthcare) {
     final ModelAndView mav = new ModelAndView("helloworld/doctorDashboard");
 
     // If the parameter is empty, set it to null
