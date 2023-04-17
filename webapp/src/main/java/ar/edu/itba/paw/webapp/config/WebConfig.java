@@ -3,12 +3,15 @@ package ar.edu.itba.paw.webapp.config;
 import java.nio.charset.StandardCharsets;
 import java.sql.*;
 import javax.sql.DataSource;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
+import org.springframework.core.env.Environment;
 import org.springframework.core.io.Resource;
 import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 import org.springframework.jdbc.datasource.init.DataSourceInitializer;
@@ -30,6 +33,7 @@ import org.springframework.web.servlet.view.JstlView;
   }
 )
 @Configuration
+@PropertySource("classpath:application.properties")
 public class WebConfig extends WebMvcConfigurerAdapter {
 
   @Value("classpath:schema.sql")
@@ -37,6 +41,9 @@ public class WebConfig extends WebMvcConfigurerAdapter {
 
   @Value("classpath:insertDefaults.sql")
   private Resource insertDefaultsSql;
+
+  // get properties from application.properties
+  @Autowired private Environment env;
 
   @Bean
   public ViewResolver viewResolver() {
@@ -54,9 +61,9 @@ public class WebConfig extends WebMvcConfigurerAdapter {
     final SimpleDriverDataSource ds = new SimpleDriverDataSource();
 
     ds.setDriverClass(org.postgresql.Driver.class);
-    ds.setUrl("jdbc:postgresql://localhost/paw-2023a-02");
-    ds.setUsername("paw-2023a-02");
-    ds.setPassword("63imijdOC");
+    ds.setUrl(env.getProperty("datasource.url"));
+    ds.setUsername(env.getProperty("datasource.user"));
+    ds.setPassword(env.getProperty("datasource.password"));
 
     return ds;
   }
