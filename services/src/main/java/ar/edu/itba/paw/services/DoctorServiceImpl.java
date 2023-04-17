@@ -52,7 +52,7 @@ public class DoctorServiceImpl implements DoctorService {
       String address) {
 
     // Create user
-    User user = userService.createUser(email, password, firstName, lastName);
+    User user = userService.createUser(email, password, firstName, lastName, healthInsurance);
     long userId = user.getId();
     long pfpId = user.getProfilePictureId();
 
