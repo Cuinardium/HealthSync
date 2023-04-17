@@ -10,25 +10,25 @@
     <div class="media">
       <img src="https://w7.pngwing.com/pngs/419/473/png-transparent-computer-icons-user-profile-login-user-heroes-sphere-black-thumbnail.png" alt="..." width="65" class="mr-3 rounded-circle img-thumbnail shadow-sm">
       <div class="media-body">
-        <h4 class="m-0">Welcome,</h4>
-        <p class="font-weight-light text-muted mb-0">Patient</p>
+        <h4 class="m-0"><spring:message code="navbar.welcome"/></h4>
+        <p class="font-weight-light text-muted mb-0"><spring:message code="navbar.patient"/></p>
       </div>
     </div>
   </div>
 
-  <p class="text-gray font-weight-bold text-uppercase px-3 small pb-4 mb-0">Main</p>
+  <p class="text-gray font-weight-bold text-uppercase px-3 small pb-4 mb-0"><spring:message code="navbar.main"/></p>
 
   <ul class="nav flex-column bg-white mb-0">
     <li class="nav-item">
       <a href="/" class="nav-link text-dark font-italic bg-light">
         <i class="fa fa-th-large mr-3 text-primary fa-fw"></i>
-        Home
+        <spring:message code="navbar.home"/>
       </a>
     </li>
     <li class="nav-item">
       <a href="/doctorDashboard" class="nav-link text-dark font-italic bg-light">
         <i class="fa-solid fa-user-doctor mr-3 text-primary fa-fw"></i>
-        Check Doctors
+        <spring:message code="navbar.checkDoc"/>
       </a>
     </li>
 <%--    <li class="nav-item">--%>
