@@ -161,7 +161,7 @@ public class HelloWorldController {
 
   @RequestMapping(value = "/doctorDashboard", method = RequestMethod.GET)
   public ModelAndView doctorDashboard(
-    @RequestParam(value = "name", required = false) final String name,
+    @RequestParam(value = "name", required = false) String name,
     @RequestParam(value = "city", required = false) String city,
     @RequestParam(value = "specialty", required = false) String specialty,
     @RequestParam(value = "healthcare", required = false) String healthcare
