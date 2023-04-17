@@ -10,6 +10,12 @@ public interface DoctorDao {
 
   public Optional<Doctor> getDoctorById(long id);
 
+  public List<Doctor> getDoctorsBySpecialty(String specialty);
+
+  public List<Doctor> getDoctorsByCity(String city);
+
+  public List<Doctor> getDoctorsByHealthInsurance(String healthInsurance);
+
   public List<Doctor> getDoctors();
 
   public void addLocation(long doctorId, long locationId);
