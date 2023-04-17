@@ -7,11 +7,11 @@ import java.util.Date;
 public class AppointmentForm{
 
     @Size(min = 1)
-    @Pattern(regexp = "[a-zA-Z]+")
+    @Pattern(regexp = "[a-zA-Z ]+")
     private String name;
 
     @Size(min = 1)
-    @Pattern(regexp = "[a-zA-Z]+")
+    @Pattern(regexp = "[a-zA-Z ]+")
     private String lastname;
 
     @Size(min = 1)
@@ -19,7 +19,7 @@ public class AppointmentForm{
     private String email;
 
     @Size(min = 1)
-    @Pattern(regexp = "[a-zA-Z]+")
+    @Pattern(regexp = "[a-zA-Z ]+")
     private String healthcare;
 
     private String date;

@@ -8,11 +8,11 @@ import java.util.Date;
 public class MedicRegisterForm{
 
     @Size(min = 1)
-    @Pattern(regexp = "[a-zA-Z]+")
+    @Pattern(regexp = "[a-zA-Z ]+")
     private String name;
 
     @Size(min = 1)
-    @Pattern(regexp = "[a-zA-Z]+")
+    @Pattern(regexp = "[a-zA-Z ]+")
     private String lastname;
 
     @Size(min = 1)
@@ -20,19 +20,19 @@ public class MedicRegisterForm{
     private String email;
 
     @Size(min = 1)
-    @Pattern(regexp = "[a-zA-Z]+")
+    @Pattern(regexp = "[a-zA-Z ]+")
     private String healthcare;
 
     @Size(min = 1)
-    @Pattern(regexp = "[a-zA-Z]+")
+    @Pattern(regexp = "[a-zA-Z ]+")
     private String city;
 
     @Size(min = 1)
-    @Pattern(regexp = "[a-zA-Z0-9]+")
+    @Pattern(regexp = "[a-zA-Z0-9. ]+")
     private String address;
 
     @Size(min = 1)
-    @Pattern(regexp = "[a-zA-Z]+")
+    @Pattern(regexp = "[a-zA-Z ]+")
     private String specialization;
 
     @Size(min = 4)
