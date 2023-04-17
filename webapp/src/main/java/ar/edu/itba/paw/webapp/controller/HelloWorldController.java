@@ -38,9 +38,9 @@ public class HelloWorldController {
     return new ModelAndView("helloworld/home");
   }
 
-  @RequestMapping(value = "/hello", method = RequestMethod.GET)
+  @RequestMapping(value = "/register_succesful", method = RequestMethod.GET)
   public ModelAndView helloWorld() {
-    final ModelAndView mav = new ModelAndView("helloworld/hello");
+    final ModelAndView mav = new ModelAndView("registerSuccesful");
     mav.addObject("user", new User(0, "hello hello", "hello", "hrlo", "hello", true, 1));
 
     return mav;
@@ -65,7 +65,7 @@ public class HelloWorldController {
     final User user =
         userService.createUser(registerForm.getEmail(), registerForm.getPassword(), "", "");
 
-    final ModelAndView mav = new ModelAndView("helloworld/hello");
+    final ModelAndView mav = new ModelAndView("registerSuccesful");
     mav.addObject("user", user);
     return mav;
   }
@@ -99,7 +99,7 @@ public class HelloWorldController {
             medicRegisterForm.getCity(),
             medicRegisterForm.getAddress());
 
-    final ModelAndView mav = new ModelAndView("helloworld/hello");
+    final ModelAndView mav = new ModelAndView("helloworld/registerSuccesful");
     mav.addObject("user", user);
     return mav;
   }
