@@ -1,0 +1,30 @@
+.vertical-nav {
+    min-width: 17rem;
+    width: 17rem;
+    height: 100vh;
+    position: fixed;
+    top: 0;
+    left: 0;
+    box-shadow: 3px 3px 10px rgba(0, 0, 0, 0.1);
+}
+
+.page-content {
+    width: calc(100% - 17rem);
+    margin-left: 17rem;
+}
+
+.identity{
+    padding-top: 5%;
+    padding-bottom: 5%;
+    background-color: #f8f9fa;
+}
+
+.media{
+    margin: 5%;
+    display: flex;
+    justify-content: center;
+}
+
+.media-body{
+    margin-left: 5%;
+}
