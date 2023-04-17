@@ -18,6 +18,25 @@
         <!-- Search Bar -->
         <jsp:include page="../components/searchBar.jsp"/>
     </div>
+    <form method="get" id="filters" action="doctorDashboard">
+      <div class="row pt-3">
+        <div class="col">
+            <input type="text" class="form-control" id="city" name="city" placeholder="city"/>
+        </div>
+
+        <div class="col">
+            <input type="text" class="form-control" id="specialty" name="specialty" placeholder="specialty">
+
+        </div>
+        <div class="col">
+            <input type="text" class="form-control" id="healthcare" name="healthcare" placeholder="healthcare">
+
+        </div>
+        <div class="col-auto">
+            <input type="submit" class="btn btn-primary" value="Filter">
+        </div>
+      </div>
+    </form>
     <div class="flex-container bcontent">
       <c:forEach items="${doctors}" var="doctor">
         <div class="card">
@@ -36,7 +55,7 @@
             </div>
         </div>
       </c:forEach>
-            </div>
+   </div>
 </div>
 </body>
 
