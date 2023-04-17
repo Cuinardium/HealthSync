@@ -9,3 +9,50 @@
     padding-bottom: 1%;
     padding-top: 1%;
 }
+
+h2, .h2{
+    margin-top: 0;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+    line-height: 1.2;
+}
+
+.text-gradient {
+    display: inline;
+    background: -webkit-linear-gradient(315deg, #0275d8 0%, black 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.profile {
+    position: relative;
+    height: 75vw;
+    width: 75vw;
+    border-radius: 5vw;
+    margin-top: 5vw;
+    max-height: 40rem;
+    max-width: 40rem;
+}
+.profile .profile-img {
+    height: 80vw;
+    max-height: 45rem;
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.about{
+    background: lightgray;
+    padding: 3rem 5rem;
+}
+
+.row{
+    justify-content: center;
+    align-items: center;
+}
+
+.text{
+    text-align: center;
+    margin: 0 3rem;
+}
