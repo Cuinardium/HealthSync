@@ -4,11 +4,18 @@
 <jsp:include page="/resources/externalResources.jsp"/>
 
 <html>
-<body>
-<div>
-    <h2> <spring:message code="appointment.title"/> </h2>
-<c:url value="/appointment" var="appointmentUrl" />
+<head>
+    <title>Appointment</title>
+    <link href="/css/main.css" rel="stylesheet"/>
     <link href="/css/register_medic.css" rel="stylesheet"/>
+</head>
+<body>
+<jsp:include page="../components/navBar.jsp"/>
+<div class="page-content p-5" id="content">
+    <div class="bcontent">
+    <h1> <spring:message code="appointment.title"/> </h1>
+<c:url value="/appointment" var="appointmentUrl" />
+
 
 
 <form:form modelAttribute="appointmentForm"  action="${appointmentUrl}" method="post">
@@ -65,6 +72,7 @@
     </div>
     </div>
 </form:form>
+</div>
 </div>
 </body>
 </html>

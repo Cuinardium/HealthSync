@@ -4,9 +4,14 @@
 <jsp:include page="/resources/externalResources.jsp"/>
 
 <html>
-<body>
-    <h2> <spring:message code="register.title"/> </h2>
+<head>
+    <title>Register</title>
+    <link href="/css/main.css" rel="stylesheet"/>
     <link href="/css/register_medic.css" rel="stylesheet"/>
+</head>
+<body>
+<div class="form-container">
+    <h1> <spring:message code="register.title"/> </h1>
     <c:url value="/register" var="registerUrl" />
     <form:form modelAttribute="registerForm" action="${registerUrl}" method="post">
         <div>
@@ -25,10 +30,11 @@
         </div>
 
         <div>
-            <input type="submit"><spring:message code="register.submit"/>
+            <button type="submit" class="btn btn-primary"><spring:message code="register.submit"/>
         </div>
 
 
     </form:form>
+</div>
 </body>
 </html>
