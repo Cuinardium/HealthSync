@@ -30,23 +30,19 @@ public class DoctorDaoImpl implements DoctorDao {
               rs.getString("medic_location_city"),
               rs.getString("medic_location_address"));
 
-  // Sql query to get all the information of a doctor by id
-  // Should return a single row with the following columns:
-  // medic_id, email, password, first_name, last_name, profile_picture_id, health_insurance_name,
-  // medical_specialty_name, medic_location_city, medic_location_address
-  private static final String GET_DOCTOR_BY_ID =
-      "SELECT medic.medic_id, email, password, first_name, last_name, profile_picture_id,"
-          + " health_insurance_name, medical_specialty_name, medic_location_city,"
-          + " medic_location_address FROM medic INNER JOIN users ON medic.user_id = users.user_id"
-          + " INNER JOIN medical_specialty ON medic.medical_specialty_id ="
-          + " medical_specialty.medical_specialty_id INNER JOIN medic_location_for_medic ON"
-          + " medic.medic_id = medic_location_for_medic.medic_id INNER JOIN medic_location ON"
-          + " medic_location_for_medic.medic_location_id = medic_location.medic_location_id INNER"
-          + " JOIN health_insurance_accepted_by_medic ON medic.medic_id ="
-          + " health_insurance_accepted_by_medic.medic_id INNER JOIN health_insurance ON"
-          + " health_insurance_accepted_by_medic.health_insurance_id ="
-          + " health_insurance.health_insurance_id WHERE medic.medic_id = ?";
+  /*
+    SELECT medic.medic_id, email, password, first_name, last_name, profile_picture_id, health_insurance_name, medical_specialty_name, medic_location_city, medic_location_address
+      FROM medic
+      INNER JOIN users ON medic.user_id = users.user_id
+      INNER JOIN medical_specialty ON medic.medical_specialty_id = medical_specialty.medical_specialty_id
+      INNER JOIN medic_location_for_medic ON medic.medic_id = medic_location_for_medic.medic_id
+      INNER JOIN medic_location ON medic_location_for_medic.medic_location_id = medic_location.medic_location_id
+      INNER JOIN health_insurance_accepted_by_medic ON medic.medic_id = health_insurance_accepted_by_medic.medic_id
+      INNER JOIN health_insurance ON health_insurance_accepted_by_medic.health_insurance_id = health_insurance.health_insurance_id;
+  */
 
+  // Joins medic, users, medical_specialty, medic_location_for_medic, medic_location,
+  // health_insurance_accepted_by_medic, health_insurance
   private static final String GET_DOCTORS =
       "SELECT medic.medic_id, email, password, first_name, last_name, profile_picture_id,"
           + " health_insurance_name, medical_specialty_name, medic_location_city,"
@@ -60,44 +56,16 @@ public class DoctorDaoImpl implements DoctorDao {
           + " health_insurance_accepted_by_medic.health_insurance_id ="
           + " health_insurance.health_insurance_id";
 
+  private static final String GET_DOCTOR_BY_ID = GET_DOCTORS + " " + "WHERE medic.medic_id = ?";
+
   private static final String GET_DOCTORS_BY_HEALTH_INSURANCE =
-      "SELECT medic.medic_id, email, password, first_name, last_name, profile_picture_id,"
-          + " health_insurance_name, medical_specialty_name, medic_location_city,"
-          + " medic_location_address FROM medic INNER JOIN users ON medic.user_id = users.user_id"
-          + " INNER JOIN medical_specialty ON medic.medical_specialty_id ="
-          + " medical_specialty.medical_specialty_id INNER JOIN medic_location_for_medic ON"
-          + " medic.medic_id = medic_location_for_medic.medic_id INNER JOIN medic_location ON"
-          + " medic_location_for_medic.medic_location_id = medic_location.medic_location_id INNER"
-          + " JOIN health_insurance_accepted_by_medic ON medic.medic_id ="
-          + " health_insurance_accepted_by_medic.medic_id INNER JOIN health_insurance ON"
-          + " health_insurance_accepted_by_medic.health_insurance_id ="
-          + " health_insurance.health_insurance_id WHERE health_insurance_name = ?";
+      GET_DOCTORS + " " + "WHERE health_insurance_name = ?";
 
   private static final String GET_DOCTORS_BY_CITY =
-      "SELECT medic.medic_id, email, password, first_name, last_name, profile_picture_id,"
-          + " health_insurance_name, medical_specialty_name, medic_location_city,"
-          + " medic_location_address FROM medic INNER JOIN users ON medic.user_id = users.user_id"
-          + " INNER JOIN medical_specialty ON medic.medical_specialty_id ="
-          + " medical_specialty.medical_specialty_id INNER JOIN medic_location_for_medic ON"
-          + " medic.medic_id = medic_location_for_medic.medic_id INNER JOIN medic_location ON"
-          + " medic_location_for_medic.medic_location_id = medic_location.medic_location_id INNER"
-          + " JOIN health_insurance_accepted_by_medic ON medic.medic_id ="
-          + " health_insurance_accepted_by_medic.medic_id INNER JOIN health_insurance ON"
-          + " health_insurance_accepted_by_medic.health_insurance_id ="
-          + " health_insurance.health_insurance_id WHERE medic_location_city = ?";
+      GET_DOCTORS + " " + "WHERE medic_location_city = ?";
 
   private static final String GET_DOCTORS_BY_SPECIALTY =
-      "SELECT medic.medic_id, email, password, first_name, last_name, profile_picture_id,"
-          + " health_insurance_name, medical_specialty_name, medic_location_city,"
-          + " medic_location_address FROM medic INNER JOIN users ON medic.user_id = users.user_id"
-          + " INNER JOIN medical_specialty ON medic.medical_specialty_id ="
-          + " medical_specialty.medical_specialty_id INNER JOIN medic_location_for_medic ON"
-          + " medic.medic_id = medic_location_for_medic.medic_id INNER JOIN medic_location ON"
-          + " medic_location_for_medic.medic_location_id = medic_location.medic_location_id INNER"
-          + " JOIN health_insurance_accepted_by_medic ON medic.medic_id ="
-          + " health_insurance_accepted_by_medic.medic_id INNER JOIN health_insurance ON"
-          + " health_insurance_accepted_by_medic.health_insurance_id ="
-          + " health_insurance.health_insurance_id WHERE medical_specialty_name = ?";
+      GET_DOCTORS + " " + "WHERE medical_specialty_name = ?";
 
   private final JdbcTemplate jdbcTemplate;
   private final SimpleJdbcInsert doctorInsert;
@@ -111,13 +79,10 @@ public class DoctorDaoImpl implements DoctorDao {
     this.doctorInsert =
         new SimpleJdbcInsert(ds).withTableName("medic").usingGeneratedKeyColumns("medic_id");
 
-    this.doctorLocationInsert =
-        new SimpleJdbcInsert(ds)
-            .withTableName("medic_location_for_medic");
+    this.doctorLocationInsert = new SimpleJdbcInsert(ds).withTableName("medic_location_for_medic");
 
     this.doctorHealthInsuranceInsert =
-        new SimpleJdbcInsert(ds)
-            .withTableName("health_insurance_accepted_by_medic");
+        new SimpleJdbcInsert(ds).withTableName("health_insurance_accepted_by_medic");
   }
 
   @Override
