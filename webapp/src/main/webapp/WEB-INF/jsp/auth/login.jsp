@@ -14,9 +14,9 @@
 </head>
 <body>
 <div class="form-container">
-    <h1> <spring:message code="register.title"/> </h1>
-    <c:url value="/register" var="registerUrl" />
-    <form:form modelAttribute="registerForm" action="${registerUrl}" method="post">
+    <h1> <spring:message code="login.title"/> </h1>
+    <c:url value="/login" var="loginUrl" />
+    <form:form modelAttribute="loginForm" action="${loginUrl}" method="post">
         <div>
             <form:label path="email"><spring:message code="form.email"/>
                 <spring:message code="form.email_hint" var="email_hint"/>
@@ -33,7 +33,7 @@
         </div>
 
         <div>
-            <button type="submit" class="btn btn-primary"><spring:message code="register.submit"/>
+            <button type="submit" class="btn btn-primary"><spring:message code="login.submit"/>
         </div>
 
 

@@ -4,6 +4,7 @@ import ar.edu.itba.paw.interfaces.services.DoctorService;
 import ar.edu.itba.paw.interfaces.services.MailService;
 import ar.edu.itba.paw.interfaces.services.UserService;
 import ar.edu.itba.paw.models.User;
+import ar.edu.itba.paw.webapp.form.LoginForm;
 import ar.edu.itba.paw.webapp.form.MedicRegisterForm;
 import ar.edu.itba.paw.webapp.form.RegisterForm;
 import javax.validation.Valid;
@@ -33,13 +34,23 @@ public class AuthController {
   }
 
   @RequestMapping(value = "/login", method = RequestMethod.POST)
-  public ModelAndView login() {
-    // TODO: hacer el login
-    return new ModelAndView("auth/login");
+  public ModelAndView login(
+      @Valid @ModelAttribute("loginForm") final LoginForm loginForm, final BindingResult errors) {
+
+    // TODO: IF LOGIN UNSUCCESFULL
+    // show errors in view
+    // return login form
+    if (errors.hasErrors() /* || login unsuccesfull*/) {
+      return loginForm(loginForm);
+    }
+
+    // TODO: CHECK IF LOGIN SUCCESFULL
+    final ModelAndView mav = new ModelAndView("helloworld/doctorDashboard");
+    return mav;
   }
 
   @RequestMapping(value = "/login", method = RequestMethod.GET)
-  public ModelAndView loginForm() {
+  public ModelAndView loginForm(@ModelAttribute("loginForm") final LoginForm loginForm) {
     return new ModelAndView("auth/login");
   }
 
