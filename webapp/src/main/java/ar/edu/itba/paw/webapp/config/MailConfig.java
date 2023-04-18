@@ -2,10 +2,12 @@ package ar.edu.itba.paw.webapp.config;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Properties;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.ResourceBundleMessageSource;
+import org.springframework.core.env.Environment;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.thymeleaf.spring4.SpringTemplateEngine;
@@ -16,10 +18,8 @@ import org.thymeleaf.templateresolver.ITemplateResolver;
 @ComponentScan({"ar.edu.itba.paw.interfaces.services"})
 public class MailConfig {
 
-  // TODO: NO SE PORQUE ESTO NO ANDA AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
   // get property from application.properties
-  // @Autowired
-  // private Environment env;
+  @Autowired private Environment env;
 
   @Bean
   public JavaMailSender javaMailSender() {
@@ -27,10 +27,8 @@ public class MailConfig {
     mailSender.setHost("smtp.gmail.com");
     mailSender.setPort(587);
 
-    mailSender.setUsername("paw.turnosya@gmail.com");
-    mailSender.setPassword("wgfcaezyfjpuxapo");
-    // mailSender.setUsername(env.getProperty("mail.username").toString());
-    // mailSender.setPassword(env.getProperty("mail.password").toString());
+    mailSender.setUsername(env.getProperty("mail.username"));
+    mailSender.setPassword(env.getProperty("mail.password"));
 
     Properties properties = mailSender.getJavaMailProperties();
     properties.put("mail.transport.protocol", "smtp");
