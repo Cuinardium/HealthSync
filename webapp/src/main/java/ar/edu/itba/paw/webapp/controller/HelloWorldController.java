@@ -4,7 +4,6 @@ import ar.edu.itba.paw.interfaces.services.DoctorService;
 import ar.edu.itba.paw.interfaces.services.MailService;
 import ar.edu.itba.paw.interfaces.services.UserService;
 import ar.edu.itba.paw.models.Doctor;
-import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.webapp.exceptions.UserNotFoundException;
 import ar.edu.itba.paw.webapp.form.*;
 import java.util.List;
@@ -38,82 +37,11 @@ public class HelloWorldController {
     return new ModelAndView("helloworld/home");
   }
 
-  @RequestMapping(value = "/register_succesful", method = RequestMethod.GET)
-  public ModelAndView helloWorld() {
-    final ModelAndView mav = new ModelAndView("registerSuccesful");
-    mav.addObject("user", new User(0, "hello hello", "hello", "hrlo", "hello", true, 1));
-
-    return mav;
-  }
-
   @RequestMapping("/{id}")
   public ModelAndView profile(@PathVariable("id") final long userId) {
     final ModelAndView mav = new ModelAndView("helloworld/profile");
     mav.addObject("user", userService.findById(userId).orElseThrow(UserNotFoundException::new));
 
-    return mav;
-  }
-
-  @RequestMapping(value = "/register", method = RequestMethod.POST)
-  public ModelAndView register(
-      @Valid @ModelAttribute("registerForm") final RegisterForm registerForm,
-      final BindingResult errors) {
-    if (errors.hasErrors()) {
-      return registerForm(registerForm);
-    }
-
-    final User user =
-        userService.createUser(registerForm.getEmail(), registerForm.getPassword(), "", "");
-
-    final ModelAndView mav = new ModelAndView("registerSuccesful");
-    mav.addObject("user", user);
-    return mav;
-  }
-
-  @RequestMapping(value = "/register", method = RequestMethod.GET)
-  public ModelAndView registerForm(
-      @ModelAttribute("registerForm") final RegisterForm registerForm) {
-    final ModelAndView mav = new ModelAndView("helloworld/register");
-    mav.addObject("form", registerForm);
-
-    return mav;
-  }
-
-  // TODO: revisar campos
-  @RequestMapping(value = "/register_medic", method = RequestMethod.POST)
-  public ModelAndView registerMedicSubmit(
-      @Valid @ModelAttribute("medicRegisterForm") final MedicRegisterForm medicRegisterForm,
-      final BindingResult errors) {
-    if (errors.hasErrors()) {
-      return registerMedicForm(medicRegisterForm);
-    }
-    final User user;
-    try {
-      user =
-          doctorService.createDoctor(
-              medicRegisterForm.getEmail(),
-              medicRegisterForm.getPassword(),
-              medicRegisterForm.getName(),
-              medicRegisterForm.getLastname(),
-              medicRegisterForm.getHealthcare(),
-              medicRegisterForm.getSpecialization(),
-              medicRegisterForm.getCity(),
-              medicRegisterForm.getAddress());
-    } catch (RuntimeException e) {
-      // TODO: coorect exception handling and show error msg for repeated medic email
-      return registerMedicForm(medicRegisterForm);
-    }
-
-    final ModelAndView mav = new ModelAndView("helloworld/registerSuccesful");
-    mav.addObject("user", user);
-    return mav;
-  }
-
-  @RequestMapping(value = "/register_medic", method = RequestMethod.GET)
-  public ModelAndView registerMedicForm(
-      @ModelAttribute("medicRegisterForm") final MedicRegisterForm medicRegisterForm) {
-    final ModelAndView mav = new ModelAndView("helloworld/register_medic");
-    mav.addObject("form", medicRegisterForm);
     return mav;
   }
 
@@ -149,7 +77,10 @@ public class HelloWorldController {
 
     try {
       userService.createUser(
-          appointmentForm.getEmail(), appointmentForm.getName(), appointmentForm.getLastname(), appointmentForm.getHealthcare());
+          appointmentForm.getEmail(),
+          appointmentForm.getName(),
+          appointmentForm.getLastname(),
+          appointmentForm.getHealthcare());
     } catch (RuntimeException e) {
       // TODO: CORRECT exception handling
     }
