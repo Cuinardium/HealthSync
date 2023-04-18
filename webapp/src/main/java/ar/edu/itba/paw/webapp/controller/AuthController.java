@@ -32,8 +32,14 @@ public class AuthController {
     this.doctorService = doctorService;
   }
 
-  @RequestMapping(value = "/login", method = RequestMethod.GET)
+  @RequestMapping(value = "/login", method = RequestMethod.POST)
   public ModelAndView login() {
+    // TODO: hacer el login
+    return new ModelAndView("auth/login");
+  }
+
+  @RequestMapping(value = "/login", method = RequestMethod.GET)
+  public ModelAndView loginForm() {
     return new ModelAndView("auth/login");
   }
 
