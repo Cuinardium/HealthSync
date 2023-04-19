@@ -18,7 +18,7 @@
 <spring:message code="doctorDashboard.placeholder.insurance" var="insurance"/>
 <spring:message code="doctorDashboard.button.filter" var="filter"/>
 <spring:message code="doctorDashboard.button.book" var="book"/>
-
+<spring:message code="doctorDashboard.no.doctors" var="noDoctors"/>
 
 <jsp:include page="/resources/externalResources.jsp"/>
 
@@ -84,6 +84,12 @@
                 </div>
             </div>
         </c:forEach>
+        <c:if test="${doctors.isEmpty()}">
+            <div class="d-flex justify-content-center">
+                <!-- TODO: style this vvvv -->
+                <h4>${noDoctors}</h4>
+            </div>
+        </c:if>
     </div>
 </div>
 </body>
