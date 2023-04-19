@@ -9,6 +9,7 @@
 <c:url value="/css/main.css" var="mainCss"/>
 <c:url value="/css/home.css" var="homeCss"/>
 <c:url value="/" var="home"/>
+<c:url value="/img/homeDoctor.png" var="homeDoctorImg"/>
 
 <spring:message code="home.home" var="title"/>
 <spring:message code="home.welcome1" var="welcome1"/>
@@ -41,7 +42,7 @@
             <div class="d-flex justify-content-center mt-5 mt-xxl-0">
                 <div class="profile bg-gradient-primary-to-secondary">
                     <img class="profile-img"
-                         src="https://i.pinimg.com/originals/a8/32/58/a83258b019c857bd3a6a9c68805d271d.png" alt="..."/>
+                         src="${homeDoctorImg}" alt="..."/>
                 </div>
             </div>
         </div>

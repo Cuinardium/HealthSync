@@ -8,14 +8,14 @@
   <link href="${navBarCss}" rel="stylesheet"/>
 </head>
 <body>
-    <c:url value="/" var="home" />
-        <c:url value="/doctorDashboard" var="dashboard" />
-
+<c:url value="/" var="home" />
+<c:url value="/doctorDashboard" var="dashboard" />
+<c:url value="/img/userDefault.png" var="userDefaultImg"/>
 
 <div class="vertical-nav bg-white" id="sidebar">
   <div class="identity">
     <div class="media">
-      <img src="https://w7.pngwing.com/pngs/419/473/png-transparent-computer-icons-user-profile-login-user-heroes-sphere-black-thumbnail.png" alt="..." width="65" class="mr-3 rounded-circle img-thumbnail shadow-sm">
+        <img src="${userDefaultImg}" alt="..." width="65" class="mr-3 rounded-circle img-thumbnail shadow-sm">
       <div class="media-body">
         <h4 class="m-0"><spring:message code="navbar.welcome"/></h4>
         <p class="font-weight-light text-muted mb-0"><spring:message code="navbar.patient"/></p>

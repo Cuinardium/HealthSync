@@ -9,7 +9,7 @@
 <c:url value="/css/main.css" var="mainCss"/>
 <c:url value="/css/doctorDashboard.css" var="doctorDashboardCss"/>
 <c:url value="/doctorDashboard" var="doctorDashboard"/>
-
+<c:url value="/img/doctorCardDefault.jpg" var="doctorCardDefaultImg"/>
 
 <spring:message code="doctorDashboard.title" var="title"/>
 <spring:message code="doctorDashboard.placeholder.search" var="search"/>
@@ -73,7 +73,7 @@
             <div class="card">
                 <div class="row g-0">
                     <div class="col-sm-5">
-                        <img src="https://blogscdn.thehut.net/app/uploads/sites/1160/2017/05/main-dermatologist.jpg"
+                        <img src="${doctorCardDefaultImg}"
                              class="card-img-top" alt="A blonde dermatologist">
                     </div>
                     <div class="col-sm-7">
