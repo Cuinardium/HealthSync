@@ -3,6 +3,9 @@
 <html>
 <head>
     <title>Home</title>
+
+    <!-- favicon -->
+    <jsp:include page="../components/favicon.jsp"/>
 </head>
 <body>
     <h1>${errorMsg}</h1>

@@ -23,6 +23,8 @@
 <head>
     <title>${title}</title>
 
+    <!-- favicon -->
+    <jsp:include page="../components/favicon.jsp"/>
     <link href="${mainCss}" rel="stylesheet"/>
     <link href="${registerCss}" rel="stylesheet"/>
 </head>
