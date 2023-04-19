@@ -1,7 +1,6 @@
 package ar.edu.itba.paw.webapp.controller;
 
 import ar.edu.itba.paw.interfaces.services.DoctorService;
-import ar.edu.itba.paw.interfaces.services.MailService;
 import ar.edu.itba.paw.interfaces.services.UserService;
 import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.webapp.form.LoginForm;
@@ -21,15 +20,12 @@ public class AuthController {
 
   private final UserService userService;
   private final DoctorService doctorService;
-  private final MailService mailService;
 
   @Autowired
   public AuthController(
       final UserService userService,
-      final MailService mailService,
       final DoctorService doctorService) {
     this.userService = userService;
-    this.mailService = mailService;
     this.doctorService = doctorService;
   }
 
@@ -45,7 +41,7 @@ public class AuthController {
     }
 
     // TODO: CHECK IF LOGIN SUCCESFULL
-    final ModelAndView mav = new ModelAndView("helloworld/doctorDashboard");
+    final ModelAndView mav = new ModelAndView("home/doctorDashboard");
     return mav;
   }
 
