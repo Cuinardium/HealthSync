@@ -37,7 +37,7 @@ public class HelloWorldController {
     return new ModelAndView("helloworld/home");
   }
 
-  @RequestMapping("/{id}")
+  @RequestMapping("/{id:\\d+}")
   public ModelAndView profile(@PathVariable("id") final long userId) {
     final ModelAndView mav = new ModelAndView("helloworld/profile");
     mav.addObject("user", userService.findById(userId).orElseThrow(UserNotFoundException::new));
@@ -45,7 +45,9 @@ public class HelloWorldController {
     return mav;
   }
 
-  @RequestMapping(value = "/{id}/appointment", method = RequestMethod.GET)
+  // TODO: revisar porque no tira 404 /-1/appointment
+  //                        vvvvvvvv
+  @RequestMapping(value = "/{id:\\d+}/appointment", method = RequestMethod.GET)
   public ModelAndView appointmentForm(
       @PathVariable("id") final int medicId,
       @ModelAttribute("appointmentForm") final AppointmentForm appointmentForm) {
@@ -64,7 +66,7 @@ public class HelloWorldController {
 
   // this function will return void for now until we figure if we make a new view
   // or use a popup
-  @RequestMapping(value = "/{id}/appointment", method = RequestMethod.POST)
+  @RequestMapping(value = "/{id:\\d+}/appointment", method = RequestMethod.POST)
   public ModelAndView appointmentSubmit(
       @PathVariable("id") final int medicId,
       @Valid @ModelAttribute("appointmentForm") final AppointmentForm appointmentForm,
