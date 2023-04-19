@@ -18,7 +18,7 @@ import org.thymeleaf.spring4.SpringTemplateEngine;
 @Service
 public class MailServiceImpl implements MailService {
 
-  private static final String FROM = "noreply@turnosya.com";
+  private static final String FROM = "noreply@healthsync.com";
 
   private final JavaMailSender mailSender;
 
