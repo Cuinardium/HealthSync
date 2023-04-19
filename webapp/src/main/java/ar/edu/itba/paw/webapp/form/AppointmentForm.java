@@ -2,7 +2,6 @@ package ar.edu.itba.paw.webapp.form;
 
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
-import java.util.Date;
 
 public class AppointmentForm{
 
@@ -15,7 +14,7 @@ public class AppointmentForm{
     private String lastname;
 
     @Size(min = 1)
-    @Pattern(regexp = "[a-zA-Z0-9.-]+@[a-zA-Z0-9.-]+")
+    @Pattern(regexp = "[a-zA-Z0-9.+-]+@[a-zA-Z0-9.-]+(.com|.com.ar|.edu.ar)")
     private String email;
 
     @Size(min = 1)

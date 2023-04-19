@@ -16,7 +16,7 @@ public class MedicRegisterForm{
     private String lastname;
 
     @Size(min = 1)
-    @Pattern(regexp = "[a-zA-Z0-9.-]+@[a-zA-Z0-9.-]+")
+    @Pattern(regexp = "[a-zA-Z0-9.+-]+@[a-zA-Z0-9.-]+(.com|.com.ar|.edu.ar)")
     private String email;
 
     @Size(min = 1)
@@ -24,7 +24,7 @@ public class MedicRegisterForm{
     private String healthcare;
 
     @Size(min = 1)
-    @Pattern(regexp = "[a-zA-Z ]+")
+    @Pattern(regexp = "[a-zA-Z. ]+")
     private String city;
 
     @Size(min = 1)
