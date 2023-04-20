@@ -8,7 +8,9 @@
 <!--Variables -->
 <c:url value="/css/main.css" var="mainCss"/>
 <c:url value="/css/home.css" var="homeCss"/>
-<c:url value="/" var="home"/>
+
+<c:url value="/" var="homeUrl"/>
+
 <c:url value="/img/homeDoctor.png" var="homeDoctorImg"/>
 
 <spring:message code="home.home" var="title"/>
@@ -64,7 +66,7 @@
 
 <footer class="border-top">
     <div class="container foot">
-        <a class="title navbar-brand" href="${home}">
+        <a class="title navbar-brand" href="${homeUrl}">
             <div class="health">Health</div>
             <div class="sync">Sync</div>
         </a>

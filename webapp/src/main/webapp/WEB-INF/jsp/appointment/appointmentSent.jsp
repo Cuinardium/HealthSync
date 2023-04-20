@@ -10,7 +10,8 @@
 <!--Variables -->
 <c:url value="/css/main.css" var="mainCss"/>
 <c:url value="/css/appointmentSent.css" var="appointmentSentCss"/>
-<c:url value="/" var="home"/>
+
+<c:url value="/" var="homeUrl"/>
 
 <spring:message code="appointmentSent.title" var="title"/>
 <spring:message code="appointmentSent.contact" var="contact"/>
@@ -37,7 +38,7 @@
             ${contact2}
         </h5>
         <h6 class="card-text media-body">
-            <a href="${home}" class="link-info">${homeMsg}</a>
+            <a href="${homeUrl}" class="link-info">${homeMsg}</a>
         </h6>
     </div>
 </div>
