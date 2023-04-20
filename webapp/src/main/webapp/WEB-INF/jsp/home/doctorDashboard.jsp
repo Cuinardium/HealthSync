@@ -71,7 +71,7 @@
     </form>
     <div class="flex-container bcontent">
         <c:forEach items="${doctors}" var="doctor">
-            <c:url value="/${doctor.id}/appointment" var="appointment"/>
+            <c:url value="/${doctor.id}/appointment" var="appointmentUrl"/>
             <div class="card">
                 <div class="row g-0">
                     <div class="col-sm-5">
@@ -83,7 +83,7 @@
                             <h5 class="card-title">${doctor.firstName} ${doctor.lastName}</h5>
                             <p class="card-text">${doctor.specialty}. ${doctor.address}, ${doctor.city}</p>
                             <p class="card-text">${doctor.healthInsurance}</p>
-                            <a href="${appointment}" class="btn btn-primary">${book}</a>
+                            <a href="${appointmentUrl}" class="btn btn-primary">${book}</a>
                         </div>
                     </div>
                 </div>
