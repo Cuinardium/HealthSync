@@ -52,7 +52,7 @@
 <!-- Content -->
 <div class="page-content p-5" id="content">
     <h1>${title}</h1>
-    <form:form modelAttribute="medicRegisterForm" class="form-container container card" action="${register_medic}" method="POST">
+    <form:form modelAttribute="medicRegisterForm" class="form-container container card" action="${registerMedicUrl}" method="POST">
         <div class="form-row container">
         <div class="form-item">
             <form:label path="name">${name}</form:label>
