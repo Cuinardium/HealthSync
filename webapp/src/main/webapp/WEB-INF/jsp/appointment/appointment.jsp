@@ -37,7 +37,8 @@
 
 
         <form:form modelAttribute="appointmentForm" action="${appointmentUrl}" method="post">
-            <div class="form-container">
+            <div class="form-container card">
+                <div class="form-row container">
                 <div class="form-item">
                     <form:label path="name" class="tag">${name}</form:label>
                     <div>
@@ -51,6 +52,7 @@
                         <form:input path="lastname" class="label" type="text" placeholder="${lastname_hint}"/>
                         <form:errors path="lastname" cssClass="error" element="p"/>
                     </div>
+                </div>
                 </div>
                 <div class="form-item">
                     <form:label path="email" class="tag"><spring:message code="form.email"/></form:label>
@@ -69,13 +71,13 @@
                 <div class="form-item">
                     <form:label path="date" class="tag"><spring:message code="form.date"/></form:label>
                     <div>
-                        <form:input path="date" class="label" type="date"/>
+                        <form:input path="date" class="label" type="datetime-local"/>
                     </div>
                 </div>
                 <div class="form-item">
                     <form:label path="description" class="tag"><spring:message code="form.desc"/></form:label>
                     <div>
-                        <form:input path="description" class="label" type="text" placeholder="${desc_hint}"/>
+                        <form:textarea path="description" class="label" type="text" placeholder="${desc_hint}"/>
                         <form:errors path="description" cssClass="error" element="p"/>
                     </div>
                 </div>

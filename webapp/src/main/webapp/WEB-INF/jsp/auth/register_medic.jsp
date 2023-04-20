@@ -51,7 +51,8 @@
 <!-- Content -->
 <div class="page-content p-5" id="content">
     <h1>${title}</h1>
-    <form:form modelAttribute="medicRegisterForm" class="form-container" action="${register_medic}" method="POST">
+    <form:form modelAttribute="medicRegisterForm" class="form-container container card" action="${register_medic}" method="POST">
+        <div class="form-row container">
         <div class="form-item">
             <form:label path="name">${name}</form:label>
                         <form:input type="text" placeholder="${name_hint}" path="name"/>
@@ -62,18 +63,20 @@
             <form:input path="lastname" type="text" placeholder="${lastname_hint}"/>
             <form:errors path="lastname" cssClass="error" element="p"/>
         </div>
-        <div class="form-item">
-            <div>
+        </div>
+        <div class="form-row container">
+            <div class="form-item">
                 <form:label path="city">${city}</form:label>
                 <form:input path="city" type="text" placeholder="${city_hint}"/>
                 <form:errors path="city" cssClass="error" element="p"/>
             </div>
-            <div>
+            <div class="form-item">
                 <form:label path="address">${address}</form:label>
                 <form:input path="address" type="text" placeholder="${address_hint}"/>
                 <form:errors path="address" cssClass="error" element="p"/>
             </div>
         </div>
+        <div class="form-row container">
         <!-- dropdown menu -->
         <div class="form-item">
             <form:label path="specialization">${specialization}</form:label>
@@ -87,6 +90,7 @@
             <form:label path="healthcare">${healthcare}</form:label>
             <form:input path="healthcare" type="text" placeholder="${healthcare_hint}"/>
             <form:errors path="healthcare" cssClass="error" element="p"/>
+        </div>
         </div>
         <div class="form-item">
             <form:label path="email">${email}</form:label>
