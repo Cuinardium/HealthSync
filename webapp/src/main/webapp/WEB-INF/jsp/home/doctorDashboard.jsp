@@ -8,7 +8,9 @@
 <!--Variables -->
 <c:url value="/css/main.css" var="mainCss"/>
 <c:url value="/css/doctorDashboard.css" var="doctorDashboardCss"/>
-<c:url value="/doctorDashboard" var="doctorDashboard"/>
+
+<c:url value="/doctorDashboard" var="doctorDashboardUrl"/>
+
 <c:url value="/img/doctorCardDefault.jpg" var="doctorCardDefaultImg"/>
 
 <spring:message code="doctorDashboard.title" var="title"/>
@@ -48,7 +50,7 @@
             </button>
         </div>
     </div>
-    <form method="get" id="filters" action="${doctorDashboard}">
+    <form method="get" id="filters" action="${doctorDashboardUrl}">
         <div class="row pt-3">
             <div class="col">
                 <input type="text" class="form-control" id="city" name="city" placeholder="${city}"/>
@@ -99,7 +101,7 @@
 <script>
     let search = () => {
         let element = document.getElementById("input").value;
-        window.location = '${doctorDashboard}?name=' + element;
+        window.location = '${doctorDashboardUrl}?name=' + element;
     }
 </script>
 </html>

@@ -9,6 +9,7 @@
 <!--Variables -->
 <c:url value="/css/main.css" var="mainCss"/>
 <c:url value="/css/register_medic.css" var="registerMedicCss"/>
+
 <c:url value="/register_medic" var="registerMedicUrl"/>
 
 <spring:message code="registerMedic.title" var="title"/>
