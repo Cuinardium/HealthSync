@@ -11,4 +11,6 @@ public interface UserDao {
   void addHealthInsuranceToUser(long userId, long healthInsuranceId);
 
   Optional<User> findById(long id);
+
+  Optional<User> findByEmail(String email);
 }

@@ -28,6 +28,9 @@ public class UserDaoImpl implements UserDao {
   private static final String FIND_BY_ID =
       "SELECT * FROM users WHERE user_id = ?";
 
+  private static final String FIND_BY_EMAIL =
+          "SELECT * FROM users WHERE email = ?";
+
 
   private final JdbcTemplate jdbcTemplate;
   private final SimpleJdbcInsert userInsert;
@@ -78,5 +81,11 @@ public class UserDaoImpl implements UserDao {
     // el ? "sanitiza" el parametro para evitar SQL Injection
     return jdbcTemplate.query(FIND_BY_ID, ROW_MAPPER, id).stream()
         .findFirst();
+  }
+
+  @Override
+  public Optional<User> findByEmail(String email){
+    return jdbcTemplate.query(FIND_BY_EMAIL, ROW_MAPPER, email).stream()
+            .findFirst();
   }
 }

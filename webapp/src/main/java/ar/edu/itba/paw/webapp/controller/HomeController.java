@@ -2,7 +2,11 @@ package ar.edu.itba.paw.webapp.controller;
 
 import java.util.List;
 
+import ar.edu.itba.paw.interfaces.services.UserService;
+import ar.edu.itba.paw.webapp.auth.PawAuthUserDetails;
+import ar.edu.itba.paw.webapp.exceptions.UserNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -16,16 +20,22 @@ import ar.edu.itba.paw.models.Doctor;
 public class HomeController {
 
   private final DoctorService doctorService;
+  private final UserService us;
 
   @Autowired
   public HomeController(
-      final DoctorService doctorService) {
+          final DoctorService doctorService, final UserService us) {
     this.doctorService = doctorService;
+    this.us=us;
   }
 
-  @RequestMapping(value = "/", method = RequestMethod.GET)
+  @RequestMapping(value = "/")
   public ModelAndView landingPage() {
-    return new ModelAndView("home/home");
+
+    final PawAuthUserDetails userDetails= (PawAuthUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    final long userId= us.findByEmail(userDetails.getUsername()).orElseThrow(UserNotFoundException::new).getId();
+    //TODO incorporar userId
+    return new ModelAndView("redirect:/");
   }
 
   @RequestMapping(value = "/doctorDashboard", method = RequestMethod.GET)
