@@ -7,6 +7,7 @@
 
 <c:url value="/" var="homeUrl" />
 <c:url value="/doctorDashboard" var="dashboardUrl" />
+<c:url value="/logout" var="logoutUrl"/>
 
 <c:url value="/img/userDefault.png" var="userDefaultImg"/>
 
@@ -15,6 +16,7 @@
 <spring:message code="navbar.main" var="main"/>
 <spring:message code="navbar.home" var="home"/>
 <spring:message code="navbar.checkDoc" var="checkDoc"/>
+<spring:message code="navbar.logout" var="logout"/>
 
 <html>
 <head>
@@ -67,6 +69,13 @@
 <%--      </a>--%>
 <%--    </li>--%>
     </ul>
+
+    <!-- log out button at end of page -->
+    <div class="logout">
+        <form action="${logoutUrl}" method="post">
+            <button type="submit" class="btn btn-primary btn-lg btn-block">${logout}</button>
+        </form>
+    </div>
 <%--  <p class="text-gray font-weight-bold text-uppercase px-3 small py-4 mb-0">My settings</p>--%>
 
 <%--  <ul class="nav flex-column bg-white mb-0">--%>

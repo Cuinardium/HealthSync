@@ -22,9 +22,7 @@ public class AuthController {
   private final DoctorService doctorService;
 
   @Autowired
-  public AuthController(
-      final UserService userService,
-      final DoctorService doctorService) {
+  public AuthController(final UserService userService, final DoctorService doctorService) {
     this.userService = userService;
     this.doctorService = doctorService;
   }
@@ -48,6 +46,13 @@ public class AuthController {
   @RequestMapping(value = "/login", method = RequestMethod.GET)
   public ModelAndView loginForm(@ModelAttribute("loginForm") final LoginForm loginForm) {
     return new ModelAndView("auth/login");
+  }
+
+  @RequestMapping(value = "/logout", method = RequestMethod.POST)
+  public ModelAndView logout() {
+    // TODO: Log out logic here
+    //
+    return new ModelAndView("home/home");
   }
 
   // TODO: register_succesful -> /verify?? should reroute to login?
