@@ -12,6 +12,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 // Le permite a Mockito tomar control de JUnit y permite anotaciones que sino no estarian
 // disponibles
@@ -24,10 +25,11 @@ public class UserServiceImplTest {
   private static final String LAST_NAME = "lastname";
   private static final String HEALTH_INSURANCE = "healthInsurance";
   private static final long PFP_ID = 1;
-  private static final boolean IS_DOCTOR = false;
+  private static final Boolean IS_DOCTOR = false;
   private static final String PASSWORD = "password";
 
   @Mock private UserDao userDao;
+  @Mock private PasswordEncoder passwordEncoder;
   @Mock private HealthInsuranceService healthInsuranceService;
 
   @InjectMocks private UserServiceImpl us;
@@ -36,6 +38,7 @@ public class UserServiceImplTest {
   public void testCreateUser() {
     // 1. Precondiciones
     // UserDao mock = Mockito.mock(UserDao.class);
+    Mockito.when(passwordEncoder.encode(Mockito.eq(PASSWORD))).thenReturn(PASSWORD);
     Mockito.when(
             userDao.createUser(
                 Mockito.anyString(),
@@ -62,6 +65,7 @@ public class UserServiceImplTest {
   @Test(expected = RuntimeException.class)
   public void testCreateAlreadyExists() {
     // 1. Precondiciones
+    Mockito.when(passwordEncoder.encode(Mockito.eq(PASSWORD))).thenReturn(PASSWORD);
     Mockito.when(
             userDao.createUser(
                 Mockito.eq(EMAIL),
