@@ -2,7 +2,6 @@ package ar.edu.itba.paw.persistence;
 
 import ar.edu.itba.paw.interfaces.persistence.DoctorDao;
 import ar.edu.itba.paw.models.Doctor;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -60,10 +59,12 @@ public class DoctorDaoImpl implements DoctorDao {
 
   private static final String GET_DOCTOR_BY_ID = GET_DOCTORS + " " + "WHERE medic.medic_id = ?";
 
-  private static final String MATCHES_PART_NAME = "CONCAT(first_name, ' ', last_name) ILIKE CONCAT(?, '%')";
-  private static final String MATCHES_CITY = "medic_location_city = ?"; 
-  private static final String MATCHES_SPECIALTY = "medical_specialty_name = ?";
-  private static final String MATCHES_HEALTH_INSURANCE = "health_insurance_name = ?";
+  private static final String MATCHES_PART_NAME =
+      "CONCAT(first_name, ' ', last_name) ILIKE CONCAT(?, '%')";
+  private static final String MATCHES_CITY = "medic_location_city ILIKE CONCAT(?, '%')";
+  private static final String MATCHES_SPECIALTY = "medical_specialty_name ILIKE CONCAT(?, '%')";
+  private static final String MATCHES_HEALTH_INSURANCE =
+      "health_insurance_name ILIKE CONCAT(?, '%')";
 
   private final JdbcTemplate jdbcTemplate;
   private final SimpleJdbcInsert doctorInsert;
@@ -124,10 +125,11 @@ public class DoctorDaoImpl implements DoctorDao {
   }
 
   @Override
-  public List<Doctor> getFilteredDoctors(String name, String specialty, String city, String healthInsurance) {
+  public List<Doctor> getFilteredDoctors(
+      String name, String specialty, String city, String healthInsurance) {
 
     // If no filters are applied, return all doctors
-    if (name==null && specialty == null && city == null && healthInsurance == null) {
+    if (name == null && specialty == null && city == null && healthInsurance == null) {
       return getDoctors();
     }
 
@@ -137,22 +139,22 @@ public class DoctorDaoImpl implements DoctorDao {
 
     // Add the filters to the query, if it is the first filter, don't add AND
     if (name != null) {
-      sql += (params.isEmpty()? " " : " AND ") + MATCHES_PART_NAME;
+      sql += (params.isEmpty() ? " " : " AND ") + MATCHES_PART_NAME;
       params.add(name);
     }
 
     if (specialty != null) {
-      sql += (params.isEmpty()? " " : " AND ") + MATCHES_SPECIALTY;
+      sql += (params.isEmpty() ? " " : " AND ") + MATCHES_SPECIALTY;
       params.add(specialty);
     }
 
     if (city != null) {
-      sql += (params.isEmpty()? " " : " AND ") + MATCHES_CITY;
+      sql += (params.isEmpty() ? " " : " AND ") + MATCHES_CITY;
       params.add(city);
     }
 
     if (healthInsurance != null) {
-      sql += (params.isEmpty()? " " : " AND ") + MATCHES_HEALTH_INSURANCE;
+      sql += (params.isEmpty() ? " " : " AND ") + MATCHES_HEALTH_INSURANCE;
       params.add(healthInsurance);
     }
 
