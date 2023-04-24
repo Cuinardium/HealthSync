@@ -42,17 +42,25 @@ h2, .h2{
     transform: translateX(-50%);
 }
 
+.circles{
+    max-width: 60%;
+    padding: 5%;
+    margin: 1%;
+}
+
 .about{
-    background: lightgray;
     padding: 3rem 5rem;
 }
 
-.row{
+.welcome{
     justify-content: center;
     align-items: center;
 }
 
 .text{
-    text-align: center;
-    margin: 0 3rem;
+    margin: 3rem;
+}
+
+section{
+    position: relative;
 }
