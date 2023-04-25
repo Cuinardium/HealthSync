@@ -31,11 +31,7 @@ public class HomeController {
 
   @RequestMapping(value = "/")
   public ModelAndView landingPage() {
-
-    final PawAuthUserDetails userDetails= (PawAuthUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-    final long userId= us.findByEmail(userDetails.getUsername()).orElseThrow(UserNotFoundException::new).getId();
-    //TODO incorporar userId
-    return new ModelAndView("redirect:/");
+    return new ModelAndView("/home/home");
   }
 
   @RequestMapping(value = "/doctorDashboard", method = RequestMethod.GET)
