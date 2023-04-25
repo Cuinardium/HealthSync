@@ -36,14 +36,14 @@
         <div>
             <form:label path="email">
                 ${email}
-                <form:input path="email" type="text" placeholder='${email_hint}'/>
+                <form:input path="email" name="email" type="text" placeholder='${email_hint}'/>
                 <form:errors path="email" cssClass="error" element="p"/>
             </form:label>
         </div>
         <div>
             <form:label path="password">
                 ${password}
-                <form:input type="password" path="password" placeholder="${password_hint}"/>
+                <form:input type="password" name="password" path="password" placeholder="${password_hint}"/>
                 <form:errors path="password" cssClass="error" element="p"/>
             </form:label>
         </div>

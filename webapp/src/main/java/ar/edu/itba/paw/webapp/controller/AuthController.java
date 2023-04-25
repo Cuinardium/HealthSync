@@ -27,21 +27,21 @@ public class AuthController {
     this.doctorService = doctorService;
   }
 
-  @RequestMapping(value = "/login", method = RequestMethod.POST)
-  public ModelAndView login(
-      @Valid @ModelAttribute("loginForm") final LoginForm loginForm, final BindingResult errors) {
-
-    // TODO: IF LOGIN UNSUCCESFULL
-    // show errors in view
-    // return login form
-    if (errors.hasErrors() /* || login unsuccesfull*/) {
-      return loginForm(loginForm);
-    }
-
-    // TODO: CHECK IF LOGIN SUCCESFULL
-    final ModelAndView mav = new ModelAndView("home/doctorDashboard");
-    return mav;
-  }
+  // @RequestMapping(value = "/login", method = RequestMethod.POST)
+  // public ModelAndView login(
+  //     @Valid @ModelAttribute("loginForm") final LoginForm loginForm, final BindingResult errors) {
+  //
+  //   // TODO: IF LOGIN UNSUCCESFULL
+  //   // show errors in view
+  //   // return login form
+  //   if (errors.hasErrors() /* || login unsuccesfull*/) {
+  //     return loginForm(loginForm);
+  //   }
+  //
+  //   // TODO: CHECK IF LOGIN SUCCESFULL
+  //   final ModelAndView mav = new ModelAndView("home/doctorDashboard");
+  //   return mav;
+  // }
 
   @RequestMapping(value = "/login")
   public ModelAndView loginForm(@ModelAttribute("loginForm") final LoginForm loginForm) {
@@ -72,7 +72,7 @@ public class AuthController {
     }
 
     final User user =
-        userService.createUser(registerForm.getEmail(), registerForm.getPassword(), "", "");
+        userService.createUser(registerForm.getEmail(), registerForm.getPassword(), "", "", "");
 
     final ModelAndView mav = new ModelAndView("auth/registerSuccesful");
     mav.addObject("user", user);

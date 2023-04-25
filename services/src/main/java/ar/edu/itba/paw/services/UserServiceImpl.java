@@ -14,17 +14,14 @@ import org.springframework.stereotype.Service;
 @Service
 public class UserServiceImpl implements UserService {
 
-  @Autowired
   private final UserDao userDao;
-
-  @Autowired
   private final PasswordEncoder passwordEncoder;
   private final HealthInsuranceService healthInsuranceService;
 
   @Autowired
-  public UserServiceImpl(UserDao userDao,final PasswordEncoder passwordEncoder,HealthInsuranceService healthInsuranceService) {
+  public UserServiceImpl(UserDao userDao,final PasswordEncoder passwordEncoder, HealthInsuranceService healthInsuranceService) {
     this.userDao = userDao;
-    this.passwordEncoder=passwordEncoder;
+    this.passwordEncoder = passwordEncoder;
     this.healthInsuranceService = healthInsuranceService;
   }
 
@@ -44,7 +41,7 @@ public class UserServiceImpl implements UserService {
   @Override
   public User createUser(String email, String firstName, String lastName, String healthInsurance) {
     String password = UUID.randomUUID().toString().replace("-", "");
-    return this.createUser(email, passwordEncoder.encode(password), firstName, lastName, healthInsurance);
+    return this.createUser(email, password, firstName, lastName, healthInsurance);
   }
 
   @Override

@@ -19,7 +19,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @Configuration
 public class WebAuthConfig extends WebSecurityConfigurerAdapter {
 
-  @Autowired private UserDetailsService userDetailsService;
+  @Autowired 
+  private UserDetailsService userDetailsService;
 
   @Bean
   public PasswordEncoder passwordEncoder() {
@@ -37,7 +38,7 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
         .invalidSessionUrl("/login")
         .and()
         .authorizeRequests()
-        .antMatchers("/login", "/register")
+        .antMatchers("/", "/login", "/register")
         .anonymous() // TODO PONER DESP DE ESTA LINEA REGLAS DE CONTROL DE ACCESO DE ROLES CON
         // .hasRole()
         .antMatchers("/**")
@@ -47,7 +48,7 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
         .loginPage("/login")
         .usernameParameter("email")
         .passwordParameter("password")
-        .defaultSuccessUrl("/", false)
+        .defaultSuccessUrl("/doctorDashboard", false)
         .and()
         .rememberMe()
         .rememberMeParameter("rememberme")
@@ -60,7 +61,7 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
         .logoutSuccessUrl("/login")
         .and()
         .exceptionHandling()
-        .accessDeniedPage("/errors")
+        .accessDeniedPage("/errors/403")
         .and()
         .csrf()
         .disable();
