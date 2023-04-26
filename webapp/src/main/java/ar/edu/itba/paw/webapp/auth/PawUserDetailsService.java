@@ -3,6 +3,7 @@ package ar.edu.itba.paw.webapp.auth;
 import ar.edu.itba.paw.interfaces.services.UserService;
 import ar.edu.itba.paw.models.User;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -18,6 +19,7 @@ public class PawUserDetailsService implements UserDetailsService {
 
     private UserService us;
 
+    
     @Autowired
     public PawUserDetailsService(final UserService us){
         this.us=us;
@@ -30,6 +32,7 @@ public class PawUserDetailsService implements UserDetailsService {
         //ROLES
         final Collection<GrantedAuthority> authorities= new HashSet<>();
         authorities.add(new SimpleGrantedAuthority("ROLE_USER"));
+        authorities.add(new SimpleGrantedAuthority("ROLE_DOCTOR"));
 
         return new PawAuthUserDetails(user.getEmail(), user.getPassword(), authorities);
     }

@@ -39,8 +39,9 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
         .and()
         .authorizeRequests()
         .antMatchers("/", "/login", "/register")
-        .anonymous() // TODO PONER DESP DE ESTA LINEA REGLAS DE CONTROL DE ACCESO DE ROLES CON
-        // .hasRole()
+        .anonymous()
+            .antMatchers("/doctorDashboard").hasRole("USER")
+            //.antMatchers("").hasRole("DOCTOR") TODO SETEAR PAGINAS PARA SOLO DOCTORS
         .antMatchers("/**")
         .authenticated()
         .and()
