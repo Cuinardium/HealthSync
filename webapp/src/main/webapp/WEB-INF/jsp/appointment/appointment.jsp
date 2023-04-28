@@ -5,7 +5,6 @@
 <!-- Include -->
 <jsp:include page="/resources/externalResources.jsp"/>
 
-
 <!--Variables -->
 <c:url value="/css/main.css" var="mainCss"/>
 <c:url value="/css/register_medic.css" var="registerCss"/>
@@ -19,7 +18,6 @@
 <spring:message code="form.email_hint" var="email_hint"/>
 <spring:message code="form.healthcare_hint" var="healthcare_hint"/>
 <spring:message code="form.desc_hint" var="desc_hint"/>
-
 
 <html>
 <head>
