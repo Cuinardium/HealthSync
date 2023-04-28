@@ -4,7 +4,6 @@
 <!-- Include -->
 <jsp:include page="/resources/externalResources.jsp"/>
 
-
 <!--Variables -->
 <c:url value="/css/main.css" var="mainCss"/>
 <c:url value="/css/doctorDashboard.css" var="doctorDashboardCss"/>
@@ -22,9 +21,6 @@
 <spring:message code="doctorDashboard.button.book" var="book"/>
 <spring:message code="doctorDashboard.no.doctors" var="noDoctors"/>
 
-<jsp:include page="/resources/externalResources.jsp"/>
-
-
 <html>
 <head>
     <title>${title}</title>
@@ -36,58 +32,52 @@
 </head>
 
 <body>
-<!-- NavBar-->
-<jsp:include page="../components/navBar.jsp"/>
+<jsp:include page="../components/header.jsp"/>
+
 <!-- Content -->
-<div class="page-content p-5" id="content">
-    <div class="row">
-        <!-- Search Bar -->
-        <div class="input-group">
-            <input type="text" id="input" class="form-control" placeholder="${search}" aria-label="Search"
-                   aria-describedby="basic-addon2">
-            <button type="button" class="btn btn-primary" onclick="search();">
-                <i class="fas fa-search"></i>
-            </button>
-        </div>
+<div class="page-content p-5">
+
+    <!-- Search Bar -->
+    <div class="input-group">
+        <input type="text" id="input" class="form-control" placeholder="${search}" aria-label="Search"
+               aria-describedby="basic-addon2">
+        <button type="button" class="btn btn-primary search" onclick="search();">
+            <i class="fas fa-search"></i>
+        </button>
     </div>
-    <form method="get" id="filters" action="${doctorDashboardUrl}">
-        <div class="row pt-3">
-            <div class="col">
-                <input type="text" class="form-control" id="city" name="city" placeholder="${city}"/>
-            </div>
 
-            <div class="col">
-                <input type="text" class="form-control" id="specialty" name="specialty" placeholder="${specialty}">
-
-            </div>
-            <div class="col">
-                <input type="text" class="form-control" id="healthcare" name="healthcare" placeholder="${insurance}">
-
-            </div>
-            <div class="col-auto">
-                <input type="submit" class="btn btn-primary" value="${filter}">
-            </div>
+    <form method="get" action="${doctorDashboardUrl}">
+        <div class="filtersContainer">
+            <input type="text" class="form-control" id="city" name="city" placeholder="${city}"/>
+            <input type="text" class="form-control" id="specialty" name="specialty" placeholder="${specialty}">
+            <input type="text" class="form-control" id="healthcare" name="healthcare" placeholder="${insurance}">
+            <input type="submit" class="btn btn-primary" value="${filter}">
         </div>
     </form>
-    <div class="flex-container bcontent">
+
+    <div class="cardsContainer">
         <c:forEach items="${doctors}" var="doctor">
             <c:url value="/${doctor.id}/appointment" var="appointmentUrl"/>
+            <c:url value="/${doctor.id}/detailed_doctor" var="detailedUrl"/>
             <div class="card">
-                <div class="row g-0">
-                    <div class="col-sm-5">
-                        <img src="${doctorCardDefaultImg}"
-                             class="card-img-top" alt="A blonde dermatologist">
+                <div class="imageContainer">
+                    <img src="${doctorCardDefaultImg}"
+                         class="card-img-top" alt="A blonde dermatologist">
+                </div>
+                <div class="infoContainer">
+                    <div class="card-body">
+                        <h5 class="card-title"><a href="${detailedUrl}">${doctor.firstName} ${doctor.lastName}</a></h5>
+                        <p class="card-text">${doctor.specialty}. ${doctor.address}, ${doctor.city}</p>
+                        <p class="card-text">${doctor.healthInsurance}</p>
                     </div>
-                    <div class="col-sm-7">
-                        <div class="card-body">
-                            <h5 class="card-title">${doctor.firstName} ${doctor.lastName}</h5>
-                            <p class="card-text">${doctor.specialty}. ${doctor.address}, ${doctor.city}</p>
-                            <p class="card-text">${doctor.healthInsurance}</p>
-                            <a href="${appointmentUrl}" class="btn btn-primary">${book}</a>
-                        </div>
+                </div>
+                <div class="buttonsContainer">
+                    <div class="card-body">
+                        <a href="${appointmentUrl}" class="btn btn-primary">${book}</a>
                     </div>
                 </div>
             </div>
+            
         </c:forEach>
         <c:if test="${doctors.isEmpty()}">
             <div class="d-flex justify-content-center">

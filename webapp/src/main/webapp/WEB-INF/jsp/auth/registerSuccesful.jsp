@@ -27,8 +27,7 @@
     <link href="${appointmentSentCss}" rel="stylesheet"/>
 </head>
 <body>
-<!-- Navbar -->
-<jsp:include page="../components/navBar.jsp"/>
+<jsp:include page="../components/header.jsp"/>
 <!-- Content -->
 <div class="page-content p-5" id="content">
     <div class="card media">

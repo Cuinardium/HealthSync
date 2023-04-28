@@ -5,7 +5,6 @@
 <!-- Include -->
 <jsp:include page="/resources/externalResources.jsp"/>
 
-
 <!--Variables -->
 <c:url value="/css/main.css" var="mainCss"/>
 <c:url value="/css/register_medic.css" var="registerCss"/>
@@ -20,7 +19,6 @@
 <spring:message code="form.healthcare_hint" var="healthcare_hint"/>
 <spring:message code="form.desc_hint" var="desc_hint"/>
 
-
 <html>
 <head>
     <title>${title}</title>
@@ -31,7 +29,8 @@
     <link href="${registerCss}" rel="stylesheet"/>
 </head>
 <body>
-<jsp:include page="../components/navBar.jsp"/>
+<jsp:include page="../components/header.jsp"/>
+
 <div class="page-content p-5" id="content">
     <div class="bcontent">
         <h1>${title}</h1>

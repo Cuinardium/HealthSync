@@ -4,8 +4,6 @@
 
 <!-- Include -->
 <jsp:include page="/resources/externalResources.jsp"/>
-<jsp:include page="../components/navBar.jsp"/>
-
 
 <!--Variables -->
 <c:url value="/css/main.css" var="mainCss"/>
@@ -29,6 +27,8 @@
     <link href="${appointmentSentCss}" rel="stylesheet"/>
 </head>
 <body>
+<jsp:include page="../components/header.jsp"/>
+
 <div class="page-content p-5" id="content">
     <div class="card media">
         <h5 class="card-title media-body">
