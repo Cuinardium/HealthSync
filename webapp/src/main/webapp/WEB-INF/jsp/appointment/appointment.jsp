@@ -74,6 +74,7 @@
                     <div>
                         <form:input path="date" class="label" type="datetime-local"/>
                     </div>
+                    <form:errors/>
                 </div>
                 <div class="form-item">
                     <form:label path="description" class="tag"><spring:message code="form.desc"/></form:label>

@@ -107,6 +107,7 @@
             <form:label path="confirmPassword">${cpassword}</form:label>
             <form:input path="confirmPassword" type="password" placeholder="${cpassword_hint}"/>
             <form:errors path="confirmPassword" cssClass="error" element="p"/>
+            <form:errors/>
         </div>
         <button type="submit" class="btn btn-primary">${submit}</button>
     </form:form>

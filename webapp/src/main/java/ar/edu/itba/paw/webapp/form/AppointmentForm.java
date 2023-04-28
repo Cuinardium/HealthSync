@@ -1,8 +1,11 @@
 package ar.edu.itba.paw.webapp.form;
 
+import ar.edu.itba.paw.webapp.annotations.Date;
+
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
+@Date
 public class AppointmentForm{
 
     @Size(min = 1)
