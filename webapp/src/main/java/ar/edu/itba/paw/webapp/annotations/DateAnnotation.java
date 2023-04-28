@@ -1,7 +1,6 @@
 package ar.edu.itba.paw.webapp.annotations;
 
 import ar.edu.itba.paw.webapp.validators.DateValidator;
-import ar.edu.itba.paw.webapp.validators.PasswordValidator;
 
 import javax.validation.Constraint;
 import javax.validation.Payload;
@@ -13,8 +12,8 @@ import java.lang.annotation.Target;
 @Target({ElementType.METHOD, ElementType.FIELD, ElementType.ANNOTATION_TYPE, ElementType.CONSTRUCTOR, ElementType.PARAMETER, ElementType.TYPE_USE})
 @Retention(RetentionPolicy.RUNTIME)
 @Constraint(validatedBy = DateValidator.class)
-public @interface Date {
-    String message() default "Date cant be in the past";
+public @interface DateAnnotation {
+    String message() default "Date must be valid";
 
     Class<?>[] groups() default {};
 

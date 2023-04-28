@@ -1,11 +1,11 @@
 package ar.edu.itba.paw.webapp.form;
 
-import ar.edu.itba.paw.webapp.annotations.Date;
+import ar.edu.itba.paw.webapp.annotations.DateAnnotation;
 
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
-@Date
+//@DateAnnotation TODO check AMD-64 bit error
 public class AppointmentForm{
 
     @Size(min = 1)

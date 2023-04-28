@@ -102,6 +102,7 @@ public class MailServiceImpl implements MailService {
 
     // Load model
     templateModel.put("userName", clientName);
+    templateModel.put("userMail", clientEmail);
     templateModel.put("docEmail", doctorEmail);
     templateModel.put("address", address);
     templateModel.put("city", city);
