@@ -1,6 +1,9 @@
 package ar.edu.itba.paw.models;
 
 public enum HealthInsurance {
+
+  // NO CAMBIAR EL ORDEN, SIEMPRE INSERTAR AL FONDO
+  // specialty.<specialty> tiene que estar internacionalizado en los i18n
   OMINT("healthInsurance.omint"),
   OSDE("healthInsurance.osde"),
   SWISS_MEDICAL("healthInsurance.swiss.medical");
