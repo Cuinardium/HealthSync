@@ -4,12 +4,10 @@
 <!-- Include -->
 <jsp:include page="/resources/externalResources.jsp"/>
 
-
 <!--Variables -->
 <c:url value="/css/main.css" var="mainCss"/>
 <c:url value="/css/doctorDashboard.css" var="doctorDashboardCss"/>
 
-<c:url value="/doctorDashboard" var="doctorDashboardUrl"/>
 <c:url value="/doctorDashboard" var="doctorDashboardUrl"/>
 
 <c:url value="/img/doctorCardDefault.jpg" var="doctorCardDefaultImg"/>
@@ -22,9 +20,6 @@
 <spring:message code="doctorDashboard.button.filter" var="filter"/>
 <spring:message code="doctorDashboard.button.book" var="book"/>
 <spring:message code="doctorDashboard.no.doctors" var="noDoctors"/>
-
-<jsp:include page="/resources/externalResources.jsp"/>
-
 
 <html>
 <head>
