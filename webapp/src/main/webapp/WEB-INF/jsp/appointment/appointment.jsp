@@ -83,6 +83,8 @@
                     </div>
                 </div>
                 <form:input type="hidden" path="docEmail" value="${email}"/>
+                <form:input type="hidden" path="address" value="${address}"/>
+                <form:input type="hidden" path="city" value="${city}"/>
                 <div>
                     <button type="submit" class="btn btn-primary" value="Create appointment"><spring:message
                             code="appointment.submit"/></button>
