@@ -29,7 +29,8 @@
     <link href="${registerCss}" rel="stylesheet"/>
 </head>
 <body>
-<jsp:include page="../components/navBar.jsp"/>
+<jsp:include page="../components/header.jsp"/>
+
 <div class="page-content p-5" id="content">
     <div class="bcontent">
         <h1>${title}</h1>

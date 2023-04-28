@@ -10,6 +10,7 @@
 <c:url value="/css/doctorDashboard.css" var="doctorDashboardCss"/>
 
 <c:url value="/doctorDashboard" var="doctorDashboardUrl"/>
+<c:url value="/doctorDashboard" var="doctorDashboardUrl"/>
 
 <c:url value="/img/doctorCardDefault.jpg" var="doctorCardDefaultImg"/>
 
@@ -36,8 +37,8 @@
 </head>
 
 <body>
-<!-- NavBar-->
-<jsp:include page="../components/navBar.jsp"/>
+<jsp:include page="../components/header.jsp"/>
+
 <!-- Content -->
 <div class="page-content p-5">
 
@@ -62,6 +63,7 @@
     <div class="cardsContainer">
         <c:forEach items="${doctors}" var="doctor">
             <c:url value="/${doctor.id}/appointment" var="appointmentUrl"/>
+            <c:url value="/${doctor.id}/detailed_doctor" var="detailedUrl"/>
             <div class="card">
                 <div class="imageContainer">
                     <img src="${doctorCardDefaultImg}"
@@ -69,7 +71,7 @@
                 </div>
                 <div class="infoContainer">
                     <div class="card-body">
-                        <h5 class="card-title">${doctor.firstName} ${doctor.lastName}</h5>
+                        <h5 class="card-title"><a href="${detailedUrl}">${doctor.firstName} ${doctor.lastName}</a></h5>
                         <p class="card-text">${doctor.specialty}. ${doctor.address}, ${doctor.city}</p>
                         <p class="card-text">${doctor.healthInsurance}</p>
                     </div>
