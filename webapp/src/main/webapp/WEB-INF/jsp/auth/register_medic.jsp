@@ -46,8 +46,7 @@
 </head>
 
 <body>
-<!-- Navbar -->
-<jsp:include page="../components/navBar.jsp"/>
+<jsp:include page="../components/header.jsp"/>
 
 <!-- Content -->
 <div class="page-content p-5" id="content">
@@ -107,6 +106,7 @@
             <form:label path="confirmPassword">${cpassword}</form:label>
             <form:input path="confirmPassword" type="password" placeholder="${cpassword_hint}"/>
             <form:errors path="confirmPassword" cssClass="error" element="p"/>
+            <form:errors/>
         </div>
         <button type="submit" class="btn btn-primary">${submit}</button>
     </form:form>

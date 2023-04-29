@@ -1,9 +1,11 @@
 package ar.edu.itba.paw.webapp.form;
 
+import ar.edu.itba.paw.webapp.annotations.ConfirmPassword;
+
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
-
+@ConfirmPassword
 public class MedicRegisterForm{
 
     @Size(min = 1)

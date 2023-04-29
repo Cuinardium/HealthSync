@@ -85,4 +85,35 @@ public class MailServiceImpl implements MailService {
 
     sendHtmlMessage(doctorEmail, subject, htmlBody);
   }
+
+  @Override
+  public void sendAppointmentReminderMail(
+          String clientEmail,
+          String doctorEmail,
+          String address,
+          String city,
+          String clientName,
+          String healthCare,
+          String date,
+          String description,
+          Locale locale
+  ){
+    Map<String, Object> templateModel = new HashMap<>();
+
+    // Load model
+    templateModel.put("userName", clientName);
+    templateModel.put("userMail", clientEmail);
+    templateModel.put("docEmail", doctorEmail);
+    templateModel.put("address", address);
+    templateModel.put("city", city);
+    templateModel.put("date", date);
+    templateModel.put("description", description);
+    templateModel.put("userHealthcare", healthCare);
+
+    String htmlBody = getHtmlBody("appointmentReminder", templateModel, locale);
+
+    String subject = messageSource.getMessage("appointmentReminder.subject", null, locale);
+
+    sendHtmlMessage(clientEmail, subject, htmlBody);
+  }
 }

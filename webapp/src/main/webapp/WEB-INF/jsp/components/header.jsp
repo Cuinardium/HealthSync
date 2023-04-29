@@ -30,6 +30,10 @@
             </a>
 
             <div class="buttons">
+                <a href="${dashboardUrl}" class="nav-link px-2 link-dark">Check Doctors</a>
+            </div>
+
+            <div class="buttons">
 
                 <button type="button" class="btn btn-primary" onclick="window.location='#';">${login}</button>
 

@@ -5,7 +5,6 @@
 <!-- Include -->
 <jsp:include page="/resources/externalResources.jsp"/>
 
-
 <!--Variables -->
 <c:url value="/css/main.css" var="mainCss"/>
 <c:url value="/css/register_medic.css" var="registerCss"/>
@@ -20,7 +19,6 @@
 <spring:message code="form.healthcare_hint" var="healthcare_hint"/>
 <spring:message code="form.desc_hint" var="desc_hint"/>
 
-
 <html>
 <head>
     <title>${title}</title>
@@ -31,7 +29,8 @@
     <link href="${registerCss}" rel="stylesheet"/>
 </head>
 <body>
-<jsp:include page="../components/navBar.jsp"/>
+<jsp:include page="../components/header.jsp"/>
+
 <div class="page-content p-5" id="content">
     <div class="bcontent">
         <h1>${title}</h1>
@@ -74,6 +73,7 @@
                     <div>
                         <form:input path="date" class="label" type="datetime-local"/>
                     </div>
+                    <form:errors/>
                 </div>
                 <div class="form-item">
                     <form:label path="description" class="tag"><spring:message code="form.desc"/></form:label>
@@ -83,6 +83,8 @@
                     </div>
                 </div>
                 <form:input type="hidden" path="docEmail" value="${email}"/>
+                <form:input type="hidden" path="address" value="${address}"/>
+                <form:input type="hidden" path="city" value="${city}"/>
                 <div>
                     <button type="submit" class="btn btn-primary" value="Create appointment"><spring:message
                             code="appointment.submit"/></button>
