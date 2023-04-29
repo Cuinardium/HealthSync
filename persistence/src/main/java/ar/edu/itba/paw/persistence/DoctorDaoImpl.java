@@ -27,7 +27,8 @@ public class DoctorDaoImpl implements DoctorDao {
             HealthInsurance.values()[rs.getInt("health_insurance_code")];
 
         City city = City.values()[rs.getInt("city_code")];
-        Location location = new Location(rs.getLong("doctor_location_id"), city, rs.getString("address"));
+        Location location =
+            new Location(rs.getLong("doctor_location_id"), city, rs.getString("address"));
 
         return new Doctor(
             rs.getLong("doctor_id"),
@@ -100,7 +101,7 @@ public class DoctorDaoImpl implements DoctorDao {
   @Override
   public Optional<Doctor> getDoctorById(long id) {
 
-    String query = doctorQuery().where("medic.medic_id = " + id).build();
+    String query = doctorQuery().where("doctor.doctor_id = " + id).build();
 
     return jdbcTemplate.query(query, DOCTOR_MAPPER).stream().findFirst();
   }
@@ -113,8 +114,8 @@ public class DoctorDaoImpl implements DoctorDao {
     QueryBuilder query = doctorQuery();
 
     // Add the filters to the query, if it is the first filter, don't add AND
-    if (name != null) {
-      query.where("CONCAT(first_name, ' ', last_name) ILIKE CONCAT(" + name + ", '%')");
+    if (name != null && !name.isEmpty()) {
+      query.where("CONCAT(first_name, ' ', last_name) ILIKE CONCAT('" + name + "', '%')");
     }
 
     if (specialtyCode >= 0) {
@@ -138,9 +139,6 @@ public class DoctorDaoImpl implements DoctorDao {
   }
 
   // ================================= Private ======================================
-
-  // Joins medic, users, medical_specialty, medic_location_for_medic, medic_location,
-  // health_insurance_accepted_by_medic, health_insurance
   private QueryBuilder doctorQuery() {
     return new QueryBuilder()
         .select(
