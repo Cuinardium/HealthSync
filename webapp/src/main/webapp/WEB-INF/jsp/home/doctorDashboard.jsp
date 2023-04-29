@@ -53,15 +53,15 @@
     <form method="get" id="filters" action="${doctorDashboardUrl}">
         <div class="row pt-3">
             <div class="col">
-                <input type="text" class="form-control" id="city" name="city" placeholder="${city}"/>
+                <input type="number" class="form-control" id="cityCode" name="cityCode" placeholder="${city}"/>
             </div>
 
             <div class="col">
-                <input type="text" class="form-control" id="specialty" name="specialty" placeholder="${specialty}">
+                <input type="number" class="form-control" id="specialtyCode" name="specialtyCode" placeholder="${specialty}">
 
             </div>
             <div class="col">
-                <input type="text" class="form-control" id="healthcare" name="healthcare" placeholder="${insurance}">
+                <input type="number" class="form-control" id="healthInsuranceCode" name="healthInsuranceCode" placeholder="${insurance}">
 
             </div>
             <div class="col-auto">
@@ -72,6 +72,8 @@
     <div class="flex-container bcontent">
         <c:forEach items="${doctors}" var="doctor">
             <c:url value="/${doctor.id}/appointment" var="appointmentUrl"/>
+            <spring:message code="${doctor.specialty.messageID}" var="doctorSpecialty"/>
+            <spring:message code="${doctor.location.city.messageID}" var="doctorCity"/>
             <div class="card">
                 <div class="row g-0">
                     <div class="col-sm-5">
@@ -81,7 +83,7 @@
                     <div class="col-sm-7">
                         <div class="card-body">
                             <h5 class="card-title">${doctor.firstName} ${doctor.lastName}</h5>
-                            <p class="card-text">${doctor.specialty}. ${doctor.address}, ${doctor.city}</p>
+                            <p class="card-text">${doctorSpecialty}. ${doctor.location.address}, ${doctorCity}</p>
                             <p class="card-text">${doctor.healthInsurance}</p>
                             <a href="${appointmentUrl}" class="btn btn-primary">${book}</a>
                         </div>

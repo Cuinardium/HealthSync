@@ -2,7 +2,6 @@ package ar.edu.itba.paw.webapp.form;
 
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
-import java.util.Date;
 
 
 public class MedicRegisterForm{
@@ -19,21 +18,15 @@ public class MedicRegisterForm{
     @Pattern(regexp = "[a-zA-Z0-9.+-]+@[a-zA-Z0-9.-]+(.com|.com.ar|.edu.ar)")
     private String email;
 
-    @Size(min = 1)
-    @Pattern(regexp = "[a-zA-Z ]+")
-    private String healthcare;
+    private int healthInsuranceCode;
 
-    @Size(min = 1)
-    @Pattern(regexp = "[a-zA-Z. ]+")
-    private String city;
+    private int cityCode;
 
     @Size(min = 1)
     @Pattern(regexp = "[a-zA-Z0-9. ]+")
     private String address;
 
-    @Size(min = 1)
-    @Pattern(regexp = "[a-zA-Z ]+")
-    private String specialization;
+    private int specialtyCode;
 
     @Size(min = 4)
     @Pattern(regexp = "[a-zA-Z0-9]+")
@@ -64,18 +57,19 @@ public class MedicRegisterForm{
         this.email = email;
     }
 
-    public String getHealthcare() {
-        return healthcare;
+    public int getHealthInsuranceCode() {
+        return healthInsuranceCode;
     }
-    public void setHealthcare(String healthcare) {
-        this.healthcare = healthcare;
+    public void setHealthInsuranceCode(int healthInsuranceCode) {
+        this.healthInsuranceCode = healthInsuranceCode;
     }
 
-    public String getCity() {
-        return city;
+    public int getCityCode() {
+        return cityCode;
     }
-    public void setCity(String city) {
-        this.city = city;
+
+    public void setCityCode(int cityCode) {
+        this.cityCode = cityCode;
     }
 
     public String getAddress() {
@@ -85,11 +79,11 @@ public class MedicRegisterForm{
         this.address = address;
     }
 
-    public String getSpecialization() {
-        return specialization;
+    public int getSpecialtyCode() {
+        return specialtyCode;
     }
-    public void setSpecialization(String specialization) {
-        this.specialization = specialization;
+    public void setSpecialtyCode(int specialtyCode) {
+        this.specialtyCode = specialtyCode;
     }
 
     public String getPassword() {
@@ -105,6 +99,4 @@ public class MedicRegisterForm{
     public void setConfirmPassword(String confirmPassword) {
         this.confirmPassword = confirmPassword;
     }
-
-
 }

@@ -98,21 +98,16 @@ public class AuthController {
       return registerMedicForm(medicRegisterForm);
     }
     final User user;
-    try {
-      user =
-          doctorService.createDoctor(
-              medicRegisterForm.getEmail(),
-              medicRegisterForm.getPassword(),
-              medicRegisterForm.getName(),
-              medicRegisterForm.getLastname(),
-              medicRegisterForm.getHealthcare(),
-              medicRegisterForm.getSpecialization(),
-              medicRegisterForm.getCity(),
-              medicRegisterForm.getAddress());
-    } catch (RuntimeException e) {
-      // TODO: coorect exception handling and show error msg for repeated medic email
-      return registerMedicForm(medicRegisterForm);
-    }
+    user =
+        doctorService.createDoctor(
+            medicRegisterForm.getEmail(),
+            medicRegisterForm.getPassword(),
+            medicRegisterForm.getName(),
+            medicRegisterForm.getLastname(),
+            medicRegisterForm.getHealthInsuranceCode(),
+            medicRegisterForm.getSpecialtyCode(),
+            medicRegisterForm.getCityCode(),
+            medicRegisterForm.getAddress());
 
     final ModelAndView mav = new ModelAndView("auth/registerSuccesful");
     mav.addObject("user", user);

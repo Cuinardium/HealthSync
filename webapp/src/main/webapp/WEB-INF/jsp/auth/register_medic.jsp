@@ -67,9 +67,9 @@
         </div>
         <div class="form-row container">
             <div class="form-item">
-                <form:label path="city">${city}</form:label>
-                <form:input path="city" type="text" placeholder="${city_hint}"/>
-                <form:errors path="city" cssClass="error" element="p"/>
+                <form:label path="cityCode">${city}</form:label>
+                <form:input path="cityCode" type="number" placeholder="${city_hint}"/>
+                <form:errors path="cityCode" cssClass="error" element="p"/>
             </div>
             <div class="form-item">
                 <form:label path="address">${address}</form:label>
@@ -80,17 +80,17 @@
         <div class="form-row container">
         <!-- dropdown menu -->
         <div class="form-item">
-            <form:label path="specialization">${specialization}</form:label>
-            <form:input path="specialization" type="text" placeholder="${specialization_hint}"/>
-            <form:errors path="specialization" cssClass="error" element="p"/>
+            <form:label path="specialtyCode">${specialization}</form:label>
+            <form:input path="specialtyCode" type="number" placeholder="${specialization_hint}"/>
+            <form:errors path="specialtyCode" cssClass="error" element="p"/>
         </div>
 
         <!-- multiple option buttons -->
         <!-- TODO: buscar otro nombre para obra social -->
         <div class="form-item">
-            <form:label path="healthcare">${healthcare}</form:label>
-            <form:input path="healthcare" type="text" placeholder="${healthcare_hint}"/>
-            <form:errors path="healthcare" cssClass="error" element="p"/>
+            <form:label path="healthInsuranceCode">${healthcare}</form:label>
+            <form:input path="healthInsuranceCode" type="number" placeholder="${healthcare_hint}"/>
+            <form:errors path="healthInsuranceCode" cssClass="error" element="p"/>
         </div>
         </div>
         <div class="form-item">
