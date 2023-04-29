@@ -47,7 +47,7 @@ CREATE TABLE IF NOT EXISTS doctor (
     specialty_code  INTEGER NOT NULL,
     attending_hours_id INTEGER NOT NULL,
     FOREIGN KEY (doctor_id) REFERENCES users (user_id),
-    FOREIGN KEY (attending_hours_id) REFERENCES attending_hours (attending_hours_id)
+    FOREIGN KEY (attending_hours_id) REFERENCES doctor_attending_hours (attending_hours_id)
 );
 
 CREATE TABLE IF NOT EXISTS location_for_doctor
