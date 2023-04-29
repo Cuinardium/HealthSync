@@ -20,8 +20,8 @@ public class LocationServiceImpl implements LocationService {
   }
 
   @Override
-  public Location createLocation(String city, String address) {
-    return locationDao.createLocation(city, address);
+  public long createLocation(int cityCode, String address) {
+    return locationDao.createLocation(cityCode, address);
   }
 
   @Override

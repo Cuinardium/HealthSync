@@ -1,6 +1,7 @@
 package ar.edu.itba.paw.persistence;
 
 import ar.edu.itba.paw.interfaces.persistence.LocationDao;
+import ar.edu.itba.paw.models.City;
 import ar.edu.itba.paw.models.Location;
 import java.util.HashMap;
 import java.util.Map;
@@ -16,14 +17,15 @@ import org.springframework.stereotype.Repository;
 public class LocationDaoImpl implements LocationDao {
 
   private static final RowMapper<Location> ROW_MAPPER =
-      (rs, rowNum) ->
-          new Location(
-              rs.getLong("medic_location_id"),
-              rs.getString("medic_location_city"),
-              rs.getString("medic_location_address"));
+      (rs, rowNum) -> {
 
-  private static final String GET_LOCATION_BY_ID =
-      "SELECT * FROM medic_location WHERE medic_location_id = ?";
+        City city = City.values()[rs.getInt("city_code")];
+        
+        return new Location(
+            rs.getLong("doctor_location_id"),
+            city,
+            rs.getString("address"));
+      };
 
   private final JdbcTemplate jdbcTemplate;
   private final SimpleJdbcInsert jdbcInsert;
@@ -34,25 +36,32 @@ public class LocationDaoImpl implements LocationDao {
 
     jdbcInsert =
         new SimpleJdbcInsert(jdbcTemplate)
-            .withTableName("medic_location")
-            .usingGeneratedKeyColumns("medic_location_id");
+            .withTableName("doctor_location")
+            .usingGeneratedKeyColumns("doctor_location_id");
   }
 
   @Override
-  public Location createLocation(String city, String address) {
+  public long createLocation(int cityCode, String address) {
 
     Map<String, Object> args = new HashMap<>();
 
-    args.put("medic_location_city", city);
-    args.put("medic_location_address", address);
+    args.put("city_code", cityCode);
+    args.put("address", address);
 
     Number id = jdbcInsert.executeAndReturnKey(args);
 
-    return new Location(id.longValue(), city, address);
+    return id.longValue();
   }
 
   @Override
   public Optional<Location> getLocationById(long id) {
-    return jdbcTemplate.query(GET_LOCATION_BY_ID, ROW_MAPPER, id).stream().findFirst();
+    String query =
+        new QueryBuilder()
+            .select()
+            .from("doctor_location")
+            .where("doctor_location_id = " + id)
+            .build();
+
+    return jdbcTemplate.query(query, ROW_MAPPER).stream().findFirst();
   }
 }

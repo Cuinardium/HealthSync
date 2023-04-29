@@ -5,7 +5,7 @@ import java.util.Optional;
 
 public interface LocationDao {
 
-  public Location createLocation(String city, String address);
+  public long createLocation(int cityCode, String address);
 
   public Optional<Location> getLocationById(long id);
 }
