@@ -48,9 +48,34 @@
 
     <form method="get" action="${doctorDashboardUrl}">
         <div class="filtersContainer">
-            <input type="number" class="form-control" id="cityCode" name="cityCode" placeholder="${city}"/>
-            <input type="number" class="form-control" id="specialtyCode" name="specialtyCode" placeholder="${specialty}">
-            <input type="number" class="form-control" id="healthInsuranceCode" name="healthInsuranceCode" placeholder="${insurance}">
+
+            <select class="form-control" name="cityCode">
+                <option value="" selected disabled hidden> -- </option>
+                <c:forEach items="${cities}" var="city" varStatus="status">
+                    <option value="${status.index}" ${status.index == cityCode? 'selected':''}>
+                        <spring:message code="${city.messageID}"/>
+                    </option>
+                </c:forEach>
+            </select>
+
+            <select name="specialtyCode">
+                <option value="" selected disabled hidden> -- </option>
+                <c:forEach items="${specialties}" var="specialty" varStatus="status">
+                    <option value="${status.index}" ${status.index == specialtyCode? 'selected':''}>
+                        <spring:message code="${specialty.messageID}"/>
+                    </option>
+                </c:forEach>
+            </select>
+
+            <select name="healthInsuranceCode">
+                <option value="" selected disabled hidden> -- </option>
+                <c:forEach items="${healthInsurances}" var="healthInsurance" varStatus="status">
+                    <option value="${status.index}" ${status.index == healthInsuranceCode? 'selected':''}>
+                        <spring:message code="${healthInsurance.messageID}"/>
+                    </option>
+                </c:forEach>
+            </select>
+
             <input type="submit" class="btn btn-primary" value="${filter}">
         </div>
     </form>
@@ -80,7 +105,7 @@
                     </div>
                 </div>
             </div>
-            
+
         </c:forEach>
         <c:if test="${doctors.isEmpty()}">
             <div class="d-flex justify-content-center">

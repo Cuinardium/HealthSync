@@ -1,7 +1,11 @@
 package ar.edu.itba.paw.webapp.controller;
 
 import ar.edu.itba.paw.interfaces.services.DoctorService;
+import ar.edu.itba.paw.models.City;
 import ar.edu.itba.paw.models.Doctor;
+import ar.edu.itba.paw.models.HealthInsurance;
+import ar.edu.itba.paw.models.Specialty;
+import java.util.Arrays;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -39,7 +43,12 @@ public class HomeController {
         doctorService.getFilteredDoctors(name, cityCode, specialtyCode, healthInsuranceCode);
 
     mav.addObject("doctors", doctors);
-
+    mav.addObject("cityCode", cityCode);
+    mav.addObject("cities", Arrays.asList(City.values()));
+    mav.addObject("specialtyCode", specialtyCode);
+    mav.addObject("specialties", Arrays.asList(Specialty.values()));
+    mav.addObject("healthInsuranceCode", healthInsuranceCode);
+    mav.addObject("healthInsurances", Arrays.asList(HealthInsurance.values()));
     return mav;
   }
 }
