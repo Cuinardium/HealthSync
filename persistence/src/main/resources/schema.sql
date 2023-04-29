@@ -18,6 +18,9 @@ CREATE TABLE IF NOT EXISTS patient (
     FOREIGN KEY (patient_id) REFERENCES users (user_id)
 );
 
+/*
+    health_insurance_code: representa el codigo de la obra social
+*/
 CREATE TABLE IF NOT EXISTS health_insurance_for_patient (
     patient_id            INTEGER NOT NULL,
     health_insurance_code INTEGER NOT NULL,
@@ -25,12 +28,19 @@ CREATE TABLE IF NOT EXISTS health_insurance_for_patient (
     FOREIGN KEY (patient_id) REFERENCES patient (patient_id)
 );
 
+/*
+    city_code: representa el codigo de la ciudad
+*/
 CREATE TABLE IF NOT EXISTS doctor_location (
     doctor_location_id SERIAL PRIMARY KEY ,
     address            VARCHAR(100) NOT NULL,
     city_code          INTEGER NOT NULL
 );
 
+/*
+    monday, tuesday, wednesday, thursday, friday, saturday, sunday:
+        Contienen 48 flags que representan si el medico atiende en ese bloque de 30 minutos
+*/
 CREATE TABLE IF NOT EXISTS doctor_attending_hours (
     attending_hours_id SERIAL PRIMARY KEY,
     monday             BIGINT NOT NULL,
@@ -42,6 +52,9 @@ CREATE TABLE IF NOT EXISTS doctor_attending_hours (
     sunday             BIGINT NOT NULL
 );
 
+/*
+ specialty_code: representa el codigo de la especialidad del doctor
+*/
 CREATE TABLE IF NOT EXISTS doctor (
     doctor_id       INTEGER PRIMARY KEY,
     specialty_code  INTEGER NOT NULL,
@@ -58,6 +71,9 @@ CREATE TABLE IF NOT EXISTS location_for_doctor
     FOREIGN KEY (doctor_id) REFERENCES doctor (doctor_id)
 );
 
+/*
+    health_insurance_code: representa el codigo de la obra social
+*/
 CREATE TABLE IF NOT EXISTS health_insurance_accepted_by_doctor (
     doctor_id             INTEGER NOT NULL,
     health_insurance_code INTEGER NOT NULL,
@@ -65,12 +81,20 @@ CREATE TABLE IF NOT EXISTS health_insurance_accepted_by_doctor (
     FOREIGN KEY (doctor_id) REFERENCES doctor (doctor_id)
 );
 
+/*
+ appointment_date: representa la fecha de la cita
+ appointment_time: representa un numero de 0 a 47 que representa un bloque de 30 minutos
+ status_code:   0 = pendiente,
+                1 = aceptada,
+                2 = rechazada,
+                3 = cancelada
+*/
 CREATE TABLE IF NOT EXISTS appointment (
     appointment_id   SERIAL PRIMARY KEY ,
     doctor_id        INTEGER NOT NULL,
     patient_id       INTEGER NOT NULL,
     appointment_date DATE NOT NULL,
-    appointment_time BIGINT NOT NULL,
+    appointment_time SMALLINT NOT NULL, -- 0 a 47 -> uso smallint para ahorrar espacio
     status_code      INTEGER NOT NULL,
     FOREIGN KEY (doctor_id)     REFERENCES doctor (doctor_id),
     FOREIGN KEY (patient_id)    REFERENCES patient (patient_id)
