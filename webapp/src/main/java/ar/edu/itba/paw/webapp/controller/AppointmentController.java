@@ -49,8 +49,8 @@ public class AppointmentController {
         doctorService.getDoctorById(medicId).orElseThrow(UserNotFoundException::new);
 
     String email= doctor.getEmail();
-    String address= doctor.getAddress();
-    String city= doctor.getCity();
+    String address= doctor.getLocation().getAddress();
+    String city= doctor.getLocation().getCity().getMessageID();
 
     final ModelAndView mav = new ModelAndView("appointment/appointment");
 

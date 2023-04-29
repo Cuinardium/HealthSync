@@ -48,9 +48,9 @@
 
     <form method="get" action="${doctorDashboardUrl}">
         <div class="filtersContainer">
-            <input type="text" class="form-control" id="cityCode" name="cityCode" placeholder="${city}"/>
-            <input type="text" class="form-control" id="specialtyCode" name="specialtyCode" placeholder="${specialty}">
-            <input type="text" class="form-control" id="healthInsuranceCode" name="healthInsuranceCode" placeholder="${insurance}">
+            <input type="number" class="form-control" id="cityCode" name="cityCode" placeholder="${city}"/>
+            <input type="number" class="form-control" id="specialtyCode" name="specialtyCode" placeholder="${specialty}">
+            <input type="number" class="form-control" id="healthInsuranceCode" name="healthInsuranceCode" placeholder="${insurance}">
             <input type="submit" class="btn btn-primary" value="${filter}">
         </div>
     </form>
