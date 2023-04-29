@@ -1,8 +1,11 @@
 package ar.edu.itba.paw.persistence;
 
 import ar.edu.itba.paw.interfaces.persistence.DoctorDao;
+import ar.edu.itba.paw.models.City;
 import ar.edu.itba.paw.models.Doctor;
-import java.util.ArrayList;
+import ar.edu.itba.paw.models.HealthInsurance;
+import ar.edu.itba.paw.models.Location;
+import ar.edu.itba.paw.models.Specialty;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -18,53 +21,25 @@ import org.springframework.stereotype.Repository;
 public class DoctorDaoImpl implements DoctorDao {
 
   private static final RowMapper<Doctor> DOCTOR_MAPPER =
-      (rs, rowNum) ->
-          new Doctor(
-              rs.getLong("medic_id"),
-              rs.getString("email"),
-              rs.getString("password"),
-              rs.getString("first_name"),
-              rs.getString("last_name"),
-              rs.getLong("profile_picture_id"),
-              rs.getString("health_insurance_name"),
-              rs.getString("medical_specialty_name"),
-              rs.getString("medic_location_city"),
-              rs.getString("medic_location_address"));
+      (rs, rowNum) -> {
+        Specialty specialty = Specialty.values()[rs.getInt("specialty_code")];
+        HealthInsurance healthInsurance =
+            HealthInsurance.values()[rs.getInt("health_insurance_code")];
 
-  /*
-    SELECT medic.medic_id, email, password, first_name, last_name, profile_picture_id, health_insurance_name, medical_specialty_name, medic_location_city, medic_location_address
-      FROM medic
-      INNER JOIN users ON medic.user_id = users.user_id
-      INNER JOIN medical_specialty ON medic.medical_specialty_id = medical_specialty.medical_specialty_id
-      INNER JOIN medic_location_for_medic ON medic.medic_id = medic_location_for_medic.medic_id
-      INNER JOIN medic_location ON medic_location_for_medic.medic_location_id = medic_location.medic_location_id
-      INNER JOIN health_insurance_accepted_by_medic ON medic.medic_id = health_insurance_accepted_by_medic.medic_id
-      INNER JOIN health_insurance ON health_insurance_accepted_by_medic.health_insurance_id = health_insurance.health_insurance_id;
-  */
+        City city = City.values()[rs.getInt("city_code")];
+        Location location = new Location(rs.getLong("doctor_location_id"), city, rs.getString("address"));
 
-  // Joins medic, users, medical_specialty, medic_location_for_medic, medic_location,
-  // health_insurance_accepted_by_medic, health_insurance
-  private static final String GET_DOCTORS =
-      "SELECT medic.medic_id, email, password, first_name, last_name, profile_picture_id,"
-          + " health_insurance_name, medical_specialty_name, medic_location_city,"
-          + " medic_location_address FROM medic INNER JOIN users ON medic.user_id = users.user_id"
-          + " INNER JOIN medical_specialty ON medic.medical_specialty_id ="
-          + " medical_specialty.medical_specialty_id INNER JOIN medic_location_for_medic ON"
-          + " medic.medic_id = medic_location_for_medic.medic_id INNER JOIN medic_location ON"
-          + " medic_location_for_medic.medic_location_id = medic_location.medic_location_id INNER"
-          + " JOIN health_insurance_accepted_by_medic ON medic.medic_id ="
-          + " health_insurance_accepted_by_medic.medic_id INNER JOIN health_insurance ON"
-          + " health_insurance_accepted_by_medic.health_insurance_id ="
-          + " health_insurance.health_insurance_id";
-
-  private static final String GET_DOCTOR_BY_ID = GET_DOCTORS + " " + "WHERE medic.medic_id = ?";
-
-  private static final String MATCHES_PART_NAME =
-      "CONCAT(first_name, ' ', last_name) ILIKE CONCAT(?, '%')";
-  private static final String MATCHES_CITY = "medic_location_city ILIKE CONCAT(?, '%')";
-  private static final String MATCHES_SPECIALTY = "medical_specialty_name ILIKE CONCAT(?, '%')";
-  private static final String MATCHES_HEALTH_INSURANCE =
-      "health_insurance_name ILIKE CONCAT(?, '%')";
+        return new Doctor(
+            rs.getLong("doctor_id"),
+            rs.getString("email"),
+            rs.getString("password"),
+            rs.getString("first_name"),
+            rs.getString("last_name"),
+            rs.getLong("profile_picture_id"),
+            healthInsurance,
+            specialty,
+            location);
+      };
 
   private final JdbcTemplate jdbcTemplate;
   private final SimpleJdbcInsert doctorInsert;
@@ -75,22 +50,23 @@ public class DoctorDaoImpl implements DoctorDao {
   public DoctorDaoImpl(final DataSource ds) {
     this.jdbcTemplate = new JdbcTemplate(ds);
 
-    this.doctorInsert =
-        new SimpleJdbcInsert(ds).withTableName("medic").usingGeneratedKeyColumns("medic_id");
+    this.doctorInsert = new SimpleJdbcInsert(ds).withTableName("doctor");
 
-    this.doctorLocationInsert = new SimpleJdbcInsert(ds).withTableName("medic_location_for_medic");
+    this.doctorLocationInsert = new SimpleJdbcInsert(ds).withTableName("location_for_doctor");
 
     this.doctorHealthInsuranceInsert =
-        new SimpleJdbcInsert(ds).withTableName("health_insurance_accepted_by_medic");
+        new SimpleJdbcInsert(ds).withTableName("health_insurance_accepted_by_doctor");
   }
 
+  // ======================== Inserts =========================================
+
   @Override
-  public void addHealthInsurance(long doctorId, long healthInsuranceId) {
+  public void addHealthInsurance(long doctorId, int healthInsuranceCode) {
 
     Map<String, Object> data = new HashMap<>();
 
-    data.put("medic_id", doctorId);
-    data.put("health_insurance_id", healthInsuranceId);
+    data.put("doctor_id", doctorId);
+    data.put("health_insurance_code", healthInsuranceCode);
 
     doctorHealthInsuranceInsert.execute(data);
   }
@@ -100,69 +76,93 @@ public class DoctorDaoImpl implements DoctorDao {
 
     Map<String, Object> data = new HashMap<>();
 
-    data.put("medic_id", doctorId);
-    data.put("medic_location_id", locationId);
+    data.put("doctor_id", doctorId);
+    data.put("doctor_location_id", locationId);
 
     doctorLocationInsert.execute(data);
   }
 
   @Override
-  public long createDoctor(long userId, long specialtyId) {
+  public long createDoctor(long userId, int specialtyCode) {
 
     Map<String, Object> data = new HashMap<>();
 
-    data.put("user_id", userId);
-    data.put("medical_specialty_id", specialtyId);
+    data.put("doctor_id", userId);
+    data.put("specialty_code", specialtyCode);
 
-    final Number key = doctorInsert.executeAndReturnKey(data);
+    doctorInsert.execute(data);
 
-    return key.longValue();
+    return userId;
   }
+
+  // ============================ Queries =============================================
 
   @Override
   public Optional<Doctor> getDoctorById(long id) {
-    return jdbcTemplate.query(GET_DOCTOR_BY_ID, DOCTOR_MAPPER, id).stream().findFirst();
+
+    String query = doctorQuery().where("medic.medic_id = " + id).build();
+
+    return jdbcTemplate.query(query, DOCTOR_MAPPER).stream().findFirst();
   }
 
   @Override
   public List<Doctor> getFilteredDoctors(
-      String name, String specialty, String city, String healthInsurance) {
-
-    // If no filters are applied, return all doctors
-    if (name == null && specialty == null && city == null && healthInsurance == null) {
-      return getDoctors();
-    }
+      String name, int specialtyCode, int cityCode, int healthInsuranceCode) {
 
     // Start building the query
-    String sql = GET_DOCTORS + " WHERE";
-    List<Object> params = new ArrayList<>();
+    QueryBuilder query = doctorQuery();
 
     // Add the filters to the query, if it is the first filter, don't add AND
     if (name != null) {
-      sql += (params.isEmpty() ? " " : " AND ") + MATCHES_PART_NAME;
-      params.add(name);
+      query.where("CONCAT(first_name, ' ', last_name) ILIKE CONCAT(" + name + ", '%')");
     }
 
-    if (specialty != null) {
-      sql += (params.isEmpty() ? " " : " AND ") + MATCHES_SPECIALTY;
-      params.add(specialty);
+    if (specialtyCode >= 0) {
+      query.where("specialty_code = " + specialtyCode);
     }
 
-    if (city != null) {
-      sql += (params.isEmpty() ? " " : " AND ") + MATCHES_CITY;
-      params.add(city);
+    if (cityCode >= 0) {
+      query.where("city_code = " + cityCode);
     }
 
-    if (healthInsurance != null) {
-      sql += (params.isEmpty() ? " " : " AND ") + MATCHES_HEALTH_INSURANCE;
-      params.add(healthInsurance);
+    if (healthInsuranceCode >= 0) {
+      query.where("health_insurance_code = " + healthInsuranceCode);
     }
 
-    return jdbcTemplate.query(sql, DOCTOR_MAPPER, params.toArray());
+    return jdbcTemplate.query(query.build(), DOCTOR_MAPPER);
   }
 
   @Override
   public List<Doctor> getDoctors() {
-    return jdbcTemplate.query(GET_DOCTORS, DOCTOR_MAPPER);
+    return jdbcTemplate.query(doctorQuery().build(), DOCTOR_MAPPER);
+  }
+
+  // ================================= Private ======================================
+
+  // Joins medic, users, medical_specialty, medic_location_for_medic, medic_location,
+  // health_insurance_accepted_by_medic, health_insurance
+  private QueryBuilder doctorQuery() {
+    return new QueryBuilder()
+        .select(
+            "doctor.doctor_id",
+            "specialty_code",
+            "email",
+            "password",
+            "first_name",
+            "last_name",
+            "profile_picture_id",
+            "health_insurance_code",
+            "doctor_location.doctor_location_id",
+            "city_code",
+            "address")
+        .from("doctor")
+        .innerJoin("users", "doctor_id = user_id")
+        .innerJoin("location_for_doctor", "doctor.doctor_id = location_for_doctor.doctor_id")
+        .innerJoin(
+            "doctor_location",
+            "location_for_doctor.doctor_location_id = doctor_location.doctor_location_id")
+        .innerJoin(
+            "health_insurance_accepted_by_doctor",
+            "doctor.doctor_id = health_insurance_accepted_by_doctor.doctor_id");
   }
 }

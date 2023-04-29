@@ -11,14 +11,14 @@ public interface DoctorService {
       String password,
       String firstName,
       String lastName,
-      String healthInsurance,
-      String specialty,
-      String city,
+      int healthInsuranceCode,
+      int specialtyCode,
+      int cityCode,
       String address);
 
   public Optional<Doctor> getDoctorById(long id);
 
-  public List<Doctor> getFilteredDoctors(String name, String specialty, String city, String healthInsurance);
+  public List<Doctor> getFilteredDoctors(String name, int specialtyCode, int cityCode, int healthInsuranceCode);
   
   public List<Doctor> getDoctors();
 }
