@@ -1,9 +1,9 @@
-CREATE TABLE profile_picture (
+CREATE TABLE IF NOT EXISTS profile_picture (
     profile_picture_id SERIAL PRIMARY KEY,
     profile_picture    BYTEA NOT NULL
 );
 
-CREATE TABLE users (
+CREATE TABLE IF NOT EXISTS users (
     user_id            SERIAL PRIMARY KEY,
     email              VARCHAR(100) NOT NULL UNIQUE,
     password           VARCHAR(100) NOT NULL,
@@ -13,31 +13,31 @@ CREATE TABLE users (
     FOREIGN KEY (profile_picture_id) REFERENCES profile_picture (profile_picture_id)
 );
 
-CREATE TABLE patient (
+CREATE TABLE IF NOT EXISTS patient (
     patient_id INTEGER PRIMARY KEY,
     FOREIGN KEY (patient_id) REFERENCES users (user_id)
 );
 
-CREATE TABLE health_insurance_for_patient (
+CREATE TABLE IF NOT EXISTS health_insurance_for_patient (
     patient_id            INTEGER NOT NULL,
     health_insurance_code INTEGER NOT NULL,
     PRIMARY KEY (patient_id, health_insurance_code),
     FOREIGN KEY (patient_id) REFERENCES patient (patient_id)
 );
 
-CREATE TABLE doctor_location (
+CREATE TABLE IF NOT EXISTS doctor_location (
     doctor_location_id SERIAL PRIMARY KEY ,
     address            VARCHAR(100) NOT NULL,
     city_code          INTEGER NOT NULL
 );
 
-CREATE TABLE doctor (
+CREATE TABLE IF NOT EXISTS doctor (
     doctor_id       INTEGER PRIMARY KEY,
     specialty_code  INTEGER NOT NULL,
     FOREIGN KEY (doctor_id) REFERENCES users (user_id)
 );
 
-CREATE TABLE location_for_doctor
+CREATE TABLE IF NOT EXISTS location_for_doctor
 (
     doctor_location_id INTEGER PRIMARY KEY,
     doctor_id          INTEGER NOT NULL,
@@ -45,14 +45,14 @@ CREATE TABLE location_for_doctor
     FOREIGN KEY (doctor_id) REFERENCES doctor (doctor_id)
 );
 
-CREATE TABLE health_insurance_accepted_by_doctor (
+CREATE TABLE IF NOT EXISTS health_insurance_accepted_by_doctor (
     doctor_id             INTEGER NOT NULL,
     health_insurance_code INTEGER NOT NULL,
     PRIMARY KEY (doctor_id, health_insurance_code),
     FOREIGN KEY (doctor_id) REFERENCES doctor (doctor_id)
 );
 
-CREATE TABLE appointment (
+CREATE TABLE IF NOT EXISTS appointment (
     appointment_id   SERIAL PRIMARY KEY ,
     doctor_id        INTEGER NOT NULL,
     patient_id       INTEGER NOT NULL,
