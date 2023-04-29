@@ -70,7 +70,7 @@ CREATE TABLE IF NOT EXISTS appointment (
     doctor_id        INTEGER NOT NULL,
     patient_id       INTEGER NOT NULL,
     appointment_date DATE NOT NULL,
-    appointment_time TIME NOT NULL,
+    appointment_time BIGINT NOT NULL,
     status_code      INTEGER NOT NULL,
     FOREIGN KEY (doctor_id)     REFERENCES doctor (doctor_id),
     FOREIGN KEY (patient_id)    REFERENCES patient (patient_id)
@@ -81,6 +81,7 @@ DROP TABLE IF EXISTS appointment;
 DROP TABLE IF EXISTS health_insurance_accepted_by_doctor;
 DROP TABLE IF EXISTS location_for_doctor;
 DROP TABLE IF EXISTS doctor;
+DROP TABLE IF EXISTS doctor_attending_hours;
 DROP TABLE IF EXISTS doctor_location;
 DROP TABLE IF EXISTS health_insurance_for_patient;
 DROP TABLE IF EXISTS patient;
