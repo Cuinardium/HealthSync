@@ -67,7 +67,14 @@
         <div class="form-row container">
             <div class="form-item">
                 <form:label path="cityCode">${city}</form:label>
-                <form:input path="cityCode" type="number" placeholder="${city_hint}"/>
+                <form:select path="cityCode">
+                <form:option value="-1"> -- </form:option>
+                <c:forEach items="${cities}" var="city" varStatus="status">
+                    <form:option value="${status.index}">
+                        <spring:message code="${city.messageID}"/>
+                    </form:option>
+                </c:forEach>
+                </form:select>
                 <form:errors path="cityCode" cssClass="error" element="p"/>
             </div>
             <div class="form-item">
@@ -80,7 +87,14 @@
         <!-- dropdown menu -->
         <div class="form-item">
             <form:label path="specialtyCode">${specialization}</form:label>
-            <form:input path="specialtyCode" type="number" placeholder="${specialization_hint}"/>
+            <form:select path="specialtyCode">
+                <form:option value="-1"> -- </form:option>
+                <c:forEach items="${specialties}" var="specialty" varStatus="status">
+                    <form:option value="${status.index}">
+                        <spring:message code="${specialty.messageID}"/>
+                    </form:option>
+                </c:forEach>
+            </form:select>
             <form:errors path="specialtyCode" cssClass="error" element="p"/>
         </div>
 
@@ -88,7 +102,14 @@
         <!-- TODO: buscar otro nombre para obra social -->
         <div class="form-item">
             <form:label path="healthInsuranceCode">${healthcare}</form:label>
-            <form:input path="healthInsuranceCode" type="number" placeholder="${healthcare_hint}"/>
+            <form:select path="healthInsuranceCode">
+                <form:option value="-1"> -- </form:option>
+                <c:forEach items="${healthInsurances}" var="healthInsurance" varStatus="status">
+                    <form:option value="${status.index}">
+                        <spring:message code="${healthInsurance.messageID}"/>
+                    </form:option>
+                </c:forEach>
+            </form:select>
             <form:errors path="healthInsuranceCode" cssClass="error" element="p"/>
         </div>
         </div>
