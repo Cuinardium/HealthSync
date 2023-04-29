@@ -68,7 +68,7 @@
             <div class="form-item">
                 <form:label path="cityCode">${city}</form:label>
                 <form:select path="cityCode">
-                <form:option value="-1"> -- </form:option>
+                <form:option value="-1" disabled="true" hidden="true"> -- </form:option>
                 <c:forEach items="${cities}" var="city" varStatus="status">
                     <form:option value="${status.index}">
                         <spring:message code="${city.messageID}"/>
@@ -88,7 +88,7 @@
         <div class="form-item">
             <form:label path="specialtyCode">${specialization}</form:label>
             <form:select path="specialtyCode">
-                <form:option value="-1"> -- </form:option>
+                <form:option value="-1" disabled="true" hidden="true"> -- </form:option>
                 <c:forEach items="${specialties}" var="specialty" varStatus="status">
                     <form:option value="${status.index}">
                         <spring:message code="${specialty.messageID}"/>
@@ -103,7 +103,7 @@
         <div class="form-item">
             <form:label path="healthInsuranceCode">${healthcare}</form:label>
             <form:select path="healthInsuranceCode">
-                <form:option value="-1"> -- </form:option>
+                <form:option value="-1" disabled="true" hidden="true"> -- </form:option>
                 <c:forEach items="${healthInsurances}" var="healthInsurance" varStatus="status">
                     <form:option value="${status.index}">
                         <spring:message code="${healthInsurance.messageID}"/>
