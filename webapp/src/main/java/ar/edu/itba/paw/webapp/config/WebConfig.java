@@ -18,6 +18,8 @@ import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 import org.springframework.jdbc.datasource.init.DataSourceInitializer;
 import org.springframework.jdbc.datasource.init.DatabasePopulator;
 import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
+import org.springframework.web.multipart.MultipartResolver;
+import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 import org.springframework.web.servlet.ViewResolver;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
@@ -105,5 +107,12 @@ public class WebConfig extends WebMvcConfigurerAdapter {
     ms.setDefaultEncoding(StandardCharsets.UTF_8.name());
 
     return ms;
+  }
+
+  @Bean
+  public MultipartResolver multipartResolver() {
+    CommonsMultipartResolver resolver = new CommonsMultipartResolver();
+    resolver.setMaxUploadSize(1024 * 1024 * 10);
+    return resolver;
   }
 }

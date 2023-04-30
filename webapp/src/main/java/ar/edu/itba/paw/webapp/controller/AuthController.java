@@ -2,10 +2,14 @@ package ar.edu.itba.paw.webapp.controller;
 
 import ar.edu.itba.paw.interfaces.services.DoctorService;
 import ar.edu.itba.paw.interfaces.services.UserService;
+import ar.edu.itba.paw.models.City;
+import ar.edu.itba.paw.models.HealthInsurance;
+import ar.edu.itba.paw.models.Specialty;
 import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.webapp.form.LoginForm;
 import ar.edu.itba.paw.webapp.form.MedicRegisterForm;
 import ar.edu.itba.paw.webapp.form.RegisterForm;
+import java.util.Arrays;
 import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -98,21 +102,16 @@ public class AuthController {
       return registerMedicForm(medicRegisterForm);
     }
     final User user;
-    try {
-      user =
-          doctorService.createDoctor(
-              medicRegisterForm.getEmail(),
-              medicRegisterForm.getPassword(),
-              medicRegisterForm.getName(),
-              medicRegisterForm.getLastname(),
-              medicRegisterForm.getHealthcare(),
-              medicRegisterForm.getSpecialization(),
-              medicRegisterForm.getCity(),
-              medicRegisterForm.getAddress());
-    } catch (RuntimeException e) {
-      // TODO: coorect exception handling and show error msg for repeated medic email
-      return registerMedicForm(medicRegisterForm);
-    }
+    user =
+        doctorService.createDoctor(
+            medicRegisterForm.getEmail(),
+            medicRegisterForm.getPassword(),
+            medicRegisterForm.getName(),
+            medicRegisterForm.getLastname(),
+            medicRegisterForm.getHealthInsuranceCode(),
+            medicRegisterForm.getSpecialtyCode(),
+            medicRegisterForm.getCityCode(),
+            medicRegisterForm.getAddress());
 
     final ModelAndView mav = new ModelAndView("auth/registerSuccesful");
     mav.addObject("user", user);
@@ -124,6 +123,9 @@ public class AuthController {
       @ModelAttribute("medicRegisterForm") final MedicRegisterForm medicRegisterForm) {
     final ModelAndView mav = new ModelAndView("auth/register_medic");
     mav.addObject("form", medicRegisterForm);
+    mav.addObject("cities", Arrays.asList(City.values()));
+    mav.addObject("specialties", Arrays.asList(Specialty.values()));
+    mav.addObject("healthInsurances", Arrays.asList(HealthInsurance.values()));
     return mav;
   }
 }

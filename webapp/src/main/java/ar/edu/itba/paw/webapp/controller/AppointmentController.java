@@ -4,6 +4,7 @@ import java.util.Locale;
 
 import javax.validation.Valid;
 
+import ar.edu.itba.paw.models.Doctor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -44,14 +45,20 @@ public class AppointmentController {
       @PathVariable("id") final int medicId,
       @ModelAttribute("appointmentForm") final AppointmentForm appointmentForm) {
 
-    String email =
-        doctorService.getDoctorById(medicId).orElseThrow(UserNotFoundException::new).getEmail();
+    Doctor doctor =
+        doctorService.getDoctorById(medicId).orElseThrow(UserNotFoundException::new);
+
+    String email= doctor.getEmail();
+    String address= doctor.getLocation().getAddress();
+    String city= doctor.getLocation().getCity().getMessageID();
 
     final ModelAndView mav = new ModelAndView("appointment/appointment");
 
     mav.addObject("form", appointmentForm);
     mav.addObject("medicId", medicId);
     mav.addObject("email", email);
+    mav.addObject("address", address);
+    mav.addObject("city", city);
 
     return mav;
   }
@@ -86,7 +93,15 @@ public class AppointmentController {
         appointmentForm.getDate(),
         appointmentForm.getDescription(),
         locale);
-
+    mailService.sendAppointmentReminderMail(appointmentForm.getEmail(),
+            appointmentForm.getDocEmail(),
+            appointmentForm.getAddress(),
+            appointmentForm.getCity(),
+            appointmentForm.getName() + " " + appointmentForm.getLastname(),
+            appointmentForm.getHealthcare(),
+            appointmentForm.getDate(),
+            appointmentForm.getDescription(),
+            locale);
     return appointmentSent();
   }
 

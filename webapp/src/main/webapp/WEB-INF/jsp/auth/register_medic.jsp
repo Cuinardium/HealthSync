@@ -46,8 +46,7 @@
 </head>
 
 <body>
-<!-- Navbar -->
-<jsp:include page="../components/navBar.jsp"/>
+<jsp:include page="../components/header.jsp"/>
 
 <!-- Content -->
 <div class="page-content p-5" id="content">
@@ -67,9 +66,16 @@
         </div>
         <div class="form-row container">
             <div class="form-item">
-                <form:label path="city">${city}</form:label>
-                <form:input path="city" type="text" placeholder="${city_hint}"/>
-                <form:errors path="city" cssClass="error" element="p"/>
+                <form:label path="cityCode">${city}</form:label>
+                <form:select path="cityCode">
+                <form:option value="-1" disabled="true" hidden="true"> -- </form:option>
+                <c:forEach items="${cities}" var="city" varStatus="status">
+                    <form:option value="${status.index}">
+                        <spring:message code="${city.messageID}"/>
+                    </form:option>
+                </c:forEach>
+                </form:select>
+                <form:errors path="cityCode" cssClass="error" element="p"/>
             </div>
             <div class="form-item">
                 <form:label path="address">${address}</form:label>
@@ -80,17 +86,31 @@
         <div class="form-row container">
         <!-- dropdown menu -->
         <div class="form-item">
-            <form:label path="specialization">${specialization}</form:label>
-            <form:input path="specialization" type="text" placeholder="${specialization_hint}"/>
-            <form:errors path="specialization" cssClass="error" element="p"/>
+            <form:label path="specialtyCode">${specialization}</form:label>
+            <form:select path="specialtyCode">
+                <form:option value="-1" disabled="true" hidden="true"> -- </form:option>
+                <c:forEach items="${specialties}" var="specialty" varStatus="status">
+                    <form:option value="${status.index}">
+                        <spring:message code="${specialty.messageID}"/>
+                    </form:option>
+                </c:forEach>
+            </form:select>
+            <form:errors path="specialtyCode" cssClass="error" element="p"/>
         </div>
 
         <!-- multiple option buttons -->
         <!-- TODO: buscar otro nombre para obra social -->
         <div class="form-item">
-            <form:label path="healthcare">${healthcare}</form:label>
-            <form:input path="healthcare" type="text" placeholder="${healthcare_hint}"/>
-            <form:errors path="healthcare" cssClass="error" element="p"/>
+            <form:label path="healthInsuranceCode">${healthcare}</form:label>
+            <form:select path="healthInsuranceCode">
+                <form:option value="-1" disabled="true" hidden="true"> -- </form:option>
+                <c:forEach items="${healthInsurances}" var="healthInsurance" varStatus="status">
+                    <form:option value="${status.index}">
+                        <spring:message code="${healthInsurance.messageID}"/>
+                    </form:option>
+                </c:forEach>
+            </form:select>
+            <form:errors path="healthInsuranceCode" cssClass="error" element="p"/>
         </div>
         </div>
         <div class="form-item">
@@ -107,6 +127,7 @@
             <form:label path="confirmPassword">${cpassword}</form:label>
             <form:input path="confirmPassword" type="password" placeholder="${cpassword_hint}"/>
             <form:errors path="confirmPassword" cssClass="error" element="p"/>
+            <form:errors/>
         </div>
         <button type="submit" class="btn btn-primary">${submit}</button>
     </form:form>

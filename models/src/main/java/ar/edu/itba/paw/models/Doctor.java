@@ -2,10 +2,9 @@ package ar.edu.itba.paw.models;
 
 public class Doctor extends User {
 
-  private final String healthInsurance;
-  private final String specialty;
-  private final String city;
-  private final String address;
+  private final HealthInsurance healthInsurance;
+  private final Specialty specialty;
+  private final Location location;
 
   public Doctor(
       long id,
@@ -14,31 +13,25 @@ public class Doctor extends User {
       String firstName,
       String lastName,
       long pfpId,
-      String healthInsurance,
-      String specialty,
-      String city,
-      String address) {
-    super(id, email, password, firstName, lastName, true, pfpId);
+      HealthInsurance healthInsurance,
+      Specialty specialty,
+      Location location) {
+    super(id, email, password, firstName, lastName, pfpId);
     this.healthInsurance = healthInsurance;
     this.specialty = specialty;
-    this.city = city;
-    this.address = address;
+    this.location = location;
   }
 
   // Getters
-  public String getHealthInsurance() {
+  public HealthInsurance getHealthInsurance() {
     return healthInsurance;
   }
 
-  public String getSpecialty() {
+  public Specialty getSpecialty() {
     return specialty;
   }
 
-  public String getCity() {
-    return city;
-  }
-
-  public String getAddress() {
-    return address;
+  public Location getLocation() {
+    return location;
   }
 }

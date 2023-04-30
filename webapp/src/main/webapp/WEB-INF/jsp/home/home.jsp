@@ -11,14 +11,21 @@
 
 <c:url value="/" var="homeUrl"/>
 
-<c:url value="/img/homeDoctor.png" var="homeDoctorImg"/>
+<c:url value="/img/homeDoctor.svg" var="homeDoctorImg"/>
+<c:url value="/img/circle1.svg" var="circle1"/>
+<c:url value="/img/circle2.svg" var="circle2"/>
+<c:url value="/img/circle3.svg" var="circle3"/>
+
 
 <spring:message code="home.home" var="title"/>
 <spring:message code="home.welcome1" var="welcome1"/>
 <spring:message code="home.welcome2" var="welcome2"/>
-<spring:message code="home.aboutUsTitle" var="aboutUsTitle"/>
-<spring:message code="home.aboutUsText1" var="aboutUsText1"/>
-<spring:message code="home.aboutUsText2" var="aboutUsText2"/>
+<spring:message code="home.circle1" var="circleText1"/>
+<spring:message code="home.circle2" var="circleText2"/>
+<spring:message code="home.circle3" var="circleText3"/>
+<spring:message code="home.description1" var="description1"/>
+<spring:message code="home.description2" var="description2"/>
+<spring:message code="home.description3" var="description3"/>
 
 <html>
 <head>
@@ -33,7 +40,7 @@
 <jsp:include page="../components/header.jsp"/>
 <!-- Content -->
 <div class="container px-5 pb-5">
-    <div class="row gx-5">
+    <div class="row welcome gx-5">
         <div class="col-xxl-5">
             <div class="text text-xxl-start">
                 <div class="fs-3 fw-light text-muted">${welcome1}</div>
@@ -51,13 +58,23 @@
     </div>
 </div>
 
-<section class="about">
-    <div class="container">
-        <div class="row gx-5">
-            <div class="col-xxl-8 text">
-                <h2 class="display-5 fw-bolder"><span class="text-gradient">${aboutUsTitle}</span></h2>
-                <p class="lead fw-light mb-4">${aboutUsText1}</p>
-                <p class="text-muted">${aboutUsText2}</p>
+<section class="about bg-light py-10">
+    <div class="container px-5">
+        <div class="row gx-5 text-center">
+            <div class="col-lg-4 mb-5 mb-lg-0">
+                <img class="circles" src="${circle1}" alt="..."/>
+                <h3>${circleText1}</h3>
+                <p class="mb-0">${description1}</p>
+            </div>
+            <div class="col-lg-4 mb-5 mb-lg-0">
+                <img class="circles" src="${circle2}" alt="..."/>
+                <h3>${circleText2}</h3>
+                <p class="mb-0">${description2}</p>
+            </div>
+            <div class="col-lg-4">
+                <img class="circles" src="${circle3}" alt="..."/>
+                <h3>${circleText3}</h3>
+                <p class="mb-0">${description3}</p>
             </div>
         </div>
     </div>
@@ -70,7 +87,6 @@
             <div class="health">Health</div>
             <div class="sync">Sync</div>
         </a>
-
         <div>
             <span class="text-body-secondary">&copy; 2023 HealthSync, Inc</span>
         </div>

@@ -24,7 +24,6 @@ public class UserDaoImplTest {
   private static final String FIRST_NAME = "firstname";
   private static final String LAST_NAME = "lastname";
   private static final long PFP_ID = 1;
-  private static final boolean IS_DOCTOR = false;
 
   @Autowired private DataSource ds;
 
@@ -52,8 +51,8 @@ public class UserDaoImplTest {
    
 
     jdbcTemplate.execute(
-        "INSERT INTO users (user_id, email, password, first_name, last_name, profile_picture_id,"
-            + " is_doctor) VALUES ("
+        "INSERT INTO users (user_id, email, password, first_name, last_name, profile_picture_id)"
+            + " VALUES ("
             + ID
             + ", '"
             + EMAIL
@@ -65,8 +64,6 @@ public class UserDaoImplTest {
             + LAST_NAME
             + "', '"
             + PFP_ID
-            + "', '"
-            + IS_DOCTOR
             + "');");
 
     // 2. Ejercitar la class under test
@@ -79,7 +76,6 @@ public class UserDaoImplTest {
     Assert.assertEquals(FIRST_NAME, maybeUser.get().getFirstName());
     Assert.assertEquals(LAST_NAME, maybeUser.get().getLastName());
     Assert.assertEquals(PFP_ID, maybeUser.get().getProfilePictureId());
-    Assert.assertEquals(IS_DOCTOR, maybeUser.get().isDoctor());
   }
 
   @Test
@@ -98,7 +94,7 @@ public class UserDaoImplTest {
     // 1. Precondiciones
 
     // 2. Ejercitar la class under test
-    User user = userDao.createUser(EMAIL, PASSWORD, FIRST_NAME, LAST_NAME, IS_DOCTOR);
+    User user = userDao.createUser(EMAIL, PASSWORD, FIRST_NAME, LAST_NAME);
 
     // 3. Meaningful assertions
     Assert.assertNotNull(user);
@@ -106,7 +102,6 @@ public class UserDaoImplTest {
     Assert.assertEquals(PASSWORD, user.getPassword());
     Assert.assertEquals(FIRST_NAME, user.getFirstName());
     Assert.assertEquals(LAST_NAME, user.getLastName());
-    Assert.assertEquals(IS_DOCTOR, user.isDoctor());
 
     Assert.assertEquals(1, JdbcTestUtils.countRowsInTable(jdbcTemplate, "users"));
   }

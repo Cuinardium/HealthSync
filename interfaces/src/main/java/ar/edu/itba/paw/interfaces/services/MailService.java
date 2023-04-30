@@ -13,4 +13,17 @@ public interface MailService {
       String date,
       String description,
       Locale locale);
+
+  void sendAppointmentReminderMail(
+          String clientEmail,
+          String doctorEmail,
+          String address,
+          String city,
+          String clientName,
+          String healthCare,
+          String date,
+          String description,
+          Locale locale
+  );
 }
+

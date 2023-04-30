@@ -1,11 +1,12 @@
 package ar.edu.itba.paw.models;
 
 public class Location {
-  private long id;
-  private String city;
-  private String address;
 
-  public Location(long id, String city, String address) {
+  private final long id;
+  private final City city;
+  private final String address;
+
+  public Location(long id, City city, String address) {
     this.id = id;
     this.city = city;
     this.address = address;
@@ -15,7 +16,7 @@ public class Location {
     return id;
   }
 
-  public String getCity() {
+  public City getCity() {
     return city;
   }
 
