@@ -4,13 +4,13 @@ import ar.edu.itba.paw.interfaces.persistence.DoctorDao;
 import ar.edu.itba.paw.interfaces.services.DoctorService;
 import ar.edu.itba.paw.interfaces.services.LocationService;
 import ar.edu.itba.paw.interfaces.services.UserService;
+import ar.edu.itba.paw.models.AttendingHours;
 import ar.edu.itba.paw.models.City;
 import ar.edu.itba.paw.models.Doctor;
 import ar.edu.itba.paw.models.HealthInsurance;
 import ar.edu.itba.paw.models.Location;
 import ar.edu.itba.paw.models.Specialty;
 import ar.edu.itba.paw.models.User;
-
 import java.util.List;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,9 +26,7 @@ public class DoctorServiceImpl implements DoctorService {
 
   @Autowired
   public DoctorServiceImpl(
-      DoctorDao doctorDao,
-      UserService userService,
-      LocationService locationService) {
+      DoctorDao doctorDao, UserService userService, LocationService locationService) {
 
     this.doctorDao = doctorDao;
 
@@ -45,7 +43,8 @@ public class DoctorServiceImpl implements DoctorService {
       int healthInsuranceCode,
       int specialtyCode,
       int cityCode,
-      String address) {
+      String address,
+      AttendingHours attendingHours) {
 
     // Create user
     User user = userService.createUser(email, password, firstName, lastName);
@@ -56,7 +55,7 @@ public class DoctorServiceImpl implements DoctorService {
     long locationId = locationService.createLocation(cityCode, address);
 
     // Create doctor
-    long doctorId = doctorDao.createDoctor(userId, specialtyCode);
+    long doctorId = doctorDao.createDoctor(userId, specialtyCode, attendingHours);
 
     // Add location to doctor
     doctorDao.addLocation(doctorId, locationId);
@@ -69,7 +68,6 @@ public class DoctorServiceImpl implements DoctorService {
     Specialty specialty = Specialty.values()[specialtyCode];
     Location location = new Location(locationId, City.values()[cityCode], address);
 
-
     return new Doctor(
         doctorId,
         email,
@@ -79,7 +77,13 @@ public class DoctorServiceImpl implements DoctorService {
         pfpId,
         healthInsurance,
         specialty,
-        location);
+        location,
+        attendingHours);
+  }
+
+  @Override
+  public void updateAttendingHours(long doctorId, AttendingHours attendingHours) {
+    doctorDao.updateAttendingHours(doctorId, attendingHours);
   }
 
   @Override
@@ -87,10 +91,9 @@ public class DoctorServiceImpl implements DoctorService {
     return doctorDao.getDoctorById(id);
   }
 
-
-
   @Override
-  public List<Doctor> getFilteredDoctors(String name, int specialtyCode, int cityCode, int healthInsuranceCode) {
+  public List<Doctor> getFilteredDoctors(
+      String name, int specialtyCode, int cityCode, int healthInsuranceCode) {
     return doctorDao.getFilteredDoctors(name, specialtyCode, cityCode, healthInsuranceCode);
   }
 

@@ -2,7 +2,6 @@ package ar.edu.itba.paw.webapp.controller;
 
 import ar.edu.itba.paw.interfaces.services.DoctorService;
 import ar.edu.itba.paw.interfaces.services.PatientService;
-import ar.edu.itba.paw.interfaces.services.UserService;
 import ar.edu.itba.paw.models.*;
 import ar.edu.itba.paw.webapp.form.LoginForm;
 import ar.edu.itba.paw.webapp.form.MedicRegisterForm;
@@ -20,16 +19,14 @@ import org.springframework.web.servlet.ModelAndView;
 @Controller
 public class AuthController {
 
-  private final UserService userService;
   private final DoctorService doctorService;
 
   private final PatientService patientService;
 
   @Autowired
-  public AuthController(final UserService userService, final DoctorService doctorService, final PatientService patientService) {
-    this.userService = userService;
+  public AuthController(final DoctorService doctorService, final PatientService patientService) {
     this.doctorService = doctorService;
-    this.patientService= patientService;
+    this.patientService = patientService;
   }
 
   @RequestMapping(value = "/login", method = RequestMethod.POST)
@@ -76,7 +73,13 @@ public class AuthController {
       return registerForm(registerForm);
     }
 
-    final User user = patientService.createPatient(registerForm.getEmail(), registerForm.getPassword(), registerForm.getName(), registerForm.getLastname(), registerForm.getHealthInsuranceCode());
+    final User user =
+        patientService.createPatient(
+            registerForm.getEmail(),
+            registerForm.getPassword(),
+            registerForm.getName(),
+            registerForm.getLastname(),
+            registerForm.getHealthInsuranceCode());
     final ModelAndView mav = new ModelAndView("auth/registerSuccesful");
     mav.addObject("user", user);
     return mav;
@@ -111,7 +114,8 @@ public class AuthController {
             medicRegisterForm.getHealthInsuranceCode(),
             medicRegisterForm.getSpecialtyCode(),
             medicRegisterForm.getCityCode(),
-            medicRegisterForm.getAddress());
+            medicRegisterForm.getAddress(),
+            AttendingHours.DEFAULT_ATTENDING_HOURS);
 
     final ModelAndView mav = new ModelAndView("auth/registerSuccesful");
     mav.addObject("user", user);
