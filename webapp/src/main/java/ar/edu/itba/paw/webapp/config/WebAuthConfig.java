@@ -1,5 +1,9 @@
 package ar.edu.itba.paw.webapp.config;
 
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.concurrent.TimeUnit;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -19,8 +23,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @Configuration
 public class WebAuthConfig extends WebSecurityConfigurerAdapter {
 
-  @Autowired 
-  private UserDetailsService userDetailsService;
+  private static final String KEY_FILE = "src/main/resources/openssl-key";
+
+  @Autowired private UserDetailsService userDetailsService;
 
   @Bean
   public PasswordEncoder passwordEncoder() {
@@ -40,8 +45,9 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
         .authorizeRequests()
         .antMatchers("/", "/login", "/register")
         .anonymous()
-            .antMatchers("/doctorDashboard").hasRole("PATIENT")
-            //.antMatchers("").hasRole("DOCTOR") TODO SETEAR PAGINAS PARA SOLO DOCTORS
+        .antMatchers("/doctorDashboard")
+        .hasRole("PATIENT")
+        // .antMatchers("").hasRole("DOCTOR") TODO SETEAR PAGINAS PARA SOLO DOCTORS
         .antMatchers("/**")
         .authenticated()
         .and()
@@ -54,7 +60,7 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
         .rememberMe()
         .rememberMeParameter("rememberme")
         .userDetailsService(userDetailsService)
-        .key("NO HAGAS ESTO")
+        .key(getKey())
         .tokenValiditySeconds((int) TimeUnit.DAYS.toSeconds(30))
         .and()
         .logout()
@@ -66,6 +72,19 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
         .and()
         .csrf()
         .disable();
+  }
+
+  private String getKey() throws IOException {
+    byte[] bytes = Files.readAllBytes(Paths.get(KEY_FILE));
+    String key = new String(bytes, StandardCharsets.UTF_8);
+
+    System.out.println("");
+    System.out.println("");
+    System.out.println(key);
+    System.out.println("");
+    System.out.println("");
+
+    return key;
   }
 
   @Override
