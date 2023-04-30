@@ -10,7 +10,12 @@ import org.springframework.stereotype.Service;
 @Service
 public class ImageServiceImpl implements ImageService {
 
-  @Autowired ImageDao imageDao;
+  private ImageDao imageDao;
+
+  @Autowired
+  public ImageServiceImpl(ImageDao imageDao) {
+    this.imageDao = imageDao;
+  }
 
   @Override
   public Optional<Image> getImage(long id) {

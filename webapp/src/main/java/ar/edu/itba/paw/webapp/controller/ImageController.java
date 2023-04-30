@@ -15,7 +15,12 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @Controller
 public class ImageController {
 
-  @Autowired ImageService imageService;
+  private ImageService imageService;
+
+  @Autowired
+  public ImageController(ImageService imageService) {
+    this.imageService = imageService;
+  }
 
   @RequestMapping(
     value = "/image/{id:\\d+}",
