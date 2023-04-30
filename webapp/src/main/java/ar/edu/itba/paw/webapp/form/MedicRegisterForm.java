@@ -1,6 +1,10 @@
 package ar.edu.itba.paw.webapp.form;
 
+import ar.edu.itba.paw.models.City;
+import ar.edu.itba.paw.models.HealthInsurance;
+import ar.edu.itba.paw.models.Specialty;
 import ar.edu.itba.paw.webapp.annotations.ConfirmPassword;
+import ar.edu.itba.paw.webapp.annotations.ExistsInEnum;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
@@ -19,14 +23,17 @@ public class MedicRegisterForm {
   @Pattern(regexp = "[a-zA-Z0-9.+-]+@[a-zA-Z0-9.-]+(.com|.com.ar|.edu.ar)")
   private String email;
 
+  @ExistsInEnum(enumClass = HealthInsurance.class)
   private Integer healthInsuranceCode = -1;
 
+  @ExistsInEnum(enumClass = City.class)
   private Integer cityCode = -1;
 
   @Size(min = 1)
   @Pattern(regexp = "[a-zA-Z0-9. ]+")
   private String address;
 
+  @ExistsInEnum(enumClass = Specialty.class)
   private Integer specialtyCode = -1;
 
   @Size(min = 4)
