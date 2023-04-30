@@ -4,17 +4,28 @@
 <!-- Include -->
 <jsp:include page="/resources/externalResources.jsp"/>
 
-
 <!--Variables -->
 <c:url value="/css/main.css" var="mainCss"/>
 <c:url value="/css/home.css" var="homeCss"/>
 
+<c:url value="/js/categoriesCarousel.js" var="categoriesCarouselJs"/>
+
 <c:url value="/" var="homeUrl"/>
+<c:url value="/doctorDashboard?specialty=" var="doctorDashboardFilteredUrl"/>
 
 <c:url value="/img/homeDoctor.svg" var="homeDoctorImg"/>
+
 <c:url value="/img/circle1.svg" var="circle1"/>
 <c:url value="/img/circle2.svg" var="circle2"/>
 <c:url value="/img/circle3.svg" var="circle3"/>
+
+<c:url value="/img/cardiologist.jpeg" var="cardiologist"/>
+<c:url value="/img/dermatologist.jpg" var="dermatologist"/>
+<c:url value="/img/neurologist.jpg" var="neurologist"/>
+<c:url value="/img/nutritionist.jpg" var="nutritionist"/>
+<c:url value="/img/pediatrics.jpg" var="pediatrics"/>
+<c:url value="/img/urologist.jpg" var="urologist"/>
+<c:url value="/img/ophtalmologist.jpg" var="ophtalmologist"/>
 
 
 <spring:message code="home.home" var="title"/>
@@ -39,7 +50,7 @@
 <!-- Header -->
 <jsp:include page="../components/header.jsp"/>
 <!-- Content -->
-<div class="container px-5 pb-5">
+<div class="horizontalPadding">
     <div class="row welcome gx-5">
         <div class="col-xxl-5">
             <div class="text text-xxl-start">
@@ -58,39 +69,112 @@
     </div>
 </div>
 
-<section class="about bg-light py-10">
-    <div class="container px-5">
-        <div class="row gx-5 text-center">
-            <div class="col-lg-4 mb-5 mb-lg-0">
-                <img class="circles" src="${circle1}" alt="..."/>
-                <h3>${circleText1}</h3>
-                <p class="mb-0">${description1}</p>
+<div class="carouselContainer generalPadding">
+    <h1>Popular Categories</h1>
+    <div id="recipeCarousel" class="carousel slide">
+        <div class="carousel-inner" role="listbox">
+            <div class="carousel-item active">
+                <div class="card">
+                    <div class="card-img">
+                        <img src="${cardiologist}" class="img-fluid">
+                    </div>
+                    <div class="card-img-overlay">Cardiology</div>
+                    <a href="${doctorDashboardFilteredUrl}cardiolog" class="stretched-link"></a>
+                </div>
             </div>
-            <div class="col-lg-4 mb-5 mb-lg-0">
-                <img class="circles" src="${circle2}" alt="..."/>
-                <h3>${circleText2}</h3>
-                <p class="mb-0">${description2}</p>
+            <div class="carousel-item">
+                <div class="card">
+                    <div class="card-img">
+                        <img src="${dermatologist}" class="img-fluid">
+                    </div>
+                    <div class="card-img-overlay">Dermatology</div>
+                    <a href="${doctorDashboardFilteredUrl}dermatolog" class="stretched-link"></a>
+                </div>
             </div>
-            <div class="col-lg-4">
-                <img class="circles" src="${circle3}" alt="..."/>
-                <h3>${circleText3}</h3>
-                <p class="mb-0">${description3}</p>
+            <div class="carousel-item">
+                <div class="card">
+                    <div class="card-img">
+                        <img src="${neurologist}" class="img-fluid">
+                    </div>
+                    <div class="card-img-overlay">Neurology</div>
+                    <a href="${doctorDashboardFilteredUrl}neurolog" class="stretched-link"></a>
+                </div>
             </div>
+            <div class="carousel-item">
+                <div class="card">
+                    <div class="card-img">
+                        <img src="${nutritionist}" class="img-fluid">
+                    </div>
+                    <div class="card-img-overlay">Nutrition</div>
+                    <a href="${doctorDashboardFilteredUrl}nutrition" class="stretched-link"></a>
+                </div>
+            </div>
+            <div class="carousel-item">
+                <div class="card">
+                    <div class="card-img">
+                        <img src="${ophtalmologist}" class="img-fluid">
+                    </div>
+                    <div class="card-img-overlay">Ophthalmology</div>
+                    <a href="${doctorDashboardFilteredUrl}ophthalmology" class="stretched-link"></a>
+                </div>
+            </div>
+            <div class="carousel-item">
+                <div class="card">
+                    <div class="card-img">
+                        <img src="${pediatrics}" class="img-fluid">
+                    </div>
+                    <div class="card-img-overlay">Pediatrics</div>
+                    <a href="${doctorDashboardFilteredUrl}pediatric" class="stretched-link"></a>
+                </div>
+            </div>
+            <div class="carousel-item">
+                <div class="card">
+                    <div class="card-img">
+                        <img src="${urologist}" class="img-fluid">
+                    </div>
+                    <div class="card-img-overlay">Urology</div>
+                    <a href="${doctorDashboardFilteredUrl}urolog" class="stretched-link"></a>
+                </div>
+            </div>
+        </div>
+        <a class="carousel-control-prev bg-transparent w-aut" href="#recipeCarousel" role="button" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+        </a>
+        <a class="carousel-control-next bg-transparent w-aut" href="#recipeCarousel" role="button" data-bs-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+        </a>
+    </div>
+</div>
+
+<section class="about bg-light generalPadding">
+    <div class="row gx-5 text-center">
+        <div class="col-lg-4 mb-5 mb-lg-0">
+            <img class="circles" src="${circle1}" alt="..."/>
+            <h3>${circleText1}</h3>
+            <p class="mb-0">${description1}</p>
+        </div>
+        <div class="col-lg-4 mb-5 mb-lg-0">
+            <img class="circles" src="${circle2}" alt="..."/>
+            <h3>${circleText2}</h3>
+            <p class="mb-0">${description2}</p>
+        </div>
+        <div class="col-lg-4">
+            <img class="circles" src="${circle3}" alt="..."/>
+            <h3>${circleText3}</h3>
+            <p class="mb-0">${description3}</p>
         </div>
     </div>
 </section>
 
-
-<footer class="border-top">
-    <div class="container foot">
-        <a class="title navbar-brand" href="${homeUrl}">
-            <div class="health">Health</div>
-            <div class="sync">Sync</div>
-        </a>
-        <div>
-            <span class="text-body-secondary">&copy; 2023 HealthSync, Inc</span>
-        </div>
+<footer class="foot border-top horizontalPadding">
+    <a class="title navbar-brand" href="${homeUrl}">
+        <div class="health">Health</div>
+        <div class="sync">Sync</div>
+    </a>
+    <div>
+        <span class="text-body-secondary">&copy; 2023 HealthSync, Inc</span>
     </div>
 </footer>
 </body>
 </html>
+<script src="${categoriesCarouselJs}"></script>
