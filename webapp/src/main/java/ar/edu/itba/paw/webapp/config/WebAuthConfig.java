@@ -40,7 +40,7 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
         .authorizeRequests()
         .antMatchers("/", "/login", "/register")
         .anonymous()
-            .antMatchers("/doctorDashboard").hasRole("USER")
+            .antMatchers("/doctorDashboard").hasRole("PATIENT")
             //.antMatchers("").hasRole("DOCTOR") TODO SETEAR PAGINAS PARA SOLO DOCTORS
         .antMatchers("/**")
         .authenticated()
