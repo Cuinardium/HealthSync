@@ -42,10 +42,19 @@ public class DoctorDaoImpl implements DoctorDao {
             location);
       };
 
+  // Most significant 16 bits dont encode anything
+  // The 48 least significant bits encode 30 minute blocks
+  // If the bit is 1 the doctor is available, otherwise it is not
+  // The least significant bit encodes the (0:00, 0:30) block
+  // The 48th bit encodes the (23:3, 0:00) block
+  private static final long DEFAULT_ATTENDING_HOURS =
+      0b0000000000000000000000000000111111111111111111110000000000000000L;
+
   private final JdbcTemplate jdbcTemplate;
   private final SimpleJdbcInsert doctorInsert;
   private final SimpleJdbcInsert doctorLocationInsert;
   private final SimpleJdbcInsert doctorHealthInsuranceInsert;
+  private final SimpleJdbcInsert doctorAttendingHoursInsert;
 
   @Autowired
   public DoctorDaoImpl(final DataSource ds) {
@@ -57,6 +66,9 @@ public class DoctorDaoImpl implements DoctorDao {
 
     this.doctorHealthInsuranceInsert =
         new SimpleJdbcInsert(ds).withTableName("health_insurance_accepted_by_doctor");
+
+    this.doctorAttendingHoursInsert =
+        new SimpleJdbcInsert(ds).withTableName("doctor_attending_hours").usingGeneratedKeyColumns("attending_hours_id");
   }
 
   // ======================== Inserts =========================================
@@ -86,12 +98,26 @@ public class DoctorDaoImpl implements DoctorDao {
   @Override
   public long createDoctor(long userId, int specialtyCode) {
 
-    Map<String, Object> data = new HashMap<>();
+    Map<String, Object> attendingHoursData = new HashMap<>();
 
-    data.put("doctor_id", userId);
-    data.put("specialty_code", specialtyCode);
+    attendingHoursData.put("monday", DEFAULT_ATTENDING_HOURS);
+    attendingHoursData.put("tuesday", DEFAULT_ATTENDING_HOURS);
+    attendingHoursData.put("wednesday", DEFAULT_ATTENDING_HOURS);
+    attendingHoursData.put("thursday", DEFAULT_ATTENDING_HOURS);
+    attendingHoursData.put("friday", DEFAULT_ATTENDING_HOURS);
 
-    doctorInsert.execute(data);
+    attendingHoursData.put("saturday", 0);
+    attendingHoursData.put("sunday", 0);
+
+    long attendingHoursId = doctorAttendingHoursInsert.executeAndReturnKey(attendingHoursData).longValue();
+
+    Map<String, Object> doctorData = new HashMap<>();
+
+    doctorData.put("doctor_id", userId);
+    doctorData.put("specialty_code", specialtyCode);
+    doctorData.put("attending_hours_id", attendingHoursId);
+
+    doctorInsert.execute(doctorData);
 
     return userId;
   }
