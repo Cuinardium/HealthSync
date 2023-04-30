@@ -42,7 +42,7 @@
 <body>
 <div class="form-container">
     <h1>${title}</h1>
-    <form:form modelAttribute="registerForm" action="${registerUrl}" method="post">
+    <form:form modelAttribute="registerForm" action="${registerUrl}" method="POST">
         <div class="form-row container">
             <div class="form-item">
                 <form:label path="name">${name}</form:label>
@@ -68,18 +68,14 @@
             <form:errors path="healthInsuranceCode" cssClass="error" element="p"/>
         </div>
         <div>
-            <form:label path="email">
-                ${email}
-                <form:input path="email" type="text" placeholder='${email_hint}'/>
-                <form:errors path="email" cssClass="error" element="p"/>
-            </form:label>
+            <form:label path="email">${email}</form:label>
+            <form:input path="email" type="text" placeholder='${email_hint}'/>
+            <form:errors path="email" cssClass="error" element="p"/>
         </div>
         <div>
-            <form:label path="password">
-                ${password}
-                <form:input type="password" path="password" placeholder="${password_hint}"/>
-                <form:errors path="password" cssClass="error" element="p"/>
-            </form:label>
+            <form:label path="password">${password}</form:label>
+            <form:input type="password" path="password" placeholder="${password_hint}"/>
+            <form:errors path="password" cssClass="error" element="p"/>
         </div>
         <div class="form-item">
             <form:label path="confirmPassword">${cpassword}</form:label>

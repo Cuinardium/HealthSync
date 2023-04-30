@@ -55,7 +55,7 @@
         <div class="form-row container">
         <div class="form-item">
             <form:label path="name">${name}</form:label>
-                        <form:input type="text" placeholder="${name_hint}" path="name"/>
+            <form:input type="text" placeholder="${name_hint}" path="name"/>
             <form:errors path="name" cssClass="error" element="p"/>
         </div>
         <div class="form-item">

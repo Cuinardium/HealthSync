@@ -1,78 +1,18 @@
 package ar.edu.itba.paw.webapp.form;
 
 import ar.edu.itba.paw.models.HealthInsurance;
-import ar.edu.itba.paw.webapp.annotations.ConfirmPassword;
 import ar.edu.itba.paw.webapp.annotations.ExistsInEnum;
 
-import javax.validation.constraints.Pattern;
-import javax.validation.constraints.Size;
+public class RegisterForm extends UserRegisterForm {
 
-@ConfirmPassword
-public class RegisterForm{
+  @ExistsInEnum(enumClass = HealthInsurance.class)
+  private Integer healthInsuranceCode = -1;
 
-    @Size(min = 1)
-    @Pattern(regexp = "[a-zA-Z ]+")
-    private String name;
+  public int getHealthInsuranceCode() {
+    return healthInsuranceCode;
+  }
 
-    @Size(min = 1)
-    @Pattern(regexp = "[a-zA-Z ]+")
-    private String lastname;
-    @Size(min = 1)
-    @Pattern(regexp = "[a-zA-Z0-9.+-]+@[a-zA-Z0-9.-]+(.com|.com.ar|.edu.ar)")
-    private String email;
-
-    @ExistsInEnum(enumClass = HealthInsurance.class)
-    private Integer healthInsuranceCode = -1;
-
-    @Size(min = 4)
-    @Pattern(regexp = "[a-zA-Z0-9]+")
-    private String password;
-
-    @Size(min = 4)
-    @Pattern(regexp = "[a-zA-Z0-9]+")
-    private String confirmPassword;
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getLastname() {
-        return lastname;
-    }
-
-    public void setLastname(String lastname) {
-        this.lastname = lastname;
-    }
-    public String getEmail() {
-        return email;
-    }
-    public void setEmail(String email) {
-        this.email = email;
-    }
-    public int getHealthInsuranceCode() {
-        return healthInsuranceCode;
-    }
-
-    public void setHealthInsuranceCode(int healthInsuranceCode) {
-        this.healthInsuranceCode = healthInsuranceCode;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public String getConfirmPassword() {
-        return confirmPassword;
-    }
-
-    public void setConfirmPassword(String confirmPassword) {
-        this.confirmPassword = confirmPassword;
-    }
+  public void setHealthInsuranceCode(int healthInsuranceCode) {
+    this.healthInsuranceCode = healthInsuranceCode;
+  }
 }
