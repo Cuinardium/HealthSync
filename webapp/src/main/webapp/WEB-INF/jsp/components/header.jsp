@@ -42,7 +42,7 @@
         </div>
 
         <c:choose>
-        <c:when test="${not empty param.user}">
+        <c:when test="${not empty user}">
             <nav class="navbar navbar-expand-lg">
                 <div class="container-fluid">
                     <button class="navbar-toggler" type="button" data-bs-toggle="collapse"

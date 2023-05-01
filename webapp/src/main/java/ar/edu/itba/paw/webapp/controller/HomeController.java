@@ -43,7 +43,6 @@ public class HomeController {
     featuredSpecialties.add(Specialty.UROLOGY);
 
     mav.addObject("featuredSpecialties", featuredSpecialties);
-    mav.addObject("user", PawAuthUserDetails.getCurrentUser());
     return mav;
   }
 
