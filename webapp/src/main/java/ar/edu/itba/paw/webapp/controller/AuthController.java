@@ -1,11 +1,12 @@
 package ar.edu.itba.paw.webapp.controller;
 
 import ar.edu.itba.paw.interfaces.services.DoctorService;
-import ar.edu.itba.paw.interfaces.services.UserService;
-import ar.edu.itba.paw.models.User;
+import ar.edu.itba.paw.interfaces.services.PatientService;
+import ar.edu.itba.paw.models.*;
 import ar.edu.itba.paw.webapp.form.LoginForm;
 import ar.edu.itba.paw.webapp.form.MedicRegisterForm;
 import ar.edu.itba.paw.webapp.form.RegisterForm;
+import java.util.Arrays;
 import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -18,32 +19,33 @@ import org.springframework.web.servlet.ModelAndView;
 @Controller
 public class AuthController {
 
-  private final UserService userService;
   private final DoctorService doctorService;
 
+  private final PatientService patientService;
+
   @Autowired
-  public AuthController(final UserService userService, final DoctorService doctorService) {
-    this.userService = userService;
+  public AuthController(final DoctorService doctorService, final PatientService patientService) {
     this.doctorService = doctorService;
+    this.patientService = patientService;
   }
 
-  @RequestMapping(value = "/login", method = RequestMethod.POST)
-  public ModelAndView login(
-      @Valid @ModelAttribute("loginForm") final LoginForm loginForm, final BindingResult errors) {
+  // @RequestMapping(value = "/login", method = RequestMethod.POST)
+  // public ModelAndView login(
+  //     @Valid @ModelAttribute("loginForm") final LoginForm loginForm, final BindingResult errors) {
+  //
+  //   // TODO: IF LOGIN UNSUCCESFULL
+  //   // show errors in view
+  //   // return login form
+  //   if (errors.hasErrors() /* || login unsuccesfull*/) {
+  //     return loginForm(loginForm);
+  //   }
+  //
+  //   // TODO: CHECK IF LOGIN SUCCESFULL
+  //   final ModelAndView mav = new ModelAndView("home/doctorDashboard");
+  //   return mav;
+  // }
 
-    // TODO: IF LOGIN UNSUCCESFULL
-    // show errors in view
-    // return login form
-    if (errors.hasErrors() /* || login unsuccesfull*/) {
-      return loginForm(loginForm);
-    }
-
-    // TODO: CHECK IF LOGIN SUCCESFULL
-    final ModelAndView mav = new ModelAndView("home/doctorDashboard");
-    return mav;
-  }
-
-  @RequestMapping(value = "/login", method = RequestMethod.GET)
+  @RequestMapping(value = "/login")
   public ModelAndView loginForm(@ModelAttribute("loginForm") final LoginForm loginForm) {
     return new ModelAndView("auth/login");
   }
@@ -72,8 +74,12 @@ public class AuthController {
     }
 
     final User user =
-        userService.createUser(registerForm.getEmail(), registerForm.getPassword(), "", "");
-
+        patientService.createPatient(
+            registerForm.getEmail(),
+            registerForm.getPassword(),
+            registerForm.getName(),
+            registerForm.getLastname(),
+            registerForm.getHealthInsuranceCode());
     final ModelAndView mav = new ModelAndView("auth/registerSuccesful");
     mav.addObject("user", user);
     return mav;
@@ -85,6 +91,7 @@ public class AuthController {
       @ModelAttribute("registerForm") final RegisterForm registerForm) {
     final ModelAndView mav = new ModelAndView("auth/register");
     mav.addObject("form", registerForm);
+    mav.addObject("healthInsurances", Arrays.asList(HealthInsurance.values()));
 
     return mav;
   }
@@ -98,21 +105,17 @@ public class AuthController {
       return registerMedicForm(medicRegisterForm);
     }
     final User user;
-    try {
-      user =
-          doctorService.createDoctor(
-              medicRegisterForm.getEmail(),
-              medicRegisterForm.getPassword(),
-              medicRegisterForm.getName(),
-              medicRegisterForm.getLastname(),
-              medicRegisterForm.getHealthcare(),
-              medicRegisterForm.getSpecialization(),
-              medicRegisterForm.getCity(),
-              medicRegisterForm.getAddress());
-    } catch (RuntimeException e) {
-      // TODO: coorect exception handling and show error msg for repeated medic email
-      return registerMedicForm(medicRegisterForm);
-    }
+    user =
+        doctorService.createDoctor(
+            medicRegisterForm.getEmail(),
+            medicRegisterForm.getPassword(),
+            medicRegisterForm.getName(),
+            medicRegisterForm.getLastname(),
+            medicRegisterForm.getHealthInsuranceCode(),
+            medicRegisterForm.getSpecialtyCode(),
+            medicRegisterForm.getCityCode(),
+            medicRegisterForm.getAddress(),
+            AttendingHours.DEFAULT_ATTENDING_HOURS);
 
     final ModelAndView mav = new ModelAndView("auth/registerSuccesful");
     mav.addObject("user", user);
@@ -124,6 +127,9 @@ public class AuthController {
       @ModelAttribute("medicRegisterForm") final MedicRegisterForm medicRegisterForm) {
     final ModelAndView mav = new ModelAndView("auth/register_medic");
     mav.addObject("form", medicRegisterForm);
+    mav.addObject("cities", Arrays.asList(City.values()));
+    mav.addObject("specialties", Arrays.asList(Specialty.values()));
+    mav.addObject("healthInsurances", Arrays.asList(HealthInsurance.values()));
     return mav;
   }
 }

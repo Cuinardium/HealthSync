@@ -47,6 +47,12 @@
                 <form:errors path="password" cssClass="error" element="p"/>
             </form:label>
         </div>
+        <div>
+            <label>
+                <input type="checkbox" name="rememberme">
+                Remember me
+            </label>
+        </div>
 
         <div>
             <button type="submit" class="btn btn-primary">${submit}</button>

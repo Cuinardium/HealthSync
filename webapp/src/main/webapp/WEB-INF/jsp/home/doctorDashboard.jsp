@@ -41,9 +41,34 @@
 
     <form method="get" action="${doctorDashboardUrl}">
         <div class="filtersContainer">
-            <input type="text" class="form-control" id="city" name="city" placeholder="${city}"/>
-            <input type="text" class="form-control" id="specialty" name="specialty" placeholder="${specialty}">
-            <input type="text" class="form-control" id="healthcare" name="healthcare" placeholder="${insurance}">
+
+            <select class="form-control" name="cityCode">
+                <option value="" selected disabled hidden> -- </option>
+                <c:forEach items="${cities}" var="city" varStatus="status">
+                    <option value="${status.index}" ${status.index == cityCode? 'selected':''}>
+                        <spring:message code="${city.messageID}"/>
+                    </option>
+                </c:forEach>
+            </select>
+
+            <select name="specialtyCode">
+                <option value="" selected disabled hidden> -- </option>
+                <c:forEach items="${specialties}" var="specialty" varStatus="status">
+                    <option value="${status.index}" ${status.index == specialtyCode? 'selected':''}>
+                        <spring:message code="${specialty.messageID}"/>
+                    </option>
+                </c:forEach>
+            </select>
+
+            <select name="healthInsuranceCode">
+                <option value="" selected disabled hidden> -- </option>
+                <c:forEach items="${healthInsurances}" var="healthInsurance" varStatus="status">
+                    <option value="${status.index}" ${status.index == healthInsuranceCode? 'selected':''}>
+                        <spring:message code="${healthInsurance.messageID}"/>
+                    </option>
+                </c:forEach>
+            </select>
+
             <input type="submit" class="btn btn-primary" value="${filter}">
         </div>
     </form>
@@ -51,6 +76,9 @@
     <div class="cardsContainer">
         <c:forEach items="${doctors}" var="doctor">
             <c:url value="/${doctor.id}/appointment" var="appointmentUrl"/>
+            <spring:message code="${doctor.specialty.messageID}" var="doctorSpecialty"/>
+            <spring:message code="${doctor.location.city.messageID}" var="doctorCity"/>
+            <spring:message code="${doctor.healthInsurance.messageID}" var="healthInsurance"/>
             <c:url value="/${doctor.id}/detailed_doctor" var="detailedUrl"/>
             <div class="card">
                 <div class="imageContainer">
@@ -60,8 +88,8 @@
                 <div class="infoContainer">
                     <div class="card-body">
                         <h5 class="card-title"><a href="${detailedUrl}">${doctor.firstName} ${doctor.lastName}</a></h5>
-                        <p class="card-text">${doctor.specialty}. ${doctor.address}, ${doctor.city}</p>
-                        <p class="card-text">${doctor.healthInsurance}</p>
+                        <p class="card-text">${doctorSpecialty}. ${doctor.location.address}, ${doctorCity}</p>
+                        <p class="card-text">${healthInsurance}</p>
                     </div>
                 </div>
                 <div class="buttonsContainer">
@@ -70,7 +98,7 @@
                     </div>
                 </div>
             </div>
-            
+
         </c:forEach>
         <c:if test="${doctors.isEmpty()}">
             <div class="d-flex justify-content-center">

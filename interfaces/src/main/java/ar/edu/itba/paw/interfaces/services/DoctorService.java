@@ -1,9 +1,9 @@
 package ar.edu.itba.paw.interfaces.services;
 
+import ar.edu.itba.paw.models.AttendingHours;
+import ar.edu.itba.paw.models.Doctor;
 import java.util.List;
 import java.util.Optional;
-
-import ar.edu.itba.paw.models.Doctor;
 
 public interface DoctorService {
   public Doctor createDoctor(
@@ -11,14 +11,18 @@ public interface DoctorService {
       String password,
       String firstName,
       String lastName,
-      String healthInsurance,
-      String specialty,
-      String city,
-      String address);
+      int healthInsuranceCode,
+      int specialtyCode,
+      int cityCode,
+      String address,
+      AttendingHours attendingHours);
+
+  public void updateAttendingHours(long doctorId, AttendingHours attendingHours);
 
   public Optional<Doctor> getDoctorById(long id);
 
-  public List<Doctor> getFilteredDoctors(String name, String specialty, String city, String healthInsurance);
-  
+  public List<Doctor> getFilteredDoctors(
+      String name, int specialtyCode, int cityCode, int healthInsuranceCode);
+
   public List<Doctor> getDoctors();
 }

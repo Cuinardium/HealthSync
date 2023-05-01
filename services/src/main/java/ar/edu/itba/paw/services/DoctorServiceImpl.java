@@ -2,13 +2,15 @@ package ar.edu.itba.paw.services;
 
 import ar.edu.itba.paw.interfaces.persistence.DoctorDao;
 import ar.edu.itba.paw.interfaces.services.DoctorService;
-import ar.edu.itba.paw.interfaces.services.HealthInsuranceService;
 import ar.edu.itba.paw.interfaces.services.LocationService;
-import ar.edu.itba.paw.interfaces.services.SpecialtyService;
 import ar.edu.itba.paw.interfaces.services.UserService;
+import ar.edu.itba.paw.models.AttendingHours;
+import ar.edu.itba.paw.models.City;
 import ar.edu.itba.paw.models.Doctor;
+import ar.edu.itba.paw.models.HealthInsurance;
+import ar.edu.itba.paw.models.Location;
+import ar.edu.itba.paw.models.Specialty;
 import ar.edu.itba.paw.models.User;
-
 import java.util.List;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,24 +22,16 @@ public class DoctorServiceImpl implements DoctorService {
   private final DoctorDao doctorDao;
 
   private final UserService userService;
-  private final SpecialtyService specialtyService;
   private final LocationService locationService;
-  private final HealthInsuranceService healthInsuranceService;
 
   @Autowired
   public DoctorServiceImpl(
-      DoctorDao doctorDao,
-      UserService userService,
-      SpecialtyService specialtyService,
-      LocationService locationService,
-      HealthInsuranceService healthInsuranceService) {
+      DoctorDao doctorDao, UserService userService, LocationService locationService) {
 
     this.doctorDao = doctorDao;
 
     this.userService = userService;
-    this.specialtyService = specialtyService;
     this.locationService = locationService;
-    this.healthInsuranceService = healthInsuranceService;
   }
 
   @Override
@@ -46,33 +40,33 @@ public class DoctorServiceImpl implements DoctorService {
       String password,
       String firstName,
       String lastName,
-      String healthInsurance,
-      String specialty,
-      String city,
-      String address) {
+      int healthInsuranceCode,
+      int specialtyCode,
+      int cityCode,
+      String address,
+      AttendingHours attendingHours) {
 
     // Create user
-    User user = userService.createUser(email, password, firstName, lastName, healthInsurance);
+    User user = userService.createUser(email, password, firstName, lastName);
     long userId = user.getId();
     long pfpId = user.getProfilePictureId();
 
-    // Create specialty
-    long specialtyId = specialtyService.createSpecialty(specialty).getId();
-
     // Create Location
-    long locationId = locationService.createLocation(city, address).getId();
-
-    // Create health insurance
-    long healthInsuranceId = healthInsuranceService.createHealthInsurance(healthInsurance).getId();
+    long locationId = locationService.createLocation(cityCode, address);
 
     // Create doctor
-    long doctorId = doctorDao.createDoctor(userId, specialtyId);
+    long doctorId = doctorDao.createDoctor(userId, specialtyCode, attendingHours);
 
     // Add location to doctor
     doctorDao.addLocation(doctorId, locationId);
 
     // Add health insurance to doctor
-    doctorDao.addHealthInsurance(doctorId, healthInsuranceId);
+    doctorDao.addHealthInsurance(doctorId, healthInsuranceCode);
+
+    // Enums
+    HealthInsurance healthInsurance = HealthInsurance.values()[healthInsuranceCode];
+    Specialty specialty = Specialty.values()[specialtyCode];
+    Location location = new Location(locationId, City.values()[cityCode], address);
 
     return new Doctor(
         doctorId,
@@ -83,8 +77,13 @@ public class DoctorServiceImpl implements DoctorService {
         pfpId,
         healthInsurance,
         specialty,
-        city,
-        address);
+        location,
+        attendingHours);
+  }
+
+  @Override
+  public void updateAttendingHours(long doctorId, AttendingHours attendingHours) {
+    doctorDao.updateAttendingHours(doctorId, attendingHours);
   }
 
   @Override
@@ -92,11 +91,10 @@ public class DoctorServiceImpl implements DoctorService {
     return doctorDao.getDoctorById(id);
   }
 
-
-
   @Override
-  public List<Doctor> getFilteredDoctors(String name, String specialty, String city, String healthInsurance) {
-    return doctorDao.getFilteredDoctors(name, specialty, city, healthInsurance);
+  public List<Doctor> getFilteredDoctors(
+      String name, int specialtyCode, int cityCode, int healthInsuranceCode) {
+    return doctorDao.getFilteredDoctors(name, specialtyCode, cityCode, healthInsuranceCode);
   }
 
   @Override

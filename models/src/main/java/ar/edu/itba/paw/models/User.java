@@ -8,7 +8,6 @@ public class User {
   private String password;
   private final String firstName;
   private final String lastName;
-  private final Boolean isDoctor;
 
   public User(
       long id,
@@ -16,14 +15,12 @@ public class User {
       String password,
       String firstName,
       String lastName,
-      Boolean isDoctor,
       long profilePictureId) {
     this.id = id;
     this.email = email;
     this.password = password;
     this.firstName = firstName;
     this.lastName = lastName;
-    this.isDoctor = isDoctor;
     this.profilePictureId = profilePictureId;
   }
 
@@ -50,10 +47,6 @@ public class User {
 
   public String getLastName() {
     return lastName;
-  }
-
-  public Boolean isDoctor() {
-    return isDoctor;
   }
 
   public long getProfilePictureId() {
