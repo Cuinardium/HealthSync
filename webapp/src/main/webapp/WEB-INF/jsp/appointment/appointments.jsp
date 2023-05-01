@@ -24,6 +24,8 @@
 
     <div class="cardsContainer">
         <c:forEach items="${appointments}" var="appointment">
+            <h1>${appointment.date}</h1>
+            <p>${appointment.description}</p>
 
             <!-- TODO: appointment card
                 - url to "appointment details" ????

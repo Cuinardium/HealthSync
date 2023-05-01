@@ -4,6 +4,7 @@ import ar.edu.itba.paw.interfaces.services.AppointmentService;
 import ar.edu.itba.paw.models.Appointment;
 import ar.edu.itba.paw.models.ThirtyMinuteBlock;
 import ar.edu.itba.paw.webapp.auth.PawAuthUserDetails;
+import ar.edu.itba.paw.webapp.auth.UserRoles;
 import ar.edu.itba.paw.webapp.form.AppointmentForm;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -82,19 +83,22 @@ public class AppointmentController {
     return new ModelAndView("appointment/appointmentSent");
   }
 
-  @RequestMapping(value = "/appointments/{id:\\d+}", method = RequestMethod.GET)
-  public ModelAndView getAppointments(@PathVariable("id") final int userId) {
+  @RequestMapping(value = "/my-appointments", method = RequestMethod.GET)
+  public ModelAndView getAppointments() {
     ModelAndView mav = new ModelAndView("appointment/appointments");
 
-    List<Appointment> appointments = getAppointmentsForUserId(userId);
+    List<Appointment> appointments = getAppointmentsForCurrentUser();
     mav.addObject("appointments", appointments);
-    mav.addObject("userId", userId);
     return mav;
   }
 
-  private List<Appointment> getAppointmentsForUserId(int userId) {
-
-    // TODO: return propperly
-    return new ArrayList<Appointment>();
+  private List<Appointment> getAppointmentsForCurrentUser() {
+    if(PawAuthUserDetails.getRole().equals(UserRoles.ROLE_PATIENT)){
+        return appointmentService.getAppointmentsForPatient(PawAuthUserDetails.getCurrentUserId());
+    }
+    if(PawAuthUserDetails.getRole().equals(UserRoles.ROLE_DOCTOR)){
+      return appointmentService.getAppointmentsForDoctor(PawAuthUserDetails.getCurrentUserId());
+    }
+    return null;
   }
 }
