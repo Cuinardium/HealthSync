@@ -1,6 +1,8 @@
 package ar.edu.itba.paw.webapp.auth;
 
 import java.util.Collection;
+
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -46,12 +48,21 @@ public class PawAuthUserDetails extends User {
   }
 
   public static long getCurrentUserId(){
-    PawAuthUserDetails user= (PawAuthUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-    return user.getId();
+
+    Authentication auth= SecurityContextHolder.getContext().getAuthentication();
+    if(auth.isAuthenticated()){
+      PawAuthUserDetails user= (PawAuthUserDetails) auth.getPrincipal();
+      return user.getId();
+    }
+    return -1;
   }
 
   public static PawAuthUserDetails getCurrentUser(){
-    return(PawAuthUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    Authentication auth= SecurityContextHolder.getContext().getAuthentication();
+    if(auth.isAuthenticated()){
+      return (PawAuthUserDetails) auth.getPrincipal();
+    }
+    return null;
   }
 
   public static UserRoles getRole() {
