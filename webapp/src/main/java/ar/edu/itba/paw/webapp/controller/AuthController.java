@@ -99,11 +99,11 @@ public class AuthController {
 
   // TODO: revisar campos
   @RequestMapping(value = "/doctor-register", method = RequestMethod.POST)
-  public ModelAndView registerMedicSubmit(
+  public ModelAndView doctorRegisterSubmit(
       @Valid @ModelAttribute("doctorRegisterForm") final DoctorRegisterForm doctorRegisterForm,
       final BindingResult errors) {
     if (errors.hasErrors()) {
-      return registerMedicForm(doctorRegisterForm);
+      return doctorRegisterForm(doctorRegisterForm);
     }
     final User user;
     user =
@@ -124,7 +124,7 @@ public class AuthController {
   }
 
   @RequestMapping(value = "/doctor-register", method = RequestMethod.GET)
-  public ModelAndView registerMedicForm(
+  public ModelAndView doctorRegisterForm(
       @ModelAttribute("doctorRegisterForm") final DoctorRegisterForm doctorRegisterForm) {
     final ModelAndView mav = new ModelAndView("auth/doctorRegister");
     mav.addObject("form", doctorRegisterForm);
