@@ -101,7 +101,7 @@ public class AppointmentController {
 
   @RequestMapping(value = "/my-appointments", method = RequestMethod.GET)
   public ModelAndView getAppointments() {
-    ModelAndView mav = new ModelAndView("appointment/appointments");
+    ModelAndView mav = new ModelAndView("appointment/myAppointments");
 
     List<Appointment> appointments = getAppointmentsForCurrentUser();
     mav.addObject("appointments", appointments);
