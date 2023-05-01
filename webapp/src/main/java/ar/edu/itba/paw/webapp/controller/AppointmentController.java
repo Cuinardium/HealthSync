@@ -1,10 +1,13 @@
 package ar.edu.itba.paw.webapp.controller;
 
 import ar.edu.itba.paw.interfaces.services.AppointmentService;
+import ar.edu.itba.paw.models.Appointment;
 import ar.edu.itba.paw.models.ThirtyMinuteBlock;
 import ar.edu.itba.paw.webapp.auth.PawAuthUserDetails;
 import ar.edu.itba.paw.webapp.form.AppointmentForm;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -77,5 +80,23 @@ public class AppointmentController {
   @RequestMapping(value = "/appointment_sent", method = RequestMethod.GET)
   public ModelAndView appointmentSent() {
     return new ModelAndView("appointment/appointmentSent");
+  }
+
+  @RequestMapping(value = "/appointments/{id:\\d+}", method = RequestMethod.GET)
+  public ModelAndView getAppointments(@PathVariable("id") final int userId) {
+    ModelAndView mav = new ModelAndView("appointment/appointments");
+
+    List<Appointment> appointments = getAppointmentsForUserId(userId);
+
+    mav.addObject("appointments", appointments);
+    mav.addObject("userId", userId);
+
+    return mav;
+  }
+
+  private List<Appointment> getAppointmentsForUserId(int userId) {
+
+    // TODO: return propperly
+    return new ArrayList<Appointment>();
   }
 }
