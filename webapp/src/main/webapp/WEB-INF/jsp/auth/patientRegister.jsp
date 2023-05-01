@@ -11,7 +11,7 @@
 <c:url value="/css/register_medic.css" var="registerCss"/>
 <c:url value="/css/register_medic.css" var="registerMedicCss"/>
 
-<c:url value="/register" var="registerUrl"/>
+<c:url value="/patient-register" var="patientRegisterUrl"/>
 
 <spring:message code="register.title" var="title"/>
 <spring:message code="form.name" var="name"/>
@@ -42,7 +42,7 @@
 <body>
 <div class="form-container">
     <h1>${title}</h1>
-    <form:form modelAttribute="registerForm" action="${registerUrl}" method="POST">
+    <form:form modelAttribute="registerForm" action="${patientRegisterUrl}" method="POST">
         <div class="form-row container">
             <div class="form-item">
                 <form:label path="name">${name}</form:label>

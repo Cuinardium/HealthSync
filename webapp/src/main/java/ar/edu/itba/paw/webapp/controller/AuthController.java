@@ -31,7 +31,8 @@ public class AuthController {
 
   // @RequestMapping(value = "/login", method = RequestMethod.POST)
   // public ModelAndView login(
-  //     @Valid @ModelAttribute("loginForm") final LoginForm loginForm, final BindingResult errors) {
+  //     @Valid @ModelAttribute("loginForm") final LoginForm loginForm, final BindingResult errors)
+  // {
   //
   //   // TODO: IF LOGIN UNSUCCESFULL
   //   // show errors in view
@@ -65,7 +66,7 @@ public class AuthController {
   }
 
   // register user?
-  @RequestMapping(value = "/register", method = RequestMethod.POST)
+  @RequestMapping(value = "/patient-register", method = RequestMethod.POST)
   public ModelAndView register(
       @Valid @ModelAttribute("registerForm") final RegisterForm registerForm,
       final BindingResult errors) {
@@ -86,10 +87,10 @@ public class AuthController {
   }
 
   // register user?
-  @RequestMapping(value = "/register", method = RequestMethod.GET)
+  @RequestMapping(value = "/patient-register", method = RequestMethod.GET)
   public ModelAndView registerForm(
       @ModelAttribute("registerForm") final RegisterForm registerForm) {
-    final ModelAndView mav = new ModelAndView("auth/register");
+    final ModelAndView mav = new ModelAndView("auth/patientRegister");
     mav.addObject("form", registerForm);
     mav.addObject("healthInsurances", Arrays.asList(HealthInsurance.values()));
 
@@ -97,7 +98,7 @@ public class AuthController {
   }
 
   // TODO: revisar campos
-  @RequestMapping(value = "/register_medic", method = RequestMethod.POST)
+  @RequestMapping(value = "/doctor-register", method = RequestMethod.POST)
   public ModelAndView registerMedicSubmit(
       @Valid @ModelAttribute("medicRegisterForm") final MedicRegisterForm medicRegisterForm,
       final BindingResult errors) {
@@ -122,10 +123,10 @@ public class AuthController {
     return mav;
   }
 
-  @RequestMapping(value = "/register_medic", method = RequestMethod.GET)
+  @RequestMapping(value = "/doctor-register", method = RequestMethod.GET)
   public ModelAndView registerMedicForm(
       @ModelAttribute("medicRegisterForm") final MedicRegisterForm medicRegisterForm) {
-    final ModelAndView mav = new ModelAndView("auth/register_medic");
+    final ModelAndView mav = new ModelAndView("auth/doctorRegister");
     mav.addObject("form", medicRegisterForm);
     mav.addObject("cities", Arrays.asList(City.values()));
     mav.addObject("specialties", Arrays.asList(Specialty.values()));

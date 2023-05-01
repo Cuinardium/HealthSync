@@ -43,7 +43,7 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
         .invalidSessionUrl("/")
         .and()
         .authorizeRequests()
-        .antMatchers("/", "/login", "/register", "/register_medic")
+        .antMatchers("/", "/login", "/patient-register", "/doctor-register")
         .anonymous()
         .antMatchers("/doctorDashboard")
         .hasRole("PATIENT")

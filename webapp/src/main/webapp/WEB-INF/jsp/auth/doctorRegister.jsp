@@ -10,7 +10,7 @@
 <c:url value="/css/main.css" var="mainCss"/>
 <c:url value="/css/register_medic.css" var="registerMedicCss"/>
 
-<c:url value="/register_medic" var="registerMedicUrl"/>
+<c:url value="/doctor-register" var="doctorRegisterUrl"/>
 
 <spring:message code="registerMedic.title" var="title"/>
 <spring:message code="form.name" var="name"/>
@@ -51,7 +51,7 @@
 <!-- Content -->
 <div class="page-content p-5" id="content">
     <h1>${title}</h1>
-    <form:form modelAttribute="medicRegisterForm" class="form-container container card" action="${registerMedicUrl}" method="POST">
+    <form:form modelAttribute="medicRegisterForm" class="form-container container card" action="${doctorRegisterUrl}" method="POST">
         <div class="form-row container">
         <div class="form-item">
             <form:label path="name">${name}</form:label>
