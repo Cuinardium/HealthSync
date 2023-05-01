@@ -45,6 +45,15 @@ public class PawAuthUserDetails extends User {
     return id;
   }
 
+  public static long getCurrentUserId(){
+    PawAuthUserDetails user= (PawAuthUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    return user.getId();
+  }
+
+  public static PawAuthUserDetails getCurrentUser(){
+    return(PawAuthUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+  }
+
   public static UserRoles getRole() {
     Collection<? extends GrantedAuthority> authorities =
         SecurityContextHolder.getContext().getAuthentication().getAuthorities();
