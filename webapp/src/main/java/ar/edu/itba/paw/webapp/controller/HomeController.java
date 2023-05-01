@@ -1,18 +1,14 @@
 package ar.edu.itba.paw.webapp.controller;
 
 import ar.edu.itba.paw.interfaces.services.DoctorService;
+import ar.edu.itba.paw.interfaces.services.UserService;
 import ar.edu.itba.paw.models.City;
 import ar.edu.itba.paw.models.Doctor;
 import ar.edu.itba.paw.models.HealthInsurance;
 import ar.edu.itba.paw.models.Specialty;
 import java.util.Arrays;
 import java.util.List;
-
-import ar.edu.itba.paw.interfaces.services.UserService;
-import ar.edu.itba.paw.webapp.auth.PawAuthUserDetails;
-import ar.edu.itba.paw.webapp.exceptions.UserNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -26,10 +22,9 @@ public class HomeController {
   private final UserService us;
 
   @Autowired
-  public HomeController(
-          final DoctorService doctorService, final UserService us) {
+  public HomeController(final DoctorService doctorService, final UserService us) {
     this.doctorService = doctorService;
-    this.us=us;
+    this.us = us;
   }
 
   @RequestMapping(value = "/")
@@ -48,7 +43,7 @@ public class HomeController {
     final ModelAndView mav = new ModelAndView("home/doctorDashboard");
 
     List<Doctor> doctors =
-        doctorService.getFilteredDoctors(name, cityCode, specialtyCode, healthInsuranceCode);
+        doctorService.getFilteredDoctors(name, specialtyCode, cityCode, healthInsuranceCode);
 
     mav.addObject("doctors", doctors);
     mav.addObject("cityCode", cityCode);
