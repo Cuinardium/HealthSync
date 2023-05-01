@@ -6,6 +6,7 @@ import ar.edu.itba.paw.models.City;
 import ar.edu.itba.paw.models.Doctor;
 import ar.edu.itba.paw.models.HealthInsurance;
 import ar.edu.itba.paw.models.Specialty;
+import ar.edu.itba.paw.webapp.auth.PawAuthUserDetails;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -40,7 +41,9 @@ public class HomeController {
     featuredSpecialties.add(Specialty.OPHTHALMOLOGY);
     featuredSpecialties.add(Specialty.PEDIATRICS);
     featuredSpecialties.add(Specialty.UROLOGY);
+
     mav.addObject("featuredSpecialties", featuredSpecialties);
+    mav.addObject("user", PawAuthUserDetails.getCurrentUser());
     return mav;
   }
 
@@ -64,6 +67,7 @@ public class HomeController {
     mav.addObject("specialties", Arrays.asList(Specialty.values()));
     mav.addObject("healthInsuranceCode", healthInsuranceCode);
     mav.addObject("healthInsurances", Arrays.asList(HealthInsurance.values()));
+
     return mav;
   }
 }

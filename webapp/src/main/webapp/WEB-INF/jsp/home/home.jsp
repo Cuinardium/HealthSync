@@ -40,7 +40,9 @@
 </head>
 <body>
 <!-- Header -->
-<jsp:include page="../components/header.jsp"/>
+<jsp:include page="../components/header.jsp">
+    <jsp:param name="user" value="${user}"/>
+</jsp:include>
 <!-- Content -->
 <div class="generalPadding welcome">
     <div class="welcome1Container">
