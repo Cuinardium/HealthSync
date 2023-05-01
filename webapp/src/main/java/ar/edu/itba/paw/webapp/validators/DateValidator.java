@@ -2,8 +2,7 @@ package ar.edu.itba.paw.webapp.validators;
 
 import ar.edu.itba.paw.webapp.annotations.DateAnnotation;
 import ar.edu.itba.paw.webapp.form.AppointmentForm;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
+import java.time.LocalDate;
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
@@ -11,12 +10,8 @@ public class DateValidator implements ConstraintValidator<DateAnnotation, Appoin
   @Override
   public boolean isValid(
       AppointmentForm appointmentForm, ConstraintValidatorContext constraintValidatorContext) {
-    DateTimeFormatter formatter = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
-    String date = appointmentForm.getDate();
-    if (!date.isEmpty()) {
-      LocalDateTime dateTime = LocalDateTime.parse(date, formatter);
-      return dateTime.isAfter(LocalDateTime.now());
-    }
-    return false;
+
+    LocalDate date = appointmentForm.getDate();
+    return date.isAfter(LocalDate.now());
   }
 }

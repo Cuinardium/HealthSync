@@ -11,22 +11,13 @@
 <c:url value="/js/categoriesCarousel.js" var="categoriesCarouselJs"/>
 
 <c:url value="/" var="homeUrl"/>
-<c:url value="/doctorDashboard?specialty=" var="doctorDashboardFilteredUrl"/>
+<c:url value="/doctorDashboard?specialtyCode=" var="doctorDashboardFilteredUrl"/>
 
 <c:url value="/img/homeDoctor.svg" var="homeDoctorImg"/>
 
 <c:url value="/img/circle1.svg" var="circle1"/>
 <c:url value="/img/circle2.svg" var="circle2"/>
 <c:url value="/img/circle3.svg" var="circle3"/>
-
-<c:url value="/img/cardiologist.jpeg" var="cardiologist"/>
-<c:url value="/img/dermatologist.jpg" var="dermatologist"/>
-<c:url value="/img/neurologist.jpg" var="neurologist"/>
-<c:url value="/img/nutritionist.jpg" var="nutritionist"/>
-<c:url value="/img/pediatrics.jpg" var="pediatrics"/>
-<c:url value="/img/urologist.jpg" var="urologist"/>
-<c:url value="/img/ophtalmologist.jpg" var="ophtalmologist"/>
-
 
 <spring:message code="home.home" var="title"/>
 <spring:message code="home.welcome1" var="welcome1"/>
@@ -68,16 +59,18 @@
     <h1 class="categoriesTitle">${categories}</h1>
     <div id="recipeCarousel" class="carousel slide">
         <div class="carousel-inner" role="listbox">
-            <c:forEach items="${featuredSpecialties}" var="specialty">
-              <div class="carousel-item active">
-                <div class="card">
-                    <div class="card-img">
-                      <img src="specialty-${specialty.ordinal()}" class="img-fluid">
+            <c:forEach items="${featuredSpecialties}" var="specialty" varStatus="status">
+                <c:url value="/img/specialty-${specialty.ordinal()}.jpg" var="img"/>
+                <spring:message code="${specialty.messageID}" var="name"/>
+                <div class="carousel-item ${status.first ? 'active' : ''}">
+                    <div class="card">
+                        <div class="card-img">
+                            <img src="${img}" class="img-fluid">
+                        </div>
+                        <div class="card-img-overlay">${name.toLowerCase()}</div>
+                        <a href="${doctorDashboardFilteredUrl}${specialty.ordinal()}" class="stretched-link"></a>
                     </div>
-                    <div class="card-img-overlay"><spring:message code="${specialty.messageID}"/></div>
-                    <a href="${doctorDashboardFilteredUrl}${specialty.ordinal()}" class="stretched-link"></a>
                 </div>
-            </div>
             </c:forEach>
         </div>
         <a class="carousel-control-prev bg-transparent w-aut" href="#recipeCarousel" role="button" data-bs-slide="prev">
@@ -90,21 +83,21 @@
 </div>
 
 <section class="about generalPadding border-top">
-        <div class="aboutCircleContainer">
-            <img class="circles" src="${circle1}" alt="..."/>
-            <h3>${circleText1}</h3>
-            <p>${description1}</p>
-        </div>
-        <div class="aboutCircleContainer">
-            <img class="circles" src="${circle2}" alt="..."/>
-            <h3>${circleText2}</h3>
-            <p>${description2}</p>
-        </div>
-        <div class="aboutCircleContainer">
-            <img class="circles" src="${circle3}" alt="..."/>
-            <h3>${circleText3}</h3>
-            <p>${description3}</p>
-        </div>
+    <div class="aboutCircleContainer">
+        <img class="circles" src="${circle1}" alt="..."/>
+        <h3>${circleText1}</h3>
+        <p>${description1}</p>
+    </div>
+    <div class="aboutCircleContainer">
+        <img class="circles" src="${circle2}" alt="..."/>
+        <h3>${circleText2}</h3>
+        <p>${description2}</p>
+    </div>
+    <div class="aboutCircleContainer">
+        <img class="circles" src="${circle3}" alt="..."/>
+        <h3>${circleText3}</h3>
+        <p>${description3}</p>
+    </div>
 </section>
 
 <footer class="foot border-top horizontalPadding">

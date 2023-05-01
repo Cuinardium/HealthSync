@@ -63,6 +63,15 @@ public enum ThirtyMinuteBlock {
     return this.blockBeginning;
   }
 
+  public static ThirtyMinuteBlock fromString(String block) {
+    for (ThirtyMinuteBlock thirtyMinuteBlock : ThirtyMinuteBlock.values()) {
+      if (thirtyMinuteBlock.getBlockBeggining().equals(block)) {
+        return thirtyMinuteBlock;
+      }
+    }
+    return null;
+  }
+
   public static Collection<ThirtyMinuteBlock> fromStrings(String... blocks) {
     Collection<ThirtyMinuteBlock> result = new ArrayList<>();
     for (String block : blocks) {

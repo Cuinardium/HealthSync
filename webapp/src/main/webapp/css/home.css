@@ -106,6 +106,7 @@ section{
     color: white;
     text-shadow: 1px 1px 3px #000000;
     font-size: 2rem;
+    text-transform: capitalize;
 }
 
 .sloganSmall{

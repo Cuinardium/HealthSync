@@ -19,8 +19,10 @@ public interface AppointmentService {
   Optional<Appointment> getAppointmentById(long appointmentId);
 
   List<Appointment> getAppointmentsForPatient(long patientId);
-  
+
   List<Appointment> getAppointmentsForDoctor(long doctorId);
 
   void updateAppointmentStatus(long appointmentId, AppointmentStatus status);
+
+  public List<ThirtyMinuteBlock> getAvailableHoursForDoctorOnDate(long doctorId, LocalDate date);
 }

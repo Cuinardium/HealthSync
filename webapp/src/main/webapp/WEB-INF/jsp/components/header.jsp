@@ -10,15 +10,18 @@
 <c:url value="/doctor-register" var="doctorRegisterUrl"/>
 <c:url value="/patient-register" var="patientRegisterUrl"/>
 <c:url value="/login" var="loginUrl"/>
+<c:url value="/logout" var="logoutUrl"/>
 
 <c:url value="/img/logo.svg" var="logo"/>
 
 <spring:message code="home.home" var="home"/>
 <spring:message code="home.checkDoctor" var="checkDoctor"/>
-<spring:message code="home.iAmDoctor" var="iAmDoctor"/>
-<spring:message code="home.iAmPatient" var="iAmPatient"/>
 <spring:message code="register.title" var="register"/>
 <spring:message code="login.title" var="login"/>
+<spring:message code="header.iAmDoctor" var="iAmDoctor"/>
+<spring:message code="header.iAmPatient" var="iAmPatient"/>
+<spring:message code="header.editProfile" var="editProfile"/>
+<spring:message code="header.logout" var="logout"/>
 
 <html>
 <head>
@@ -38,10 +41,35 @@
             <a href="${dashboardUrl}" class="nav-link px-2 link-dark">Check Doctors</a>
         </div>
 
+        <c:choose>
+        <c:when test="${not empty user}">
+            <nav class="navbar navbar-expand-lg">
+                <div class="container-fluid">
+                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                            data-bs-target="#profileDropdown" aria-controls="profileDropdown" aria-expanded="false"
+                            aria-label="Toggle navigation">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+                    <div class="collapse navbar-collapse" id="profileDropdown">
+                        <ul class="navbar-nav">
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    <img src="https://s3.eu-central-1.amazonaws.com/bootstrapbaymisc/blog/24_days_bootstrap/fox.jpg" width="40" height="40" class="rounded-circle">
+                                </a>
+                                <ul class="dropdown-menu">
+                                    <li><a class="dropdown-item" href="#">${editProfile}</a></li>
+                                    <li><a class="dropdown-item" href="${logoutUrl}">${logout}</a></li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </nav>
+        </c:when>
+        <c:otherwise>
         <div class="buttons">
-
             <!-- TODO: ver si se puede dejar en "<button>" como antes -->
-            <a href=${loginUrl} class="btn btn-primary" role="button">${login}</a>
+            <a href="${loginUrl}" class="btn btn-primary" role="button">${login}</a>
 
             <nav class="navbar navbar-expand-lg">
                 <div class="container-fluid">
@@ -54,7 +82,7 @@
                         <ul class="navbar-nav">
                             <li class="nav-item dropdown">
                                 <button class="btn dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-                                    ${register}
+                                        ${register}
                                 </button>
                                 <ul class="dropdown-menu">
                                     <li><a class="dropdown-item" href="${doctorRegisterUrl}">${iAmDoctor}</a></li>
@@ -67,6 +95,8 @@
             </nav>
         </div>
     </div>
+    </c:otherwise>
+    </c:choose>
 
 </header>
 </body>
