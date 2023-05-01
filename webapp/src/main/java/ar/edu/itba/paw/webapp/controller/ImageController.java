@@ -23,7 +23,7 @@ public class ImageController {
   }
 
   @RequestMapping(
-    value = "/image/{id:\\d+}",
+    value = "/img/{id:\\d+}",
     method = RequestMethod.GET,
     produces = MediaType.IMAGE_JPEG_VALUE
   )
