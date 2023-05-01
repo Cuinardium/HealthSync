@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 @Controller
@@ -34,13 +35,24 @@ public class AppointmentController {
   //                        vvvvvvvv
   @RequestMapping(value = "/{id:\\d+}/appointment", method = RequestMethod.GET)
   public ModelAndView appointmentForm(
-      @PathVariable("id") final int medicId,
+      @PathVariable("id") final int doctorId,
+      @RequestParam(name = "date", required = false) final String date,
+      @RequestParam(name = "desc", required = false, defaultValue = "") final String description,
       @ModelAttribute("appointmentForm") final AppointmentForm appointmentForm) {
 
     final ModelAndView mav = new ModelAndView("appointment/appointment");
 
+    LocalDate requestedDate = date == null ? LocalDate.now() : LocalDate.parse(date);
+
+    List<ThirtyMinuteBlock> availableHours =
+        appointmentService.getAvailableHoursForDoctorOnDate(doctorId, requestedDate);
+
+    appointmentForm.setDate(requestedDate);
+    appointmentForm.setDescription(description);
+
     mav.addObject("form", appointmentForm);
-    mav.addObject("medicId", medicId);
+    mav.addObject("medicId", doctorId);
+    mav.addObject("availableHours", availableHours);
 
     return mav;
   }
@@ -49,13 +61,17 @@ public class AppointmentController {
   // or use a popup
   @RequestMapping(value = "/{id:\\d+}/appointment", method = RequestMethod.POST)
   public ModelAndView appointmentSubmit(
-      @PathVariable("id") final int medicId,
+      @PathVariable("id") final int doctorId,
       @Valid @ModelAttribute("appointmentForm") final AppointmentForm appointmentForm,
       final BindingResult errors,
       Locale locale) {
 
     if (errors.hasErrors()) {
-      return appointmentForm(medicId, appointmentForm);
+      return appointmentForm(
+          doctorId,
+          appointmentForm.getDate().toString(),
+          appointmentForm.getDescription(),
+          appointmentForm);
     }
 
     PawAuthUserDetails currentUser =
@@ -65,9 +81,9 @@ public class AppointmentController {
     try {
       appointmentService.createAppointment(
           currentUser.getId(),
-          medicId,
-          LocalDate.now(),
-          ThirtyMinuteBlock.BLOCK_00_30,
+          doctorId,
+          appointmentForm.getDate(),
+          appointmentForm.getBlockEnum(),
           appointmentForm.getDescription());
 
     } catch (RuntimeException e) {

@@ -1,5 +1,6 @@
 package ar.edu.itba.paw.models;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -69,5 +70,26 @@ public class AttendingHours {
 
   public List<ThirtyMinuteBlock> getAttendingBlocksSunday() {
     return attendingBlocksSunday;
+  }
+
+  public List<ThirtyMinuteBlock> getAttendingBlocksForDate(LocalDate date) {
+    switch (date.getDayOfWeek()) {
+      case MONDAY:
+        return attendingBlocksMonday;
+      case TUESDAY:
+        return attendingBlocksTuesday;
+      case WEDNESDAY:
+        return attendingBlocksWednesday;
+      case THURSDAY:
+        return attendingBlocksThursday;
+      case FRIDAY:
+        return attendingBlocksFriday;
+      case SATURDAY:
+        return attendingBlocksSaturday;
+      case SUNDAY:
+        return attendingBlocksSunday;
+      default:
+        throw new IllegalArgumentException("Invalid date");
+    }
   }
 }
