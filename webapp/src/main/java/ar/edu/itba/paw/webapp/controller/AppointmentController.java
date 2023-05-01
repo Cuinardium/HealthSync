@@ -1,13 +1,9 @@
 package ar.edu.itba.paw.webapp.controller;
 
 import ar.edu.itba.paw.interfaces.services.AppointmentService;
-import ar.edu.itba.paw.interfaces.services.DoctorService;
-import ar.edu.itba.paw.models.Doctor;
 import ar.edu.itba.paw.models.ThirtyMinuteBlock;
 import ar.edu.itba.paw.webapp.auth.PawAuthUserDetails;
-import ar.edu.itba.paw.webapp.exceptions.UserNotFoundException;
 import ar.edu.itba.paw.webapp.form.AppointmentForm;
-
 import java.time.LocalDate;
 import java.util.Locale;
 import javax.validation.Valid;
@@ -24,13 +20,10 @@ import org.springframework.web.servlet.ModelAndView;
 @Controller
 public class AppointmentController {
 
-  private final DoctorService doctorService;
   private final AppointmentService appointmentService;
 
   @Autowired
-  public AppointmentController(
-      final DoctorService doctorService, final AppointmentService appointmentService) {
-    this.doctorService = doctorService;
+  public AppointmentController(final AppointmentService appointmentService) {
     this.appointmentService = appointmentService;
   }
 
@@ -41,19 +34,10 @@ public class AppointmentController {
       @PathVariable("id") final int medicId,
       @ModelAttribute("appointmentForm") final AppointmentForm appointmentForm) {
 
-    Doctor doctor = doctorService.getDoctorById(medicId).orElseThrow(UserNotFoundException::new);
-
-    String email = doctor.getEmail();
-    String address = doctor.getLocation().getAddress();
-    String city = doctor.getLocation().getCity().getMessageID();
-
     final ModelAndView mav = new ModelAndView("appointment/appointment");
 
     mav.addObject("form", appointmentForm);
     mav.addObject("medicId", medicId);
-    mav.addObject("email", email);
-    mav.addObject("address", address);
-    mav.addObject("city", city);
 
     return mav;
   }
@@ -71,18 +55,18 @@ public class AppointmentController {
       return appointmentForm(medicId, appointmentForm);
     }
 
-
-    PawAuthUserDetails currentUser = (PawAuthUserDetails) (SecurityContextHolder.getContext().getAuthentication().getPrincipal());
+    PawAuthUserDetails currentUser =
+        (PawAuthUserDetails)
+            (SecurityContextHolder.getContext().getAuthentication().getPrincipal());
 
     try {
       appointmentService.createAppointment(
-        currentUser.getId(),
-        medicId,
-        LocalDate.now(),
-        ThirtyMinuteBlock.BLOCK_00_30,
-        appointmentForm.getDescription()
-      );
-      
+          currentUser.getId(),
+          medicId,
+          LocalDate.now(),
+          ThirtyMinuteBlock.BLOCK_00_30,
+          appointmentForm.getDescription());
+
     } catch (RuntimeException e) {
       // TODO: CORRECT exception handling
     }
