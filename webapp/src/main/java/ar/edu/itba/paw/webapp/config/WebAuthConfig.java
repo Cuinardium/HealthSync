@@ -76,15 +76,7 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
 
   private String getKey() throws IOException {
     byte[] bytes = Files.readAllBytes(Paths.get(KEY_FILE));
-    String key = new String(bytes, StandardCharsets.UTF_8);
-
-    System.out.println("");
-    System.out.println("");
-    System.out.println(key);
-    System.out.println("");
-    System.out.println("");
-
-    return key;
+    return new String(bytes, StandardCharsets.UTF_8);
   }
 
   @Override
