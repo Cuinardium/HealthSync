@@ -1,9 +1,12 @@
 package ar.edu.itba.paw.webapp.controller;
 
 import javax.servlet.http.HttpServletRequest;
+
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.servlet.ModelAndView;
 
 @Controller
@@ -44,5 +47,13 @@ public class ErrorController {
 
   private int getErrorCode(HttpServletRequest httpRequest) {
     return (Integer) httpRequest.getAttribute("javax.servlet.error.status_code");
+  }
+
+  @RequestMapping("/errors/403")
+  @ResponseStatus(code= HttpStatus.FORBIDDEN)
+  public ModelAndView error403(){
+    ModelAndView errorPage = new ModelAndView("errors/errorPage");
+    errorPage.addObject("errorMsg", "Http Error Code: 403. Access Denied");
+    return errorPage;
   }
 }

@@ -29,23 +29,23 @@ public class AuthController {
     this.patientService = patientService;
   }
 
-  @RequestMapping(value = "/login", method = RequestMethod.POST)
-  public ModelAndView login(
-      @Valid @ModelAttribute("loginForm") final LoginForm loginForm, final BindingResult errors) {
+  // @RequestMapping(value = "/login", method = RequestMethod.POST)
+  // public ModelAndView login(
+  //     @Valid @ModelAttribute("loginForm") final LoginForm loginForm, final BindingResult errors) {
+  //
+  //   // TODO: IF LOGIN UNSUCCESFULL
+  //   // show errors in view
+  //   // return login form
+  //   if (errors.hasErrors() /* || login unsuccesfull*/) {
+  //     return loginForm(loginForm);
+  //   }
+  //
+  //   // TODO: CHECK IF LOGIN SUCCESFULL
+  //   final ModelAndView mav = new ModelAndView("home/doctorDashboard");
+  //   return mav;
+  // }
 
-    // TODO: IF LOGIN UNSUCCESFULL
-    // show errors in view
-    // return login form
-    if (errors.hasErrors() /* || login unsuccesfull*/) {
-      return loginForm(loginForm);
-    }
-
-    // TODO: CHECK IF LOGIN SUCCESFULL
-    final ModelAndView mav = new ModelAndView("home/doctorDashboard");
-    return mav;
-  }
-
-  @RequestMapping(value = "/login", method = RequestMethod.GET)
+  @RequestMapping(value = "/login")
   public ModelAndView loginForm(@ModelAttribute("loginForm") final LoginForm loginForm) {
     return new ModelAndView("auth/login");
   }

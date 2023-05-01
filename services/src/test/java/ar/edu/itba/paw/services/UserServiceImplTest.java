@@ -10,6 +10,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 // Le permite a Mockito tomar control de JUnit y permite anotaciones que sino no estarian
 // disponibles
@@ -22,8 +23,10 @@ public class UserServiceImplTest {
   private static final String LAST_NAME = "lastname";
   private static final long PFP_ID = 1;
   private static final String PASSWORD = "password";
+  private static final String PASSWORD_ENCODED = "password_encoded";
 
   @Mock private UserDao userDao;
+  @Mock private PasswordEncoder passwordEncoder;
 
   @InjectMocks private UserServiceImpl us;
 
@@ -31,6 +34,7 @@ public class UserServiceImplTest {
   public void testCreateUser() {
     // 1. Precondiciones
     // UserDao mock = Mockito.mock(UserDao.class);
+    Mockito.when(passwordEncoder.encode(Mockito.eq(PASSWORD))).thenReturn(PASSWORD_ENCODED);
     Mockito.when(
             userDao.createUser(
                 Mockito.anyString(),
@@ -38,7 +42,10 @@ public class UserServiceImplTest {
                 Mockito.anyString(),
                 Mockito.anyString()
                 ))
-        .thenReturn(new User(ID, EMAIL, PASSWORD, FIRST_NAME, LAST_NAME, PFP_ID));
+        .thenReturn(new User(ID, EMAIL, PASSWORD_ENCODED, FIRST_NAME, LAST_NAME, PFP_ID));
+
+    // TODO: mock this?
+    // userDao.addHealthInsuranceToUser(user.getId(), insurance.getId());
 
     // 2. Ejercitar la class under test
     User newUser = us.createUser(EMAIL, PASSWORD, FIRST_NAME, LAST_NAME);
@@ -46,7 +53,7 @@ public class UserServiceImplTest {
     // 3. Meaningful assertions
     Assert.assertNotNull(newUser);
     Assert.assertEquals(EMAIL, newUser.getEmail());
-    Assert.assertEquals(PASSWORD, newUser.getPassword());
+    Assert.assertEquals(PASSWORD_ENCODED, newUser.getPassword());
     Assert.assertEquals(FIRST_NAME, newUser.getFirstName());
     Assert.assertEquals(LAST_NAME, newUser.getLastName());
   }
@@ -54,10 +61,11 @@ public class UserServiceImplTest {
   @Test(expected = RuntimeException.class)
   public void testCreateAlreadyExists() {
     // 1. Precondiciones
+    Mockito.when(passwordEncoder.encode(Mockito.eq(PASSWORD))).thenReturn(PASSWORD_ENCODED);
     Mockito.when(
             userDao.createUser(
                 Mockito.eq(EMAIL),
-                Mockito.eq(PASSWORD),
+                Mockito.eq(PASSWORD_ENCODED),
                 Mockito.eq(FIRST_NAME),
                 Mockito.eq(LAST_NAME)))
         .thenThrow(RuntimeException.class);
