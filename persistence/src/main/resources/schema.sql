@@ -95,6 +95,7 @@ CREATE TABLE IF NOT EXISTS appointment (
     patient_id       INTEGER NOT NULL,
     appointment_date DATE NOT NULL,
     appointment_time SMALLINT NOT NULL, -- 0 a 47 -> uso smallint para ahorrar espacio
+    appointment_description VARCHAR(1000),
     status_code      INTEGER NOT NULL,
     FOREIGN KEY (doctor_id)     REFERENCES doctor (doctor_id),
     FOREIGN KEY (patient_id)    REFERENCES patient (patient_id)
