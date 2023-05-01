@@ -1,7 +1,7 @@
 package ar.edu.itba.paw.webapp.auth;
 
 import java.util.Collection;
-
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -47,19 +47,18 @@ public class PawAuthUserDetails extends User {
     return id;
   }
 
-  public static long getCurrentUserId(){
-
-    Authentication auth= SecurityContextHolder.getContext().getAuthentication();
-    if(auth.isAuthenticated()){
-      PawAuthUserDetails user= (PawAuthUserDetails) auth.getPrincipal();
+  public static long getCurrentUserId() {
+    Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+    if (auth != null && !(auth instanceof AnonymousAuthenticationToken) && auth.isAuthenticated()) {
+      PawAuthUserDetails user = (PawAuthUserDetails) auth.getPrincipal();
       return user.getId();
     }
     return -1;
   }
 
-  public static PawAuthUserDetails getCurrentUser(){
-    Authentication auth= SecurityContextHolder.getContext().getAuthentication();
-    if(auth.isAuthenticated()){
+  public static PawAuthUserDetails getCurrentUser() {
+    Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+    if (auth != null && !(auth instanceof AnonymousAuthenticationToken) && auth.isAuthenticated()) {
       return (PawAuthUserDetails) auth.getPrincipal();
     }
     return null;
