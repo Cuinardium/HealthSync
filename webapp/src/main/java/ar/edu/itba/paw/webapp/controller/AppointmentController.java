@@ -87,10 +87,8 @@ public class AppointmentController {
     ModelAndView mav = new ModelAndView("appointment/appointments");
 
     List<Appointment> appointments = getAppointmentsForUserId(userId);
-
     mav.addObject("appointments", appointments);
     mav.addObject("userId", userId);
-
     return mav;
   }
 

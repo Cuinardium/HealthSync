@@ -3,6 +3,7 @@ package ar.edu.itba.paw.webapp.auth;
 import java.util.Collection;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 
 public class PawAuthUserDetails extends User {
@@ -44,13 +45,13 @@ public class PawAuthUserDetails extends User {
     return id;
   }
 
-  public UserRoles getRole(){
-    if(this.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_PATIENT"))){
+  public static UserRoles getRole(){
+    if(SecurityContextHolder.getContext().getAuthentication().getAuthorities().contains(new SimpleGrantedAuthority("ROLE_PATIENT"))){
       return UserRoles.ROLE_PATIENT;
     }
-    if(this.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_DOCTOR"))){
+    if(SecurityContextHolder.getContext().getAuthentication().getAuthorities().contains(new SimpleGrantedAuthority("ROLE_DOCTOR"))){
       return UserRoles.ROLE_DOCTOR;
     }
-    return null;
+    return UserRoles.ROLE_NULL;
   }
 }
