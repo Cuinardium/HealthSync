@@ -11,7 +11,7 @@
 <c:url value="/js/categoriesCarousel.js" var="categoriesCarouselJs"/>
 
 <c:url value="/" var="homeUrl"/>
-<c:url value="/doctorDashboard?specialty=" var="doctorDashboardFilteredUrl"/>
+<c:url value="/doctorDashboard?specialtyCode=" var="doctorDashboardFilteredUrl"/>
 
 <c:url value="/img/homeDoctor.svg" var="homeDoctorImg"/>
 
