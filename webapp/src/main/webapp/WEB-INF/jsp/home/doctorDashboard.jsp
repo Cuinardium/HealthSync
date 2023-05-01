@@ -41,7 +41,6 @@
 
     <form method="get" action="${doctorDashboardUrl}">
         <div class="filtersContainer">
-
             <select class="form-control" name="cityCode">
                 <option value="" selected disabled hidden> -- </option>
                 <c:forEach items="${cities}" var="city" varStatus="status">
@@ -51,7 +50,7 @@
                 </c:forEach>
             </select>
 
-            <select name="specialtyCode">
+            <select class="form-control" name="specialtyCode">
                 <option value="" selected disabled hidden> -- </option>
                 <c:forEach items="${specialties}" var="specialty" varStatus="status">
                     <option value="${status.index}" ${status.index == specialtyCode? 'selected':''}>
@@ -60,7 +59,7 @@
                 </c:forEach>
             </select>
 
-            <select name="healthInsuranceCode">
+            <select class="form-control" name="healthInsuranceCode">
                 <option value="" selected disabled hidden> -- </option>
                 <c:forEach items="${healthInsurances}" var="healthInsurance" varStatus="status">
                     <option value="${status.index}" ${status.index == healthInsuranceCode? 'selected':''}>
