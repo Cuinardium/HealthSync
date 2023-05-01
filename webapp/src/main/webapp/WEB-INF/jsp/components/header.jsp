@@ -7,7 +7,9 @@
 
 <c:url value="/" var="homeUrl" />
 <c:url value="/doctorDashboard" var="dashboardUrl" />
-<c:url value="/register_medic" var="registerMedicUrl" />
+<c:url value="/doctor-register" var="doctorRegisterUrl" />
+<c:url value="/patient-register" var="patientRegisterUrl" />
+<c:url value="/login" var="loginUrl" />
 
 <spring:message code="home.home" var="home"/>
 <spring:message code="home.checkDoctor" var="checkDoctor"/>
@@ -35,7 +37,8 @@
 
             <div class="buttons">
 
-                <button type="button" class="btn btn-primary" onclick="window.location='#';">${login}</button>
+                <!-- TODO: ver si se puede dejar en "<button>" como antes -->
+                <a href=${loginUrl} class="btn btn-primary" role="button">${login}</a>
 
                 <nav class="navbar navbar-expand-lg">
                     <div class="container-fluid">
@@ -49,9 +52,8 @@
                                         ${register}
                                     </button>
                                     <ul class="dropdown-menu">
-                                        <li><a class="dropdown-item" href="${registerMedicUrl}">${iAmDoctor}</a></li>
-                                        <!-- TODO: Add patient register routing -->
-                                        <li><a class="dropdown-item" href="#">${iAmPatient}</a></li>
+                                        <li><a class="dropdown-item" href="${doctorRegisterUrl}">${iAmDoctor}</a></li>
+                                        <li><a class="dropdown-item" href="${patientRegisterUrl}">${iAmPatient}</a></li>
                                     </ul>
                                 </li>
                             </ul>
