@@ -28,7 +28,7 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
   @Autowired private UserDetailsService userDetailsService;
 
   @Bean
-  public PasswordEncoder passwordEncoder() {
+  public static PasswordEncoder passwordEncoder() {
     return new BCryptPasswordEncoder();
   }
 
