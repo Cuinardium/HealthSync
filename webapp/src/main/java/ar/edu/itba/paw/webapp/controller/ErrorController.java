@@ -1,59 +1,29 @@
 package ar.edu.itba.paw.webapp.controller;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.servlet.ModelAndView;
 
 @Controller
 public class ErrorController {
 
-  @RequestMapping(value = "/errors", method = RequestMethod.GET)
-  public ModelAndView renderErrorPage(HttpServletRequest httpRequest) {
-
-    ModelAndView errorPage = new ModelAndView("errors/errorPage");
-    String errorMsg = "";
-    int httpErrorCode = getErrorCode(httpRequest);
-
-    switch (httpErrorCode) {
-      case 400:
-        {
-          errorMsg = "Http Error Code: 400. Bad Request";
-          break;
-        }
-      case 401:
-        {
-          errorMsg = "Http Error Code: 401. Unauthorized";
-          break;
-        }
-      case 404:
-        {
-          errorMsg = "Http Error Code: 404. Resource not found";
-          break;
-        }
-      case 500:
-        {
-          errorMsg = "Http Error Code: 500. Internal Server Error";
-          break;
-        }
-    }
-    errorPage.addObject("errorMsg", errorMsg);
-    return errorPage;
-  }
-
-  private int getErrorCode(HttpServletRequest httpRequest) {
-    return (Integer) httpRequest.getAttribute("javax.servlet.error.status_code");
-  }
-
   @RequestMapping("/errors/403")
-  @ResponseStatus(code= HttpStatus.FORBIDDEN)
-  public ModelAndView error403(){
-    ModelAndView errorPage = new ModelAndView("errors/errorPage");
-    errorPage.addObject("errorMsg", "Http Error Code: 403. Access Denied");
-    return errorPage;
+  @ResponseStatus(HttpStatus.FORBIDDEN)
+  public ModelAndView error403() {
+    return new ModelAndView("/errors/403");
+  }
+
+  @RequestMapping("/errors/404")
+  @ResponseStatus(HttpStatus.NOT_FOUND)
+  public ModelAndView error404() {
+    return new ModelAndView("/errors/404");
+  }
+
+  @RequestMapping("/errors/500")
+  @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+  public ModelAndView error500() {
+    return new ModelAndView("/errors/500");
   }
 }
