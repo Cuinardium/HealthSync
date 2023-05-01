@@ -51,7 +51,7 @@ public class AppointmentController {
     appointmentForm.setDescription(description);
 
     mav.addObject("form", appointmentForm);
-    mav.addObject("medicId", doctorId);
+    mav.addObject("doctorId", doctorId);
     mav.addObject("availableHours", availableHours);
 
     return mav;
