@@ -11,6 +11,7 @@ import ar.edu.itba.paw.models.Doctor;
 import ar.edu.itba.paw.models.Patient;
 import ar.edu.itba.paw.models.ThirtyMinuteBlock;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -78,5 +79,29 @@ public class AppointmentServiceImpl implements AppointmentService {
   @Override
   public void updateAppointmentStatus(long appointmentId, AppointmentStatus status) {
     appointmentDao.updateAppointmentStatus(appointmentId, status);
+  }
+
+  @Override
+  public List<ThirtyMinuteBlock> getAvailableHoursForDoctorOnDate(long doctorId, LocalDate date) {
+
+    // Get doctor appointments
+    List<Appointment> appointments = getAppointmentsForDoctor(doctorId);
+    
+    // TODO: error handling
+    Doctor doctor = doctorService.getDoctorById(doctorId).orElseThrow(RuntimeException::new);
+
+    // Get doctor available hours for date
+    List<ThirtyMinuteBlock> availableHours = new ArrayList<>();
+    for (ThirtyMinuteBlock block : doctor.getAttendingHours().getAttendingBlocksForDate(date)) {
+      availableHours.add(block);
+    }
+
+    for (Appointment appointment : appointments) {
+      if (appointment.getDate().equals(date)) {
+        availableHours.remove(appointment.getTimeBlock());
+      }
+    }
+
+    return availableHours;
   }
 }
