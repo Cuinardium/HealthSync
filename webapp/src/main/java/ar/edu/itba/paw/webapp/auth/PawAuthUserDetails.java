@@ -45,11 +45,13 @@ public class PawAuthUserDetails extends User {
     return id;
   }
 
-  public static UserRoles getRole(){
-    if(SecurityContextHolder.getContext().getAuthentication().getAuthorities().contains(new SimpleGrantedAuthority("ROLE_PATIENT"))){
+  public static UserRoles getRole() {
+    Collection<? extends GrantedAuthority> authorities =
+        SecurityContextHolder.getContext().getAuthentication().getAuthorities();
+    if (authorities.contains(new SimpleGrantedAuthority("ROLE_PATIENT"))) {
       return UserRoles.ROLE_PATIENT;
     }
-    if(SecurityContextHolder.getContext().getAuthentication().getAuthorities().contains(new SimpleGrantedAuthority("ROLE_DOCTOR"))){
+    if (authorities.contains(new SimpleGrantedAuthority("ROLE_DOCTOR"))) {
       return UserRoles.ROLE_DOCTOR;
     }
     return UserRoles.ROLE_NULL;
