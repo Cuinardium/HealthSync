@@ -7,7 +7,7 @@ import ar.edu.itba.paw.webapp.annotations.ExistsInEnum;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
-public class MedicRegisterForm extends UserRegisterForm {
+public class DoctorRegisterForm extends UserRegisterForm {
 
   @ExistsInEnum(enumClass = HealthInsurance.class)
   private Integer healthInsuranceCode = -1;

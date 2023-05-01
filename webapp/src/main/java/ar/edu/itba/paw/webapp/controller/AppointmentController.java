@@ -34,13 +34,13 @@ public class AppointmentController {
   //                        vvvvvvvv
   @RequestMapping(value = "/{id:\\d+}/appointment", method = RequestMethod.GET)
   public ModelAndView appointmentForm(
-      @PathVariable("id") final int medicId,
+      @PathVariable("id") final int doctorId,
       @ModelAttribute("appointmentForm") final AppointmentForm appointmentForm) {
 
     final ModelAndView mav = new ModelAndView("appointment/appointment");
 
     mav.addObject("form", appointmentForm);
-    mav.addObject("medicId", medicId);
+    mav.addObject("doctorId", doctorId);
 
     return mav;
   }
@@ -49,13 +49,13 @@ public class AppointmentController {
   // or use a popup
   @RequestMapping(value = "/{id:\\d+}/appointment", method = RequestMethod.POST)
   public ModelAndView appointmentSubmit(
-      @PathVariable("id") final int medicId,
+      @PathVariable("id") final int doctorId,
       @Valid @ModelAttribute("appointmentForm") final AppointmentForm appointmentForm,
       final BindingResult errors,
       Locale locale) {
 
     if (errors.hasErrors()) {
-      return appointmentForm(medicId, appointmentForm);
+      return appointmentForm(doctorId, appointmentForm);
     }
 
     PawAuthUserDetails currentUser =
@@ -65,7 +65,7 @@ public class AppointmentController {
     try {
       appointmentService.createAppointment(
           currentUser.getId(),
-          medicId,
+          doctorId,
           LocalDate.now(),
           ThirtyMinuteBlock.BLOCK_00_30,
           appointmentForm.getDescription());

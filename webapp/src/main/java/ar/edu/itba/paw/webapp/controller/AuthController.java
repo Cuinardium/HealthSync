@@ -3,8 +3,8 @@ package ar.edu.itba.paw.webapp.controller;
 import ar.edu.itba.paw.interfaces.services.DoctorService;
 import ar.edu.itba.paw.interfaces.services.PatientService;
 import ar.edu.itba.paw.models.*;
+import ar.edu.itba.paw.webapp.form.DoctorRegisterForm;
 import ar.edu.itba.paw.webapp.form.LoginForm;
-import ar.edu.itba.paw.webapp.form.MedicRegisterForm;
 import ar.edu.itba.paw.webapp.form.RegisterForm;
 import java.util.Arrays;
 import javax.validation.Valid;
@@ -100,22 +100,22 @@ public class AuthController {
   // TODO: revisar campos
   @RequestMapping(value = "/doctor-register", method = RequestMethod.POST)
   public ModelAndView registerMedicSubmit(
-      @Valid @ModelAttribute("medicRegisterForm") final MedicRegisterForm medicRegisterForm,
+      @Valid @ModelAttribute("doctorRegisterForm") final DoctorRegisterForm doctorRegisterForm,
       final BindingResult errors) {
     if (errors.hasErrors()) {
-      return registerMedicForm(medicRegisterForm);
+      return registerMedicForm(doctorRegisterForm);
     }
     final User user;
     user =
         doctorService.createDoctor(
-            medicRegisterForm.getEmail(),
-            medicRegisterForm.getPassword(),
-            medicRegisterForm.getName(),
-            medicRegisterForm.getLastname(),
-            medicRegisterForm.getHealthInsuranceCode(),
-            medicRegisterForm.getSpecialtyCode(),
-            medicRegisterForm.getCityCode(),
-            medicRegisterForm.getAddress(),
+            doctorRegisterForm.getEmail(),
+            doctorRegisterForm.getPassword(),
+            doctorRegisterForm.getName(),
+            doctorRegisterForm.getLastname(),
+            doctorRegisterForm.getHealthInsuranceCode(),
+            doctorRegisterForm.getSpecialtyCode(),
+            doctorRegisterForm.getCityCode(),
+            doctorRegisterForm.getAddress(),
             AttendingHours.DEFAULT_ATTENDING_HOURS);
 
     final ModelAndView mav = new ModelAndView("auth/registerSuccesful");
@@ -125,9 +125,9 @@ public class AuthController {
 
   @RequestMapping(value = "/doctor-register", method = RequestMethod.GET)
   public ModelAndView registerMedicForm(
-      @ModelAttribute("medicRegisterForm") final MedicRegisterForm medicRegisterForm) {
+      @ModelAttribute("doctorRegisterForm") final DoctorRegisterForm doctorRegisterForm) {
     final ModelAndView mav = new ModelAndView("auth/doctorRegister");
-    mav.addObject("form", medicRegisterForm);
+    mav.addObject("form", doctorRegisterForm);
     mav.addObject("cities", Arrays.asList(City.values()));
     mav.addObject("specialties", Arrays.asList(Specialty.values()));
     mav.addObject("healthInsurances", Arrays.asList(HealthInsurance.values()));
