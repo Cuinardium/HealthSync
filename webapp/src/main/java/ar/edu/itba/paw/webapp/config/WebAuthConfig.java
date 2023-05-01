@@ -2,13 +2,14 @@ package ar.edu.itba.paw.webapp.config;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.concurrent.TimeUnit;
+import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.io.Resource;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
@@ -23,7 +24,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @Configuration
 public class WebAuthConfig extends WebSecurityConfigurerAdapter {
 
-  private static final String KEY_FILE = "src/main/resources/openssl-key";
+  @Value("classpath:openssl-key")
+  private Resource openSSLKey;
 
   @Autowired private UserDetailsService userDetailsService;
 
@@ -43,11 +45,15 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
         .invalidSessionUrl("/")
         .and()
         .authorizeRequests()
-            .antMatchers("/doctorDashboard").permitAll()
-            .antMatchers("/", "/login", "/patient-register", "/doctor-register").anonymous()
-            .antMatchers("/appointment").hasRole("PATIENT")
+        .antMatchers("/doctorDashboard")
+        .permitAll()
+        .antMatchers("/", "/login", "/patient-register", "/doctor-register")
+        .anonymous()
+        .antMatchers("/appointment")
+        .hasRole("PATIENT")
         //  .antMatchers("").hasRole("DOCTOR") TODO SETEAR PAGINAS PARA SOLO DOCTORS
-            .antMatchers("/**").authenticated()
+        .antMatchers("/**")
+        .authenticated()
         .and()
         .formLogin()
         .loginPage("/login")
@@ -73,7 +79,7 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
   }
 
   private String getKey() throws IOException {
-    byte[] bytes = Files.readAllBytes(Paths.get(KEY_FILE));
+    byte[] bytes = FileUtils.readFileToByteArray(openSSLKey.getFile());
     return new String(bytes, StandardCharsets.UTF_8);
   }
 
