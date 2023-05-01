@@ -3,7 +3,7 @@ div{
 }
 
 .health{
-    color: #0275d8;
+    color: #223E6A;
 }
 
 .sync{
@@ -22,4 +22,15 @@ div{
 .verticalPadding{
     padding-left: 3rem;
     padding-right: 3rem;
+}
+
+.title{
+    font-weight: bold;
+    font-size: 2rem;
+}
+
+.navbar-brand{
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: center;
 }

@@ -7,16 +7,10 @@
     font-size: 85%;
 }
 
-.title{
-    display: flex;
-    align-items: center;
-    font-weight: bold;
-    font-size: 2em;
-}
 
 .head{
     display: flex;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
     flex-direction: row;
     justify-content: space-between;
     margin-bottom: 1%;
@@ -28,4 +22,9 @@
     align-items: center;
     flex-wrap: wrap;
     flex-direction: row;
+}
+
+.logo {
+    max-height: 3rem;
+    margin-right: 10px;
 }

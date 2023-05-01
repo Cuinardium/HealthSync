@@ -160,9 +160,9 @@
 </section>
 
 <footer class="foot border-top horizontalPadding">
-    <a class="title navbar-brand" href="${homeUrl}">
-        <div class="health">Health</div>
-        <div class="sync">Sync</div>
+    <a class="navbar-brand" href="${homeUrl}">
+        <div class="health title">Health</div>
+        <div class="sync title">Sync</div>
     </a>
     <div>
         <span class="text-body-secondary">&copy; 2023 HealthSync, Inc</span>
