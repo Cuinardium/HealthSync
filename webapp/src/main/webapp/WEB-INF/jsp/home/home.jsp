@@ -57,6 +57,9 @@
                 <div class="fs-3 fw-light text-muted">${welcome1}</div>
                 <h1 class="display-3 fw-bolder mb-5"><span class="text-gradient">${welcome2}</span></h1>
             </div>
+            <div class="searchBar">
+                <jsp:include page="../components/searchBar.jsp"/>
+            </div>
         </div>
         <div class="col-xxl-7">
             <div class="d-flex justify-content-center mt-5 mt-xxl-0">
@@ -115,7 +118,7 @@
                         <img src="${ophtalmologist}" class="img-fluid">
                     </div>
                     <div class="card-img-overlay">Ophthalmology</div>
-                    <a href="${doctorDashboardFilteredUrl}ophthalmology" class="stretched-link"></a>
+                    <a href="${doctorDashboardFilteredUrl}ophthalmolog" class="stretched-link"></a>
                 </div>
             </div>
             <div class="carousel-item">
@@ -151,17 +154,17 @@
         <div class="col-lg-4 mb-5 mb-lg-0">
             <img class="circles" src="${circle1}" alt="..."/>
             <h3>${circleText1}</h3>
-            <p class="mb-0">${description1}</p>
+            <p>${description1}</p>
         </div>
         <div class="col-lg-4 mb-5 mb-lg-0">
             <img class="circles" src="${circle2}" alt="..."/>
             <h3>${circleText2}</h3>
-            <p class="mb-0">${description2}</p>
+            <p>${description2}</p>
         </div>
         <div class="col-lg-4">
             <img class="circles" src="${circle3}" alt="..."/>
             <h3>${circleText3}</h3>
-            <p class="mb-0">${description3}</p>
+            <p>${description3}</p>
         </div>
     </div>
 </section>

@@ -13,7 +13,6 @@
 <c:url value="/img/doctorCardDefault.jpg" var="doctorCardDefaultImg"/>
 
 <spring:message code="doctorDashboard.title" var="title"/>
-<spring:message code="doctorDashboard.placeholder.search" var="search"/>
 <spring:message code="doctorDashboard.placeholder.city" var="city"/>
 <spring:message code="doctorDashboard.placeholder.specialty" var="specialty"/>
 <spring:message code="doctorDashboard.placeholder.insurance" var="insurance"/>
@@ -35,16 +34,10 @@
 <jsp:include page="../components/header.jsp"/>
 
 <!-- Content -->
-<div class="page-content p-5">
+<div class="page-content generalPadding">
 
     <!-- Search Bar -->
-    <div class="input-group">
-        <input type="text" id="input" class="form-control" placeholder="${search}" aria-label="Search"
-               aria-describedby="basic-addon2">
-        <button type="button" class="btn btn-primary search" onclick="search();">
-            <i class="fas fa-search"></i>
-        </button>
-    </div>
+    <jsp:include page="../components/searchBar.jsp"/>
 
     <form method="get" action="${doctorDashboardUrl}">
         <div class="filtersContainer">
@@ -87,11 +80,8 @@
         </c:if>
     </div>
 </div>
+<script src="${searchBarJs}"></script>
 </body>
-<script>
-    let search = () => {
-        let element = document.getElementById("input").value;
-        window.location = '${doctorDashboardUrl}?name=' + element;
-    }
-</script>
 </html>
+
+
