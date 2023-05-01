@@ -14,25 +14,6 @@
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
 }
-
-.profile {
-    position: relative;
-    height: 75vw;
-    width: 75vw;
-    border-radius: 5vw;
-    margin-top: 5vw;
-    max-height: 40rem;
-    max-width: 40rem;
-}
-.profile .profile-img {
-    height: 80vw;
-    max-height: 45rem;
-    position: absolute;
-    bottom: 0;
-    left: 50%;
-    transform: translateX(-50%);
-}
-
 .circles{
     max-width: 60%;
     padding-bottom: 5%;
@@ -40,9 +21,25 @@
 }
 
 .welcome{
-    justify-content: center;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: space-between;
     align-items: center;
 }
+
+.welcome1Container{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+}
+
+.profile {
+    height: 70%;
+    width: 70%;
+}
+
 
 .text{
     margin: 3rem;
@@ -111,7 +108,20 @@ section{
     font-size: 2rem;
 }
 
-.h1, h1{
+.sloganSmall{
+    font-size: 2rem;
+    font-weight: lighter;
+    --bs-text-opacity: 1;
+    color: var(--bs-secondary-color);
+}
+
+.sloganBig{
+    font-size: 3.3rem;
+    font-weight: bolder;
+    margin-bottom: 2rem;
+}
+
+.categoriesTitle{
     margin-bottom: 1.5rem;
 }
 
@@ -121,5 +131,21 @@ p{
 }
 
 .searchBar{
-    margin: 0 2.5rem;
+    width: 80%;
+}
+
+.about{
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.aboutCircleContainer{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 0 3%;
 }

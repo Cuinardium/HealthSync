@@ -37,6 +37,7 @@
 <spring:message code="home.description1" var="description1"/>
 <spring:message code="home.description2" var="description2"/>
 <spring:message code="home.description3" var="description3"/>
+<spring:message code="home.categories" var="categories"/>
 
 <html>
 <head>
@@ -50,30 +51,21 @@
 <!-- Header -->
 <jsp:include page="../components/header.jsp"/>
 <!-- Content -->
-<div class="horizontalPadding">
-    <div class="row welcome gx-5">
-        <div class="col-xxl-5">
-            <div class="text text-xxl-start">
-                <div class="fs-3 fw-light text-muted">${welcome1}</div>
-                <h1 class="display-3 fw-bolder mb-5"><span class="text-gradient">${welcome2}</span></h1>
-            </div>
-            <div class="searchBar">
-                <jsp:include page="../components/searchBar.jsp"/>
-            </div>
+<div class="generalPadding welcome">
+    <div class="welcome1Container">
+        <div class="sloganSmall">${welcome1}</div>
+        <h1 class="sloganBig"><span class="text-gradient">${welcome2}</span></h1>
+        <div class="searchBar">
+            <jsp:include page="../components/searchBar.jsp"/>
         </div>
-        <div class="col-xxl-7">
-            <div class="d-flex justify-content-center mt-5 mt-xxl-0">
-                <div class="profile bg-gradient-primary-to-secondary">
-                    <img class="profile-img"
-                         src="${homeDoctorImg}" alt="..."/>
-                </div>
-            </div>
-        </div>
+    </div>
+    <div class="profile">
+        <img class="profile-img" src="${homeDoctorImg}" alt="..."/>
     </div>
 </div>
 
-<div class="carouselContainer generalPadding">
-    <h1>Popular Categories</h1>
+<div class="carouselContainer generalPadding border-top">
+    <h1>${categories}</h1>
     <div id="recipeCarousel" class="carousel slide">
         <div class="carousel-inner" role="listbox">
             <div class="carousel-item active">
@@ -149,24 +141,22 @@
     </div>
 </div>
 
-<section class="about bg-light generalPadding">
-    <div class="row gx-5 text-center">
-        <div class="col-lg-4 mb-5 mb-lg-0">
+<section class="about bg-light generalPadding border-top">
+        <div class="aboutCircleContainer">
             <img class="circles" src="${circle1}" alt="..."/>
             <h3>${circleText1}</h3>
             <p>${description1}</p>
         </div>
-        <div class="col-lg-4 mb-5 mb-lg-0">
+        <div class="aboutCircleContainer">
             <img class="circles" src="${circle2}" alt="..."/>
             <h3>${circleText2}</h3>
             <p>${description2}</p>
         </div>
-        <div class="col-lg-4">
+        <div class="aboutCircleContainer">
             <img class="circles" src="${circle3}" alt="..."/>
             <h3>${circleText3}</h3>
             <p>${description3}</p>
         </div>
-    </div>
 </section>
 
 <footer class="foot border-top horizontalPadding">
