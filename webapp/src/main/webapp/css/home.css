@@ -140,6 +140,8 @@ p{
     flex-wrap: nowrap;
     justify-content: space-between;
     align-items: center;
+    --bs-bg-opacity: 1;
+    background-color: rgba(var(--bs-light-rgb),var(--bs-bg-opacity))!important;
 }
 
 .aboutCircleContainer{

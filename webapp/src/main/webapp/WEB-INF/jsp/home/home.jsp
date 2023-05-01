@@ -65,7 +65,7 @@
 </div>
 
 <div class="carouselContainer generalPadding border-top">
-    <h1>${categories}</h1>
+    <h1 class="categoriesTitle">${categories}</h1>
     <div id="recipeCarousel" class="carousel slide">
         <div class="carousel-inner" role="listbox">
             <div class="carousel-item active">
@@ -141,7 +141,7 @@
     </div>
 </div>
 
-<section class="about bg-light generalPadding border-top">
+<section class="about generalPadding border-top">
         <div class="aboutCircleContainer">
             <img class="circles" src="${circle1}" alt="..."/>
             <h3>${circleText1}</h3>
