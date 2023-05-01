@@ -43,13 +43,11 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
         .invalidSessionUrl("/")
         .and()
         .authorizeRequests()
-        .antMatchers("/", "/login", "/patient-register", "/doctor-register")
-        .anonymous()
-        .antMatchers("/doctorDashboard")
-        .hasRole("PATIENT")
-        // .antMatchers("").hasRole("DOCTOR") TODO SETEAR PAGINAS PARA SOLO DOCTORS
-        .antMatchers("/**")
-        .authenticated()
+            .antMatchers("/doctorDashboard").permitAll()
+            .antMatchers("/", "/login", "/patient-register", "/doctor-register").anonymous()
+            .antMatchers("/appointment").hasRole("PATIENT")
+        //  .antMatchers("").hasRole("DOCTOR") TODO SETEAR PAGINAS PARA SOLO DOCTORS
+            .antMatchers("/**").authenticated()
         .and()
         .formLogin()
         .loginPage("/login")
