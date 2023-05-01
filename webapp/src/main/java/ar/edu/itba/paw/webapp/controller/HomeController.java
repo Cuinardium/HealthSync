@@ -6,6 +6,7 @@ import ar.edu.itba.paw.models.City;
 import ar.edu.itba.paw.models.Doctor;
 import ar.edu.itba.paw.models.HealthInsurance;
 import ar.edu.itba.paw.models.Specialty;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +30,18 @@ public class HomeController {
 
   @RequestMapping(value = "/")
   public ModelAndView landingPage() {
-    return new ModelAndView("/home/home");
+    ModelAndView mav = new ModelAndView("/home/home");
+
+    List<Specialty> featuredSpecialties = new ArrayList<>();
+    featuredSpecialties.add(Specialty.CARDIOLOGY);
+    featuredSpecialties.add(Specialty.DERMATOLOGY);
+    featuredSpecialties.add(Specialty.NEUROLOGY);
+    featuredSpecialties.add(Specialty.NUTRITION);
+    featuredSpecialties.add(Specialty.OPHTHALMOLOGY);
+    featuredSpecialties.add(Specialty.PEDIATRICS);
+    featuredSpecialties.add(Specialty.UROLOGY);
+    mav.addObject("featuredSpecialties", featuredSpecialties);
+    return mav;
   }
 
   @RequestMapping(value = "/doctorDashboard", method = RequestMethod.GET)

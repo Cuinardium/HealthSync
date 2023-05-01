@@ -68,69 +68,17 @@
     <h1 class="categoriesTitle">${categories}</h1>
     <div id="recipeCarousel" class="carousel slide">
         <div class="carousel-inner" role="listbox">
-            <div class="carousel-item active">
+            <c:forEach items="${featuredSpecialties}" var="specialty">
+              <div class="carousel-item active">
                 <div class="card">
                     <div class="card-img">
-                        <img src="${cardiologist}" class="img-fluid">
+                      <img src="specialty-${specialty.ordinal()}" class="img-fluid">
                     </div>
-                    <div class="card-img-overlay">Cardiology</div>
-                    <a href="${doctorDashboardFilteredUrl}cardiolog" class="stretched-link"></a>
+                    <div class="card-img-overlay"><spring:message code="${specialty.messageID}"/></div>
+                    <a href="${doctorDashboardFilteredUrl}${specialty.ordinal()}" class="stretched-link"></a>
                 </div>
             </div>
-            <div class="carousel-item">
-                <div class="card">
-                    <div class="card-img">
-                        <img src="${dermatologist}" class="img-fluid">
-                    </div>
-                    <div class="card-img-overlay">Dermatology</div>
-                    <a href="${doctorDashboardFilteredUrl}dermatolog" class="stretched-link"></a>
-                </div>
-            </div>
-            <div class="carousel-item">
-                <div class="card">
-                    <div class="card-img">
-                        <img src="${neurologist}" class="img-fluid">
-                    </div>
-                    <div class="card-img-overlay">Neurology</div>
-                    <a href="${doctorDashboardFilteredUrl}neurolog" class="stretched-link"></a>
-                </div>
-            </div>
-            <div class="carousel-item">
-                <div class="card">
-                    <div class="card-img">
-                        <img src="${nutritionist}" class="img-fluid">
-                    </div>
-                    <div class="card-img-overlay">Nutrition</div>
-                    <a href="${doctorDashboardFilteredUrl}nutrition" class="stretched-link"></a>
-                </div>
-            </div>
-            <div class="carousel-item">
-                <div class="card">
-                    <div class="card-img">
-                        <img src="${ophtalmologist}" class="img-fluid">
-                    </div>
-                    <div class="card-img-overlay">Ophthalmology</div>
-                    <a href="${doctorDashboardFilteredUrl}ophthalmolog" class="stretched-link"></a>
-                </div>
-            </div>
-            <div class="carousel-item">
-                <div class="card">
-                    <div class="card-img">
-                        <img src="${pediatrics}" class="img-fluid">
-                    </div>
-                    <div class="card-img-overlay">Pediatrics</div>
-                    <a href="${doctorDashboardFilteredUrl}pediatric" class="stretched-link"></a>
-                </div>
-            </div>
-            <div class="carousel-item">
-                <div class="card">
-                    <div class="card-img">
-                        <img src="${urologist}" class="img-fluid">
-                    </div>
-                    <div class="card-img-overlay">Urology</div>
-                    <a href="${doctorDashboardFilteredUrl}urolog" class="stretched-link"></a>
-                </div>
-            </div>
+            </c:forEach>
         </div>
         <a class="carousel-control-prev bg-transparent w-aut" href="#recipeCarousel" role="button" data-bs-slide="prev">
             <span class="carousel-control-prev-icon" aria-hidden="true"></span>
