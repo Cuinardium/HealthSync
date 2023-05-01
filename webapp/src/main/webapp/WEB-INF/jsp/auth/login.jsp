@@ -30,6 +30,8 @@
     <link href="${registerCss}" rel="stylesheet"/>
 </head>
 <body>
+<!-- Header -->
+<jsp:include page="../components/header.jsp"/>
 <div class="form-container">
     <h1>${title}</h1>
     <form:form modelAttribute="loginForm" action="${loginUrl}" method="post">

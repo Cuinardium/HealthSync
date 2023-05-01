@@ -40,6 +40,8 @@
     <link href="${registerMedicCss}" rel="stylesheet"/>
 </head>
 <body>
+<!-- Header -->
+<jsp:include page="../components/header.jsp"/>
 <div class="form-container">
     <h1>${title}</h1>
     <form:form modelAttribute="registerForm" action="${patientRegisterUrl}" method="POST">
