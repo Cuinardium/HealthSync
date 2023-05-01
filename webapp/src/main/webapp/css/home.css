@@ -35,17 +35,8 @@
 
 .circles{
     max-width: 60%;
-    padding: 5%;
-    margin: 1%;
-}
-
-.generalPadding{
-    padding: 3rem 8rem;
-}
-
-.horizontalPadding{
-    padding-left: 8rem;
-    padding-right: 8rem;
+    padding-bottom: 5%;
+    margin-bottom: 1%;
 }
 
 .welcome{
@@ -122,4 +113,13 @@ section{
 
 .h1, h1{
     margin-bottom: 1.5rem;
+}
+
+p{
+    text-align: justify;
+    text-align-last: center;
+}
+
+.searchBar{
+    margin: 0 2.5rem;
 }

@@ -9,3 +9,17 @@ div{
 .sync{
     color: black;
 }
+
+.generalPadding{
+    padding: 3rem 8rem;
+}
+
+.horizontalPadding{
+    padding-left: 8rem;
+    padding-right: 8rem;
+}
+
+.verticalPadding{
+    padding-left: 3rem;
+    padding-right: 3rem;
+}
