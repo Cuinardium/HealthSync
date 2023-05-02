@@ -9,7 +9,8 @@
 <c:url value="/doctorDashboard" var="dashboardUrl"/>
 <c:url value="/doctor-register" var="doctorRegisterUrl"/>
 <c:url value="/patient-register" var="patientRegisterUrl"/>
-<c:url value="/edit-profile" var="editProfileUrl"/>
+<c:url value="/doctor-edit" var="doctorEditUrl"/>
+<c:url value="/patient-edit" var="patientEditUrl"/>
 <c:url value="/login" var="loginUrl"/>
 <c:url value="/logout" var="logoutUrl"/>
 
@@ -58,7 +59,14 @@
                                     <img src="/img/${user.getProfilePictureId()}" width="40" height="40" class="rounded-circle">
                                 </a>
                                 <ul class="dropdown-menu">
-                                    <li><a class="dropdown-item" href="${editProfileUrl}">${editProfile}</a></li>
+                                    <c:choose>
+                                        <c:when test="${isDoctor}">
+                                            <li><a class="dropdown-item" href="${doctorEditUrl}">${editProfile}</a></li>
+                                        </c:when>
+                                        <c:otherwise>
+                                            <li><a class="dropdown-item" href="${patientEditUrl}">${editProfile}</a></li>
+                                        </c:otherwise>
+                                    </c:choose>
                                     <li><a class="dropdown-item" href="${logoutUrl}">${logout}</a></li>
                                 </ul>
                             </li>
