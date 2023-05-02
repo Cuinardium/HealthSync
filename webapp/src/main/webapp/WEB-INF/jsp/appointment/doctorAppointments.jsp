@@ -50,9 +50,9 @@
         <div class="cardsContainer">
             <div id="requests" class="tabContent active">
                 <c:forEach items="${pendingAppointments}" var="appointment">
-                    <div class="card">
+                    <div class="card mt-3">
                         <div class="card-header d-flex flex-row justify-content-between">
-                            <div>
+                            <div class="align-self-center">
                                     ${appointment.date} ${appointment.timeBlock.blockBeginning}
                             </div>
                             <c:url value="/my-appointments/${appointment.id}/update" var="updateUrl"/>
@@ -67,9 +67,7 @@
 
                         </div>
                         <div class="card-body">
-                            <p class="card-text">
-                                ${appointment.description}
-                            </p>
+                            <div>${appointment.description}<div/>
                         </div>
                     </div>
 
@@ -81,17 +79,16 @@
 
                 </c:forEach>
                 <c:if test="${empty pendingAppointments}">
-                    <div class="d-flex justify-content-center">
-                        <!-- TODO: style this vvvv -->
-                        <h4>${noAppointments}</h4>
+                    <div class="d-flex justify-content-center mt-3">
+                        <div class="alert alert-info">${noAppointments}</div>
                     </div>
                 </c:if>
             </div>
             <div id="confirmed" class="tabContent">
                 <c:forEach items="${upcomingAppointments}" var="appointment">
-                    <div class="card">
+                    <div class="card mt-3">
                         <div class="card-header d-flex flex-row justify-content-between">
-                            <div>
+                            <div class="align-self-center">
                                     ${appointment.date} ${appointment.timeBlock.blockBeginning}
                             </div>
                             <c:url value="/my-appointments/${appointment.id}/update" var="updateUrl"/>
@@ -117,17 +114,16 @@
 
                 </c:forEach>
                 <c:if test="${empty upcomingAppointments}">
-                    <div class="d-flex justify-content-center">
-                        <!-- TODO: style this vvvv -->
-                        <h4>${noAppointments}</h4>
+                    <div class="d-flex justify-content-center mt-3">
+                        <div class="alert alert-info">${noAppointments}</div>
                     </div>
                 </c:if>
             </div>
             <div id="cancelled" class="tabContent">
                 <c:forEach items="${cancelledAppointments}" var="appointment">
-                    <div class="card">
+                    <div class="card mt-3">
                         <div class="card-header d-flex flex-row justify-content-between">
-                            <div>
+                            <div class="align-self-center">
                                     ${appointment.date} ${appointment.timeBlock.blockBeginning}
                             </div>
                         </div>
@@ -146,17 +142,16 @@
 
                 </c:forEach>
                 <c:if test="${empty cancelledAppointments}">
-                    <div class="d-flex justify-content-center">
-                        <!-- TODO: style this vvvv -->
-                        <h4>${noAppointments}</h4>
+                    <div class="d-flex justify-content-center mt-3">
+                        <div class="alert alert-info">${noAppointments}</div>
                     </div>
                 </c:if>
             </div>
             <div id="history" class="tabContent">
                 <c:forEach items="${completedAppointments}" var="appointment">
-                    <div class="card">
+                    <div class="card mt-3">
                         <div class="card-header d-flex flex-row justify-content-between">
-                            <div>
+                            <div class="align-self-center">
                                     ${appointment.date} ${appointment.timeBlock.blockBeginning}
                             </div>
                         </div>
@@ -175,9 +170,8 @@
 
                 </c:forEach>
                 <c:if test="${empty completedAppointments}">
-                    <div class="d-flex justify-content-center">
-                        <!-- TODO: style this vvvv -->
-                        <h4>${noAppointments}</h4>
+                    <div class="d-flex justify-content-center mt-3">
+                        <div class="alert alert-info">${noAppointments}</div>
                     </div>
                 </c:if>
             </div>
