@@ -122,31 +122,51 @@ public class AppointmentDaoImpl implements AppointmentDao {
   }
 
   @Override
-  public List<Appointment> getAppointmentsForDoctorByStatus(
-      long doctorId, AppointmentStatus status) {
-    String query =
+  public List<Appointment> getFilteredAppointmentsForDoctor(
+          long doctorId, AppointmentStatus status, LocalDate from, LocalDate to) {
+    QueryBuilder appointmentsQuery =
         new QueryBuilder()
             .select("*")
             .from("appointment")
-            .where("doctor_id = " + doctorId)
-            .where("status_code = " + status.ordinal())
-            .build();
+            .where("doctor_id = " + doctorId);
 
-    return jdbcTemplate.query(query, APPOINTMENT_MAPPER);
+    if (status != null) {
+      appointmentsQuery.where("status_code = " + status.ordinal());
+    }
+
+    if (from != null) {
+      appointmentsQuery.where("appointment_date >= " + Date.valueOf(from));
+    }
+
+    if (to != null) {
+      appointmentsQuery.where("appointment_date <= " + Date.valueOf(to));
+    }
+
+    return jdbcTemplate.query(appointmentsQuery.build(), APPOINTMENT_MAPPER);
   }
 
   @Override
-  public List<Appointment> getAppointmentsForPatientByStatus(
-      long patientId, AppointmentStatus status) {
-    String query =
+  public List<Appointment> getFilteredAppointmentsForPatient(
+          long patientId, AppointmentStatus status, LocalDate from, LocalDate to) {
+    QueryBuilder appointmentsQuery =
         new QueryBuilder()
             .select("*")
             .from("appointment")
-            .where("patient_id = " + patientId)
-            .where("status_code = " + status.ordinal())
-            .build();
+            .where("patient_id = " + patientId);
 
-    return jdbcTemplate.query(query, APPOINTMENT_MAPPER);
+    if (status != null) {
+      appointmentsQuery.where("status_code = " + status.ordinal());
+    }
+
+    if (from != null) {
+      appointmentsQuery.where("appointment_date >= '" + Date.valueOf(from) + "'");
+    }
+
+    if (to != null) {
+      appointmentsQuery.where("appointment_date <= '" + Date.valueOf(to) + "'");
+    }
+
+    return jdbcTemplate.query(appointmentsQuery.build(), APPOINTMENT_MAPPER);
   }
 
   // ========================== Private ==========================

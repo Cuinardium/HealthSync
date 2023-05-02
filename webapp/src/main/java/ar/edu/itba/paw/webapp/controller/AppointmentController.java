@@ -8,6 +8,7 @@ import ar.edu.itba.paw.webapp.auth.PawAuthUserDetails;
 import ar.edu.itba.paw.webapp.auth.UserRoles;
 import ar.edu.itba.paw.webapp.form.AppointmentForm;
 import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
 import java.util.List;
 import java.util.Locale;
 import javax.validation.Valid;
@@ -115,12 +116,32 @@ public class AppointmentController {
   // ==================================  My Appointments   ========================================
 
   @RequestMapping(value = "/my-appointments", method = RequestMethod.GET)
-  public ModelAndView getAppointments() {
+  public ModelAndView getAppointments(
+      @RequestParam(name = "from", required = false, defaultValue = "") final String from,
+      @RequestParam(name = "to", required = false, defaultValue = "") final String to) {
+
+    LocalDate fromDate;
+    LocalDate toDate;
+
+    try {
+      fromDate = from.isEmpty() ? null : LocalDate.parse(from);
+    } catch (DateTimeParseException exception) {
+      // TODO: error handling
+      return getAppointments("", to);
+    }
+    
+    try {
+      toDate = to.isEmpty() ? null : LocalDate.parse(to);
+    } catch (DateTimeParseException exception) {
+      // TODO: error handling
+      return getAppointments(from, "");
+    }
+
     if (PawAuthUserDetails.getRole().equals(UserRoles.ROLE_PATIENT)) {
-      return getAppointmentsForPatient();
+      return getAppointmentsForPatient(fromDate, toDate);
     }
     if (PawAuthUserDetails.getRole().equals(UserRoles.ROLE_DOCTOR)) {
-      return getAppointmentsForDoctor();
+      return getAppointmentsForDoctor(fromDate, toDate);
     }
     // TODO: what do i do here????
     return null;
@@ -129,85 +150,93 @@ public class AppointmentController {
   @RequestMapping(value = "/my-appointments/{id:\\d+}/update", method = RequestMethod.POST)
   public ModelAndView updateAppointment(
       @PathVariable("id") final int appointmentId,
-      @RequestParam(name = "status") final int status) {
+      @RequestParam(name = "status") final int status,
+    @RequestParam(name = "from", required = false, defaultValue = "") final String from,
+    @RequestParam(name = "to", required = false, defaultValue = "") final String to
+  ) {
 
     // TODO: feedback?
     if (status < 0 || status >= AppointmentStatus.values().length) {
-      return getAppointments();
+      return getAppointments(from, to);
     }
 
     // A patient can only cancel an appointment
     if (PawAuthUserDetails.getRole().equals(UserRoles.ROLE_PATIENT)
         && status != AppointmentStatus.CANCELLED.ordinal()) {
-      return getAppointments();
+      return getAppointments(from, to);
     }
 
     AppointmentStatus appointmentStatus = AppointmentStatus.values()[status];
 
-    appointmentService.updateAppointmentStatus(appointmentId, appointmentStatus, PawAuthUserDetails.getCurrentUserId());
+    appointmentService.updateAppointmentStatus(
+        appointmentId, appointmentStatus, PawAuthUserDetails.getCurrentUserId());
 
-    return getAppointments();
+    return getAppointments(from, to);
   }
 
   // ==================================  Private   =================================================
 
-  private ModelAndView getAppointmentsForDoctor() {
+  private ModelAndView getAppointmentsForDoctor(LocalDate fromDate, LocalDate toDate) {
 
     ModelAndView mav = new ModelAndView("appointment/doctorAppointments");
 
     List<Appointment> upcomingAppointments =
-        appointmentService.getAppointmentsForDoctorByStatus(
-            PawAuthUserDetails.getCurrentUserId(), AppointmentStatus.ACCEPTED);
+        appointmentService.getFilteredAppointmentsForDoctor(
+            PawAuthUserDetails.getCurrentUserId(), AppointmentStatus.ACCEPTED, fromDate, toDate);
 
     List<Appointment> pendingAppointments =
-        appointmentService.getAppointmentsForDoctorByStatus(
-            PawAuthUserDetails.getCurrentUserId(), AppointmentStatus.PENDING);
+        appointmentService.getFilteredAppointmentsForDoctor(
+            PawAuthUserDetails.getCurrentUserId(), AppointmentStatus.PENDING, fromDate, toDate);
 
     List<Appointment> cancelledAppointments =
-        appointmentService.getAppointmentsForDoctorByStatus(
-            PawAuthUserDetails.getCurrentUserId(), AppointmentStatus.CANCELLED);
+        appointmentService.getFilteredAppointmentsForDoctor(
+            PawAuthUserDetails.getCurrentUserId(), AppointmentStatus.CANCELLED, fromDate, toDate);
 
     List<Appointment> completedAppointments =
-        appointmentService.getAppointmentsForDoctorByStatus(
-            PawAuthUserDetails.getCurrentUserId(), AppointmentStatus.COMPLETED);
+        appointmentService.getFilteredAppointmentsForDoctor(
+            PawAuthUserDetails.getCurrentUserId(), AppointmentStatus.COMPLETED, fromDate, toDate);
 
     mav.addObject("upcomingAppointments", upcomingAppointments);
     mav.addObject("pendingAppointments", pendingAppointments);
     mav.addObject("cancelledAppointments", cancelledAppointments);
     mav.addObject("completedAppointments", completedAppointments);
+    mav.addObject("from", fromDate.toString());
+    mav.addObject("to", toDate.toString());
 
     return mav;
   }
 
-  private ModelAndView getAppointmentsForPatient() {
+  private ModelAndView getAppointmentsForPatient(LocalDate fromDate, LocalDate toDate) {
 
     ModelAndView mav = new ModelAndView("appointment/patientAppointments");
 
     List<Appointment> upcomingAppointments =
-        appointmentService.getAppointmentsForPatientByStatus(
-            PawAuthUserDetails.getCurrentUserId(), AppointmentStatus.ACCEPTED);
+        appointmentService.getFilteredAppointmentsForPatient(
+            PawAuthUserDetails.getCurrentUserId(), AppointmentStatus.ACCEPTED, fromDate, toDate);
 
     List<Appointment> pendingAppointments =
-        appointmentService.getAppointmentsForPatientByStatus(
-            PawAuthUserDetails.getCurrentUserId(), AppointmentStatus.PENDING);
+        appointmentService.getFilteredAppointmentsForPatient(
+            PawAuthUserDetails.getCurrentUserId(), AppointmentStatus.PENDING, fromDate, toDate);
 
     List<Appointment> rejectedAppointments =
-    appointmentService.getAppointmentsForPatientByStatus(
-        PawAuthUserDetails.getCurrentUserId(), AppointmentStatus.REJECTED);
+        appointmentService.getFilteredAppointmentsForPatient(
+            PawAuthUserDetails.getCurrentUserId(), AppointmentStatus.REJECTED, fromDate, toDate);
 
     List<Appointment> cancelledAppointments =
-        appointmentService.getAppointmentsForPatientByStatus(
-            PawAuthUserDetails.getCurrentUserId(), AppointmentStatus.CANCELLED);
+        appointmentService.getFilteredAppointmentsForPatient(
+            PawAuthUserDetails.getCurrentUserId(), AppointmentStatus.CANCELLED, fromDate, toDate);
 
     List<Appointment> completedAppointments =
-        appointmentService.getAppointmentsForPatientByStatus(
-            PawAuthUserDetails.getCurrentUserId(), AppointmentStatus.COMPLETED);
+        appointmentService.getFilteredAppointmentsForPatient(
+            PawAuthUserDetails.getCurrentUserId(), AppointmentStatus.COMPLETED, fromDate, toDate);
 
     mav.addObject("upcomingAppointments", upcomingAppointments);
     mav.addObject("pendingAppointments", pendingAppointments);
     mav.addObject("cancelledAppointments", cancelledAppointments);
     mav.addObject("rejectedAppointments", rejectedAppointments);
     mav.addObject("completedAppointments", completedAppointments);
+    mav.addObject("from", fromDate == null ? "" : fromDate.toString());
+    mav.addObject("to", toDate == null ? "" : toDate.toString()) ;
 
     return mav;
   }

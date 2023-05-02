@@ -6,6 +6,7 @@
 
 <!--Variables -->
 <c:url value="/css/main.css" var="mainCss"/>
+<c:url value="/my-appointments" var="myAppointmentUrl"/>
 
 <spring:message code="appointments.title" var="title"/>
 <spring:message code="appointments.noAppointments" var="noAppointments"/>
@@ -30,7 +31,23 @@
 <body>
 <jsp:include page="../components/header.jsp"/>
 
+
 <div class="container pt-2">
+
+  <form id="get-form" action="${myAppointmentUrl}" method="get" class="row justify-content-between">
+    <div class="col">
+      <label for="from">From</label>
+      <input id="from" type="date" name="from"  class="form-control" value="${from}"/>
+    </div>
+    <div class="col">
+      <label for="to">To</label>
+      <input id="to" type="date" name="to" class="form-control" value="${to}">
+    </div>
+    <div class="col align-self-end">
+      <input type="submit" value="filter" class="btn btn-primary"/>
+    </div>
+  </form>
+
   <ul id="nav" class="nav nav-tabs">
     <li class="nav-item">
       <a id="pending-tab" class="nav-link active bg-primary text-white" href="#pending">${pending}</a>
@@ -87,8 +104,8 @@
             </div>
             <c:url value="/my-appointments/${appointment.id}/update" var="updateUrl"/>
             <div class="flex-row">
-              <form class="d-inline" method="post" action="${updateUrl}/?status=3">
-                <button type="submit" class="align-self-end btn btn-danger">${cancel}</button>
+              <form id="post-form" class="d-inline" method="post" action="${updateUrl}/?status=3">
+                <button id="post-button" type="submit" class="align-self-end btn btn-danger">${cancel}</button>
               </form>
             </div>
 
@@ -224,5 +241,23 @@
     });
   });
 </script>
+<script>
+  document.getElementById("post-button").addEventListener("click", function(event) {
+    event.preventDefault();
+    // get the values from the get-form
+    var from = document.getElementById("get-form").elements.namedItem("from").value;
+    var to = document.getElementById("get-form").elements.namedItem("to").value;
+
+    // modify the action attribute of the post-form to include query parameters
+    var postForm = document.getElementById("post-form");
+    var postAction = postForm.getAttribute("action");
+    postAction += "&from=" + encodeURIComponent(from) + "&to=" + encodeURIComponent(to);
+    postForm.setAttribute("action", postAction);
+
+    // submit the post-form
+    postForm.submit();
+  });
+</script>
+
 
 
