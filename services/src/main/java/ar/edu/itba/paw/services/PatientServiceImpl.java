@@ -28,11 +28,14 @@ public class PatientServiceImpl implements PatientService {
   public Patient createPatient(
       String email, String password, String firstName, String lastName, int healthInsuranceCode) {
 
-        // Create User
-        User user = userService.createUser(email, password, firstName, lastName);
+    // Create User
+    User user = userService.createUser(email, password, firstName, lastName);
 
-        // Create Patient
-        long patientId = patientDao.createPatient(user.getId());
+    // Create Patient
+    long patientId = patientDao.createPatient(user.getId());
+
+    // Add Health Insurance
+    patientDao.addHealthInsurance(patientId, healthInsuranceCode);
 
     return new Patient(
         patientId,
@@ -44,14 +47,15 @@ public class PatientServiceImpl implements PatientService {
         HealthInsurance.values()[healthInsuranceCode]);
   }
 
-    @Override
-    public void updateInformation(long patientId, String email, String firstName, String lastName, int healthInsuranceCode) {
-        userService.editUser(patientId, email, firstName, lastName);
-        patientDao.updateInformation(patientId, healthInsuranceCode);
-    }
+  @Override
+  public void updateInformation(
+      long patientId, String email, String firstName, String lastName, int healthInsuranceCode) {
+    userService.editUser(patientId, email, firstName, lastName);
+    patientDao.updateInformation(patientId, healthInsuranceCode);
+  }
 
-    @Override
-    public Optional<Patient> getPatientById(long id) {
-        return patientDao.getPatientById(id);
-    }
+  @Override
+  public Optional<Patient> getPatientById(long id) {
+    return patientDao.getPatientById(id);
+  }
 }
