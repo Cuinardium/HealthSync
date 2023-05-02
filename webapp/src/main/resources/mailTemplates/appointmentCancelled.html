@@ -4,20 +4,20 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 </head>
 <body>
-<p th:text="#{appointmentCanceled.title}"></p>
-<p th:text="#{appointmentCanceled.date}"></p> <p th:text="${date}"></p>
+<p th:text="#{appointmentCancelled.title}"></p>
+<p th:text="#{appointmentCancelled.date}"></p> <p th:text="${date}"></p>
 <p th:text="#{appointmentReminder.address(${address}, ${city})}"></p>
 <h3 th:text="#{appointmentRequest.descriptionTitle}"></h3>
 <p th:text="${description}"></p>
 
-<h3 th:text="#{appointmentCanceled.patientDetails}"></h3>
+<h3 th:text="#{appointmentCancelled.patientDetails}"></h3>
 <ul>
     <li th:text="#{appointmentRequest.userName(${userName})}"></li>
     <li th:text="#{appointmentRequest.userHealthcare(${userHealthcare})}"></li>
     <li th:text="#{appointmentRequest.userMail(${userMail})}"></li>
 </ul>
 
-<h3 th:text="#{appointmentCanceled.doctorDetails}"></h3>
+<h3 th:text="#{appointmentCancelled.doctorDetails}"></h3>
 <ul>
     <li th:text="#{appointmentRequest.userName(${docName})}"></li>
     <li th:text="#{appointmentRequest.userMail(${docEmail})}"></li>

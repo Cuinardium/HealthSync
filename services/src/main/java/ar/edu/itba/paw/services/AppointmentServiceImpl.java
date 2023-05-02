@@ -117,7 +117,7 @@ public class AppointmentServiceImpl implements AppointmentService {
               LocaleContextHolder.getLocale()
       );
     }else if(status==AppointmentStatus.CANCELLED){
-      mailService.sendAppointmentCanceledMail(
+      mailService.sendAppointmentCancelledMail(
               appointment,
               doctorService.getDoctorById(appointment.getDoctorId()).orElseThrow(RuntimeException::new),
               patientService.getPatientById(appointment.getPatientId()).orElseThrow(RuntimeException::new),
