@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+</head>
+<body>
+<p th:text="#{appointmentConfirmed.userAndDate(${userName}, ${date}, ${docName})}"></p>
+<p th:text="#{appointmentReminder.address(${address}, ${city})}"></p>
+<h3 th:text="#{appointmentRequest.descriptionTitle}"></h3>
+<p th:text="${description}"></p>
+
+<h3 th:text="#{appointmentReminder.userDetails}"></h3>
+<ul>
+    <li th:text="#{appointmentRequest.userName(${userName})}"></li>
+    <li th:text="#{appointmentRequest.userHealthcare(${userHealthcare})}"></li>
+    <li th:text="#{appointmentRequest.userMail(${userMail})}"></li>
+</ul>
+
+</body>
+</html>
