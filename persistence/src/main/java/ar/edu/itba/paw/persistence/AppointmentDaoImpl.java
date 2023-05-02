@@ -135,11 +135,11 @@ public class AppointmentDaoImpl implements AppointmentDao {
     }
 
     if (from != null) {
-      appointmentsQuery.where("appointment_date >= " + Date.valueOf(from));
+      appointmentsQuery.where("appointment_date >= '" + Date.valueOf(from) + "'");
     }
 
     if (to != null) {
-      appointmentsQuery.where("appointment_date <= " + Date.valueOf(to));
+      appointmentsQuery.where("appointment_date <= '" + Date.valueOf(to) + "'");
     }
 
     return jdbcTemplate.query(appointmentsQuery.build(), APPOINTMENT_MAPPER);
