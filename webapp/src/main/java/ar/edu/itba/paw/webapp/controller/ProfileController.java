@@ -36,7 +36,7 @@ public class ProfileController {
     this.userService = userService;
   }
 
-  @RequestMapping(value = "/edit-doctor", method = RequestMethod.POST)
+  @RequestMapping(value = "/doctor-edit", method = RequestMethod.POST)
   public ModelAndView doctorEditSubmit(
       @Valid @ModelAttribute("doctorEditForm") final DoctorEditForm doctorEditForm,
       final BindingResult errors) {
@@ -57,7 +57,7 @@ public class ProfileController {
     return new ModelAndView("auth/editSuccesful");
   }
 
-  @RequestMapping(value = "/edit-doctor", method = RequestMethod.GET)
+  @RequestMapping(value = "/doctor-edit", method = RequestMethod.GET)
   public ModelAndView doctorEdit(
       @ModelAttribute("doctorEditForm") final DoctorEditForm doctorEditForm) {
     Doctor doctor =
@@ -81,7 +81,7 @@ public class ProfileController {
     return mav;
   }
 
-  @RequestMapping(value = "/edit-patient", method = RequestMethod.POST)
+  @RequestMapping(value = "/patient-edit", method = RequestMethod.POST)
   public ModelAndView patientEditSubmit(
       @Valid @ModelAttribute("patientEditForm") final PatientEditForm patientEditForm,
       final BindingResult errors) {
@@ -99,7 +99,7 @@ public class ProfileController {
     return new ModelAndView("auth/registerSuccesful");
   }
 
-  @RequestMapping(value = "/edit-patient", method = RequestMethod.GET)
+  @RequestMapping(value = "/patient-edit", method = RequestMethod.GET)
   public ModelAndView patientEdit(
       @ModelAttribute("patientEditForm") final PatientEditForm patientEditForm) {
 
