@@ -118,7 +118,9 @@ public class AppointmentController {
   @RequestMapping(value = "/my-appointments", method = RequestMethod.GET)
   public ModelAndView getAppointments(
       @RequestParam(name = "from", required = false, defaultValue = "") final String from,
-      @RequestParam(name = "to", required = false, defaultValue = "") final String to) {
+      @RequestParam(name = "to", required = false, defaultValue = "") final String to,
+      @RequestParam(name = "selected_tab", required = false, defaultValue = "0")
+          final int selectedTab) {
 
     LocalDate fromDate;
     LocalDate toDate;
@@ -127,21 +129,21 @@ public class AppointmentController {
       fromDate = from.isEmpty() ? null : LocalDate.parse(from);
     } catch (DateTimeParseException exception) {
       // TODO: error handling
-      return getAppointments("", to);
+      return getAppointments("", to, selectedTab);
     }
-    
+
     try {
       toDate = to.isEmpty() ? null : LocalDate.parse(to);
     } catch (DateTimeParseException exception) {
       // TODO: error handling
-      return getAppointments(from, "");
+      return getAppointments(from, "", selectedTab);
     }
 
     if (PawAuthUserDetails.getRole().equals(UserRoles.ROLE_PATIENT)) {
-      return getAppointmentsForPatient(fromDate, toDate);
+      return getAppointmentsForPatient(fromDate, toDate, selectedTab);
     }
     if (PawAuthUserDetails.getRole().equals(UserRoles.ROLE_DOCTOR)) {
-      return getAppointmentsForDoctor(fromDate, toDate);
+      return getAppointmentsForDoctor(fromDate, toDate, selectedTab);
     }
     // TODO: what do i do here????
     return null;
@@ -151,19 +153,20 @@ public class AppointmentController {
   public ModelAndView updateAppointment(
       @PathVariable("id") final int appointmentId,
       @RequestParam(name = "status") final int status,
-    @RequestParam(name = "from", required = false, defaultValue = "") final String from,
-    @RequestParam(name = "to", required = false, defaultValue = "") final String to
-  ) {
+      @RequestParam(name = "from", required = false, defaultValue = "") final String from,
+      @RequestParam(name = "to", required = false, defaultValue = "") final String to,
+      @RequestParam(name = "selected_tab", required = false, defaultValue = "0")
+          final int selectedTab) {
 
     // TODO: feedback?
     if (status < 0 || status >= AppointmentStatus.values().length) {
-      return getAppointments(from, to);
+      return getAppointments(from, to, selectedTab);
     }
 
     // A patient can only cancel an appointment
     if (PawAuthUserDetails.getRole().equals(UserRoles.ROLE_PATIENT)
         && status != AppointmentStatus.CANCELLED.ordinal()) {
-      return getAppointments(from, to);
+      return getAppointments(from, to, selectedTab);
     }
 
     AppointmentStatus appointmentStatus = AppointmentStatus.values()[status];
@@ -171,12 +174,12 @@ public class AppointmentController {
     appointmentService.updateAppointmentStatus(
         appointmentId, appointmentStatus, PawAuthUserDetails.getCurrentUserId());
 
-    return getAppointments(from, to);
+    return getAppointments(from, to, selectedTab);
   }
 
   // ==================================  Private   =================================================
 
-  private ModelAndView getAppointmentsForDoctor(LocalDate fromDate, LocalDate toDate) {
+  private ModelAndView getAppointmentsForDoctor(LocalDate fromDate, LocalDate toDate, int selectedTab) {
 
     ModelAndView mav = new ModelAndView("appointment/doctorAppointments");
 
@@ -200,13 +203,15 @@ public class AppointmentController {
     mav.addObject("pendingAppointments", pendingAppointments);
     mav.addObject("cancelledAppointments", cancelledAppointments);
     mav.addObject("completedAppointments", completedAppointments);
-    mav.addObject("from", fromDate.toString());
-    mav.addObject("to", toDate.toString());
+    mav.addObject("from", fromDate == null ? "" : fromDate.toString());
+    mav.addObject("to", toDate == null ? "" : toDate.toString());
+
+    mav.addObject("selectedTab", selectedTab);
 
     return mav;
   }
 
-  private ModelAndView getAppointmentsForPatient(LocalDate fromDate, LocalDate toDate) {
+  private ModelAndView getAppointmentsForPatient(LocalDate fromDate, LocalDate toDate, int selectedTab) {
 
     ModelAndView mav = new ModelAndView("appointment/patientAppointments");
 
@@ -236,7 +241,9 @@ public class AppointmentController {
     mav.addObject("rejectedAppointments", rejectedAppointments);
     mav.addObject("completedAppointments", completedAppointments);
     mav.addObject("from", fromDate == null ? "" : fromDate.toString());
-    mav.addObject("to", toDate == null ? "" : toDate.toString()) ;
+    mav.addObject("to", toDate == null ? "" : toDate.toString());
+
+    mav.addObject("selectedTab", selectedTab);
 
     return mav;
   }
