@@ -15,12 +15,19 @@ public class QueryBuilder {
 
   private final List<String> whereConditions;
 
+  private final List<String> orderByColumns;
+  private final List<Boolean> orderByDirections;
+
 
   public QueryBuilder() {
     this.columns = new ArrayList<>();
     this.innerJoinTables = new ArrayList<>();
     this.innerJoinConditions = new ArrayList<>();
     this.whereConditions = new ArrayList<>();
+    this.orderByColumns = new ArrayList<>();
+
+    // True = ASC, False = DESC
+    this.orderByDirections = new ArrayList<>();
   }
 
   public QueryBuilder select(String... columns) {
@@ -44,6 +51,18 @@ public class QueryBuilder {
     return this;
   }
 
+  public QueryBuilder orderByAsc(String column) {
+    this.orderByColumns.add(column);
+    this.orderByDirections.add(Boolean.TRUE);
+    return this;
+  }
+
+  public QueryBuilder orderByDesc(String column) {
+    this.orderByColumns.add(column);
+    this.orderByDirections.add(Boolean.FALSE);
+    return this;
+  }
+
   public String build() {
     StringBuilder query = new StringBuilder();
 
@@ -64,6 +83,23 @@ public class QueryBuilder {
 
     if (!whereConditions.isEmpty()) {
       query.append(" WHERE ").append(String.join(" AND ", whereConditions));
+    }
+
+    if (!orderByColumns.isEmpty()) {
+      query.append(" ORDER BY ");
+      for (int i = 0; i < orderByColumns.size(); i++) {
+        query.append(orderByColumns.get(i));
+
+        if (orderByDirections.get(i)) {
+          query.append(" ASC");
+        } else {
+          query.append(" DESC");
+        }
+
+        if (i != orderByColumns.size() - 1) {
+          query.append(", ");
+        }
+      }
     }
 
     return query.toString();

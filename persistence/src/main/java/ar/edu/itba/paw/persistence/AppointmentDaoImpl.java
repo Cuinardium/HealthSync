@@ -102,7 +102,8 @@ public class AppointmentDaoImpl implements AppointmentDao {
   }
 
   @Override
-  public Optional<Appointment> getAppointment(long doctorId, LocalDate date, ThirtyMinuteBlock timeBlock) {
+  public Optional<Appointment> getAppointment(
+      long doctorId, LocalDate date, ThirtyMinuteBlock timeBlock) {
     String query =
         new QueryBuilder()
             .select("*")
@@ -122,6 +123,8 @@ public class AppointmentDaoImpl implements AppointmentDao {
             .select("*")
             .from("appointment")
             .where("patient_id = " + patientId)
+            .orderByAsc("appointment_date")
+            .orderByAsc("appointment_time")
             .build();
 
     return jdbcTemplate.query(query, APPOINTMENT_MAPPER);
@@ -130,19 +133,22 @@ public class AppointmentDaoImpl implements AppointmentDao {
   @Override
   public List<Appointment> getAppointmentsForDoctor(long doctorId) {
     String query =
-        new QueryBuilder().select("*").from("appointment").where("doctor_id = " + doctorId).build();
+        new QueryBuilder()
+            .select("*")
+            .from("appointment")
+            .where("doctor_id = " + doctorId)
+            .orderByAsc("appointment_date")
+            .orderByAsc("appointment_time")
+            .build();
 
     return jdbcTemplate.query(query, APPOINTMENT_MAPPER);
   }
 
   @Override
   public List<Appointment> getFilteredAppointmentsForDoctor(
-          long doctorId, AppointmentStatus status, LocalDate from, LocalDate to) {
+      long doctorId, AppointmentStatus status, LocalDate from, LocalDate to) {
     QueryBuilder appointmentsQuery =
-        new QueryBuilder()
-            .select("*")
-            .from("appointment")
-            .where("doctor_id = " + doctorId);
+        new QueryBuilder().select("*").from("appointment").where("doctor_id = " + doctorId);
 
     if (status != null) {
       appointmentsQuery.where("status_code = " + status.ordinal());
@@ -155,18 +161,17 @@ public class AppointmentDaoImpl implements AppointmentDao {
     if (to != null) {
       appointmentsQuery.where("appointment_date <= '" + Date.valueOf(to) + "'");
     }
+
+    appointmentsQuery.orderByAsc("appointment_date").orderByAsc("appointment_time");
 
     return jdbcTemplate.query(appointmentsQuery.build(), APPOINTMENT_MAPPER);
   }
 
   @Override
   public List<Appointment> getFilteredAppointmentsForPatient(
-          long patientId, AppointmentStatus status, LocalDate from, LocalDate to) {
+      long patientId, AppointmentStatus status, LocalDate from, LocalDate to) {
     QueryBuilder appointmentsQuery =
-        new QueryBuilder()
-            .select("*")
-            .from("appointment")
-            .where("patient_id = " + patientId);
+        new QueryBuilder().select("*").from("appointment").where("patient_id = " + patientId);
 
     if (status != null) {
       appointmentsQuery.where("status_code = " + status.ordinal());
@@ -179,6 +184,8 @@ public class AppointmentDaoImpl implements AppointmentDao {
     if (to != null) {
       appointmentsQuery.where("appointment_date <= '" + Date.valueOf(to) + "'");
     }
+
+    appointmentsQuery.orderByAsc("appointment_date").orderByAsc("appointment_time");
 
     return jdbcTemplate.query(appointmentsQuery.build(), APPOINTMENT_MAPPER);
   }
