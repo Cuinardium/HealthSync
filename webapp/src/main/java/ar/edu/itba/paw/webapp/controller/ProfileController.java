@@ -54,7 +54,7 @@ public class ProfileController {
         doctorEditForm.getCityCode(),
         doctorEditForm.getAddress());
 
-    ModelAndView mav = new ModelAndView("auth/operationSuccessful");
+    ModelAndView mav = new ModelAndView("components/operationSuccessful");
     mav.addObject("operationTitle", "profile.editProfileSuccessfulTitle");
     mav.addObject("operationMsg", "profile.editProfileSuccessfulMsg");
     return mav;
@@ -99,7 +99,7 @@ public class ProfileController {
         patientEditForm.getLastname(),
         patientEditForm.getHealthInsuranceCode());
 
-    ModelAndView mav = new ModelAndView("auth/operationSuccessful");
+    ModelAndView mav = new ModelAndView("components/operationSuccessful");
     mav.addObject("operationTitle", "profile.editProfileSuccessfulTitle");
     mav.addObject("operationMsg", "profile.editProfileSuccessfulMsg");
     return mav;
@@ -135,7 +135,7 @@ public class ProfileController {
     }
 
     userService.changePassword(PawAuthUserDetails.getCurrentUserId(), passwordForm.getPassword());
-    ModelAndView mav = new ModelAndView("auth/operationSuccessful");
+    ModelAndView mav = new ModelAndView("components/operationSuccessful");
     mav.addObject("operationTitle", "profile.changePasswordSuccessfulTitle");
     mav.addObject("operationMsg", "profile.changePasswordSuccessfulMsg");
     return mav;
