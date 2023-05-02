@@ -19,4 +19,21 @@ public class Patient extends User {
   public HealthInsurance getHealthInsurance() {
     return healthInsurance;
   }
+
+  @Override
+  public String toString() {
+    return "{id:"
+        + getId()
+        + ", email:"
+        + getEmail()
+        + ", password:<redacted>, firstName:"
+        + getFirstName()
+        + ", lastName:"
+        + getLastName()
+        + ", ppId:"
+        + getProfilePictureId()
+        + ", HI:"
+        + getHealthInsurance()
+        + "}";
+  }
 }

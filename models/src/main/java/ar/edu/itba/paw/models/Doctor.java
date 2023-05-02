@@ -41,4 +41,25 @@ public class Doctor extends User {
   public AttendingHours getAttendingHours() {
     return attendingHours;
   }
+
+  @Override
+  public String toString() {
+    return "{id:"
+        + getId()
+        + ", email:"
+        + getEmail()
+        + ", password:<redacted>, firstName:"
+        + getFirstName()
+        + ", lastName:"
+        + getLastName()
+        + ", ppId:"
+        + getProfilePictureId()
+        + ", SP:"
+        + getSpecialty()
+        + ", Loc:"
+        + getLocation()
+        + ", HI:"
+        + getHealthInsurance()
+        + "}";
+  }
 }

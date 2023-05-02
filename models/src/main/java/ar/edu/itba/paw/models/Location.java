@@ -23,4 +23,9 @@ public class Location {
   public String getAddress() {
     return address;
   }
+
+  @Override
+  public String toString() {
+    return "{id:" + id + ", city: " + city + ", address: " + address + "}";
+  }
 }

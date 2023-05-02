@@ -8,6 +8,8 @@ import ar.edu.itba.paw.webapp.form.LoginForm;
 import ar.edu.itba.paw.webapp.form.RegisterForm;
 import java.util.Arrays;
 import javax.validation.Valid;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -18,6 +20,8 @@ import org.springframework.web.servlet.ModelAndView;
 
 @Controller
 public class AuthController {
+
+  private static final Logger LOGGER = LoggerFactory.getLogger(AuthController.class);
 
   private final DoctorService doctorService;
 
@@ -74,15 +78,19 @@ public class AuthController {
       return registerForm(registerForm);
     }
 
-    final User user =
+    // TODO: check for exceptions
+    final Patient patient =
         patientService.createPatient(
             registerForm.getEmail(),
             registerForm.getPassword(),
             registerForm.getName(),
             registerForm.getLastname(),
             registerForm.getHealthInsuranceCode());
+
+    LOGGER.info("Patient registered: {}", patient);
+
     final ModelAndView mav = new ModelAndView("auth/registerSuccesful");
-    mav.addObject("user", user);
+    mav.addObject("user", patient);
     return mav;
   }
 
@@ -105,8 +113,9 @@ public class AuthController {
     if (errors.hasErrors()) {
       return doctorRegisterForm(doctorRegisterForm);
     }
-    final User user;
-    user =
+
+    // TODO: check for exceptions
+    final Doctor doctor =
         doctorService.createDoctor(
             doctorRegisterForm.getEmail(),
             doctorRegisterForm.getPassword(),
@@ -118,8 +127,10 @@ public class AuthController {
             doctorRegisterForm.getAddress(),
             AttendingHours.DEFAULT_ATTENDING_HOURS);
 
+    LOGGER.info("Doctor registered: {}", doctor);
+
     final ModelAndView mav = new ModelAndView("auth/registerSuccesful");
-    mav.addObject("user", user);
+    mav.addObject("user", doctor);
     return mav;
   }
 
