@@ -27,6 +27,7 @@ public class UserServiceImpl implements UserService {
     return userDao.createUser(email, passwordEncoder.encode(password), firstName, lastName);
   }
 
+  @Transactional
   @Override
   public void editUser(long userId, String email, String firstName, String lastName){
     userDao.editUser(userId, email, firstName, lastName);

@@ -47,6 +47,7 @@ public class PatientServiceImpl implements PatientService {
         HealthInsurance.values()[healthInsuranceCode]);
   }
 
+  @Transactional
   @Override
   public void updateInformation(
       long patientId, String email, String firstName, String lastName, int healthInsuranceCode) {
