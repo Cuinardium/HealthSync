@@ -5,20 +5,11 @@
     justify-content: center;
 }
 
-input{
-    margin: 4px;
-}
-
 .filtersContainer{
     display: flex;
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
-}
-
-.form-control{
-    margin-left: 5px;
-    margin-right: 5px;
 }
 
 .card{

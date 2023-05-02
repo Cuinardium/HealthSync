@@ -2,7 +2,6 @@
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 
 <c:url value="/css/main.css" var="mainCss"/>
-<c:url value="/css/searchBar.css" var="searchBarCss"/>
 
 <c:url value="/doctorDashboard" var="doctorDashboardUrl"/>
 
@@ -11,7 +10,6 @@
 <html>
 <head>
     <link href="${mainCss}" rel="stylesheet"/>
-    <link href="${searchBarCss}" rel="stylesheet"/>
 </head>
 <body>
 <form method="get" action="${doctorDashboardUrl}">

@@ -7,7 +7,7 @@
 
 <!--Variables -->
 <c:url value="/css/main.css" var="mainCss"/>
-<c:url value="/css/doctorRegister.css" var="doctorRegisterCss"/>
+<c:url value="/css/forms.css" var="formsCss"/>
 
 <c:url value="/patient-edit" var="patientEditUrl"/>
 
@@ -28,39 +28,47 @@
     <!-- favicon -->
     <jsp:include page="../components/favicon.jsp"/>
     <link href="${mainCss}" rel="stylesheet"/>
-    <link href="${doctorRegisterCss}" rel="stylesheet"/>
+    <link href="${formsCss}" rel="stylesheet"/>
 </head>
 <body>
 <jsp:include page="../components/header.jsp"/>
 
-<form:form modelAttribute="patientEditForm" action="${patientEditUrl}" method="POST">
-    <div class="form-row container">
-        <div class="form-item">
-            <form:label path="name">${name}</form:label>
-            <form:input type="text" placeholder="${name_hint}" path="name"/>
-            <form:errors path="name" cssClass="error" element="p"/>
+<div class="formContainer generalPadding">
+    <h1>${title}</h1>
+    <form:form modelAttribute="patientEditForm" class="card" action="${patientEditUrl}" method="POST">
+        <div class="formRow">
+            <div class="formItem">
+                <form:label path="name">${name}</form:label>
+                <form:input class="form-control" type="text" placeholder="${name_hint}" path="name"/>
+                <form:errors path="name" cssClass="error" element="p"/>
+            </div>
+            <div class="formItem">
+                <form:label path="lastname">${lastname}</form:label>
+                <form:input class="form-control" path="lastname" type="text" placeholder="${lastname_hint}"/>
+                <form:errors path="lastname" cssClass="error" element="p"/>
+            </div>
         </div>
-        <div class="form-item">
-            <form:label path="lastname">${lastname}</form:label>
-            <form:input path="lastname" type="text" placeholder="${lastname_hint}"/>
-            <form:errors path="lastname" cssClass="error" element="p"/>
+        <div class="formRow">
+            <div class="formItem">
+                <form:label path="healthInsuranceCode">${healthcare}</form:label>
+                <form:select class="form-select" path="healthInsuranceCode">
+                    <form:option value="-1" disabled="true" hidden="true"> -- </form:option>
+                    <c:forEach items="${healthInsurances}" var="healthInsurance" varStatus="status">
+                        <form:option value="${status.index}">
+                            <spring:message code="${healthInsurance.messageID}"/>
+                        </form:option>
+                    </c:forEach>
+                </form:select>
+                <form:errors path="healthInsuranceCode" cssClass="error" element="p"/>
+            </div>
+            <div class="formItem">
+                <form:label path="email">${email}</form:label>
+                <form:input class="form-control" path="email" type="text" placeholder='${email_hint}'/>
+                <form:errors path="email" cssClass="error" element="p"/>
+            </div>
         </div>
-    </div>
-    <div class="form-item">
-        <form:label path="healthInsuranceCode">${healthcare}</form:label>
-        <form:select path="healthInsuranceCode">
-            <form:option value="-1" disabled="true" hidden="true"> -- </form:option>
-            <c:forEach items="${healthInsurances}" var="healthInsurance" varStatus="status">
-                <form:option value="${status.index}">
-                    <spring:message code="${healthInsurance.messageID}"/>
-                </form:option>
-            </c:forEach>
-        </form:select>
-        <form:errors path="healthInsuranceCode" cssClass="error" element="p"/>
-    </div>
-    <div>
-        <button type="submit" class="btn btn-primary">${saveChanges}</button>
-    </div>
-</form:form>
+        <button type="submit" class="btn btn-primary submitButton">${saveChanges}</button>
+    </form:form>
+</div>
 </body>
 </html>

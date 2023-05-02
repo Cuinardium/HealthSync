@@ -7,7 +7,8 @@
 
 <!--Variables -->
 <c:url value="/css/main.css" var="mainCss"/>
-<c:url value="/css/doctorRegister.css" var="doctorRegisterCss"/>
+<c:url value="/css/forms.css" var="formsCss"/>
+
 
 <c:url value="/change-password" var="changePasswordUrl"/>
 
@@ -25,27 +26,30 @@
     <!-- favicon -->
     <jsp:include page="../components/favicon.jsp"/>
     <link href="${mainCss}" rel="stylesheet"/>
-    <link href="${doctorRegisterCss}" rel="stylesheet"/>
+    <link href="${formsCss}" rel="stylesheet"/>
 </head>
 <body>
 <jsp:include page="../components/header.jsp"/>
 
-<form:form modelAttribute="changePasswordForm" action="${changePasswordUrl}" method="POST">
-    <div class="form-row container">
-    <div>
-        <form:label path="password">${password}</form:label>
-        <form:input type="password" path="password" placeholder="${password_hint}"/>
-        <form:errors path="password" cssClass="error" element="p"/>
+<!-- Content -->
+<div class="formContainer generalPadding">
+    <h1>${title}</h1>
+<form:form modelAttribute="changePasswordForm" class="card" action="${changePasswordUrl}" method="POST">
+    <div class="formRow">
+        <div class="formItem">
+            <form:label path="password">${password}</form:label>
+            <form:input class="form-control" type="password" path="password" placeholder="${password_hint}"/>
+            <form:errors path="password" cssClass="error" element="p"/>
+        </div>
     </div>
-    <div class="form-item">
-        <form:label path="confirmPassword">${cpassword}</form:label>
-        <form:input path="confirmPassword" type="password" placeholder="${cpassword_hint}"/>
-        <form:errors path="confirmPassword" cssClass="error" element="p"/>
-        <form:errors/>
+    <div class="formRow">
+        <div class="formItem">
+            <form:label path="confirmPassword">${cpassword}</form:label>
+            <form:input class="form-control" path="confirmPassword" type="password" placeholder="${cpassword_hint}"/>
+            <form:errors path="confirmPassword" cssClass="error" element="p"/>
+        </div>
     </div>
-    <div>
-        <button type="submit" class="btn btn-primary">${saveChanges}</button>
-    </div>
+    <button type="submit" class="btn btn-primary submitButton">${saveChanges}</button>
 </form:form>
 </body>
 </html>

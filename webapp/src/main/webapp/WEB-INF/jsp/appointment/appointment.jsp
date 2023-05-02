@@ -7,7 +7,7 @@
 
 <!--Variables -->
 <c:url value="/css/main.css" var="mainCss"/>
-<c:url value="/css/doctorRegister.css" var="registerCss"/>
+<c:url value="/css/forms.css" var="registerCss"/>
 
 <c:url value="/${doctorId}/appointment" var="appointmentUrl"/>
 
