@@ -5,21 +5,17 @@
 <!-- Include -->
 <jsp:include page="/resources/externalResources.jsp"/>
 
-
 <!--Variables -->
 <c:url value="/css/main.css" var="mainCss"/>
 <c:url value="/css/appointmentSent.css" var="appointmentSentCss"/>
 
 <c:url value="/" var="homeUrl"/>
 
-<spring:message code="registerMedic.registerSuccessfulTitle" var="title"/>
-<spring:message code="registerMedic.registerSuccessful" var="registerSuccessful"/>
 <spring:message code="appointmentSent.home" var="homeMsg"/>
-
 
 <html>
 <head>
-    <title>${title}</title>
+    <title><spring:message code="${operationTitle}"/></title>
 
     <!-- favicon -->
     <jsp:include page="../components/favicon.jsp"/>
@@ -28,11 +24,12 @@
 </head>
 <body>
 <jsp:include page="../components/header.jsp"/>
+
 <!-- Content -->
 <div class="page-content p-5" id="content">
     <div class="card media">
         <h5 class="card-title media-body">
-            ${registerSuccessful}
+            <spring:message code="${operationMsg}"/>
         </h5>
         <h6 class="card-text media-body">
             <a href="${homeUrl}" class="link-info">${homeMsg}</a>

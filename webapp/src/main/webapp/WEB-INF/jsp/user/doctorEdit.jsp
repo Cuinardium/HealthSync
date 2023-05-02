@@ -10,22 +10,24 @@
 <c:url value="/css/main.css" var="mainCss"/>
 <c:url value="/css/forms.css" var="formsCss"/>
 
-<c:url value="/patient-register" var="patientRegisterUrl"/>
+<c:url value="/doctor-edit" var="doctorEditUrl"/>
 
-<spring:message code="registerPatient.title" var="title"/>
+<spring:message code="profile.edit" var="title"/>
 <spring:message code="form.name" var="name"/>
 <spring:message code="form.name_hint" var="name_hint"/>
 <spring:message code="form.lastname" var="lastname"/>
 <spring:message code="form.lastname_hint" var="lastname_hint"/>
+<spring:message code="form.city" var="city"/>
+<spring:message code="form.city_hint" var="city_hint"/>
+<spring:message code="form.address" var="address"/>
+<spring:message code="form.address_hint" var="address_hint"/>
+<spring:message code="form.specialization" var="specialization"/>
+<spring:message code="form.specialization_hint" var="specialization_hint"/>
 <spring:message code="form.healthcare" var="healthcare"/>
 <spring:message code="form.healthcare_hint" var="healthcare_hint"/>
 <spring:message code="form.email" var="email"/>
 <spring:message code="form.email_hint" var="email_hint"/>
-<spring:message code="form.password" var="password"/>
-<spring:message code="form.password_hint" var="password_hint"/>
-<spring:message code="form.cpassword" var="cpassword"/>
-<spring:message code="form.cpassword_hint" var="cpassword_hint"/>
-<spring:message code="register.submit" var="submit"/>
+<spring:message code="profile.saveChanges" var="saveChanges"/>
 
 <html>
 <head>
@@ -36,12 +38,15 @@
     <link href="${mainCss}" rel="stylesheet"/>
     <link href="${formsCss}" rel="stylesheet"/>
 </head>
+
 <body>
-<!-- Header -->
 <jsp:include page="../components/header.jsp"/>
+
+<!-- Content -->
 <div class="formContainer generalPadding">
     <h1>${title}</h1>
-    <form:form modelAttribute="patientRegisterForm" class="card" action="${patientRegisterUrl}" method="POST">
+    <form:form modelAttribute="doctorEditForm" class="card" action="${doctorEditUrl}"
+               method="POST">
         <div class="formRow">
             <div class="formItem">
                 <form:label path="name">${name}</form:label>
@@ -56,6 +61,37 @@
         </div>
         <div class="formRow">
             <div class="formItem">
+                <form:label path="cityCode">${city}</form:label>
+                <form:select class="form-select" path="cityCode">
+                    <form:option value="-1" disabled="true" hidden="true"> -- </form:option>
+                    <c:forEach items="${cities}" var="city" varStatus="status">
+                        <form:option value="${status.index}">
+                            <spring:message code="${city.messageID}"/>
+                        </form:option>
+                    </c:forEach>
+                </form:select>
+                <form:errors path="cityCode" cssClass="error" element="p"/>
+            </div>
+            <div class="formItem">
+                <form:label path="address">${address}</form:label>
+                <form:input class="form-control" path="address" type="text" placeholder="${address_hint}"/>
+                <form:errors path="address" cssClass="error" element="p"/>
+            </div>
+        </div>
+        <div class="formRow">
+            <div class="formItem">
+                <form:label path="specialtyCode">${specialization}</form:label>
+                <form:select class="form-select" path="specialtyCode">
+                    <form:option value="-1" disabled="true" hidden="true"> -- </form:option>
+                    <c:forEach items="${specialties}" var="specialty" varStatus="status">
+                        <form:option value="${status.index}">
+                            <spring:message code="${specialty.messageID}"/>
+                        </form:option>
+                    </c:forEach>
+                </form:select>
+                <form:errors path="specialtyCode" cssClass="error" element="p"/>
+            </div>
+            <div class="formItem">
                 <form:label path="healthInsuranceCode">${healthcare}</form:label>
                 <form:select class="form-select" path="healthInsuranceCode">
                     <form:option value="-1" disabled="true" hidden="true"> -- </form:option>
@@ -67,27 +103,15 @@
                 </form:select>
                 <form:errors path="healthInsuranceCode" cssClass="error" element="p"/>
             </div>
-            <div class="formItem">
-                <form:label path="email">${email}</form:label>
-                <form:input class="form-control" path="email" type="text" placeholder='${email_hint}'/>
-                <form:errors path="email" cssClass="error" element="p"/>
-            </div>
         </div>
         <div class="formRow">
             <div class="formItem">
-                <form:label path="password">${password}</form:label>
-                <form:input class="form-control" type="password" path="password" placeholder="${password_hint}"/>
-                <form:errors path="password" cssClass="error" element="p"/>
-            </div>
-            <div class="formItem">
-                <form:label path="confirmPassword">${cpassword}</form:label>
-                <form:input class="form-control" path="confirmPassword" type="password"
-                            placeholder="${cpassword_hint}"/>
-                <form:errors path="confirmPassword" cssClass="error" element="p"/>
-                <form:errors/>
+                <form:label path="email">${email}</form:label>
+                <form:input class="form-control" path="email" type="text" placeholder="${email_hint}"/>
+                <form:errors path="email" cssClass="error" element="p"/>
             </div>
         </div>
-        <button type="submit" class="btn btn-primary submitButton">${submit}</button>
+        <button type="submit" class="btn btn-primary submitButton">${saveChanges}</button>
     </form:form>
 </div>
 </body>

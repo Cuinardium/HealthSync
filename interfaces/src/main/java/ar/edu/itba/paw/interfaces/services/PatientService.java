@@ -9,5 +9,8 @@ public interface PatientService {
   public Patient createPatient(
       String email, String password, String firstName, String lastName, int healthInsuranceCode);
 
+  public void updateInformation(
+          long patientId, String email, String firstName, String lastName, int healthInsuranceCode);
+
   public Optional<Patient> getPatientById(long id); 
 }

@@ -5,14 +5,13 @@
 <!-- Include -->
 <jsp:include page="/resources/externalResources.jsp"/>
 
-
 <!--Variables -->
 <c:url value="/css/main.css" var="mainCss"/>
 <c:url value="/css/forms.css" var="formsCss"/>
 
-<c:url value="/patient-register" var="patientRegisterUrl"/>
+<c:url value="/patient-edit" var="patientEditUrl"/>
 
-<spring:message code="registerPatient.title" var="title"/>
+<spring:message code="profile.edit" var="title"/>
 <spring:message code="form.name" var="name"/>
 <spring:message code="form.name_hint" var="name_hint"/>
 <spring:message code="form.lastname" var="lastname"/>
@@ -21,12 +20,7 @@
 <spring:message code="form.healthcare_hint" var="healthcare_hint"/>
 <spring:message code="form.email" var="email"/>
 <spring:message code="form.email_hint" var="email_hint"/>
-<spring:message code="form.password" var="password"/>
-<spring:message code="form.password_hint" var="password_hint"/>
-<spring:message code="form.cpassword" var="cpassword"/>
-<spring:message code="form.cpassword_hint" var="cpassword_hint"/>
-<spring:message code="register.submit" var="submit"/>
-
+<spring:message code="profile.saveChanges" var="saveChanges"/>
 <html>
 <head>
     <title>${title}</title>
@@ -37,11 +31,11 @@
     <link href="${formsCss}" rel="stylesheet"/>
 </head>
 <body>
-<!-- Header -->
 <jsp:include page="../components/header.jsp"/>
+
 <div class="formContainer generalPadding">
     <h1>${title}</h1>
-    <form:form modelAttribute="patientRegisterForm" class="card" action="${patientRegisterUrl}" method="POST">
+    <form:form modelAttribute="patientEditForm" class="card" action="${patientEditUrl}" method="POST">
         <div class="formRow">
             <div class="formItem">
                 <form:label path="name">${name}</form:label>
@@ -73,21 +67,7 @@
                 <form:errors path="email" cssClass="error" element="p"/>
             </div>
         </div>
-        <div class="formRow">
-            <div class="formItem">
-                <form:label path="password">${password}</form:label>
-                <form:input class="form-control" type="password" path="password" placeholder="${password_hint}"/>
-                <form:errors path="password" cssClass="error" element="p"/>
-            </div>
-            <div class="formItem">
-                <form:label path="confirmPassword">${cpassword}</form:label>
-                <form:input class="form-control" path="confirmPassword" type="password"
-                            placeholder="${cpassword_hint}"/>
-                <form:errors path="confirmPassword" cssClass="error" element="p"/>
-                <form:errors/>
-            </div>
-        </div>
-        <button type="submit" class="btn btn-primary submitButton">${submit}</button>
+        <button type="submit" class="btn btn-primary submitButton">${saveChanges}</button>
     </form:form>
 </div>
 </body>

@@ -10,6 +10,9 @@ public interface PatientDao {
 
   public void addHealthInsurance(long userId, int healthInsuranceCode);
 
+  public void updateInformation(
+          long patientId, int healthInsuranceCode);
+
   public Optional<Patient> getPatientById(long id); 
 }
 

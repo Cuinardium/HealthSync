@@ -19,5 +19,8 @@ public interface DoctorDao {
 
   public void addHealthInsurance(long doctorId, int healthInsuranceCode);
 
+  public void updateInformation(
+      long doctorId, int healthInsuranceCode, int specialtyCode, int cityCode, String address);
+
   public void updateAttendingHours(long doctorId, AttendingHours attendingHours);
 }

@@ -1,0 +1,58 @@
+.card{
+    background-color: #F5F5F5;
+}
+
+.formContainer {
+    display: flex;
+    flex-direction: column;
+}
+
+.formItem {
+    display: flex;
+    flex-direction: column;
+    width: 50%;
+    align-items: center;
+    padding-left: 1%;
+    padding-right: 1%;
+}
+
+.formRow{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+    margin: 0.5rem;
+}
+
+label {
+    padding: 12px 12px 12px 0px;
+    display: inline-block;
+}
+
+.error{
+    color:red;
+}
+
+.submitButton{
+    margin: 2rem
+}
+
+select{
+    width: 20rem
+}
+
+h1, .h1{
+    margin-bottom: 1.5rem;
+}
+
+.form-control{
+    width: 50%;
+}
+
+.form-select{
+    width: 46%;
+}
+
+.form-check{
+    display: flex;
+    align-items: center;
+}

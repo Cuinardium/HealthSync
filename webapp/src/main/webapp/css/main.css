@@ -34,3 +34,26 @@ div{
     flex-wrap: nowrap;
     align-items: center;
 }
+
+input, textarea {
+    width: 18rem;
+    border: black;
+    border-bottom: 2px solid blue;
+
+    margin: 4px;
+    box-sizing: content-box;
+}
+
+.search{
+    margin: 4px;
+}
+
+.container{
+    display: flex;
+}
+
+.form-control, .form-select{
+    border-bottom: 2px solid blue;
+    margin: 4px;
+    box-sizing: content-box;
+}
