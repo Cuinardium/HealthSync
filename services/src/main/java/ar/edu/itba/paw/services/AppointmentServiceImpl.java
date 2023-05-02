@@ -156,14 +156,14 @@ public class AppointmentServiceImpl implements AppointmentService {
   }
 
   @Override
-  public List<Appointment> getAppointmentsForDoctorByStatus(
-      long doctorId, AppointmentStatus status) {
-    return appointmentDao.getAppointmentsForDoctorByStatus(doctorId, status);
+  public List<Appointment> getFilteredAppointmentsForDoctor(
+          long doctorId, AppointmentStatus status, LocalDate from, LocalDate to) {
+    return appointmentDao.getFilteredAppointmentsForDoctor(doctorId, status, from, to);
   }
 
   @Override
-  public List<Appointment> getAppointmentsForPatientByStatus(
-      long patientId, AppointmentStatus status) {
-    return appointmentDao.getAppointmentsForPatientByStatus(patientId, status);
+  public List<Appointment> getFilteredAppointmentsForPatient(
+          long patientId, AppointmentStatus status, LocalDate from, LocalDate to) {
+    return appointmentDao.getFilteredAppointmentsForPatient(patientId, status, from, to);
   }
 }
