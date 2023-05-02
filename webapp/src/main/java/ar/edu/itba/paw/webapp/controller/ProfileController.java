@@ -36,7 +36,7 @@ public class ProfileController {
     this.userService = userService;
   }
 
-  @RequestMapping(value = "/doctor-edit", method = RequestMethod.POST)
+  @RequestMapping(value = "/doctor-edit", method = RequestMethod.PUT)
   public ModelAndView doctorEditSubmit(
       @Valid @ModelAttribute("doctorEditForm") final DoctorEditForm doctorEditForm,
       final BindingResult errors) {
@@ -81,7 +81,7 @@ public class ProfileController {
     return mav;
   }
 
-  @RequestMapping(value = "/patient-edit", method = RequestMethod.POST)
+  @RequestMapping(value = "/patient-edit", method = RequestMethod.PUT)
   public ModelAndView patientEditSubmit(
       @Valid @ModelAttribute("patientEditForm") final PatientEditForm patientEditForm,
       final BindingResult errors) {
@@ -120,7 +120,7 @@ public class ProfileController {
     return mav;
   }
 
-  @RequestMapping(value = "/change-password", method = RequestMethod.POST)
+  @RequestMapping(value = "/change-password", method = RequestMethod.PUT)
   public ModelAndView changePasswordSubmit(
       @Valid @ModelAttribute("changePasswordForm") final PasswordForm passwordForm,
       final BindingResult errors) {

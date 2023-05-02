@@ -45,7 +45,7 @@
 <!-- Content -->
 <div class="page-content p-5" id="content">
     <h1>${title}</h1>
-    <form:form modelAttribute="doctorEditForm" class="form-container container card" action="${doctorEditUrl}" method="POST">
+    <form:form modelAttribute="doctorEditForm" class="form-container container card" action="${doctorEditUrl}" method="PUT">
         <div class="form-row container">
             <div class="form-item">
                 <form:label path="name">${name}</form:label>

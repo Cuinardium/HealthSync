@@ -31,7 +31,7 @@
     <link href="${doctorRegisterCss}" rel="stylesheet"/>
 </head>
 <body>
-<form:form modelAttribute="patientEditForm" action="${patientEditUrl}" method="POST">
+<form:form modelAttribute="patientEditForm" action="${patientEditUrl}" method="PUT">
     <div class="form-row container">
         <div class="form-item">
             <form:label path="name">${name}</form:label>
