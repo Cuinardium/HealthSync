@@ -11,6 +11,7 @@
 <c:url value="/patient-register" var="patientRegisterUrl"/>
 <c:url value="/doctor-edit" var="doctorEditUrl"/>
 <c:url value="/patient-edit" var="patientEditUrl"/>
+<c:url value="/change-password" var="changePasswordUrl"/>
 <c:url value="/login" var="loginUrl"/>
 <c:url value="/logout" var="logoutUrl"/>
 
@@ -23,6 +24,7 @@
 <spring:message code="header.iAmDoctor" var="iAmDoctor"/>
 <spring:message code="header.iAmPatient" var="iAmPatient"/>
 <spring:message code="header.editProfile" var="editProfile"/>
+<spring:message code="header.changePassword" var="changePassword"/>
 <spring:message code="header.logout" var="logout"/>
 
 <html>
@@ -67,6 +69,7 @@
                                             <li><a class="dropdown-item" href="${patientEditUrl}">${editProfile}</a></li>
                                         </c:otherwise>
                                     </c:choose>
+                                    <li><a class="dropdown-item" href="${changePasswordUrl}">${changePassword}</a></li>
                                     <li><a class="dropdown-item" href="${logoutUrl}">${logout}</a></li>
                                 </ul>
                             </li>
