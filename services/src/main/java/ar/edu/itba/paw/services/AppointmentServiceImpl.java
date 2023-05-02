@@ -105,8 +105,12 @@ public class AppointmentServiceImpl implements AppointmentService {
     appointmentDao.updateAppointmentStatus(appointmentId, status);
 
     // TODO: error handling
-    Doctor doctor = doctorService.getDoctorById(appointment.getDoctorId()).orElseThrow(RuntimeException::new);
-    Patient patient = patientService.getPatientById(appointment.getPatientId()).orElseThrow(RuntimeException::new);
+    Doctor doctor =
+        doctorService.getDoctorById(appointment.getDoctorId()).orElseThrow(RuntimeException::new);
+    Patient patient =
+        patientService
+            .getPatientById(appointment.getPatientId())
+            .orElseThrow(RuntimeException::new);
     Locale locale = LocaleContextHolder.getLocale();
 
     switch (status) {
@@ -114,7 +118,11 @@ public class AppointmentServiceImpl implements AppointmentService {
         mailService.sendAppointmentConfirmedMail(appointment, doctor, patient, locale);
         break;
       case CANCELLED:
-        mailService.sendAppointmentCancelledMail(appointment, doctor, patient, locale);
+        if (requesterId == appointment.getPatientId()) {
+          mailService.sendAppointmentCancelledByPatientMail(appointment, doctor, patient, locale);
+        } else {
+          mailService.sendAppointmentCancelledByDoctorMail(appointment, doctor, patient, locale);
+        }
         break;
       case REJECTED:
         mailService.sendAppointmentRejectedMail(appointment, doctor, patient, locale);
