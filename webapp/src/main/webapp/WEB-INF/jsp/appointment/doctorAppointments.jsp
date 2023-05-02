@@ -53,19 +53,19 @@
     <ul id="nav" class="nav nav-tabs">
         <li class="nav-item">
             <a id="request-tab"
-               class="nav-link ${selectedTab <= 0 || selectedTab >= 4 ? 'active bg-primary text-white' : ''}"
+               class="nav-link tab ${selectedTab <= 0 || selectedTab >= 4 ? 'active bg-primary text-white' : ''}"
                href="#requests">${requests}</a>
         </li>
         <li id="confirm-tab" class="nav-item">
-            <a class="nav-link ${selectedTab == 1 ? 'active bg-primary text-white' : ''}"
+            <a class="nav-link tab ${selectedTab == 1 ? 'active bg-primary text-white' : ''}"
                href="#confirmed">${upcoming}</a>
         </li>
         <li id="cancelled-tab" class="nav-item">
-            <a class="nav-link ${selectedTab == 2 ? 'active bg-primary text-white' : ''}"
+            <a class="nav-link tab ${selectedTab == 2 ? 'active bg-primary text-white' : ''}"
                href="#cancelled">${cancelled}</a>
         </li>
         <li id="history-tab" class="nav-item">
-            <a class="nav-link ${selectedTab == 3 ? 'active bg-primary text-white' : ''}" href="#history">${history}</a>
+            <a class="nav-link tab ${selectedTab == 3 ? 'active bg-primary text-white' : ''}" href="#history">${history}</a>
         </li>
     </ul>
 
@@ -214,7 +214,7 @@
         }
 
         // Get all tab links
-        var tabLinks = document.querySelectorAll('li.nav-item a');
+        var tabLinks = document.querySelectorAll('li.nav-item a.tab');
 
         // Add click event listeners to each tab link
         for (i = 0; i < tabLinks.length; i++) {

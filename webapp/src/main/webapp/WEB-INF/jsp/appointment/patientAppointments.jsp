@@ -52,19 +52,19 @@
     </form>
     <ul id="nav" class="nav nav-tabs">
         <li class="nav-item">
-            <a id="pending-tab" class="nav-link ${selectedTab <= 0 || selectedTab >= 5 ? 'active bg-primary text-white' : ''}" href="#pending">${pending}</a>
+            <a id="pending-tab" class="nav-link tab ${selectedTab <= 0 || selectedTab >= 5 ? 'active bg-primary text-white' : ''}" href="#pending">${pending}</a>
         </li>
         <li id="confirm-tab" class="nav-item">
-            <a class="nav-link ${selectedTab == 1 ? 'active bg-primary text-white' : ''}" href="#confirmed">${confirmed}</a>
+            <a class="nav-link tab ${selectedTab == 1 ? 'active bg-primary text-white' : ''}" href="#confirmed">${confirmed}</a>
         </li>
         <li id="rejected-tab" class="nav-item">
-            <a class="nav-link ${selectedTab == 2 ? 'active bg-primary text-white' : ''}" href="#rejected">${rejected}</a>
+            <a class="nav-link tab ${selectedTab == 2 ? 'active bg-primary text-white' : ''}" href="#rejected">${rejected}</a>
         </li>
         <li id="cancelled-tab" class="nav-item">
-            <a class="nav-link ${selectedTab == 3 ? 'active bg-primary text-white' : ''}" href="#cancelled">${cancelled}</a>
+            <a class="nav-link tab ${selectedTab == 3 ? 'active bg-primary text-white' : ''}" href="#cancelled">${cancelled}</a>
         </li>
         <li id="history-tab" class="nav-item">
-            <a class="nav-link ${selectedTab == 4 ? 'active bg-primary text-white' : ''}" href="#history">${history}</a>
+            <a class="nav-link tab ${selectedTab == 4 ? 'active bg-primary text-white' : ''}" href="#history">${history}</a>
         </li>
     </ul>
 
@@ -236,7 +236,7 @@
         }
 
         // Get all tab links
-        var tabLinks = document.querySelectorAll('li.nav-item a');
+        var tabLinks = document.querySelectorAll('li.nav-item a.tab');
 
         // Add click event listeners to each tab link
         for (i = 0; i < tabLinks.length; i++) {
