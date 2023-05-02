@@ -1,8 +1,12 @@
 package ar.edu.itba.paw.webapp.controller;
 
 import ar.edu.itba.paw.interfaces.services.AppointmentService;
+import ar.edu.itba.paw.interfaces.services.DoctorService;
+import ar.edu.itba.paw.interfaces.services.PatientService;
 import ar.edu.itba.paw.models.Appointment;
 import ar.edu.itba.paw.models.AppointmentStatus;
+import ar.edu.itba.paw.models.Doctor;
+import ar.edu.itba.paw.models.Patient;
 import ar.edu.itba.paw.models.ThirtyMinuteBlock;
 import ar.edu.itba.paw.webapp.auth.PawAuthUserDetails;
 import ar.edu.itba.paw.webapp.auth.UserRoles;
@@ -31,10 +35,17 @@ public class AppointmentController {
   private static final Logger LOGGER = LoggerFactory.getLogger(AppointmentController.class);
 
   private final AppointmentService appointmentService;
+  private final PatientService patientService;
+  private final DoctorService doctorService;
 
   @Autowired
-  public AppointmentController(final AppointmentService appointmentService) {
+  public AppointmentController(
+      final AppointmentService appointmentService,
+      final PatientService patientService,
+      final DoctorService doctorService) {
     this.appointmentService = appointmentService;
+    this.patientService = patientService;
+    this.doctorService = doctorService;
   }
 
   // ========================== Appointment Requests ==========================
@@ -177,9 +188,60 @@ public class AppointmentController {
     return getAppointments(from, to, selectedTab);
   }
 
+  // ================================== Detailed Appointment =======================================
+
+  @RequestMapping(value = "/{id:\\d+}/detailed_appointment", method = RequestMethod.GET)
+  public ModelAndView getDetailedAppointment(
+      @PathVariable("id") final int appointmentId,
+      @RequestParam(name = "selected_tab", required = false, defaultValue = "0")
+          final int selectedTab,
+      @RequestParam(name = "from", required = false, defaultValue = "") final String from,
+      @RequestParam(name = "to", required = false, defaultValue = "") final String to) {
+
+    // TODO: Error handling
+    Appointment appointment =
+        appointmentService.getAppointmentById(appointmentId).orElseThrow(RuntimeException::new);
+
+    // Get Appointment patient
+    Patient patient =
+        patientService
+            .getPatientById(appointment.getPatientId())
+            .orElseThrow(RuntimeException::new);
+
+    Doctor doctor =
+        doctorService.getDoctorById(appointment.getDoctorId()).orElseThrow(RuntimeException::new);
+
+    // If user is nor the patient nor the doctor, unauthorized
+    if (PawAuthUserDetails.getCurrentUserId() != patient.getId()
+        && PawAuthUserDetails.getCurrentUserId() != doctor.getId()) {
+      return new ModelAndView("error/403");
+    }
+
+    ModelAndView mav = new ModelAndView("appointment/detailedAppointment");
+
+    // Add values to model
+    mav.addObject("appointmentDesc", appointment.getDescription());
+    mav.addObject(
+        "appointmentDateTime",
+        appointment.getDate() + " " + appointment.getTimeBlock().getBlockBeginning());
+    mav.addObject("appointmentStatusMessageId", appointment.getStatus().getMessageID());
+    mav.addObject("patientName", patient.getFirstName() + " " + patient.getLastName());
+    mav.addObject("doctorName", doctor.getFirstName() + " " + doctor.getLastName());
+    mav.addObject("cityMessageId", doctor.getLocation().getCity().getMessageID());
+    mav.addObject("address", doctor.getLocation().getAddress());
+    mav.addObject("patientHealthInsuranceMessageId", patient.getHealthInsurance().getMessageID());
+
+    mav.addObject("selectedTab", selectedTab);
+    mav.addObject("from", from);
+    mav.addObject("to", to);
+
+    return mav;
+  }
+
   // ==================================  Private   =================================================
 
-  private ModelAndView getAppointmentsForDoctor(LocalDate fromDate, LocalDate toDate, int selectedTab) {
+  private ModelAndView getAppointmentsForDoctor(
+      LocalDate fromDate, LocalDate toDate, int selectedTab) {
 
     ModelAndView mav = new ModelAndView("appointment/doctorAppointments");
 
@@ -211,7 +273,8 @@ public class AppointmentController {
     return mav;
   }
 
-  private ModelAndView getAppointmentsForPatient(LocalDate fromDate, LocalDate toDate, int selectedTab) {
+  private ModelAndView getAppointmentsForPatient(
+      LocalDate fromDate, LocalDate toDate, int selectedTab) {
 
     ModelAndView mav = new ModelAndView("appointment/patientAppointments");
 

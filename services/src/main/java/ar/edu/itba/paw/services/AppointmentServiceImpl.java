@@ -54,6 +54,16 @@ public class AppointmentServiceImpl implements AppointmentService {
     Doctor doctor = doctorService.getDoctorById(doctorId).orElseThrow(RuntimeException::new);
     Patient patient = patientService.getPatientById(patientId).orElseThrow(RuntimeException::new);
 
+    Optional<Appointment> possibleAppointment =
+        appointmentDao.getAppointment(doctorId, date, timeBlock);
+
+    if (possibleAppointment.isPresent()
+        && (possibleAppointment.get().getStatus() == AppointmentStatus.COMPLETED
+            || possibleAppointment.get().getStatus() == AppointmentStatus.ACCEPTED
+            || possibleAppointment.get().getStatus() == AppointmentStatus.PENDING)) {
+      throw new RuntimeException();
+    }
+
     Appointment appointment =
         appointmentDao.createAppointment(patientId, doctorId, date, timeBlock, description);
 
@@ -147,7 +157,10 @@ public class AppointmentServiceImpl implements AppointmentService {
     }
 
     for (Appointment appointment : appointments) {
-      if (appointment.getDate().equals(date)) {
+      if (appointment.getDate().equals(date)
+          && (appointment.getStatus() == AppointmentStatus.ACCEPTED
+              || appointment.getStatus() == AppointmentStatus.PENDING
+              || appointment.getStatus() == AppointmentStatus.COMPLETED)) {
         availableHours.remove(appointment.getTimeBlock());
       }
     }
@@ -157,13 +170,13 @@ public class AppointmentServiceImpl implements AppointmentService {
 
   @Override
   public List<Appointment> getFilteredAppointmentsForDoctor(
-          long doctorId, AppointmentStatus status, LocalDate from, LocalDate to) {
+      long doctorId, AppointmentStatus status, LocalDate from, LocalDate to) {
     return appointmentDao.getFilteredAppointmentsForDoctor(doctorId, status, from, to);
   }
 
   @Override
   public List<Appointment> getFilteredAppointmentsForPatient(
-          long patientId, AppointmentStatus status, LocalDate from, LocalDate to) {
+      long patientId, AppointmentStatus status, LocalDate from, LocalDate to) {
     return appointmentDao.getFilteredAppointmentsForPatient(patientId, status, from, to);
   }
 }
