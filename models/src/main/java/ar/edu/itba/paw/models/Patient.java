@@ -22,18 +22,6 @@ public class Patient extends User {
 
   @Override
   public String toString() {
-    return "{id:"
-        + getId()
-        + ", email:"
-        + getEmail()
-        + ", password:<redacted>, firstName:"
-        + getFirstName()
-        + ", lastName:"
-        + getLastName()
-        + ", ppId:"
-        + getProfilePictureId()
-        + ", HI:"
-        + getHealthInsurance()
-        + "}";
+    return "Patient [healthInsurance=" + healthInsurance + super.toString() + "]";
   }
 }

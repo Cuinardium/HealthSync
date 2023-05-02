@@ -4,6 +4,25 @@ import java.time.LocalDate;
 
 public class Appointment {
 
+  @Override
+  public String toString() {
+    return "Appointment [id="
+        + id
+        + ", patientId="
+        + patientId
+        + ", doctorId="
+        + doctorId
+        + ", date="
+        + date
+        + ", timeBlock="
+        + timeBlock
+        + ", status="
+        + status
+        + ", description="
+        + description
+        + "]";
+  }
+
   private final long id;
   private final long patientId;
   private final long doctorId;

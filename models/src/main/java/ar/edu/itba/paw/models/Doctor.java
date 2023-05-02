@@ -44,22 +44,15 @@ public class Doctor extends User {
 
   @Override
   public String toString() {
-    return "{id:"
-        + getId()
-        + ", email:"
-        + getEmail()
-        + ", password:<redacted>, firstName:"
-        + getFirstName()
-        + ", lastName:"
-        + getLastName()
-        + ", ppId:"
-        + getProfilePictureId()
-        + ", SP:"
-        + getSpecialty()
-        + ", Loc:"
-        + getLocation()
-        + ", HI:"
-        + getHealthInsurance()
-        + "}";
+    return "Doctor [healthInsurance="
+        + healthInsurance
+        + ", specialty="
+        + specialty
+        + ", location="
+        + location
+        + ", attendingHours="
+        + attendingHours
+        + super.toString()
+        + "]";
   }
 }
