@@ -22,7 +22,11 @@ public interface AppointmentService {
 
   List<Appointment> getAppointmentsForDoctor(long doctorId);
 
-  void updateAppointmentStatus(long appointmentId, AppointmentStatus status);
+  List<Appointment> getAppointmentsForPatientByStatus(long patientId, AppointmentStatus status);
+
+  List<Appointment> getAppointmentsForDoctorByStatus(long doctorId, AppointmentStatus status);
+
+  void updateAppointmentStatus(long appointmentId, AppointmentStatus status, long requesterId);
 
   public List<ThirtyMinuteBlock> getAvailableHoursForDoctorOnDate(long doctorId, LocalDate date);
 }

@@ -82,7 +82,24 @@ public class AppointmentServiceImpl implements AppointmentService {
 
   @Transactional
   @Override
-  public void updateAppointmentStatus(long appointmentId, AppointmentStatus status) {
+  public void updateAppointmentStatus(long appointmentId, AppointmentStatus status, long requesterId) {
+
+    // Get appointment
+    // TODO: error handling
+    Appointment appointment = getAppointmentById(appointmentId).orElseThrow(RuntimeException::new);
+
+    // If requester is the patient, he can only cancel the appointment
+    if (requesterId == appointment.getPatientId()) {
+      if (status != AppointmentStatus.CANCELLED) {
+        throw new RuntimeException();
+      }
+    }
+
+    // If requester is nor the patient nor the doctor, he can't update the appointment
+    if (requesterId != appointment.getPatientId() && requesterId != appointment.getDoctorId()) {
+      throw new RuntimeException();
+    }
+    
     appointmentDao.updateAppointmentStatus(appointmentId, status);
   }
 
@@ -108,5 +125,15 @@ public class AppointmentServiceImpl implements AppointmentService {
     }
 
     return availableHours;
+  }
+
+  @Override
+  public List<Appointment> getAppointmentsForDoctorByStatus(long doctorId, AppointmentStatus status) {
+    return appointmentDao.getAppointmentsForDoctorByStatus(doctorId, status);
+  }
+
+  @Override
+  public List<Appointment> getAppointmentsForPatientByStatus(long patientId, AppointmentStatus status) {
+    return appointmentDao.getAppointmentsForPatientByStatus(patientId, status);
   }
 }

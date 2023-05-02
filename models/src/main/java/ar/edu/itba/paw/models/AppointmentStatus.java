@@ -7,7 +7,8 @@ public enum AppointmentStatus {
   PENDING("appointmentStatus.pending"),
   ACCEPTED("appointmentStatus.accepted"),
   REJECTED("appointmentStatus.rejected"),
-  CANCELLED("appointmentStatus.cancelled");
+  CANCELLED("appointmentStatus.cancelled"),
+  COMPLETED("appointmentStatus.completed");
 
   private final String messageID;
 

@@ -79,7 +79,7 @@ public class MailServiceImpl implements MailService {
 
     String patientName = patient.getFirstName() + " " + patient.getLastName();
     String dateTime =
-        appointment.getDate().toString() + " " + appointment.getTimeBlock().getBlockBeggining();
+        appointment.getDate().toString() + " " + appointment.getTimeBlock().getBlockBeginning();
     String description = appointment.getDescription();
     String patientHealthInsurance =
         messageSource.getMessage(patient.getHealthInsurance().getMessageID(), null, locale);
@@ -110,7 +110,7 @@ public class MailServiceImpl implements MailService {
 
     String patientName = patient.getFirstName() + " " + patient.getLastName();
     String dateTime =
-        appointment.getDate().toString() + " " + appointment.getTimeBlock().getBlockBeggining();
+        appointment.getDate().toString() + " " + appointment.getTimeBlock().getBlockBeginning();
     String description = appointment.getDescription();
     String patientHealthInsurance =
         messageSource.getMessage(patient.getHealthInsurance().getMessageID(), null, locale);

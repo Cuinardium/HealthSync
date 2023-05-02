@@ -59,13 +59,13 @@ public enum ThirtyMinuteBlock {
     this.blockBeginning = blockBeginning;
   }
 
-  public String getBlockBeggining() {
+  public String getBlockBeginning() {
     return this.blockBeginning;
   }
 
   public static ThirtyMinuteBlock fromString(String block) {
     for (ThirtyMinuteBlock thirtyMinuteBlock : ThirtyMinuteBlock.values()) {
-      if (thirtyMinuteBlock.getBlockBeggining().equals(block)) {
+      if (thirtyMinuteBlock.getBlockBeginning().equals(block)) {
         return thirtyMinuteBlock;
       }
     }
@@ -76,7 +76,7 @@ public enum ThirtyMinuteBlock {
     Collection<ThirtyMinuteBlock> result = new ArrayList<>();
     for (String block : blocks) {
       for (ThirtyMinuteBlock thirtyMinuteBlock : ThirtyMinuteBlock.values()) {
-        if (thirtyMinuteBlock.getBlockBeggining().equals(block)) {
+        if (thirtyMinuteBlock.getBlockBeginning().equals(block)) {
           result.add(thirtyMinuteBlock);
         }
       }
