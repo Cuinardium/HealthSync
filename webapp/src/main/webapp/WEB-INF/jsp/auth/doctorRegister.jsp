@@ -8,7 +8,7 @@
 
 <!--Variables -->
 <c:url value="/css/main.css" var="mainCss"/>
-<c:url value="/css/doctorRegister.css" var="registerMedicCss"/>
+<c:url value="/css/doctorRegister.css" var="doctorRegisterCss"/>
 
 <c:url value="/doctor-register" var="doctorRegisterUrl"/>
 
@@ -42,7 +42,7 @@
     <!-- favicon -->
     <jsp:include page="../components/favicon.jsp"/>
     <link href="${mainCss}" rel="stylesheet"/>
-    <link href="${registerMedicCss}" rel="stylesheet"/>
+    <link href="${doctorRegisterCss}" rel="stylesheet"/>
 </head>
 
 <body>
