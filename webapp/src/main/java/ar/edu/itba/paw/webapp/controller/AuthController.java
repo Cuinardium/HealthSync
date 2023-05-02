@@ -87,7 +87,7 @@ public class AuthController {
             registerForm.getLastname(),
             registerForm.getHealthInsuranceCode());
 
-    LOGGER.info("Patient registered: {}", patient);
+    LOGGER.info("Registered {}", patient);
 
     final ModelAndView mav = new ModelAndView("auth/registerSuccesful");
     mav.addObject("user", patient);
@@ -127,7 +127,7 @@ public class AuthController {
             doctorRegisterForm.getAddress(),
             AttendingHours.DEFAULT_ATTENDING_HOURS);
 
-    LOGGER.info("Doctor registered: {}", doctor);
+    LOGGER.info("Registered {}", doctor);
 
     final ModelAndView mav = new ModelAndView("auth/registerSuccesful");
     mav.addObject("user", doctor);
