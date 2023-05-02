@@ -101,6 +101,29 @@ public class AppointmentServiceImpl implements AppointmentService {
     }
     
     appointmentDao.updateAppointmentStatus(appointmentId, status);
+    //TODO CAMBIAR ESTO A UN SWITCH
+    if(status==AppointmentStatus.ACCEPTED){
+      mailService.sendAppointmentConfirmedMail(
+              appointment,
+              doctorService.getDoctorById(appointment.getDoctorId()).orElseThrow(RuntimeException::new),
+              patientService.getPatientById(appointment.getPatientId()).orElseThrow(RuntimeException::new),
+              LocaleContextHolder.getLocale()
+      );
+    }else if(status==AppointmentStatus.REJECTED){
+      mailService.sendAppointmentRejectedMail(
+              appointment,
+              doctorService.getDoctorById(appointment.getDoctorId()).orElseThrow(RuntimeException::new),
+              patientService.getPatientById(appointment.getPatientId()).orElseThrow(RuntimeException::new),
+              LocaleContextHolder.getLocale()
+      );
+    }else if(status==AppointmentStatus.CANCELLED){
+      mailService.sendAppointmentCanceledMail(
+              appointment,
+              doctorService.getDoctorById(appointment.getDoctorId()).orElseThrow(RuntimeException::new),
+              patientService.getPatientById(appointment.getPatientId()).orElseThrow(RuntimeException::new),
+              LocaleContextHolder.getLocale()
+      );
+    }
   }
 
   @Override
