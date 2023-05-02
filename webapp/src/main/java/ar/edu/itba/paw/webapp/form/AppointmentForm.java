@@ -37,7 +37,7 @@ public class AppointmentForm {
       return null;
     }
 
-    return block.getBlockBeggining();
+    return block.getBlockBeginning();
   }
 
   public ThirtyMinuteBlock getBlockEnum() {
