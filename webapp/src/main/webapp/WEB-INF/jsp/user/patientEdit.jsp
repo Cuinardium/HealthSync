@@ -31,7 +31,9 @@
     <link href="${doctorRegisterCss}" rel="stylesheet"/>
 </head>
 <body>
-<form:form modelAttribute="patientEditForm" action="${patientEditUrl}" method="PUT">
+<jsp:include page="../components/header.jsp"/>
+
+<form:form modelAttribute="patientEditForm" action="${patientEditUrl}" method="POST">
     <div class="form-row container">
         <div class="form-item">
             <form:label path="name">${name}</form:label>

@@ -36,7 +36,7 @@ public class ProfileController {
     this.userService = userService;
   }
 
-  @RequestMapping(value = "/doctor-edit", method = RequestMethod.PUT)
+  @RequestMapping(value = "/doctor-edit", method = RequestMethod.POST)
   public ModelAndView doctorEditSubmit(
       @Valid @ModelAttribute("doctorEditForm") final DoctorEditForm doctorEditForm,
       final BindingResult errors) {
@@ -54,7 +54,10 @@ public class ProfileController {
         doctorEditForm.getCityCode(),
         doctorEditForm.getAddress());
 
-    return new ModelAndView("auth/editSuccesful");
+    ModelAndView mav = new ModelAndView("auth/operationSuccessful");
+    mav.addObject("operationTitle", "profile.editProfileSuccessfulTitle");
+    mav.addObject("operationMsg", "profile.editProfileSuccessfulMsg");
+    return mav;
   }
 
   @RequestMapping(value = "/doctor-edit", method = RequestMethod.GET)
@@ -81,7 +84,7 @@ public class ProfileController {
     return mav;
   }
 
-  @RequestMapping(value = "/patient-edit", method = RequestMethod.PUT)
+  @RequestMapping(value = "/patient-edit", method = RequestMethod.POST)
   public ModelAndView patientEditSubmit(
       @Valid @ModelAttribute("patientEditForm") final PatientEditForm patientEditForm,
       final BindingResult errors) {
@@ -96,7 +99,10 @@ public class ProfileController {
         patientEditForm.getLastname(),
         patientEditForm.getHealthInsuranceCode());
 
-    return new ModelAndView("auth/registerSuccesful");
+    ModelAndView mav = new ModelAndView("auth/operationSuccessful");
+    mav.addObject("operationTitle", "profile.editProfileSuccessfulTitle");
+    mav.addObject("operationMsg", "profile.editProfileSuccessfulMsg");
+    return mav;
   }
 
   @RequestMapping(value = "/patient-edit", method = RequestMethod.GET)
@@ -120,7 +126,7 @@ public class ProfileController {
     return mav;
   }
 
-  @RequestMapping(value = "/change-password", method = RequestMethod.PUT)
+  @RequestMapping(value = "/change-password", method = RequestMethod.POST)
   public ModelAndView changePasswordSubmit(
       @Valid @ModelAttribute("changePasswordForm") final PasswordForm passwordForm,
       final BindingResult errors) {
@@ -129,8 +135,10 @@ public class ProfileController {
     }
 
     userService.changePassword(PawAuthUserDetails.getCurrentUserId(), passwordForm.getPassword());
-
-    return new ModelAndView("auth/registerSuccesful");
+    ModelAndView mav = new ModelAndView("auth/operationSuccessful");
+    mav.addObject("operationTitle", "profile.changePasswordSuccessfulTitle");
+    mav.addObject("operationMsg", "profile.changePasswordSuccessfulMsg");
+    return mav;
   }
 
   @RequestMapping(value = "/change-password", method = RequestMethod.GET)
