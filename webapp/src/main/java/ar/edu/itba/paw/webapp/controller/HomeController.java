@@ -6,7 +6,6 @@ import ar.edu.itba.paw.models.City;
 import ar.edu.itba.paw.models.Doctor;
 import ar.edu.itba.paw.models.HealthInsurance;
 import ar.edu.itba.paw.models.Specialty;
-import ar.edu.itba.paw.webapp.auth.PawAuthUserDetails;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -21,12 +20,10 @@ import org.springframework.web.servlet.ModelAndView;
 public class HomeController {
 
   private final DoctorService doctorService;
-  private final UserService us;
 
   @Autowired
   public HomeController(final DoctorService doctorService, final UserService us) {
     this.doctorService = doctorService;
-    this.us = us;
   }
 
   @RequestMapping(value = "/")

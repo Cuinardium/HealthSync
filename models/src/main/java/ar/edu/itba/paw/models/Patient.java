@@ -19,4 +19,9 @@ public class Patient extends User {
   public HealthInsurance getHealthInsurance() {
     return healthInsurance;
   }
+
+  @Override
+  public String toString() {
+    return "Patient [healthInsurance=" + healthInsurance + super.toString() + "]";
+  }
 }

@@ -11,6 +11,8 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Locale;
 import javax.validation.Valid;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -24,6 +26,8 @@ import org.springframework.web.servlet.ModelAndView;
 
 @Controller
 public class AppointmentController {
+
+  private static final Logger LOGGER = LoggerFactory.getLogger(AppointmentController.class);
 
   private final AppointmentService appointmentService;
 
@@ -82,15 +86,22 @@ public class AppointmentController {
             (SecurityContextHolder.getContext().getAuthentication().getPrincipal());
 
     try {
-      appointmentService.createAppointment(
-          currentUser.getId(),
-          doctorId,
-          appointmentForm.getDate(),
-          appointmentForm.getBlockEnum(),
-          appointmentForm.getDescription());
+      Appointment appointment =
+          appointmentService.createAppointment(
+              currentUser.getId(),
+              doctorId,
+              appointmentForm.getDate(),
+              appointmentForm.getBlockEnum(),
+              appointmentForm.getDescription());
 
+      LOGGER.info("Created {}", appointment);
     } catch (RuntimeException e) {
       // TODO: CORRECT exception handling
+      LOGGER.error(
+          "Failed to create Appointment for patient {}, {}",
+          currentUser.getId(),
+          appointmentForm,
+          new RuntimeException());
     }
 
     return appointmentSent();

@@ -52,4 +52,20 @@ public class User {
   public long getProfilePictureId() {
     return profilePictureId;
   }
+
+  @Override
+  public String toString() {
+    return "User [id="
+        + id
+        + ", profilePictureId="
+        + profilePictureId
+        + ", email="
+        + email
+        + ", password=<redacted>"
+        + ", firstName="
+        + firstName
+        + ", lastName="
+        + lastName
+        + "]";
+  }
 }

@@ -41,4 +41,18 @@ public class Doctor extends User {
   public AttendingHours getAttendingHours() {
     return attendingHours;
   }
+
+  @Override
+  public String toString() {
+    return "Doctor [healthInsurance="
+        + healthInsurance
+        + ", specialty="
+        + specialty
+        + ", location="
+        + location
+        + ", attendingHours="
+        + attendingHours
+        + super.toString()
+        + "]";
+  }
 }
