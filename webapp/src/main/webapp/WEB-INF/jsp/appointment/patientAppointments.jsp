@@ -16,8 +16,8 @@
 <spring:message code="appointments.cancelled" var="cancelled"/>
 <spring:message code="appointments.history" var="history"/>
 <spring:message code="appointments.cancel" var="cancel"/>
-<spring:message code="appointments.from" var="from"/>
-<spring:message code="appointments.to" var="to"/>
+<spring:message code="appointments.from" var="fromTitle"/>
+<spring:message code="appointments.to" var="toTitle"/>
 <spring:message code="appointments.filter" var="filter"/>
 
 
@@ -71,10 +71,15 @@
     <div class="cardsContainer">
         <div id="pending" class="tabContent ${selectedTab <= 0 || selectedTab >= 5 ? 'active' : ''}">
             <c:forEach items="${pendingAppointments}" var="appointment">
+                <c:url value="/${appointment.id}/detailed_appointment" var="detailedUrl">
+                    <c:param name="from" value="${from}" />
+                    <c:param name="to" value="${to}" />
+                    <c:param name="selected_tab" value="${selectedTab}" />
+                </c:url>
                 <div class="card mt-3">
                     <div class="card-header d-flex flex-row justify-content-between">
                         <div class="align-self-center">
-                                ${appointment.date} ${appointment.timeBlock.blockBeginning}
+                            <a class="detailed-link" href="${detailedUrl}">${appointment.date} ${appointment.timeBlock.blockBeginning}</a>
                         </div>
                     </div>
                     <div class="card-body">
@@ -83,13 +88,6 @@
                         </p>
                     </div>
                 </div>
-
-                <!-- TODO: appointment card
-                - url to "appointment details" ????
-                - buttons to cancell if status != rejected (para user)
-                - button to reject cancell or accept (para doctor)
-                -->
-
             </c:forEach>
             <c:if test="${empty pendingAppointments}">
                 <div class="d-flex justify-content-center mt-3">
@@ -99,10 +97,15 @@
         </div>
         <div id="confirmed" class="tabContent ${selectedTab == 1 ? 'active' : ''}">
             <c:forEach items="${upcomingAppointments}" var="appointment">
+                <c:url value="/${appointment.id}/detailed_appointment" var="detailedUrl">
+                    <c:param name="from" value="${from}" />
+                    <c:param name="to" value="${to}" />
+                    <c:param name="selected_tab" value="${selectedTab}" />
+                </c:url>
                 <div class="card mt-3">
                     <div class="card-header d-flex flex-row justify-content-between">
                         <div class="align-self-center">
-                                ${appointment.date} ${appointment.timeBlock.blockBeginning}
+                            <a class="detailed-link" href="${detailedUrl}">${appointment.date} ${appointment.timeBlock.blockBeginning}</a>
                         </div>
                         <c:url value="/my-appointments/${appointment.id}/update" var="updateUrl"/>
                         <div class="flex-row">
@@ -119,13 +122,6 @@
                         </p>
                     </div>
                 </div>
-
-                <!-- TODO: appointment card
-                - url to "appointment details" ????
-                - buttons to cancell if status != rejected (para user)
-                - button to reject cancell or accept (para doctor)
-                -->
-
             </c:forEach>
             <c:if test="${empty upcomingAppointments}">
                 <div class="d-flex justify-content-center mt-3">
@@ -135,10 +131,15 @@
         </div>
         <div id="rejected" class="tabContent ${selectedTab == 2 ? 'active' : ''}">
             <c:forEach items="${rejectedAppointments}" var="appointment">
+                <c:url value="/${appointment.id}/detailed_appointment" var="detailedUrl">
+                    <c:param name="from" value="${from}" />
+                    <c:param name="to" value="${to}" />
+                    <c:param name="selected_tab" value="${selectedTab}" />
+                </c:url>
                 <div class="card mt-3">
                     <div class="card-header d-flex flex-row justify-content-between">
                         <div class="align-self-center">
-                                ${appointment.date} ${appointment.timeBlock.blockBeginning}
+                            <a class="detailed-link" href="${detailedUrl}">${appointment.date} ${appointment.timeBlock.blockBeginning}</a>
                         </div>
                     </div>
                     <div class="card-body">
@@ -147,13 +148,6 @@
                         </p>
                     </div>
                 </div>
-
-                <!-- TODO: appointment card
-                - url to "appointment details" ????
-                - buttons to cancell if status != rejected (para user)
-                - button to reject cancell or accept (para doctor)
-                -->
-
             </c:forEach>
             <c:if test="${empty rejectedAppointments}">
                 <div class="d-flex justify-content-center mt-3">
@@ -163,10 +157,15 @@
         </div>
         <div id="cancelled" class="tabContent ${selectedTab == 3 ? 'active' : ''}">
             <c:forEach items="${cancelledAppointments}" var="appointment">
+                <c:url value="/${appointment.id}/detailed_appointment" var="detailedUrl">
+                    <c:param name="from" value="${from}" />
+                    <c:param name="to" value="${to}" />
+                    <c:param name="selected_tab" value="${selectedTab}" />
+                </c:url>
                 <div class="card mt-3">
                     <div class="card-header d-flex flex-row justify-content-between">
                         <div class="align-self-center">
-                                ${appointment.date} ${appointment.timeBlock.blockBeginning}
+                            <a class="detailed-link" href="${detailedUrl}">${appointment.date} ${appointment.timeBlock.blockBeginning}</a>
                         </div>
                     </div>
                     <div class="card-body">
@@ -175,13 +174,6 @@
                         </p>
                     </div>
                 </div>
-
-                <!-- TODO: appointment card
-                - url to "appointment details" ????
-                - buttons to cancell if status != rejected (para user)
-                - button to reject cancell or accept (para doctor)
-                -->
-
             </c:forEach>
             <c:if test="${empty cancelledAppointments}">
                 <div class="d-flex justify-content-center mt-3">
@@ -191,10 +183,15 @@
         </div>
         <div id="history" class="tabContent ${selectedTab == 4 ? 'active' : ''}">
             <c:forEach items="${completedAppointments}" var="appointment">
+                <c:url value="/${appointment.id}/detailed_appointment" var="detailedUrl">
+                    <c:param name="from" value="${from}" />
+                    <c:param name="to" value="${to}" />
+                    <c:param name="selected_tab" value="${selectedTab}" />
+                </c:url>
                 <div class="card mt-3">
                     <div class="card-header d-flex flex-row justify-content-between">
                         <div class="align-self-center">
-                                ${appointment.date} ${appointment.timeBlock.blockBeginning}
+                            <a class="detailed-link" href="${detailedUrl}">${appointment.date} ${appointment.timeBlock.blockBeginning}</a>
                         </div>
                     </div>
                     <div class="card-body">
@@ -203,13 +200,6 @@
                         </p>
                     </div>
                 </div>
-
-                <!-- TODO: appointment card
-                - url to "appointment details" ????
-                - buttons to cancell if status != rejected (para user)
-                - button to reject cancell or accept (para doctor)
-                -->
-
             </c:forEach>
             <c:if test="${empty completedAppointments}">
                 <div class="d-flex justify-content-center mt-3">
@@ -263,6 +253,24 @@
                     } else {
                         tabContents[j].style.display = 'none';
                     }
+                }
+                // get all the <a class="detailed-link"> tags in the document
+                var links = document.querySelectorAll("a.detailed-link");
+
+                // loop through all the links and modify their href attributes
+                for (var k = 0; k < links.length; k++) {
+
+                    // get the original href attribute
+                    var originalHref = links[k].getAttribute("href");
+                    originalHref = originalHref.replace(/[\?&]selected_tab=\d+/, "");
+
+                    // get the selected tab's index
+                    var selectedTab = document.querySelector("#nav .nav-link.active");
+                    var selectedIndex = Array.from(selectedTab.parentNode.parentNode.children).indexOf(selectedTab.parentNode);
+
+                    // modify the href attribute to include the query parameters
+                    var newHref = originalHref + "&selected_tab=" + encodeURIComponent(selectedIndex);
+                    links[k].setAttribute("href", newHref);
                 }
 
                 // Change the get-form, input with id selected_tab value to the current tab index
