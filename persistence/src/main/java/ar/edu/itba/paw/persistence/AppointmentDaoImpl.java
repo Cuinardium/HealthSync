@@ -102,6 +102,20 @@ public class AppointmentDaoImpl implements AppointmentDao {
   }
 
   @Override
+  public Optional<Appointment> getAppointment(long doctorId, LocalDate date, ThirtyMinuteBlock timeBlock) {
+    String query =
+        new QueryBuilder()
+            .select("*")
+            .from("appointment")
+            .where("doctor_id = " + doctorId)
+            .where("appointment_date = '" + Date.valueOf(date) + "'")
+            .where("appointment_time = " + timeBlockToSmallInt(timeBlock))
+            .build();
+
+    return jdbcTemplate.query(query, APPOINTMENT_MAPPER).stream().findFirst();
+  }
+
+  @Override
   public List<Appointment> getAppointmentsForPatient(long patientId) {
     String query =
         new QueryBuilder()

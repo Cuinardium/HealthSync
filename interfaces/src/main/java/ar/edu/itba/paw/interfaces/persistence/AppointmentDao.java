@@ -18,6 +18,8 @@ public interface AppointmentDao {
 
   Optional<Appointment> getAppointmentById(long appointmentId);
 
+  Optional<Appointment> getAppointment(long doctorId, LocalDate date, ThirtyMinuteBlock timeBlock);
+
   List<Appointment> getAppointmentsForPatient(long patientId);
 
   List<Appointment> getAppointmentsForDoctor(long doctorId);
