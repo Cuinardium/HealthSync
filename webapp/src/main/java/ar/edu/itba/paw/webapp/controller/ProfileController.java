@@ -122,7 +122,7 @@ public class ProfileController {
 
   @RequestMapping(value = "/change-password", method = RequestMethod.POST)
   public ModelAndView changePasswordSubmit(
-      @Valid @ModelAttribute("patientEditForm") final PasswordForm passwordForm,
+      @Valid @ModelAttribute("changePasswordForm") final PasswordForm passwordForm,
       final BindingResult errors) {
     if (errors.hasErrors()) {
       return changePassword(passwordForm);
@@ -135,7 +135,7 @@ public class ProfileController {
 
   @RequestMapping(value = "/change-password", method = RequestMethod.GET)
   public ModelAndView changePassword(
-      @ModelAttribute("patientEditForm") final PasswordForm passwordForm) {
+      @ModelAttribute("changePasswordForm") final PasswordForm passwordForm) {
     final ModelAndView mav = new ModelAndView("user/changePassword");
     mav.addObject("form", passwordForm);
     mav.addObject("healthInsurances", Arrays.asList(HealthInsurance.values()));
