@@ -8,8 +8,8 @@
 
 <!--Variables -->
 <c:url value="/css/main.css" var="mainCss"/>
-<c:url value="/css/register_medic.css" var="registerCss"/>
-<c:url value="/css/register_medic.css" var="registerMedicCss"/>
+<c:url value="/css/doctorRegister.css" var="registerCss"/>
+<c:url value="/css/doctorRegister.css" var="registerMedicCss"/>
 
 <c:url value="/patient-register" var="patientRegisterUrl"/>
 
