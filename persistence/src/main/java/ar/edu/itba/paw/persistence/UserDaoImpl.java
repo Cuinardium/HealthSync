@@ -52,6 +52,40 @@ public class UserDaoImpl implements UserDao {
     return new User(key.longValue(), email, password, firstName, lastName, DEFAULT_PFP_ID);
   }
 
+  @Override
+    public void editUser(long userId, String email, String firstName, String lastName) {
+    String update =
+            new UpdateBuilder()
+                    .update("users")
+                    .set(
+                            "email",
+                            "'" + email + "'")
+                    .set(
+                            "first_name",
+                            "'" + firstName + "'")
+                    .set(
+                            "last_name",
+                            "'" + lastName + "'")
+                    .where("user_id = (" + userId + ")")
+                    .build();
+
+    jdbcTemplate.update(update);
+    }
+
+    @Override
+    public void changePassword(long userId, String password) {
+      String update =
+              new UpdateBuilder()
+                      .update("users")
+                      .set(
+                              "password",
+                              "'" + password + "'")
+                      .where("user_id = (" + userId + ")")
+                      .build();
+
+      jdbcTemplate.update(update);
+    }
+
   // Optional garantiza que no va a ser null, pero no significa q se vaya a devolver un usuario
   @Override
   public Optional<User> findById(final long id) {
@@ -64,7 +98,6 @@ public class UserDaoImpl implements UserDao {
   @Override
   public Optional<User> findByEmail(String email){
     String query = new QueryBuilder().select().from("users").where("email = '" + email + "'").build();
-    return jdbcTemplate.query(query, ROW_MAPPER).stream()
-            .findFirst();
+    return jdbcTemplate.query(query, ROW_MAPPER).stream().findFirst();
   }
 }

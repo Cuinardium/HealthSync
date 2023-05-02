@@ -15,37 +15,43 @@ import ar.edu.itba.paw.models.User;
 @Service
 public class PatientServiceImpl implements PatientService {
 
-  private final PatientDao patientDao;
-  
-  private final UserService userService; 
+    private final PatientDao patientDao;
 
-  @Autowired
-  public PatientServiceImpl(PatientDao patientDao, UserService userService) {
-      this.patientDao = patientDao;
-      this.userService = userService;
-  }
+    private final UserService userService;
 
-  @Override
-  public Patient createPatient(String email, String password, String firstName, String lastName,
-      int healthInsuranceCode) {
+    @Autowired
+    public PatientServiceImpl(PatientDao patientDao, UserService userService) {
+        this.patientDao = patientDao;
+        this.userService = userService;
+    }
 
-    // Create User
-    User user = userService.createUser(email, password, firstName, lastName);
+    @Override
+    public Patient createPatient(String email, String password, String firstName, String lastName,
+                                 int healthInsuranceCode) {
 
-    // Create Patient
-    long patientId = patientDao.createPatient(user.getId());
+        // Create User
+        User user = userService.createUser(email, password, firstName, lastName);
 
-    // Add Health Insurance
-    patientDao.addHealthInsurance(patientId, healthInsuranceCode);
+        // Create Patient
+        long patientId = patientDao.createPatient(user.getId());
 
-    return new Patient(patientId, email, password, firstName, lastName, user.getProfilePictureId(), HealthInsurance.values()[healthInsuranceCode]);
+        // Add Health Insurance
+        patientDao.addHealthInsurance(patientId, healthInsuranceCode);
 
-  }
+        return new Patient(patientId, email, password, firstName, lastName, user.getProfilePictureId(), HealthInsurance.values()[healthInsuranceCode]);
 
-  @Override
-  public Optional<Patient> getPatientById(long id) {
-    return patientDao.getPatientById(id);
-  }
+    }
+
+    @Override
+    public void updateInformation(long patientId, String email, String firstName, String lastName, int healthInsuranceCode) {
+        userService.editUser(patientId, email, firstName, lastName);
+        patientDao.updateInformation(patientId, healthInsuranceCode);
+    }
+
+    @Override
+    public Optional<Patient> getPatientById(long id) {
+        return patientDao.getPatientById(id);
+    }
 }
 
 

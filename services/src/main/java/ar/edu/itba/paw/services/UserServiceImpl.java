@@ -26,6 +26,16 @@ public class UserServiceImpl implements UserService {
   }
 
   @Override
+  public void editUser(long userId, String email, String firstName, String lastName){
+    userDao.editUser(userId, email, firstName, lastName);
+  }
+
+  @Override
+  public void changePassword(long userId, String password){
+    userDao.changePassword(userId, passwordEncoder.encode(password));
+  }
+
+  @Override
   public Optional<User> findById(long id) {
     return userDao.findById(id);
   }
