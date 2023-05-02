@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+</head>
+<body>
+    <p th:text="#{appointmentCancelledByUser.title(${userName}, ${date})}"></p>
+    
+    <h3 th:text="#{appointmentCancelledByUser.description}"></h3>
+    <p th:text="${description}"></p>
+
+    <h3 th:text="#{appointmentCancelledByUser.patientDetails}"></h3>
+    <ul>
+      <li th:text="#{appointmentRequest.userName(${userName})}"></li>
+      <li th:text="#{appointmentRequest.userHealthcare(${userHealthcare})}"></li>
+      <li th:text="#{appointmentRequest.userMail(${userMail})}"></li>
+    </ul>
+</body>
+</html>

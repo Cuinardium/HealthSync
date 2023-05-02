@@ -1,0 +1,11 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+</head>
+<body>
+<p th:text="#{appointmentRejected.userAndDate(${userName}, ${date}, ${docName})}"></p>
+<a th:href="@{{url}(url = ${appointmentUrl})}" th:text="#{appointmentCancelledByDoctor.callToAction}"></a>
+
+</body>
+</html>

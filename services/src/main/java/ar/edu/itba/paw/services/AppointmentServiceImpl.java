@@ -13,6 +13,7 @@ import ar.edu.itba.paw.models.ThirtyMinuteBlock;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.i18n.LocaleContextHolder;
@@ -82,7 +83,8 @@ public class AppointmentServiceImpl implements AppointmentService {
 
   @Transactional
   @Override
-  public void updateAppointmentStatus(long appointmentId, AppointmentStatus status, long requesterId) {
+  public void updateAppointmentStatus(
+      long appointmentId, AppointmentStatus status, long requesterId) {
 
     // Get appointment
     // TODO: error handling
@@ -99,8 +101,34 @@ public class AppointmentServiceImpl implements AppointmentService {
     if (requesterId != appointment.getPatientId() && requesterId != appointment.getDoctorId()) {
       throw new RuntimeException();
     }
-    
+
     appointmentDao.updateAppointmentStatus(appointmentId, status);
+
+    // TODO: error handling
+    Doctor doctor =
+        doctorService.getDoctorById(appointment.getDoctorId()).orElseThrow(RuntimeException::new);
+    Patient patient =
+        patientService
+            .getPatientById(appointment.getPatientId())
+            .orElseThrow(RuntimeException::new);
+    Locale locale = LocaleContextHolder.getLocale();
+
+    switch (status) {
+      case ACCEPTED:
+        mailService.sendAppointmentConfirmedMail(appointment, doctor, patient, locale);
+        break;
+      case CANCELLED:
+        if (requesterId == appointment.getPatientId()) {
+          mailService.sendAppointmentCancelledByPatientMail(appointment, doctor, patient, locale);
+        } else {
+          mailService.sendAppointmentCancelledByDoctorMail(appointment, doctor, patient, locale);
+        }
+        break;
+      case REJECTED:
+        mailService.sendAppointmentRejectedMail(appointment, doctor, patient, locale);
+        break;
+      default:
+    }
   }
 
   @Override
@@ -128,12 +156,14 @@ public class AppointmentServiceImpl implements AppointmentService {
   }
 
   @Override
-  public List<Appointment> getAppointmentsForDoctorByStatus(long doctorId, AppointmentStatus status) {
+  public List<Appointment> getAppointmentsForDoctorByStatus(
+      long doctorId, AppointmentStatus status) {
     return appointmentDao.getAppointmentsForDoctorByStatus(doctorId, status);
   }
 
   @Override
-  public List<Appointment> getAppointmentsForPatientByStatus(long patientId, AppointmentStatus status) {
+  public List<Appointment> getAppointmentsForPatientByStatus(
+      long patientId, AppointmentStatus status) {
     return appointmentDao.getAppointmentsForPatientByStatus(patientId, status);
   }
 }

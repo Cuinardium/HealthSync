@@ -13,6 +13,7 @@ import javax.mail.internet.MimeMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.support.ResourceBundleMessageSource;
+import org.springframework.core.env.Environment;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Async;
@@ -34,16 +35,21 @@ public class MailServiceImpl implements MailService {
   // For i18n enums
   private final MessageSource messageSource;
 
+  // To get urls from application.properties
+  private Environment env;
+
   @Autowired
   public MailServiceImpl(
       JavaMailSender mailSender,
       SpringTemplateEngine templateEngine,
       ResourceBundleMessageSource mailMessageSource,
-      MessageSource messageSource) {
+      MessageSource messageSource,
+      Environment env) {
     this.mailSender = mailSender;
     this.templateEngine = templateEngine;
     this.mailMessageSource = mailMessageSource;
     this.messageSource = messageSource;
+    this.env = env;
   }
 
   private void sendHtmlMessage(String to, String subject, String htmlBody) {
@@ -70,6 +76,10 @@ public class MailServiceImpl implements MailService {
     return templateEngine.process(template, context);
   }
 
+  // ========================== Appointments ==========================
+
+  // ========================= For Doctor =========================
+
   @Override
   @Async
   public void sendAppointmentRequestMail(
@@ -85,12 +95,15 @@ public class MailServiceImpl implements MailService {
         messageSource.getMessage(patient.getHealthInsurance().getMessageID(), null, locale);
     String patientEmail = patient.getEmail();
 
+    String appointmentsUrl = env.getProperty("webapp.baseUrl") + "my-appointments";
+  
     // Load model
     templateModel.put("userName", patientName);
     templateModel.put("date", dateTime);
     templateModel.put("description", description);
     templateModel.put("userHealthcare", patientHealthInsurance);
     templateModel.put("userMail", patientEmail);
+    templateModel.put("appointmentsUrl", appointmentsUrl);
 
     String htmlBody = getHtmlBody("appointmentRequest", templateModel, locale);
 
@@ -100,6 +113,41 @@ public class MailServiceImpl implements MailService {
 
     sendHtmlMessage(doctorEmail, subject, htmlBody);
   }
+
+  @Override
+  @Async
+  public void sendAppointmentCancelledByPatientMail(
+      Appointment appointment, Doctor doctor, Patient patient, Locale locale) {
+
+    Map<String, Object> templateModel = new HashMap<>();
+
+    String patientName = patient.getFirstName() + " " + patient.getLastName();
+    String patientEmail = patient.getEmail();
+    String patientHealthInsurance =
+        messageSource.getMessage(patient.getHealthInsurance().getMessageID(), null, locale);
+
+    String dateTime =
+        appointment.getDate().toString() + " " + appointment.getTimeBlock().getBlockBeginning();
+    String description = appointment.getDescription();
+
+    String doctorEmail = doctor.getEmail();
+
+    // Load model
+    templateModel.put("userName", patientName);
+    templateModel.put("userMail", patientEmail);
+    templateModel.put("userHealthcare", patientHealthInsurance);
+
+    templateModel.put("date", dateTime);
+    templateModel.put("description", description);
+
+    String htmlBody = getHtmlBody("appointmentCancelledByPatient", templateModel, locale);
+
+    String subject = mailMessageSource.getMessage("appointmentCancelled.subject", null, locale);
+
+    sendHtmlMessage(doctorEmail, subject, htmlBody);
+  }
+
+  // ========================== For Patient ==========================
 
   @Override
   @Async
@@ -115,7 +163,7 @@ public class MailServiceImpl implements MailService {
     String patientHealthInsurance =
         messageSource.getMessage(patient.getHealthInsurance().getMessageID(), null, locale);
     String patientEmail = patient.getEmail();
-    String doctorEmail = doctor.getEmail();
+    String doctorName = doctor.getFirstName() + " " + doctor.getLastName();
     String doctorAddress = doctor.getLocation().getAddress();
     String doctorCity =
         messageSource.getMessage(doctor.getLocation().getCity().getMessageID(), null, locale);
@@ -123,7 +171,7 @@ public class MailServiceImpl implements MailService {
     // Load model
     templateModel.put("userName", patientName);
     templateModel.put("userMail", patientEmail);
-    templateModel.put("docEmail", doctorEmail);
+    templateModel.put("docName", doctorName);
     templateModel.put("address", doctorAddress);
     templateModel.put("city", doctorCity);
     templateModel.put("date", dateTime);
@@ -133,6 +181,97 @@ public class MailServiceImpl implements MailService {
     String htmlBody = getHtmlBody("appointmentReminder", templateModel, locale);
 
     String subject = mailMessageSource.getMessage("appointmentReminder.subject", null, locale);
+
+    sendHtmlMessage(patientEmail, subject, htmlBody);
+  }
+
+  @Override
+  @Async
+  public void sendAppointmentConfirmedMail(
+      Appointment appointment, Doctor doctor, Patient patient, Locale locale) {
+    Map<String, Object> templateModel = new HashMap<>();
+
+    String patientName = patient.getFirstName() + " " + patient.getLastName();
+    String dateTime =
+        appointment.getDate().toString() + " " + appointment.getTimeBlock().getBlockBeginning();
+    String description = appointment.getDescription();
+    String patientHealthInsurance =
+        messageSource.getMessage(patient.getHealthInsurance().getMessageID(), null, locale);
+    String patientEmail = patient.getEmail();
+    String doctorName = doctor.getFirstName() + " " + doctor.getLastName();
+    String doctorAddress = doctor.getLocation().getAddress();
+    String doctorCity =
+        messageSource.getMessage(doctor.getLocation().getCity().getMessageID(), null, locale);
+
+    // Load model
+    templateModel.put("userName", patientName);
+    templateModel.put("userMail", patientEmail);
+    templateModel.put("docName", doctorName);
+    templateModel.put("address", doctorAddress);
+    templateModel.put("city", doctorCity);
+    templateModel.put("date", dateTime);
+    templateModel.put("description", description);
+    templateModel.put("userHealthcare", patientHealthInsurance);
+
+    String htmlBody = getHtmlBody("appointmentConfirmed", templateModel, locale);
+
+    String subject = mailMessageSource.getMessage("appointmentConfirmed.subject", null, locale);
+
+    sendHtmlMessage(patientEmail, subject, htmlBody);
+  }
+
+  @Override
+  @Async
+  public void sendAppointmentRejectedMail(
+      Appointment appointment, Doctor doctor, Patient patient, Locale locale) {
+    Map<String, Object> templateModel = new HashMap<>();
+
+    String patientName = patient.getFirstName() + " " + patient.getLastName();
+    String dateTime =
+        appointment.getDate().toString() + " " + appointment.getTimeBlock().getBlockBeginning();
+    String patientEmail = patient.getEmail();
+    String doctorName = doctor.getFirstName() + " " + doctor.getLastName();
+
+    String doctorAppointmentUrl =
+        env.getProperty("webapp.baseUrl") + doctor.getId() + "/appointment";
+
+    // Load model
+    templateModel.put("userName", patientName);
+    templateModel.put("docName", doctorName);
+    templateModel.put("appointmentUrl", doctorAppointmentUrl);
+
+    templateModel.put("date", dateTime);
+
+    String htmlBody = getHtmlBody("appointmentRejected", templateModel, locale);
+
+    String subject = mailMessageSource.getMessage("appointmentRejected.subject", null, locale);
+
+    sendHtmlMessage(patientEmail, subject, htmlBody);
+  }
+
+  @Override
+  @Async
+  public void sendAppointmentCancelledByDoctorMail(
+      Appointment appointment, Doctor doctor, Patient patient, Locale locale) {
+    Map<String, Object> templateModel = new HashMap<>();
+
+    String dateTime =
+        appointment.getDate().toString() + " " + appointment.getTimeBlock().getBlockBeginning();
+    String patientEmail = patient.getEmail();
+    String doctorName = doctor.getFirstName() + " " + doctor.getLastName();
+
+    String doctorAppointmentUrl =
+        env.getProperty("webapp.baseUrl") + doctor.getId() + "/appointment";
+
+    // Load model
+    templateModel.put("userMail", patientEmail);
+    templateModel.put("docName", doctorName);
+    templateModel.put("appointmentUrl", doctorAppointmentUrl);
+    templateModel.put("date", dateTime);
+
+    String htmlBody = getHtmlBody("appointmentCancelledByDoctor", templateModel, locale);
+
+    String subject = mailMessageSource.getMessage("appointmentCancelled.subject", null, locale);
 
     sendHtmlMessage(patientEmail, subject, htmlBody);
   }
