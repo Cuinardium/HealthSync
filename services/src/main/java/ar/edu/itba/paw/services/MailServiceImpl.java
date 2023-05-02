@@ -95,12 +95,15 @@ public class MailServiceImpl implements MailService {
         messageSource.getMessage(patient.getHealthInsurance().getMessageID(), null, locale);
     String patientEmail = patient.getEmail();
 
+    String appointmentsUrl = env.getProperty("webapp.baseUrl") + "my-appointments";
+  
     // Load model
     templateModel.put("userName", patientName);
     templateModel.put("date", dateTime);
     templateModel.put("description", description);
     templateModel.put("userHealthcare", patientHealthInsurance);
     templateModel.put("userMail", patientEmail);
+    templateModel.put("appointmentsUrl", appointmentsUrl);
 
     String htmlBody = getHtmlBody("appointmentRequest", templateModel, locale);
 

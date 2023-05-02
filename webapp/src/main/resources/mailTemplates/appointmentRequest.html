@@ -17,5 +17,7 @@
         <li th:text="#{appointmentRequest.userMail(${userMail})}"></li>
     </ul>
 
+    <a th:href="@{{url}(url = ${appointmentsUrl})}" th:text="#{appointmentRequest.callToAction}"></a>
+
   </body>
 </html>
