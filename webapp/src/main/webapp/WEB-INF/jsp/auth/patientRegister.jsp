@@ -44,7 +44,7 @@
 <jsp:include page="../components/header.jsp"/>
 <div class="form-container">
     <h1>${title}</h1>
-    <form:form modelAttribute="registerForm" action="${patientRegisterUrl}" method="POST">
+    <form:form modelAttribute="patientRegisterForm" action="${patientRegisterUrl}" method="POST">
         <div class="form-row container">
             <div class="form-item">
                 <form:label path="name">${name}</form:label>

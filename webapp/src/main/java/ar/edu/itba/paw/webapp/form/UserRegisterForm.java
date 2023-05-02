@@ -4,8 +4,7 @@ import ar.edu.itba.paw.webapp.annotations.PasswordsMatch;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
-@PasswordsMatch
-public class UserRegisterForm {
+public class UserRegisterForm extends PasswordForm {
 
   @Size(min = 1)
   @Pattern(regexp = "[a-zA-Z ]+")
@@ -18,14 +17,6 @@ public class UserRegisterForm {
   @Size(min = 1)
   @Pattern(regexp = "[a-zA-Z0-9.+-]+@[a-zA-Z0-9.-]+(.com|.com.ar|.edu.ar)")
   private String email;
-
-  @Size(min = 4)
-  @Pattern(regexp = "[a-zA-Z0-9]+")
-  private String password;
-
-  @Size(min = 4)
-  @Pattern(regexp = "[a-zA-Z0-9]+")
-  private String confirmPassword;
 
   public String getName() {
     return name;
@@ -49,21 +40,5 @@ public class UserRegisterForm {
 
   public void setEmail(String email) {
     this.email = email;
-  }
-
-  public String getPassword() {
-    return password;
-  }
-
-  public void setPassword(String password) {
-    this.password = password;
-  }
-
-  public String getConfirmPassword() {
-    return confirmPassword;
-  }
-
-  public void setConfirmPassword(String confirmPassword) {
-    this.confirmPassword = confirmPassword;
   }
 }

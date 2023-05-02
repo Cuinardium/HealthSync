@@ -5,7 +5,7 @@ import ar.edu.itba.paw.interfaces.services.PatientService;
 import ar.edu.itba.paw.models.*;
 import ar.edu.itba.paw.webapp.form.DoctorRegisterForm;
 import ar.edu.itba.paw.webapp.form.LoginForm;
-import ar.edu.itba.paw.webapp.form.RegisterForm;
+import ar.edu.itba.paw.webapp.form.PatientRegisterForm;
 import java.util.Arrays;
 import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -67,20 +67,20 @@ public class AuthController {
 
   // register user?
   @RequestMapping(value = "/patient-register", method = RequestMethod.POST)
-  public ModelAndView register(
-      @Valid @ModelAttribute("registerForm") final RegisterForm registerForm,
+  public ModelAndView patientRegisterSubmit(
+      @Valid @ModelAttribute("patientRegisterForm") final PatientRegisterForm patientRegisterForm,
       final BindingResult errors) {
     if (errors.hasErrors()) {
-      return registerForm(registerForm);
+      return patientRegister(patientRegisterForm);
     }
 
     final User user =
         patientService.createPatient(
-            registerForm.getEmail(),
-            registerForm.getPassword(),
-            registerForm.getName(),
-            registerForm.getLastname(),
-            registerForm.getHealthInsuranceCode());
+            patientRegisterForm.getEmail(),
+            patientRegisterForm.getPassword(),
+            patientRegisterForm.getName(),
+            patientRegisterForm.getLastname(),
+            patientRegisterForm.getHealthInsuranceCode());
     final ModelAndView mav = new ModelAndView("auth/registerSuccesful");
     mav.addObject("user", user);
     return mav;
@@ -88,10 +88,10 @@ public class AuthController {
 
   // register user?
   @RequestMapping(value = "/patient-register", method = RequestMethod.GET)
-  public ModelAndView registerForm(
-      @ModelAttribute("registerForm") final RegisterForm registerForm) {
+  public ModelAndView patientRegister(
+      @ModelAttribute("patientRegisterForm") final PatientRegisterForm patientRegisterForm) {
     final ModelAndView mav = new ModelAndView("auth/patientRegister");
-    mav.addObject("form", registerForm);
+    mav.addObject("form", patientRegisterForm);
     mav.addObject("healthInsurances", Arrays.asList(HealthInsurance.values()));
 
     return mav;
