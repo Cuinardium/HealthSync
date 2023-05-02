@@ -28,14 +28,16 @@
           <version>${project.version}</version>
       </dependency>
 
-
-
       <!-- Spring dependencies -->
       <dependency>
           <groupId>org.springframework</groupId>
           <artifactId>spring-context</artifactId>
       </dependency>
 
+      <dependency>
+          <groupId>org.springframework</groupId>
+          <artifactId>spring-tx</artifactId>
+      </dependency>
 
       <!-- Mailing dependencies -->
       <dependency>
