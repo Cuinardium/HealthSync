@@ -37,7 +37,9 @@
 <div class="page-content generalPadding">
 
     <!-- Search Bar -->
-    <jsp:include page="../components/searchBar.jsp"/>
+    <jsp:include page="../components/searchBar.jsp">
+        <jsp:param name="searchValue" value="${name}"/>
+    </jsp:include>
 
     <form method="get" action="${doctorDashboardUrl}">
         <div class="filtersContainer">

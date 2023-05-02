@@ -56,6 +56,7 @@ public class HomeController {
     List<Doctor> doctors =
         doctorService.getFilteredDoctors(name, specialtyCode, cityCode, healthInsuranceCode);
 
+    mav.addObject("name", name);
     mav.addObject("doctors", doctors);
     mav.addObject("cityCode", cityCode);
     mav.addObject("cities", Arrays.asList(City.values()));
