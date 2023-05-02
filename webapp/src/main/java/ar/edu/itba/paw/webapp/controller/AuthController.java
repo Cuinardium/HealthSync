@@ -58,13 +58,6 @@ public class AuthController {
     return new ModelAndView("home/home");
   }
 
-  // TODO: register_succesful -> /verify?? should reroute to login?
-  @RequestMapping(value = "/register_succesful", method = RequestMethod.GET)
-  public ModelAndView registerSuccesful() {
-    final ModelAndView mav = new ModelAndView("auth/registerSuccesful");
-    return mav;
-  }
-
   // register user?
   @RequestMapping(value = "/patient-register", method = RequestMethod.POST)
   public ModelAndView patientRegisterSubmit(
@@ -81,8 +74,10 @@ public class AuthController {
             patientRegisterForm.getName(),
             patientRegisterForm.getLastname(),
             patientRegisterForm.getHealthInsuranceCode());
-    final ModelAndView mav = new ModelAndView("auth/registerSuccesful");
+    final ModelAndView mav = new ModelAndView("components/operationSuccessful");
     mav.addObject("user", user);
+    mav.addObject("operationTitle", "registerMedic.registerSuccessfulTitle");
+    mav.addObject("operationMsg", "registerMedic.registerSuccessfulMsg");
     return mav;
   }
 
@@ -118,8 +113,10 @@ public class AuthController {
             doctorRegisterForm.getAddress(),
             AttendingHours.DEFAULT_ATTENDING_HOURS);
 
-    final ModelAndView mav = new ModelAndView("auth/registerSuccesful");
+    final ModelAndView mav = new ModelAndView("components/operationSuccessful");
     mav.addObject("user", user);
+    mav.addObject("operationTitle", "registerMedic.registerSuccessfulTitle");
+    mav.addObject("operationMsg", "registerMedic.registerSuccessfulMsg");
     return mav;
   }
 
