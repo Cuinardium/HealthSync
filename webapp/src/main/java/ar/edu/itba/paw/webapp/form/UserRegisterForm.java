@@ -5,7 +5,6 @@ import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
 public class UserRegisterForm extends PasswordForm {
-
   @Size(min = 1)
   @Pattern(regexp = "[a-zA-Z ]+")
   private String name;
