@@ -2,12 +2,12 @@ package ar.edu.itba.paw.webapp.controller;
 
 import ar.edu.itba.paw.interfaces.services.AppointmentService;
 import ar.edu.itba.paw.models.Appointment;
+import ar.edu.itba.paw.models.AppointmentStatus;
 import ar.edu.itba.paw.models.ThirtyMinuteBlock;
 import ar.edu.itba.paw.webapp.auth.PawAuthUserDetails;
 import ar.edu.itba.paw.webapp.auth.UserRoles;
 import ar.edu.itba.paw.webapp.form.AppointmentForm;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import javax.validation.Valid;
@@ -31,6 +31,8 @@ public class AppointmentController {
   public AppointmentController(final AppointmentService appointmentService) {
     this.appointmentService = appointmentService;
   }
+
+  // ========================== Appointment Requests ==========================
 
   // TODO: revisar porque no tira 404 /-1/appointment
   //                        vvvvvvvv
@@ -99,22 +101,103 @@ public class AppointmentController {
     return new ModelAndView("appointment/appointmentSent");
   }
 
+  // ==================================  My Appointments   ========================================
+
   @RequestMapping(value = "/my-appointments", method = RequestMethod.GET)
   public ModelAndView getAppointments() {
-    ModelAndView mav = new ModelAndView("appointment/myAppointments");
+    if (PawAuthUserDetails.getRole().equals(UserRoles.ROLE_PATIENT)) {
+      return getAppointmentsForPatient();
+    }
+    if (PawAuthUserDetails.getRole().equals(UserRoles.ROLE_DOCTOR)) {
+      return getAppointmentsForDoctor();
+    }
+    // TODO: what do i do here????
+    return null;
+  }
 
-    List<Appointment> appointments = getAppointmentsForCurrentUser();
-    mav.addObject("appointments", appointments);
+  @RequestMapping(value = "/my-appointments/{id:\\d+}/update", method = RequestMethod.POST)
+  public ModelAndView updateAppointment(
+      @PathVariable("id") final int appointmentId,
+      @RequestParam(name = "status") final int status) {
+
+    // TODO: feedback?
+    if (status < 0 || status >= AppointmentStatus.values().length) {
+      return getAppointments();
+    }
+
+    // A patient can only cancel an appointment
+    if (PawAuthUserDetails.getRole().equals(UserRoles.ROLE_PATIENT)
+        && status != AppointmentStatus.CANCELLED.ordinal()) {
+      return getAppointments();
+    }
+
+    AppointmentStatus appointmentStatus = AppointmentStatus.values()[status];
+
+    appointmentService.updateAppointmentStatus(appointmentId, appointmentStatus, PawAuthUserDetails.getCurrentUserId());
+
+    return getAppointments();
+  }
+
+  // ==================================  Private   =================================================
+
+  private ModelAndView getAppointmentsForDoctor() {
+
+    ModelAndView mav = new ModelAndView("appointment/doctorAppointments");
+
+    List<Appointment> upcomingAppointments =
+        appointmentService.getAppointmentsForDoctorByStatus(
+            PawAuthUserDetails.getCurrentUserId(), AppointmentStatus.ACCEPTED);
+
+    List<Appointment> pendingAppointments =
+        appointmentService.getAppointmentsForDoctorByStatus(
+            PawAuthUserDetails.getCurrentUserId(), AppointmentStatus.PENDING);
+
+    List<Appointment> cancelledAppointments =
+        appointmentService.getAppointmentsForDoctorByStatus(
+            PawAuthUserDetails.getCurrentUserId(), AppointmentStatus.CANCELLED);
+
+    List<Appointment> completedAppointments =
+        appointmentService.getAppointmentsForDoctorByStatus(
+            PawAuthUserDetails.getCurrentUserId(), AppointmentStatus.COMPLETED);
+
+    mav.addObject("upcomingAppointments", upcomingAppointments);
+    mav.addObject("pendingAppointments", pendingAppointments);
+    mav.addObject("cancelledAppointments", cancelledAppointments);
+    mav.addObject("completedAppointments", completedAppointments);
+
     return mav;
   }
 
-  private List<Appointment> getAppointmentsForCurrentUser() {
-    if(PawAuthUserDetails.getRole().equals(UserRoles.ROLE_PATIENT)){
-        return appointmentService.getAppointmentsForPatient(PawAuthUserDetails.getCurrentUserId());
-    }
-    if(PawAuthUserDetails.getRole().equals(UserRoles.ROLE_DOCTOR)){
-      return appointmentService.getAppointmentsForDoctor(PawAuthUserDetails.getCurrentUserId());
-    }
-    return null;
+  private ModelAndView getAppointmentsForPatient() {
+
+    ModelAndView mav = new ModelAndView("appointment/patientAppointments");
+
+    List<Appointment> upcomingAppointments =
+        appointmentService.getAppointmentsForPatientByStatus(
+            PawAuthUserDetails.getCurrentUserId(), AppointmentStatus.ACCEPTED);
+
+    List<Appointment> pendingAppointments =
+        appointmentService.getAppointmentsForPatientByStatus(
+            PawAuthUserDetails.getCurrentUserId(), AppointmentStatus.PENDING);
+
+    List<Appointment> rejectedAppointments =
+    appointmentService.getAppointmentsForPatientByStatus(
+        PawAuthUserDetails.getCurrentUserId(), AppointmentStatus.REJECTED);
+
+    List<Appointment> cancelledAppointments =
+        appointmentService.getAppointmentsForPatientByStatus(
+            PawAuthUserDetails.getCurrentUserId(), AppointmentStatus.CANCELLED);
+
+    List<Appointment> completedAppointments =
+        appointmentService.getAppointmentsForPatientByStatus(
+            PawAuthUserDetails.getCurrentUserId(), AppointmentStatus.COMPLETED);
+
+    mav.addObject("upcomingAppointments", upcomingAppointments);
+    mav.addObject("pendingAppointments", pendingAppointments);
+    mav.addObject("cancelledAppointments", cancelledAppointments);
+    mav.addObject("rejectedAppointments", rejectedAppointments);
+    mav.addObject("completedAppointments", completedAppointments);
+
+    return mav;
   }
 }
