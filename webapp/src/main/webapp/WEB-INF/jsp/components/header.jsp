@@ -9,6 +9,7 @@
 <c:url value="/doctorDashboard" var="dashboardUrl"/>
 <c:url value="/doctor-register" var="doctorRegisterUrl"/>
 <c:url value="/patient-register" var="patientRegisterUrl"/>
+<c:url value="/edit-profile" var="editProfileUrl"/>
 <c:url value="/login" var="loginUrl"/>
 <c:url value="/logout" var="logoutUrl"/>
 
@@ -53,11 +54,11 @@
                     <div class="collapse navbar-collapse" id="profileDropdown">
                         <ul class="navbar-nav">
                             <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                    <img src="https://s3.eu-central-1.amazonaws.com/bootstrapbaymisc/blog/24_days_bootstrap/fox.jpg" width="40" height="40" class="rounded-circle">
+                                <a class="nav-link dropdown-toggle" href="" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    <img src="/img/${user.getProfilePictureId()}" width="40" height="40" class="rounded-circle">
                                 </a>
                                 <ul class="dropdown-menu">
-                                    <li><a class="dropdown-item" href="#">${editProfile}</a></li>
+                                    <li><a class="dropdown-item" href="${editProfileUrl}">${editProfile}</a></li>
                                     <li><a class="dropdown-item" href="${logoutUrl}">${logout}</a></li>
                                 </ul>
                             </li>
