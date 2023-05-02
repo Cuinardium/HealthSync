@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Si logback ve el archivo logback-test.xml -> usa ese e ignora los demas.
+    Esto nos sirve en el entorno de desarrollo, pero para deployear
+    no queremos que se incluya. Por lo tanto agregamos una regla a webapp/pom.xml
+    para que cuando haga el package lo ignore.
+-->
+<configuration>
+    <property name="defaultPattern"	value="%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"/>
+
+    <appender name="STDOUT"	class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>${defaultPattern:-}</pattern>
+        </encoder>
+    </appender>
+
+    <root level="DEBUG">
+        <appender-ref ref="STDOUT"/>
+    </root>
+</configuration>

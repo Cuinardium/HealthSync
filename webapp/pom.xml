@@ -168,6 +168,14 @@
                 <plugin>
                     <artifactId>maven-war-plugin</artifactId>
                     <version>3.2.2</version>
+                    <!--
+                        Cuando armamos el war para deployar, el archivo logback-test.xml
+                        no se incluye en el war.
+                        Por lo tanto la configuracion de desarrollo nunca se sube.
+                    -->
+                    <configuration>
+                        <packagingExcludes>**/logback-test.xml</packagingExcludes>
+                    </configuration>
                 </plugin>
                 <plugin>
                     <artifactId>maven-install-plugin</artifactId>
