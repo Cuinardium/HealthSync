@@ -12,4 +12,10 @@ public interface MailService {
   void sendAppointmentRequestMail(Appointment appointment, Doctor doctor, Patient patient, Locale locale);
 
   void sendAppointmentReminderMail(Appointment appointment, Doctor doctor, Patient patient, Locale locale);
+
+  void sendAppointmentConfirmedMail(Appointment appointment, Doctor doctor, Patient patient, Locale locale);
+
+  void sendAppointmentRejectedMail(Appointment appointment, Doctor doctor, Patient patient, Locale locale);
+
+  void sendAppointmentCanceledMail(Appointment appointment, Doctor doctor, Patient patient, Locale locale);
 }
