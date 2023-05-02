@@ -2,15 +2,25 @@ package ar.edu.itba.paw.webapp.form;
 
 import ar.edu.itba.paw.models.ThirtyMinuteBlock;
 import ar.edu.itba.paw.webapp.annotations.DateAnnotation;
-
 import java.time.LocalDate;
-
 import javax.validation.constraints.Size;
-
 import org.springframework.format.annotation.DateTimeFormat;
 
 @DateAnnotation
 public class AppointmentForm {
+
+  @Override
+  public String toString() {
+    return "AppointmentForm [date="
+        + date
+        + ", block="
+        + block
+        + ", description="
+        + description
+        + ", docId="
+        + docId
+        + "]";
+  }
 
   @DateTimeFormat(pattern = "yyyy-MM-dd")
   private LocalDate date;
@@ -19,7 +29,6 @@ public class AppointmentForm {
 
   @Size(min = 1, max = 100)
   private String description;
-
 
   private int docId;
 
