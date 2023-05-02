@@ -7,6 +7,7 @@
 
 <c:url value="/" var="homeUrl"/>
 <c:url value="/doctorDashboard" var="dashboardUrl"/>
+<c:url value="/my-appointments" var="myAppoitnmentUrl"/>
 <c:url value="/doctor-register" var="doctorRegisterUrl"/>
 <c:url value="/patient-register" var="patientRegisterUrl"/>
 <c:url value="/doctor-edit" var="doctorEditUrl"/>
@@ -42,13 +43,16 @@
         </a>
 
         <div class="buttons">
-            <a href="${dashboardUrl}" class="nav-link px-2 link-dark">Check Doctors</a>
+            <a href="${dashboardUrl}"><i class="fa-solid fa-user-doctor"></i></a>
         </div>
 
         <c:choose>
         <c:when test="${not empty user}">
             <nav class="navbar navbar-expand-lg">
                 <div class="container-fluid">
+                        <a href="${myAppoitnmentUrl}">
+                            <i class="fa-solid fa-calendar-check"></i>
+                        </a>
                     <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
                             data-bs-target="#profileDropdown" aria-controls="profileDropdown" aria-expanded="false"
                             aria-label="Toggle navigation">
