@@ -17,6 +17,7 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class AppointmentServiceImpl implements AppointmentService {
@@ -39,6 +40,7 @@ public class AppointmentServiceImpl implements AppointmentService {
     this.appointmentDao = appointmentDao;
   }
 
+  @Transactional
   @Override
   public Appointment createAppointment(
       long patientId,
@@ -55,8 +57,10 @@ public class AppointmentServiceImpl implements AppointmentService {
         appointmentDao.createAppointment(patientId, doctorId, date, timeBlock, description);
 
     // TODO: locale should be determined by the patient's language
-    mailService.sendAppointmentRequestMail(appointment, doctor, patient, LocaleContextHolder.getLocale());
-    mailService.sendAppointmentReminderMail(appointment, doctor, patient, LocaleContextHolder.getLocale());
+    mailService.sendAppointmentRequestMail(
+        appointment, doctor, patient, LocaleContextHolder.getLocale());
+    mailService.sendAppointmentReminderMail(
+        appointment, doctor, patient, LocaleContextHolder.getLocale());
 
     return appointment;
   }
@@ -76,6 +80,7 @@ public class AppointmentServiceImpl implements AppointmentService {
     return appointmentDao.getAppointmentsForDoctor(doctorId);
   }
 
+  @Transactional
   @Override
   public void updateAppointmentStatus(long appointmentId, AppointmentStatus status) {
     appointmentDao.updateAppointmentStatus(appointmentId, status);
@@ -86,7 +91,7 @@ public class AppointmentServiceImpl implements AppointmentService {
 
     // Get doctor appointments
     List<Appointment> appointments = getAppointmentsForDoctor(doctorId);
-    
+
     // TODO: error handling
     Doctor doctor = doctorService.getDoctorById(doctorId).orElseThrow(RuntimeException::new);
 

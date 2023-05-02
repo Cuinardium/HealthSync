@@ -7,6 +7,7 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -20,6 +21,7 @@ public class UserServiceImpl implements UserService {
     this.passwordEncoder = passwordEncoder;
   }
 
+  @Transactional
   @Override
   public User createUser(String email, String password, String firstName, String lastName) {
     return userDao.createUser(email, passwordEncoder.encode(password), firstName, lastName);
@@ -31,8 +33,7 @@ public class UserServiceImpl implements UserService {
   }
 
   @Override
-  public Optional<User> findByEmail(String email){
+  public Optional<User> findByEmail(String email) {
     return userDao.findByEmail(email);
-
   }
 }

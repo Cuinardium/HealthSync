@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class DoctorServiceImpl implements DoctorService {
@@ -34,6 +35,7 @@ public class DoctorServiceImpl implements DoctorService {
     this.locationService = locationService;
   }
 
+  @Transactional
   @Override
   public Doctor createDoctor(
       String email,
@@ -81,6 +83,7 @@ public class DoctorServiceImpl implements DoctorService {
         attendingHours);
   }
 
+  @Transactional
   @Override
   public void updateAttendingHours(long doctorId, AttendingHours attendingHours) {
     doctorDao.updateAttendingHours(doctorId, attendingHours);
