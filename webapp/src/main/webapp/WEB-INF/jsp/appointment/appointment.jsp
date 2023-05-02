@@ -64,8 +64,8 @@
                                 <form:select id="block" path="block" class="form-control form-control-lg">
                                     <form:option value="-1" disabled="true" hidden="true"> -- </form:option>
                                     <c:forEach items="${availableHours}" var="timeBlock" varStatus="status">
-                                        <form:option value="${timeBlock.blockBeggining}">
-                                            ${timeBlock.blockBeggining}
+                                        <form:option value="${timeBlock.blockBeginning}">
+                                            ${timeBlock.blockBeginning}
                                         </form:option>
                                     </c:forEach>
                                 </form:select>
