@@ -16,6 +16,9 @@
 <spring:message code="appointments.cancelled" var="cancelled"/>
 <spring:message code="appointments.history" var="history"/>
 <spring:message code="appointments.cancel" var="cancel"/>
+<spring:message code="appointments.from" var="from"/>
+<spring:message code="appointments.to" var="to"/>
+<spring:message code="appointments.filter" var="filter"/>
 
 
 <html>
@@ -35,16 +38,16 @@
 
     <form id="get-form" action="${myAppointmentUrl}" method="get" class="row justify-content-between">
         <div class="col">
-            <label for="from">From</label>
+            <label for="from">${from}</label>
             <input id="from" type="date" name="from" class="form-control" value="${from}"/>
         </div>
         <div class="col">
-            <label for="to">To</label>
+            <label for="to">${to}</label>
             <input id="to" type="date" name="to" class="form-control" value="${to}">
         </div>
         <input type="hidden" id="selected_tab" name="selected_tab" value="${selectedTab}" />
         <div class="col align-self-end">
-            <input id="get-button" type="submit" value="filter" class="btn btn-primary"/>
+            <input id="get-button" type="submit" value="${filter}" class="btn btn-primary"/>
         </div>
     </form>
     <ul id="nav" class="nav nav-tabs">
