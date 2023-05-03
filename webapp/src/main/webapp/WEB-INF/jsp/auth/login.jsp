@@ -53,7 +53,7 @@
         </div>
         <div class="formRow">
             <div class="form-check">
-                <input class="form-check-input" type="checkbox" value="" id="rememberme" name="rememberme">
+                <input class="form-check-input" type="checkbox" id="rememberme" name="rememberme">
                 <label class="form-check-label" for="rememberme">${rememberMe}</label>
             </div>
         </div>
