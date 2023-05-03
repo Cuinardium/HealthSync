@@ -1,10 +1,12 @@
 package ar.edu.itba.paw.webapp.controller;
 
 import ar.edu.itba.paw.interfaces.services.DoctorService;
+import ar.edu.itba.paw.interfaces.services.ImageService;
 import ar.edu.itba.paw.interfaces.services.PatientService;
 import ar.edu.itba.paw.interfaces.services.UserService;
 import ar.edu.itba.paw.models.*;
 import ar.edu.itba.paw.webapp.auth.PawAuthUserDetails;
+import ar.edu.itba.paw.webapp.exceptions.ImageNotFoundException;
 import ar.edu.itba.paw.webapp.exceptions.UserNotFoundException;
 import ar.edu.itba.paw.webapp.form.DoctorEditForm;
 import ar.edu.itba.paw.webapp.form.PasswordForm;
@@ -25,15 +27,18 @@ public class ProfileController {
   private final PatientService patientService;
 
   private final UserService userService;
+  private final ImageService imageService;
 
   @Autowired
   public ProfileController(
       final DoctorService doctorService,
       final PatientService patientService,
-      final UserService userService) {
+      final UserService userService,
+      final ImageService imageService) {
     this.doctorService = doctorService;
     this.patientService = patientService;
     this.userService = userService;
+    this.imageService = imageService;
   }
 
   @RequestMapping(value = "/doctor-edit", method = RequestMethod.POST)
@@ -68,6 +73,11 @@ public class ProfileController {
             .getDoctorById(PawAuthUserDetails.getCurrentUserId())
             .orElseThrow(UserNotFoundException::new);
 
+    Image image =
+        imageService
+            .getImage(doctor.getProfilePictureId())
+            .orElseThrow(ImageNotFoundException::new);
+
     doctorEditForm.setName(doctor.getFirstName());
     doctorEditForm.setLastname(doctor.getLastName());
     doctorEditForm.setEmail(doctor.getEmail());
@@ -75,6 +85,7 @@ public class ProfileController {
     doctorEditForm.setAddress(doctor.getLocation().getAddress());
     doctorEditForm.setCityCode(doctor.getLocation().getCity().ordinal());
     doctorEditForm.setSpecialtyCode(doctor.getSpecialty().ordinal());
+    doctorEditForm.setImage(image);
 
     final ModelAndView mav = new ModelAndView("user/doctorEdit");
     mav.addObject("form", doctorEditForm);
@@ -114,10 +125,16 @@ public class ProfileController {
             .getPatientById(PawAuthUserDetails.getCurrentUserId())
             .orElseThrow(UserNotFoundException::new);
 
+    Image image =
+        imageService
+            .getImage(patient.getProfilePictureId())
+            .orElseThrow(ImageNotFoundException::new);
+
     patientEditForm.setEmail(patient.getEmail());
     patientEditForm.setName(patient.getFirstName());
     patientEditForm.setLastname(patient.getLastName());
     patientEditForm.setHealthInsuranceCode(patient.getHealthInsurance().ordinal());
+    patientEditForm.setImage(image);
 
     final ModelAndView mav = new ModelAndView("user/patientEdit");
     mav.addObject("form", patientEditForm);
