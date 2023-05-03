@@ -6,9 +6,10 @@
 
 <!--Variables -->
 <c:url value="/css/main.css" var="mainCss"/>
+<c:url value="/css/appointments.css" var="appointmentsCss"/>
 <c:url value="/my-appointments" var="myAppointmentUrl"/>
 
-<c:url value="js/myAppointments.js" var="myAppointmentsJs"/>
+<c:url value="/js/myAppointments.js" var="myAppointmentsJs"/>
 
 <spring:message code="appointments.title" var="title"/>
 <spring:message code="appointments.noAppointments" var="noAppointments"/>
@@ -30,29 +31,33 @@
     <!-- favicon -->
     <jsp:include page="../components/favicon.jsp"/>
     <link href="${mainCss}" rel="stylesheet"/>
-    <script src="${myAppointmentJS}"></script>
+    <link href="${appointmentsCss}" rel="stylesheet"/>
+    <script src="${myAppointmentsJs}"></script>
 </head>
 
 <body>
 <jsp:include page="../components/header.jsp"/>
 
 
-<div class="container pt-2">
+<div class="contentContainer">
 
-    <form id="get-form" action="${myAppointmentUrl}" method="get" class="row justify-content-between">
-        <div class="col">
-            <label for="from">${from}</label>
-            <input id="from" type="date" name="from" class="form-control" value="${from}"/>
+    <form id="get-form" action="${myAppointmentUrl}" method="get" class="dateFilter">
+        <div class="datePickerContainer">
+            <div class="fromDatePicker">
+                <label for="from">${fromTitle}</label>
+                <input id="from" type="date" name="from" class="form-control" value="${from}"/>
+            </div>
+            <div class="toDatePicker">
+                <label for="to">${toTitle}</label>
+                <input id="to" type="date" name="to" class="form-control" value="${to}">
+            </div>
         </div>
-        <div class="col">
-            <label for="to">${to}</label>
-            <input id="to" type="date" name="to" class="form-control" value="${to}">
-        </div>
+
         <input type="hidden" id="selected_tab" name="selected_tab" value="${selectedTab}" />
-        <div class="col align-self-end">
-            <input id="get-button" type="submit" value="${filter}" class="btn btn-primary"/>
-        </div>
+
+        <input id="get-button" type="submit" value="${filter}" class="btn btn-primary"/>
     </form>
+
     <ul id="nav" class="nav nav-tabs">
         <li class="nav-item">
             <a id="pending-tab" class="nav-link tab ${selectedTab <= 0 || selectedTab >= 5 ? 'active bg-primary text-white' : ''}" href="#pending">${pending}</a>
@@ -79,21 +84,17 @@
                     <c:param name="to" value="${to}" />
                     <c:param name="selected_tab" value="${selectedTab}" />
                 </c:url>
-                <div class="card mt-3">
-                    <div class="card-header d-flex flex-row justify-content-between">
-                        <div class="align-self-center">
-                            <a class="detailed-link" href="${detailedUrl}">${appointment.date} ${appointment.timeBlock.blockBeginning}</a>
-                        </div>
+                <div class="card">
+                    <div class="card-header">
+                        <a class="detailed-link" href="${detailedUrl}">${appointment.date} ${appointment.timeBlock.blockBeginning}</a>
                     </div>
                     <div class="card-body">
-                        <p class="card-text">
-                                ${appointment.description}
-                        </p>
+                            ${appointment.description}
                     </div>
                 </div>
             </c:forEach>
             <c:if test="${empty pendingAppointments}">
-                <div class="d-flex justify-content-center mt-3">
+                <div class="noAppointmentsMsg">
                     <div class="alert alert-info">${noAppointments}</div>
                 </div>
             </c:if>
@@ -105,29 +106,26 @@
                     <c:param name="to" value="${to}" />
                     <c:param name="selected_tab" value="${selectedTab}" />
                 </c:url>
-                <div class="card mt-3">
-                    <div class="card-header d-flex flex-row justify-content-between">
-                        <div class="align-self-center">
-                            <a class="detailed-link" href="${detailedUrl}">${appointment.date} ${appointment.timeBlock.blockBeginning}</a>
-                        </div>
+                <div class="card">
+                    <div class="card-header">
+                        <a class="detailed-link" href="${detailedUrl}">${appointment.date} ${appointment.timeBlock.blockBeginning}</a>
+
                         <c:url value="/my-appointments/${appointment.id}/update" var="updateUrl"/>
-                        <div class="flex-row">
-                            <form id="post-form" class="d-inline" method="post" action="${updateUrl}/?status=3">
+                        <div class="cardButtonContainer">
+                            <form id="post-form" method="post" action="${updateUrl}/?status=3">
                                 <button id="post-button" type="submit"
-                                        class="align-self-end btn btn-danger">${cancel}</button>
+                                        class="post-button btn btn-danger">${cancel}</button>
                             </form>
                         </div>
 
                     </div>
                     <div class="card-body">
-                        <p class="card-text">
-                                ${appointment.description}
-                        </p>
+                            ${appointment.description}
                     </div>
                 </div>
             </c:forEach>
             <c:if test="${empty upcomingAppointments}">
-                <div class="d-flex justify-content-center mt-3">
+                <div class="noAppointmentsMsg">
                     <div class="alert alert-info">${noAppointments}</div>
                 </div>
             </c:if>
@@ -139,21 +137,17 @@
                     <c:param name="to" value="${to}" />
                     <c:param name="selected_tab" value="${selectedTab}" />
                 </c:url>
-                <div class="card mt-3">
-                    <div class="card-header d-flex flex-row justify-content-between">
-                        <div class="align-self-center">
-                            <a class="detailed-link" href="${detailedUrl}">${appointment.date} ${appointment.timeBlock.blockBeginning}</a>
-                        </div>
+                <div class="card">
+                    <div class="card-header">
+                        <a class="detailed-link" href="${detailedUrl}">${appointment.date} ${appointment.timeBlock.blockBeginning}</a>
                     </div>
                     <div class="card-body">
-                        <p class="card-text">
-                                ${appointment.description}
-                        </p>
+                            ${appointment.description}
                     </div>
                 </div>
             </c:forEach>
             <c:if test="${empty rejectedAppointments}">
-                <div class="d-flex justify-content-center mt-3">
+                <div class="noAppointmentsMsg">
                     <div class="alert alert-info">${noAppointments}</div>
                 </div>
             </c:if>
@@ -165,21 +159,17 @@
                     <c:param name="to" value="${to}" />
                     <c:param name="selected_tab" value="${selectedTab}" />
                 </c:url>
-                <div class="card mt-3">
-                    <div class="card-header d-flex flex-row justify-content-between">
-                        <div class="align-self-center">
-                            <a class="detailed-link" href="${detailedUrl}">${appointment.date} ${appointment.timeBlock.blockBeginning}</a>
-                        </div>
+                <div class="card">
+                    <div class="card-header">
+                        <a class="detailed-link" href="${detailedUrl}">${appointment.date} ${appointment.timeBlock.blockBeginning}</a>
                     </div>
                     <div class="card-body">
-                        <p class="card-text">
-                                ${appointment.description}
-                        </p>
+                            ${appointment.description}
                     </div>
                 </div>
             </c:forEach>
             <c:if test="${empty cancelledAppointments}">
-                <div class="d-flex justify-content-center mt-3">
+                <div class="noAppointmentsMsg">
                     <div class="alert alert-info">${noAppointments}</div>
                 </div>
             </c:if>
@@ -191,21 +181,17 @@
                     <c:param name="to" value="${to}" />
                     <c:param name="selected_tab" value="${selectedTab}" />
                 </c:url>
-                <div class="card mt-3">
-                    <div class="card-header d-flex flex-row justify-content-between">
-                        <div class="align-self-center">
-                            <a class="detailed-link" href="${detailedUrl}">${appointment.date} ${appointment.timeBlock.blockBeginning}</a>
-                        </div>
+                <div class="card">
+                    <div class="card-header">
+                        <a class="detailed-link" href="${detailedUrl}">${appointment.date} ${appointment.timeBlock.blockBeginning}</a>
                     </div>
                     <div class="card-body">
-                        <p class="card-text">
-                                ${appointment.description}
-                        </p>
+                            ${appointment.description}
                     </div>
                 </div>
             </c:forEach>
             <c:if test="${empty completedAppointments}">
-                <div class="d-flex justify-content-center mt-3">
+                <div class="noAppointmentsMsg">
                     <div class="alert alert-info">${noAppointments}</div>
                 </div>
             </c:if>
