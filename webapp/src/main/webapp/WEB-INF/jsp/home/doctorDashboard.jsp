@@ -93,11 +93,13 @@
                         <p class="card-text">${healthInsurance}</p>
                     </div>
                 </div>
-                <div class="buttonsContainer">
-                    <div class="card-body">
-                        <a href="${appointmentUrl}" class="btn btn-primary">${book}</a>
+                <c:if test="${canBook}">
+                    <div class="buttonsContainer">
+                        <div class="card-body">
+                            <a href="${appointmentUrl}" class="btn btn-primary">${book}</a>
+                        </div>
                     </div>
-                </div>
+                </c:if>
             </div>
 
         </c:forEach>
