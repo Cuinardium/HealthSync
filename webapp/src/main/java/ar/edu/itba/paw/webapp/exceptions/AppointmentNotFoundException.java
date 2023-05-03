@@ -2,10 +2,10 @@ package ar.edu.itba.paw.webapp.exceptions;
 
 public class AppointmentNotFoundException extends RuntimeException {
 
-  private static final String MESSAGE = "Appointment not found!";
+  private static final String MESSAGE_ID = "error.appointmentNotFound";
 
   public AppointmentNotFoundException() {
-    super(MESSAGE);
+    super(MESSAGE_ID);
   }
 
   public AppointmentNotFoundException(String message) {

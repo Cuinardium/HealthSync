@@ -1,10 +1,10 @@
 package ar.edu.itba.paw.webapp.exceptions;
 
 public class ImageNotFoundException extends RuntimeException {
-  private static final String MESSAGE = "Image not found!";
+  private static final String MESSAGE_ID = "error.imageNotFound";
 
   public ImageNotFoundException() {
-    super(MESSAGE);
+    super(MESSAGE_ID);
   }
 
   public ImageNotFoundException(String message) {
