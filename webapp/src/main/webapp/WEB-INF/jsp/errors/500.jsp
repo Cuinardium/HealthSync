@@ -6,7 +6,7 @@
 <c:url value="/css/main.css" var="mainCss"/>
 <c:url value="/css/error.css" var="errorCss"/>
 
-<spring:message code="${message}" var="error"/>
+<spring:message code="error.500" var="error"/>
 
 
 <html>
