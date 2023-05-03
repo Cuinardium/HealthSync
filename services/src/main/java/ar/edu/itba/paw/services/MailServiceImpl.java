@@ -136,6 +136,7 @@ public class MailServiceImpl implements MailService {
     String doctorEmail = doctor.getEmail();
 
     // Load model
+    templateModel.put("baseUrl", env.getProperty("webapp.baseUrl"));
     templateModel.put("userName", patientName);
     templateModel.put("userMail", patientEmail);
     templateModel.put("userHealthcare", patientHealthInsurance);
@@ -172,6 +173,7 @@ public class MailServiceImpl implements MailService {
         messageSource.getMessage(doctor.getLocation().getCity().getMessageID(), null, locale);
 
     // Load model
+    templateModel.put("baseUrl", env.getProperty("webapp.baseUrl"));
     templateModel.put("userName", patientName);
     templateModel.put("userMail", patientEmail);
     templateModel.put("docName", doctorName);
@@ -207,6 +209,7 @@ public class MailServiceImpl implements MailService {
         messageSource.getMessage(doctor.getLocation().getCity().getMessageID(), null, locale);
 
     // Load model
+    templateModel.put("baseUrl", env.getProperty("webapp.baseUrl"));
     templateModel.put("userName", patientName);
     templateModel.put("userMail", patientEmail);
     templateModel.put("docName", doctorName);
@@ -235,10 +238,12 @@ public class MailServiceImpl implements MailService {
     String patientEmail = patient.getEmail();
     String doctorName = doctor.getFirstName() + " " + doctor.getLastName();
 
-    String doctorAppointmentUrl =
-        env.getProperty("webapp.baseUrl") + doctor.getId() + "/appointment";
+    String baseUrl = env.getProperty("webapp.baseUrl");
+
+    String doctorAppointmentUrl = baseUrl + doctor.getId() + "/appointment";
 
     // Load model
+    templateModel.put("baseUrl", baseUrl);
     templateModel.put("userName", patientName);
     templateModel.put("docName", doctorName);
     templateModel.put("appointmentUrl", doctorAppointmentUrl);
@@ -263,10 +268,12 @@ public class MailServiceImpl implements MailService {
     String patientEmail = patient.getEmail();
     String doctorName = doctor.getFirstName() + " " + doctor.getLastName();
 
-    String doctorAppointmentUrl =
-        env.getProperty("webapp.baseUrl") + doctor.getId() + "/appointment";
+    String baseUrl = env.getProperty("webapp.baseUrl");
+
+    String doctorAppointmentUrl = baseUrl + doctor.getId() + "/appointment";
 
     // Load model
+    templateModel.put("baseUrl", baseUrl);
     templateModel.put("userMail", patientEmail);
     templateModel.put("docName", doctorName);
     templateModel.put("appointmentUrl", doctorAppointmentUrl);
