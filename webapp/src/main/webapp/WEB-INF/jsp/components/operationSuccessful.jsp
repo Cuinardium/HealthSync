@@ -23,7 +23,9 @@
     <link href="${appointmentSentCss}" rel="stylesheet"/>
 </head>
 <body>
-<jsp:include page="../components/header.jsp"/>
+<c:if test="${showHeader}">
+    <jsp:include page="../components/header.jsp"/>
+</c:if>
 
 <!-- Content -->
 <div class="page-content p-5" id="content">
