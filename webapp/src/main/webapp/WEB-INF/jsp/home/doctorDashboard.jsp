@@ -103,15 +103,13 @@
             </div>
 
         </c:forEach>
-        <c:if test="${doctors.isEmpty()}">
-            <div class="d-flex justify-content-center">
-                <!-- TODO: style this vvvv -->
-                <h4>${noDoctors}</h4>
+        <c:if test="${empty doctors}">
+            <div class="noDoctorsMsg">
+                <div class="alert alert-info">${noDoctors}</div>
             </div>
         </c:if>
     </div>
 </div>
-<script src="${searchBarJs}"></script>
 </body>
 </html>
 
