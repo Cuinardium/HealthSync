@@ -5,6 +5,6 @@
 </head>
 <body>
     <p th:text="#{appointmentCancelledByDoctor.title(${docName}, ${date})}"></p>
-    <a th:href="@{{url}(url = ${appointmentUrl})}" th:text="#{appointmentRejected.callToAction}"></a>
+    <a th:href="@{{url}(url = ${appointmentUrl})}"><button th:text="#{button.rejected}"></button></a>
 </body>
 </html>
