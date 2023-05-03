@@ -245,8 +245,9 @@ public class AppointmentController {
   private ModelAndView getAppointmentsForDoctor(
       LocalDate fromDate, LocalDate toDate, int selectedTab) {
 
-    ModelAndView mav = new ModelAndView("appointment/doctorAppointments");
+    ModelAndView mav = new ModelAndView("appointment/appointments");
 
+    // Get relevant appointments
     List<Appointment> upcomingAppointments =
         appointmentService.getFilteredAppointmentsForDoctor(
             PawAuthUserDetails.getCurrentUserId(), AppointmentStatus.ACCEPTED, fromDate, toDate);
@@ -263,55 +264,109 @@ public class AppointmentController {
         appointmentService.getFilteredAppointmentsForDoctor(
             PawAuthUserDetails.getCurrentUserId(), AppointmentStatus.COMPLETED, fromDate, toDate);
 
-    /*
-     mav.addObject("upcomingAppointments", upcomingAppointments);
-     mav.addObject("pendingAppointments", pendingAppointments);
-     mav.addObject("cancelledAppointments", cancelledAppointments);
-     mav.addObject("completedAppointments", completedAppointments);
-    */
-    mav.addObject("from", fromDate == null ? "" : fromDate.toString());
-    mav.addObject("to", toDate == null ? "" : toDate.toString());
-    // ID
-    // active condition
-    // items
-    // status
-
-    //    {tabName (string), boolean isActive(Integer selectedTab), Appointment[] items,
-    // AllowedActions[] }
+    
+    // Create tabs
     List<AppointmentTab> tabs = new ArrayList<>();
 
+    // Doctor can confirm or reject a pending appointment
     List<AllowedActions> requestAllowedActions = new ArrayList<>();
     requestAllowedActions.add(AllowedActions.CONFIRM);
     requestAllowedActions.add(AllowedActions.REJECT);
-
     tabs.add(
         new AppointmentTab(
-            "requests", (x) -> (x <= 0 || x >= 4), pendingAppointments, requestAllowedActions));
+            "requests", (x) -> (x <= 0 || x >= 4), pendingAppointments, requestAllowedActions, "appointments.requests"));
 
+    // Doctor can cancel an upcoming appointment
     List<AllowedActions> confirmedAllowedActions = new ArrayList<>();
     confirmedAllowedActions.add(AllowedActions.CANCEL);
     tabs.add(
         new AppointmentTab(
-            "confirmed", (x) -> (x == 1), upcomingAppointments, confirmedAllowedActions));
+            "confirmed", (x) -> (x == 1), upcomingAppointments, confirmedAllowedActions, "appointments.upcoming"));
 
+    // Doctor can only see cancelled and completed appointments
     tabs.add(
-        new AppointmentTab("cancelled", (x) -> (x == 2), cancelledAppointments, new ArrayList<>()));
+        new AppointmentTab("cancelled", (x) -> (x == 2), cancelledAppointments, new ArrayList<>(), "appointments.cancelled"));
+    tabs.add(
+        new AppointmentTab("history", (x) -> (x == 3), completedAppointments, new ArrayList<>(), "appointments.history"));
 
-    tabs.add(
-        new AppointmentTab("history", (x) -> (x == 3), completedAppointments, new ArrayList<>()));
+    // Add values to model
+    mav.addObject("from", fromDate == null ? "" : fromDate.toString());
+    mav.addObject("to", toDate == null ? "" : toDate.toString());
+
     mav.addObject("selectedTab", selectedTab);
     mav.addObject("tabs", tabs);
     return mav;
   }
 
-  public enum AllowedActions {
-    CONFIRM(1, "btn-success", "appointments.confirm"),
-    REJECT(2, "btn-danger", "appointments.reject"),
-    CANCEL(3, "btn-danger", "appointments.cancel");
+  private ModelAndView getAppointmentsForPatient(
+      LocalDate fromDate, LocalDate toDate, int selectedTab) {
 
-    private Integer statusCode;
-    private String buttonClass;
-    private String messageID;
+    ModelAndView mav = new ModelAndView("appointment/appointments");
+
+    // Get relevant appointments
+    List<Appointment> upcomingAppointments =
+        appointmentService.getFilteredAppointmentsForPatient(
+            PawAuthUserDetails.getCurrentUserId(), AppointmentStatus.ACCEPTED, fromDate, toDate);
+
+    List<Appointment> pendingAppointments =
+        appointmentService.getFilteredAppointmentsForPatient(
+            PawAuthUserDetails.getCurrentUserId(), AppointmentStatus.PENDING, fromDate, toDate);
+
+    List<Appointment> rejectedAppointments =
+        appointmentService.getFilteredAppointmentsForPatient(
+            PawAuthUserDetails.getCurrentUserId(), AppointmentStatus.REJECTED, fromDate, toDate);
+
+    List<Appointment> cancelledAppointments =
+        appointmentService.getFilteredAppointmentsForPatient(
+            PawAuthUserDetails.getCurrentUserId(), AppointmentStatus.CANCELLED, fromDate, toDate);
+
+    List<Appointment> completedAppointments =
+        appointmentService.getFilteredAppointmentsForPatient(
+            PawAuthUserDetails.getCurrentUserId(), AppointmentStatus.COMPLETED, fromDate, toDate);
+
+    
+    // Create tabs
+    List<AppointmentTab> tabs = new ArrayList<>();
+
+    // Patient can only see pending appointments
+    tabs.add(
+        new AppointmentTab(
+            "requests", (x) -> (x <= 0 || x >= 5), pendingAppointments, new ArrayList<>(), "appointments.pending"));
+    
+    // Patient can cancel an upcoming appointment
+    List<AllowedActions> confirmedAllowedActions = new ArrayList<>();
+    confirmedAllowedActions.add(AllowedActions.CANCEL);
+    tabs.add(
+        new AppointmentTab(
+            "confirmed", (x) -> (x == 1), upcomingAppointments, confirmedAllowedActions, "appointments.confirmed"));
+
+    // Patient can only see rejected, cancelled and completed appointments
+    tabs.add(
+        new AppointmentTab("rejected", (x) -> (x == 2), rejectedAppointments, new ArrayList<>(), "appointments.rejected"));
+    tabs.add(
+        new AppointmentTab("cancelled", (x) -> (x == 3), cancelledAppointments, new ArrayList<>(), "appointments.cancelled"));
+    tabs.add(
+        new AppointmentTab("history", (x) -> (x == 4), completedAppointments, new ArrayList<>(), "appointments.history"));
+
+    // Add values to model
+    mav.addObject("from", fromDate == null ? "" : fromDate.toString());
+    mav.addObject("to", toDate == null ? "" : toDate.toString());
+
+    mav.addObject("selectedTab", selectedTab);
+    mav.addObject("tabs", tabs);
+
+    return mav;
+  }
+
+  // ==================================  Inner Classes  ===========================================
+  public enum AllowedActions {
+    CONFIRM(AppointmentStatus.ACCEPTED.ordinal(), "btn-success", "appointments.confirm"),
+    REJECT(AppointmentStatus.REJECTED.ordinal(), "btn-danger", "appointments.reject"),
+    CANCEL(AppointmentStatus.CANCELLED.ordinal(), "btn-danger", "appointments.cancel");
+
+    private final Integer statusCode;
+    private final String buttonClass;
+    private final String messageID;
 
     private AllowedActions(Integer statusCode, String buttonClass, String messageID) {
       this.statusCode = statusCode;
@@ -333,20 +388,23 @@ public class AppointmentController {
   }
 
   public class AppointmentTab {
-    private String tabName;
-    private IntPredicate intPredicate;
-    private List<Appointment> appointments;
-    private List<AllowedActions> allowedActions;
+    private final String tabName;
+    private final IntPredicate intPredicate;
+    private final List<Appointment> appointments;
+    private final List<AllowedActions> allowedActions;
+    private final String messageID;
 
     private AppointmentTab(
         String tabName,
         IntPredicate intPredicate,
         List<Appointment> appointments,
-        List<AllowedActions> allowedActions) {
+        List<AllowedActions> allowedActions,
+        String messageID) {
       this.tabName = tabName;
       this.intPredicate = intPredicate;
       this.appointments = appointments;
       this.allowedActions = allowedActions;
+      this.messageID = messageID;
     }
 
     public String getTabName() {
@@ -364,43 +422,9 @@ public class AppointmentController {
     public boolean isActive(Integer status) {
       return intPredicate.test(status);
     }
-  }
 
-  private ModelAndView getAppointmentsForPatient(
-      LocalDate fromDate, LocalDate toDate, int selectedTab) {
-
-    ModelAndView mav = new ModelAndView("appointment/patientAppointments");
-
-    List<Appointment> upcomingAppointments =
-        appointmentService.getFilteredAppointmentsForPatient(
-            PawAuthUserDetails.getCurrentUserId(), AppointmentStatus.ACCEPTED, fromDate, toDate);
-
-    List<Appointment> pendingAppointments =
-        appointmentService.getFilteredAppointmentsForPatient(
-            PawAuthUserDetails.getCurrentUserId(), AppointmentStatus.PENDING, fromDate, toDate);
-
-    List<Appointment> rejectedAppointments =
-        appointmentService.getFilteredAppointmentsForPatient(
-            PawAuthUserDetails.getCurrentUserId(), AppointmentStatus.REJECTED, fromDate, toDate);
-
-    List<Appointment> cancelledAppointments =
-        appointmentService.getFilteredAppointmentsForPatient(
-            PawAuthUserDetails.getCurrentUserId(), AppointmentStatus.CANCELLED, fromDate, toDate);
-
-    List<Appointment> completedAppointments =
-        appointmentService.getFilteredAppointmentsForPatient(
-            PawAuthUserDetails.getCurrentUserId(), AppointmentStatus.COMPLETED, fromDate, toDate);
-
-    mav.addObject("upcomingAppointments", upcomingAppointments);
-    mav.addObject("pendingAppointments", pendingAppointments);
-    mav.addObject("cancelledAppointments", cancelledAppointments);
-    mav.addObject("rejectedAppointments", rejectedAppointments);
-    mav.addObject("completedAppointments", completedAppointments);
-    mav.addObject("from", fromDate == null ? "" : fromDate.toString());
-    mav.addObject("to", toDate == null ? "" : toDate.toString());
-
-    mav.addObject("selectedTab", selectedTab);
-
-    return mav;
+    public String getMessageID() {
+      return messageID;
+    }
   }
 }

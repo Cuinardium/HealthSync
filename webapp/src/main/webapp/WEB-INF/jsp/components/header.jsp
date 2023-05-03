@@ -7,7 +7,7 @@
 
 <c:url value="/" var="homeUrl"/>
 <c:url value="/doctorDashboard" var="dashboardUrl"/>
-<c:url value="/my-appointments" var="myAppoitnmentUrl"/>
+<c:url value="/my-appointments" var="myAppointmentsUrl"/>
 <c:url value="/doctor-register" var="doctorRegisterUrl"/>
 <c:url value="/patient-register" var="patientRegisterUrl"/>
 <c:url value="/doctor-edit" var="doctorEditUrl"/>
@@ -20,6 +20,7 @@
 
 <spring:message code="home.home" var="home"/>
 <spring:message code="home.checkDoctor" var="checkDoctor"/>
+<spring:message code="home.myAppointments" var="myAppointments"/>
 <spring:message code="register.title" var="register"/>
 <spring:message code="login.title" var="login"/>
 <spring:message code="header.iAmDoctor" var="iAmDoctor"/>
@@ -43,16 +44,23 @@
         </a>
 
         <div class="buttons">
-            <a href="${dashboardUrl}"><i class="fa-solid fa-user-doctor"></i></a>
+            <a href="${dashboardUrl}" class="headerLink">
+                ${checkDoctor}
+                <i class="fa-solid fa-user-doctor"></i>
+            </a>
+
+            <c:if test="${not empty user}">
+                <a href="${myAppointmentsUrl}" class="headerLink">
+                    ${myAppointments}
+                    <i class="fa-solid fa-calendar-check"></i>
+                </a>
+            </c:if>
         </div>
 
         <c:choose>
         <c:when test="${not empty user}">
             <nav class="navbar navbar-expand-lg">
                 <div class="container-fluid">
-                        <a href="${myAppoitnmentUrl}">
-                            <i class="fa-solid fa-calendar-check"></i>
-                        </a>
                     <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
                             data-bs-target="#profileDropdown" aria-controls="profileDropdown" aria-expanded="false"
                             aria-label="Toggle navigation">
@@ -61,8 +69,10 @@
                     <div class="collapse navbar-collapse" id="profileDropdown">
                         <ul class="navbar-nav">
                             <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle" href="" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                    <img src="/img/${user.getProfilePictureId()}" width="40" height="40" class="rounded-circle">
+                                <a class="nav-link dropdown-toggle" href="" role="button" data-bs-toggle="dropdown"
+                                   aria-haspopup="true" aria-expanded="false">
+                                    <img src="/img/${user.getProfilePictureId()}" width="40" height="40"
+                                         class="rounded-circle">
                                 </a>
                                 <ul class="dropdown-menu">
                                     <c:choose>
@@ -70,7 +80,8 @@
                                             <li><a class="dropdown-item" href="${doctorEditUrl}">${editProfile}</a></li>
                                         </c:when>
                                         <c:otherwise>
-                                            <li><a class="dropdown-item" href="${patientEditUrl}">${editProfile}</a></li>
+                                            <li><a class="dropdown-item" href="${patientEditUrl}">${editProfile}</a>
+                                            </li>
                                         </c:otherwise>
                                     </c:choose>
                                     <li><a class="dropdown-item" href="${changePasswordUrl}">${changePassword}</a></li>

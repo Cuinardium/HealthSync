@@ -2,6 +2,8 @@ package ar.edu.itba.paw.webapp.controller;
 
 import ar.edu.itba.paw.interfaces.services.DoctorService;
 import ar.edu.itba.paw.models.Doctor;
+import ar.edu.itba.paw.webapp.auth.PawAuthUserDetails;
+import ar.edu.itba.paw.webapp.auth.UserRoles;
 import ar.edu.itba.paw.webapp.exceptions.UserNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -28,6 +30,10 @@ public class DoctorController {
 
     mav.addObject("doctor", doctor);
 
+    // Only patients can book appointments
+    boolean canBook = PawAuthUserDetails.getRole().equals(UserRoles.ROLE_PATIENT);
+
+    mav.addObject("canBook", canBook);
     return mav;
   }
 }

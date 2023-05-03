@@ -6,6 +6,9 @@ import ar.edu.itba.paw.models.City;
 import ar.edu.itba.paw.models.Doctor;
 import ar.edu.itba.paw.models.HealthInsurance;
 import ar.edu.itba.paw.models.Specialty;
+import ar.edu.itba.paw.webapp.auth.PawAuthUserDetails;
+import ar.edu.itba.paw.webapp.auth.UserRoles;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -64,6 +67,10 @@ public class HomeController {
     mav.addObject("specialties", Arrays.asList(Specialty.values()));
     mav.addObject("healthInsuranceCode", healthInsuranceCode);
     mav.addObject("healthInsurances", Arrays.asList(HealthInsurance.values()));
+
+    // Only patients can book appointments
+    boolean canBook = PawAuthUserDetails.getRole().equals(UserRoles.ROLE_PATIENT);
+    mav.addObject("canBook", canBook);
 
     return mav;
   }
