@@ -13,8 +13,10 @@ import ar.edu.itba.paw.webapp.auth.UserRoles;
 import ar.edu.itba.paw.webapp.form.AppointmentForm;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.function.IntPredicate;
 import javax.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -261,16 +263,107 @@ public class AppointmentController {
         appointmentService.getFilteredAppointmentsForDoctor(
             PawAuthUserDetails.getCurrentUserId(), AppointmentStatus.COMPLETED, fromDate, toDate);
 
-    mav.addObject("upcomingAppointments", upcomingAppointments);
-    mav.addObject("pendingAppointments", pendingAppointments);
-    mav.addObject("cancelledAppointments", cancelledAppointments);
-    mav.addObject("completedAppointments", completedAppointments);
+    /*
+     mav.addObject("upcomingAppointments", upcomingAppointments);
+     mav.addObject("pendingAppointments", pendingAppointments);
+     mav.addObject("cancelledAppointments", cancelledAppointments);
+     mav.addObject("completedAppointments", completedAppointments);
+    */
     mav.addObject("from", fromDate == null ? "" : fromDate.toString());
     mav.addObject("to", toDate == null ? "" : toDate.toString());
+    // ID
+    // active condition
+    // items
+    // status
 
+    //    {tabName (string), boolean isActive(Integer selectedTab), Appointment[] items,
+    // AllowedActions[] }
+    List<AppointmentTab> tabs = new ArrayList<>();
+
+    List<AllowedActions> requestAllowedActions = new ArrayList<>();
+    requestAllowedActions.add(AllowedActions.CONFIRM);
+    requestAllowedActions.add(AllowedActions.REJECT);
+
+    tabs.add(
+        new AppointmentTab(
+            "requests", (x) -> (x <= 0 || x >= 4), pendingAppointments, requestAllowedActions));
+
+    List<AllowedActions> confirmedAllowedActions = new ArrayList<>();
+    confirmedAllowedActions.add(AllowedActions.CANCEL);
+    tabs.add(
+        new AppointmentTab(
+            "confirmed", (x) -> (x == 1), upcomingAppointments, confirmedAllowedActions));
+
+    tabs.add(
+        new AppointmentTab("cancelled", (x) -> (x == 2), cancelledAppointments, new ArrayList<>()));
+
+    tabs.add(
+        new AppointmentTab("history", (x) -> (x == 3), completedAppointments, new ArrayList<>()));
     mav.addObject("selectedTab", selectedTab);
-
+    mav.addObject("tabs", tabs);
     return mav;
+  }
+
+  public enum AllowedActions {
+    CONFIRM(1, "btn-success", "appointments.confirm"),
+    REJECT(2, "btn-danger", "appointments.reject"),
+    CANCEL(3, "btn-danger", "appointments.cancel");
+
+    private Integer statusCode;
+    private String buttonClass;
+    private String messageID;
+
+    private AllowedActions(Integer statusCode, String buttonClass, String messageID) {
+      this.statusCode = statusCode;
+      this.buttonClass = buttonClass;
+      this.messageID = messageID;
+    }
+
+    public Integer getStatusCode() {
+      return statusCode;
+    }
+
+    public String getButtonClass() {
+      return buttonClass;
+    }
+
+    public String getMessageID() {
+      return messageID;
+    }
+  }
+
+  public class AppointmentTab {
+    private String tabName;
+    private IntPredicate intPredicate;
+    private List<Appointment> appointments;
+    private List<AllowedActions> allowedActions;
+
+    private AppointmentTab(
+        String tabName,
+        IntPredicate intPredicate,
+        List<Appointment> appointments,
+        List<AllowedActions> allowedActions) {
+      this.tabName = tabName;
+      this.intPredicate = intPredicate;
+      this.appointments = appointments;
+      this.allowedActions = allowedActions;
+    }
+
+    public String getTabName() {
+      return tabName;
+    }
+
+    public List<Appointment> getAppointments() {
+      return appointments;
+    }
+
+    public List<AllowedActions> getAllowedActions() {
+      return allowedActions;
+    }
+
+    public boolean isActive(Integer status) {
+      return intPredicate.test(status);
+    }
   }
 
   private ModelAndView getAppointmentsForPatient(

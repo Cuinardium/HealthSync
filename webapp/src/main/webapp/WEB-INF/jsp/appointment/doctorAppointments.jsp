@@ -75,16 +75,9 @@
 
     <div class="cardsContainer">
 
-        <!--
-        // ID
-        // active condition
-        // items
-        // status
-
-        {tabName (string), boolean isActive(Integer selectedTab), Appointment[] items, AllowedActions[] }
-         -->
-        <div id="requests" class="tabContent ${selectedTab <= 0 || selectedTab >= 4 ? 'active' : ''}">  <!-- here, ID, active cond-->
-            <c:forEach items="${pendingAppointments}" var="appointment">                                <!-- here items -->
+         <c:forEach items="${tabs}" var="tab">
+         <div id="${tab.tabName}" class="tabContent ${tab.isActive(selectedTab) ? 'active' : ''}">
+            <c:forEach items="${tab.appointments}" var="appointment">
                 <c:url value="/${appointment.id}/detailed_appointment" var="detailedUrl">
                     <c:param name="from" value="${from}" />
                     <c:param name="to" value="${to}" />
@@ -97,115 +90,29 @@
                         </div>
                         <c:url value="/my-appointments/${appointment.id}/update" var="updateUrl"/>
                         <div class="flex-row">
-                            <!-- for each with buttons -->
-                            <form class="d-inline" method="post" action="${updateUrl}/?status=1">       <!-- here status code -->
+                          <c:forEach items="${tab.allowedActions}" var="action">
+                            <form class="d-inline" method="post" action="${updateUrl}/?status=${action.statusCode}">
                                 <button type="submit"
-                                        class="align-self-end btn btn-success post-button">${confirm}</button> <!-- here buttons -->
-                            </form>
-                            <form class="d-inline" method="post" action="${updateUrl}/?status=2">
-                                <button type="submit"
-                                        class="align-self-end btn btn-danger post-button">${reject}</button>
-                            </form>
+                                        class="align-self-end btn ${action.buttonClass} post-button">
+                                <spring:message code="${action.messageID}"/>
+                                </button>
+                              </form>
+                            </c:forEach>
                         </div>
-
                     </div>
                     <div class="card-body">
                             ${appointment.description}
                     </div>
                 </div>
             </c:forEach>
-            <c:if test="${empty pendingAppointments}">                                              <!-- here empty items -->
+            <c:if test="${empty tab.appointments}">
                 <div class="d-flex justify-content-center mt-3">
                     <div class="alert alert-info">${noAppointments}</div>
                 </div>
             </c:if>
         </div>
-        <div id="confirmed" class="tabContent ${selectedTab == 1 ? 'active' : ''}">
-            <c:forEach items="${upcomingAppointments}" var="appointment">
-                <c:url value="/${appointment.id}/detailed_appointment" var="detailedUrl">
-                    <c:param name="from" value="${from}" />
-                    <c:param name="to" value="${to}" />
-                    <c:param name="selected_tab" value="${selectedTab}" />
-                </c:url>
-                <div class="card mt-3">
-                    <div class="card-header d-flex flex-row justify-content-between">
-                        <div class="align-self-center">
-                            <a class="detailed-link" href="${detailedUrl}">${appointment.date} ${appointment.timeBlock.blockBeginning}</a>
-                        </div>
-                        <c:url value="/my-appointments/${appointment.id}/update" var="updateUrl"/>
-                        <div class="flex-row">
-                            <form class="d-inline" method="post" action="${updateUrl}/?status=3">
-                                <button type="submit"
-                                        class="align-self-end btn btn-danger post-button">${cancel}</button>
-                            </form>
-                        </div>
 
-                    </div>
-                    <div class="card-body">
-                        <p class="card-text">
-                                ${appointment.description}
-                        </p>
-                    </div>
-                </div>
-            </c:forEach>
-            <c:if test="${empty upcomingAppointments}">
-                <div class="d-flex justify-content-center mt-3">
-                    <div class="alert alert-info">${noAppointments}</div>
-                </div>
-            </c:if>
-        </div>
-        <div id="cancelled" class="tabContent ${selectedTab == 2 ? 'active' : ''}">
-            <c:forEach items="${cancelledAppointments}" var="appointment">
-                <c:url value="/${appointment.id}/detailed_appointment" var="detailedUrl">
-                    <c:param name="from" value="${from}" />
-                    <c:param name="to" value="${to}" />
-                    <c:param name="selected_tab" value="${selectedTab}" />
-                </c:url>
-                <div class="card mt-3">
-                    <div class="card-header d-flex flex-row justify-content-between">
-                        <div class="align-self-center">
-                            <a class="detailed-link" href="${detailedUrl}">${appointment.date} ${appointment.timeBlock.blockBeginning}</a>
-                        </div>
-                    </div>
-                    <div class="card-body">
-                        <p class="card-text">
-                                ${appointment.description}
-                        </p>
-                    </div>
-                </div>
-            </c:forEach>
-            <c:if test="${empty cancelledAppointments}">
-                <div class="d-flex justify-content-center mt-3">
-                    <div class="alert alert-info">${noAppointments}</div>
-                </div>
-            </c:if>
-        </div>
-        <div id="history" class="tabContent ${selectedTab == 3 ? 'active' : ''}">
-            <c:forEach items="${completedAppointments}" var="appointment">
-                <c:url value="/${appointment.id}/detailed_appointment" var="detailedUrl">
-                    <c:param name="from" value="${from}" />
-                    <c:param name="to" value="${to}" />
-                    <c:param name="selected_tab" value="${selectedTab}" />
-                </c:url>
-                <div class="card mt-3">
-                    <div class="card-header d-flex flex-row justify-content-between">
-                        <div class="align-self-center">
-                            <a class="detailed-link" href="${detailedUrl}">${appointment.date} ${appointment.timeBlock.blockBeginning}</a>
-                        </div>
-                    </div>
-                    <div class="card-body">
-                        <p class="card-text">
-                                ${appointment.description}
-                        </p>
-                    </div>
-                </div>
-            </c:forEach>
-            <c:if test="${empty completedAppointments}">
-                <div class="d-flex justify-content-center mt-3">
-                    <div class="alert alert-info">${noAppointments}</div>
-                </div>
-            </c:if>
-        </div>
+         </c:forEach>
     </div>
 </div>
 </body>
