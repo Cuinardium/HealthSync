@@ -6,6 +6,7 @@
 
 <!--Variables -->
 <c:url value="/css/main.css" var="mainCss"/>
+<c:url value="/css/detailedAppointment.css" var="detailedAppointmentCss"/>
 
 
 <c:url value="/my-appointments" var="myAppointmentsUrl">
@@ -32,6 +33,7 @@
 
   <jsp:include page="../components/favicon.jsp"/>
   <link href="${mainCss}" rel="stylesheet"/>
+  <link href="${detailedAppointmentCss}" rel="stylesheet"/>
 </head>
 <body>
 <jsp:include page="../components/header.jsp"/>
@@ -42,14 +44,10 @@
       <i class="fa-solid fa-arrow-left"></i>
     </a>
   </div>
-  <div class="card mt-3">
+  <div class="card">
     <div class="card-header">
-      <div class="d-flex flex-row justify-content-between">
         <strong>${appointmentDateTime}</strong>
         <strong>${statusTitle}: ${status}</strong>
-
-      </div>
-
     </div>
     <div class="card-body">
       <div class="card-title"><strong>${doctor}: </strong>${doctorName}</div>
@@ -59,7 +57,6 @@
       <div class="card-title"><strong>${description}: </strong>${appointmentDesc}</div>
     </div>
   </div>
-
 </div>
 </body>
 </html>
