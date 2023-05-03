@@ -71,7 +71,8 @@
                             <li class="nav-item dropdown">
                                 <a class="nav-link dropdown-toggle" href="" role="button" data-bs-toggle="dropdown"
                                    aria-haspopup="true" aria-expanded="false">
-                                    <img src="/img/${user.getProfilePictureId()}" width="40" height="40"
+                                    <c:url value="/img/${user.getProfilePictureId()}" var="userImg"/>
+                                    <img src="${userImg}" width="40" height="40"
                                          class="rounded-circle">
                                 </a>
                                 <ul class="dropdown-menu">

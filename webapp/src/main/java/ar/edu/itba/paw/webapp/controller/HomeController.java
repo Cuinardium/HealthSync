@@ -69,7 +69,7 @@ public class HomeController {
     mav.addObject("healthInsurances", Arrays.asList(HealthInsurance.values()));
 
     // Only patients can book appointments
-    boolean canBook = PawAuthUserDetails.getRole().equals(UserRoles.ROLE_PATIENT);
+    boolean canBook = PawAuthUserDetails.getRole().equals(UserRoles.ROLE_PATIENT) || PawAuthUserDetails.getRole().equals(UserRoles.ROLE_NULL);
     mav.addObject("canBook", canBook);
 
     return mav;
