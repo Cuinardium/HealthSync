@@ -111,6 +111,46 @@
                 <form:errors path="email" cssClass="error" element="p"/>
             </div>
         </div>
+
+        <!-- hacerlo tipo col -->
+        <div class="formContainer">
+            <c:forEach items="${dayOfWeekEnumValues}" var="day">
+                <div class="formRow">
+                    <h3>${day}</h3>
+                    <div class="form-check form-switch">
+                        <input class="form-check-input" type="checkbox" id="flexSwitch-${day}">
+                        <label class="form-check-label" for="flexSwitch-${day}">Active</label>
+                    </div>
+                </div>
+                <div class="formRow" id="range-picker-${day}">
+                    <div class="">
+                        <form:label path="${attendingHours[$day].from}">from</form:label>
+                        <form:select path="${attendingHours[$day].from}" class="form-control form-control-lg">
+                            <form:option value="-1" disabled="true" hidden="true" > -- </form:option>
+                            <c:forEach items="${timeEnumValues}" var="timeBlock">
+                                <form:option value="${timeBlock.blockBeginning}">
+                                    ${timeBlock.blockBeginning}
+                                </form:option>
+                            </c:forEach>
+                        </form:select>
+                        <form:errors path="${attendingHours[$day].from}" cssClass="error" element="p"/>
+                    </div>
+                    <div class="">
+                        <form:label path="${attendingHours[$day].to}">to</form:label>
+                        <form:select path="${attendingHours[$day].to}" class="form-control form-control-lg">
+                            <form:option value="-1" disabled="true" hidden="true" > -- </form:option>
+                            <c:forEach items="${timeEnumValues}" var="timeBlock">
+                                <form:option value="${timeBlock.blockBeginning}">
+                                    ${timeBlock.blockBeginning}
+                                </form:option>
+                            </c:forEach>
+                        </form:select>
+                        <form:errors path="${attendingHours[$day].to}" cssClass="error" element="p"/>
+                    </div>
+                </div>
+            </c:forEach>
+        </div>
+
         <button type="submit" class="btn btn-primary submitButton">${saveChanges}</button>
     </form:form>
 </div>
