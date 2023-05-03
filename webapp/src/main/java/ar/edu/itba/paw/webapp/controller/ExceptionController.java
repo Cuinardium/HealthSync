@@ -1,5 +1,6 @@
 package ar.edu.itba.paw.webapp.controller;
 
+import ar.edu.itba.paw.webapp.exceptions.AppointmentForbiddenException;
 import ar.edu.itba.paw.webapp.exceptions.AppointmentNotFoundException;
 import ar.edu.itba.paw.webapp.exceptions.ImageNotFoundException;
 import ar.edu.itba.paw.webapp.exceptions.UserNotFoundException;
@@ -34,5 +35,11 @@ public class ExceptionController {
   @ResponseStatus(code = HttpStatus.INTERNAL_SERVER_ERROR)
   public ModelAndView internalServerError() {
     return new ModelAndView("/errors/500");
+  }
+
+  @ExceptionHandler(AppointmentForbiddenException.class)
+  @ResponseStatus(code = HttpStatus.FORBIDDEN)
+  public ModelAndView forbidden() {
+    return new ModelAndView("/errors/403");
   }
 }

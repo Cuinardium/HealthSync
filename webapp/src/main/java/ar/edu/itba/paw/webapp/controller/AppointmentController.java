@@ -10,6 +10,7 @@ import ar.edu.itba.paw.models.Patient;
 import ar.edu.itba.paw.models.ThirtyMinuteBlock;
 import ar.edu.itba.paw.webapp.auth.PawAuthUserDetails;
 import ar.edu.itba.paw.webapp.auth.UserRoles;
+import ar.edu.itba.paw.webapp.exceptions.AppointmentForbiddenException;
 import ar.edu.itba.paw.webapp.exceptions.AppointmentNotFoundException;
 import ar.edu.itba.paw.webapp.exceptions.UserNotFoundException;
 import ar.edu.itba.paw.webapp.form.AppointmentForm;
@@ -226,7 +227,7 @@ public class AppointmentController {
     // If user is nor the patient nor the doctor, unauthorized
     if (PawAuthUserDetails.getCurrentUserId() != patient.getId()
         && PawAuthUserDetails.getCurrentUserId() != doctor.getId()) {
-      return new ModelAndView("error/403");
+      throw new AppointmentForbiddenException();
     }
 
     ModelAndView mav = new ModelAndView("appointment/detailedAppointment");
