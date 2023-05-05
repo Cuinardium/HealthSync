@@ -1,8 +1,12 @@
 package ar.edu.itba.paw.persistence;
 
 import ar.edu.itba.paw.interfaces.persistence.AppointmentDao;
+import ar.edu.itba.paw.interfaces.persistence.DoctorDao;
+import ar.edu.itba.paw.interfaces.persistence.PatientDao;
 import ar.edu.itba.paw.models.Appointment;
 import ar.edu.itba.paw.models.AppointmentStatus;
+import ar.edu.itba.paw.models.Doctor;
+import ar.edu.itba.paw.models.Patient;
 import ar.edu.itba.paw.models.ThirtyMinuteBlock;
 import java.sql.Date;
 import java.time.LocalDate;
@@ -20,45 +24,51 @@ import org.springframework.stereotype.Repository;
 @Repository
 public class AppointmentDaoImpl implements AppointmentDao {
 
+  private final PatientDao patientDao;
+  private final DoctorDao doctorDao;
+
+  // TODO: fix this
   private static final RowMapper<Appointment> APPOINTMENT_MAPPER =
       (rs, rowNum) -> {
         long appointmentId = rs.getLong("appointment_id");
-        long patientId = rs.getLong("patient_id");
-        long doctorId = rs.getLong("doctor_id");
+        Patient patient = patientDao.getPatientById(rs.getLong("patient_id"));
+        Doctor doctor = doctorDao.getDoctorById(rs.getLong("doctor_id"));
         LocalDate date = rs.getDate("appointment_date").toLocalDate();
         ThirtyMinuteBlock timeBlock = ThirtyMinuteBlock.values()[rs.getShort("appointment_time")];
         AppointmentStatus status = AppointmentStatus.values()[rs.getInt("status_code")];
         String description = rs.getString("appointment_description");
 
         return new Appointment(
-            appointmentId, patientId, doctorId, date, timeBlock, status, description);
+            appointmentId, patient, doctor, date, timeBlock, status, description);
       };
 
   private final JdbcTemplate jdbcTemplate;
   private final SimpleJdbcInsert appointmentInsert;
 
   @Autowired
-  public AppointmentDaoImpl(DataSource ds) {
+  public AppointmentDaoImpl(DataSource ds, PatientDao patientDao, DoctorDao doctorDao) {
     this.jdbcTemplate = new JdbcTemplate(ds);
     this.appointmentInsert =
         new SimpleJdbcInsert(ds)
             .withTableName("appointment")
             .usingGeneratedKeyColumns("appointment_id");
+    this.patientDao = patientDao;
+    this.doctorDao = doctorDao;
   }
 
   // ========================== Inserts ==========================
   @Override
   public Appointment createAppointment(
-      long patientId,
-      long doctorId,
+      Patient patient,
+      Doctor doctor,
       LocalDate date,
       ThirtyMinuteBlock timeBlock,
       String description) {
 
     Map<String, Object> data = new HashMap<>();
 
-    data.put("patient_id", patientId);
-    data.put("doctor_id", doctorId);
+    data.put("patient_id", patient.getId());
+    data.put("doctor_id", doctor.getId());
     data.put("appointment_date", Date.valueOf(date));
     data.put("appointment_time", timeBlockToSmallInt(timeBlock));
     data.put("appointment_description", description);
@@ -67,13 +77,7 @@ public class AppointmentDaoImpl implements AppointmentDao {
     long appointmentId = appointmentInsert.executeAndReturnKey(data).longValue();
 
     return new Appointment(
-        appointmentId,
-        patientId,
-        doctorId,
-        date,
-        timeBlock,
-        AppointmentStatus.PENDING,
-        description);
+        appointmentId, patient, doctor, date, timeBlock, AppointmentStatus.PENDING, description);
   }
 
   @Override

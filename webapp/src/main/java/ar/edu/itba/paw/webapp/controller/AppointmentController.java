@@ -70,8 +70,7 @@ public class AppointmentController {
     List<ThirtyMinuteBlock> availableHours;
 
     try {
-      availableHours =
-          appointmentService.getAvailableHoursForDoctorOnDate(doctorId, requestedDate);
+      availableHours = appointmentService.getAvailableHoursForDoctorOnDate(doctorId, requestedDate);
     } catch (RuntimeException e) {
       throw new UserNotFoundException();
     }
@@ -108,10 +107,13 @@ public class AppointmentController {
             (SecurityContextHolder.getContext().getAuthentication().getPrincipal());
 
     try {
+      // TODO: throw other exceptions??
       Appointment appointment =
           appointmentService.createAppointment(
-              currentUser.getId(),
-              doctorId,
+              patientService
+                  .getPatientById(currentUser.getId())
+                  .orElseThrow(UserNotFoundException::new),
+              doctorService.getDoctorById(doctorId).orElseThrow(UserNotFoundException::new),
               appointmentForm.getDate(),
               appointmentForm.getBlockEnum(),
               appointmentForm.getDescription());
@@ -194,11 +196,11 @@ public class AppointmentController {
 
     try {
       appointmentService.updateAppointmentStatus(
-        appointmentId, appointmentStatus, PawAuthUserDetails.getCurrentUserId());
+          appointmentId, appointmentStatus, PawAuthUserDetails.getCurrentUserId());
     } catch (RuntimeException e) {
       throw new UserNotFoundException();
     }
-    
+
     return getAppointments(from, to, selectedTab);
   }
 
@@ -213,7 +215,9 @@ public class AppointmentController {
       @RequestParam(name = "to", required = false, defaultValue = "") final String to) {
 
     Appointment appointment =
-        appointmentService.getAppointmentById(appointmentId).orElseThrow(AppointmentNotFoundException::new);
+        appointmentService
+            .getAppointmentById(appointmentId)
+            .orElseThrow(AppointmentNotFoundException::new);
 
     // Get Appointment patient
     Patient patient =
@@ -222,7 +226,9 @@ public class AppointmentController {
             .orElseThrow(UserNotFoundException::new);
 
     Doctor doctor =
-        doctorService.getDoctorById(appointment.getDoctorId()).orElseThrow(UserNotFoundException::new);
+        doctorService
+            .getDoctorById(appointment.getDoctorId())
+            .orElseThrow(UserNotFoundException::new);
 
     // If user is nor the patient nor the doctor, unauthorized
     if (PawAuthUserDetails.getCurrentUserId() != patient.getId()
