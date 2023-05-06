@@ -4,6 +4,7 @@ import ar.edu.itba.paw.interfaces.persistence.LocationDao;
 import ar.edu.itba.paw.models.City;
 import ar.edu.itba.paw.models.Location;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import javax.sql.DataSource;
@@ -63,5 +64,18 @@ public class LocationDaoImpl implements LocationDao {
             .build();
 
     return jdbcTemplate.query(query, ROW_MAPPER).stream().findFirst();
+  }
+
+  // Get all city codes present in the database
+  @Override
+  public List<Integer> getUsedCities() {
+    String query =
+        new QueryBuilder()
+            .select("city_code")
+            .distinct()
+            .from("doctor_location")
+            .build();
+
+    return jdbcTemplate.queryForList(query, Integer.class);
   }
 }

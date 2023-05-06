@@ -1,5 +1,9 @@
 package ar.edu.itba.paw.models;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 public enum City {
 
   // NO CAMBIAR EL ORDEN, SIEMPRE INSERTAR AL FONDO
@@ -209,5 +213,23 @@ public enum City {
 
   public String getMessageID() {
     return messageID;
+  }
+
+  public static List<City> getCities(List<Integer> cityCodes) {
+
+    if (cityCodes == null) {
+      return Collections.emptyList();
+    }
+
+    List<City> cities = new ArrayList<>();
+    City[] citiesArray = City.values();
+
+    for (Integer cityCode : cityCodes) {
+      if(cityCode != null && cityCode >= 0 && cityCode < citiesArray.length) {
+        cities.add(citiesArray[cityCode]);
+      }
+    }
+    
+    return cities;
   }
 }
