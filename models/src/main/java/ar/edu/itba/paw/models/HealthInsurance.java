@@ -1,5 +1,9 @@
 package ar.edu.itba.paw.models;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 public enum HealthInsurance {
 
   // NO CAMBIAR EL ORDEN, SIEMPRE INSERTAR AL FONDO
@@ -17,5 +21,23 @@ public enum HealthInsurance {
 
   public String getMessageID() {
     return messageID;
+  }
+
+  public static List<HealthInsurance> getHealthInsurances(List<Integer> healthInsurancesCodes) {
+
+    if (healthInsurancesCodes == null) {
+      return Collections.emptyList();
+    }
+
+    List<HealthInsurance> healthInsurances = new ArrayList<>();
+    HealthInsurance[] healthInsurancesArray = HealthInsurance.values();
+
+    for (Integer healthInsuranceCode : healthInsurancesCodes) {
+      if (healthInsuranceCode != null && healthInsuranceCode >= 0 && healthInsuranceCode < healthInsurancesArray.length) {
+        healthInsurances.add(healthInsurancesArray[healthInsuranceCode]);
+      }
+    }
+
+    return healthInsurances;
   }
 }

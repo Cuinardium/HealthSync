@@ -231,6 +231,26 @@ public class DoctorDaoImpl implements DoctorDao {
     return jdbcTemplate.query(doctorQuery().build(), doctorMapper);
   }
 
+  // Get used specialties and health insurances
+  @Override
+  public List<Integer> getUsedHealthInsurances() {
+    String query =
+        new QueryBuilder()
+            .select("health_insurance_code")
+            .distinct()
+            .from("health_insurance_accepted_by_doctor")
+            .build();
+
+    return jdbcTemplate.queryForList(query, Integer.class);
+  }
+
+  @Override
+  public List<Integer> getUsedSpecialties() {
+    String query = new QueryBuilder().select("specialty_code").distinct().from("doctor").build();
+
+    return jdbcTemplate.queryForList(query, Integer.class);
+  }
+
   // ================================= Private ======================================
   private QueryBuilder doctorQuery() {
     return new QueryBuilder()

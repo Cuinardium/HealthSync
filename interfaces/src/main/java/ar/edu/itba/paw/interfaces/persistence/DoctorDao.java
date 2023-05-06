@@ -23,4 +23,9 @@ public interface DoctorDao {
       long doctorId, int healthInsuranceCode, int specialtyCode, int cityCode, String address);
 
   public void updateAttendingHours(long doctorId, AttendingHours attendingHours);
+
+  // Get used specialties and health insurances
+  public List<Integer> getUsedHealthInsurances();
+
+  public List<Integer> getUsedSpecialties();
 }

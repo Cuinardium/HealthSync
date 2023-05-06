@@ -1,5 +1,9 @@
 package ar.edu.itba.paw.models;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 public enum Specialty {
 
   // NO CAMBIAR EL ORDEN, SIEMPRE INSERTAR AL FONDO
@@ -88,5 +92,23 @@ public enum Specialty {
 
   public String getMessageID() {
     return messageID;
+  }
+
+  public static List<Specialty> getSpecialties(List<Integer> specialtiesCodes) {
+
+    if (specialtiesCodes == null) {
+      return Collections.emptyList();
+    }
+
+    List<Specialty> specialties = new ArrayList<>();
+    Specialty[] specialtiesArray = Specialty.values();
+
+    for (Integer specialtyCode : specialtiesCodes) {
+      if (specialtyCode != null && specialtyCode >= 0 && specialtyCode < specialtiesArray.length) {
+        specialties.add(specialtiesArray[specialtyCode]);
+      }
+    }
+
+    return specialties;
   }
 }
