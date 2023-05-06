@@ -1,16 +1,14 @@
 package ar.edu.itba.paw.webapp.controller;
 
 import ar.edu.itba.paw.interfaces.services.DoctorService;
-import ar.edu.itba.paw.interfaces.services.UserService;
+import ar.edu.itba.paw.interfaces.services.LocationService;
 import ar.edu.itba.paw.models.City;
 import ar.edu.itba.paw.models.Doctor;
 import ar.edu.itba.paw.models.HealthInsurance;
 import ar.edu.itba.paw.models.Specialty;
 import ar.edu.itba.paw.webapp.auth.PawAuthUserDetails;
 import ar.edu.itba.paw.webapp.auth.UserRoles;
-
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -23,10 +21,12 @@ import org.springframework.web.servlet.ModelAndView;
 public class HomeController {
 
   private final DoctorService doctorService;
+  private final LocationService locationService;
 
   @Autowired
-  public HomeController(final DoctorService doctorService, final UserService us) {
+  public HomeController(final DoctorService doctorService, final LocationService locationService) {
     this.doctorService = doctorService;
+    this.locationService = locationService;
   }
 
   @RequestMapping(value = "/")
@@ -56,20 +56,28 @@ public class HomeController {
           Integer healthInsuranceCode) {
     final ModelAndView mav = new ModelAndView("home/doctorDashboard");
 
+    // Get used specialties, cities and health insurances
+    List<Specialty> usedSpecialties = doctorService.getUsedSpecialties();
+    List<City> usedCities = locationService.getUsedCities();
+    List<HealthInsurance> usedHealthInsurances = doctorService.getUsedHealthInsurances();
+
+    // Get doctors
     List<Doctor> doctors =
         doctorService.getFilteredDoctors(name, specialtyCode, cityCode, healthInsuranceCode);
 
     mav.addObject("name", name);
     mav.addObject("doctors", doctors);
     mav.addObject("cityCode", cityCode);
-    mav.addObject("cities", Arrays.asList(City.values()));
+    mav.addObject("cities", usedCities);
     mav.addObject("specialtyCode", specialtyCode);
-    mav.addObject("specialties", Arrays.asList(Specialty.values()));
+    mav.addObject("specialties", usedSpecialties);
     mav.addObject("healthInsuranceCode", healthInsuranceCode);
-    mav.addObject("healthInsurances", Arrays.asList(HealthInsurance.values()));
+    mav.addObject("healthInsurances", usedHealthInsurances);
 
     // Only patients can book appointments
-    boolean canBook = PawAuthUserDetails.getRole().equals(UserRoles.ROLE_PATIENT) || PawAuthUserDetails.getRole().equals(UserRoles.ROLE_NULL);
+    boolean canBook =
+        PawAuthUserDetails.getRole().equals(UserRoles.ROLE_PATIENT)
+            || PawAuthUserDetails.getRole().equals(UserRoles.ROLE_NULL);
     mav.addObject("canBook", canBook);
 
     return mav;
