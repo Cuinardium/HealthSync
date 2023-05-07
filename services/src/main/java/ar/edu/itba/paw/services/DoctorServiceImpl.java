@@ -124,13 +124,16 @@ public class DoctorServiceImpl implements DoctorService {
 
   // Get all Specialties and health insurances that are used by doctors
   @Override
-  public List<HealthInsurance> getUsedHealthInsurances() {
+  public Map<HealthInsurance, Integer> getUsedHealthInsurances() {
 
     // Get all health insurances codes present in the database
-    List<Integer> healthInsurancesCodes = doctorDao.getUsedHealthInsurances();
+    Map<Integer, Integer> healthInsurancesCodes = doctorDao.getUsedHealthInsurances();
 
-    // Return a list of health insurances using the codes
-    return HealthInsurance.getHealthInsurances(healthInsurancesCodes);
+    Map<HealthInsurance, Integer> healthInsurancesMap = new HashMap<>();
+    healthInsurancesCodes.forEach(
+        (key, value) -> healthInsurancesMap.put(HealthInsurance.getHealthInsurance(key), value));
+
+    return healthInsurancesMap;
   }
 
   @Override

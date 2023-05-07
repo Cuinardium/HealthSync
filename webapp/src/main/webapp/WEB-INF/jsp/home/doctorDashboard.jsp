@@ -63,9 +63,9 @@
 
             <select class="form-select" name="healthInsuranceCode">
                 <option value="" selected disabled hidden> -- </option>
-                <c:forEach items="${healthInsurances}" var="healthInsurance" varStatus="status">
-                    <option value="${status.index}" ${status.index == healthInsuranceCode? 'selected':''}>
-                        <spring:message code="${healthInsurance.messageID}"/>
+                <c:forEach items="${healthInsuranceMap}" var="healthInsurance">
+                    <option value="${healthInsurance.key.ordinal()}" ${healthInsurance.key.ordinal() == healthInsuranceCode? 'selected':''}>
+                        <spring:message code="${healthInsurance.key.messageID}"/> (${healthInsurance.value})
                     </option>
                 </c:forEach>
             </select>

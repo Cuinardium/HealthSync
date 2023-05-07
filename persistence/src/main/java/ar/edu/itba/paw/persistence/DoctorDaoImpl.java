@@ -233,15 +233,24 @@ public class DoctorDaoImpl implements DoctorDao {
 
   // Get used specialties and health insurances
   @Override
-  public List<Integer> getUsedHealthInsurances() {
+  public Map<Integer, Integer> getUsedHealthInsurances() {
     String query =
         new QueryBuilder()
             .select("health_insurance_code")
-            .distinct()
+            .select("count(*) as qtyhealthinsurances")
             .from("health_insurance_accepted_by_doctor")
+            .groupBy("health_insurance_code")
             .build();
 
-    return jdbcTemplate.queryForList(query, Integer.class);
+    return jdbcTemplate.query(
+        query,
+        (ResultSet rs) -> {
+          Map<Integer, Integer> result = new HashMap<>();
+          while (rs.next()) {
+            result.put(rs.getInt("health_insurance_code"), rs.getInt("qtyhealthinsurances"));
+          }
+          return result;
+        });
   }
 
   @Override

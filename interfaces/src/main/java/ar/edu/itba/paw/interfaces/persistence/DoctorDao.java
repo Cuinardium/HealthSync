@@ -26,7 +26,7 @@ public interface DoctorDao {
   public void updateAttendingHours(long doctorId, AttendingHours attendingHours);
 
   // Get used specialties and health insurances
-  public List<Integer> getUsedHealthInsurances();
+  public Map<Integer, Integer> getUsedHealthInsurances();
 
   public Map<Integer, Integer> getUsedSpecialties();
 }
