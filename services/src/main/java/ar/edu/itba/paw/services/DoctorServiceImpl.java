@@ -11,7 +11,9 @@ import ar.edu.itba.paw.models.HealthInsurance;
 import ar.edu.itba.paw.models.Location;
 import ar.edu.itba.paw.models.Specialty;
 import ar.edu.itba.paw.models.User;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -132,12 +134,15 @@ public class DoctorServiceImpl implements DoctorService {
   }
 
   @Override
-  public List<Specialty> getUsedSpecialties() {
+  public Map<Specialty, Integer> getUsedSpecialties() {
 
-    // Get all specialties codes present in the database
-    List<Integer> specialtiesCodes = doctorDao.getUsedSpecialties();
+    // Get all specialties codes present in the database & qty of appearences
+    Map<Integer, Integer> specialtiesCodes = doctorDao.getUsedSpecialties();
+
+    Map<Specialty, Integer> specialtyMap = new HashMap<>();
+    specialtiesCodes.forEach((key, value) -> specialtyMap.put(Specialty.getSpecialty(key), value));
 
     // Return a list of specialties using the codes
-    return Specialty.getSpecialties(specialtiesCodes);
+    return specialtyMap;
   }
 }

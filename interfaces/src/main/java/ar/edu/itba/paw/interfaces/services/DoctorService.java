@@ -1,11 +1,11 @@
 package ar.edu.itba.paw.interfaces.services;
 
 import ar.edu.itba.paw.models.AttendingHours;
-import ar.edu.itba.paw.models.City;
 import ar.edu.itba.paw.models.Doctor;
 import ar.edu.itba.paw.models.HealthInsurance;
 import ar.edu.itba.paw.models.Specialty;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 public interface DoctorService {
@@ -39,9 +39,8 @@ public interface DoctorService {
 
   public List<Doctor> getDoctors();
 
-
   // Get all Specialties and health insurances that are used by doctors
-  public List<Specialty> getUsedSpecialties();
+  public Map<Specialty, Integer> getUsedSpecialties();
 
   public List<HealthInsurance> getUsedHealthInsurances();
 }

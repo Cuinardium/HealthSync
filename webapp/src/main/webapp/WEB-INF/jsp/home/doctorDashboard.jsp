@@ -54,9 +54,9 @@
 
             <select class="form-select" name="specialtyCode">
                 <option value="" selected disabled hidden> -- </option>
-                <c:forEach items="${specialties}" var="specialty" varStatus="status">
-                    <option value="${status.index}" ${status.index == specialtyCode? 'selected':''}>
-                        <spring:message code="${specialty.messageID}"/>
+                <c:forEach items="${specialtyMap}" var="specialty">
+                    <option value="${specialty.key.ordinal()}" ${specialty.key.ordinal() == specialtyCode? 'selected':''}>
+                        <spring:message code="${specialty.key.messageID}"/> (${specialty.value})
                     </option>
                 </c:forEach>
             </select>

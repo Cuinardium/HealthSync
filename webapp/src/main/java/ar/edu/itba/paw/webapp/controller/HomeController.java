@@ -58,7 +58,7 @@ public class HomeController {
     final ModelAndView mav = new ModelAndView("home/doctorDashboard");
 
     // Get used specialties, cities and health insurances
-    List<Specialty> usedSpecialties = doctorService.getUsedSpecialties();
+    Map<Specialty, Integer> usedSpecialties = doctorService.getUsedSpecialties();
     Map<City, Integer> usedCities = locationService.getUsedCities();
     List<HealthInsurance> usedHealthInsurances = doctorService.getUsedHealthInsurances();
 
@@ -71,7 +71,7 @@ public class HomeController {
     mav.addObject("cityCode", cityCode);
     mav.addObject("cityMap", usedCities);
     mav.addObject("specialtyCode", specialtyCode);
-    mav.addObject("specialties", usedSpecialties);
+    mav.addObject("specialtyMap", usedSpecialties);
     mav.addObject("healthInsuranceCode", healthInsuranceCode);
     mav.addObject("healthInsurances", usedHealthInsurances);
 

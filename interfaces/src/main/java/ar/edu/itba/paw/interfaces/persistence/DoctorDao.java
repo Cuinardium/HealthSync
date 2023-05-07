@@ -3,6 +3,7 @@ package ar.edu.itba.paw.interfaces.persistence;
 import ar.edu.itba.paw.models.AttendingHours;
 import ar.edu.itba.paw.models.Doctor;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 public interface DoctorDao {
@@ -27,5 +28,5 @@ public interface DoctorDao {
   // Get used specialties and health insurances
   public List<Integer> getUsedHealthInsurances();
 
-  public List<Integer> getUsedSpecialties();
+  public Map<Integer, Integer> getUsedSpecialties();
 }

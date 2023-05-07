@@ -245,10 +245,24 @@ public class DoctorDaoImpl implements DoctorDao {
   }
 
   @Override
-  public List<Integer> getUsedSpecialties() {
-    String query = new QueryBuilder().select("specialty_code").distinct().from("doctor").build();
+  public Map<Integer, Integer> getUsedSpecialties() {
+    String query =
+        new QueryBuilder()
+            .select("specialty_code")
+            .select("count(*) as qtyspecialties")
+            .from("doctor")
+            .groupBy("specialty_code")
+            .build();
 
-    return jdbcTemplate.queryForList(query, Integer.class);
+    return jdbcTemplate.query(
+        query,
+        (ResultSet rs) -> {
+          Map<Integer, Integer> result = new HashMap<>();
+          while (rs.next()) {
+            result.put(rs.getInt("specialty_code"), rs.getInt("qtyspecialties"));
+          }
+          return result;
+        });
   }
 
   // ================================= Private ======================================
