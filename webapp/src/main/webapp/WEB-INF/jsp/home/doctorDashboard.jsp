@@ -45,9 +45,9 @@
         <div class="filtersContainer">
             <select class="form-select" name="cityCode">
                 <option value="" selected disabled hidden> -- </option>
-                <c:forEach items="${cities}" var="city" varStatus="status">
-                    <option value="${status.index}" ${status.index == cityCode? 'selected':''}>
-                        <spring:message code="${city.messageID}"/>
+                <c:forEach items="${cityMap}" var="city">
+                    <option value="${city.key.ordinal()}" ${city.key.ordinal() == cityCode? 'selected':''}>
+                      <spring:message code="${city.key.messageID}"/> (${city.value})
                     </option>
                 </c:forEach>
             </select>

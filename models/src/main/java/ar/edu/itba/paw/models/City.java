@@ -215,6 +215,11 @@ public enum City {
     return messageID;
   }
 
+  // TODO: check for range?
+  public static City getCity(int cityCode) {
+    return City.values()[cityCode];
+  }
+
   public static List<City> getCities(List<Integer> cityCodes) {
 
     if (cityCodes == null) {
@@ -225,11 +230,11 @@ public enum City {
     City[] citiesArray = City.values();
 
     for (Integer cityCode : cityCodes) {
-      if(cityCode != null && cityCode >= 0 && cityCode < citiesArray.length) {
+      if (cityCode != null && cityCode >= 0 && cityCode < citiesArray.length) {
         cities.add(citiesArray[cityCode]);
       }
     }
-    
+
     return cities;
   }
 }

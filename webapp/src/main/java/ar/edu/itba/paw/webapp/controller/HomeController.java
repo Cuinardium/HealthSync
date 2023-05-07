@@ -10,6 +10,7 @@ import ar.edu.itba.paw.webapp.auth.PawAuthUserDetails;
 import ar.edu.itba.paw.webapp.auth.UserRoles;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -58,7 +59,7 @@ public class HomeController {
 
     // Get used specialties, cities and health insurances
     List<Specialty> usedSpecialties = doctorService.getUsedSpecialties();
-    List<City> usedCities = locationService.getUsedCities();
+    Map<City, Integer> usedCities = locationService.getUsedCities();
     List<HealthInsurance> usedHealthInsurances = doctorService.getUsedHealthInsurances();
 
     // Get doctors
@@ -68,7 +69,7 @@ public class HomeController {
     mav.addObject("name", name);
     mav.addObject("doctors", doctors);
     mav.addObject("cityCode", cityCode);
-    mav.addObject("cities", usedCities);
+    mav.addObject("cityMap", usedCities);
     mav.addObject("specialtyCode", specialtyCode);
     mav.addObject("specialties", usedSpecialties);
     mav.addObject("healthInsuranceCode", healthInsuranceCode);

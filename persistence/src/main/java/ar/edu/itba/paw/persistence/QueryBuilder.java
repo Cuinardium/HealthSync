@@ -13,6 +13,7 @@ public class QueryBuilder {
   private final List<String> innerJoinConditions;
 
   private final List<String> whereConditions;
+  private final List<String> groupByColumns;
 
   private final List<String> orderByColumns;
   private final List<Boolean> orderByDirections;
@@ -24,6 +25,7 @@ public class QueryBuilder {
     this.innerJoinTables = new ArrayList<>();
     this.innerJoinConditions = new ArrayList<>();
     this.whereConditions = new ArrayList<>();
+    this.groupByColumns = new ArrayList<>();
     this.orderByColumns = new ArrayList<>();
 
     // True = ASC, False = DESC
@@ -53,6 +55,11 @@ public class QueryBuilder {
 
   public QueryBuilder where(String condition) {
     this.whereConditions.add(condition);
+    return this;
+  }
+
+  public QueryBuilder groupBy(String... columns) {
+    this.groupByColumns.addAll(Arrays.asList(columns));
     return this;
   }
 
@@ -95,6 +102,9 @@ public class QueryBuilder {
 
     if (!whereConditions.isEmpty()) {
       query.append(" WHERE ").append(String.join(" AND ", whereConditions));
+    }
+    if (!groupByColumns.isEmpty()) {
+      query.append(" GROUP BY ").append(String.join(",", groupByColumns));
     }
 
     if (!orderByColumns.isEmpty()) {
