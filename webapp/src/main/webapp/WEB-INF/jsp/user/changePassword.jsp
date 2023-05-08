@@ -18,6 +18,8 @@
 <spring:message code="form.cpassword" var="cpassword"/>
 <spring:message code="form.cpassword_hint" var="cpassword_hint"/>
 <spring:message code="profile.saveChanges" var="saveChanges"/>
+<spring:message code="profile.oldPassword" var="oldPassword"/>
+<spring:message code="profile.oldPassword_hint" var="oldPassword_hint"/>
 
 <html>
 <head>
@@ -35,6 +37,13 @@
 <div class="formContainer generalPadding">
     <h1>${title}</h1>
 <form:form modelAttribute="changePasswordForm" class="card" action="${changePasswordUrl}" method="POST">
+    <div class="formRow">
+        <div class="formItem">
+            <form:label path="oldPassword">${oldPassword}</form:label>
+            <form:input class="form-control" type="password" path="oldPassword" placeholder="${oldPassword_hint}"/>
+            <form:errors path="oldPassword" cssClass="error" element="p"/>
+        </div>
+    </div>
     <div class="formRow">
         <div class="formItem">
             <form:label path="password">${password}</form:label>
