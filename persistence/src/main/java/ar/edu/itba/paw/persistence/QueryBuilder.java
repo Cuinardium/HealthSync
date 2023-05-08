@@ -6,24 +6,26 @@ import java.util.List;
 
 public class QueryBuilder {
 
-
   private String table;
   private final List<String> columns;
-  
+
   private final List<String> innerJoinTables;
   private final List<String> innerJoinConditions;
 
   private final List<String> whereConditions;
+  private final List<String> groupByColumns;
 
   private final List<String> orderByColumns;
   private final List<Boolean> orderByDirections;
 
+  private boolean distinct;
 
   public QueryBuilder() {
     this.columns = new ArrayList<>();
     this.innerJoinTables = new ArrayList<>();
     this.innerJoinConditions = new ArrayList<>();
     this.whereConditions = new ArrayList<>();
+    this.groupByColumns = new ArrayList<>();
     this.orderByColumns = new ArrayList<>();
 
     // True = ASC, False = DESC
@@ -32,6 +34,11 @@ public class QueryBuilder {
 
   public QueryBuilder select(String... columns) {
     this.columns.addAll(Arrays.asList(columns));
+    return this;
+  }
+
+  public QueryBuilder distinct() {
+    this.distinct = true;
     return this;
   }
 
@@ -48,6 +55,11 @@ public class QueryBuilder {
 
   public QueryBuilder where(String condition) {
     this.whereConditions.add(condition);
+    return this;
+  }
+
+  public QueryBuilder groupBy(String... columns) {
+    this.groupByColumns.addAll(Arrays.asList(columns));
     return this;
   }
 
@@ -68,6 +80,10 @@ public class QueryBuilder {
 
     query.append("SELECT");
 
+    if (distinct) {
+      query.append(" DISTINCT");
+    }
+
     if (columns.isEmpty()) {
       query.append(" *");
     } else {
@@ -77,12 +93,18 @@ public class QueryBuilder {
     query.append(" FROM ").append(table);
 
     for (int i = 0; i < innerJoinTables.size(); i++) {
-      query.append(" INNER JOIN ").append(innerJoinTables.get(i)).append(" ON ").append(innerJoinConditions.get(i));
+      query
+          .append(" INNER JOIN ")
+          .append(innerJoinTables.get(i))
+          .append(" ON ")
+          .append(innerJoinConditions.get(i));
     }
-
 
     if (!whereConditions.isEmpty()) {
       query.append(" WHERE ").append(String.join(" AND ", whereConditions));
+    }
+    if (!groupByColumns.isEmpty()) {
+      query.append(" GROUP BY ").append(String.join(",", groupByColumns));
     }
 
     if (!orderByColumns.isEmpty()) {
@@ -105,4 +127,3 @@ public class QueryBuilder {
     return query.toString();
   }
 }
-

@@ -12,13 +12,17 @@ public class ErrorController {
   @RequestMapping("/errors/403")
   @ResponseStatus(HttpStatus.FORBIDDEN)
   public ModelAndView error403() {
-    return new ModelAndView("/errors/403");
+    ModelAndView mav = new ModelAndView("/errors/403");
+    mav.addObject("message", "error.403");
+    return mav;
   }
 
   @RequestMapping("/errors/404")
   @ResponseStatus(HttpStatus.NOT_FOUND)
   public ModelAndView error404() {
-    return new ModelAndView("/errors/404");
+    ModelAndView mav = new ModelAndView("/errors/404");
+    mav.addObject("message", "error.404");
+    return mav;
   }
 
   @RequestMapping("/errors/500")

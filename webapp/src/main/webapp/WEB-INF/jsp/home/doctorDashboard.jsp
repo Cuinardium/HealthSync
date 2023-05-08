@@ -45,27 +45,27 @@
         <div class="filtersContainer">
             <select class="form-select" name="cityCode">
                 <option value="" selected disabled hidden> -- </option>
-                <c:forEach items="${cities}" var="city" varStatus="status">
-                    <option value="${status.index}" ${status.index == cityCode? 'selected':''}>
-                        <spring:message code="${city.messageID}"/>
+                <c:forEach items="${cityMap}" var="city">
+                    <option value="${city.key.ordinal()}" ${city.key.ordinal() == cityCode? 'selected':''}>
+                      <spring:message code="${city.key.messageID}"/> (${city.value})
                     </option>
                 </c:forEach>
             </select>
 
             <select class="form-select" name="specialtyCode">
                 <option value="" selected disabled hidden> -- </option>
-                <c:forEach items="${specialties}" var="specialty" varStatus="status">
-                    <option value="${status.index}" ${status.index == specialtyCode? 'selected':''}>
-                        <spring:message code="${specialty.messageID}"/>
+                <c:forEach items="${specialtyMap}" var="specialty">
+                    <option value="${specialty.key.ordinal()}" ${specialty.key.ordinal() == specialtyCode? 'selected':''}>
+                        <spring:message code="${specialty.key.messageID}"/> (${specialty.value})
                     </option>
                 </c:forEach>
             </select>
 
             <select class="form-select" name="healthInsuranceCode">
                 <option value="" selected disabled hidden> -- </option>
-                <c:forEach items="${healthInsurances}" var="healthInsurance" varStatus="status">
-                    <option value="${status.index}" ${status.index == healthInsuranceCode? 'selected':''}>
-                        <spring:message code="${healthInsurance.messageID}"/>
+                <c:forEach items="${healthInsuranceMap}" var="healthInsurance">
+                    <option value="${healthInsurance.key.ordinal()}" ${healthInsurance.key.ordinal() == healthInsuranceCode? 'selected':''}>
+                        <spring:message code="${healthInsurance.key.messageID}"/> (${healthInsurance.value})
                     </option>
                 </c:forEach>
             </select>
@@ -93,23 +93,23 @@
                         <p class="card-text">${healthInsurance}</p>
                     </div>
                 </div>
-                <div class="buttonsContainer">
-                    <div class="card-body">
-                        <a href="${appointmentUrl}" class="btn btn-primary">${book}</a>
+                <c:if test="${canBook}">
+                    <div class="buttonsContainer">
+                        <div class="card-body">
+                            <a href="${appointmentUrl}" class="btn btn-primary">${book}</a>
+                        </div>
                     </div>
-                </div>
+                </c:if>
             </div>
 
         </c:forEach>
-        <c:if test="${doctors.isEmpty()}">
-            <div class="d-flex justify-content-center">
-                <!-- TODO: style this vvvv -->
-                <h4>${noDoctors}</h4>
+        <c:if test="${empty doctors}">
+            <div class="noDoctorsMsg">
+                <div class="alert alert-info">${noDoctors}</div>
             </div>
         </c:if>
     </div>
 </div>
-<script src="${searchBarJs}"></script>
 </body>
 </html>
 

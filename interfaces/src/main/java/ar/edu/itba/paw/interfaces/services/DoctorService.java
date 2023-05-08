@@ -2,7 +2,10 @@ package ar.edu.itba.paw.interfaces.services;
 
 import ar.edu.itba.paw.models.AttendingHours;
 import ar.edu.itba.paw.models.Doctor;
+import ar.edu.itba.paw.models.HealthInsurance;
+import ar.edu.itba.paw.models.Specialty;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 public interface DoctorService {
@@ -18,10 +21,16 @@ public interface DoctorService {
       AttendingHours attendingHours);
 
   public void updateInformation(
-          long doctorId, String email, String firstName, String lastName, int healthInsuranceCode, int specialtyCode, int cityCode, String address);
+      long doctorId,
+      String email,
+      String firstName,
+      String lastName,
+      int healthInsuranceCode,
+      int specialtyCode,
+      int cityCode,
+      String address);
 
-
-    public void updateAttendingHours(long doctorId, AttendingHours attendingHours);
+  public void updateAttendingHours(long doctorId, AttendingHours attendingHours);
 
   public Optional<Doctor> getDoctorById(long id);
 
@@ -29,4 +38,9 @@ public interface DoctorService {
       String name, int specialtyCode, int cityCode, int healthInsuranceCode);
 
   public List<Doctor> getDoctors();
+
+  // Get all Specialties and health insurances that are used by doctors
+  public Map<Specialty, Integer> getUsedSpecialties();
+
+  public Map<HealthInsurance, Integer> getUsedHealthInsurances();
 }
