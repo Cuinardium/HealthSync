@@ -13,8 +13,11 @@ public class ImageValidator implements ConstraintValidator<ValidateImage, Multip
   @Override
   public boolean isValid(
       MultipartFile image, ConstraintValidatorContext constraintValidatorContext) {
-    if (image == null || image.isEmpty() || image.getSize() > MAX_IMG_SIZE) {
+    if (image == null || image.isEmpty()) {
       return true;
+    }
+    if (image.getSize() > MAX_IMG_SIZE) {
+      return false;
     }
     String extension = FilenameUtils.getExtension(image.getOriginalFilename());
     return isValidExtension(extension);
