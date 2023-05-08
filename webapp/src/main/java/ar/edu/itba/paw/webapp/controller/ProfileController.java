@@ -6,7 +6,6 @@ import ar.edu.itba.paw.interfaces.services.PatientService;
 import ar.edu.itba.paw.interfaces.services.UserService;
 import ar.edu.itba.paw.models.*;
 import ar.edu.itba.paw.webapp.auth.PawAuthUserDetails;
-import ar.edu.itba.paw.webapp.exceptions.ImageNotFoundException;
 import ar.edu.itba.paw.webapp.exceptions.UserNotFoundException;
 import ar.edu.itba.paw.webapp.form.DoctorEditForm;
 import ar.edu.itba.paw.webapp.form.DoctorEditForm.DayEnum;
@@ -77,13 +76,11 @@ public class ProfileController {
             .getDoctorById(PawAuthUserDetails.getCurrentUserId())
             .orElseThrow(UserNotFoundException::new);
 
-    Image image =
-        imageService
-            .getImage(doctor.getProfilePictureId())
-            .orElseThrow(ImageNotFoundException::new);
-
-    doctorEditForm.setImage(image);
-
+    //    Image image =
+    //        imageService
+    //            .getImage(doctor.getProfilePictureId())
+    //            .orElseThrow(ImageNotFoundException::new);
+    //  doctorEditForm.setImage(image);
     doctorEditForm.setName(doctor.getFirstName());
     doctorEditForm.setLastname(doctor.getLastName());
     doctorEditForm.setEmail(doctor.getEmail());
@@ -167,16 +164,16 @@ public class ProfileController {
             .getPatientById(PawAuthUserDetails.getCurrentUserId())
             .orElseThrow(UserNotFoundException::new);
 
-    Image image =
-        imageService
-            .getImage(patient.getProfilePictureId())
-            .orElseThrow(ImageNotFoundException::new);
+    // Image image =
+    //  imageService
+    //    .getImage(patient.getProfilePictureId())
+    //  .orElseThrow(ImageNotFoundException::new);
 
     patientEditForm.setEmail(patient.getEmail());
     patientEditForm.setName(patient.getFirstName());
     patientEditForm.setLastname(patient.getLastName());
     patientEditForm.setHealthInsuranceCode(patient.getHealthInsurance().ordinal());
-    patientEditForm.setImage(image);
+    //  patientEditForm.setImage(image);
 
     final ModelAndView mav = new ModelAndView("user/patientEdit");
     mav.addObject("form", patientEditForm);

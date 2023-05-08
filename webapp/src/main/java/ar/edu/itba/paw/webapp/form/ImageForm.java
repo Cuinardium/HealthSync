@@ -1,19 +1,17 @@
 package ar.edu.itba.paw.webapp.form;
 
-import ar.edu.itba.paw.models.Image;
+import ar.edu.itba.paw.webapp.annotations.ValidateImage;
+import org.springframework.web.multipart.MultipartFile;
 
 public class ImageForm {
 
-  // TODO:
-  // change image to a validated class
-  // add validations
-  private Image image;
+  @ValidateImage private MultipartFile image;
 
-  public Image getImage() {
+  public MultipartFile getImage() {
     return image;
   }
 
-  public void setImage(Image image) {
+  public void setImage(MultipartFile image) {
     this.image = image;
   }
 }
