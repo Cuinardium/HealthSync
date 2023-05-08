@@ -223,7 +223,9 @@ public class AppointmentDaoImpl implements AppointmentDao {
 
     appointmentsQuery.orderByAsc("appointment_date").orderByAsc("appointment_time");
 
-    appointmentsQuery.limit(pageSize).offset(page * pageSize);
+    if (page >= 0 && pageSize > 0) {
+        appointmentsQuery.limit(pageSize).offset(page * pageSize);
+    }
 
     return appointmentsQuery;
   }

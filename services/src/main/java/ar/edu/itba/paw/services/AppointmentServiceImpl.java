@@ -8,6 +8,7 @@ import ar.edu.itba.paw.interfaces.services.PatientService;
 import ar.edu.itba.paw.models.Appointment;
 import ar.edu.itba.paw.models.AppointmentStatus;
 import ar.edu.itba.paw.models.Doctor;
+import ar.edu.itba.paw.models.Page;
 import ar.edu.itba.paw.models.Patient;
 import ar.edu.itba.paw.models.ThirtyMinuteBlock;
 import java.time.LocalDate;
@@ -144,7 +145,7 @@ public class AppointmentServiceImpl implements AppointmentService {
   public List<ThirtyMinuteBlock> getAvailableHoursForDoctorOnDate(long doctorId, LocalDate date) {
 
     // Get doctor appointments for date
-    List<Appointment> appointments = getFilteredAppointmentsForDoctor(doctorId, null, date, date);
+    Page<Appointment> appointments = getFilteredAppointmentsForDoctor(doctorId, null, date, date, -1, -1);
 
     Doctor doctor = doctorService.getDoctorById(doctorId).orElseThrow(RuntimeException::new);
 
@@ -154,7 +155,7 @@ public class AppointmentServiceImpl implements AppointmentService {
       availableHours.add(block);
     }
 
-    for (Appointment appointment : appointments) {
+    for (Appointment appointment : appointments.getContent()) {
       if ((appointment.getStatus() == AppointmentStatus.ACCEPTED
           || appointment.getStatus() == AppointmentStatus.COMPLETED)) {
         availableHours.remove(appointment.getTimeBlock());
@@ -165,14 +166,14 @@ public class AppointmentServiceImpl implements AppointmentService {
   }
 
   @Override
-  public List<Appointment> getFilteredAppointmentsForDoctor(
-      long doctorId, AppointmentStatus status, LocalDate from, LocalDate to) {
-    return appointmentDao.getFilteredAppointmentsForDoctor(doctorId, status, from, to);
+  public Page<Appointment> getFilteredAppointmentsForDoctor(
+      long doctorId, AppointmentStatus status, LocalDate from, LocalDate to, int page, int pageSize) {
+    return appointmentDao.getFilteredAppointmentsForDoctor(doctorId, status, from, to, page, pageSize);
   }
 
   @Override
-  public List<Appointment> getFilteredAppointmentsForPatient(
-      long patientId, AppointmentStatus status, LocalDate from, LocalDate to) {
-    return appointmentDao.getFilteredAppointmentsForPatient(patientId, status, from, to);
+  public Page<Appointment> getFilteredAppointmentsForPatient(
+      long patientId, AppointmentStatus status, LocalDate from, LocalDate to, int page, int pageSize) {
+    return appointmentDao.getFilteredAppointmentsForPatient(patientId, status, from, to, page, pageSize);
   }
 }
