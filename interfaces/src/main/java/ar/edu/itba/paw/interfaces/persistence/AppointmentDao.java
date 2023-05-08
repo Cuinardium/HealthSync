@@ -2,6 +2,7 @@ package ar.edu.itba.paw.interfaces.persistence;
 
 import ar.edu.itba.paw.models.Appointment;
 import ar.edu.itba.paw.models.AppointmentStatus;
+import ar.edu.itba.paw.models.Page;
 import ar.edu.itba.paw.models.ThirtyMinuteBlock;
 import java.time.LocalDate;
 import java.util.List;
@@ -24,9 +25,9 @@ public interface AppointmentDao {
 
   List<Appointment> getAppointmentsForDoctor(long doctorId);
 
-  List<Appointment> getFilteredAppointmentsForPatient(long patientId, AppointmentStatus status, LocalDate from, LocalDate to);
+  Page<Appointment> getFilteredAppointmentsForPatient(long patientId, AppointmentStatus status, LocalDate from, LocalDate to, int page, int pageSize);
 
-  List<Appointment> getFilteredAppointmentsForDoctor(long doctorId, AppointmentStatus status, LocalDate from, LocalDate to);
+  Page<Appointment> getFilteredAppointmentsForDoctor(long doctorId, AppointmentStatus status, LocalDate from, LocalDate to, int page, int pageSize);
 
   void updateAppointmentStatus(long appointmentId, AppointmentStatus status);
 }
