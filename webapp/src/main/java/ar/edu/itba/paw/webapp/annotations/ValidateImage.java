@@ -12,7 +12,7 @@ import javax.validation.Payload;
 @Retention(RetentionPolicy.RUNTIME)
 @Constraint(validatedBy = ImageValidator.class)
 public @interface ValidateImage {
-  String message() default "Image must be a jpeg of size < 8MB";
+  String message() default "Image must be a png/jpg/jpeg of size < 8MB";
 
   Class<?>[] groups() default {};
 
