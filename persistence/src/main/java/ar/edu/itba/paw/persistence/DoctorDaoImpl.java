@@ -6,6 +6,7 @@ import ar.edu.itba.paw.models.City;
 import ar.edu.itba.paw.models.Doctor;
 import ar.edu.itba.paw.models.HealthInsurance;
 import ar.edu.itba.paw.models.Location;
+import ar.edu.itba.paw.models.Page;
 import ar.edu.itba.paw.models.Specialty;
 import ar.edu.itba.paw.models.ThirtyMinuteBlock;
 import java.sql.ResultSet;
@@ -200,8 +201,13 @@ public class DoctorDaoImpl implements DoctorDao {
   }
 
   @Override
-  public List<Doctor> getFilteredDoctors(
-      String name, int specialtyCode, int cityCode, int healthInsuranceCode) {
+  public Page<Doctor> getFilteredDoctors(
+      String name,
+      int specialtyCode,
+      int cityCode,
+      int healthInsuranceCode,
+      int page,
+      int pageSize) {
 
     // Start building the query
     QueryBuilder query = doctorQuery();
@@ -223,7 +229,18 @@ public class DoctorDaoImpl implements DoctorDao {
       query.where("health_insurance_code = " + healthInsuranceCode);
     }
 
-    return jdbcTemplate.query(query.build(), doctorMapper);
+    if (page >= 0 && pageSize > 0) {
+      query.limit(pageSize).offset(page * pageSize);
+    }
+
+    List<Doctor> doctors = jdbcTemplate.query(query.build(), doctorMapper);
+
+    // Get the total number of doctors
+    String doctorCountQuery = new QueryBuilder().select("count(*)").from("doctor").build();
+
+    int totalDoctors = jdbcTemplate.queryForObject(doctorCountQuery, Integer.class);
+
+    return new Page<>(doctors, page, totalDoctors); 
   }
 
   @Override
