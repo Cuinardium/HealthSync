@@ -5,6 +5,7 @@ import ar.edu.itba.paw.interfaces.services.LocationService;
 import ar.edu.itba.paw.models.City;
 import ar.edu.itba.paw.models.Doctor;
 import ar.edu.itba.paw.models.HealthInsurance;
+import ar.edu.itba.paw.models.Page;
 import ar.edu.itba.paw.models.Specialty;
 import ar.edu.itba.paw.webapp.auth.PawAuthUserDetails;
 import ar.edu.itba.paw.webapp.auth.UserRoles;
@@ -19,6 +20,8 @@ import org.springframework.web.servlet.ModelAndView;
 
 @Controller
 public class HomeController {
+
+  private static final DEFAULT_PAGE_SIZE = "20"
 
   private final DoctorService doctorService;
   private final LocationService locationService;
@@ -53,7 +56,9 @@ public class HomeController {
       @RequestParam(value = "specialtyCode", required = false, defaultValue = "-1")
           Integer specialtyCode,
       @RequestParam(value = "healthInsuranceCode", required = false, defaultValue = "-1")
-          Integer healthInsuranceCode) {
+          Integer healthInsuranceCode,
+      @RequestParam(value = "page", required = false, defaultValue = "1") Integer page,
+      @RequestParam(value = "pageSize", required = false, defaultValue = DEFAULT_PAGE_SIZE) Integer pageSize) {
     final ModelAndView mav = new ModelAndView("home/doctorDashboard");
 
     // Get used specialties, cities and health insurances
@@ -62,11 +67,11 @@ public class HomeController {
     List<HealthInsurance> usedHealthInsurances = doctorService.getUsedHealthInsurances();
 
     // Get doctors
-    List<Doctor> doctors =
-        doctorService.getFilteredDoctors(name, specialtyCode, cityCode, healthInsuranceCode);
+    Page<Doctor> doctors =
+        doctorService.getFilteredDoctors(name, specialtyCode, cityCode, healthInsuranceCode, page - 1, pageSize);
 
     mav.addObject("name", name);
-    mav.addObject("doctors", doctors);
+    mav.addObject("doctors", doctors.getContent());
     mav.addObject("cityCode", cityCode);
     mav.addObject("cities", usedCities);
     mav.addObject("specialtyCode", specialtyCode);

@@ -261,19 +261,19 @@ public class AppointmentController {
     // Get relevant appointments
     List<Appointment> upcomingAppointments =
         appointmentService.getFilteredAppointmentsForDoctor(
-            PawAuthUserDetails.getCurrentUserId(), AppointmentStatus.ACCEPTED, fromDate, toDate);
+            PawAuthUserDetails.getCurrentUserId(), AppointmentStatus.ACCEPTED, fromDate, toDate, -1, -1).getContent();
 
     List<Appointment> pendingAppointments =
         appointmentService.getFilteredAppointmentsForDoctor(
-            PawAuthUserDetails.getCurrentUserId(), AppointmentStatus.PENDING, fromDate, toDate);
+            PawAuthUserDetails.getCurrentUserId(), AppointmentStatus.PENDING, fromDate, toDate, -1, -1).getContent();
 
     List<Appointment> cancelledAppointments =
         appointmentService.getFilteredAppointmentsForDoctor(
-            PawAuthUserDetails.getCurrentUserId(), AppointmentStatus.CANCELLED, fromDate, toDate);
+            PawAuthUserDetails.getCurrentUserId(), AppointmentStatus.CANCELLED, fromDate, toDate, -1 ,-1).getContent();
 
     List<Appointment> completedAppointments =
         appointmentService.getFilteredAppointmentsForDoctor(
-            PawAuthUserDetails.getCurrentUserId(), AppointmentStatus.COMPLETED, fromDate, toDate);
+            PawAuthUserDetails.getCurrentUserId(), AppointmentStatus.COMPLETED, fromDate, toDate, -1, -1).getContent();
 
     // Create tabs
     List<AppointmentTab> tabs = new ArrayList<>();
@@ -334,23 +334,23 @@ public class AppointmentController {
     // Get relevant appointments
     List<Appointment> upcomingAppointments =
         appointmentService.getFilteredAppointmentsForPatient(
-            PawAuthUserDetails.getCurrentUserId(), AppointmentStatus.ACCEPTED, fromDate, toDate);
+            PawAuthUserDetails.getCurrentUserId(), AppointmentStatus.ACCEPTED, fromDate, toDate, 0, 100).getContent();
 
     List<Appointment> pendingAppointments =
         appointmentService.getFilteredAppointmentsForPatient(
-            PawAuthUserDetails.getCurrentUserId(), AppointmentStatus.PENDING, fromDate, toDate);
+            PawAuthUserDetails.getCurrentUserId(), AppointmentStatus.PENDING, fromDate, toDate, 0, 100).getContent();
 
     List<Appointment> rejectedAppointments =
         appointmentService.getFilteredAppointmentsForPatient(
-            PawAuthUserDetails.getCurrentUserId(), AppointmentStatus.REJECTED, fromDate, toDate);
+            PawAuthUserDetails.getCurrentUserId(), AppointmentStatus.REJECTED, fromDate, toDate, 0, 100).getContent();
 
     List<Appointment> cancelledAppointments =
         appointmentService.getFilteredAppointmentsForPatient(
-            PawAuthUserDetails.getCurrentUserId(), AppointmentStatus.CANCELLED, fromDate, toDate);
+            PawAuthUserDetails.getCurrentUserId(), AppointmentStatus.CANCELLED, fromDate, toDate, 0, 100).getContent();
 
     List<Appointment> completedAppointments =
         appointmentService.getFilteredAppointmentsForPatient(
-            PawAuthUserDetails.getCurrentUserId(), AppointmentStatus.COMPLETED, fromDate, toDate);
+            PawAuthUserDetails.getCurrentUserId(), AppointmentStatus.COMPLETED, fromDate, toDate, 0, 100).getContent();
 
     // Create tabs
     List<AppointmentTab> tabs = new ArrayList<>();
