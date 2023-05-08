@@ -53,38 +53,33 @@ public class UserDaoImpl implements UserDao {
   }
 
   @Override
-    public void editUser(long userId, String email, String firstName, String lastName) {
+  public void editUser(long userId, String email, String firstName, String lastName) {
     String update =
-            new UpdateBuilder()
-                    .update("users")
-                    .set(
-                            "email",
-                            "'" + email + "'")
-                    .set(
-                            "first_name",
-                            "'" + firstName + "'")
-                    .set(
-                            "last_name",
-                            "'" + lastName + "'")
-                    .where("user_id = (" + userId + ")")
-                    .build();
+        new UpdateBuilder()
+            .update("users")
+            .set("email", "'" + email + "'")
+            .set("first_name", "'" + firstName + "'")
+            .set("last_name", "'" + lastName + "'")
+            .where("user_id = (" + userId + ")")
+            .build();
 
     jdbcTemplate.update(update);
-    }
+  }
 
-    @Override
-    public void changePassword(long userId, String password) {
-      String update =
-              new UpdateBuilder()
-                      .update("users")
-                      .set(
-                              "password",
-                              "'" + password + "'")
-                      .where("user_id = (" + userId + ")")
-                      .build();
+  @Override
+  public void changePassword(long userId, String oldPassword, String password) {
+    String update =
+        new UpdateBuilder()
+            .update("users")
+            .set("password", "'" + password + "'")
+            .where("user_id = (" + userId + ")")
+            // TODO: si nada matchea ->  tiro exep?
+            // TODO: que pasa si hay 2 con la misma contrasena?
+            .where("password = '" + oldPassword + "'")
+            .build();
 
-      jdbcTemplate.update(update);
-    }
+    jdbcTemplate.update(update);
+  }
 
   // Optional garantiza que no va a ser null, pero no significa q se vaya a devolver un usuario
   @Override
@@ -96,8 +91,9 @@ public class UserDaoImpl implements UserDao {
   }
 
   @Override
-  public Optional<User> findByEmail(String email){
-    String query = new QueryBuilder().select().from("users").where("email = '" + email + "'").build();
+  public Optional<User> findByEmail(String email) {
+    String query =
+        new QueryBuilder().select().from("users").where("email = '" + email + "'").build();
     return jdbcTemplate.query(query, ROW_MAPPER).stream().findFirst();
   }
 }

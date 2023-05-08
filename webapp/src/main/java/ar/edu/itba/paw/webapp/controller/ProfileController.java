@@ -192,8 +192,16 @@ public class ProfileController {
       return changePassword(changePasswordForm);
     }
 
-    userService.changePassword(
-        PawAuthUserDetails.getCurrentUserId(), changePasswordForm.getPassword());
+    try {
+      userService.changePassword(
+          PawAuthUserDetails.getCurrentUserId(),
+          changePasswordForm.getOldPassword(),
+          changePasswordForm.getPassword());
+    } catch (RuntimeException e) {
+      // TODO: la contrasenia vieja no matchaba u otro error
+      throw e;
+      // return changePassword(changePasswordForm);
+    }
     ModelAndView mav = new ModelAndView("components/operationSuccessful");
     mav.addObject("showHeader", true);
     mav.addObject("operationTitle", "profile.changePasswordSuccessfulTitle");

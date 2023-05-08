@@ -29,13 +29,14 @@ public class UserServiceImpl implements UserService {
 
   @Transactional
   @Override
-  public void editUser(long userId, String email, String firstName, String lastName){
+  public void editUser(long userId, String email, String firstName, String lastName) {
     userDao.editUser(userId, email, firstName, lastName);
   }
 
   @Override
-  public void changePassword(long userId, String password){
-    userDao.changePassword(userId, passwordEncoder.encode(password));
+  public void changePassword(long userId, String oldPassword, String password) {
+    userDao.changePassword(
+        userId, passwordEncoder.encode(oldPassword), passwordEncoder.encode(password));
   }
 
   @Override

@@ -9,7 +9,7 @@ public interface UserDao {
 
   void editUser(long userId, String email, String firstName, String lastName);
 
-  void changePassword(long userId, String password);
+  void changePassword(long userId, String oldPassword, String password);
 
   Optional<User> findById(long id);
 
