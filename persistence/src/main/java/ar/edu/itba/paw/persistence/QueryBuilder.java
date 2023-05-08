@@ -19,6 +19,9 @@ public class QueryBuilder {
 
   private boolean distinct;
 
+  private int limit = -1;
+  private int offset = -1;
+
   public QueryBuilder() {
     this.columns = new ArrayList<>();
     this.innerJoinTables = new ArrayList<>();
@@ -37,6 +40,16 @@ public class QueryBuilder {
 
   public QueryBuilder distinct() {
     this.distinct = true;
+    return this;
+  }
+
+  public QueryBuilder limit(int limit) {
+    this.limit = limit;
+    return this;
+  }
+
+  public QueryBuilder offset(int offset) {
+    this.offset = offset;
     return this;
   }
 
@@ -112,6 +125,14 @@ public class QueryBuilder {
           query.append(", ");
         }
       }
+    }
+
+    if (offset >= 0) {
+      query.append(" OFFSET ").append(offset);
+    }
+
+    if (limit >= 0) {
+      query.append(" LIMIT ").append(limit);
     }
 
     return query.toString();
