@@ -18,6 +18,7 @@
 <spring:message code="form.password_hint" var="password_hint"/>
 <spring:message code="login.rememberMe" var="rememberMe"/>
 <spring:message code="login.submit" var="submit"/>
+<spring:message code="login.register" var="register"/>
 
 
 <html>
@@ -59,6 +60,10 @@
         </div>
 
         <button type="submit" class="btn btn-primary submitButton">${submit}</button>
+
+        <div class="formRow">
+            <a href="/patient-register">${register}</a>
+        </div>
     </form:form>
 </div>
 </body>
