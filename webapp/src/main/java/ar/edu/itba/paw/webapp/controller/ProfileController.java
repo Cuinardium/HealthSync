@@ -7,10 +7,10 @@ import ar.edu.itba.paw.interfaces.services.UserService;
 import ar.edu.itba.paw.models.*;
 import ar.edu.itba.paw.webapp.auth.PawAuthUserDetails;
 import ar.edu.itba.paw.webapp.exceptions.UserNotFoundException;
+import ar.edu.itba.paw.webapp.form.ChangePasswordForm;
 import ar.edu.itba.paw.webapp.form.DoctorEditForm;
 import ar.edu.itba.paw.webapp.form.DoctorEditForm.DayEnum;
 import ar.edu.itba.paw.webapp.form.HourRangeForm;
-import ar.edu.itba.paw.webapp.form.PasswordForm;
 import ar.edu.itba.paw.webapp.form.PatientEditForm;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -186,13 +186,14 @@ public class ProfileController {
 
   @RequestMapping(value = "/change-password", method = RequestMethod.POST)
   public ModelAndView changePasswordSubmit(
-      @Valid @ModelAttribute("changePasswordForm") final PasswordForm passwordForm,
+      @Valid @ModelAttribute("changePasswordForm") final ChangePasswordForm changePasswordForm,
       final BindingResult errors) {
     if (errors.hasErrors()) {
-      return changePassword(passwordForm);
+      return changePassword(changePasswordForm);
     }
 
-    userService.changePassword(PawAuthUserDetails.getCurrentUserId(), passwordForm.getPassword());
+    userService.changePassword(
+        PawAuthUserDetails.getCurrentUserId(), changePasswordForm.getPassword());
     ModelAndView mav = new ModelAndView("components/operationSuccessful");
     mav.addObject("showHeader", true);
     mav.addObject("operationTitle", "profile.changePasswordSuccessfulTitle");
@@ -202,9 +203,9 @@ public class ProfileController {
 
   @RequestMapping(value = "/change-password", method = RequestMethod.GET)
   public ModelAndView changePassword(
-      @ModelAttribute("changePasswordForm") final PasswordForm passwordForm) {
+      @ModelAttribute("changePasswordForm") final ChangePasswordForm changePasswordForm) {
     final ModelAndView mav = new ModelAndView("user/changePassword");
-    mav.addObject("form", passwordForm);
+    mav.addObject("form", changePasswordForm);
     mav.addObject("healthInsurances", Arrays.asList(HealthInsurance.values()));
 
     return mav;
