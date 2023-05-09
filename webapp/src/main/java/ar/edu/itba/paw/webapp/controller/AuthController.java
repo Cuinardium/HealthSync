@@ -20,6 +20,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 @Controller
@@ -34,7 +35,10 @@ public class AuthController {
   private final AuthenticationManager authenticationManager;
 
   @Autowired
-  public AuthController(final DoctorService doctorService, final PatientService patientService, AuthenticationManager authenticationManager) {
+  public AuthController(
+      final DoctorService doctorService,
+      final PatientService patientService,
+      AuthenticationManager authenticationManager) {
     this.doctorService = doctorService;
     this.patientService = patientService;
     this.authenticationManager = authenticationManager;
@@ -58,8 +62,15 @@ public class AuthController {
   // }
 
   @RequestMapping(value = "/login")
-  public ModelAndView loginForm(@ModelAttribute("loginForm") final LoginForm loginForm) {
-    return new ModelAndView("auth/login");
+  public ModelAndView loginForm(
+      @ModelAttribute("loginForm") final LoginForm loginForm,
+      @RequestParam(value = "error", required = false) String error) {
+
+    ModelAndView mav = new ModelAndView("auth/login");
+
+    // si ?error no esta -> error es null, en cambio si ?error esta -> error es un string vacio
+    mav.addObject("hasError", error != null);
+    return mav;
   }
 
   @RequestMapping(value = "/logout", method = RequestMethod.POST)
@@ -153,8 +164,9 @@ public class AuthController {
     return mav;
   }
 
-  private void authUser(String username, String password){
-    UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(username, password);
+  private void authUser(String username, String password) {
+    UsernamePasswordAuthenticationToken authToken =
+        new UsernamePasswordAuthenticationToken(username, password);
     Authentication authentication = authenticationManager.authenticate(authToken);
     SecurityContextHolder.getContext().setAuthentication(authentication);
   }
