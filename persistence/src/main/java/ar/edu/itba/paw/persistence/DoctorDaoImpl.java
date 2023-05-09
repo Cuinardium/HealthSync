@@ -6,6 +6,7 @@ import ar.edu.itba.paw.models.City;
 import ar.edu.itba.paw.models.Doctor;
 import ar.edu.itba.paw.models.HealthInsurance;
 import ar.edu.itba.paw.models.Location;
+import ar.edu.itba.paw.models.Page;
 import ar.edu.itba.paw.models.Specialty;
 import ar.edu.itba.paw.models.ThirtyMinuteBlock;
 import java.sql.ResultSet;
@@ -200,30 +201,49 @@ public class DoctorDaoImpl implements DoctorDao {
   }
 
   @Override
-  public List<Doctor> getFilteredDoctors(
-      String name, int specialtyCode, int cityCode, int healthInsuranceCode) {
+  public Page<Doctor> getFilteredDoctors(
+      String name,
+      int specialtyCode,
+      int cityCode,
+      int healthInsuranceCode,
+      int page,
+      int pageSize) {
 
     // Start building the query
     QueryBuilder query = doctorQuery();
+    QueryBuilder doctorCountQuery = doctorCountQuery();
 
     // Add the filters to the query, if it is the first filter, don't add AND
     if (name != null && !name.isEmpty()) {
       query.where("CONCAT(first_name, ' ', last_name) ILIKE CONCAT('" + name + "', '%')");
+      doctorCountQuery.where(
+          "CONCAT(first_name, ' ', last_name) ILIKE CONCAT('" + name + "', '%')");
     }
 
     if (specialtyCode >= 0) {
       query.where("specialty_code = " + specialtyCode);
+      doctorCountQuery.where("specialty_code = " + specialtyCode);
     }
 
     if (cityCode >= 0) {
       query.where("city_code = " + cityCode);
+      doctorCountQuery.where("city_code = " + cityCode);
     }
 
     if (healthInsuranceCode >= 0) {
       query.where("health_insurance_code = " + healthInsuranceCode);
+      doctorCountQuery.where("health_insurance_code = " + healthInsuranceCode);
     }
 
-    return jdbcTemplate.query(query.build(), doctorMapper);
+    if (page >= 0 && pageSize > 0) {
+      query.limit(pageSize).offset(page * pageSize);
+    }
+
+    List<Doctor> doctors = jdbcTemplate.query(query.build(), doctorMapper);
+
+    int totalDoctors = jdbcTemplate.queryForObject(doctorCountQuery.build(), Integer.class);
+
+    return new Page<>(doctors, page, totalDoctors); 
   }
 
   @Override
@@ -296,6 +316,23 @@ public class DoctorDaoImpl implements DoctorDao {
             "friday",
             "saturday",
             "sunday")
+        .from("doctor")
+        .innerJoin("users", "doctor_id = user_id")
+        .innerJoin("location_for_doctor", "doctor.doctor_id = location_for_doctor.doctor_id")
+        .innerJoin(
+            "doctor_location",
+            "location_for_doctor.doctor_location_id = doctor_location.doctor_location_id")
+        .innerJoin(
+            "health_insurance_accepted_by_doctor",
+            "doctor.doctor_id = health_insurance_accepted_by_doctor.doctor_id")
+        .innerJoin(
+            "doctor_attending_hours",
+            "doctor.attending_hours_id = doctor_attending_hours.attending_hours_id");
+  }
+
+  private QueryBuilder doctorCountQuery() {
+    return new QueryBuilder()
+        .select("count(*)")
         .from("doctor")
         .innerJoin("users", "doctor_id = user_id")
         .innerJoin("location_for_doctor", "doctor.doctor_id = location_for_doctor.doctor_id")

@@ -5,13 +5,6 @@
     justify-content: center;
 }
 
-.filtersContainer{
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
-}
-
 .card{
     display: flex;
     flex-direction: row;

@@ -9,6 +9,7 @@ import ar.edu.itba.paw.models.City;
 import ar.edu.itba.paw.models.Doctor;
 import ar.edu.itba.paw.models.HealthInsurance;
 import ar.edu.itba.paw.models.Location;
+import ar.edu.itba.paw.models.Page;
 import ar.edu.itba.paw.models.Specialty;
 import ar.edu.itba.paw.models.User;
 import java.util.HashMap;
@@ -112,9 +113,9 @@ public class DoctorServiceImpl implements DoctorService {
   }
 
   @Override
-  public List<Doctor> getFilteredDoctors(
-      String name, int specialtyCode, int cityCode, int healthInsuranceCode) {
-    return doctorDao.getFilteredDoctors(name, specialtyCode, cityCode, healthInsuranceCode);
+  public Page<Doctor> getFilteredDoctors(
+      String name, int specialtyCode, int cityCode, int healthInsuranceCode, int page, int pageSize) {
+    return doctorDao.getFilteredDoctors(name, specialtyCode, cityCode, healthInsuranceCode, page, pageSize);
   }
 
   @Override

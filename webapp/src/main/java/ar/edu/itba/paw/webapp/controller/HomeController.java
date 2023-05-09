@@ -5,14 +5,17 @@ import ar.edu.itba.paw.interfaces.services.LocationService;
 import ar.edu.itba.paw.models.City;
 import ar.edu.itba.paw.models.Doctor;
 import ar.edu.itba.paw.models.HealthInsurance;
+import ar.edu.itba.paw.models.Page;
 import ar.edu.itba.paw.models.Specialty;
 import ar.edu.itba.paw.webapp.auth.PawAuthUserDetails;
 import ar.edu.itba.paw.webapp.auth.UserRoles;
+import ar.edu.itba.paw.webapp.form.DoctorFilterForm;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -20,6 +23,8 @@ import org.springframework.web.servlet.ModelAndView;
 
 @Controller
 public class HomeController {
+
+  private static final int DEFAULT_PAGE_SIZE = 10;
 
   private final DoctorService doctorService;
   private final LocationService locationService;
@@ -49,12 +54,19 @@ public class HomeController {
 
   @RequestMapping(value = "/doctorDashboard", method = RequestMethod.GET)
   public ModelAndView doctorDashboard(
-      @RequestParam(value = "name", required = false, defaultValue = "") String name,
-      @RequestParam(value = "cityCode", required = false, defaultValue = "-1") Integer cityCode,
-      @RequestParam(value = "specialtyCode", required = false, defaultValue = "-1")
-          Integer specialtyCode,
-      @RequestParam(value = "healthInsuranceCode", required = false, defaultValue = "-1")
-          Integer healthInsuranceCode) {
+      @ModelAttribute("doctorFilterForm") DoctorFilterForm doctorFilterForm,
+      @RequestParam(value = "page", required = false, defaultValue = "1") String page) {
+
+    // Parse page here to catch NumberFormatException
+    // If done in parameter, it would be caught by the ExceptionHandler
+    int parsedPage;
+    try {
+      parsedPage = Integer.parseInt(page);
+    } catch (NumberFormatException e) {
+      parsedPage = 1;
+    }
+    parsedPage = parsedPage < 1 ? 1 : parsedPage;
+
     final ModelAndView mav = new ModelAndView("home/doctorDashboard");
 
     // Get used specialties, cities and health insurances
@@ -62,18 +74,29 @@ public class HomeController {
     Map<City, Integer> usedCities = locationService.getUsedCities();
     Map<HealthInsurance, Integer> usedHealthInsurances = doctorService.getUsedHealthInsurances();
 
+    int specialtyCode = doctorFilterForm.getSpecialtyCode();
+    int cityCode = doctorFilterForm.getCityCode();
+    int healthInsuranceCode = doctorFilterForm.getHealthInsuranceCode();
+    String name = doctorFilterForm.getName();
+
+
     // Get doctors
-    List<Doctor> doctors =
-        doctorService.getFilteredDoctors(name, specialtyCode, cityCode, healthInsuranceCode);
+    Page<Doctor> doctors =
+        doctorService.getFilteredDoctors(
+            name, specialtyCode, cityCode, healthInsuranceCode, parsedPage - 1, DEFAULT_PAGE_SIZE);
 
     mav.addObject("name", name);
-    mav.addObject("doctors", doctors);
+    mav.addObject("doctors", doctors.getContent());
     mav.addObject("cityCode", cityCode);
     mav.addObject("cityMap", usedCities);
     mav.addObject("specialtyCode", specialtyCode);
     mav.addObject("specialtyMap", usedSpecialties);
     mav.addObject("healthInsuranceCode", healthInsuranceCode);
     mav.addObject("healthInsuranceMap", usedHealthInsurances);
+
+    // Pagination
+    mav.addObject("currentPage", doctors.getCurrentPage() + 1);
+    mav.addObject("totalPages", doctors.getContent().size() == 0 ? 1 : doctors.getTotalPages());
 
     // Only patients can book appointments
     boolean canBook =
