@@ -59,8 +59,7 @@ public class AppointmentServiceImpl implements AppointmentService {
 
     if (possibleAppointment.isPresent()
         && (possibleAppointment.get().getStatus() == AppointmentStatus.COMPLETED
-            || possibleAppointment.get().getStatus() == AppointmentStatus.ACCEPTED
-            || possibleAppointment.get().getStatus() == AppointmentStatus.PENDING)) {
+            || possibleAppointment.get().getStatus() == AppointmentStatus.ACCEPTED)) {
       throw new RuntimeException();
     }
 
@@ -144,10 +143,9 @@ public class AppointmentServiceImpl implements AppointmentService {
   @Override
   public List<ThirtyMinuteBlock> getAvailableHoursForDoctorOnDate(long doctorId, LocalDate date) {
 
-    // Get doctor appointments
-    List<Appointment> appointments = getAppointmentsForDoctor(doctorId);
+    // Get doctor appointments for date
+    List<Appointment> appointments = getFilteredAppointmentsForDoctor(doctorId, null, date, date);
 
-    // TODO: error handling
     Doctor doctor = doctorService.getDoctorById(doctorId).orElseThrow(RuntimeException::new);
 
     // Get doctor available hours for date
@@ -157,10 +155,8 @@ public class AppointmentServiceImpl implements AppointmentService {
     }
 
     for (Appointment appointment : appointments) {
-      if (appointment.getDate().equals(date)
-          && (appointment.getStatus() == AppointmentStatus.ACCEPTED
-              || appointment.getStatus() == AppointmentStatus.PENDING
-              || appointment.getStatus() == AppointmentStatus.COMPLETED)) {
+      if ((appointment.getStatus() == AppointmentStatus.ACCEPTED
+          || appointment.getStatus() == AppointmentStatus.COMPLETED)) {
         availableHours.remove(appointment.getTimeBlock());
       }
     }
