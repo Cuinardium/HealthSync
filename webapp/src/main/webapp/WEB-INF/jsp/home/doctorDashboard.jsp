@@ -9,8 +9,6 @@
 <c:url value="/css/main.css" var="mainCss"/>
 <c:url value="/css/doctorDashboard.css" var="doctorDashboardCss"/>
 
-<c:url value="/doctorDashboard" var="doctorDashboardUrl"/>
-
 <c:url value="/img/doctorCardDefault.jpg" var="doctorCardDefaultImg"/>
 
 <spring:message code="doctorDashboard.title" var="title"/>
@@ -73,6 +71,19 @@
                 <div class="alert alert-info">${noDoctors}</div>
             </div>
         </c:if>
+
+
+        <c:url value="/doctorDashboard" var="doctorDashboardUrl">
+            <c:param name="name" value="${name}"/>
+            <c:param name="cityCode" value="${cityCode}"/>
+            <c:param name="specialtyCode" value="${specialtyCode}"/>
+            <c:param name="healthInsuranceCode" value="${healthInsuranceCode}"/>
+        </c:url>
+        <jsp:include page="../components/pagination.jsp">
+            <jsp:param name="currentPage" value="${currentPage}"/>
+            <jsp:param name="totalPages" value="${totalPages}"/>
+            <jsp:param name="url" value="${doctorDashboardUrl}"/>
+        </jsp:include>
     </div>
 </div>
 </body>

@@ -24,7 +24,7 @@ import org.springframework.web.servlet.ModelAndView;
 @Controller
 public class HomeController {
 
-  private static final String DEFAULT_PAGE_SIZE = "20";
+  private static final int DEFAULT_PAGE_SIZE = 10;
 
   private final DoctorService doctorService;
   private final LocationService locationService;
@@ -55,9 +55,17 @@ public class HomeController {
   @RequestMapping(value = "/doctorDashboard", method = RequestMethod.GET)
   public ModelAndView doctorDashboard(
       @ModelAttribute("doctorFilterForm") DoctorFilterForm doctorFilterForm,
-      @RequestParam(value = "page", required = false, defaultValue = "1") Integer page,
-      @RequestParam(value = "pageSize", required = false, defaultValue = DEFAULT_PAGE_SIZE)
-          Integer pageSize) {
+      @RequestParam(value = "page", required = false, defaultValue = "1") String page) {
+
+    // Parse page here to catch NumberFormatException
+    // If done in parameter, it would be caught by the ExceptionHandler
+    int parsedPage;
+    try {
+      parsedPage = Integer.parseInt(page);
+    } catch (NumberFormatException e) {
+      parsedPage = 1;
+    }
+    parsedPage = parsedPage < 1 ? 1 : parsedPage;
 
     final ModelAndView mav = new ModelAndView("home/doctorDashboard");
 
@@ -71,10 +79,11 @@ public class HomeController {
     int healthInsuranceCode = doctorFilterForm.getHealthInsuranceCode();
     String name = doctorFilterForm.getName();
 
+
     // Get doctors
     Page<Doctor> doctors =
         doctorService.getFilteredDoctors(
-            name, specialtyCode, cityCode, healthInsuranceCode, page - 1, pageSize);
+            name, specialtyCode, cityCode, healthInsuranceCode, parsedPage - 1, DEFAULT_PAGE_SIZE);
 
     mav.addObject("name", name);
     mav.addObject("doctors", doctors.getContent());
@@ -84,6 +93,10 @@ public class HomeController {
     mav.addObject("specialtyMap", usedSpecialties);
     mav.addObject("healthInsuranceCode", healthInsuranceCode);
     mav.addObject("healthInsuranceMap", usedHealthInsurances);
+
+    // Pagination
+    mav.addObject("currentPage", doctors.getCurrentPage() + 1);
+    mav.addObject("totalPages", doctors.getContent().size() == 0 ? 1 : doctors.getTotalPages());
 
     // Only patients can book appointments
     boolean canBook =

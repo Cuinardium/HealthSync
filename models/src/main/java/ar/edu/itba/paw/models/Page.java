@@ -25,7 +25,7 @@ public class Page<T> {
     return totalContentCount;
   }
 
-  public int getPageCount() {
-    return content.size();
+  public int getTotalPages() {
+    return (int) Math.ceil((double) totalContentCount / content.size());
   }
 }
