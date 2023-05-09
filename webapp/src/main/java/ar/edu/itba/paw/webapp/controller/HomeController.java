@@ -9,11 +9,13 @@ import ar.edu.itba.paw.models.Page;
 import ar.edu.itba.paw.models.Specialty;
 import ar.edu.itba.paw.webapp.auth.PawAuthUserDetails;
 import ar.edu.itba.paw.webapp.auth.UserRoles;
+import ar.edu.itba.paw.webapp.form.DoctorFilterForm;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -22,7 +24,7 @@ import org.springframework.web.servlet.ModelAndView;
 @Controller
 public class HomeController {
 
-  private static final DEFAULT_PAGE_SIZE = "20"
+  private static final String DEFAULT_PAGE_SIZE = "20";
 
   private final DoctorService doctorService;
   private final LocationService locationService;
@@ -52,14 +54,11 @@ public class HomeController {
 
   @RequestMapping(value = "/doctorDashboard", method = RequestMethod.GET)
   public ModelAndView doctorDashboard(
-      @RequestParam(value = "name", required = false, defaultValue = "") String name,
-      @RequestParam(value = "cityCode", required = false, defaultValue = "-1") Integer cityCode,
-      @RequestParam(value = "specialtyCode", required = false, defaultValue = "-1")
-          Integer specialtyCode,
-      @RequestParam(value = "healthInsuranceCode", required = false, defaultValue = "-1")
-          Integer healthInsuranceCode,
+      @ModelAttribute("doctorFilterForm") DoctorFilterForm doctorFilterForm,
       @RequestParam(value = "page", required = false, defaultValue = "1") Integer page,
-      @RequestParam(value = "pageSize", required = false, defaultValue = DEFAULT_PAGE_SIZE) Integer pageSize) {
+      @RequestParam(value = "pageSize", required = false, defaultValue = DEFAULT_PAGE_SIZE)
+          Integer pageSize) {
+
     final ModelAndView mav = new ModelAndView("home/doctorDashboard");
 
     // Get used specialties, cities and health insurances
@@ -67,9 +66,15 @@ public class HomeController {
     Map<City, Integer> usedCities = locationService.getUsedCities();
     Map<HealthInsurance, Integer> usedHealthInsurances = doctorService.getUsedHealthInsurances();
 
+    int specialtyCode = doctorFilterForm.getSpecialtyCode();
+    int cityCode = doctorFilterForm.getCityCode();
+    int healthInsuranceCode = doctorFilterForm.getHealthInsuranceCode();
+    String name = doctorFilterForm.getName();
+
     // Get doctors
     Page<Doctor> doctors =
-        doctorService.getFilteredDoctors(name, specialtyCode, cityCode, healthInsuranceCode, page - 1, pageSize);
+        doctorService.getFilteredDoctors(
+            name, specialtyCode, cityCode, healthInsuranceCode, page - 1, pageSize);
 
     mav.addObject("name", name);
     mav.addObject("doctors", doctors.getContent());

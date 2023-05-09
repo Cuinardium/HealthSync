@@ -1,5 +1,6 @@
 <%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 
 <!-- Include -->
 <jsp:include page="/resources/externalResources.jsp"/>
@@ -13,10 +14,7 @@
 <c:url value="/img/doctorCardDefault.jpg" var="doctorCardDefaultImg"/>
 
 <spring:message code="doctorDashboard.title" var="title"/>
-<spring:message code="doctorDashboard.placeholder.city" var="city"/>
-<spring:message code="doctorDashboard.placeholder.specialty" var="specialty"/>
-<spring:message code="doctorDashboard.placeholder.insurance" var="insurance"/>
-<spring:message code="doctorDashboard.button.filter" var="filter"/>
+
 <spring:message code="doctorDashboard.button.book" var="book"/>
 <spring:message code="doctorDashboard.no.doctors" var="noDoctors"/>
 
@@ -36,43 +34,10 @@
 <!-- Content -->
 <div class="page-content generalPadding">
 
-    <!-- Search Bar -->
-    <jsp:include page="../components/searchBar.jsp">
-        <jsp:param name="searchValue" value="${name}"/>
-    </jsp:include>
-
-    <form method="get" action="${doctorDashboardUrl}">
-        <div class="filtersContainer">
-            <select class="form-select" name="cityCode">
-                <option value="" selected disabled hidden> -- </option>
-                <c:forEach items="${cityMap}" var="city">
-                    <option value="${city.key.ordinal()}" ${city.key.ordinal() == cityCode? 'selected':''}>
-                      <spring:message code="${city.key.messageID}"/> (${city.value})
-                    </option>
-                </c:forEach>
-            </select>
-
-            <select class="form-select" name="specialtyCode">
-                <option value="" selected disabled hidden> -- </option>
-                <c:forEach items="${specialtyMap}" var="specialty">
-                    <option value="${specialty.key.ordinal()}" ${specialty.key.ordinal() == specialtyCode? 'selected':''}>
-                        <spring:message code="${specialty.key.messageID}"/> (${specialty.value})
-                    </option>
-                </c:forEach>
-            </select>
-
-            <select class="form-select" name="healthInsuranceCode">
-                <option value="" selected disabled hidden> -- </option>
-                <c:forEach items="${healthInsuranceMap}" var="healthInsurance">
-                    <option value="${healthInsurance.key.ordinal()}" ${healthInsurance.key.ordinal() == healthInsuranceCode? 'selected':''}>
-                        <spring:message code="${healthInsurance.key.messageID}"/> (${healthInsurance.value})
-                    </option>
-                </c:forEach>
-            </select>
-
-            <input type="submit" class="btn btn-primary" value="${filter}">
-        </div>
-    </form>
+    <c:set var="cityMap" value="${cityMap}" scope="request"/>
+    <c:set var="specialtyMap" value="${specialtyMap}" scope="request"/>
+    <c:set var="healthInsuranceMap" value="${healthInsuranceMap}" scope="request"/>
+    <jsp:include page="../components/filters.jsp"/>
 
     <div class="cardsContainer">
         <c:forEach items="${doctors}" var="doctor">
