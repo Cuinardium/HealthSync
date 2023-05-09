@@ -67,15 +67,12 @@ public class UserDaoImpl implements UserDao {
   }
 
   @Override
-  public void changePassword(long userId, String oldPassword, String password) {
+  public void changePassword(long userId, String password) {
     String update =
         new UpdateBuilder()
             .update("users")
             .set("password", "'" + password + "'")
             .where("user_id = (" + userId + ")")
-            // TODO: si nada matchea ->  tiro exep?
-            // TODO: que pasa si hay 2 con la misma contrasena?
-            .where("password = '" + oldPassword + "'")
             .build();
 
     jdbcTemplate.update(update);

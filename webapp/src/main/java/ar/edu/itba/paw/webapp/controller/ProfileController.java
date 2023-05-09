@@ -197,10 +197,13 @@ public class ProfileController {
           PawAuthUserDetails.getCurrentUserId(),
           changePasswordForm.getOldPassword(),
           changePasswordForm.getPassword());
-    } catch (RuntimeException e) {
-      // TODO: la contrasenia vieja no matchaba u otro error
-      throw e;
-      // return changePassword(changePasswordForm);
+    } catch (IllegalStateException exception) {
+      // No deberia pasar
+      throw exception;
+    } catch (RuntimeException /*OldPasswordDoesNotMatchException*/ exception) {
+      // TODO: ADD error to view
+      // Loggear?
+      return changePassword(changePasswordForm);
     }
     ModelAndView mav = new ModelAndView("components/operationSuccessful");
     mav.addObject("showHeader", true);

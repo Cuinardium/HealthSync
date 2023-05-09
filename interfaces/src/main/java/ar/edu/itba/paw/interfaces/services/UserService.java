@@ -9,7 +9,8 @@ public interface UserService {
 
   void editUser(long userId, String email, String firstName, String lastName);
 
-  void changePassword(long userId, String oldPassword, String password);
+  void changePassword(long userId, String oldPassword, String password)
+      throws IllegalStateException;
 
   Optional<User> findById(long id);
 

@@ -34,9 +34,16 @@ public class UserServiceImpl implements UserService {
   }
 
   @Override
-  public void changePassword(long userId, String oldPassword, String password) {
-    userDao.changePassword(
-        userId, passwordEncoder.encode(oldPassword), passwordEncoder.encode(password));
+  public void changePassword(long userId, String oldPassword, String password)
+      throws IllegalStateException {
+    if (!passwordEncoder.matches(
+        oldPassword,
+        userDao.findById(userId).orElseThrow(IllegalStateException::new).getPassword())) {
+      // TODO: OldPasswordDoesNotMatchException?!?! -> agregar al throws cuando este listo (tmb en
+      // la interfaz)
+      throw new RuntimeException("Old password does not match");
+    }
+    userDao.changePassword(userId, passwordEncoder.encode(password));
   }
 
   @Override
