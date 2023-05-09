@@ -6,6 +6,7 @@ import ar.edu.itba.paw.models.HealthInsurance;
 import ar.edu.itba.paw.models.Page;
 import ar.edu.itba.paw.models.Specialty;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 public interface DoctorService {
@@ -45,7 +46,7 @@ public interface DoctorService {
   public List<Doctor> getDoctors();
 
   // Get all Specialties and health insurances that are used by doctors
-  public List<Specialty> getUsedSpecialties();
+  public Map<Specialty, Integer> getUsedSpecialties();
 
-  public List<HealthInsurance> getUsedHealthInsurances();
+  public Map<HealthInsurance, Integer> getUsedHealthInsurances();
 }

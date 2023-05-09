@@ -23,6 +23,10 @@ public enum HealthInsurance {
     return messageID;
   }
 
+  public static HealthInsurance getHealthInsurance(int healthInsuranceCode) {
+    return HealthInsurance.values()[healthInsuranceCode];
+  }
+
   public static List<HealthInsurance> getHealthInsurances(List<Integer> healthInsurancesCodes) {
 
     if (healthInsurancesCodes == null) {
@@ -33,7 +37,9 @@ public enum HealthInsurance {
     HealthInsurance[] healthInsurancesArray = HealthInsurance.values();
 
     for (Integer healthInsuranceCode : healthInsurancesCodes) {
-      if (healthInsuranceCode != null && healthInsuranceCode >= 0 && healthInsuranceCode < healthInsurancesArray.length) {
+      if (healthInsuranceCode != null
+          && healthInsuranceCode >= 0
+          && healthInsuranceCode < healthInsurancesArray.length) {
         healthInsurances.add(healthInsurancesArray[healthInsuranceCode]);
       }
     }

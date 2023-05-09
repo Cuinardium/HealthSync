@@ -11,6 +11,7 @@ import ar.edu.itba.paw.webapp.auth.PawAuthUserDetails;
 import ar.edu.itba.paw.webapp.auth.UserRoles;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -62,9 +63,9 @@ public class HomeController {
     final ModelAndView mav = new ModelAndView("home/doctorDashboard");
 
     // Get used specialties, cities and health insurances
-    List<Specialty> usedSpecialties = doctorService.getUsedSpecialties();
-    List<City> usedCities = locationService.getUsedCities();
-    List<HealthInsurance> usedHealthInsurances = doctorService.getUsedHealthInsurances();
+    Map<Specialty, Integer> usedSpecialties = doctorService.getUsedSpecialties();
+    Map<City, Integer> usedCities = locationService.getUsedCities();
+    Map<HealthInsurance, Integer> usedHealthInsurances = doctorService.getUsedHealthInsurances();
 
     // Get doctors
     Page<Doctor> doctors =
@@ -73,11 +74,11 @@ public class HomeController {
     mav.addObject("name", name);
     mav.addObject("doctors", doctors.getContent());
     mav.addObject("cityCode", cityCode);
-    mav.addObject("cities", usedCities);
+    mav.addObject("cityMap", usedCities);
     mav.addObject("specialtyCode", specialtyCode);
-    mav.addObject("specialties", usedSpecialties);
+    mav.addObject("specialtyMap", usedSpecialties);
     mav.addObject("healthInsuranceCode", healthInsuranceCode);
-    mav.addObject("healthInsurances", usedHealthInsurances);
+    mav.addObject("healthInsuranceMap", usedHealthInsurances);
 
     // Only patients can book appointments
     boolean canBook =

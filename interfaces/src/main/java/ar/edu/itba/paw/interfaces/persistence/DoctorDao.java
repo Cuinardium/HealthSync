@@ -4,6 +4,7 @@ import ar.edu.itba.paw.models.AttendingHours;
 import ar.edu.itba.paw.models.Doctor;
 import ar.edu.itba.paw.models.Page;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 public interface DoctorDao {
@@ -31,7 +32,7 @@ public interface DoctorDao {
   public void updateAttendingHours(long doctorId, AttendingHours attendingHours);
 
   // Get used specialties and health insurances
-  public List<Integer> getUsedHealthInsurances();
+  public Map<Integer, Integer> getUsedHealthInsurances();
 
-  public List<Integer> getUsedSpecialties();
+  public Map<Integer, Integer> getUsedSpecialties();
 }

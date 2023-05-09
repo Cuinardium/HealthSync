@@ -3,8 +3,8 @@ package ar.edu.itba.paw.persistence;
 import ar.edu.itba.paw.interfaces.persistence.LocationDao;
 import ar.edu.itba.paw.models.City;
 import ar.edu.itba.paw.models.Location;
+import java.sql.ResultSet;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import javax.sql.DataSource;
@@ -19,13 +19,9 @@ public class LocationDaoImpl implements LocationDao {
 
   private static final RowMapper<Location> ROW_MAPPER =
       (rs, rowNum) -> {
-
         City city = City.values()[rs.getInt("city_code")];
-        
-        return new Location(
-            rs.getLong("doctor_location_id"),
-            city,
-            rs.getString("address"));
+
+        return new Location(rs.getLong("doctor_location_id"), city, rs.getString("address"));
       };
 
   private final JdbcTemplate jdbcTemplate;
@@ -68,14 +64,23 @@ public class LocationDaoImpl implements LocationDao {
 
   // Get all city codes present in the database
   @Override
-  public List<Integer> getUsedCities() {
+  public Map<Integer, Integer> getUsedCities() {
     String query =
         new QueryBuilder()
             .select("city_code")
-            .distinct()
+            .select("count(*) as qtycities")
             .from("doctor_location")
+            .groupBy("city_code")
             .build();
 
-    return jdbcTemplate.queryForList(query, Integer.class);
+    return jdbcTemplate.query(
+        query,
+        (ResultSet rs) -> {
+          Map<Integer, Integer> results = new HashMap<>();
+          while (rs.next()) {
+            results.put(rs.getInt("city_code"), rs.getInt("qtycities"));
+          }
+          return results;
+        });
   }
 }
