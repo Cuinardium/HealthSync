@@ -28,6 +28,7 @@
     <jsp:include page="../components/favicon.jsp"/>
     <link href="${mainCss}" rel="stylesheet"/>
     <link href="${doctorDashboardCss}" rel="stylesheet"/>
+    <script src="jquery-3.0.0.min.js"></script>
 </head>
 
 <body>
@@ -71,6 +72,7 @@
             </select>
 
             <input type="submit" class="btn btn-primary" value="${filter}">
+
         </div>
     </form>
 
@@ -96,13 +98,32 @@
                 <c:if test="${canBook}">
                     <div class="buttonsContainer">
                         <div class="card-body">
-                            <a href="${appointmentUrl}" class="btn btn-primary">${book}</a>
+                            <a class="btn btn-primary" onclick="checkInsurance('${appointmentUrl}', '${doctor.healthInsurance}')">${book}</a>
                         </div>
                     </div>
                 </c:if>
             </div>
 
         </c:forEach>
+        <div class="modal fade" id="modal" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="modalLabel">Modal title</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="false">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        ...
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary">Save changes</button>
+                    </div>
+                </div>
+            </div>
+        </div>
         <c:if test="${empty doctors}">
             <div class="noDoctorsMsg">
                 <div class="alert alert-info">${noDoctors}</div>
@@ -112,5 +133,24 @@
 </div>
 </body>
 </html>
+<script>
+
+
+    function checkInsurance(appointmentUrl, object){
+        if(object=='${patientHealthInsurance}'){
+            redirect(appointmentUrl);
+        }
+        else{
+            $('#modal').show();
+        }
+    }
+
+    function redirect(appointmentUrl){
+        window.location.replace(appointmentUrl);
+    }
+</script>
+
+
+
 
 

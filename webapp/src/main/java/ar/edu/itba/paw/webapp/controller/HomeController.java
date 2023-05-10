@@ -2,6 +2,7 @@ package ar.edu.itba.paw.webapp.controller;
 
 import ar.edu.itba.paw.interfaces.services.DoctorService;
 import ar.edu.itba.paw.interfaces.services.LocationService;
+import ar.edu.itba.paw.interfaces.services.PatientService;
 import ar.edu.itba.paw.models.City;
 import ar.edu.itba.paw.models.Doctor;
 import ar.edu.itba.paw.models.HealthInsurance;
@@ -11,7 +12,10 @@ import ar.edu.itba.paw.webapp.auth.UserRoles;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+
+import ar.edu.itba.paw.webapp.exceptions.UserNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -22,11 +26,14 @@ import org.springframework.web.servlet.ModelAndView;
 public class HomeController {
 
   private final DoctorService doctorService;
+
+  private final PatientService patientService;
   private final LocationService locationService;
 
   @Autowired
-  public HomeController(final DoctorService doctorService, final LocationService locationService) {
+  public HomeController(final DoctorService doctorService, PatientService patientService, final LocationService locationService) {
     this.doctorService = doctorService;
+    this.patientService = patientService;
     this.locationService = locationService;
   }
 
@@ -65,6 +72,16 @@ public class HomeController {
     // Get doctors
     List<Doctor> doctors =
         doctorService.getFilteredDoctors(name, specialtyCode, cityCode, healthInsuranceCode);
+
+
+    if(PawAuthUserDetails.getRole().equals(UserRoles.ROLE_PATIENT)){
+      PawAuthUserDetails currentUser = (PawAuthUserDetails) (SecurityContextHolder.getContext().getAuthentication().getPrincipal());
+      HealthInsurance patientHealthInsurance= patientService.getPatientById(currentUser.getId()).orElseThrow(UserNotFoundException::new).getHealthInsurance();
+
+      mav.addObject("patientHealthInsurance", patientHealthInsurance);
+    }else {
+      mav.addObject("patientHealthInsurance", null);
+    }
 
     mav.addObject("name", name);
     mav.addObject("doctors", doctors);
