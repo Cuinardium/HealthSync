@@ -22,16 +22,6 @@ public class DoctorEditForm extends UserEditForm {
   @ExistsInEnum(enumClass = Specialty.class)
   private Integer specialtyCode = -1;
 
-  public enum DayEnum {
-    MONDAY,
-    TUESDAY,
-    WEDNESDAY,
-    THURSDAY,
-    FRIDAY,
-    SATURDAY,
-    SUNDAY;
-  }
-
   public List<HourRangeForm> attendingHours;
 
   public List<HourRangeForm> getAttendingHours() {

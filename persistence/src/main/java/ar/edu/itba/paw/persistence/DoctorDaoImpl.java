@@ -7,11 +7,8 @@ import ar.edu.itba.paw.models.Doctor;
 import ar.edu.itba.paw.models.HealthInsurance;
 import ar.edu.itba.paw.models.Location;
 import ar.edu.itba.paw.models.Specialty;
-import ar.edu.itba.paw.models.ThirtyMinuteBlock;
 import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Collection;
+import java.time.DayOfWeek;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -26,7 +23,39 @@ import org.springframework.stereotype.Repository;
 @Repository
 public class DoctorDaoImpl implements DoctorDao {
 
-  private final RowMapper<Doctor> doctorMapper = new DoctorMapper();
+  private static final RowMapper<Doctor> DOCTOR_MAPPER =
+      (rs, rowNum) -> {
+        Specialty specialty = Specialty.values()[rs.getInt("specialty_code")];
+        HealthInsurance healthInsurance =
+            HealthInsurance.values()[rs.getInt("health_insurance_code")];
+
+        City city = City.values()[rs.getInt("city_code")];
+        Location location =
+            new Location(rs.getLong("doctor_location_id"), city, rs.getString("address"));
+
+        AttendingHours attendingHours =
+            new AttendingHours(
+                rs.getLong("monday"),
+                rs.getLong("tuesday"),
+                rs.getLong("wednesday"),
+                rs.getLong("thursday"),
+                rs.getLong("friday"),
+                rs.getLong("saturday"),
+                rs.getLong("sunday"));
+
+        return new Doctor(
+            rs.getLong("doctor_id"),
+            rs.getString("email"),
+            rs.getString("password"),
+            rs.getString("first_name"),
+            rs.getString("last_name"),
+            rs.getLong("profile_picture_id"),
+            healthInsurance,
+            specialty,
+            location,
+            attendingHours);
+      };
+
   private final JdbcTemplate jdbcTemplate;
   private final SimpleJdbcInsert doctorInsert;
   private final SimpleJdbcInsert doctorLocationInsert;
@@ -80,19 +109,19 @@ public class DoctorDaoImpl implements DoctorDao {
     Map<String, Object> attendingHoursData = new HashMap<>();
 
     attendingHoursData.put(
-        "monday", attendingHoursToBits(attendingHours.getAttendingBlocksMonday()));
+        "monday", attendingHours.getAttendingBlocksForDayAsBits(DayOfWeek.MONDAY));
     attendingHoursData.put(
-        "tuesday", attendingHoursToBits(attendingHours.getAttendingBlocksTuesday()));
+        "tuesday", attendingHours.getAttendingBlocksForDayAsBits(DayOfWeek.TUESDAY));
     attendingHoursData.put(
-        "wednesday", attendingHoursToBits(attendingHours.getAttendingBlocksWednesday()));
+        "wednesday", attendingHours.getAttendingBlocksForDayAsBits(DayOfWeek.WEDNESDAY));
     attendingHoursData.put(
-        "thursday", attendingHoursToBits(attendingHours.getAttendingBlocksThursday()));
+        "thursday", attendingHours.getAttendingBlocksForDayAsBits(DayOfWeek.THURSDAY));
     attendingHoursData.put(
-        "friday", attendingHoursToBits(attendingHours.getAttendingBlocksFriday()));
+        "friday", attendingHours.getAttendingBlocksForDayAsBits(DayOfWeek.FRIDAY));
     attendingHoursData.put(
-        "saturday", attendingHoursToBits(attendingHours.getAttendingBlocksSaturday()));
+        "saturday", attendingHours.getAttendingBlocksForDayAsBits(DayOfWeek.SATURDAY));
     attendingHoursData.put(
-        "sunday", attendingHoursToBits(attendingHours.getAttendingBlocksSunday()));
+        "sunday", attendingHours.getAttendingBlocksForDayAsBits(DayOfWeek.SUNDAY));
 
     long attendingHoursId =
         doctorAttendingHoursInsert.executeAndReturnKey(attendingHoursData).longValue();
@@ -164,25 +193,25 @@ public class DoctorDaoImpl implements DoctorDao {
             .update("doctor_attending_hours")
             .set(
                 "monday",
-                "'" + attendingHoursToBits(attendingHours.getAttendingBlocksMonday()) + "'")
+                "'" + attendingHours.getAttendingBlocksForDayAsBits(DayOfWeek.MONDAY) + "'")
             .set(
                 "tuesday",
-                "'" + attendingHoursToBits(attendingHours.getAttendingBlocksTuesday()) + "'")
+                "'" + attendingHours.getAttendingBlocksForDayAsBits(DayOfWeek.TUESDAY) + "'")
             .set(
                 "wednesday",
-                "'" + attendingHoursToBits(attendingHours.getAttendingBlocksWednesday()) + "'")
+                "'" + attendingHours.getAttendingBlocksForDayAsBits(DayOfWeek.WEDNESDAY) + "'")
             .set(
                 "thursday",
-                "'" + attendingHoursToBits(attendingHours.getAttendingBlocksThursday()) + "'")
+                "'" + attendingHours.getAttendingBlocksForDayAsBits(DayOfWeek.THURSDAY) + "'")
             .set(
                 "friday",
-                "'" + attendingHoursToBits(attendingHours.getAttendingBlocksFriday()) + "'")
+                "'" + attendingHours.getAttendingBlocksForDayAsBits(DayOfWeek.FRIDAY) + "'")
             .set(
                 "saturday",
-                "'" + attendingHoursToBits(attendingHours.getAttendingBlocksSaturday()) + "'")
+                "'" + attendingHours.getAttendingBlocksForDayAsBits(DayOfWeek.SATURDAY) + "'")
             .set(
                 "sunday",
-                "'" + attendingHoursToBits(attendingHours.getAttendingBlocksSunday()) + "'")
+                "'" + attendingHours.getAttendingBlocksForDayAsBits(DayOfWeek.SUNDAY) + "'")
             .where("attending_hours_id = (" + attendingHoursIdQuery + ")")
             .build();
 
@@ -196,7 +225,7 @@ public class DoctorDaoImpl implements DoctorDao {
 
     String query = doctorQuery().where("doctor.doctor_id = " + id).build();
 
-    return jdbcTemplate.query(query, doctorMapper).stream().findFirst();
+    return jdbcTemplate.query(query, DOCTOR_MAPPER).stream().findFirst();
   }
 
   @Override
@@ -223,12 +252,12 @@ public class DoctorDaoImpl implements DoctorDao {
       query.where("health_insurance_code = " + healthInsuranceCode);
     }
 
-    return jdbcTemplate.query(query.build(), doctorMapper);
+    return jdbcTemplate.query(query.build(), DOCTOR_MAPPER);
   }
 
   @Override
   public List<Doctor> getDoctors() {
-    return jdbcTemplate.query(doctorQuery().build(), doctorMapper);
+    return jdbcTemplate.query(doctorQuery().build(), DOCTOR_MAPPER);
   }
 
   // Get used specialties and health insurances
@@ -308,71 +337,5 @@ public class DoctorDaoImpl implements DoctorDao {
         .innerJoin(
             "doctor_attending_hours",
             "doctor.attending_hours_id = doctor_attending_hours.attending_hours_id");
-  }
-
-  private long attendingHoursToBits(Collection<ThirtyMinuteBlock> attendingHours) {
-
-    long bits = 0;
-
-    for (ThirtyMinuteBlock block : attendingHours) {
-      bits |= (1L << block.ordinal());
-    }
-
-    return bits;
-  }
-
-  private class DoctorMapper implements RowMapper<Doctor> {
-
-    // Most significant 16 bits dont encode anything
-    // The 48 least significant bits encode 30 minute blocks
-    // If the bit is 1 the doctor is available, otherwise it is not
-    // The least significant bit encodes the (0:00, 0:30) block
-    // The 48th bit encodes the (23:3, 0:00) block
-    private Collection<ThirtyMinuteBlock> attendingHoursFromBits(long bits) {
-
-      Collection<ThirtyMinuteBlock> blocks = new ArrayList<>();
-      ThirtyMinuteBlock[] values = ThirtyMinuteBlock.values();
-
-      for (int i = 0; i < 48; i++) {
-        if ((bits & (1L << i)) != 0) {
-          blocks.add(values[i]);
-        }
-      }
-
-      return blocks;
-    }
-
-    @Override
-    public Doctor mapRow(ResultSet rs, int rowNum) throws SQLException {
-      Specialty specialty = Specialty.values()[rs.getInt("specialty_code")];
-      HealthInsurance healthInsurance =
-          HealthInsurance.values()[rs.getInt("health_insurance_code")];
-
-      City city = City.values()[rs.getInt("city_code")];
-      Location location =
-          new Location(rs.getLong("doctor_location_id"), city, rs.getString("address"));
-
-      AttendingHours attendingHours =
-          new AttendingHours(
-              attendingHoursFromBits(rs.getLong("monday")),
-              attendingHoursFromBits(rs.getLong("tuesday")),
-              attendingHoursFromBits(rs.getLong("wednesday")),
-              attendingHoursFromBits(rs.getLong("thursday")),
-              attendingHoursFromBits(rs.getLong("friday")),
-              attendingHoursFromBits(rs.getLong("saturday")),
-              attendingHoursFromBits(rs.getLong("sunday")));
-
-      return new Doctor(
-          rs.getLong("doctor_id"),
-          rs.getString("email"),
-          rs.getString("password"),
-          rs.getString("first_name"),
-          rs.getString("last_name"),
-          rs.getLong("profile_picture_id"),
-          healthInsurance,
-          specialty,
-          location,
-          attendingHours);
-    }
   }
 }
