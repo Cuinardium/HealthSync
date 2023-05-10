@@ -5,4 +5,8 @@ import java.util.Optional;
 
 public interface ImageService {
   Optional<Image> getImage(long id);
+
+  void uploadImage(Image image);
+
+  void updateImage(long id, Image image);
 }

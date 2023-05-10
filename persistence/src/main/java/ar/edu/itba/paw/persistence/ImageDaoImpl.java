@@ -32,4 +32,24 @@ public class ImageDaoImpl implements ImageDao {
             .build();
     return jdbcTemplate.query(query, ROW_MAPPER).stream().findFirst();
   }
+
+  @Override
+  public void uploadImage(Image image) {
+    // TODO Auto-generated method stub
+    throw new UnsupportedOperationException("Unimplemented method 'uploadImage'");
+  }
+
+  @Override
+  public void updateImage(long id, Image image) {
+    // TODO: updateImage, if image is default -> create a new image
+    /* Something along
+     * IF EXISTS(SELECT ...)
+     *  INSERT INTO
+     *  VALUES
+     * ELSE
+     *  UPDATE
+     * END IF;
+     * */
+    throw new UnsupportedOperationException("Unimplemented method 'updateImage'");
+  }
 }
