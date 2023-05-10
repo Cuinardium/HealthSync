@@ -180,7 +180,6 @@ public class ProfileController {
     final ModelAndView mav = new ModelAndView("user/patientEdit");
     mav.addObject("form", patientEditForm);
     mav.addObject("healthInsurances", Arrays.asList(HealthInsurance.values()));
-
     return mav;
   }
 
@@ -189,7 +188,7 @@ public class ProfileController {
       @Valid @ModelAttribute("changePasswordForm") final ChangePasswordForm changePasswordForm,
       final BindingResult errors) {
     if (errors.hasErrors()) {
-      return changePassword(changePasswordForm);
+      return changePassword(changePasswordForm, false);
     }
 
     try {
@@ -203,7 +202,7 @@ public class ProfileController {
     } catch (RuntimeException /*OldPasswordDoesNotMatchException*/ exception) {
       // TODO: ADD error to view
       // Loggear?
-      return changePassword(changePasswordForm);
+      return changePassword(changePasswordForm, true);
     }
     ModelAndView mav = new ModelAndView("components/operationSuccessful");
     mav.addObject("showHeader", true);
@@ -214,11 +213,11 @@ public class ProfileController {
 
   @RequestMapping(value = "/change-password", method = RequestMethod.GET)
   public ModelAndView changePassword(
-      @ModelAttribute("changePasswordForm") final ChangePasswordForm changePasswordForm) {
+      @ModelAttribute("changePasswordForm") final ChangePasswordForm changePasswordForm,
+      Boolean OldPasswordDoesNotMatch) {
     final ModelAndView mav = new ModelAndView("user/changePassword");
+    mav.addObject("oldPasswordDoesNotMatch", OldPasswordDoesNotMatch);
     mav.addObject("form", changePasswordForm);
-    mav.addObject("healthInsurances", Arrays.asList(HealthInsurance.values()));
-
     return mav;
   }
 }
