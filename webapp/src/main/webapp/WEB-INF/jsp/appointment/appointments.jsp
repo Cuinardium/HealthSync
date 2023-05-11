@@ -84,12 +84,10 @@
                                 <c:url value="/my-appointments/${appointment.id}/update" var="updateUrl"/>
                                 <div class="cardButtonContainer">
                                     <c:forEach items="${tab.allowedActions}" var="action">
-                                        <form id="post-form" method="post" action="${updateUrl}/?status=${action.statusCode}">
-                                            <button onclick="openModal()"
+                                            <button onclick="openModal('${updateUrl}/?status=${action.statusCode}')"
                                                     class="post-button btn ${action.buttonClass}">
                                                 <spring:message code="${action.messageID}"/>
                                             </button>
-                                        </form>
                                         <div class="modal fade" id="modal" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
                                             <div class="modal-dialog" role="dialog">
                                                 <div class="modal-content">
@@ -100,8 +98,12 @@
                                                             ${modalDesc}
                                                     </div>
                                                     <div class="modal-footer">
-                                                        <button type="button" class="btn btn-danger" onclick="closeModal()">${modalDeny}</button>
-                                                        <button type="submit" id="modal-href" class="btn btn-primary">${modalConfirm}</button>
+                                                        <form id="post-modal" method="post">
+                                                            <div class="form-row container">
+                                                                <button type="button" class="btn btn-danger" onclick="closeModal()">${modalDeny}</button>
+                                                                <button type="submit" class="btn btn-primary">${modalConfirm}</button>
+                                                            </div>
+                                                        </form>
                                                     </div>
                                                 </div>
                                             </div>
@@ -126,8 +128,9 @@
 </body>
 </html>
 <script>
-    function openModal(){
-        $('#modal').modal('show')
+    function openModal(action){
+        $('#modal').modal('show');
+        $('#post-modal').attr('action', action);
     }
     function closeModal(){
         $('#modal').modal('hide')
