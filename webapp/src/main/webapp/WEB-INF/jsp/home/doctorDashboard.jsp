@@ -18,6 +18,7 @@
 <spring:message code="doctorDashboard.modal.title" var="modalTitle"/>
 <spring:message code="doctorDashboard.modal.desc" var="modalDesc"/>
 <spring:message code="doctorDashboard.modal.confirm" var="modalConfirm"/>
+<spring:message code="doctorDashboard.modal.deny" var="modalDeny"/>
 
 <html>
 <head>
@@ -78,6 +79,7 @@
                                     ${modalDesc}
                                 </div>
                                 <div class="modal-footer">
+                                    <button type="button" class="btn btn-danger" onclick="closeModal()">${modalDeny}</button>
                                     <a type="button" id="modal-href" class="btn btn-primary">${modalConfirm}</a>
                                 </div>
                             </div>
@@ -121,6 +123,9 @@
             $('#modal-href').attr('href', appointmentUrl);
 
         }
+    }
+    function closeModal(){
+        $('#modal').modal('hide')
     }
 
     function redirect(appointmentUrl){
