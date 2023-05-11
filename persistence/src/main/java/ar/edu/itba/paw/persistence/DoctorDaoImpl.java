@@ -7,6 +7,8 @@ import ar.edu.itba.paw.models.Doctor;
 import ar.edu.itba.paw.models.HealthInsurance;
 import ar.edu.itba.paw.models.Location;
 import ar.edu.itba.paw.models.Specialty;
+import ar.edu.itba.paw.models.ThirtyMinuteBlock;
+
 import java.sql.ResultSet;
 import java.time.DayOfWeek;
 import java.util.HashMap;
@@ -35,13 +37,13 @@ public class DoctorDaoImpl implements DoctorDao {
 
         AttendingHours attendingHours =
             new AttendingHours(
-                rs.getLong("monday"),
-                rs.getLong("tuesday"),
-                rs.getLong("wednesday"),
-                rs.getLong("thursday"),
-                rs.getLong("friday"),
-                rs.getLong("saturday"),
-                rs.getLong("sunday"));
+                ThirtyMinuteBlock.fromBits(rs.getLong("monday")),
+                ThirtyMinuteBlock.fromBits(rs.getLong("tuesday")),
+                ThirtyMinuteBlock.fromBits(rs.getLong("wednesday")),
+                ThirtyMinuteBlock.fromBits(rs.getLong("thursday")),
+                ThirtyMinuteBlock.fromBits(rs.getLong("friday")),
+                ThirtyMinuteBlock.fromBits(rs.getLong("saturday")),
+                ThirtyMinuteBlock.fromBits(rs.getLong("sunday")));
 
         return new Doctor(
             rs.getLong("doctor_id"),
@@ -109,19 +111,19 @@ public class DoctorDaoImpl implements DoctorDao {
     Map<String, Object> attendingHoursData = new HashMap<>();
 
     attendingHoursData.put(
-        "monday", attendingHours.getAttendingBlocksForDayAsBits(DayOfWeek.MONDAY));
+        "monday", ThirtyMinuteBlock.toBits(attendingHours.getAttendingBlocksForDay(DayOfWeek.MONDAY)));
     attendingHoursData.put(
-        "tuesday", attendingHours.getAttendingBlocksForDayAsBits(DayOfWeek.TUESDAY));
+        "tuesday", ThirtyMinuteBlock.toBits(attendingHours.getAttendingBlocksForDay(DayOfWeek.TUESDAY)));
     attendingHoursData.put(
-        "wednesday", attendingHours.getAttendingBlocksForDayAsBits(DayOfWeek.WEDNESDAY));
+        "wednesday", ThirtyMinuteBlock.toBits(attendingHours.getAttendingBlocksForDay(DayOfWeek.WEDNESDAY)));
     attendingHoursData.put(
-        "thursday", attendingHours.getAttendingBlocksForDayAsBits(DayOfWeek.THURSDAY));
+        "thursday", ThirtyMinuteBlock.toBits(attendingHours.getAttendingBlocksForDay(DayOfWeek.THURSDAY)));
     attendingHoursData.put(
-        "friday", attendingHours.getAttendingBlocksForDayAsBits(DayOfWeek.FRIDAY));
+        "friday", ThirtyMinuteBlock.toBits(attendingHours.getAttendingBlocksForDay(DayOfWeek.FRIDAY)));
     attendingHoursData.put(
-        "saturday", attendingHours.getAttendingBlocksForDayAsBits(DayOfWeek.SATURDAY));
+        "saturday", ThirtyMinuteBlock.toBits(attendingHours.getAttendingBlocksForDay(DayOfWeek.SATURDAY)));
     attendingHoursData.put(
-        "sunday", attendingHours.getAttendingBlocksForDayAsBits(DayOfWeek.SUNDAY));
+        "sunday", ThirtyMinuteBlock.toBits(attendingHours.getAttendingBlocksForDay(DayOfWeek.SUNDAY)));
 
     long attendingHoursId =
         doctorAttendingHoursInsert.executeAndReturnKey(attendingHoursData).longValue();
@@ -193,25 +195,25 @@ public class DoctorDaoImpl implements DoctorDao {
             .update("doctor_attending_hours")
             .set(
                 "monday",
-                "'" + attendingHours.getAttendingBlocksForDayAsBits(DayOfWeek.MONDAY) + "'")
+                "'" + ThirtyMinuteBlock.toBits(attendingHours.getAttendingBlocksForDay(DayOfWeek.MONDAY)) + "'")
             .set(
                 "tuesday",
-                "'" + attendingHours.getAttendingBlocksForDayAsBits(DayOfWeek.TUESDAY) + "'")
+                "'" + ThirtyMinuteBlock.toBits(attendingHours.getAttendingBlocksForDay(DayOfWeek.TUESDAY)) + "'")
             .set(
                 "wednesday",
-                "'" + attendingHours.getAttendingBlocksForDayAsBits(DayOfWeek.WEDNESDAY) + "'")
+                "'" + ThirtyMinuteBlock.toBits(attendingHours.getAttendingBlocksForDay(DayOfWeek.WEDNESDAY)) + "'")
             .set(
                 "thursday",
-                "'" + attendingHours.getAttendingBlocksForDayAsBits(DayOfWeek.THURSDAY) + "'")
+                "'" + ThirtyMinuteBlock.toBits(attendingHours.getAttendingBlocksForDay(DayOfWeek.THURSDAY)) + "'")
             .set(
                 "friday",
-                "'" + attendingHours.getAttendingBlocksForDayAsBits(DayOfWeek.FRIDAY) + "'")
+                "'" + ThirtyMinuteBlock.toBits(attendingHours.getAttendingBlocksForDay(DayOfWeek.FRIDAY)) + "'")
             .set(
                 "saturday",
-                "'" + attendingHours.getAttendingBlocksForDayAsBits(DayOfWeek.SATURDAY) + "'")
+                "'" + ThirtyMinuteBlock.toBits(attendingHours.getAttendingBlocksForDay(DayOfWeek.SATURDAY)) + "'")
             .set(
                 "sunday",
-                "'" + attendingHours.getAttendingBlocksForDayAsBits(DayOfWeek.SUNDAY) + "'")
+                "'" + ThirtyMinuteBlock.toBits(attendingHours.getAttendingBlocksForDay(DayOfWeek.SUNDAY)) + "'")
             .where("attending_hours_id = (" + attendingHoursIdQuery + ")")
             .build();
 

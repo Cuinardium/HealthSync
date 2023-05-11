@@ -55,12 +55,51 @@ public enum ThirtyMinuteBlock {
 
   private final String blockBeginning;
 
+  // The bit set to 1 encodes the corresponding block
+  private final long blockAsBit;
+
   private ThirtyMinuteBlock(String blockBeginning) {
     this.blockBeginning = blockBeginning;
+    this.blockAsBit = 1L << this.ordinal();
   }
 
   public String getBlockBeginning() {
     return this.blockBeginning;
+  }
+
+  public long getBlockAsBit() {
+    return this.blockAsBit;
+  }
+
+  // Most significant 16 bits dont encode anything
+  // The 48 least significant bits encode 30 minute blocks
+  // If the bit is 1 the doctor is available, otherwise it is not
+  // The least significant bit encodes the (0:00, 0:30) block
+  // The 48th bit encodes the (23:3, 0:00) block
+  public static Collection<ThirtyMinuteBlock> fromBits(long bits) {
+
+    Collection<ThirtyMinuteBlock> blocks = new ArrayList<>();
+    ThirtyMinuteBlock[] values = ThirtyMinuteBlock.values();
+
+    for (int i = 0; i < values.length; i++) {
+      if ((bits & (1L << i)) != 0) {
+        blocks.add(values[i]);
+      }
+    }
+
+    return blocks;
+  }
+
+
+  public static long toBits(Collection<ThirtyMinuteBlock> blocks) {
+    
+    long bits = 0;
+
+    for (ThirtyMinuteBlock block : blocks) {
+      bits |= block.getBlockAsBit();
+    }
+
+    return bits;
   }
 
   public static ThirtyMinuteBlock fromString(String block) {
