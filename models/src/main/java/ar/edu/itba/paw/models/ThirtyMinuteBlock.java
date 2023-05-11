@@ -71,6 +71,10 @@ public enum ThirtyMinuteBlock {
     return this.blockAsBit;
   }
 
+  public boolean isBlockSet(long attendingHours) {
+    return (attendingHours & this.blockAsBit) != 0;
+  }
+
   // Most significant 16 bits dont encode anything
   // The 48 least significant bits encode 30 minute blocks
   // If the bit is 1 the doctor is available, otherwise it is not
