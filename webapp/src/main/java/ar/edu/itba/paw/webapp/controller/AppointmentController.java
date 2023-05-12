@@ -231,8 +231,20 @@ public class AppointmentController {
     }
 
     ModelAndView mav = new ModelAndView("appointment/detailedAppointment");
+    List<AllowedActions> allowedActions= new ArrayList<>();
+    if(appointment.getStatus().equals(AppointmentStatus.PENDING)){
+      if(PawAuthUserDetails.getCurrentUserId()==doctor.getId()){
+        allowedActions.add(AllowedActions.CONFIRM);
+        allowedActions.add(AllowedActions.REJECT);
+      }
+    }
+    else if(appointment.getStatus().equals(AppointmentStatus.ACCEPTED)){
+      allowedActions.add(AllowedActions.CANCEL);
+    }
 
     // Add values to model
+    mav.addObject("appointmentId", appointmentId);
+    mav.addObject("actions", allowedActions);
     mav.addObject("appointmentDesc", appointment.getDescription());
     mav.addObject(
         "appointmentDateTime",

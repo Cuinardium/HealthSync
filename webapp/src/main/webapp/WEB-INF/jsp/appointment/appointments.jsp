@@ -99,7 +99,7 @@
                                                     </div>
                                                     <div class="modal-footer">
                                                         <form id="post-modal" method="post">
-                                                            <div class="form-row container">
+                                                            <div class="form-row">
                                                                 <button type="button" class="btn btn-danger" onclick="closeModal()">${modalDeny}</button>
                                                                 <button type="submit" class="btn btn-primary">${modalConfirm}</button>
                                                             </div>
