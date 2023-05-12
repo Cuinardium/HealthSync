@@ -1,9 +1,12 @@
 package ar.edu.itba.paw.models;
 
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class AttendingHours {
 
@@ -18,14 +21,9 @@ public class AttendingHours {
           new ArrayList<>(),
           new ArrayList<>());
 
-  private final List<ThirtyMinuteBlock> attendingBlocksMonday = new ArrayList<>();
-  private final List<ThirtyMinuteBlock> attendingBlocksTuesday = new ArrayList<>();
-  private final List<ThirtyMinuteBlock> attendingBlocksWednesday = new ArrayList<>();
-  private final List<ThirtyMinuteBlock> attendingBlocksThursday = new ArrayList<>();
-  private final List<ThirtyMinuteBlock> attendingBlocksFriday = new ArrayList<>();
-  private final List<ThirtyMinuteBlock> attendingBlocksSaturday = new ArrayList<>();
-  private final List<ThirtyMinuteBlock> attendingBlocksSunday = new ArrayList<>();
+  private final Map<DayOfWeek, List<ThirtyMinuteBlock>> attendingHours = new HashMap<>();
 
+  // From collection of 30 minute blocks
   public AttendingHours(
       Collection<ThirtyMinuteBlock> attendingBlocksMonday,
       Collection<ThirtyMinuteBlock> attendingBlocksTuesday,
@@ -34,62 +32,22 @@ public class AttendingHours {
       Collection<ThirtyMinuteBlock> attendingBlocksFriday,
       Collection<ThirtyMinuteBlock> attendingBlocksSaturday,
       Collection<ThirtyMinuteBlock> attendingBlocksSunday) {
-    this.attendingBlocksMonday.addAll(attendingBlocksMonday);
-    this.attendingBlocksTuesday.addAll(attendingBlocksTuesday);
-    this.attendingBlocksWednesday.addAll(attendingBlocksWednesday);
-    this.attendingBlocksThursday.addAll(attendingBlocksThursday);
-    this.attendingBlocksFriday.addAll(attendingBlocksFriday);
-    this.attendingBlocksSaturday.addAll(attendingBlocksSaturday);
-    this.attendingBlocksSunday.addAll(attendingBlocksSunday);
+
+    this.attendingHours.put(DayOfWeek.MONDAY, new ArrayList<>(attendingBlocksMonday));
+    this.attendingHours.put(DayOfWeek.TUESDAY, new ArrayList<>(attendingBlocksTuesday));
+    this.attendingHours.put(DayOfWeek.WEDNESDAY, new ArrayList<>(attendingBlocksWednesday));
+    this.attendingHours.put(DayOfWeek.THURSDAY, new ArrayList<>(attendingBlocksThursday));
+    this.attendingHours.put(DayOfWeek.FRIDAY, new ArrayList<>(attendingBlocksFriday));
+    this.attendingHours.put(DayOfWeek.SATURDAY, new ArrayList<>(attendingBlocksSaturday));
+    this.attendingHours.put(DayOfWeek.SUNDAY, new ArrayList<>(attendingBlocksSunday));
   }
 
-  // Getters
-  public List<ThirtyMinuteBlock> getAttendingBlocksMonday() {
-    return attendingBlocksMonday;
-  }
-
-  public List<ThirtyMinuteBlock> getAttendingBlocksTuesday() {
-    return attendingBlocksTuesday;
-  }
-
-  public List<ThirtyMinuteBlock> getAttendingBlocksWednesday() {
-    return attendingBlocksWednesday;
-  }
-
-  public List<ThirtyMinuteBlock> getAttendingBlocksThursday() {
-    return attendingBlocksThursday;
-  }
-
-  public List<ThirtyMinuteBlock> getAttendingBlocksFriday() {
-    return attendingBlocksFriday;
-  }
-
-  public List<ThirtyMinuteBlock> getAttendingBlocksSaturday() {
-    return attendingBlocksSaturday;
-  }
-
-  public List<ThirtyMinuteBlock> getAttendingBlocksSunday() {
-    return attendingBlocksSunday;
+  // Getter for lists of 30 minute blocks
+  public List<ThirtyMinuteBlock> getAttendingBlocksForDay(DayOfWeek day) {
+    return attendingHours.get(day);
   }
 
   public List<ThirtyMinuteBlock> getAttendingBlocksForDate(LocalDate date) {
-    switch (date.getDayOfWeek()) {
-      case MONDAY:
-        return attendingBlocksMonday;
-      case TUESDAY:
-        return attendingBlocksTuesday;
-      case WEDNESDAY:
-        return attendingBlocksWednesday;
-      case THURSDAY:
-        return attendingBlocksThursday;
-      case FRIDAY:
-        return attendingBlocksFriday;
-      case SATURDAY:
-        return attendingBlocksSaturday;
-      case SUNDAY:
-        return attendingBlocksSunday;
-      default:
-        throw new IllegalArgumentException("Invalid date");
-    }
+    return attendingHours.get(date.getDayOfWeek());
   }
 }
