@@ -1,0 +1,59 @@
+.scheduleContainer {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+}
+
+.checkBoxContainer {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+}
+
+.daySchedule {
+    display: flex;
+    flex-direction: column;
+    align-content: center;
+    padding-left: 1px;
+    min-width: 100px;
+}
+
+.timeLabelContainer {
+    display: flex;
+    flex-direction: column;
+    align-content: center;
+    padding-left: 1px;
+    min-width: 100px;
+}
+
+.timeBlock {
+    margin:2px;
+    padding:4px;
+    cursor: pointer;
+    user-select: none;
+}
+
+.scheduleTitle {
+    display: flex;
+    justify-content: center;
+}
+
+.timeLabel {
+    display: flex;
+    justify-content: center;
+    margin:2px;
+    padding:4px;
+}
+
+.selected {
+    background-color: #0275d8;
+    color: white;
+}
+
+.unselected {
+    background-color: lightgray;
+}
+
+.hidden {
+    display: none;
+}
