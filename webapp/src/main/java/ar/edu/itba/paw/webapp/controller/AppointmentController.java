@@ -21,6 +21,9 @@ import java.util.List;
 import java.util.Locale;
 import java.util.function.IntPredicate;
 import javax.validation.Valid;
+
+import ar.edu.itba.paw.webapp.form.DoctorEditForm;
+import ar.edu.itba.paw.webapp.form.ModalForm;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -138,6 +141,7 @@ public class AppointmentController {
 
   @RequestMapping(value = "/my-appointments", method = RequestMethod.GET)
   public ModelAndView getAppointments(
+          @ModelAttribute("modalForm") final ModalForm modalForm,
       @RequestParam(name = "from", required = false, defaultValue = "") final String from,
       @RequestParam(name = "to", required = false, defaultValue = "") final String to,
       @RequestParam(name = "selected_tab", required = false, defaultValue = "0")
@@ -150,21 +154,25 @@ public class AppointmentController {
       fromDate = from.isEmpty() ? null : LocalDate.parse(from);
     } catch (DateTimeParseException exception) {
       // TODO: error handling
-      return getAppointments("", to, selectedTab);
+      return getAppointments(modalForm,"", to, selectedTab);
     }
 
     try {
       toDate = to.isEmpty() ? null : LocalDate.parse(to);
     } catch (DateTimeParseException exception) {
       // TODO: error handling
-      return getAppointments(from, "", selectedTab);
+      return getAppointments(modalForm,from, "", selectedTab);
     }
 
     if (PawAuthUserDetails.getRole().equals(UserRoles.ROLE_PATIENT)) {
-      return getAppointmentsForPatient(fromDate, toDate, selectedTab);
+      ModelAndView mav=getAppointmentsForPatient(fromDate, toDate, selectedTab);
+      mav.addObject("modalForm", modalForm);
+      return mav;
     }
     if (PawAuthUserDetails.getRole().equals(UserRoles.ROLE_DOCTOR)) {
-      return getAppointmentsForDoctor(fromDate, toDate, selectedTab);
+      ModelAndView mav= getAppointmentsForDoctor( fromDate, toDate, selectedTab);
+      mav.addObject("modalForm", modalForm);
+      return mav;
     }
     // TODO: what do i do here????
     return null;
@@ -172,6 +180,7 @@ public class AppointmentController {
 
   @RequestMapping(value = "/my-appointments/{id:\\d+}/update", method = RequestMethod.POST)
   public ModelAndView updateAppointment(
+          @ModelAttribute("modalForm") final ModalForm modalForm,
       @PathVariable("id") final int appointmentId,
       @RequestParam(name = "status") final int status,
       @RequestParam(name = "from", required = false, defaultValue = "") final String from,
@@ -181,31 +190,32 @@ public class AppointmentController {
 
     // TODO: feedback?
     if (status < 0 || status >= AppointmentStatus.values().length) {
-      return getAppointments(from, to, selectedTab);
+      return getAppointments(modalForm,from, to, selectedTab);
     }
 
     // A patient can only cancel an appointment
     if (PawAuthUserDetails.getRole().equals(UserRoles.ROLE_PATIENT)
         && status != AppointmentStatus.CANCELLED.ordinal()) {
-      return getAppointments(from, to, selectedTab);
+      return getAppointments(modalForm,from, to, selectedTab);
     }
 
     AppointmentStatus appointmentStatus = AppointmentStatus.values()[status];
 
     try {
       appointmentService.updateAppointmentStatus(
-        appointmentId, appointmentStatus, PawAuthUserDetails.getCurrentUserId());
+        appointmentId, appointmentStatus, modalForm.getDescription(), PawAuthUserDetails.getCurrentUserId());
     } catch (RuntimeException e) {
       throw new UserNotFoundException();
     }
     
-    return getAppointments(from, to, selectedTab);
+    return getAppointments(modalForm, from, to, selectedTab);
   }
 
   // ================================== Detailed Appointment =======================================
 
   @RequestMapping(value = "/{id:\\d+}/detailed_appointment", method = RequestMethod.GET)
   public ModelAndView getDetailedAppointment(
+          @ModelAttribute("modalForm") final ModalForm modalForm,
       @PathVariable("id") final int appointmentId,
       @RequestParam(name = "selected_tab", required = false, defaultValue = "0")
           final int selectedTab,

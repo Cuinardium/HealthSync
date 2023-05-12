@@ -27,7 +27,7 @@ public interface AppointmentService {
 
   Page<Appointment> getFilteredAppointmentsForDoctor(long doctorId, AppointmentStatus status, LocalDate from, LocalDate to, int page, int pageSize);
 
-  void updateAppointmentStatus(long appointmentId, AppointmentStatus status, long requesterId);
+  void updateAppointmentStatus(long appointmentId, AppointmentStatus status,String cancelDescription, long requesterId);
 
   public List<ThirtyMinuteBlock> getAvailableHoursForDoctorOnDate(long doctorId, LocalDate date);
 }

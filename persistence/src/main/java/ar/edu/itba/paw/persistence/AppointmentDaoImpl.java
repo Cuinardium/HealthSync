@@ -78,11 +78,12 @@ public class AppointmentDaoImpl implements AppointmentDao {
   }
 
   @Override
-  public void updateAppointmentStatus(long appointmentId, AppointmentStatus status) {
+  public void updateAppointmentStatus(long appointmentId, AppointmentStatus status, String cancelDescription) {
     String update =
         new UpdateBuilder()
             .update("appointment")
             .set("status_code", Integer.toString(status.ordinal()))
+                .set("cancel_description", "'" + cancelDescription + "'")
             .where("appointment_id = " + appointmentId)
             .build();
 

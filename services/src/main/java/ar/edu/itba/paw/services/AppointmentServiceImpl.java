@@ -94,7 +94,7 @@ public class AppointmentServiceImpl implements AppointmentService {
   @Transactional
   @Override
   public void updateAppointmentStatus(
-      long appointmentId, AppointmentStatus status, long requesterId) {
+      long appointmentId, AppointmentStatus status,String cancelDescription, long requesterId) {
 
     // Get appointment
     // TODO: error handling
@@ -112,7 +112,7 @@ public class AppointmentServiceImpl implements AppointmentService {
       throw new RuntimeException();
     }
 
-    appointmentDao.updateAppointmentStatus(appointmentId, status);
+    appointmentDao.updateAppointmentStatus(appointmentId, status, cancelDescription);
 
     // TODO: error handling
     Doctor doctor =

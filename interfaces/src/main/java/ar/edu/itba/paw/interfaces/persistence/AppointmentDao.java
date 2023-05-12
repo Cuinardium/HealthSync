@@ -29,5 +29,5 @@ public interface AppointmentDao {
 
   Page<Appointment> getFilteredAppointmentsForDoctor(long doctorId, AppointmentStatus status, LocalDate from, LocalDate to, int page, int pageSize);
 
-  void updateAppointmentStatus(long appointmentId, AppointmentStatus status);
+  void updateAppointmentStatus(long appointmentId, AppointmentStatus status, String cancelDescription);
 }
