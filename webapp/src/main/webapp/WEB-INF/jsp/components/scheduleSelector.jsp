@@ -124,6 +124,9 @@
       ${showWeekend}
     </label>
   </div>
+  <div id="clear-button" class="btn btn-danger">
+    Clear
+  </div>
 </div>
 </body>
 </html>

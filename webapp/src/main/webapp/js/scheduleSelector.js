@@ -10,7 +10,7 @@ document.addEventListener('DOMContentLoaded', function () {
     document.body.addEventListener("mouseup", () => isDragging = false);
 
 
-    // =========================  Events on checkboxes  ==============================================
+    // =========================  Events on checkboxes & clear ==============================================
 
     document.querySelector("#show-all-times-check").addEventListener("click", toggleAllTimes);
 
@@ -42,6 +42,21 @@ document.addEventListener('DOMContentLoaded', function () {
         days.item(5).classList.toggle("hidden");
         days.item(6).classList.toggle("hidden");
     }
+
+    
+    document.querySelector("#clear-button").addEventListener("click", clearScheduleSelector)
+
+    function clearScheduleSelector() {
+        document.querySelectorAll(".daySchedule").forEach(daySchedule =>{
+            daySchedule.getElementsByTagName("input")[0].value = "0";
+
+            daySchedule.querySelectorAll(".timeBlock").forEach(timeBlock => {
+                timeBlock.classList.remove("selected");
+                timeBlock.classList.add("unselected")
+            })
+        })
+    }
+
 
     // =========================  Events on time block  ==============================================
     function handleEnterInBlock(event) {
