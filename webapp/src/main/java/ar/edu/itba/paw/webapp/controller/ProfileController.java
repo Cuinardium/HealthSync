@@ -192,17 +192,18 @@ public class ProfileController {
     }
 
     try {
-      userService.changePassword(
-          PawAuthUserDetails.getCurrentUserId(),
-          changePasswordForm.getOldPassword(),
-          changePasswordForm.getPassword());
+      boolean changedPassword =
+          userService.changePassword(
+              PawAuthUserDetails.getCurrentUserId(),
+              changePasswordForm.getOldPassword(),
+              changePasswordForm.getPassword());
+      if (!changedPassword) {
+        return changePassword(changePasswordForm, true);
+      }
     } catch (IllegalStateException exception) {
       // No deberia pasar
+      // TODO: log?
       throw exception;
-    } catch (RuntimeException /*OldPasswordDoesNotMatchException*/ exception) {
-      // TODO: ADD error to view
-      // Loggear?
-      return changePassword(changePasswordForm, true);
     }
     ModelAndView mav = new ModelAndView("components/operationSuccessful");
     mav.addObject("showHeader", true);

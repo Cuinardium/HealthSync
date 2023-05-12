@@ -34,16 +34,17 @@ public class UserServiceImpl implements UserService {
   }
 
   @Override
-  public void changePassword(long userId, String oldPassword, String password)
+  public boolean changePassword(long userId, String oldPassword, String password)
       throws IllegalStateException {
     if (!passwordEncoder.matches(
         oldPassword,
         userDao.findById(userId).orElseThrow(IllegalStateException::new).getPassword())) {
-      // TODO: OldPasswordDoesNotMatchException?!?! -> agregar al throws cuando este listo (tmb en
-      // la interfaz)
-      throw new RuntimeException("Old password does not match");
+      // En clase vimos que era mejor retornar true o false, para verificar si se actualizo la pass
+      return false;
     }
+    // TODO: return true <-> hay afected rows?
     userDao.changePassword(userId, passwordEncoder.encode(password));
+    return true;
   }
 
   @Override
