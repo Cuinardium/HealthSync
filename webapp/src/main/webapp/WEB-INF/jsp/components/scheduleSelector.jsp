@@ -15,6 +15,7 @@
 <spring:message code="form.scheduleSelector" var="scheduleSelector"/>
 <spring:message code="form.showAllTimes" var="showAllTimes"/>
 <spring:message code="form.showWeekend" var="showWeekend"/>
+<spring:message code="form.clear" var="clear"/>
 
 <c:url value="/css/main.css" var="mainCss"/>
 <c:url value="/css/scheduleSelector.css" var="scheduleSelectorCss"/>
@@ -125,7 +126,7 @@
     </label>
   </div>
   <div id="clear-button" class="btn btn-danger">
-    Clear
+    ${clear}
   </div>
 </div>
 </body>
