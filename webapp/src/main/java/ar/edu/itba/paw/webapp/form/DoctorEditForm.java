@@ -24,7 +24,7 @@ public class DoctorEditForm extends UserEditForm {
 
   // Attending hours encoded as bits
   private long mondayAttendingHours;
-  private long tuedayAttendingHours;
+  private long tuesdayAttendingHours;
   private long wednesdayAttendingHours;
   private long thursdayAttendingHours;
   private long fridayAttendingHours;
@@ -72,12 +72,12 @@ public class DoctorEditForm extends UserEditForm {
     this.mondayAttendingHours = mondayAttendingHours;
   }
 
-  public long getTuedayAttendingHours() {
-    return tuedayAttendingHours;
+  public long getTuesdayAttendingHours() {
+    return tuesdayAttendingHours;
   }
 
-  public void setTuedayAttendingHours(long tuedayAttendingHours) {
-    this.tuedayAttendingHours = tuedayAttendingHours;
+  public void setTuesdayAttendingHours(long tuesdayAttendingHours) {
+    this.tuesdayAttendingHours = tuesdayAttendingHours;
   }
 
   public long getWednesdayAttendingHours() {
