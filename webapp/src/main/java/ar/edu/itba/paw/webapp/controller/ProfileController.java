@@ -10,7 +10,6 @@ import ar.edu.itba.paw.webapp.exceptions.UserNotFoundException;
 import ar.edu.itba.paw.webapp.form.ChangePasswordForm;
 import ar.edu.itba.paw.webapp.form.DoctorEditForm;
 import ar.edu.itba.paw.webapp.form.PatientEditForm;
-
 import java.time.DayOfWeek;
 import java.util.Arrays;
 import javax.validation.Valid;
@@ -60,6 +59,18 @@ public class ProfileController {
         doctorEditForm.getCityCode(),
         doctorEditForm.getAddress());
 
+    AttendingHours attendingHours =
+        new AttendingHours(
+            ThirtyMinuteBlock.fromBits(doctorEditForm.getMondayAttendingHours()),
+            ThirtyMinuteBlock.fromBits(doctorEditForm.getTuesdayAttendingHours()),
+            ThirtyMinuteBlock.fromBits(doctorEditForm.getWednesdayAttendingHours()),
+            ThirtyMinuteBlock.fromBits(doctorEditForm.getThursdayAttendingHours()),
+            ThirtyMinuteBlock.fromBits(doctorEditForm.getFridayAttendingHours()),
+            ThirtyMinuteBlock.fromBits(doctorEditForm.getSaturdayAttendingHours()),
+            ThirtyMinuteBlock.fromBits(doctorEditForm.getSundayAttendingHours()));
+
+    doctorService.updateAttendingHours(PawAuthUserDetails.getCurrentUserId(), attendingHours);
+
     ModelAndView mav = new ModelAndView("components/operationSuccessful");
     mav.addObject("showHeader", true);
     mav.addObject("operationTitle", "profile.editProfileSuccessfulTitle");
@@ -90,21 +101,26 @@ public class ProfileController {
 
     // Attending hours
     AttendingHours attendingHours = doctor.getAttendingHours();
-    doctorEditForm.setMondayAttendingHours(ThirtyMinuteBlock.toBits(attendingHours.getAttendingBlocksForDay(DayOfWeek.MONDAY)));
-    doctorEditForm.setTuedayAttendingHours(ThirtyMinuteBlock.toBits(attendingHours.getAttendingBlocksForDay(DayOfWeek.TUESDAY)));
-    doctorEditForm.setWednesdayAttendingHours(ThirtyMinuteBlock.toBits(attendingHours.getAttendingBlocksForDay(DayOfWeek.WEDNESDAY)));
-    doctorEditForm.setThursdayAttendingHours(ThirtyMinuteBlock.toBits(attendingHours.getAttendingBlocksForDay(DayOfWeek.THURSDAY)));
-    doctorEditForm.setFridayAttendingHours(ThirtyMinuteBlock.toBits(attendingHours.getAttendingBlocksForDay(DayOfWeek.FRIDAY)));
-    doctorEditForm.setSaturdayAttendingHours(ThirtyMinuteBlock.toBits(attendingHours.getAttendingBlocksForDay(DayOfWeek.SATURDAY)));
-    doctorEditForm.setSundayAttendingHours(ThirtyMinuteBlock.toBits(attendingHours.getAttendingBlocksForDay(DayOfWeek.SUNDAY)));
-
+    doctorEditForm.setMondayAttendingHours(
+        ThirtyMinuteBlock.toBits(attendingHours.getAttendingBlocksForDay(DayOfWeek.MONDAY)));
+    doctorEditForm.setTuesdayAttendingHours(
+        ThirtyMinuteBlock.toBits(attendingHours.getAttendingBlocksForDay(DayOfWeek.TUESDAY)));
+    doctorEditForm.setWednesdayAttendingHours(
+        ThirtyMinuteBlock.toBits(attendingHours.getAttendingBlocksForDay(DayOfWeek.WEDNESDAY)));
+    doctorEditForm.setThursdayAttendingHours(
+        ThirtyMinuteBlock.toBits(attendingHours.getAttendingBlocksForDay(DayOfWeek.THURSDAY)));
+    doctorEditForm.setFridayAttendingHours(
+        ThirtyMinuteBlock.toBits(attendingHours.getAttendingBlocksForDay(DayOfWeek.FRIDAY)));
+    doctorEditForm.setSaturdayAttendingHours(
+        ThirtyMinuteBlock.toBits(attendingHours.getAttendingBlocksForDay(DayOfWeek.SATURDAY)));
+    doctorEditForm.setSundayAttendingHours(
+        ThirtyMinuteBlock.toBits(attendingHours.getAttendingBlocksForDay(DayOfWeek.SUNDAY)));
 
     final ModelAndView mav = new ModelAndView("user/doctorEdit");
     mav.addObject("form", doctorEditForm);
     mav.addObject("cities", Arrays.asList(City.values()));
     mav.addObject("specialties", Arrays.asList(Specialty.values()));
     mav.addObject("healthInsurances", Arrays.asList(HealthInsurance.values()));
-    mav.addObject("dayOfWeekEnumValues", DayOfWeek.values());
     mav.addObject("timeEnumValues", ThirtyMinuteBlock.values());
     return mav;
   }
