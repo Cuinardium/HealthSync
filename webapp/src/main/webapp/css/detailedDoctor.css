@@ -76,67 +76,57 @@
     background-position: center center; }
 
 .content {
-    overflow: none;
     width: 100%;
     max-width: 790px;
-    padding: 0px 0;
     height: 500px;
     position: relative;
     margin: 20px auto;
     background: #7e0cf5; }
 
-/*  Events display */
-.events-container {
+/*  appointments display */
+.appointments-container {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
     overflow-y: scroll;
     height: 100%;
     width: 50%;
-    float: right;
-    margin: 0px auto;
-    display: inline-block;
-    padding: 0px;
-    border-bottom-right-radius: 3px;
-    border-top-right-radius: 3px;
-    padding: 0; }
-@media (max-width: 767.98px) {
-    .events-container {
+    }
+@media (max-width: 768px) {
+    .appointments-container {
         width: 100%;
         height: auto; } }
 
-.events-container:after {
+.appointments-container:after {
     clear: both; }
 
-.event-card {
-    padding: 20px 0;
-    max-width: 100%;
-    display: block;
-    background: #fff;
-    border: none !important;
-    margin: 20px;
-    margin-left: 12px; }
-@media (max-width: 991.98px) {
-    .event-card {
+.appointment-card {
+    justify-content: center;
+    width: 25%;
+    margin: 20px 20px 20px 12px;
+    height: min-content;
+}
+@media (max-width: 992px) {
+    .appointment-card {
         margin: 10px; } }
-@media (max-width: 767.98px) {
-    .event-card {
-        margin: 0;
-        background: #e6e6e6; } }
+@media (max-width: 768px) {
+    .appointment-card {
+        margin: 0;} }
 
-.event-count, .event-name, .event-cancelled {
-    display: inline;
-    padding: 0 10px;
-    font-size: 1rem; }
+.appointment-time{
+    display: flex;
+    justify-content: center;
+    padding: 0.5rem;
+    font-size: 1rem;
+}
 
-.event-count {
-    color: #7e0cf5;
-    text-align: right; }
-
-.event-name {
-    padding-right: 0;
-    text-align: left; }
-
-.event-cancelled {
-    color: #cd4dcc;
-    text-align: right; }
+.noAppointments{
+    justify-content: center;
+    margin: 20px 20px 20px 12px;
+    border-left: 10px solid #FF1744;
+    height: min-content;
+}
 
 .ftco-section {
     padding: 7em 0; }
@@ -304,11 +294,11 @@
 .table-date:not(.nil):hover {
     border-color: #cd4dcc; }
 
-.event-date {
+.appointment-date {
     border-color: #7e0cf5;
     background: #7e0cf5;
     color: #fff; }
-.event-date:after {
+.appointment-date:after {
     position: absolute;
     top: 0;
     left: 0;
@@ -322,7 +312,7 @@
     background: #cd4dcc;
     color: #fff; }
 
-.event-date.active-date {
+.appointment-date.active-date {
     background: #7e0cf5; }
 
 /* input dialog */

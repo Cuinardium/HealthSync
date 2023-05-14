@@ -165,6 +165,15 @@ public class AppointmentServiceImpl implements AppointmentService {
   }
 
   @Override
+  public List<List<ThirtyMinuteBlock>> getAvailableHoursForDoctorOnRange(long doctorId, LocalDate from, LocalDate to){
+    List<List<ThirtyMinuteBlock>> availableHours = new ArrayList<>();
+    for (LocalDate date = from; date.isBefore(to.plusDays(1)); date = date.plusDays(1)) {
+      availableHours.add(getAvailableHoursForDoctorOnDate(doctorId, date));
+    }
+    return availableHours;
+  }
+
+  @Override
   public List<Appointment> getFilteredAppointmentsForDoctor(
       long doctorId, AppointmentStatus status, LocalDate from, LocalDate to) {
     return appointmentDao.getFilteredAppointmentsForDoctor(doctorId, status, from, to);
