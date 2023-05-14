@@ -101,10 +101,10 @@
 .appointments-container:after {
     clear: both; }
 
-.appointment-card {
+.appointment-button {
     justify-content: center;
-    width: 25%;
-    margin: 20px 20px 20px 12px;
+    width: 20%;
+    margin: 20px;
     height: min-content;
 }
 @media (max-width: 992px) {
@@ -337,6 +337,10 @@
 
 .form-container {
     margin-top: 25%; }
+
+.form-control{
+    max-width: -webkit-fill-available;
+}
 
 .form-label {
     text-transform: uppercase;

@@ -175,7 +175,7 @@ function showAppointments(appointments, month, day) {
     else {
         // Go through and add each appointment as a card to the appointments container
         for(var i=0; i<appointments.length; i++) {
-            var appointmentCard = $("<div class='card appointment-card'></div>");
+            var appointmentCard = $("<div class='btn btn-light appointment-button' onclick='openModal()'></div>");
             var appointmentTime = $("<div class='appointment-time'>"+appointments[i]["time"]+"</div>");
             $(appointmentCard).append(appointmentTime);
             $(".appointments-container").append(appointmentCard);
