@@ -7,6 +7,8 @@ import ar.edu.itba.paw.webapp.form.DoctorRegisterForm;
 import ar.edu.itba.paw.webapp.form.LoginForm;
 import ar.edu.itba.paw.webapp.form.PatientRegisterForm;
 import java.util.Arrays;
+import java.util.stream.Collectors;
+
 import javax.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -136,7 +138,7 @@ public class AuthController {
             doctorRegisterForm.getPassword(),
             doctorRegisterForm.getName(),
             doctorRegisterForm.getLastname(),
-            doctorRegisterForm.getHealthInsuranceCode(),
+            doctorRegisterForm.getHealthInsuranceCodes(),
             doctorRegisterForm.getSpecialtyCode(),
             doctorRegisterForm.getCityCode(),
             doctorRegisterForm.getAddress(),

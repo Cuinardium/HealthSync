@@ -1,56 +1,59 @@
 package ar.edu.itba.paw.webapp.form;
 
 import ar.edu.itba.paw.models.City;
-import ar.edu.itba.paw.models.HealthInsurance;
 import ar.edu.itba.paw.models.Specialty;
 import ar.edu.itba.paw.webapp.annotations.ExistsInEnum;
+import java.util.List;
 
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
-public class DoctorEditForm extends UserEditForm{
-    @ExistsInEnum(enumClass = HealthInsurance.class)
-    private Integer healthInsuranceCode = -1;
+import org.hibernate.validator.constraints.NotEmpty;
 
-    @ExistsInEnum(enumClass = City.class)
-    private Integer cityCode = -1;
+public class DoctorEditForm extends UserEditForm {
 
-    @Size(min = 1)
-    @Pattern(regexp = "[a-zA-Z0-9. ]+")
-    private String address;
+  @NotEmpty
+  private List<Integer> healthInsuranceCodes;
 
-    @ExistsInEnum(enumClass = Specialty.class)
-    private Integer specialtyCode = -1;
+  @ExistsInEnum(enumClass = City.class)
+  private Integer cityCode = -1;
 
-    public int getHealthInsuranceCode() {
-        return healthInsuranceCode;
-    }
+  @Size(min = 1)
+  @Pattern(regexp = "[a-zA-Z0-9. ]+")
+  private String address;
 
-    public void setHealthInsuranceCode(int healthInsuranceCode) {
-        this.healthInsuranceCode = healthInsuranceCode;
-    }
+  @ExistsInEnum(enumClass = Specialty.class)
+  private Integer specialtyCode = -1;
 
-    public int getCityCode() {
-        return cityCode;
-    }
+  public List<Integer> getHealthInsuranceCodes() {
+    return healthInsuranceCodes;
+  }
 
-    public void setCityCode(int cityCode) {
-        this.cityCode = cityCode;
-    }
+  public void setHealthInsuranceCodes(List<Integer> healthInsuranceCodes) {
+    this.healthInsuranceCodes = healthInsuranceCodes;
+  }
 
-    public String getAddress() {
-        return address;
-    }
+  public int getCityCode() {
+    return cityCode;
+  }
 
-    public void setAddress(String address) {
-        this.address = address;
-    }
+  public void setCityCode(int cityCode) {
+    this.cityCode = cityCode;
+  }
 
-    public int getSpecialtyCode() {
-        return specialtyCode;
-    }
+  public String getAddress() {
+    return address;
+  }
 
-    public void setSpecialtyCode(int specialtyCode) {
-        this.specialtyCode = specialtyCode;
-    }
+  public void setAddress(String address) {
+    this.address = address;
+  }
+
+  public int getSpecialtyCode() {
+    return specialtyCode;
+  }
+
+  public void setSpecialtyCode(int specialtyCode) {
+    this.specialtyCode = specialtyCode;
+  }
 }
