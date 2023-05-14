@@ -102,6 +102,12 @@ public class DoctorController {
           new RuntimeException());
     }
 
+    return appointmentSent();
+  }
+
+  // ========================== Appointment Sent ==========================
+  @RequestMapping(value = "/appointment_sent", method = RequestMethod.GET)
+  public ModelAndView appointmentSent() {
     return new ModelAndView("appointment/appointmentSent");
   }
 }
