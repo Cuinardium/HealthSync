@@ -15,7 +15,7 @@ public interface DoctorService {
       String password,
       String firstName,
       String lastName,
-      int healthInsuranceCode,
+      List<Integer> healthInsuranceCodes,
       int specialtyCode,
       int cityCode,
       String address,
@@ -26,7 +26,7 @@ public interface DoctorService {
       String email,
       String firstName,
       String lastName,
-      int healthInsuranceCode,
+      List<Integer> healthInsuranceCodes,
       int specialtyCode,
       int cityCode,
       String address);

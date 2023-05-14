@@ -19,15 +19,16 @@ import java.util.Map;
 import java.util.Optional;
 import javax.sql.DataSource;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
 
 @Repository
 public class DoctorDaoImpl implements DoctorDao {
 
-  private final RowMapper<Doctor> doctorMapper = new DoctorMapper();
+  private final ResultSetExtractor<List<Doctor>> doctorExtractor = new DoctorExtractor();
   private final JdbcTemplate jdbcTemplate;
   private final SimpleJdbcInsert doctorInsert;
   private final SimpleJdbcInsert doctorLocationInsert;
@@ -113,24 +114,52 @@ public class DoctorDaoImpl implements DoctorDao {
 
   @Override
   public void updateInformation(
-      long doctorId, int healthInsuranceCode, int specialtyCode, int cityCode, String address) {
-    String update =
+      long doctorId,
+      List<Integer> healthInsuranceCodes,
+      int specialtyCode,
+      int cityCode,
+      String address) {
+
+    String specialtyUpdate =
         new UpdateBuilder()
             .update("doctor")
             .set("specialty_code", "'" + specialtyCode + "'")
             .where("doctor_id = (" + doctorId + ")")
             .build();
 
-    jdbcTemplate.update(update);
+    jdbcTemplate.update(specialtyUpdate);
 
-    update =
-        new UpdateBuilder()
-            .update("health_insurance_accepted_by_doctor")
-            .set("health_insurance_code", "'" + healthInsuranceCode + "'")
-            .where("doctor_id = (" + doctorId + ")")
+    // Get existing health insurance codes
+    String existingHealthInsuranceCodesQuery =
+        new QueryBuilder()
+            .select("health_insurance_code")
+            .from("health_insurance_accepted_by_doctor")
+            .where("doctor_id = " + doctorId)
             .build();
 
-    jdbcTemplate.update(update);
+    List<Integer> existingHealthInsuranceCodes =
+        jdbcTemplate.queryForList(existingHealthInsuranceCodesQuery, Integer.class);
+
+    // Remove health insurance codes that are not in the new list
+    String deleteHealthInsurances =
+        new DeleteBuilder()
+            .delete("health_insurance_accepted_by_doctor")
+            .where("doctor_id = " + doctorId)
+            .where("health_insurance_code = ?")
+            .build();
+
+    for (Integer code : existingHealthInsuranceCodes) {
+      if (!healthInsuranceCodes.contains(code)) {
+        jdbcTemplate.update(deleteHealthInsurances, code);
+      }
+    }
+
+    // Add health insurance codes that are not in the old list
+    for (Integer code : healthInsuranceCodes) {
+      if (!existingHealthInsuranceCodes.contains(code)) {
+        addHealthInsurance(doctorId, code);
+      }
+    }
 
     String doctorLocationIdQuery =
         new QueryBuilder()
@@ -139,7 +168,7 @@ public class DoctorDaoImpl implements DoctorDao {
             .where("doctor_id = " + doctorId)
             .build();
 
-    update =
+    String doctorLocationUpdate =
         new UpdateBuilder()
             .update("doctor_location")
             .set("address", "'" + address + "'")
@@ -147,7 +176,7 @@ public class DoctorDaoImpl implements DoctorDao {
             .where("doctor_location_id = (" + doctorLocationIdQuery + ")")
             .build();
 
-    jdbcTemplate.update(update);
+    jdbcTemplate.update(doctorLocationUpdate);
   }
 
   @Override
@@ -197,7 +226,11 @@ public class DoctorDaoImpl implements DoctorDao {
 
     String query = doctorQuery().where("doctor.doctor_id = " + id).build();
 
-    return jdbcTemplate.query(query, doctorMapper).stream().findFirst();
+    System.out.println("====================================");
+    System.out.println(query);
+    System.out.println("====================================");
+
+    return jdbcTemplate.query(query, doctorExtractor).stream().findFirst();
   }
 
   @Override
@@ -231,24 +264,31 @@ public class DoctorDaoImpl implements DoctorDao {
     }
 
     if (healthInsuranceCode >= 0) {
-      query.where("health_insurance_code = " + healthInsuranceCode);
-      doctorCountQuery.where("health_insurance_code = " + healthInsuranceCode);
+      String healthInsuranceQuery =
+          new QueryBuilder()
+              .select("doctor_id")
+              .from("health_insurance_accepted_by_doctor")
+              .where("health_insurance_code = " + healthInsuranceCode)
+              .build();
+
+      query.where("doctor.doctor_id IN (" + healthInsuranceQuery + ")");
+      doctorCountQuery.where("doctor.doctor_id IN (" + healthInsuranceQuery + ")");
     }
 
     if (page >= 0 && pageSize > 0) {
       query.limit(pageSize).offset(page * pageSize);
     }
 
-    List<Doctor> doctors = jdbcTemplate.query(query.build(), doctorMapper);
+    List<Doctor> doctors = jdbcTemplate.query(query.build(), doctorExtractor);
 
     int totalDoctors = jdbcTemplate.queryForObject(doctorCountQuery.build(), Integer.class);
 
-    return new Page<>(doctors, page, totalDoctors); 
+    return new Page<>(doctors, page, totalDoctors);
   }
 
   @Override
   public List<Doctor> getDoctors() {
-    return jdbcTemplate.query(doctorQuery().build(), doctorMapper);
+    return jdbcTemplate.query(doctorQuery().build(), doctorExtractor);
   }
 
   // Get used specialties and health insurances
@@ -358,7 +398,7 @@ public class DoctorDaoImpl implements DoctorDao {
     return bits;
   }
 
-  private class DoctorMapper implements RowMapper<Doctor> {
+  private class DoctorExtractor implements ResultSetExtractor<List<Doctor>> {
 
     // Most significant 16 bits dont encode anything
     // The 48 least significant bits encode 30 minute blocks
@@ -380,36 +420,57 @@ public class DoctorDaoImpl implements DoctorDao {
     }
 
     @Override
-    public Doctor mapRow(ResultSet rs, int rowNum) throws SQLException {
-      Specialty specialty = Specialty.values()[rs.getInt("specialty_code")];
-      HealthInsurance healthInsurance =
-          HealthInsurance.values()[rs.getInt("health_insurance_code")];
+    public List<Doctor> extractData(ResultSet rs) throws SQLException, DataAccessException {
+      Map<Long, Doctor> doctors = new HashMap<>();
+      Specialty[] specialties = Specialty.values();
+      City[] cities = City.values();
+      HealthInsurance[] healthInsurances = HealthInsurance.values();
 
-      City city = City.values()[rs.getInt("city_code")];
-      Location location =
-          new Location(rs.getLong("doctor_location_id"), city, rs.getString("address"));
+      while (rs.next()) {
+        long doctorId = rs.getLong("doctor_id");
+        Doctor doctor = doctors.get(doctorId);
 
-      AttendingHours attendingHours =
-          new AttendingHours(
-              attendingHoursFromBits(rs.getLong("monday")),
-              attendingHoursFromBits(rs.getLong("tuesday")),
-              attendingHoursFromBits(rs.getLong("wednesday")),
-              attendingHoursFromBits(rs.getLong("thursday")),
-              attendingHoursFromBits(rs.getLong("friday")),
-              attendingHoursFromBits(rs.getLong("saturday")),
-              attendingHoursFromBits(rs.getLong("sunday")));
+        if (doctor == null) {
+          Specialty specialty = specialties[rs.getInt("specialty_code")];
 
-      return new Doctor(
-          rs.getLong("doctor_id"),
-          rs.getString("email"),
-          rs.getString("password"),
-          rs.getString("first_name"),
-          rs.getString("last_name"),
-          rs.getLong("profile_picture_id"),
-          healthInsurance,
-          specialty,
-          location,
-          attendingHours);
+          City city = cities[rs.getInt("city_code")];
+          Location location =
+              new Location(rs.getLong("doctor_location_id"), city, rs.getString("address"));
+
+          AttendingHours attendingHours =
+              new AttendingHours(
+                  attendingHoursFromBits(rs.getLong("monday")),
+                  attendingHoursFromBits(rs.getLong("tuesday")),
+                  attendingHoursFromBits(rs.getLong("wednesday")),
+                  attendingHoursFromBits(rs.getLong("thursday")),
+                  attendingHoursFromBits(rs.getLong("friday")),
+                  attendingHoursFromBits(rs.getLong("saturday")),
+                  attendingHoursFromBits(rs.getLong("sunday")));
+
+          doctor =
+              new Doctor(
+                  rs.getLong("doctor_id"),
+                  rs.getString("email"),
+                  rs.getString("password"),
+                  rs.getString("first_name"),
+                  rs.getString("last_name"),
+                  rs.getLong("profile_picture_id"),
+                  new ArrayList<>(),
+                  specialty,
+                  location,
+                  attendingHours);
+
+          doctors.put(doctorId, doctor);
+        }
+
+        doctor.getHealthInsurances().add(healthInsurances[rs.getInt("health_insurance_code")]);
+      }
+
+      System.out.println("====================================");
+      System.out.println(doctors.values());
+      System.out.println("====================================");
+
+      return new ArrayList<>(doctors.values());
     }
   }
 }
