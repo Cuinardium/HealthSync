@@ -28,9 +28,15 @@
     <jsp:include page="../components/favicon.jsp"/>
     <link href="${mainCss}" rel="stylesheet"/>
     <link href="${doctorDashboardCss}" rel="stylesheet"/>
-    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+            integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+            crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js"
+            integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+            crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js"
+            integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+            crossorigin="anonymous"></script>
 </head>
 
 <body>
@@ -49,7 +55,6 @@
             <c:url value="/${doctor.id}/appointment" var="appointmentUrl"/>
             <spring:message code="${doctor.specialty.messageID}" var="doctorSpecialty"/>
             <spring:message code="${doctor.location.city.messageID}" var="doctorCity"/>
-            <spring:message code="${doctor.healthInsurance.messageID}" var="healthInsurance"/>
             <c:url value="/${doctor.id}/detailed_doctor" var="detailedUrl"/>
             <div class="card">
                 <div class="imageContainer">
@@ -60,26 +65,35 @@
                     <div class="card-body">
                         <h5 class="card-title"><a href="${detailedUrl}">${doctor.firstName} ${doctor.lastName}</a></h5>
                         <p class="card-text">${doctorSpecialty}. ${doctor.location.address}, ${doctorCity}</p>
-                        <p class="card-text">${healthInsurance}</p>
+
+                        <p class="card-text">
+                            <c:forEach items="${doctor.healthInsurances}" var="healthInsurance" varStatus="status">
+                                <spring:message code="${healthInsurance.messageID}" var="healthInsuranceMsg"/>
+                                ${healthInsuranceMsg}${status.last ? "" : ", "}
+                            </c:forEach>
+                        </p>
                     </div>
                 </div>
                 <c:if test="${canBook}">
                     <div class="buttonsContainer">
                         <div class="card-body">
-                            <a class="btn btn-primary" onclick="checkInsurance('${appointmentUrl}', '${doctor.healthInsurance}')">${book}</a>
+                            <a class="btn btn-primary"
+                               onclick="checkInsurance('${appointmentUrl}', '${doctor.healthInsurances}')">${book}</a>
                         </div>
                     </div>
-                    <div class="modal fade" id="modal" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
+                    <div class="modal fade" id="modal" tabindex="-1" role="dialog" aria-labelledby="modalLabel"
+                         aria-hidden="true">
                         <div class="modal-dialog" role="dialog">
                             <div class="modal-content">
                                 <div class="modal-header">
                                     <h5 class="modal-title" id="modalLabel">${modalTitle}</h5>
                                 </div>
                                 <div class="modal-body">
-                                    ${modalDesc}
+                                        ${modalDesc}
                                 </div>
                                 <div class="modal-footer">
-                                    <button type="button" class="btn btn-danger" onclick="closeModal()">${modalDeny}</button>
+                                    <button type="button" class="btn btn-danger"
+                                            onclick="closeModal()">${modalDeny}</button>
                                     <a type="button" id="modal-href" class="btn btn-primary">${modalConfirm}</a>
                                 </div>
                             </div>
@@ -114,21 +128,21 @@
 <script>
 
 
-    function checkInsurance(appointmentUrl, object){
-        if(object=='${patientHealthInsurance}' || ${notLogged}){
+    function checkInsurance(appointmentUrl, object) {
+        if (object === '${patientHealthInsurance}' || ${notLogged}) {
             redirect(appointmentUrl);
-        }
-        else{
+        } else {
             $('#modal').modal('show');
             $('#modal-href').attr('href', appointmentUrl);
 
         }
     }
-    function closeModal(){
+
+    function closeModal() {
         $('#modal').modal('hide')
     }
 
-    function redirect(appointmentUrl){
+    function redirect(appointmentUrl) {
         window.location.replace(appointmentUrl);
     }
 </script>

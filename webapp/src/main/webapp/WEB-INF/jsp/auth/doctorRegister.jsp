@@ -23,8 +23,6 @@
 <spring:message code="form.address_hint" var="address_hint"/>
 <spring:message code="form.specialization" var="specialization"/>
 <spring:message code="form.specialization_hint" var="specialization_hint"/>
-<spring:message code="form.healthcare" var="healthcare"/>
-<spring:message code="form.healthcare_hint" var="healthcare_hint"/>
 <spring:message code="form.email" var="email"/>
 <spring:message code="form.email_hint" var="email_hint"/>
 <spring:message code="form.password" var="password"/>
@@ -98,19 +96,11 @@
                 <form:errors path="specialtyCode" cssClass="error" element="p"/>
             </div>
 
-            <!-- multiple option buttons -->
-            <div class="formItem">
-                <form:label path="healthInsuranceCode">${healthcare}</form:label>
-                <form:select class="form-select" path="healthInsuranceCode">
-                    <form:option value="-1" disabled="true" hidden="true"> -- </form:option>
-                    <c:forEach items="${healthInsurances}" var="healthInsurance" varStatus="status">
-                        <form:option value="${status.index}">
-                            <spring:message code="${healthInsurance.messageID}"/>
-                        </form:option>
-                    </c:forEach>
-                </form:select>
-                <form:errors path="healthInsuranceCode" cssClass="error" element="p"/>
-            </div>
+            <!-- Health Insurance Picker -->
+            <c:set var="healthInsurances" value="${healthInsurances}" scope="request"/>
+            <c:set var="currentHealthInsuranceCodes" value="${[]}" scope="request"/>
+            <jsp:include page="../components/healthInsurancePicker.jsp"/>
+
         </div>
         <div class="formRow">
             <div class="formItem">
@@ -129,7 +119,8 @@
         <div class="formRow">
             <div class="formItem">
                 <form:label path="confirmPassword">${cpassword}</form:label>
-                <form:input class="form-control" path="confirmPassword" type="password" placeholder="${cpassword_hint}"/>
+                <form:input class="form-control" path="confirmPassword" type="password"
+                            placeholder="${cpassword_hint}"/>
                 <form:errors path="confirmPassword" cssClass="error" element="p"/>
                 <form:errors/>
             </div>

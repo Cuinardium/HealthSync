@@ -3,6 +3,7 @@
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 
 <jsp:useBean id="healthInsurances" scope="request" type="java.util.List"/>
+<jsp:useBean id="currentHealthInsuranceCodes" scope="request" type="java.util.List"/>
 
 <!--Variables -->
 <c:url value="/css/main.css" var="mainCss"/>
@@ -11,6 +12,7 @@
 
 <spring:message code="form.healthcare" var="healthcare"/>
 <spring:message code="form.healthcare_hint" var="healthcare_hint"/>
+<spring:message code="form.add" var="add"/>
 
 <html>
 <head>
@@ -29,7 +31,7 @@
 
     <div id="chipsContainer" class="chipsContainer">
         <c:forEach items="${healthInsurances}" var="healthInsurance" varStatus="status">
-            <div class="chip hidden">
+            <div class="chip ${currentHealthInsuranceCodes.contains(status.index) ? "" : "hidden"}">
                 <spring:message code="${healthInsurance.messageID}"/>
                 <button type="button" data-index="${status.index}" class="chipClose">
                     X
@@ -38,8 +40,8 @@
         </c:forEach>
 
         <div id="healthInsuranceDropdown" class="dropdown">
-            <span id="healthInsuranceDropdownLabel">Agregar</span>
-            <button class="btn btn-outline-primary" type="button" data-bs-toggle="dropdown">
+            <span id="healthInsuranceDropdownLabel" class="${currentHealthInsuranceCodes.isEmpty() ? "" : "hidden"}">${add}</span>
+            <button class="btn btn-outline-primary ${currentHealthInsuranceCodes.size() == healthInsurances.size() ? "hidden" : ""}" type="button" data-bs-toggle="dropdown">
                 <i class="fa fa-plus"></i>
             </button>
             <ul id="healthInsuranceDropdownMenu" class="dropdown-menu">
