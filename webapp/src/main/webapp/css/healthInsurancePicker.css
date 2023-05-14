@@ -1,0 +1,41 @@
+
+.healthInsurancePickerContainer {
+    display: flex;
+    flex-direction: column;
+    width: 50%;
+    align-items: center;
+    padding-left: 1%;
+    padding-right: 1%;
+}
+
+.chipsContainer {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.chip {
+    background: #0275d8;
+    color: white;
+    padding: 3px 5px 3px 10px;
+    border-radius: 15px;
+    margin-right: 5px;
+}
+
+.chipClose {
+    color: white;
+    text-decoration: none;
+    border: none;
+    background: none;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+}
+
+.chipClose:hover {
+    color: #223E6A;
+}
+
+.hidden {
+    display: none;
+}
