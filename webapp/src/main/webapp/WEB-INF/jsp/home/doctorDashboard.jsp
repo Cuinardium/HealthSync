@@ -78,7 +78,13 @@
                     <div class="buttonsContainer">
                         <div class="card-body">
                             <a class="btn btn-primary"
-                               onclick="checkInsurance('${appointmentUrl}', '${doctor.healthInsurances}')">${book}</a>
+                               onclick="checkInsurance(
+                                       '${appointmentUrl}',
+                                        [<c:forEach items="${doctor.healthInsurances}" var="healthInsurance" varStatus="status">
+                                            ${healthInsurance.ordinal()}${status.last ? "" : ", "}
+                                        </c:forEach>])">
+                                    ${book}
+                            </a>
                         </div>
                     </div>
                     <div class="modal fade" id="modal" tabindex="-1" role="dialog" aria-labelledby="modalLabel"
@@ -129,7 +135,7 @@
 
 
     function checkInsurance(appointmentUrl, object) {
-        if (object === '${patientHealthInsurance}' || ${notLogged}) {
+        if (object.includes(${patientHealthInsurance.ordinal()}) || ${notLogged}) {
             redirect(appointmentUrl);
         } else {
             $('#modal').modal('show');
@@ -143,7 +149,7 @@
     }
 
     function redirect(appointmentUrl) {
-        window.location.replace(appointmentUrl);
+        window.location.href = appointmentUrl;
     }
 </script>
 
