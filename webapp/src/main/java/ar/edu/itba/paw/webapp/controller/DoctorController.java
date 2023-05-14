@@ -11,7 +11,6 @@ import ar.edu.itba.paw.webapp.exceptions.UserNotFoundException;
 import ar.edu.itba.paw.webapp.form.AppointmentForm;
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Locale;
 import javax.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -62,7 +61,7 @@ public class DoctorController {
     // Patients will only be able to book appointments between tomorrow and 3 months from now
     List<List<ThirtyMinuteBlock>> hoursAvailable =
         appointmentService.getAvailableHoursForDoctorOnRange(
-            doctorId, tomorrow, tomorrow.plusMonths(1));
+            doctorId, tomorrow, tomorrow.plusMonths(3));
 
     mav.addObject("form", appointmentForm);
     mav.addObject("canBook", canBook);
@@ -71,11 +70,10 @@ public class DoctorController {
   }
 
   @RequestMapping(value = "/{id:\\d+}/detailed_doctor", method = RequestMethod.POST)
-  public ModelAndView appointmentSubmit(
+  public ModelAndView sendAppointment(
       @PathVariable("id") final int doctorId,
       @Valid @ModelAttribute("appointmentForm") final AppointmentForm appointmentForm,
-      final BindingResult errors,
-      Locale locale) {
+      final BindingResult errors) {
 
     if (errors.hasErrors()) {
       return detailedDoctor(doctorId, appointmentForm);
