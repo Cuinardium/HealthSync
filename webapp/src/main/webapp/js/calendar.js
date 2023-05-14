@@ -10,7 +10,6 @@ $(document).ready(function(){
     $(".right-button").click({date: date}, nextYear);
     $(".left-button").click({date: date}, prevYear);
     $(".month").click({date: date}, monthClick);
-    $("#add-button").click({date: date}, newAppointment);
     // Set current month as active
     $(".months-row").children().eq(date.getMonth()).addClass("active-month");
     initCalendar(date);
@@ -81,6 +80,8 @@ function dateClick(appointment) {
     $("#dialog").hide(250);
     $(".active-date").removeClass("active-date");
     $(this).addClass("active-date");
+    let date = new Date($(".year").text(), months.indexOf(appointment.data.month), appointment.data.day);
+    document.getElementById("date").value = date.toLocaleDateString("fr-CA");
     showAppointments(appointment.data.appointments, appointment.data.month, appointment.data.day);
 };
 
@@ -116,67 +117,22 @@ function prevYear(appointment) {
     initCalendar(date);
 }
 
-// appointment handler for clicking the new appointment button
-function newAppointment(appointment) {
-    // if a date isn't selected then do nothing
-    if($(".active-date").length===0)
-        return;
-    // remove red error input on click
-    $("input").click(function(){
-        $(this).removeClass("error-input");
-    })
-    // empty inputs and hide appointments
-    $("#dialog input[type=text]").val('');
-    $("#dialog input[type=number]").val('');
-
-    // appointment handler for ok button
-    $("#ok-button").unbind().click({date: appointment.data.date}, function() {
-        var date = appointment.data.date;
-        var time = $("#time").val().trim();
-        var day = parseInt($(".active-date").html());
-        // Basic form validation
-        if(time.length === 0) {
-            $("#time").addClass("error-input");
-        }
-        else {
-            $("#dialog").hide(250);
-            console.log("new appointment");
-            newAppointmentJson(time, date);
-            date.setDate(day);
-            initCalendar(date);
-        }
-    });
-}
-
-// Adds a json event to appointmentData
-    function newAppointmentJson(time, date) {
-        var event = {
-            "time": time,
-            "year": date.getFullYear(),
-            "month": date.getMonth()+1,
-            "day": date.getDay(),
-        };
-        appointmentData["events"].push(event);
-    }
-
 // Display all appointments of the selected date in card views
 function showAppointments(appointments, month, day) {
     // Clear the dates container
     $(".appointments-container").empty();
     $(".appointments-container").show(250);
-    console.log(appointmentData["appointments"]);
     // If there are no appointments for this date, notify the user
-    if(appointments.length===0) {
+    if (appointments.length === 0) {
         var appointmentCard = $("<div class='card noAppointments'></div>");
-        var appointmentTime = $("<div class='appointment-time'>There are no appointments available for " +month+" "+day+"</div>");
+        var appointmentTime = $("<div class='appointment-time'>There are no appointments available for " + month + " " + day + "</div>");
         $(appointmentCard).append(appointmentTime);
         $(".appointments-container").append(appointmentCard);
-    }
-    else {
+    } else {
         // Go through and add each appointment as a card to the appointments container
-        for(var i=0; i<appointments.length; i++) {
-            var appointmentCard = $("<div class='btn btn-light appointment-button' onclick='openModal()'></div>");
-            var appointmentTime = $("<div class='appointment-time'>"+appointments[i]["time"]+"</div>");
+        for (var i = 0; i < appointments.length; i++) {
+            var appointmentCard = $("<div class='btn btn-light appointment-button' onclick='openModal(); setBlock(\"" + appointments[i]["time"] + "\");'></div>");
+            var appointmentTime = $("<div class='appointment-time'>" + appointments[i]["time"] + "</div>");
             $(appointmentCard).append(appointmentTime);
             $(".appointments-container").append(appointmentCard);
         }

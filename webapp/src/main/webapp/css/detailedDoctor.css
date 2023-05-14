@@ -54,9 +54,6 @@
     border-radius: 50%;
 }
 
-.bg-primary {
-    background: #7e0cf5 !important; }
-
 .ftco-section {
     padding: 7em 0; }
 
@@ -81,7 +78,7 @@
     height: 500px;
     position: relative;
     margin: 20px auto;
-    background: #7e0cf5; }
+    background: #223E6A; }
 
 /*  appointments display */
 .appointments-container {
@@ -124,7 +121,7 @@
 .noAppointments{
     justify-content: center;
     margin: 20px 20px 20px 12px;
-    border-left: 10px solid #FF1744;
+    border-left: 10px solid var(--bs-red);
     height: min-content;
 }
 
@@ -199,7 +196,7 @@
         -o-transition: none;
         transition: none; } }
 .left-button:hover, .right-button:hover {
-    color: #7e0cf5 !important; }
+    color: #223E6A !important; }
 
 .left-button {
     left: 0; }
@@ -207,30 +204,6 @@
 .right-button {
     right: 0;
     top: 0; }
-
-/* Buttons */
-.button {
-    cursor: pointer;
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    appearance: none;
-    outline: none;
-    font-size: 1rem;
-    border-radius: 25px;
-    padding: 0.65rem 1.9rem;
-    -webkit-transition: .2s ease all;
-    -o-transition: .2s ease all;
-    transition: .2s ease all;
-    color: white;
-    border: none;
-    background: #7e0cf5; }
-.button.button-white {
-    background: #fff;
-    color: #000; }
-.button:focus {
-    -webkit-box-shadow: none;
-    box-shadow: none;
-    outline: none; }
 
 /* Days/months tables */
 .days-table, .dates-table, .months-table {
@@ -251,8 +224,7 @@
     cursor: default;
     height: 26px;
     width: 26px;
-    padding: 0 2px;
-    padding-top: 10px;
+    padding: 10px 2px 0;
     line-height: 26px;
     text-transform: uppercase;
     font-size: 11px;
@@ -260,19 +232,19 @@
     -webkit-transition: all 250ms;
     -o-transition: all 250ms;
     transition: all 250ms; }
-@media (max-width: 991.98px) {
+@media (max-width: 992px) {
     .month {
         font-size: 8px; } }
-@media (max-width: 767.98px) {
+@media (max-width: 768px) {
     .month {
-        font-size: 10.5px; } }
+        font-size: 11px; } }
 
 .active-month {
     font-weight: 700;
     color: #000; }
 
 .month:hover {
-    color: #cd4dcc; }
+    color: var(--bs-code-color); }
 
 /*  Dates table */
 .table-date {
@@ -292,12 +264,9 @@
     position: relative; }
 
 .table-date:not(.nil):hover {
-    border-color: #cd4dcc; }
+    border-color: var(--bs-code-color);
+}
 
-.appointment-date {
-    border-color: #7e0cf5;
-    background: #7e0cf5;
-    color: #fff; }
 .appointment-date:after {
     position: absolute;
     top: 0;
@@ -309,11 +278,10 @@
     background: #28a745; }
 
 .active-date {
-    background: #cd4dcc;
-    color: #fff; }
-
-.appointment-date.active-date {
-    background: #7e0cf5; }
+    background: var(--bs-primary);
+    border-color: #223E6A;
+    color: #fff;
+}
 
 /* input dialog */
 .dialog {
@@ -347,24 +315,3 @@
     font-size: 13px;
     letter-spacing: 1px;
     color: rgba(255, 255, 255, 0.9); }
-
-.input {
-    border: none;
-    background: none;
-    border-bottom: 1px rgba(255, 255, 255, 0.2) solid;
-    display: block;
-    margin-bottom: 50px;
-    width: 300px;
-    height: 20px;
-    text-align: center;
-    -webkit-transition: border-color 250ms;
-    -o-transition: border-color 250ms;
-    transition: border-color 250ms;
-    color: #fff; }
-
-.input:focus {
-    outline: none;
-    border-color: #fff; }
-
-.error-input {
-    border-color: #cd4dcc; }
