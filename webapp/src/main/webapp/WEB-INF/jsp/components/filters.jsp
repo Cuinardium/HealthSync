@@ -16,6 +16,7 @@
 <spring:message code="doctorDashboard.placeholder.insurance" var="insurance"/>
 <spring:message code="doctorDashboard.button.filter" var="filter"/>
 <spring:message code="doctorDashboard.placeholder.search" var="search"/>
+<spring:message code="filters.clear" var="clear"/>
 
 
 <html>
@@ -61,7 +62,7 @@
             </c:forEach>
         </form:select>
 
-        <input type="submit" class="btn btn-danger" value="Clear" onclick="clearFilters()">
+        <input type="submit" class="btn btn-danger" value="${clear}" onclick="clearFilters()">
         <input type="submit" class="btn btn-primary" value="${filter}">
     </div>
 </form:form>
