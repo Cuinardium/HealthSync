@@ -315,3 +315,16 @@
     font-size: 13px;
     letter-spacing: 1px;
     color: rgba(255, 255, 255, 0.9); }
+
+.availabilityTitle{
+    margin-bottom: 1.5rem;
+    font-weight: normal;
+}
+
+.titleCalendarContainer{
+    display: flex;
+    flex-direction: column;
+    margin-top: 1rem;
+    padding: 2rem;
+    width: 100%;
+}
