@@ -12,6 +12,7 @@ import ar.edu.itba.paw.webapp.form.DoctorEditForm;
 import ar.edu.itba.paw.webapp.form.DoctorEditForm.DayEnum;
 import ar.edu.itba.paw.webapp.form.HourRangeForm;
 import ar.edu.itba.paw.webapp.form.PatientEditForm;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -30,7 +31,6 @@ public class ProfileController {
   private final PatientService patientService;
 
   private final UserService userService;
-  private final ImageService imageService;
 
   @Autowired
   public ProfileController(
@@ -41,7 +41,6 @@ public class ProfileController {
     this.doctorService = doctorService;
     this.patientService = patientService;
     this.userService = userService;
-    this.imageService = imageService;
   }
 
   @RequestMapping(value = "/doctor-edit", method = RequestMethod.POST)
@@ -52,15 +51,25 @@ public class ProfileController {
       return doctorEdit(doctorEditForm);
     }
 
-    doctorService.updateInformation(
-        PawAuthUserDetails.getCurrentUserId(),
-        doctorEditForm.getEmail(),
-        doctorEditForm.getName(),
-        doctorEditForm.getLastname(),
-        doctorEditForm.getHealthInsuranceCode(),
-        doctorEditForm.getSpecialtyCode(),
-        doctorEditForm.getCityCode(),
-        doctorEditForm.getAddress());
+    // Q: static fromMultiPartFile method
+    try {
+      Image image = null;
+      if (!doctorEditForm.getImage().isEmpty()) {
+        image = new Image(doctorEditForm.getImage().getBytes());
+      }
+      doctorService.updateInformation(
+          PawAuthUserDetails.getCurrentUserId(),
+          doctorEditForm.getEmail(),
+          doctorEditForm.getName(),
+          doctorEditForm.getLastname(),
+          doctorEditForm.getHealthInsuranceCode(),
+          doctorEditForm.getSpecialtyCode(),
+          doctorEditForm.getCityCode(),
+          doctorEditForm.getAddress(),
+          image);
+    } catch (IOException e) {
+      // TODO: handle
+    }
 
     ModelAndView mav = new ModelAndView("components/operationSuccessful");
     mav.addObject("showHeader", true);
@@ -77,11 +86,6 @@ public class ProfileController {
             .getDoctorById(PawAuthUserDetails.getCurrentUserId())
             .orElseThrow(UserNotFoundException::new);
 
-    //    Image image =
-    //        imageService
-    //            .getImage(doctor.getProfilePictureId())
-    //            .orElseThrow(ImageNotFoundException::new);
-    //  doctorEditForm.setImage(image);
     doctorEditForm.setName(doctor.getFirstName());
     doctorEditForm.setLastname(doctor.getLastName());
     doctorEditForm.setEmail(doctor.getEmail());
@@ -143,12 +147,22 @@ public class ProfileController {
       return patientEdit(patientEditForm);
     }
 
-    patientService.updateInformation(
-        PawAuthUserDetails.getCurrentUserId(),
-        patientEditForm.getEmail(),
-        patientEditForm.getName(),
-        patientEditForm.getLastname(),
-        patientEditForm.getHealthInsuranceCode());
+    // Q: static fromMultiPartFile method
+    try {
+      Image image = null;
+      if (!patientEditForm.getImage().isEmpty()) {
+        image = new Image(patientEditForm.getImage().getBytes());
+      }
+      patientService.updateInformation(
+          PawAuthUserDetails.getCurrentUserId(),
+          patientEditForm.getEmail(),
+          patientEditForm.getName(),
+          patientEditForm.getLastname(),
+          patientEditForm.getHealthInsuranceCode(),
+          image);
+    } catch (IOException e) {
+      // TODO: handle this
+    }
 
     ModelAndView mav = new ModelAndView("components/operationSuccessful");
     mav.addObject("showHeader", true);
@@ -166,16 +180,10 @@ public class ProfileController {
             .getPatientById(PawAuthUserDetails.getCurrentUserId())
             .orElseThrow(UserNotFoundException::new);
 
-    // Image image =
-    //  imageService
-    //    .getImage(patient.getProfilePictureId())
-    //  .orElseThrow(ImageNotFoundException::new);
-
     patientEditForm.setEmail(patient.getEmail());
     patientEditForm.setName(patient.getFirstName());
     patientEditForm.setLastname(patient.getLastName());
     patientEditForm.setHealthInsuranceCode(patient.getHealthInsurance().ordinal());
-    //  patientEditForm.setImage(image);
 
     final ModelAndView mav = new ModelAndView("user/patientEdit");
     mav.addObject("form", patientEditForm);

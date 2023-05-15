@@ -9,7 +9,7 @@ CREATE TABLE IF NOT EXISTS users (
     password           VARCHAR(100) NOT NULL,
     first_name         VARCHAR(100) NOT NULL,
     last_name          VARCHAR(100) NOT NULL,
-    profile_picture_id INTEGER DEFAULT 1 NOT NULL,
+    profile_picture_id INTEGER DEFAULT NULL,
     FOREIGN KEY (profile_picture_id) REFERENCES profile_picture (profile_picture_id)
 );
 
@@ -102,14 +102,14 @@ CREATE TABLE IF NOT EXISTS appointment (
 );
 
 /*
-DROP TABLE IF EXISTS appointment;
-DROP TABLE IF EXISTS health_insurance_accepted_by_doctor;
-DROP TABLE IF EXISTS location_for_doctor;
-DROP TABLE IF EXISTS doctor;
-DROP TABLE IF EXISTS doctor_attending_hours;
-DROP TABLE IF EXISTS doctor_location;
-DROP TABLE IF EXISTS health_insurance_for_patient;
-DROP TABLE IF EXISTS patient;
-DROP TABLE IF EXISTS users;
-DROP TABLE IF EXISTS profile_picture;
+    DROP TABLE IF EXISTS appointment;
+    DROP TABLE IF EXISTS health_insurance_accepted_by_doctor;
+    DROP TABLE IF EXISTS location_for_doctor;
+    DROP TABLE IF EXISTS doctor;
+    DROP TABLE IF EXISTS doctor_attending_hours;
+    DROP TABLE IF EXISTS doctor_location;
+    DROP TABLE IF EXISTS health_insurance_for_patient;
+    DROP TABLE IF EXISTS patient;
+    DROP TABLE IF EXISTS users CASCADE;
+    DROP TABLE IF EXISTS profiprofile_picturele_picture;
  */

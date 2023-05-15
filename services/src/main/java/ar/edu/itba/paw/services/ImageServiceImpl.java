@@ -25,13 +25,13 @@ public class ImageServiceImpl implements ImageService {
 
   @Transactional
   @Override
-  public void uploadImage(Image image) {
-    imageDao.uploadImage(image);
+  public long uploadImage(Image image) {
+    return imageDao.uploadImage(image);
   }
 
   @Transactional
   @Override
-  public void updateImage(long id, Image image) {
-    imageDao.updateImage(id, image);
+  public void updateImage(Long pfpId, Image image) {
+    imageDao.updateImage(pfpId, image);
   }
 }

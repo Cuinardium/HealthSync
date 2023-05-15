@@ -1,7 +1,9 @@
 package ar.edu.itba.paw.services;
 
 import ar.edu.itba.paw.interfaces.persistence.UserDao;
+import ar.edu.itba.paw.interfaces.services.ImageService;
 import ar.edu.itba.paw.interfaces.services.UserService;
+import ar.edu.itba.paw.models.Image;
 import ar.edu.itba.paw.models.User;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,11 +15,14 @@ import org.springframework.transaction.annotation.Transactional;
 public class UserServiceImpl implements UserService {
 
   private final UserDao userDao;
+  private final ImageService imageService;
   private final PasswordEncoder passwordEncoder;
 
   @Autowired
-  public UserServiceImpl(UserDao userDao, final PasswordEncoder passwordEncoder) {
+  public UserServiceImpl(
+      UserDao userDao, ImageService imageService, final PasswordEncoder passwordEncoder) {
     this.userDao = userDao;
+    this.imageService = imageService;
     this.passwordEncoder = passwordEncoder;
   }
 
@@ -29,8 +34,17 @@ public class UserServiceImpl implements UserService {
 
   @Transactional
   @Override
-  public void editUser(long userId, String email, String firstName, String lastName) {
-    userDao.editUser(userId, email, firstName, lastName);
+  public void editUser(long userId, String email, String firstName, String lastName, Image image) {
+    Long pfpId =
+        userDao.findById(userId).orElseThrow(IllegalStateException::new).getProfilePictureId();
+    // Si la pfp es null -> insertamos imagen
+    // si la pfp no es null -> la actualizamos para pisar la vieja
+    if (pfpId == null) {
+      pfpId = imageService.uploadImage(image);
+    } else {
+      imageService.updateImage(pfpId, image);
+    }
+    userDao.editUser(userId, email, firstName, lastName, pfpId);
   }
 
   @Override

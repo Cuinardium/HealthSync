@@ -3,6 +3,7 @@ package ar.edu.itba.paw.interfaces.services;
 import ar.edu.itba.paw.models.AttendingHours;
 import ar.edu.itba.paw.models.Doctor;
 import ar.edu.itba.paw.models.HealthInsurance;
+import ar.edu.itba.paw.models.Image;
 import ar.edu.itba.paw.models.Specialty;
 import java.util.List;
 import java.util.Map;
@@ -28,7 +29,8 @@ public interface DoctorService {
       int healthInsuranceCode,
       int specialtyCode,
       int cityCode,
-      String address);
+      String address,
+      Image image);
 
   public void updateAttendingHours(long doctorId, AttendingHours attendingHours);
 

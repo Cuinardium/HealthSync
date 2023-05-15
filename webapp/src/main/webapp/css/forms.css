@@ -16,6 +16,12 @@
     padding-right: 1%;
 }
 
+.formCol{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
 .formRow{
     display: flex;
     flex-direction: row;
