@@ -43,70 +43,98 @@
 
   <div class="daySchedule">
     <div class="scheduleTitle">${monday}</div>
-    <form:input path="mondayAttendingHours" hidden="true"/>
+    <form:select path="mondayAttendingHours" hidden="true" multiple="true">
+      <c:forEach items="${timeEnumValues}" var="block">
+        <form:option value="${block.ordinal()}"/>
+      </c:forEach>
+    </form:select>
     <c:forEach items="${timeEnumValues}" var="block" varStatus="status">
-      <div data-bit="${block.blockAsBit}"
-           class="timeBlock ${block.isBlockSet(form.mondayAttendingHours) ? "selected" : "unselected" } ${status.index < 16 || status.index > 35 ? "hidden" : ""}">
+      <div data-index="${status.index}"
+           class="timeBlock ${form.mondayAttendingHours.contains(block.ordinal()) ? "selected" : "unselected" } ${status.index < 16 || status.index > 35 ? "hidden" : ""}">
         &nbsp;
       </div>
     </c:forEach>
   </div>
   <div class="daySchedule">
     <div class="scheduleTitle">${tuesday}</div>
-    <form:input path="tuesdayAttendingHours" hidden="true"/>
+    <form:select path="tuesdayAttendingHours" hidden="true" multiple="true">
+      <c:forEach items="${timeEnumValues}" var="block">
+        <form:option value="${block.ordinal()}"/>
+      </c:forEach>
+    </form:select>
     <c:forEach items="${timeEnumValues}" var="block" varStatus="status">
-      <div data-bit="${block.blockAsBit}"
-           class="timeBlock ${block.isBlockSet(form.tuesdayAttendingHours) ? "selected" : "unselected" } ${status.index < 16 || status.index > 35 ? "hidden" : ""}">
+      <div data-index="${status.index}"
+           class="timeBlock ${form.tuesdayAttendingHours.contains(block.ordinal()) ? "selected" : "unselected" } ${status.index < 16 || status.index > 35 ? "hidden" : ""}">
         &nbsp;
       </div>
     </c:forEach>
   </div>
   <div class="daySchedule">
     <div class="scheduleTitle">${wednesday}</div>
-    <form:input path="wednesdayAttendingHours" hidden="true"/>
+    <form:select path="wednesdayAttendingHours" hidden="true" multiple="true">
+      <c:forEach items="${timeEnumValues}" var="block">
+        <form:option value="${block.ordinal()}"/>
+      </c:forEach>
+    </form:select>
     <c:forEach items="${timeEnumValues}" var="block" varStatus="status">
-      <div data-bit="${block.blockAsBit}"
-           class="timeBlock ${block.isBlockSet(form.wednesdayAttendingHours) ? "selected" : "unselected" } ${status.index < 16 || status.index > 35 ? "hidden" : ""}">
+      <div data-index="${status.index}"
+           class="timeBlock ${form.wednesdayAttendingHours.contains(block.ordinal()) ? "selected" : "unselected" } ${status.index < 16 || status.index > 35 ? "hidden" : ""}">
         &nbsp;
       </div>
     </c:forEach>
   </div>
   <div class="daySchedule">
     <div class="scheduleTitle">${thursday}</div>
-    <form:input path="thursdayAttendingHours" hidden="true"/>
+    <form:select path="thursdayAttendingHours" hidden="true" multiple="true">
+      <c:forEach items="${timeEnumValues}" var="block">
+        <form:option value="${block.ordinal()}"/>
+      </c:forEach>
+    </form:select>
     <c:forEach items="${timeEnumValues}" var="block" varStatus="status">
-      <div data-bit="${block.blockAsBit}"
-           class="timeBlock ${block.isBlockSet(form.thursdayAttendingHours) ? "selected" : "unselected" } ${status.index < 16 || status.index > 35 ? "hidden" : ""}">
+      <div data-index="${status.index}"
+           class="timeBlock ${form.thursdayAttendingHours.contains(block.ordinal()) ? "selected" : "unselected" } ${status.index < 16 || status.index > 35 ? "hidden" : ""}">
         &nbsp;
       </div>
     </c:forEach>
   </div>
   <div class="daySchedule">
     <div class="scheduleTitle">${friday}</div>
-    <form:input path="fridayAttendingHours" hidden="true"/>
+    <form:select path="fridayAttendingHours" hidden="true" multiple="true">
+      <c:forEach items="${timeEnumValues}" var="block">
+        <form:option value="${block.ordinal()}"/>
+      </c:forEach>
+    </form:select>
     <c:forEach items="${timeEnumValues}" var="block" varStatus="status">
-      <div data-bit="${block.blockAsBit}"
-           class="timeBlock ${block.isBlockSet(form.fridayAttendingHours) ? "selected" : "unselected" } ${status.index < 16 || status.index > 35 ? "hidden" : ""}">
+      <div data-index="${status.index}"
+           class="timeBlock ${form.fridayAttendingHours.contains(block.ordinal()) ? "selected" : "unselected" } ${status.index < 16 || status.index > 35 ? "hidden" : ""}">
         &nbsp;
       </div>
     </c:forEach>
   </div>
   <div class="daySchedule hidden">
     <div class="scheduleTitle">${saturday}</div>
-    <form:input path="saturdayAttendingHours" hidden="true"/>
+    <form:select path="saturdayAttendingHours" hidden="true" multiple="true">
+      <c:forEach items="${timeEnumValues}" var="block">
+        <form:option value="${block.ordinal()}"/>
+      </c:forEach>
+    </form:select>
     <c:forEach items="${timeEnumValues}" var="block" varStatus="status">
-      <div data-bit="${block.blockAsBit}"
-           class="timeBlock ${block.isBlockSet(form.saturdayAttendingHours) ? "selected" : "unselected" } ${status.index < 16 || status.index > 35 ? "hidden" : ""}">
+      <div data-index="${status.index}"
+           class="timeBlock ${form.saturdayAttendingHours.contains(block.ordinal()) ? "selected" : "unselected" } ${status.index < 16 || status.index > 35 ? "hidden" : ""}">
         &nbsp;
       </div>
     </c:forEach>
   </div>
   <div class="daySchedule hidden">
     <div class="scheduleTitle">${sunday}</div>
-    <form:input path="sundayAttendingHours" hidden="true"/>
+    <form:select path="sundayAttendingHours" hidden="true" multiple="true">
+      <c:forEach items="${timeEnumValues}" var="block">
+        <form:option value="${block.ordinal()}"/>
+      </c:forEach>
+    </form:select>
     <c:forEach items="${timeEnumValues}" var="block" varStatus="status">
-      <div data-bit="${block.blockAsBit}"
-           class="timeBlock ${block.isBlockSet(form.sundayAttendingHours) ? "selected" : "unselected" } ${status.index < 16 || status.index > 35 ? "hidden" : ""}">
+      <div data-index="${status.index}"
+           class="timeBlock ${form.sundayAttendingHours.contains(block.ordinal()) ? "selected" : "unselected" } ${status.index < 16 || status.index > 35 ? "hidden" : ""}">
         &nbsp;
       </div>
     </c:forEach>

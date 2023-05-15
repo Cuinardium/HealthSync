@@ -19,7 +19,7 @@ document.addEventListener('DOMContentLoaded', function () {
         // Toggle hidden class for time labels
         let timeLabels = document.querySelectorAll(".timeLabel");
 
-        for(let i = 0; i < timeLabels.length; i++) {
+        for (let i = 0; i < timeLabels.length; i++) {
             if (i < 16 || i > 35) {
                 timeLabels.item(i).classList.toggle("hidden");
             }
@@ -28,7 +28,7 @@ document.addEventListener('DOMContentLoaded', function () {
         // Toggle hidden class for time blocks
         document.querySelectorAll(".daySchedule").forEach(daySchedule => {
             let timeBlocks = daySchedule.querySelectorAll(".timeBlock")
-            for(let i = 0; i < timeBlocks.length; i++) {
+            for (let i = 0; i < timeBlocks.length; i++) {
                 if (i < 16 || i > 35) {
                     timeBlocks.item(i).classList.toggle("hidden");
                 }
@@ -37,18 +37,22 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     document.querySelector("#show-weekend-check").addEventListener("click", toggleWeekend);
+
     function toggleWeekend() {
         let days = document.querySelectorAll(".daySchedule");
         days.item(5).classList.toggle("hidden");
         days.item(6).classList.toggle("hidden");
     }
 
-    
+
     document.querySelector("#clear-button").addEventListener("click", clearScheduleSelector)
 
     function clearScheduleSelector() {
-        document.querySelectorAll(".daySchedule").forEach(daySchedule =>{
-            daySchedule.getElementsByTagName("input")[0].value = "0";
+        document.querySelectorAll(".daySchedule").forEach(daySchedule => {
+            let options = daySchedule.getElementsByTagName("select")[0].getElementsByTagName("option");
+            for (let i = 0; i < options.length; i++) {
+                options[i].selected = false;
+            }
 
             daySchedule.querySelectorAll(".timeBlock").forEach(timeBlock => {
                 timeBlock.classList.remove("selected");
@@ -73,21 +77,19 @@ document.addEventListener('DOMContentLoaded', function () {
         updateBlockState(event.target)
     }
 
-    // Updates the value on the form input of the blocks day
-    // The orm input has a 64 bit integer, each bit represents the state of a block
+    // Updates the selected value on the form select
     // After updating, the css class is updated
     function updateBlockState(element) {
         // Get input element from father element
-        let input = element.parentElement.getElementsByTagName("input")[0];
+        let select = element.parentElement.getElementsByTagName("select")[0];
 
         // Get bit from element
-        let bit = BigInt(element.getAttribute("data-bit"));
+        let index = Number(element.getAttribute("data-index"));
 
-        // Negate bit at same index in input
-        let newValue = BigInt(input.value) ^ bit;
+        // Negate selected option in index
+        let option = select.getElementsByTagName("option")[index];
+        option.selected = !option.selected
 
-        // Store the new value in input
-        input.value = newValue.toString();
 
         // Toggle css class
         element.classList.toggle("selected");
