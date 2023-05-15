@@ -286,7 +286,7 @@ public class DoctorDaoImpl implements DoctorDao {
                 "first_name",
                 "last_name",
                 "profile_picture_id",
-                "subquery.health_insurance_code",
+                "health_insurance_accepted_by_doctor.health_insurance_code",
                 "doctor_location_id",
                 "city_code",
                 "address",
