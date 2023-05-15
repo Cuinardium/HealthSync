@@ -1,15 +1,19 @@
 package ar.edu.itba.paw.webapp.controller;
 
 import ar.edu.itba.paw.interfaces.services.DoctorService;
+import ar.edu.itba.paw.interfaces.services.ImageService;
 import ar.edu.itba.paw.interfaces.services.PatientService;
 import ar.edu.itba.paw.interfaces.services.UserService;
 import ar.edu.itba.paw.models.*;
 import ar.edu.itba.paw.webapp.auth.PawAuthUserDetails;
 import ar.edu.itba.paw.webapp.exceptions.UserNotFoundException;
+import ar.edu.itba.paw.webapp.form.ChangePasswordForm;
 import ar.edu.itba.paw.webapp.form.DoctorEditForm;
-import ar.edu.itba.paw.webapp.form.PasswordForm;
 import ar.edu.itba.paw.webapp.form.PatientEditForm;
+import java.io.IOException;
+import java.time.DayOfWeek;
 import java.util.Arrays;
+import java.util.stream.Collectors;
 import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -30,7 +34,8 @@ public class ProfileController {
   public ProfileController(
       final DoctorService doctorService,
       final PatientService patientService,
-      final UserService userService) {
+      final UserService userService,
+      final ImageService imageService) {
     this.doctorService = doctorService;
     this.patientService = patientService;
     this.userService = userService;
@@ -44,15 +49,67 @@ public class ProfileController {
       return doctorEdit(doctorEditForm);
     }
 
-    doctorService.updateInformation(
-        PawAuthUserDetails.getCurrentUserId(),
-        doctorEditForm.getEmail(),
-        doctorEditForm.getName(),
-        doctorEditForm.getLastname(),
-        doctorEditForm.getHealthInsuranceCode(),
-        doctorEditForm.getSpecialtyCode(),
-        doctorEditForm.getCityCode(),
-        doctorEditForm.getAddress());
+    // Q: static fromMultiPartFile method
+    try {
+      Image image = null;
+      if (!doctorEditForm.getImage().isEmpty()) {
+        image = new Image(doctorEditForm.getImage().getBytes());
+      }
+      doctorService.updateInformation(
+          PawAuthUserDetails.getCurrentUserId(),
+          doctorEditForm.getEmail(),
+          doctorEditForm.getName(),
+          doctorEditForm.getLastname(),
+          doctorEditForm.getHealthInsuranceCode(),
+          doctorEditForm.getSpecialtyCode(),
+          doctorEditForm.getCityCode(),
+          doctorEditForm.getAddress(),
+          image);
+    } catch (IOException e) {
+      // TODO: handle
+    }
+
+    ThirtyMinuteBlock[] values = ThirtyMinuteBlock.values();
+
+    AttendingHours attendingHours =
+        new AttendingHours(
+            doctorEditForm
+                .getMondayAttendingHours()
+                .stream()
+                .map(i -> values[i])
+                .collect(Collectors.toList()),
+            doctorEditForm
+                .getTuesdayAttendingHours()
+                .stream()
+                .map(i -> values[i])
+                .collect(Collectors.toList()),
+            doctorEditForm
+                .getWednesdayAttendingHours()
+                .stream()
+                .map(i -> values[i])
+                .collect(Collectors.toList()),
+            doctorEditForm
+                .getThursdayAttendingHours()
+                .stream()
+                .map(i -> values[i])
+                .collect(Collectors.toList()),
+            doctorEditForm
+                .getFridayAttendingHours()
+                .stream()
+                .map(i -> values[i])
+                .collect(Collectors.toList()),
+            doctorEditForm
+                .getSaturdayAttendingHours()
+                .stream()
+                .map(i -> values[i])
+                .collect(Collectors.toList()),
+            doctorEditForm
+                .getSundayAttendingHours()
+                .stream()
+                .map(i -> values[i])
+                .collect(Collectors.toList()));
+
+    doctorService.updateAttendingHours(PawAuthUserDetails.getCurrentUserId(), attendingHours);
 
     ModelAndView mav = new ModelAndView("components/operationSuccessful");
     mav.addObject("showHeader", true);
@@ -77,11 +134,57 @@ public class ProfileController {
     doctorEditForm.setCityCode(doctor.getLocation().getCity().ordinal());
     doctorEditForm.setSpecialtyCode(doctor.getSpecialty().ordinal());
 
+    // Attending hours
+    AttendingHours attendingHours = doctor.getAttendingHours();
+    doctorEditForm.setMondayAttendingHours(
+        attendingHours
+            .getAttendingBlocksForDay(DayOfWeek.MONDAY)
+            .stream()
+            .map(ThirtyMinuteBlock::ordinal)
+            .collect(Collectors.toList()));
+    doctorEditForm.setTuesdayAttendingHours(
+        attendingHours
+            .getAttendingBlocksForDay(DayOfWeek.TUESDAY)
+            .stream()
+            .map(ThirtyMinuteBlock::ordinal)
+            .collect(Collectors.toList()));
+    doctorEditForm.setWednesdayAttendingHours(
+        attendingHours
+            .getAttendingBlocksForDay(DayOfWeek.WEDNESDAY)
+            .stream()
+            .map(ThirtyMinuteBlock::ordinal)
+            .collect(Collectors.toList()));
+    doctorEditForm.setThursdayAttendingHours(
+        attendingHours
+            .getAttendingBlocksForDay(DayOfWeek.THURSDAY)
+            .stream()
+            .map(ThirtyMinuteBlock::ordinal)
+            .collect(Collectors.toList()));
+    doctorEditForm.setFridayAttendingHours(
+        attendingHours
+            .getAttendingBlocksForDay(DayOfWeek.FRIDAY)
+            .stream()
+            .map(ThirtyMinuteBlock::ordinal)
+            .collect(Collectors.toList()));
+    doctorEditForm.setSaturdayAttendingHours(
+        attendingHours
+            .getAttendingBlocksForDay(DayOfWeek.SATURDAY)
+            .stream()
+            .map(ThirtyMinuteBlock::ordinal)
+            .collect(Collectors.toList()));
+    doctorEditForm.setSundayAttendingHours(
+        attendingHours
+            .getAttendingBlocksForDay(DayOfWeek.SUNDAY)
+            .stream()
+            .map(ThirtyMinuteBlock::ordinal)
+            .collect(Collectors.toList()));
+
     final ModelAndView mav = new ModelAndView("user/doctorEdit");
     mav.addObject("form", doctorEditForm);
     mav.addObject("cities", Arrays.asList(City.values()));
     mav.addObject("specialties", Arrays.asList(Specialty.values()));
     mav.addObject("healthInsurances", Arrays.asList(HealthInsurance.values()));
+    mav.addObject("timeEnumValues", ThirtyMinuteBlock.values());
     return mav;
   }
 
@@ -93,12 +196,22 @@ public class ProfileController {
       return patientEdit(patientEditForm);
     }
 
-    patientService.updateInformation(
-        PawAuthUserDetails.getCurrentUserId(),
-        patientEditForm.getEmail(),
-        patientEditForm.getName(),
-        patientEditForm.getLastname(),
-        patientEditForm.getHealthInsuranceCode());
+    // Q: static fromMultiPartFile method
+    try {
+      Image image = null;
+      if (!patientEditForm.getImage().isEmpty()) {
+        image = new Image(patientEditForm.getImage().getBytes());
+      }
+      patientService.updateInformation(
+          PawAuthUserDetails.getCurrentUserId(),
+          patientEditForm.getEmail(),
+          patientEditForm.getName(),
+          patientEditForm.getLastname(),
+          patientEditForm.getHealthInsuranceCode(),
+          image);
+    } catch (IOException e) {
+      // TODO: handle this
+    }
 
     ModelAndView mav = new ModelAndView("components/operationSuccessful");
     mav.addObject("showHeader", true);
@@ -124,19 +237,31 @@ public class ProfileController {
     final ModelAndView mav = new ModelAndView("user/patientEdit");
     mav.addObject("form", patientEditForm);
     mav.addObject("healthInsurances", Arrays.asList(HealthInsurance.values()));
-
     return mav;
   }
 
   @RequestMapping(value = "/change-password", method = RequestMethod.POST)
   public ModelAndView changePasswordSubmit(
-      @Valid @ModelAttribute("changePasswordForm") final PasswordForm passwordForm,
+      @Valid @ModelAttribute("changePasswordForm") final ChangePasswordForm changePasswordForm,
       final BindingResult errors) {
     if (errors.hasErrors()) {
-      return changePassword(passwordForm);
+      return changePassword(changePasswordForm, false);
     }
 
-    userService.changePassword(PawAuthUserDetails.getCurrentUserId(), passwordForm.getPassword());
+    try {
+      boolean changedPassword =
+          userService.changePassword(
+              PawAuthUserDetails.getCurrentUserId(),
+              changePasswordForm.getOldPassword(),
+              changePasswordForm.getPassword());
+      if (!changedPassword) {
+        return changePassword(changePasswordForm, true);
+      }
+    } catch (IllegalStateException exception) {
+      // No deberia pasar
+      // TODO: log?
+      throw exception;
+    }
     ModelAndView mav = new ModelAndView("components/operationSuccessful");
     mav.addObject("showHeader", true);
     mav.addObject("operationTitle", "profile.changePasswordSuccessfulTitle");
@@ -146,11 +271,11 @@ public class ProfileController {
 
   @RequestMapping(value = "/change-password", method = RequestMethod.GET)
   public ModelAndView changePassword(
-      @ModelAttribute("changePasswordForm") final PasswordForm passwordForm) {
+      @ModelAttribute("changePasswordForm") final ChangePasswordForm changePasswordForm,
+      Boolean OldPasswordDoesNotMatch) {
     final ModelAndView mav = new ModelAndView("user/changePassword");
-    mav.addObject("form", passwordForm);
-    mav.addObject("healthInsurances", Arrays.asList(HealthInsurance.values()));
-
+    mav.addObject("oldPasswordDoesNotMatch", OldPasswordDoesNotMatch);
+    mav.addObject("form", changePasswordForm);
     return mav;
   }
 }

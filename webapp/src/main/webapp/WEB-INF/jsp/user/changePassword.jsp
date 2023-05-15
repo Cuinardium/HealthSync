@@ -18,6 +18,9 @@
 <spring:message code="form.cpassword" var="cpassword"/>
 <spring:message code="form.cpassword_hint" var="cpassword_hint"/>
 <spring:message code="profile.saveChanges" var="saveChanges"/>
+<spring:message code="profile.oldPassword" var="oldPassword"/>
+<spring:message code="profile.oldPassword_hint" var="oldPassword_hint"/>
+<spring:message code="profile.oldPasswordDoesNotMatchError" var="oldPasswordDoesNotMatchError"/>
 
 <html>
 <head>
@@ -37,6 +40,18 @@
 <form:form modelAttribute="changePasswordForm" class="card" action="${changePasswordUrl}" method="POST">
     <div class="formRow">
         <div class="formItem">
+            <form:label path="oldPassword">${oldPassword}</form:label>
+            <form:input class="form-control" type="password" path="oldPassword" placeholder="${oldPassword_hint}"/>
+            <form:errors path="oldPassword" cssClass="error" element="p"/>
+            <c:if test="${oldPasswordDoesNotMatch}">
+                <p class="error">
+                    ${oldPasswordDoesNotMatchError}
+                </p>
+            </c:if>
+        </div>
+    </div>
+    <div class="formRow">
+        <div class="formItem">
             <form:label path="password">${password}</form:label>
             <form:input class="form-control" type="password" path="password" placeholder="${password_hint}"/>
             <form:errors path="password" cssClass="error" element="p"/>
@@ -47,6 +62,7 @@
             <form:label path="confirmPassword">${cpassword}</form:label>
             <form:input class="form-control" path="confirmPassword" type="password" placeholder="${cpassword_hint}"/>
             <form:errors path="confirmPassword" cssClass="error" element="p"/>
+            <form:errors cssClass="error" element="p"/>
         </div>
     </div>
     <button type="submit" class="btn btn-primary submitButton">${saveChanges}</button>

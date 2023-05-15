@@ -4,53 +4,155 @@ import ar.edu.itba.paw.models.City;
 import ar.edu.itba.paw.models.HealthInsurance;
 import ar.edu.itba.paw.models.Specialty;
 import ar.edu.itba.paw.webapp.annotations.ExistsInEnum;
-
+import java.util.Collections;
+import java.util.List;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
-public class DoctorEditForm extends UserEditForm{
-    @ExistsInEnum(enumClass = HealthInsurance.class)
-    private Integer healthInsuranceCode = -1;
+public class DoctorEditForm extends UserEditForm {
+  @ExistsInEnum(enumClass = HealthInsurance.class)
+  private Integer healthInsuranceCode = -1;
 
-    @ExistsInEnum(enumClass = City.class)
-    private Integer cityCode = -1;
+  @ExistsInEnum(enumClass = City.class)
+  private Integer cityCode = -1;
 
-    @Size(min = 1)
-    @Pattern(regexp = "[a-zA-Z0-9. ]+")
-    private String address;
+  @Size(min = 1)
+  @Pattern(regexp = "[a-zA-Z0-9. ]+")
+  private String address;
 
-    @ExistsInEnum(enumClass = Specialty.class)
-    private Integer specialtyCode = -1;
+  @ExistsInEnum(enumClass = Specialty.class)
+  private Integer specialtyCode = -1;
 
-    public int getHealthInsuranceCode() {
-        return healthInsuranceCode;
+  // Attending hours encoded as bits
+  private List<Integer> mondayAttendingHours;
+  private List<Integer> tuesdayAttendingHours;
+  private List<Integer> wednesdayAttendingHours;
+  private List<Integer> thursdayAttendingHours;
+  private List<Integer> fridayAttendingHours;
+  private List<Integer> saturdayAttendingHours;
+  private List<Integer> sundayAttendingHours;
+
+  public int getHealthInsuranceCode() {
+    return healthInsuranceCode;
+  }
+
+  public void setHealthInsuranceCode(int healthInsuranceCode) {
+    this.healthInsuranceCode = healthInsuranceCode;
+  }
+
+  public int getCityCode() {
+    return cityCode;
+  }
+
+  public void setCityCode(int cityCode) {
+    this.cityCode = cityCode;
+  }
+
+  public String getAddress() {
+    return address;
+  }
+
+  public void setAddress(String address) {
+    this.address = address;
+  }
+
+  public int getSpecialtyCode() {
+    return specialtyCode;
+  }
+
+  public void setSpecialtyCode(int specialtyCode) {
+    this.specialtyCode = specialtyCode;
+  }
+
+  // =================== Attending hours ==============================
+  public List<Integer> getMondayAttendingHours() {
+    return mondayAttendingHours;
+  }
+
+  public void setMondayAttendingHours(List<Integer> mondayAttendingHours) {
+    if (mondayAttendingHours == null) {
+      this.mondayAttendingHours = Collections.emptyList();
+      return;
     }
 
-    public void setHealthInsuranceCode(int healthInsuranceCode) {
-        this.healthInsuranceCode = healthInsuranceCode;
+    this.mondayAttendingHours = mondayAttendingHours;
+  }
+
+  public List<Integer> getTuesdayAttendingHours() {
+    return tuesdayAttendingHours;
+  }
+
+  public void setTuesdayAttendingHours(List<Integer> tuesdayAttendingHours) {
+    if (tuesdayAttendingHours == null) {
+      this.tuesdayAttendingHours = Collections.emptyList();
+      return;
     }
 
-    public int getCityCode() {
-        return cityCode;
+    this.tuesdayAttendingHours = tuesdayAttendingHours;
+  }
+
+  public List<Integer> getWednesdayAttendingHours() {
+    return wednesdayAttendingHours;
+  }
+
+  public void setWednesdayAttendingHours(List<Integer> wednesdayAttendingHours) {
+    if (wednesdayAttendingHours == null) {
+      this.wednesdayAttendingHours = Collections.emptyList();
+      return;
     }
 
-    public void setCityCode(int cityCode) {
-        this.cityCode = cityCode;
+    this.wednesdayAttendingHours = wednesdayAttendingHours;
+  }
+
+  public List<Integer> getThursdayAttendingHours() {
+    return thursdayAttendingHours;
+  }
+
+  public void setThursdayAttendingHours(List<Integer> thursdayAttendingHours) {
+    if (thursdayAttendingHours == null) {
+      this.thursdayAttendingHours = Collections.emptyList();
+      return;
     }
 
-    public String getAddress() {
-        return address;
+    this.thursdayAttendingHours = thursdayAttendingHours;
+  }
+
+  public List<Integer> getFridayAttendingHours() {
+    return fridayAttendingHours;
+  }
+
+  public void setFridayAttendingHours(List<Integer> fridayAttendingHours) {
+    if (fridayAttendingHours == null) {
+      this.fridayAttendingHours = Collections.emptyList();
+      return;
     }
 
-    public void setAddress(String address) {
-        this.address = address;
+    this.fridayAttendingHours = fridayAttendingHours;
+  }
+
+  public List<Integer> getSaturdayAttendingHours() {
+    return saturdayAttendingHours;
+  }
+
+  public void setSaturdayAttendingHours(List<Integer> saturdayAttendingHours) {
+    if (saturdayAttendingHours == null) {
+      this.saturdayAttendingHours = Collections.emptyList();
+      return;
     }
 
-    public int getSpecialtyCode() {
-        return specialtyCode;
+    this.saturdayAttendingHours = saturdayAttendingHours;
+  }
+
+  public List<Integer> getSundayAttendingHours() {
+    return sundayAttendingHours;
+  }
+
+  public void setSundayAttendingHours(List<Integer> sundayAttendingHours) {
+    if (sundayAttendingHours == null) {
+      this.sundayAttendingHours = Collections.emptyList();
+      return;
     }
 
-    public void setSpecialtyCode(int specialtyCode) {
-        this.specialtyCode = specialtyCode;
-    }
+    this.sundayAttendingHours = sundayAttendingHours;
+  }
 }

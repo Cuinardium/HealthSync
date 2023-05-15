@@ -46,7 +46,18 @@
 <div class="formContainer generalPadding">
     <h1>${title}</h1>
     <form:form modelAttribute="doctorEditForm" class="card" action="${doctorEditUrl}"
-               method="POST">
+               method="POST" enctype="multipart/form-data">
+        <div class="formCol">
+            <div class="formItem">
+                <c:url value="/img/${user.getProfilePictureId()}" var="userImg"/>
+                <img src="${userImg}" width="100" height="100" class="rounded-circle">
+            </div>
+            <div class="formItem">
+                <form:label path="image">${image}</form:label>
+                <form:input class="form-control" type="file" placeholder="${image_hint}" path="image"/>
+                <form:errors path="image" cssClass="error" element="p"/>
+            </div>
+        </div>
         <div class="formRow">
             <div class="formItem">
                 <form:label path="name">${name}</form:label>
@@ -111,6 +122,11 @@
                 <form:errors path="email" cssClass="error" element="p"/>
             </div>
         </div>
+
+        <!-- Doctor schedule selector -->
+        <c:set var="timeEnumValues" value="${timeEnumValues}" scope="request"/>
+        <jsp:include page="../components/scheduleSelector.jsp"/>
+
         <button type="submit" class="btn btn-primary submitButton">${saveChanges}</button>
     </form:form>
 </div>

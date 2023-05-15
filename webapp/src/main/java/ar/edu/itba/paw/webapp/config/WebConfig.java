@@ -47,9 +47,6 @@ public class WebConfig extends WebMvcConfigurerAdapter {
   @Value("classpath:schema.sql")
   private Resource schemaSql;
 
-  @Value("classpath:insertDefaults.sql")
-  private Resource insertDefaultsSql;
-
   // get properties from application.properties
   @Autowired private Environment env;
 
@@ -89,7 +86,6 @@ public class WebConfig extends WebMvcConfigurerAdapter {
   private DatabasePopulator databasePopulator() {
     final ResourceDatabasePopulator populator = new ResourceDatabasePopulator();
     populator.addScript(schemaSql);
-    populator.addScript(insertDefaultsSql);
     return populator;
   }
 
@@ -117,7 +113,6 @@ public class WebConfig extends WebMvcConfigurerAdapter {
   @Bean
   public MultipartResolver multipartResolver() {
     CommonsMultipartResolver resolver = new CommonsMultipartResolver();
-    resolver.setMaxUploadSize(1024 * 1024 * 10);
     return resolver;
   }
 
