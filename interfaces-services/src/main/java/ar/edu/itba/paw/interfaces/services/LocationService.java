@@ -1,8 +1,7 @@
 package ar.edu.itba.paw.interfaces.services;
 
-import java.util.Optional;
-
 import ar.edu.itba.paw.models.Location;
+import java.util.Optional;
 
 public interface LocationService {
 

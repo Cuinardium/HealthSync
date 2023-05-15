@@ -8,47 +8,19 @@
   </parent>
 
   <groupId>ar.edu.itba.paw</groupId>
-  <artifactId>persistence</artifactId>
+  <artifactId>interfaces-persistance</artifactId>
   <version>1.0-SNAPSHOT</version>
 
-  <name>persistence</name>
+  <name>interfaces</name>
   <!-- FIXME change it to the project's website -->
   <url>http://www.example.com</url>
+
 
   <dependencies>
       <dependency>
           <groupId>${project.groupId}</groupId>
           <artifactId>models</artifactId>
           <version>${project.version}</version>
-      </dependency>
-      <dependency>
-          <groupId>${project.groupId}</groupId>
-          <artifactId>interfaces-persistance</artifactId>
-          <version>${project.version}</version>
-      </dependency>
-      <dependency>
-          <groupId>org.springframework</groupId>
-          <artifactId>spring-context</artifactId>
-      </dependency>
-      <dependency>
-          <groupId>org.springframework</groupId>
-          <artifactId>spring-jdbc</artifactId>
-      </dependency>
-      <dependency>
-          <groupId>junit</groupId>
-          <artifactId>junit</artifactId>
-      </dependency>
-      <dependency>
-          <groupId>org.mockito</groupId>
-          <artifactId>mockito-core</artifactId>
-      </dependency>
-      <dependency>
-          <groupId>org.springframework</groupId>
-          <artifactId>spring-test</artifactId>
-      </dependency>
-      <dependency>
-          <groupId>org.hsqldb</groupId>
-          <artifactId>hsqldb</artifactId>
       </dependency>
   </dependencies>
 

@@ -18,10 +18,16 @@ public interface DoctorService {
       AttendingHours attendingHours);
 
   public void updateInformation(
-          long doctorId, String email, String firstName, String lastName, int healthInsuranceCode, int specialtyCode, int cityCode, String address);
+      long doctorId,
+      String email,
+      String firstName,
+      String lastName,
+      int healthInsuranceCode,
+      int specialtyCode,
+      int cityCode,
+      String address);
 
-
-    public void updateAttendingHours(long doctorId, AttendingHours attendingHours);
+  public void updateAttendingHours(long doctorId, AttendingHours attendingHours);
 
   public Optional<Doctor> getDoctorById(long id);
 

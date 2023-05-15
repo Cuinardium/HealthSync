@@ -24,7 +24,12 @@
       </dependency>
       <dependency>
           <groupId>${project.groupId}</groupId>
-          <artifactId>interfaces</artifactId>
+          <artifactId>interfaces-services</artifactId>
+          <version>${project.version}</version>
+      </dependency>
+      <dependency>
+          <groupId>${project.groupId}</groupId>
+          <artifactId>interfaces-persistance</artifactId>
           <version>${project.version}</version>
       </dependency>
 

@@ -1,8 +1,7 @@
 package ar.edu.itba.paw.interfaces.services;
 
-import java.util.Optional;
-
 import ar.edu.itba.paw.models.Patient;
+import java.util.Optional;
 
 public interface PatientService {
 
@@ -10,7 +9,7 @@ public interface PatientService {
       String email, String password, String firstName, String lastName, int healthInsuranceCode);
 
   public void updateInformation(
-          long patientId, String email, String firstName, String lastName, int healthInsuranceCode);
+      long patientId, String email, String firstName, String lastName, int healthInsuranceCode);
 
-  public Optional<Patient> getPatientById(long id); 
+  public Optional<Patient> getPatientById(long id);
 }

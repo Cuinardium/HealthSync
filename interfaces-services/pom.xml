@@ -8,7 +8,7 @@
   </parent>
 
   <groupId>ar.edu.itba.paw</groupId>
-  <artifactId>interfaces</artifactId>
+  <artifactId>interfaces-services</artifactId>
   <version>1.0-SNAPSHOT</version>
 
   <name>interfaces</name>
