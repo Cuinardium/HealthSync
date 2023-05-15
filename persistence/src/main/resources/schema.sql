@@ -9,7 +9,7 @@ CREATE TABLE IF NOT EXISTS users (
     password           VARCHAR(100) NOT NULL,
     first_name         VARCHAR(100) NOT NULL,
     last_name          VARCHAR(100) NOT NULL,
-    profile_picture_id INTEGER DEFAULT 1 NOT NULL,
+    profile_picture_id INTEGER DEFAULT NULL,
     FOREIGN KEY (profile_picture_id) REFERENCES profile_picture (profile_picture_id)
 );
 
@@ -96,7 +96,7 @@ CREATE TABLE IF NOT EXISTS appointment (
     appointment_date DATE NOT NULL,
     appointment_time SMALLINT NOT NULL, -- 0 a 47 -> uso smallint para ahorrar espacio
     appointment_description VARCHAR(1000),
-    cancel_description VARCHAR(1000),
+    cancel_description VARCHAR(1000) DEFAULT NULL,
     status_code      INTEGER NOT NULL,
     FOREIGN KEY (doctor_id)     REFERENCES doctor (doctor_id),
     FOREIGN KEY (patient_id)    REFERENCES patient (patient_id)
@@ -105,14 +105,14 @@ CREATE TABLE IF NOT EXISTS appointment (
 /*Alter table appointment add column cancelDescription VARCHAR(1000);
 
 /*
-DROP TABLE IF EXISTS appointment;
-DROP TABLE IF EXISTS health_insurance_accepted_by_doctor;
-DROP TABLE IF EXISTS location_for_doctor;
-DROP TABLE IF EXISTS doctor;
-DROP TABLE IF EXISTS doctor_attending_hours;
-DROP TABLE IF EXISTS doctor_location;
-DROP TABLE IF EXISTS health_insurance_for_patient;
-DROP TABLE IF EXISTS patient;
-DROP TABLE IF EXISTS users;
-DROP TABLE IF EXISTS profile_picture;
+    DROP TABLE IF EXISTS appointment;
+    DROP TABLE IF EXISTS health_insurance_accepted_by_doctor;
+    DROP TABLE IF EXISTS location_for_doctor;
+    DROP TABLE IF EXISTS doctor;
+    DROP TABLE IF EXISTS doctor_attending_hours;
+    DROP TABLE IF EXISTS doctor_location;
+    DROP TABLE IF EXISTS health_insurance_for_patient;
+    DROP TABLE IF EXISTS patient;
+    DROP TABLE IF EXISTS users CASCADE;
+    DROP TABLE IF EXISTS profiprofile_picturele_picture;
  */

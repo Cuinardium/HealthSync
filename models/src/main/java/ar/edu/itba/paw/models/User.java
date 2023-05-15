@@ -2,7 +2,7 @@ package ar.edu.itba.paw.models;
 
 public class User {
   private final long id;
-  private final long profilePictureId;
+  private final Long profilePictureId;
 
   private final String email;
   private String password;
@@ -15,7 +15,7 @@ public class User {
       String password,
       String firstName,
       String lastName,
-      long profilePictureId) {
+      Long profilePictureId) {
     this.id = id;
     this.email = email;
     this.password = password;
@@ -49,7 +49,7 @@ public class User {
     return lastName;
   }
 
-  public long getProfilePictureId() {
+  public Long getProfilePictureId() {
     return profilePictureId;
   }
 

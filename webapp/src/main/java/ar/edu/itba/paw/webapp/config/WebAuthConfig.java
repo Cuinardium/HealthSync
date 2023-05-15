@@ -37,7 +37,7 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
 
   @Bean
   @Override
-  public AuthenticationManager authenticationManagerBean() throws Exception{
+  public AuthenticationManager authenticationManagerBean() throws Exception {
     return super.authenticationManagerBean();
   }
 
@@ -52,16 +52,17 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
         .invalidSessionUrl("/")
         .and()
         .authorizeRequests()
-            .antMatchers("/appointment", "/patient-edit")
-            .hasRole("PATIENT")
-        .antMatchers("/doctorDashboard","/", "detailed_doctor")
+        .antMatchers("/appointment", "/patient-edit")
+        .hasRole("PATIENT")
+        .antMatchers("/doctorDashboard", "/", "detailed_doctor")
         .permitAll()
         .antMatchers("/login", "/patient-register", "/doctor-register")
         .anonymous()
-        .antMatchers("/doctor-edit").hasRole("DOCTOR")
+        .antMatchers("/doctor-edit")
+        .hasRole("DOCTOR")
         .antMatchers("/**")
         .authenticated()
-            .and()
+        .and()
         .formLogin()
         .loginPage("/login")
         .usernameParameter("email")

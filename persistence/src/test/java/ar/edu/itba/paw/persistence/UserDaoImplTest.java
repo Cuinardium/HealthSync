@@ -23,7 +23,7 @@ public class UserDaoImplTest {
   private static final String PASSWORD = "password";
   private static final String FIRST_NAME = "firstname";
   private static final String LAST_NAME = "lastname";
-  private static final long PFP_ID = 1;
+  private static final Long PFP_ID = 1L;
 
   @Autowired private DataSource ds;
 
@@ -37,7 +37,7 @@ public class UserDaoImplTest {
     JdbcTestUtils.deleteFromTables(jdbcTemplate, "users");
     JdbcTestUtils.deleteFromTables(jdbcTemplate, "profile_picture");
 
-     jdbcTemplate.execute(
+    jdbcTemplate.execute(
         "INSERT INTO profile_picture (profile_picture_id, profile_picture) VALUES ("
             + PFP_ID
             + ", "
@@ -48,7 +48,6 @@ public class UserDaoImplTest {
   @Test
   public void testFindById() throws SQLException {
     // 1. Precondiciones
-   
 
     jdbcTemplate.execute(
         "INSERT INTO users (user_id, email, password, first_name, last_name, profile_picture_id)"
@@ -105,5 +104,4 @@ public class UserDaoImplTest {
 
     Assert.assertEquals(1, JdbcTestUtils.countRowsInTable(jdbcTemplate, "users"));
   }
-
 }

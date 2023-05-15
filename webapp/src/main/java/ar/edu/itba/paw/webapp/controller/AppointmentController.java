@@ -12,19 +12,15 @@ import ar.edu.itba.paw.webapp.auth.UserRoles;
 import ar.edu.itba.paw.webapp.exceptions.AppointmentForbiddenException;
 import ar.edu.itba.paw.webapp.exceptions.AppointmentNotFoundException;
 import ar.edu.itba.paw.webapp.exceptions.UserNotFoundException;
+import ar.edu.itba.paw.webapp.form.ModalForm;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.IntPredicate;
-import javax.validation.Valid;
-
-import ar.edu.itba.paw.webapp.form.DoctorEditForm;
-import ar.edu.itba.paw.webapp.form.ModalForm;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -51,7 +47,7 @@ public class AppointmentController {
 
   @RequestMapping(value = "/my-appointments", method = RequestMethod.GET)
   public ModelAndView getAppointments(
-          @ModelAttribute("modalForm") final ModalForm modalForm,
+      @ModelAttribute("modalForm") final ModalForm modalForm,
       @RequestParam(name = "from", required = false, defaultValue = "") final String from,
       @RequestParam(name = "to", required = false, defaultValue = "") final String to,
       @RequestParam(name = "selected_tab", required = false, defaultValue = "0")
@@ -64,23 +60,23 @@ public class AppointmentController {
       fromDate = from.isEmpty() ? null : LocalDate.parse(from);
     } catch (DateTimeParseException exception) {
       // TODO: error handling
-      return getAppointments(modalForm,"", to, selectedTab);
+      return getAppointments(modalForm, "", to, selectedTab);
     }
 
     try {
       toDate = to.isEmpty() ? null : LocalDate.parse(to);
     } catch (DateTimeParseException exception) {
       // TODO: error handling
-      return getAppointments(modalForm,from, "", selectedTab);
+      return getAppointments(modalForm, from, "", selectedTab);
     }
 
     if (PawAuthUserDetails.getRole().equals(UserRoles.ROLE_PATIENT)) {
-      ModelAndView mav=getAppointmentsForPatient(fromDate, toDate, selectedTab);
+      ModelAndView mav = getAppointmentsForPatient(fromDate, toDate, selectedTab);
       mav.addObject("modalForm", modalForm);
       return mav;
     }
     if (PawAuthUserDetails.getRole().equals(UserRoles.ROLE_DOCTOR)) {
-      ModelAndView mav= getAppointmentsForDoctor( fromDate, toDate, selectedTab);
+      ModelAndView mav = getAppointmentsForDoctor(fromDate, toDate, selectedTab);
       mav.addObject("modalForm", modalForm);
       return mav;
     }
@@ -90,7 +86,7 @@ public class AppointmentController {
 
   @RequestMapping(value = "/my-appointments/{id:\\d+}/update", method = RequestMethod.POST)
   public ModelAndView updateAppointment(
-          @ModelAttribute("modalForm") final ModalForm modalForm,
+      @ModelAttribute("modalForm") final ModalForm modalForm,
       @PathVariable("id") final int appointmentId,
       @RequestParam(name = "status") final int status,
       @RequestParam(name = "from", required = false, defaultValue = "") final String from,
@@ -100,24 +96,27 @@ public class AppointmentController {
 
     // TODO: feedback?
     if (status < 0 || status >= AppointmentStatus.values().length) {
-      return getAppointments(modalForm,from, to, selectedTab);
+      return getAppointments(modalForm, from, to, selectedTab);
     }
 
     // A patient can only cancel an appointment
     if (PawAuthUserDetails.getRole().equals(UserRoles.ROLE_PATIENT)
         && status != AppointmentStatus.CANCELLED.ordinal()) {
-      return getAppointments(modalForm,from, to, selectedTab);
+      return getAppointments(modalForm, from, to, selectedTab);
     }
 
     AppointmentStatus appointmentStatus = AppointmentStatus.values()[status];
 
     try {
       appointmentService.updateAppointmentStatus(
-        appointmentId, appointmentStatus, modalForm.getDescription(), PawAuthUserDetails.getCurrentUserId());
+          appointmentId,
+          appointmentStatus,
+          modalForm.getDescription(),
+          PawAuthUserDetails.getCurrentUserId());
     } catch (RuntimeException e) {
       throw new UserNotFoundException();
     }
-    
+
     return getAppointments(modalForm, from, to, selectedTab);
   }
 
@@ -125,7 +124,7 @@ public class AppointmentController {
 
   @RequestMapping(value = "/{id:\\d+}/detailed_appointment", method = RequestMethod.GET)
   public ModelAndView getDetailedAppointment(
-          @ModelAttribute("modalForm") final ModalForm modalForm,
+      @ModelAttribute("modalForm") final ModalForm modalForm,
       @PathVariable("id") final int appointmentId,
       @RequestParam(name = "selected_tab", required = false, defaultValue = "0")
           final int selectedTab,
@@ -155,14 +154,13 @@ public class AppointmentController {
     }
 
     ModelAndView mav = new ModelAndView("appointment/detailedAppointment");
-    List<AllowedActions> allowedActions= new ArrayList<>();
-    if(appointment.getStatus().equals(AppointmentStatus.PENDING)){
-      if(PawAuthUserDetails.getCurrentUserId()==doctor.getId()){
+    List<AllowedActions> allowedActions = new ArrayList<>();
+    if (appointment.getStatus().equals(AppointmentStatus.PENDING)) {
+      if (PawAuthUserDetails.getCurrentUserId() == doctor.getId()) {
         allowedActions.add(AllowedActions.CONFIRM);
         allowedActions.add(AllowedActions.REJECT);
       }
-    }
-    else if(appointment.getStatus().equals(AppointmentStatus.ACCEPTED)){
+    } else if (appointment.getStatus().equals(AppointmentStatus.ACCEPTED)) {
       allowedActions.add(AllowedActions.CANCEL);
     }
 
@@ -196,20 +194,48 @@ public class AppointmentController {
 
     // Get relevant appointments
     List<Appointment> upcomingAppointments =
-        appointmentService.getFilteredAppointmentsForDoctor(
-            PawAuthUserDetails.getCurrentUserId(), AppointmentStatus.ACCEPTED, fromDate, toDate, -1, -1).getContent();
+        appointmentService
+            .getFilteredAppointmentsForDoctor(
+                PawAuthUserDetails.getCurrentUserId(),
+                AppointmentStatus.ACCEPTED,
+                fromDate,
+                toDate,
+                -1,
+                -1)
+            .getContent();
 
     List<Appointment> pendingAppointments =
-        appointmentService.getFilteredAppointmentsForDoctor(
-            PawAuthUserDetails.getCurrentUserId(), AppointmentStatus.PENDING, fromDate, toDate, -1, -1).getContent();
+        appointmentService
+            .getFilteredAppointmentsForDoctor(
+                PawAuthUserDetails.getCurrentUserId(),
+                AppointmentStatus.PENDING,
+                fromDate,
+                toDate,
+                -1,
+                -1)
+            .getContent();
 
     List<Appointment> cancelledAppointments =
-        appointmentService.getFilteredAppointmentsForDoctor(
-            PawAuthUserDetails.getCurrentUserId(), AppointmentStatus.CANCELLED, fromDate, toDate, -1 ,-1).getContent();
+        appointmentService
+            .getFilteredAppointmentsForDoctor(
+                PawAuthUserDetails.getCurrentUserId(),
+                AppointmentStatus.CANCELLED,
+                fromDate,
+                toDate,
+                -1,
+                -1)
+            .getContent();
 
     List<Appointment> completedAppointments =
-        appointmentService.getFilteredAppointmentsForDoctor(
-            PawAuthUserDetails.getCurrentUserId(), AppointmentStatus.COMPLETED, fromDate, toDate, -1, -1).getContent();
+        appointmentService
+            .getFilteredAppointmentsForDoctor(
+                PawAuthUserDetails.getCurrentUserId(),
+                AppointmentStatus.COMPLETED,
+                fromDate,
+                toDate,
+                -1,
+                -1)
+            .getContent();
 
     // Create tabs
     List<AppointmentTab> tabs = new ArrayList<>();
@@ -269,24 +295,59 @@ public class AppointmentController {
 
     // Get relevant appointments
     List<Appointment> upcomingAppointments =
-        appointmentService.getFilteredAppointmentsForPatient(
-            PawAuthUserDetails.getCurrentUserId(), AppointmentStatus.ACCEPTED, fromDate, toDate, 0, 100).getContent();
+        appointmentService
+            .getFilteredAppointmentsForPatient(
+                PawAuthUserDetails.getCurrentUserId(),
+                AppointmentStatus.ACCEPTED,
+                fromDate,
+                toDate,
+                0,
+                100)
+            .getContent();
 
     List<Appointment> pendingAppointments =
-        appointmentService.getFilteredAppointmentsForPatient(
-            PawAuthUserDetails.getCurrentUserId(), AppointmentStatus.PENDING, fromDate, toDate, 0, 100).getContent();
+        appointmentService
+            .getFilteredAppointmentsForPatient(
+                PawAuthUserDetails.getCurrentUserId(),
+                AppointmentStatus.PENDING,
+                fromDate,
+                toDate,
+                0,
+                100)
+            .getContent();
 
     List<Appointment> rejectedAppointments =
-        appointmentService.getFilteredAppointmentsForPatient(
-            PawAuthUserDetails.getCurrentUserId(), AppointmentStatus.REJECTED, fromDate, toDate, 0, 100).getContent();
+        appointmentService
+            .getFilteredAppointmentsForPatient(
+                PawAuthUserDetails.getCurrentUserId(),
+                AppointmentStatus.REJECTED,
+                fromDate,
+                toDate,
+                0,
+                100)
+            .getContent();
 
     List<Appointment> cancelledAppointments =
-        appointmentService.getFilteredAppointmentsForPatient(
-            PawAuthUserDetails.getCurrentUserId(), AppointmentStatus.CANCELLED, fromDate, toDate, 0, 100).getContent();
+        appointmentService
+            .getFilteredAppointmentsForPatient(
+                PawAuthUserDetails.getCurrentUserId(),
+                AppointmentStatus.CANCELLED,
+                fromDate,
+                toDate,
+                0,
+                100)
+            .getContent();
 
     List<Appointment> completedAppointments =
-        appointmentService.getFilteredAppointmentsForPatient(
-            PawAuthUserDetails.getCurrentUserId(), AppointmentStatus.COMPLETED, fromDate, toDate, 0, 100).getContent();
+        appointmentService
+            .getFilteredAppointmentsForPatient(
+                PawAuthUserDetails.getCurrentUserId(),
+                AppointmentStatus.COMPLETED,
+                fromDate,
+                toDate,
+                0,
+                100)
+            .getContent();
 
     // Create tabs
     List<AppointmentTab> tabs = new ArrayList<>();

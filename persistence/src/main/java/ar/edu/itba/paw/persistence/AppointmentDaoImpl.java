@@ -30,9 +30,9 @@ public class AppointmentDaoImpl implements AppointmentDao {
         ThirtyMinuteBlock timeBlock = ThirtyMinuteBlock.values()[rs.getShort("appointment_time")];
         AppointmentStatus status = AppointmentStatus.values()[rs.getInt("status_code")];
         String description = rs.getString("appointment_description");
-
+        String cancelDesc = rs.getString("appointment_cancel_description");
         return new Appointment(
-            appointmentId, patientId, doctorId, date, timeBlock, status, description);
+            appointmentId, patientId, doctorId, date, timeBlock, status, description, cancelDesc);
       };
 
   private final JdbcTemplate jdbcTemplate;
@@ -74,16 +74,18 @@ public class AppointmentDaoImpl implements AppointmentDao {
         date,
         timeBlock,
         AppointmentStatus.PENDING,
-        description);
+        description,
+        null);
   }
 
   @Override
-  public void updateAppointmentStatus(long appointmentId, AppointmentStatus status, String cancelDescription) {
+  public void updateAppointmentStatus(
+      long appointmentId, AppointmentStatus status, String cancelDescription) {
     String update =
         new UpdateBuilder()
             .update("appointment")
             .set("status_code", Integer.toString(status.ordinal()))
-                .set("cancel_description", "'" + cancelDescription + "'")
+            .set("cancel_description", "'" + cancelDescription + "'")
             .where("appointment_id = " + appointmentId)
             .build();
 
@@ -225,7 +227,7 @@ public class AppointmentDaoImpl implements AppointmentDao {
     appointmentsQuery.orderByAsc("appointment_date").orderByAsc("appointment_time");
 
     if (page >= 0 && pageSize > 0) {
-        appointmentsQuery.limit(pageSize).offset(page * pageSize);
+      appointmentsQuery.limit(pageSize).offset(page * pageSize);
     }
 
     return appointmentsQuery;

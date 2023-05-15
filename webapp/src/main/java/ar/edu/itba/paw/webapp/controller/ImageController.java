@@ -31,8 +31,8 @@ public class ImageController {
   public ResponseEntity<byte[]> getImage(@PathVariable("id") final long id) {
     Image image = imageService.getImage(id).orElseThrow(ImageNotFoundException::new);
     return ResponseEntity.ok()
-        .contentLength(image.getImage().length)
+        .contentLength(image.getBytes().length)
         .contentType(MediaType.IMAGE_JPEG)
-        .body(image.getImage());
+        .body(image.getBytes());
   }
 }

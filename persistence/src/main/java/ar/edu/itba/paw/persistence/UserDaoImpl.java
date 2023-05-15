@@ -24,7 +24,7 @@ public class UserDaoImpl implements UserDao {
               rs.getString("password"),
               rs.getString("first_name"),
               rs.getString("last_name"),
-              rs.getLong("profile_picture_id"));
+              rs.getObject("profile_picture_id") == null ? null : rs.getLong("profile_picture_id"));
 
   private final JdbcTemplate jdbcTemplate;
   private final SimpleJdbcInsert userInsert;
@@ -44,7 +44,7 @@ public class UserDaoImpl implements UserDao {
     data.put("password", password);
     data.put("first_name", firstName);
     data.put("last_name", lastName);
-    data.put("profile_picture_id", DEFAULT_PFP_ID);
+    // data.put("profile_picture_id", DEFAULT_PFP_ID);
 
     // Profile Picture is default for now
 
@@ -53,38 +53,31 @@ public class UserDaoImpl implements UserDao {
   }
 
   @Override
-    public void editUser(long userId, String email, String firstName, String lastName) {
+  public void editUser(long userId, String email, String firstName, String lastName, Long pfpId) {
     String update =
-            new UpdateBuilder()
-                    .update("users")
-                    .set(
-                            "email",
-                            "'" + email + "'")
-                    .set(
-                            "first_name",
-                            "'" + firstName + "'")
-                    .set(
-                            "last_name",
-                            "'" + lastName + "'")
-                    .where("user_id = (" + userId + ")")
-                    .build();
+        new UpdateBuilder()
+            .update("users")
+            .set("email", "'" + email + "'")
+            .set("first_name", "'" + firstName + "'")
+            .set("last_name", "'" + lastName + "'")
+            .set("profile_picture_id", pfpId.toString())
+            .where("user_id = (" + userId + ")")
+            .build();
 
     jdbcTemplate.update(update);
-    }
+  }
 
-    @Override
-    public void changePassword(long userId, String password) {
-      String update =
-              new UpdateBuilder()
-                      .update("users")
-                      .set(
-                              "password",
-                              "'" + password + "'")
-                      .where("user_id = (" + userId + ")")
-                      .build();
+  @Override
+  public void changePassword(long userId, String password) {
+    String update =
+        new UpdateBuilder()
+            .update("users")
+            .set("password", "'" + password + "'")
+            .where("user_id = (" + userId + ")")
+            .build();
 
-      jdbcTemplate.update(update);
-    }
+    jdbcTemplate.update(update);
+  }
 
   // Optional garantiza que no va a ser null, pero no significa q se vaya a devolver un usuario
   @Override
@@ -96,8 +89,9 @@ public class UserDaoImpl implements UserDao {
   }
 
   @Override
-  public Optional<User> findByEmail(String email){
-    String query = new QueryBuilder().select().from("users").where("email = '" + email + "'").build();
+  public Optional<User> findByEmail(String email) {
+    String query =
+        new QueryBuilder().select().from("users").where("email = '" + email + "'").build();
     return jdbcTemplate.query(query, ROW_MAPPER).stream().findFirst();
   }
 }

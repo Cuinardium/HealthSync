@@ -4,7 +4,6 @@ import ar.edu.itba.paw.webapp.exceptions.AppointmentForbiddenException;
 import ar.edu.itba.paw.webapp.exceptions.AppointmentNotFoundException;
 import ar.edu.itba.paw.webapp.exceptions.ImageNotFoundException;
 import ar.edu.itba.paw.webapp.exceptions.UserNotFoundException;
-
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;

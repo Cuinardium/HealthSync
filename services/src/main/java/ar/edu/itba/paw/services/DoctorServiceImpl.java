@@ -8,6 +8,7 @@ import ar.edu.itba.paw.models.AttendingHours;
 import ar.edu.itba.paw.models.City;
 import ar.edu.itba.paw.models.Doctor;
 import ar.edu.itba.paw.models.HealthInsurance;
+import ar.edu.itba.paw.models.Image;
 import ar.edu.itba.paw.models.Location;
 import ar.edu.itba.paw.models.Page;
 import ar.edu.itba.paw.models.Specialty;
@@ -73,7 +74,8 @@ public class DoctorServiceImpl implements DoctorService {
 
     // Enums
     List<HealthInsurance> healthInsurances =
-        healthInsuranceCodes.stream()
+        healthInsuranceCodes
+            .stream()
             .map(HealthInsurance::getHealthInsurance)
             .collect(Collectors.toList());
 
@@ -103,8 +105,9 @@ public class DoctorServiceImpl implements DoctorService {
       List<Integer> healthInsuranceCodes,
       int specialtyCode,
       int cityCode,
-      String address) {
-    userService.editUser(doctorId, email, firstName, lastName);
+      String address,
+      Image image) {
+    userService.editUser(doctorId, email, firstName, lastName, image);
     doctorDao.updateInformation(doctorId, healthInsuranceCodes, specialtyCode, cityCode, address);
   }
 

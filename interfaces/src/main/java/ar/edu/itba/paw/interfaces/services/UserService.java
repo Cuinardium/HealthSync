@@ -1,5 +1,6 @@
 package ar.edu.itba.paw.interfaces.services;
 
+import ar.edu.itba.paw.models.Image;
 import ar.edu.itba.paw.models.User;
 import java.util.Optional;
 
@@ -7,9 +8,10 @@ public interface UserService {
 
   User createUser(String email, String password, String firstName, String lastName);
 
-  void editUser(long userId, String email, String firstName, String lastName);
+  void editUser(long userId, String email, String firstName, String lastName, Image image);
 
-  void changePassword(long userId, String password);
+  boolean changePassword(long userId, String oldPassword, String password)
+      throws IllegalStateException;
 
   Optional<User> findById(long id);
 
