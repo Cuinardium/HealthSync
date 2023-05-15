@@ -226,10 +226,6 @@ public class DoctorDaoImpl implements DoctorDao {
 
     String query = doctorQuery().where("doctor.doctor_id = " + id).build();
 
-    System.out.println("====================================");
-    System.out.println(query);
-    System.out.println("====================================");
-
     return jdbcTemplate.query(query, doctorExtractor).stream().findFirst();
   }
 
@@ -243,23 +239,23 @@ public class DoctorDaoImpl implements DoctorDao {
       int pageSize) {
 
     // Start building the query
-    QueryBuilder query = doctorQuery();
+    QueryBuilder subQuery = doctorQuery().distinctOn("doctor.doctor_id");
     QueryBuilder doctorCountQuery = doctorCountQuery();
 
     // Add the filters to the query, if it is the first filter, don't add AND
     if (name != null && !name.isEmpty()) {
-      query.where("CONCAT(first_name, ' ', last_name) ILIKE CONCAT('" + name + "', '%')");
+      subQuery.where("CONCAT(first_name, ' ', last_name) ILIKE CONCAT('" + name + "', '%')");
       doctorCountQuery.where(
           "CONCAT(first_name, ' ', last_name) ILIKE CONCAT('" + name + "', '%')");
     }
 
     if (specialtyCode >= 0) {
-      query.where("specialty_code = " + specialtyCode);
+      subQuery.where("specialty_code = " + specialtyCode);
       doctorCountQuery.where("specialty_code = " + specialtyCode);
     }
 
     if (cityCode >= 0) {
-      query.where("city_code = " + cityCode);
+      subQuery.where("city_code = " + cityCode);
       doctorCountQuery.where("city_code = " + cityCode);
     }
 
@@ -271,15 +267,43 @@ public class DoctorDaoImpl implements DoctorDao {
               .where("health_insurance_code = " + healthInsuranceCode)
               .build();
 
-      query.where("doctor.doctor_id IN (" + healthInsuranceQuery + ")");
+      subQuery.where("doctor.doctor_id IN (" + healthInsuranceQuery + ")");
       doctorCountQuery.where("doctor.doctor_id IN (" + healthInsuranceQuery + ")");
     }
 
     if (page >= 0 && pageSize > 0) {
-      query.limit(pageSize).offset(page * pageSize);
+      subQuery.limit(pageSize).offset(page * pageSize);
     }
 
-    List<Doctor> doctors = jdbcTemplate.query(query.build(), doctorExtractor);
+    // Outer query
+    String query =
+        new QueryBuilder()
+            .select(
+                "subquery.doctor_id",
+                "specialty_code",
+                "email",
+                "password",
+                "first_name",
+                "last_name",
+                "profile_picture_id",
+                "subquery.health_insurance_code",
+                "doctor_location_id",
+                "city_code",
+                "address",
+                "monday",
+                "tuesday",
+                "wednesday",
+                "thursday",
+                "friday",
+                "saturday",
+                "sunday")
+            .from("(" + subQuery.build() + ") as subquery")
+            .leftJoin(
+                "health_insurance_accepted_by_doctor",
+                "subquery.doctor_id = health_insurance_accepted_by_doctor.doctor_id")
+            .build();
+
+    List<Doctor> doctors = jdbcTemplate.query(query, doctorExtractor);
 
     int totalDoctors = jdbcTemplate.queryForObject(doctorCountQuery.build(), Integer.class);
 
@@ -372,7 +396,7 @@ public class DoctorDaoImpl implements DoctorDao {
 
   private QueryBuilder doctorCountQuery() {
     return new QueryBuilder()
-        .select("count(*)")
+        .select("count(distinct doctor.doctor_id)")
         .from("doctor")
         .innerJoin("users", "doctor_id = user_id")
         .innerJoin("location_for_doctor", "doctor.doctor_id = location_for_doctor.doctor_id")
@@ -465,10 +489,6 @@ public class DoctorDaoImpl implements DoctorDao {
 
         doctor.getHealthInsurances().add(healthInsurances[rs.getInt("health_insurance_code")]);
       }
-
-      System.out.println("====================================");
-      System.out.println(doctors.values());
-      System.out.println("====================================");
 
       return new ArrayList<>(doctors.values());
     }

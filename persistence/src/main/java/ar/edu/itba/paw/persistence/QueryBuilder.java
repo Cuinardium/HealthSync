@@ -12,6 +12,9 @@ public class QueryBuilder {
   private final List<String> innerJoinTables;
   private final List<String> innerJoinConditions;
 
+  private final List<String> leftJoinTables;
+  private final List<String> leftJoinConditions;
+
   private final List<String> whereConditions;
   private final List<String> groupByColumns;
 
@@ -19,6 +22,7 @@ public class QueryBuilder {
   private final List<Boolean> orderByDirections;
 
   private boolean distinct;
+  private final List<String> distinctColumns;
 
   private int limit = -1;
   private int offset = -1;
@@ -27,12 +31,15 @@ public class QueryBuilder {
     this.columns = new ArrayList<>();
     this.innerJoinTables = new ArrayList<>();
     this.innerJoinConditions = new ArrayList<>();
+    this.leftJoinTables = new ArrayList<>();
+    this.leftJoinConditions = new ArrayList<>();
     this.whereConditions = new ArrayList<>();
     this.groupByColumns = new ArrayList<>();
     this.orderByColumns = new ArrayList<>();
 
     // True = ASC, False = DESC
     this.orderByDirections = new ArrayList<>();
+    this.distinctColumns = new ArrayList<>();
   }
 
   public QueryBuilder select(String... columns) {
@@ -42,6 +49,12 @@ public class QueryBuilder {
 
   public QueryBuilder distinct() {
     this.distinct = true;
+    return this;
+  }
+
+  public QueryBuilder distinctOn(String... columns) {
+    this.distinct = true;
+    this.distinctColumns.addAll(Arrays.asList(columns));
     return this;
   }
 
@@ -63,6 +76,12 @@ public class QueryBuilder {
   public QueryBuilder innerJoin(String table, String condition) {
     this.innerJoinTables.add(table);
     this.innerJoinConditions.add(condition);
+    return this;
+  }
+
+  public QueryBuilder leftJoin(String table, String condition) {
+    this.leftJoinTables.add(table);
+    this.leftJoinConditions.add(condition);
     return this;
   }
 
@@ -95,6 +114,9 @@ public class QueryBuilder {
 
     if (distinct) {
       query.append(" DISTINCT");
+      if (!distinctColumns.isEmpty()) {
+        query.append(" ON (").append(String.join(",", distinctColumns)).append(")");
+      }
     }
 
     if (columns.isEmpty()) {
@@ -111,6 +133,14 @@ public class QueryBuilder {
           .append(innerJoinTables.get(i))
           .append(" ON ")
           .append(innerJoinConditions.get(i));
+    }
+
+    for (int i = 0; i < leftJoinTables.size(); i++) {
+      query
+          .append(" LEFT JOIN ")
+          .append(leftJoinTables.get(i))
+          .append(" ON ")
+          .append(leftJoinConditions.get(i));
     }
 
     if (!whereConditions.isEmpty()) {
