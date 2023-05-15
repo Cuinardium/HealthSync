@@ -25,7 +25,7 @@ public class AppointmentForm {
   @DateTimeFormat(pattern = "yyyy-MM-dd")
   private LocalDate date;
 
-  private ThirtyMinuteBlock block;
+  private String block;
 
   @Size(min = 1, max = 100)
   private String description;
@@ -46,15 +46,15 @@ public class AppointmentForm {
       return null;
     }
 
-    return block.getBlockBeginning();
-  }
-
-  public ThirtyMinuteBlock getBlockEnum() {
     return block;
   }
 
+  public ThirtyMinuteBlock getBlockEnum() {
+    return ThirtyMinuteBlock.fromString(block);
+  }
+
   public void setBlock(String block) {
-    this.block = ThirtyMinuteBlock.fromString(block);
+    this.block = block;
   }
 
   public String getDescription() {
