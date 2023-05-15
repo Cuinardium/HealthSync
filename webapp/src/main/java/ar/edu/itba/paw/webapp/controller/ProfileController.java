@@ -60,7 +60,7 @@ public class ProfileController {
           doctorEditForm.getEmail(),
           doctorEditForm.getName(),
           doctorEditForm.getLastname(),
-          doctorEditForm.getHealthInsuranceCode(),
+          doctorEditForm.getHealthInsuranceCodes(),
           doctorEditForm.getSpecialtyCode(),
           doctorEditForm.getCityCode(),
           doctorEditForm.getAddress(),
@@ -129,7 +129,12 @@ public class ProfileController {
     doctorEditForm.setName(doctor.getFirstName());
     doctorEditForm.setLastname(doctor.getLastName());
     doctorEditForm.setEmail(doctor.getEmail());
-    doctorEditForm.setHealthInsuranceCode(doctor.getHealthInsurance().ordinal());
+    doctorEditForm.setHealthInsuranceCodes(
+        doctor
+            .getHealthInsurances()
+            .stream()
+            .map(HealthInsurance::ordinal)
+            .collect(Collectors.toList()));
     doctorEditForm.setAddress(doctor.getLocation().getAddress());
     doctorEditForm.setCityCode(doctor.getLocation().getCity().ordinal());
     doctorEditForm.setSpecialtyCode(doctor.getSpecialty().ordinal());
@@ -183,6 +188,7 @@ public class ProfileController {
     mav.addObject("form", doctorEditForm);
     mav.addObject("cities", Arrays.asList(City.values()));
     mav.addObject("specialties", Arrays.asList(Specialty.values()));
+    mav.addObject("currentHealthInsuranceCodes", doctorEditForm.getHealthInsuranceCodes());
     mav.addObject("healthInsurances", Arrays.asList(HealthInsurance.values()));
     mav.addObject("timeEnumValues", ThirtyMinuteBlock.values());
     return mav;

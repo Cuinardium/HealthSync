@@ -4,6 +4,7 @@ import ar.edu.itba.paw.models.AttendingHours;
 import ar.edu.itba.paw.models.Doctor;
 import ar.edu.itba.paw.models.HealthInsurance;
 import ar.edu.itba.paw.models.Image;
+import ar.edu.itba.paw.models.Page;
 import ar.edu.itba.paw.models.Specialty;
 import java.util.List;
 import java.util.Map;
@@ -15,7 +16,7 @@ public interface DoctorService {
       String password,
       String firstName,
       String lastName,
-      int healthInsuranceCode,
+      List<Integer> healthInsuranceCodes,
       int specialtyCode,
       int cityCode,
       String address,
@@ -26,7 +27,7 @@ public interface DoctorService {
       String email,
       String firstName,
       String lastName,
-      int healthInsuranceCode,
+      List<Integer> healthInsuranceCodes,
       int specialtyCode,
       int cityCode,
       String address,
@@ -36,8 +37,13 @@ public interface DoctorService {
 
   public Optional<Doctor> getDoctorById(long id);
 
-  public List<Doctor> getFilteredDoctors(
-      String name, int specialtyCode, int cityCode, int healthInsuranceCode);
+  public Page<Doctor> getFilteredDoctors(
+      String name,
+      int specialtyCode,
+      int cityCode,
+      int healthInsuranceCode,
+      int page,
+      int pageSize);
 
   public List<Doctor> getDoctors();
 

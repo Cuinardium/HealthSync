@@ -11,11 +11,16 @@ import javax.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 @Controller
@@ -27,10 +32,16 @@ public class AuthController {
 
   private final PatientService patientService;
 
+  private final AuthenticationManager authenticationManager;
+
   @Autowired
-  public AuthController(final DoctorService doctorService, final PatientService patientService) {
+  public AuthController(
+      final DoctorService doctorService,
+      final PatientService patientService,
+      AuthenticationManager authenticationManager) {
     this.doctorService = doctorService;
     this.patientService = patientService;
+    this.authenticationManager = authenticationManager;
   }
 
   // @RequestMapping(value = "/login", method = RequestMethod.POST)
@@ -51,8 +62,15 @@ public class AuthController {
   // }
 
   @RequestMapping(value = "/login")
-  public ModelAndView loginForm(@ModelAttribute("loginForm") final LoginForm loginForm) {
-    return new ModelAndView("auth/login");
+  public ModelAndView loginForm(
+      @ModelAttribute("loginForm") final LoginForm loginForm,
+      @RequestParam(value = "error", required = false) String error) {
+
+    ModelAndView mav = new ModelAndView("auth/login");
+
+    // si ?error no esta -> error es null, en cambio si ?error esta -> error es un string vacio
+    mav.addObject("hasError", error != null);
+    return mav;
   }
 
   @RequestMapping(value = "/logout", method = RequestMethod.POST)
@@ -81,6 +99,7 @@ public class AuthController {
             patientRegisterForm.getHealthInsuranceCode());
 
     LOGGER.info("Registered {}", patient);
+    authUser(patient.getEmail(), patient.getPassword());
 
     final ModelAndView mav = new ModelAndView("components/operationSuccessful");
     mav.addObject("showHeader", false);
@@ -117,13 +136,14 @@ public class AuthController {
             doctorRegisterForm.getPassword(),
             doctorRegisterForm.getName(),
             doctorRegisterForm.getLastname(),
-            doctorRegisterForm.getHealthInsuranceCode(),
+            doctorRegisterForm.getHealthInsuranceCodes(),
             doctorRegisterForm.getSpecialtyCode(),
             doctorRegisterForm.getCityCode(),
             doctorRegisterForm.getAddress(),
             AttendingHours.DEFAULT_ATTENDING_HOURS);
 
     LOGGER.info("Registered {}", doctor);
+    authUser(doctor.getEmail(), doctor.getPassword());
 
     final ModelAndView mav = new ModelAndView("components/operationSuccessful");
     mav.addObject("showHeader", false);
@@ -142,5 +162,12 @@ public class AuthController {
     mav.addObject("specialties", Arrays.asList(Specialty.values()));
     mav.addObject("healthInsurances", Arrays.asList(HealthInsurance.values()));
     return mav;
+  }
+
+  private void authUser(String username, String password) {
+    UsernamePasswordAuthenticationToken authToken =
+        new UsernamePasswordAuthenticationToken(username, password);
+    Authentication authentication = authenticationManager.authenticate(authToken);
+    SecurityContextHolder.getContext().setAuthentication(authentication);
   }
 }

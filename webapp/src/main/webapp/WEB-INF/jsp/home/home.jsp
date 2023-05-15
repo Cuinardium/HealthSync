@@ -55,9 +55,12 @@
     </div>
 </div>
 
-<div class="carouselContainer generalPadding border-top">
+<div class="carouselSectionContainer generalPadding border-top">
     <h1 class="categoriesTitle">${categories}</h1>
-    <div id="recipeCarousel" class="carousel slide">
+    <div class="carouselContainer carousel slide" id="recipeCarousel">
+        <a class="carouselNavButton" href="#recipeCarousel" role="button" data-bs-slide="prev">
+            <i class="fa-solid fa-angle-left"></i>
+        </a>
         <div class="carousel-inner" role="listbox">
             <c:forEach items="${featuredSpecialties}" var="specialty" varStatus="status">
                 <c:url value="/img/specialty-${specialty.ordinal()}.jpg" var="img"/>
@@ -73,11 +76,8 @@
                 </div>
             </c:forEach>
         </div>
-        <a class="carousel-control-prev bg-transparent w-aut" href="#recipeCarousel" role="button" data-bs-slide="prev">
-            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-        </a>
-        <a class="carousel-control-next bg-transparent w-aut" href="#recipeCarousel" role="button" data-bs-slide="next">
-            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+        <a class="carouselNavButton" href="#recipeCarousel" role="button" data-bs-slide="next">
+            <i class="fa-solid fa-angle-right"></i>
         </a>
     </div>
 </div>

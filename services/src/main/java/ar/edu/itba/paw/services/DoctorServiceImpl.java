@@ -10,12 +10,14 @@ import ar.edu.itba.paw.models.Doctor;
 import ar.edu.itba.paw.models.HealthInsurance;
 import ar.edu.itba.paw.models.Image;
 import ar.edu.itba.paw.models.Location;
+import ar.edu.itba.paw.models.Page;
 import ar.edu.itba.paw.models.Specialty;
 import ar.edu.itba.paw.models.User;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -45,7 +47,7 @@ public class DoctorServiceImpl implements DoctorService {
       String password,
       String firstName,
       String lastName,
-      int healthInsuranceCode,
+      List<Integer> healthInsuranceCodes,
       int specialtyCode,
       int cityCode,
       String address,
@@ -65,11 +67,18 @@ public class DoctorServiceImpl implements DoctorService {
     // Add location to doctor
     doctorDao.addLocation(doctorId, locationId);
 
-    // Add health insurance to doctor
-    doctorDao.addHealthInsurance(doctorId, healthInsuranceCode);
+    // Add health insurances to doctor
+    for (int healthInsuranceCode : healthInsuranceCodes) {
+      doctorDao.addHealthInsurance(doctorId, healthInsuranceCode);
+    }
 
     // Enums
-    HealthInsurance healthInsurance = HealthInsurance.values()[healthInsuranceCode];
+    List<HealthInsurance> healthInsurances =
+        healthInsuranceCodes
+            .stream()
+            .map(HealthInsurance::getHealthInsurance)
+            .collect(Collectors.toList());
+
     Specialty specialty = Specialty.values()[specialtyCode];
     Location location = new Location(locationId, City.values()[cityCode], address);
 
@@ -80,7 +89,7 @@ public class DoctorServiceImpl implements DoctorService {
         firstName,
         lastName,
         pfpId,
-        healthInsurance,
+        healthInsurances,
         specialty,
         location,
         attendingHours);
@@ -93,13 +102,13 @@ public class DoctorServiceImpl implements DoctorService {
       String email,
       String firstName,
       String lastName,
-      int healthInsuranceCode,
+      List<Integer> healthInsuranceCodes,
       int specialtyCode,
       int cityCode,
       String address,
       Image image) {
     userService.editUser(doctorId, email, firstName, lastName, image);
-    doctorDao.updateInformation(doctorId, healthInsuranceCode, specialtyCode, cityCode, address);
+    doctorDao.updateInformation(doctorId, healthInsuranceCodes, specialtyCode, cityCode, address);
   }
 
   @Transactional
@@ -114,9 +123,15 @@ public class DoctorServiceImpl implements DoctorService {
   }
 
   @Override
-  public List<Doctor> getFilteredDoctors(
-      String name, int specialtyCode, int cityCode, int healthInsuranceCode) {
-    return doctorDao.getFilteredDoctors(name, specialtyCode, cityCode, healthInsuranceCode);
+  public Page<Doctor> getFilteredDoctors(
+      String name,
+      int specialtyCode,
+      int cityCode,
+      int healthInsuranceCode,
+      int page,
+      int pageSize) {
+    return doctorDao.getFilteredDoctors(
+        name, specialtyCode, cityCode, healthInsuranceCode, page, pageSize);
   }
 
   @Override

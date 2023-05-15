@@ -8,6 +8,7 @@ import ar.edu.itba.paw.interfaces.services.PatientService;
 import ar.edu.itba.paw.models.Appointment;
 import ar.edu.itba.paw.models.AppointmentStatus;
 import ar.edu.itba.paw.models.Doctor;
+import ar.edu.itba.paw.models.Page;
 import ar.edu.itba.paw.models.Patient;
 import ar.edu.itba.paw.models.ThirtyMinuteBlock;
 import java.time.LocalDate;
@@ -44,22 +45,25 @@ public class AppointmentServiceImpl implements AppointmentService {
   @Transactional
   @Override
   public Appointment createAppointment(
-      Patient patient,
-      Doctor doctor,
+      Long patientId,
+      Long doctorId,
       LocalDate date,
       ThirtyMinuteBlock timeBlock,
-      String description) {
+      String description)
+      throws IllegalStateException {
 
     Optional<Appointment> possibleAppointment =
-        appointmentDao.getAppointment(doctor.getId(), date, timeBlock);
+        appointmentDao.getAppointment(doctorId, date, timeBlock);
 
     if (possibleAppointment.isPresent()
         && (possibleAppointment.get().getStatus() == AppointmentStatus.COMPLETED
-            || possibleAppointment.get().getStatus() == AppointmentStatus.ACCEPTED
-            || possibleAppointment.get().getStatus() == AppointmentStatus.PENDING)) {
+            || possibleAppointment.get().getStatus() == AppointmentStatus.ACCEPTED)) {
       throw new RuntimeException();
     }
 
+    Patient patient =
+        patientService.getPatientById(patientId).orElseThrow(IllegalStateException::new);
+    Doctor doctor = doctorService.getDoctorById(doctorId).orElseThrow(IllegalStateException::new);
     Appointment appointment =
         appointmentDao.createAppointment(patient, doctor, date, timeBlock, description);
 
@@ -88,7 +92,7 @@ public class AppointmentServiceImpl implements AppointmentService {
   @Transactional
   @Override
   public void updateAppointmentStatus(
-      long appointmentId, AppointmentStatus status, long requesterId) {
+      long appointmentId, AppointmentStatus status, String cancelDescription, long requesterId) {
 
     // Get appointment
     // TODO: error handling
@@ -106,7 +110,7 @@ public class AppointmentServiceImpl implements AppointmentService {
       throw new RuntimeException();
     }
 
-    appointmentDao.updateAppointmentStatus(appointmentId, status);
+    appointmentDao.updateAppointmentStatus(appointmentId, status, cancelDescription);
 
     // TODO: error handling
     Locale locale = LocaleContextHolder.getLocale();
@@ -132,10 +136,10 @@ public class AppointmentServiceImpl implements AppointmentService {
   @Override
   public List<ThirtyMinuteBlock> getAvailableHoursForDoctorOnDate(long doctorId, LocalDate date) {
 
-    // Get doctor appointments
-    List<Appointment> appointments = getAppointmentsForDoctor(doctorId);
+    // Get doctor appointments for date
+    Page<Appointment> appointments =
+        getFilteredAppointmentsForDoctor(doctorId, null, date, date, -1, -1);
 
-    // TODO: error handling
     Doctor doctor = doctorService.getDoctorById(doctorId).orElseThrow(RuntimeException::new);
 
     // Get doctor available hours for date
@@ -144,11 +148,9 @@ public class AppointmentServiceImpl implements AppointmentService {
       availableHours.add(block);
     }
 
-    for (Appointment appointment : appointments) {
-      if (appointment.getDate().equals(date)
-          && (appointment.getStatus() == AppointmentStatus.ACCEPTED
-              || appointment.getStatus() == AppointmentStatus.PENDING
-              || appointment.getStatus() == AppointmentStatus.COMPLETED)) {
+    for (Appointment appointment : appointments.getContent()) {
+      if ((appointment.getStatus() == AppointmentStatus.ACCEPTED
+          || appointment.getStatus() == AppointmentStatus.COMPLETED)) {
         availableHours.remove(appointment.getTimeBlock());
       }
     }
@@ -157,14 +159,36 @@ public class AppointmentServiceImpl implements AppointmentService {
   }
 
   @Override
-  public List<Appointment> getFilteredAppointmentsForDoctor(
-      long doctorId, AppointmentStatus status, LocalDate from, LocalDate to) {
-    return appointmentDao.getFilteredAppointmentsForDoctor(doctorId, status, from, to);
+  public List<List<ThirtyMinuteBlock>> getAvailableHoursForDoctorOnRange(
+      long doctorId, LocalDate from, LocalDate to) {
+    List<List<ThirtyMinuteBlock>> availableHours = new ArrayList<>();
+    for (LocalDate date = from; date.isBefore(to.plusDays(1)); date = date.plusDays(1)) {
+      availableHours.add(getAvailableHoursForDoctorOnDate(doctorId, date));
+    }
+    return availableHours;
   }
 
   @Override
-  public List<Appointment> getFilteredAppointmentsForPatient(
-      long patientId, AppointmentStatus status, LocalDate from, LocalDate to) {
-    return appointmentDao.getFilteredAppointmentsForPatient(patientId, status, from, to);
+  public Page<Appointment> getFilteredAppointmentsForDoctor(
+      long doctorId,
+      AppointmentStatus status,
+      LocalDate from,
+      LocalDate to,
+      int page,
+      int pageSize) {
+    return appointmentDao.getFilteredAppointmentsForDoctor(
+        doctorId, status, from, to, page, pageSize);
+  }
+
+  @Override
+  public Page<Appointment> getFilteredAppointmentsForPatient(
+      long patientId,
+      AppointmentStatus status,
+      LocalDate from,
+      LocalDate to,
+      int page,
+      int pageSize) {
+    return appointmentDao.getFilteredAppointmentsForPatient(
+        patientId, status, from, to, page, pageSize);
   }
 }

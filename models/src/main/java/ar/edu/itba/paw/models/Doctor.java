@@ -1,8 +1,10 @@
 package ar.edu.itba.paw.models;
 
+import java.util.List;
+
 public class Doctor extends User {
 
-  private final HealthInsurance healthInsurance;
+  private final List<HealthInsurance> healthInsurances;
   private final Specialty specialty;
   private final Location location;
   private final AttendingHours attendingHours;
@@ -14,20 +16,20 @@ public class Doctor extends User {
       String firstName,
       String lastName,
       long pfpId,
-      HealthInsurance healthInsurance,
+      List<HealthInsurance> healthInsurances,
       Specialty specialty,
       Location location,
       AttendingHours attendingHours) {
     super(id, email, password, firstName, lastName, pfpId);
-    this.healthInsurance = healthInsurance;
+    this.healthInsurances = healthInsurances;
     this.specialty = specialty;
     this.location = location;
     this.attendingHours = attendingHours;
   }
 
   // Getters
-  public HealthInsurance getHealthInsurance() {
-    return healthInsurance;
+  public List<HealthInsurance> getHealthInsurances() {
+    return healthInsurances;
   }
 
   public Specialty getSpecialty() {
@@ -44,8 +46,8 @@ public class Doctor extends User {
 
   @Override
   public String toString() {
-    return "Doctor [healthInsurance="
-        + healthInsurance
+    return "Doctor [healthInsurances="
+        + healthInsurances
         + ", specialty="
         + specialty
         + ", location="

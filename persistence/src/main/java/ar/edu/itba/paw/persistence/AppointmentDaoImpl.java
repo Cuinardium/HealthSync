@@ -6,6 +6,7 @@ import ar.edu.itba.paw.interfaces.persistence.PatientDao;
 import ar.edu.itba.paw.models.Appointment;
 import ar.edu.itba.paw.models.AppointmentStatus;
 import ar.edu.itba.paw.models.Doctor;
+import ar.edu.itba.paw.models.Page;
 import ar.edu.itba.paw.models.Patient;
 import ar.edu.itba.paw.models.ThirtyMinuteBlock;
 import java.sql.Date;
@@ -31,15 +32,15 @@ public class AppointmentDaoImpl implements AppointmentDao {
   private static final RowMapper<Appointment> APPOINTMENT_MAPPER =
       (rs, rowNum) -> {
         long appointmentId = rs.getLong("appointment_id");
-        Patient patient = patientDao.getPatientById(rs.getLong("patient_id"));
-        Doctor doctor = doctorDao.getDoctorById(rs.getLong("doctor_id"));
+        Patient patient = null; // patientDao.getPatientById(rs.getLong("patient_id"));
+        Doctor doctor = null; // doctorDao.getDoctorById(rs.getLong("doctor_id"));
         LocalDate date = rs.getDate("appointment_date").toLocalDate();
         ThirtyMinuteBlock timeBlock = ThirtyMinuteBlock.values()[rs.getShort("appointment_time")];
         AppointmentStatus status = AppointmentStatus.values()[rs.getInt("status_code")];
         String description = rs.getString("appointment_description");
-
+        String cancelDesc = rs.getString("appointment_cancel_description");
         return new Appointment(
-            appointmentId, patient, doctor, date, timeBlock, status, description);
+            appointmentId, patient, doctor, date, timeBlock, status, description, cancelDesc);
       };
 
   private final JdbcTemplate jdbcTemplate;
@@ -77,15 +78,24 @@ public class AppointmentDaoImpl implements AppointmentDao {
     long appointmentId = appointmentInsert.executeAndReturnKey(data).longValue();
 
     return new Appointment(
-        appointmentId, patient, doctor, date, timeBlock, AppointmentStatus.PENDING, description);
+        appointmentId,
+        patient,
+        doctor,
+        date,
+        timeBlock,
+        AppointmentStatus.PENDING,
+        description,
+        null);
   }
 
   @Override
-  public void updateAppointmentStatus(long appointmentId, AppointmentStatus status) {
+  public void updateAppointmentStatus(
+      long appointmentId, AppointmentStatus status, String cancelDescription) {
     String update =
         new UpdateBuilder()
             .update("appointment")
             .set("status_code", Integer.toString(status.ordinal()))
+            .set("cancel_description", "'" + cancelDescription + "'")
             .where("appointment_id = " + appointmentId)
             .build();
 
@@ -149,33 +159,68 @@ public class AppointmentDaoImpl implements AppointmentDao {
   }
 
   @Override
-  public List<Appointment> getFilteredAppointmentsForDoctor(
-      long doctorId, AppointmentStatus status, LocalDate from, LocalDate to) {
-    QueryBuilder appointmentsQuery =
-        new QueryBuilder().select("*").from("appointment").where("doctor_id = " + doctorId);
+  public Page<Appointment> getFilteredAppointmentsForDoctor(
+      long doctorId,
+      AppointmentStatus status,
+      LocalDate from,
+      LocalDate to,
+      int page,
+      int pageSize) {
 
-    if (status != null) {
-      appointmentsQuery.where("status_code = " + status.ordinal());
-    }
+    // Get the appointments for the doctor
+    String appointmentsQuery =
+        appointmentsQuery(doctorId, true, status, from, to, page, pageSize).build();
 
-    if (from != null) {
-      appointmentsQuery.where("appointment_date >= '" + Date.valueOf(from) + "'");
-    }
+    List<Appointment> appointments = jdbcTemplate.query(appointmentsQuery, APPOINTMENT_MAPPER);
 
-    if (to != null) {
-      appointmentsQuery.where("appointment_date <= '" + Date.valueOf(to) + "'");
-    }
+    // Get the total number of appointments for the doctor
+    String appointmentsCountQuery =
+        appointmentsCountQuery(doctorId, true, status, from, to).build();
 
-    appointmentsQuery.orderByAsc("appointment_date").orderByAsc("appointment_time");
+    int totalAppointments = jdbcTemplate.queryForObject(appointmentsCountQuery, Integer.class);
 
-    return jdbcTemplate.query(appointmentsQuery.build(), APPOINTMENT_MAPPER);
+    return new Page<>(appointments, page, totalAppointments);
   }
 
   @Override
-  public List<Appointment> getFilteredAppointmentsForPatient(
-      long patientId, AppointmentStatus status, LocalDate from, LocalDate to) {
+  public Page<Appointment> getFilteredAppointmentsForPatient(
+      long patientId,
+      AppointmentStatus status,
+      LocalDate from,
+      LocalDate to,
+      int page,
+      int pageSize) {
+
+    // Get the appointments for the patient
+    String appointmentsQuery =
+        appointmentsQuery(patientId, false, status, from, to, page, pageSize).build();
+
+    List<Appointment> appointments = jdbcTemplate.query(appointmentsQuery, APPOINTMENT_MAPPER);
+
+    // Get the total number of appointments for the patient
+    String appointmentsCountQuery =
+        appointmentsCountQuery(patientId, false, status, from, to).build();
+
+    int totalAppointments = jdbcTemplate.queryForObject(appointmentsCountQuery, Integer.class);
+
+    return new Page<>(appointments, page, totalAppointments);
+  }
+
+  // ========================== Private ==========================
+
+  private QueryBuilder appointmentsQuery(
+      long userId,
+      boolean isDoctor,
+      AppointmentStatus status,
+      LocalDate from,
+      LocalDate to,
+      int page,
+      int pageSize) {
+
+    String userField = isDoctor ? "doctor_id" : "patient_id";
+
     QueryBuilder appointmentsQuery =
-        new QueryBuilder().select("*").from("appointment").where("patient_id = " + patientId);
+        new QueryBuilder().select("*").from("appointment").where(userField + " = " + userId);
 
     if (status != null) {
       appointmentsQuery.where("status_code = " + status.ordinal());
@@ -191,10 +236,36 @@ public class AppointmentDaoImpl implements AppointmentDao {
 
     appointmentsQuery.orderByAsc("appointment_date").orderByAsc("appointment_time");
 
-    return jdbcTemplate.query(appointmentsQuery.build(), APPOINTMENT_MAPPER);
+    if (page >= 0 && pageSize > 0) {
+      appointmentsQuery.limit(pageSize).offset(page * pageSize);
+    }
+
+    return appointmentsQuery;
   }
 
-  // ========================== Private ==========================
+  private QueryBuilder appointmentsCountQuery(
+      long userId, boolean isDoctor, AppointmentStatus status, LocalDate from, LocalDate to) {
+
+    String userField = isDoctor ? "doctor_id" : "patient_id";
+
+    QueryBuilder appointmentsQuery =
+        new QueryBuilder().select("count(*)").from("appointment").where(userField + " = " + userId);
+
+    if (status != null) {
+      appointmentsQuery.where("status_code = " + status.ordinal());
+    }
+
+    if (from != null) {
+      appointmentsQuery.where("appointment_date >= '" + Date.valueOf(from) + "'");
+    }
+
+    if (to != null) {
+      appointmentsQuery.where("appointment_date <= '" + Date.valueOf(to) + "'");
+    }
+
+    return appointmentsQuery;
+  }
+
   private short timeBlockToSmallInt(ThirtyMinuteBlock timeBlock) {
     return (short) timeBlock.ordinal();
   }

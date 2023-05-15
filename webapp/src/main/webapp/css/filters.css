@@ -1,15 +1,11 @@
-.card {
-    margin-top: 10px;
-}
-
-.card-header {
+.filtersContainer{
     display: flex;
     flex-direction: row;
     justify-content: space-between;
+    align-items: center;
 }
 
-.cardButtonContainer{
+.searchBarContainer{
     display: flex;
-    justify-content: end;
-
+    flex-direction: row;
 }

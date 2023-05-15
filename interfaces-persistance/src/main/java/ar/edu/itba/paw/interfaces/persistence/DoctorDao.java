@@ -2,6 +2,7 @@ package ar.edu.itba.paw.interfaces.persistence;
 
 import ar.edu.itba.paw.models.AttendingHours;
 import ar.edu.itba.paw.models.Doctor;
+import ar.edu.itba.paw.models.Page;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -11,8 +12,13 @@ public interface DoctorDao {
 
   public Optional<Doctor> getDoctorById(long id);
 
-  public List<Doctor> getFilteredDoctors(
-      String name, int specialtyCode, int cityCode, int healthInsuranceCode);
+  public Page<Doctor> getFilteredDoctors(
+      String name,
+      int specialtyCode,
+      int cityCode,
+      int healthInsuranceCode,
+      int page,
+      int pageSize);
 
   public List<Doctor> getDoctors();
 
@@ -21,7 +27,11 @@ public interface DoctorDao {
   public void addHealthInsurance(long doctorId, int healthInsuranceCode);
 
   public void updateInformation(
-      long doctorId, int healthInsuranceCode, int specialtyCode, int cityCode, String address);
+      long doctorId,
+      List<Integer> healthInsuranceCodes,
+      int specialtyCode,
+      int cityCode,
+      String address);
 
   public void updateAttendingHours(long doctorId, AttendingHours attendingHours);
 

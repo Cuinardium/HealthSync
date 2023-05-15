@@ -6,57 +6,30 @@ import ar.edu.itba.paw.models.City;
 import ar.edu.itba.paw.models.Doctor;
 import ar.edu.itba.paw.models.HealthInsurance;
 import ar.edu.itba.paw.models.Location;
+import ar.edu.itba.paw.models.Page;
 import ar.edu.itba.paw.models.Specialty;
 import ar.edu.itba.paw.models.ThirtyMinuteBlock;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.time.DayOfWeek;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import javax.sql.DataSource;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
 
 @Repository
 public class DoctorDaoImpl implements DoctorDao {
 
-  private static final RowMapper<Doctor> DOCTOR_MAPPER =
-      (rs, rowNum) -> {
-        Specialty specialty = Specialty.values()[rs.getInt("specialty_code")];
-        HealthInsurance healthInsurance =
-            HealthInsurance.values()[rs.getInt("health_insurance_code")];
-
-        City city = City.values()[rs.getInt("city_code")];
-        Location location =
-            new Location(rs.getLong("doctor_location_id"), city, rs.getString("address"));
-
-        AttendingHours attendingHours =
-            new AttendingHours(
-                ThirtyMinuteBlock.fromBits(rs.getLong("monday")),
-                ThirtyMinuteBlock.fromBits(rs.getLong("tuesday")),
-                ThirtyMinuteBlock.fromBits(rs.getLong("wednesday")),
-                ThirtyMinuteBlock.fromBits(rs.getLong("thursday")),
-                ThirtyMinuteBlock.fromBits(rs.getLong("friday")),
-                ThirtyMinuteBlock.fromBits(rs.getLong("saturday")),
-                ThirtyMinuteBlock.fromBits(rs.getLong("sunday")));
-
-        return new Doctor(
-            rs.getLong("doctor_id"),
-            rs.getString("email"),
-            rs.getString("password"),
-            rs.getString("first_name"),
-            rs.getString("last_name"),
-            rs.getLong("profile_picture_id"),
-            healthInsurance,
-            specialty,
-            location,
-            attendingHours);
-      };
-
+  private final ResultSetExtractor<List<Doctor>> doctorExtractor = new DoctorExtractor();
   private final JdbcTemplate jdbcTemplate;
   private final SimpleJdbcInsert doctorInsert;
   private final SimpleJdbcInsert doctorLocationInsert;
@@ -149,24 +122,52 @@ public class DoctorDaoImpl implements DoctorDao {
 
   @Override
   public void updateInformation(
-      long doctorId, int healthInsuranceCode, int specialtyCode, int cityCode, String address) {
-    String update =
+      long doctorId,
+      List<Integer> healthInsuranceCodes,
+      int specialtyCode,
+      int cityCode,
+      String address) {
+
+    String specialtyUpdate =
         new UpdateBuilder()
             .update("doctor")
             .set("specialty_code", "'" + specialtyCode + "'")
             .where("doctor_id = (" + doctorId + ")")
             .build();
 
-    jdbcTemplate.update(update);
+    jdbcTemplate.update(specialtyUpdate);
 
-    update =
-        new UpdateBuilder()
-            .update("health_insurance_accepted_by_doctor")
-            .set("health_insurance_code", "'" + healthInsuranceCode + "'")
-            .where("doctor_id = (" + doctorId + ")")
+    // Get existing health insurance codes
+    String existingHealthInsuranceCodesQuery =
+        new QueryBuilder()
+            .select("health_insurance_code")
+            .from("health_insurance_accepted_by_doctor")
+            .where("doctor_id = " + doctorId)
             .build();
 
-    jdbcTemplate.update(update);
+    List<Integer> existingHealthInsuranceCodes =
+        jdbcTemplate.queryForList(existingHealthInsuranceCodesQuery, Integer.class);
+
+    // Remove health insurance codes that are not in the new list
+    String deleteHealthInsurances =
+        new DeleteBuilder()
+            .delete("health_insurance_accepted_by_doctor")
+            .where("doctor_id = " + doctorId)
+            .where("health_insurance_code = ?")
+            .build();
+
+    for (Integer code : existingHealthInsuranceCodes) {
+      if (!healthInsuranceCodes.contains(code)) {
+        jdbcTemplate.update(deleteHealthInsurances, code);
+      }
+    }
+
+    // Add health insurance codes that are not in the old list
+    for (Integer code : healthInsuranceCodes) {
+      if (!existingHealthInsuranceCodes.contains(code)) {
+        addHealthInsurance(doctorId, code);
+      }
+    }
 
     String doctorLocationIdQuery =
         new QueryBuilder()
@@ -175,7 +176,7 @@ public class DoctorDaoImpl implements DoctorDao {
             .where("doctor_id = " + doctorId)
             .build();
 
-    update =
+    String doctorLocationUpdate =
         new UpdateBuilder()
             .update("doctor_location")
             .set("address", "'" + address + "'")
@@ -183,7 +184,7 @@ public class DoctorDaoImpl implements DoctorDao {
             .where("doctor_location_id = (" + doctorLocationIdQuery + ")")
             .build();
 
-    jdbcTemplate.update(update);
+    jdbcTemplate.update(doctorLocationUpdate);
   }
 
   @Override
@@ -254,39 +255,93 @@ public class DoctorDaoImpl implements DoctorDao {
 
     String query = doctorQuery().where("doctor.doctor_id = " + id).build();
 
-    return jdbcTemplate.query(query, DOCTOR_MAPPER).stream().findFirst();
+    return jdbcTemplate.query(query, doctorExtractor).stream().findFirst();
   }
 
   @Override
-  public List<Doctor> getFilteredDoctors(
-      String name, int specialtyCode, int cityCode, int healthInsuranceCode) {
+  public Page<Doctor> getFilteredDoctors(
+      String name,
+      int specialtyCode,
+      int cityCode,
+      int healthInsuranceCode,
+      int page,
+      int pageSize) {
 
     // Start building the query
-    QueryBuilder query = doctorQuery();
+    QueryBuilder subQuery = doctorQuery().distinctOn("doctor.doctor_id");
+    QueryBuilder doctorCountQuery = doctorCountQuery();
 
     // Add the filters to the query, if it is the first filter, don't add AND
     if (name != null && !name.isEmpty()) {
-      query.where("CONCAT(first_name, ' ', last_name) ILIKE CONCAT('" + name + "', '%')");
+      subQuery.where("CONCAT(first_name, ' ', last_name) ILIKE CONCAT('" + name + "', '%')");
+      doctorCountQuery.where(
+          "CONCAT(first_name, ' ', last_name) ILIKE CONCAT('" + name + "', '%')");
     }
 
     if (specialtyCode >= 0) {
-      query.where("specialty_code = " + specialtyCode);
+      subQuery.where("specialty_code = " + specialtyCode);
+      doctorCountQuery.where("specialty_code = " + specialtyCode);
     }
 
     if (cityCode >= 0) {
-      query.where("city_code = " + cityCode);
+      subQuery.where("city_code = " + cityCode);
+      doctorCountQuery.where("city_code = " + cityCode);
     }
 
     if (healthInsuranceCode >= 0) {
-      query.where("health_insurance_code = " + healthInsuranceCode);
+      String healthInsuranceQuery =
+          new QueryBuilder()
+              .select("doctor_id")
+              .from("health_insurance_accepted_by_doctor")
+              .where("health_insurance_code = " + healthInsuranceCode)
+              .build();
+
+      subQuery.where("doctor.doctor_id IN (" + healthInsuranceQuery + ")");
+      doctorCountQuery.where("doctor.doctor_id IN (" + healthInsuranceQuery + ")");
     }
 
-    return jdbcTemplate.query(query.build(), DOCTOR_MAPPER);
+    if (page >= 0 && pageSize > 0) {
+      subQuery.limit(pageSize).offset(page * pageSize);
+    }
+
+    // Outer query
+    String query =
+        new QueryBuilder()
+            .select(
+                "subquery.doctor_id",
+                "specialty_code",
+                "email",
+                "password",
+                "first_name",
+                "last_name",
+                "profile_picture_id",
+                "health_insurance_accepted_by_doctor.health_insurance_code",
+                "doctor_location_id",
+                "city_code",
+                "address",
+                "monday",
+                "tuesday",
+                "wednesday",
+                "thursday",
+                "friday",
+                "saturday",
+                "sunday")
+            .from("(" + subQuery.build() + ") as subquery")
+            .leftJoin(
+                "health_insurance_accepted_by_doctor",
+                "subquery.doctor_id = health_insurance_accepted_by_doctor.doctor_id")
+            .build();
+
+    List<Doctor> doctors = jdbcTemplate.query(query, doctorExtractor);
+
+    int totalDoctors = jdbcTemplate.queryForObject(doctorCountQuery.build(), Integer.class);
+
+    return new Page<>(doctors, page, totalDoctors);
   }
 
   @Override
   public List<Doctor> getDoctors() {
-    return jdbcTemplate.query(doctorQuery().build(), DOCTOR_MAPPER);
+    return jdbcTemplate.query(doctorQuery().build(), doctorExtractor);
   }
 
   // Get used specialties and health insurances
@@ -366,5 +421,94 @@ public class DoctorDaoImpl implements DoctorDao {
         .innerJoin(
             "doctor_attending_hours",
             "doctor.attending_hours_id = doctor_attending_hours.attending_hours_id");
+  }
+
+  private QueryBuilder doctorCountQuery() {
+    return new QueryBuilder()
+        .select("count(distinct doctor.doctor_id)")
+        .from("doctor")
+        .innerJoin("users", "doctor_id = user_id")
+        .innerJoin("location_for_doctor", "doctor.doctor_id = location_for_doctor.doctor_id")
+        .innerJoin(
+            "doctor_location",
+            "location_for_doctor.doctor_location_id = doctor_location.doctor_location_id")
+        .innerJoin(
+            "health_insurance_accepted_by_doctor",
+            "doctor.doctor_id = health_insurance_accepted_by_doctor.doctor_id")
+        .innerJoin(
+            "doctor_attending_hours",
+            "doctor.attending_hours_id = doctor_attending_hours.attending_hours_id");
+  }
+
+  private class DoctorExtractor implements ResultSetExtractor<List<Doctor>> {
+
+    // Most significant 16 bits dont encode anything
+    // The 48 least significant bits encode 30 minute blocks
+    // If the bit is 1 the doctor is available, otherwise it is not
+    // The least significant bit encodes the (0:00, 0:30) block
+    // The 48th bit encodes the (23:3, 0:00) block
+    private Collection<ThirtyMinuteBlock> attendingHoursFromBits(long bits) {
+
+      Collection<ThirtyMinuteBlock> blocks = new ArrayList<>();
+      ThirtyMinuteBlock[] values = ThirtyMinuteBlock.values();
+
+      for (int i = 0; i < 48; i++) {
+        if ((bits & (1L << i)) != 0) {
+          blocks.add(values[i]);
+        }
+      }
+
+      return blocks;
+    }
+
+    @Override
+    public List<Doctor> extractData(ResultSet rs) throws SQLException, DataAccessException {
+      Map<Long, Doctor> doctors = new HashMap<>();
+      Specialty[] specialties = Specialty.values();
+      City[] cities = City.values();
+      HealthInsurance[] healthInsurances = HealthInsurance.values();
+
+      while (rs.next()) {
+        long doctorId = rs.getLong("doctor_id");
+        Doctor doctor = doctors.get(doctorId);
+
+        if (doctor == null) {
+          Specialty specialty = specialties[rs.getInt("specialty_code")];
+
+          City city = cities[rs.getInt("city_code")];
+          Location location =
+              new Location(rs.getLong("doctor_location_id"), city, rs.getString("address"));
+
+          AttendingHours attendingHours =
+              new AttendingHours(
+                  attendingHoursFromBits(rs.getLong("monday")),
+                  attendingHoursFromBits(rs.getLong("tuesday")),
+                  attendingHoursFromBits(rs.getLong("wednesday")),
+                  attendingHoursFromBits(rs.getLong("thursday")),
+                  attendingHoursFromBits(rs.getLong("friday")),
+                  attendingHoursFromBits(rs.getLong("saturday")),
+                  attendingHoursFromBits(rs.getLong("sunday")));
+
+          doctor =
+              new Doctor(
+                  rs.getLong("doctor_id"),
+                  rs.getString("email"),
+                  rs.getString("password"),
+                  rs.getString("first_name"),
+                  rs.getString("last_name"),
+                  rs.getLong("profile_picture_id"),
+                  new ArrayList<>(),
+                  specialty,
+                  location,
+                  attendingHours);
+
+          doctors.put(doctorId, doctor);
+        }
+
+        doctor.getHealthInsurances().add(healthInsurances[rs.getInt("health_insurance_code")]);
+      }
+
+      return new ArrayList<>(doctors.values());
+    }
   }
 }

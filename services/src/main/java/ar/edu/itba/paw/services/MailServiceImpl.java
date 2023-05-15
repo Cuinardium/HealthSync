@@ -143,6 +143,7 @@ public class MailServiceImpl implements MailService {
 
     templateModel.put("date", dateTime);
     templateModel.put("description", description);
+    templateModel.put("cancelDesc", appointment.getCancelDesc());
 
     String htmlBody = getHtmlBody("appointmentCancelledByPatient", templateModel, locale);
 
@@ -285,6 +286,7 @@ public class MailServiceImpl implements MailService {
     templateModel.put("docName", doctorName);
     templateModel.put("appointmentUrl", doctorAppointmentUrl);
     templateModel.put("date", dateTime);
+    templateModel.put("cancelDesc", appointment.getCancelDesc());
 
     String htmlBody = getHtmlBody("appointmentCancelledByDoctor", templateModel, locale);
 

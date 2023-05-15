@@ -1,5 +1,6 @@
 <%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 
 <!-- Include -->
 <jsp:include page="/resources/externalResources.jsp"/>
@@ -17,6 +18,12 @@
 <spring:message code="appointments.to" var="toTitle"/>
 <spring:message code="appointments.filter" var="filter"/>
 
+<spring:message code="appointments.modal.title" var="modalTitle"/>
+<spring:message code="appointments.modal.desc" var="modalDesc"/>
+<spring:message code="appointments.modal.confirm" var="modalConfirm"/>
+<spring:message code="appointments.modal.deny" var="modalDeny"/>
+<spring:message code="appointments.modal.cancelDesc" var="cancelDesc"/>
+
 <html>
 <head>
     <title>${title}</title>
@@ -26,6 +33,9 @@
     <link href="${mainCss}" rel="stylesheet"/>
     <link href="${appointmentsCss}" rel="stylesheet"/>
     <script src="${myAppointmentsJs}"></script>
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
 </head>
 
 <body>
@@ -76,12 +86,38 @@
                                 <c:url value="/my-appointments/${appointment.id}/update" var="updateUrl"/>
                                 <div class="cardButtonContainer">
                                     <c:forEach items="${tab.allowedActions}" var="action">
-                                        <form id="post-form" method="post" action="${updateUrl}/?status=${action.statusCode}">
-                                            <button type="submit"
+                                            <button onclick="openModal('${updateUrl}/?status=${action.statusCode}')"
                                                     class="post-button btn ${action.buttonClass}">
                                                 <spring:message code="${action.messageID}"/>
                                             </button>
-                                        </form>
+                                        <div class="modal fade" id="modal" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
+                                            <div class="modal-dialog" role="dialog">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title" id="modalLabel">${modalTitle}</h5>
+                                                    </div>
+                                                    <form:form modelAttribute="modalForm" id="post-modal">
+                                                    <div class="modal-body">
+
+                                                            ${modalDesc}
+                                                            <div class="form-group">
+                                                                <form:label path="description" for="cancelDescription" class="col-form-label">${cancelDesc}</form:label>
+                                                                <form:input path="description" class="form-control" id="cancelDescription"/>
+                                                            </div>
+
+                                                    </div>
+                                                    <div class="modal-footer">
+
+                                                            <div class="cardButtonContainer">
+                                                                <button type="button" class="btn btn-danger" onclick="closeModal()">${modalDeny}</button>
+                                                                <button type="submit" class="btn btn-primary">${modalConfirm}</button>
+                                                            </div>
+
+                                                    </div>
+                                                    </form:form>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </c:forEach>
                                 </div>
                             </div>
@@ -101,3 +137,12 @@
     </div>
 </body>
 </html>
+<script>
+    function openModal(action){
+        $('#modal').modal('show');
+        $('#post-modal').attr('action', action);
+    }
+    function closeModal(){
+        $('#modal').modal('hide')
+    }
+</script>

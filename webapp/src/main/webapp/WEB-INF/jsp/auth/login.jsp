@@ -18,7 +18,8 @@
 <spring:message code="form.password_hint" var="password_hint"/>
 <spring:message code="login.rememberMe" var="rememberMe"/>
 <spring:message code="login.submit" var="submit"/>
-
+<spring:message code="login.register" var="register"/>
+<spring:message code="login.error" var="error"/>
 
 <html>
 <head>
@@ -37,6 +38,13 @@
 <div class="formContainer generalPadding">
     <h1>${title}</h1>
     <form:form modelAttribute="loginForm" class="card" action="${loginUrl}" method="POST">
+        <c:if test="${hasError}">
+          <div class="formRow">
+            <p class="error">
+              ${error}
+            </p>
+          </div>
+        </c:if>
         <div class="formRow">
             <div class="formItem">
                 <form:label path="email">${email}</form:label>
@@ -59,6 +67,10 @@
         </div>
 
         <button type="submit" class="btn btn-primary submitButton">${submit}</button>
+
+        <div class="formRow">
+            <a href="/patient-register">${register}</a>
+        </div>
     </form:form>
 </div>
 </body>

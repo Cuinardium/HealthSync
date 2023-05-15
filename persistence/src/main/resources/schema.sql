@@ -96,10 +96,13 @@ CREATE TABLE IF NOT EXISTS appointment (
     appointment_date DATE NOT NULL,
     appointment_time SMALLINT NOT NULL, -- 0 a 47 -> uso smallint para ahorrar espacio
     appointment_description VARCHAR(1000),
+    cancel_description VARCHAR(1000) DEFAULT NULL,
     status_code      INTEGER NOT NULL,
     FOREIGN KEY (doctor_id)     REFERENCES doctor (doctor_id),
     FOREIGN KEY (patient_id)    REFERENCES patient (patient_id)
 );
+
+/*Alter table appointment add column cancelDescription VARCHAR(1000);
 
 /*
     DROP TABLE IF EXISTS appointment;

@@ -16,6 +16,8 @@ public class Appointment {
         + status
         + ", description="
         + description
+        + ", cancelDesc="
+        + cancelDesc
         + " "
         + patient
         + " "
@@ -33,6 +35,8 @@ public class Appointment {
   private final AppointmentStatus status;
   private final String description;
 
+  private final String cancelDesc;
+
   public Appointment(
       long id,
       Patient patient,
@@ -40,7 +44,8 @@ public class Appointment {
       LocalDate date,
       ThirtyMinuteBlock timeBlock,
       AppointmentStatus status,
-      String description) {
+      String description,
+      String cancelDesc) {
     this.id = id;
     this.patient = patient;
     this.doctor = doctor;
@@ -48,6 +53,7 @@ public class Appointment {
     this.timeBlock = timeBlock;
     this.status = status;
     this.description = description;
+    this.cancelDesc = cancelDesc;
   }
 
   public long getId() {
@@ -84,5 +90,9 @@ public class Appointment {
 
   public String getDescription() {
     return description;
+  }
+
+  public String getCancelDesc() {
+    return cancelDesc;
   }
 }
