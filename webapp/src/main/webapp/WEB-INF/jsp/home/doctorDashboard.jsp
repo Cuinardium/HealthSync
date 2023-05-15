@@ -83,8 +83,8 @@
             <c:url value="/${doctor.id}/detailed_doctor" var="detailedUrl"/>
             <div class="card">
                 <div class="imageContainer">
-                    <img src="${doctorCardDefaultImg}"
-                         class="card-img-top" alt="A blonde dermatologist">
+                    <c:url value="/img/${user.getProfilePictureId()}" var="doctorImg"/>
+                    <img src="${doctorImg}" class="card-img-top">
                 </div>
                 <div class="infoContainer">
                     <div class="card-body">
