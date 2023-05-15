@@ -1,5 +1,6 @@
 <%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 
 <!-- Include -->
 <jsp:include page="/resources/externalResources.jsp"/>
@@ -21,6 +22,7 @@
 <spring:message code="appointments.modal.desc" var="modalDesc"/>
 <spring:message code="appointments.modal.confirm" var="modalConfirm"/>
 <spring:message code="appointments.modal.deny" var="modalDeny"/>
+<spring:message code="appointments.modal.cancelDesc" var="cancelDesc"/>
 
 <html>
 <head>
@@ -94,17 +96,25 @@
                                                     <div class="modal-header">
                                                         <h5 class="modal-title" id="modalLabel">${modalTitle}</h5>
                                                     </div>
+                                                    <form:form modelAttribute="modalForm" id="post-modal">
                                                     <div class="modal-body">
+
                                                             ${modalDesc}
+                                                            <div class="form-group">
+                                                                <form:label path="description" for="cancelDescription" class="col-form-label">${cancelDesc}</form:label>
+                                                                <form:input path="description" class="form-control" id="cancelDescription"/>
+                                                            </div>
+
                                                     </div>
                                                     <div class="modal-footer">
-                                                        <form id="post-modal" method="post">
-                                                            <div class="form-row">
+
+                                                            <div class="cardButtonContainer">
                                                                 <button type="button" class="btn btn-danger" onclick="closeModal()">${modalDeny}</button>
                                                                 <button type="submit" class="btn btn-primary">${modalConfirm}</button>
                                                             </div>
-                                                        </form>
+
                                                     </div>
+                                                    </form:form>
                                                 </div>
                                             </div>
                                         </div>
