@@ -191,6 +191,7 @@ public class DoctorDaoImpl implements DoctorDao {
                 "last_name",
                 "profile_picture_id",
                 "health_insurance_accepted_by_doctor.health_insurance_code",
+                "rating",
                 "doctor_location_id",
                 "city_code",
                 "address",
@@ -500,6 +501,13 @@ public class DoctorDaoImpl implements DoctorDao {
 
 
   private QueryBuilder doctorQuery() {
+
+    String ratingQuery = new QueryBuilder()
+        .select("avg(rating)")
+        .from("review")
+        .where("doctor_id = doctor.doctor_id")
+        .build();
+
     return new QueryBuilder()
         .select(
             "doctor.doctor_id",
@@ -510,6 +518,7 @@ public class DoctorDaoImpl implements DoctorDao {
             "last_name",
             "profile_picture_id",
             "health_insurance_code",
+            "(" + ratingQuery + ") as rating",
             "doctor_location.doctor_location_id",
             "city_code",
             "address",

@@ -63,7 +63,8 @@ public class RowMappers {
                     new ArrayList<>(),
                     specialty,
                     location,
-                    attendingHours);
+                    attendingHours,
+                    rs.getFloat("rating"));
 
             doctors.put(doctorId, doctor);
           }
@@ -161,6 +162,8 @@ public class RowMappers {
                     ThirtyMinuteBlock.fromBits(rs.getLong("saturday")),
                     ThirtyMinuteBlock.fromBits(rs.getLong("sunday")));
 
+            float rating = rs.getFloat("rating");
+
             Doctor doctor =
                 new Doctor(
                     doctorId,
@@ -172,7 +175,8 @@ public class RowMappers {
                     new ArrayList<>(),
                     specialty,
                     location,
-                    attendingHours);
+                    attendingHours,
+                    rating);
 
             Appointment appointment =
                 new Appointment(
@@ -184,6 +188,7 @@ public class RowMappers {
                     status,
                     description,
                     cancelDesc);
+
             appointments.put(appointmentId, appointment);
           }
 

@@ -37,7 +37,7 @@ public class AppointmentDaoImpl implements AppointmentDao {
   }
 
   // ========================== Inserts ==========================
-  
+
   @Override
   public Appointment createAppointment(
       Patient patient,
@@ -199,6 +199,13 @@ public class AppointmentDaoImpl implements AppointmentDao {
       int page,
       int pageSize) {
 
+    String ratingQuery =
+        new QueryBuilder()
+            .select("AVG(rating)")
+            .from("review")
+            .where("doctor_id = appointment.doctor_id")
+            .build();
+
     QueryBuilder appointmentsQuery =
         new QueryBuilder()
             .select(
@@ -224,6 +231,7 @@ public class AppointmentDaoImpl implements AppointmentDao {
                 "specialty_code",
                 "city_code",
                 "location_for_doctor.doctor_location_id",
+                "(" + ratingQuery + ") as rating",
                 "health_insurance_accepted_by_doctor.health_insurance_code",
                 "address",
                 "monday",
