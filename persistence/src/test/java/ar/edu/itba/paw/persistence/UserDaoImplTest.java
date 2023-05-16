@@ -114,7 +114,7 @@ public class UserDaoImplTest {
     Assert.assertEquals(AUX_LAST_NAME, user.getLastName());
     Assert.assertEquals(INSERTED_USER_PFP_ID, user.getProfilePictureId());
 
-    Assert.assertEquals(4, JdbcTestUtils.countRowsInTable(jdbcTemplate, "users"));
+    Assert.assertEquals(5, JdbcTestUtils.countRowsInTable(jdbcTemplate, "users"));
   }
 
   @Test
