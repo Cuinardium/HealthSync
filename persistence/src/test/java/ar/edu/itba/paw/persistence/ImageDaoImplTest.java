@@ -51,7 +51,7 @@ public class ImageDaoImplTest {
     Assert.assertTrue(image.isPresent());
     Assert.assertEquals(INSERTED_IMAGE_ID, image.get().getImageId());
     Assert.assertArrayEquals(INSERTED_IMAGE_BYTES, image.get().getBytes());
-  };
+  }
 
   @Test
   public void testGetImageDoesNotExist() {
@@ -60,7 +60,7 @@ public class ImageDaoImplTest {
     Optional<Image> image = imageDao.getImage(AUX_IMAGE_ID);
     // 3. Meanignful assertions
     Assert.assertFalse(image.isPresent());
-  };
+  }
 
   @Test
   public void testUploadImage() {
@@ -71,7 +71,7 @@ public class ImageDaoImplTest {
     Assert.assertArrayEquals(AUX_IMAGE_BYTES, image.getBytes());
 
     Assert.assertEquals(2, JdbcTestUtils.countRowsInTable(jdbcTemplate, "profile_picture"));
-  };
+  }
 
   // TODO: corregir esto
   @Test
@@ -82,7 +82,7 @@ public class ImageDaoImplTest {
     // 3. Meanignful assertions
     // Assert.assertEquals(INSERTED_IMAGE_ID, image.getImageId());
     // Assert.assertArrayEquals(AUX_IMAGE_BYTES, image.getBytes());
-  };
+  }
 
   @Test
   public void testUpdateImageDoesNotExist() {
@@ -92,5 +92,5 @@ public class ImageDaoImplTest {
         ImageNotFoundException.class,
         () -> imageDao.updateImage(AUX_IMAGE_ID, new Image(AUX_IMAGE_BYTES)));
     // 3. Meanignful assertions
-  };
+  }
 }

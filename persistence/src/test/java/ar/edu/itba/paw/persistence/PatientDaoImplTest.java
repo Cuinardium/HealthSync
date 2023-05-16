@@ -18,6 +18,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.jdbc.JdbcTestUtils;
 import org.springframework.transaction.annotation.Transactional;
 
 @Transactional
@@ -66,7 +67,9 @@ public class PatientDaoImplTest {
     Assert.assertEquals(AUX_PATIENT_LAST_NAME, patient.getLastName());
     Assert.assertEquals(INSERTED_PATIENT_PFP_ID, patient.getProfilePictureId());
     Assert.assertEquals(AUX_PATIENT_HEALTH_INSURANCE, patient.getHealthInsurance());
-  };
+
+    Assert.assertEquals(2, JdbcTestUtils.countRowsInTable(jdbcTemplate, "patient"));
+  }
 
   @Test
   public void testCreatePatientAlreadyExists() {
@@ -76,7 +79,7 @@ public class PatientDaoImplTest {
         PatientAlreadyExistsException.class,
         () -> patientDao.createPatient(INSERTED_PATIENT_ID, AUX_PATIENT_HEALTH_INSURANCE));
     // 3. Meaningful assertions
-  };
+  }
 
   @Test
   public void testUpdatePatientInfo() {
@@ -93,7 +96,7 @@ public class PatientDaoImplTest {
     Assert.assertEquals(INSERTED_PATIENT_LAST_NAME, patient.getLastName());
     Assert.assertEquals(INSERTED_PATIENT_PFP_ID, patient.getProfilePictureId());
     Assert.assertEquals(AUX_PATIENT_HEALTH_INSURANCE, patient.getHealthInsurance());
-  };
+  }
 
   @Test
   public void testUpdatePatientInfoPatientDoesNotExist() {
@@ -103,7 +106,7 @@ public class PatientDaoImplTest {
         PatientNotFoundException.class,
         () -> patientDao.updatePatientInfo(AUX_PATIENT_ID, INSERTED_PATIENT_HEALTH_INSURANCE));
     // 3. Meaningful assertions
-  };
+  }
 
   @Test
   public void testGetPatientById() {
@@ -119,7 +122,7 @@ public class PatientDaoImplTest {
     Assert.assertEquals(INSERTED_PATIENT_LAST_NAME, maybePatient.get().getLastName());
     Assert.assertEquals(INSERTED_PATIENT_PFP_ID, maybePatient.get().getProfilePictureId());
     Assert.assertEquals(INSERTED_PATIENT_HEALTH_INSURANCE, maybePatient.get().getHealthInsurance());
-  };
+  }
 
   @Test
   public void testGetPatientByIdDoesNotExist() {
@@ -128,5 +131,5 @@ public class PatientDaoImplTest {
     Optional<Patient> maybePatient = patientDao.getPatientById(AUX_PATIENT_ID);
     // 3. Meaningful assertions
     Assert.assertFalse(maybePatient.isPresent());
-  };
+  }
 }

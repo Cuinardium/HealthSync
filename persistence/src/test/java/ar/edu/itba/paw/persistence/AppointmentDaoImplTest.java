@@ -1,7 +1,7 @@
 package ar.edu.itba.paw.persistence;
 
+import ar.edu.itba.paw.persistence.config.TestConfig;
 import javax.sql.DataSource;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -11,8 +11,6 @@ import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
-
-import ar.edu.itba.paw.persistence.config.TestConfig;
 
 @Transactional
 @Rollback
@@ -25,7 +23,7 @@ public class AppointmentDaoImplTest {
   private JdbcTemplate jdbcTemplate;
 
   @Autowired private AppointmentDaoImpl appointmentDao;
- 
+
   @Before
   public void setUp() {
     jdbcTemplate = new JdbcTemplate(ds);
@@ -36,24 +34,26 @@ public class AppointmentDaoImplTest {
     // TODO: implement test
   }
 
+  @Test
+  public void testUpdateAppointment() {}
 
   @Test
   public void testGetAppointmentById() {
     // TODO: implement test
   }
 
-  @Test public void testGetAppointment() {};
+  @Test
+  public void testGetAppointment() {}
 
-  @Test public void testGetAppointmentsForPatient() {};
+  @Test
+  public void testGetAppointmentsForPatient() {}
 
-  @Test public void testGetAppointmentsForDoctor() {};
+  @Test
+  public void testGetAppointmentsForDoctor() {}
 
-  @Test public void testGetFilteredAppointmentsForPatient() {};
+  @Test
+  public void testGetFilteredAppointmentsForPatient() {}
 
-  @Test public void testGetFilteredAppointmentsForDoctor() {};
-
-  void updateAppointmentStatus() {};
-
+  @Test
+  public void testGetFilteredAppointmentsForDoctor() {}
 }
-
-
