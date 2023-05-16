@@ -107,7 +107,6 @@ CREATE TABLE IF NOT EXISTS review (
     doctor_id        INTEGER NOT NULL,
     patient_id       INTEGER NOT NULL,
     review_date      DATE NOT NULL,
-    review_time      SMALLINT NOT NULL,
     review_description VARCHAR(1000),
     rating           SMALLINT NOT NULL,
     FOREIGN KEY (doctor_id)     REFERENCES doctor (doctor_id),
