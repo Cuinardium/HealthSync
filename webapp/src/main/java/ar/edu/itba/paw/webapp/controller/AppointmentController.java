@@ -142,6 +142,7 @@ public class AppointmentController {
     mav.addObject("appointmentId", appointmentId);
     mav.addObject("actions", allowedActions);
     mav.addObject("appointmentDesc", appointment.getDescription());
+    mav.addObject("cancelDescription", appointment.getCancelDesc());
     mav.addObject(
         "appointmentDateTime",
         appointment.getDate() + " " + appointment.getTimeBlock().getBlockBeginning());
