@@ -496,7 +496,9 @@ public class DoctorDaoImpl implements DoctorDao {
                   rs.getString("password"),
                   rs.getString("first_name"),
                   rs.getString("last_name"),
-                  rs.getLong("profile_picture_id"),
+                  rs.getObject("profile_picture_id") == null
+                      ? null
+                      : rs.getLong("profile_picture_id"),
                   new ArrayList<>(),
                   specialty,
                   location,
