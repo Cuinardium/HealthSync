@@ -42,17 +42,18 @@ public class UserDaoImpl implements UserDao {
   @Override
   public User updateUserInfo(
       long userId, String email, String firstName, String lastName, Long pfpId) {
-    String update =
+    UpdateBuilder update =
         new UpdateBuilder()
             .update("users")
             .set("email", "'" + email + "'")
             .set("first_name", "'" + firstName + "'")
             .set("last_name", "'" + lastName + "'")
-            .set("profile_picture_id", pfpId.toString())
-            .where("user_id = (" + userId + ")")
-            .build();
+            .where("user_id = (" + userId + ")");
+    if (pfpId != null) {
+      update.set("profile_picture_id", pfpId.toString());
+    }
 
-    jdbcTemplate.update(update);
+    jdbcTemplate.update(update.build());
     return findById(userId).orElseThrow(IllegalStateException::new);
   }
 
