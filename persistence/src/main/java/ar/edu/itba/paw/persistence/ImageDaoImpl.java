@@ -2,6 +2,7 @@ package ar.edu.itba.paw.persistence;
 
 import ar.edu.itba.paw.interfaces.persistence.ImageDao;
 import ar.edu.itba.paw.models.Image;
+import ar.edu.itba.paw.persistence.exceptions.ImageNotFoundException;
 import ar.edu.itba.paw.persistence.utils.QueryBuilder;
 import ar.edu.itba.paw.persistence.utils.UpdateBuilder;
 import java.util.HashMap;
@@ -36,7 +37,7 @@ public class ImageDaoImpl implements ImageDao {
   public Optional<Image> getImage(long id) {
     String query =
         new QueryBuilder()
-            .select(TABLE_BYTEA_COLUMN)
+            .select("*")
             .from(TABLE_NAME)
             .where(TABLE_PKEY_COLUMN + " = " + id)
             .build();
@@ -70,7 +71,7 @@ public class ImageDaoImpl implements ImageDao {
             .build();
 
     jdbcTemplate.update(updateQuery);
-    return getImage(pfpId).orElseThrow(IllegalStateException::new);
+    return getImage(pfpId).orElseThrow(ImageNotFoundException::new);
   }
 
   private String getHexString(byte[] bytea) {

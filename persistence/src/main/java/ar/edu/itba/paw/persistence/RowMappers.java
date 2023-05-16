@@ -75,7 +75,7 @@ public class RowMappers {
       };
 
   protected static final RowMapper<Image> IMAGE_MAPPER =
-      (rs, rowNum) -> new Image(rs.getBytes("profile_picture"));
+      (rs, rowNum) -> new Image(rs.getLong("profile_picture_id"), rs.getBytes("profile_picture"));
 
   protected static final RowMapper<Location> LOCATION_MAPPER =
       (rs, rowNum) -> {
