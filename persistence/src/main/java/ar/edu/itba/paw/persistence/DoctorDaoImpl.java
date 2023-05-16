@@ -76,14 +76,14 @@ public class DoctorDaoImpl implements DoctorDao {
     doctorData.put("specialty_code", specialty.ordinal());
     doctorData.put("attending_hours_id", attendingHoursId);
 
+    doctorInsert.execute(doctorData);
+
     addLocation(userId, city.ordinal(), address);
 
     // Add health insurances
     for (HealthInsurance healthInsurance : healthInsurances) {
       addHealthInsurance(userId, healthInsurance.ordinal());
     }
-
-    doctorInsert.execute(doctorData);
 
     return getDoctorById(userId).orElseThrow(IllegalStateException::new);
   }
