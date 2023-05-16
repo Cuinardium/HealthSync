@@ -76,6 +76,33 @@ public class UserDaoImplTest {
   }
 
   @Test
+  public void testFindByEmail() {
+    // 1. Precondiciones (script testUsers.sql)
+
+    // 2. Ejercitar la class under test
+    Optional<User> maybeUser = userDao.findByEmail(EMAIL);
+
+    // 3. Meaningful assertions
+    Assert.assertEquals(ID, maybeUser.get().getId());
+    Assert.assertEquals(EMAIL, maybeUser.get().getEmail());
+    Assert.assertEquals(PASSWORD, maybeUser.get().getPassword());
+    Assert.assertEquals(FIRST_NAME, maybeUser.get().getFirstName());
+    Assert.assertEquals(LAST_NAME, maybeUser.get().getLastName());
+    Assert.assertEquals(PFP_ID, maybeUser.get().getProfilePictureId());
+  }
+
+  @Test
+  public void testFindByEmailDoesNotExist() {
+    // 1. Precondiciones (script testUsers.sql)
+
+    // 2. Ejercitar la class under test
+    Optional<User> maybeUser = userDao.findByEmail(EMAIL2);
+
+    // 3. Meaningful assertions
+    Assert.assertFalse(maybeUser.isPresent());
+  }
+
+  @Test
   public void testCreateUser() {
     // 1. Precondiciones (script testUsers.sql)
 
@@ -101,6 +128,34 @@ public class UserDaoImplTest {
         EmailAlreadyExistsException.class,
         () -> userDao.createUser(EMAIL, PASSWORD, FIRST_NAME, LAST_NAME));
 
+    // 3. Meaningful assertions
+  }
+
+  @Test
+  public void testEditUser() {
+    // 1. Precondiciones (script testUsers.sql)
+    // 2. Ejercitar la class under test
+    // 3. Meaningful assertions
+  }
+
+  @Test
+  public void testEditUserDoesNotExist() {
+    // 1. Precondiciones (script testUsers.sql)
+    // 2. Ejercitar la class under test
+    // 3. Meaningful assertions
+  }
+
+  @Test
+  public void testChangePassword() {
+    // 1. Precondiciones (script testUsers.sql)
+    // 2. Ejercitar la class under test
+    // 3. Meaningful assertions
+  }
+
+  @Test
+  public void testChangePasswordUserDoesNotExist() {
+    // 1. Precondiciones (script testUsers.sql)
+    // 2. Ejercitar la class under test
     // 3. Meaningful assertions
   }
 }
