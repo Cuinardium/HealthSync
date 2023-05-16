@@ -26,17 +26,17 @@ import org.springframework.transaction.annotation.Transactional;
 @ContextConfiguration(classes = TestConfig.class)
 public class UserDaoImplTest {
   private static final long INSERTED_USER_ID = 1;
-  private static final String INSERTED_USER_EMAIL = "email";
-  private static final String INSERTED_USER_PASSWORD = "password";
-  private static final String INSERTED_USER_FIRST_NAME = "first_name";
-  private static final String INSERTED_USER_LAST_NAME = "last_name";
+  private static final String INSERTED_USER_EMAIL = "patient@email.com";
+  private static final String INSERTED_USER_PASSWORD = "patient_password";
+  private static final String INSERTED_USER_FIRST_NAME = "patient_first_name";
+  private static final String INSERTED_USER_LAST_NAME = "patient_last_name";
   private static final Long INSERTED_USER_PFP_ID = null;
 
-  private static final long AUX_ID = 2;
-  private static final String AUX_EMAIL = "email2";
-  private static final String AUX_PASSWORD = "password2";
-  private static final String AUX_FIRST_NAME = "first_name2";
-  private static final String AUX_LAST_NAME = "last_name2";
+  private static final long AUX_ID = 3;
+  private static final String AUX_EMAIL = "notuser@email.com";
+  private static final String AUX_PASSWORD = "notuser_password";
+  private static final String AUX_FIRST_NAME = "notuser_first_name";
+  private static final String AUX_LAST_NAME = "notuser_last_name";
   private static final Long AUX_PFP_ID = 1L;
 
   @Autowired private DataSource ds;

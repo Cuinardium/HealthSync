@@ -25,11 +25,8 @@ public class TestConfig {
   @Value("classpath:schema.sql")
   private Resource schemaSql;
 
-  @Value("classpath:testUsers.sql")
-  private Resource testUsersSql;
-
-  @Value("classpath:testImages.sql")
-  private Resource testImagesSql;
+  @Value("classpath:testInserts.sql")
+  private Resource testInsertsSql;
 
   @Bean
   public DataSource dataSource() {
@@ -57,8 +54,7 @@ public class TestConfig {
     final ResourceDatabasePopulator populator = new ResourceDatabasePopulator();
     populator.addScript(hsqldbSql);
     populator.addScript(schemaSql);
-    populator.addScript(testUsersSql);
-    populator.addScript(testImagesSql);
+    populator.addScript(testInsertsSql);
     return populator;
   }
 

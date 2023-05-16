@@ -114,5 +114,5 @@ CREATE TABLE IF NOT EXISTS appointment (
     DROP TABLE IF EXISTS health_insurance_for_patient;
     DROP TABLE IF EXISTS patient;
     DROP TABLE IF EXISTS users CASCADE;
-    DROP TABLE IF EXISTS profiprofile_picturele_picture;
+    DROP TABLE IF EXISTS profile_picture;
  */
