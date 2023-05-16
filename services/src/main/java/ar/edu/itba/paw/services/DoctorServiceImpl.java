@@ -2,14 +2,12 @@ package ar.edu.itba.paw.services;
 
 import ar.edu.itba.paw.interfaces.persistence.DoctorDao;
 import ar.edu.itba.paw.interfaces.services.DoctorService;
-import ar.edu.itba.paw.interfaces.services.LocationService;
 import ar.edu.itba.paw.interfaces.services.UserService;
 import ar.edu.itba.paw.models.AttendingHours;
 import ar.edu.itba.paw.models.City;
 import ar.edu.itba.paw.models.Doctor;
 import ar.edu.itba.paw.models.HealthInsurance;
 import ar.edu.itba.paw.models.Image;
-import ar.edu.itba.paw.models.Location;
 import ar.edu.itba.paw.models.Page;
 import ar.edu.itba.paw.models.Specialty;
 import ar.edu.itba.paw.models.User;
@@ -17,7 +15,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,17 +25,16 @@ public class DoctorServiceImpl implements DoctorService {
   private final DoctorDao doctorDao;
 
   private final UserService userService;
-  private final LocationService locationService;
 
   @Autowired
-  public DoctorServiceImpl(
-      DoctorDao doctorDao, UserService userService, LocationService locationService) {
+  public DoctorServiceImpl(DoctorDao doctorDao, UserService userService) {
 
     this.doctorDao = doctorDao;
 
     this.userService = userService;
-    this.locationService = locationService;
   }
+
+  // =============== Inserts ===============
 
   @Transactional
   @Override
@@ -47,75 +43,43 @@ public class DoctorServiceImpl implements DoctorService {
       String password,
       String firstName,
       String lastName,
-      List<Integer> healthInsuranceCodes,
-      int specialtyCode,
-      int cityCode,
+      Specialty specialty,
+      City city,
       String address,
+      List<HealthInsurance> healthInsurances,
       AttendingHours attendingHours) {
 
     // Create user
     User user = userService.createUser(email, password, firstName, lastName);
-    long userId = user.getId();
-    long pfpId = user.getProfilePictureId();
-
-    // Create Location
-    long locationId = locationService.createLocation(cityCode, address);
 
     // Create doctor
-    long doctorId = doctorDao.createDoctor(userId, specialtyCode, attendingHours);
-
-    // Add location to doctor
-    doctorDao.addLocation(doctorId, locationId);
-
-    // Add health insurances to doctor
-    for (int healthInsuranceCode : healthInsuranceCodes) {
-      doctorDao.addHealthInsurance(doctorId, healthInsuranceCode);
-    }
-
-    // Enums
-    List<HealthInsurance> healthInsurances =
-        healthInsuranceCodes
-            .stream()
-            .map(HealthInsurance::getHealthInsurance)
-            .collect(Collectors.toList());
-
-    Specialty specialty = Specialty.values()[specialtyCode];
-    Location location = new Location(locationId, City.values()[cityCode], address);
-
-    return new Doctor(
-        doctorId,
-        email,
-        password,
-        firstName,
-        lastName,
-        pfpId,
-        healthInsurances,
-        specialty,
-        location,
-        attendingHours);
+    return doctorDao.createDoctor(
+        user.getId(), specialty, city, address, healthInsurances, attendingHours);
   }
+
+  // =============== Updates ===============
 
   @Transactional
   @Override
-  public void updateInformation(
+  public Doctor updateDoctor(
       long doctorId,
       String email,
       String firstName,
       String lastName,
-      List<Integer> healthInsuranceCodes,
-      int specialtyCode,
-      int cityCode,
+      Specialty specialty,
+      City city,
       String address,
+      List<HealthInsurance> healthInsurances,
+      AttendingHours attendingHours,
       Image image) {
-    userService.editUser(doctorId, email, firstName, lastName, image);
-    doctorDao.updateDoctorInfo(doctorId, healthInsuranceCodes, specialtyCode, cityCode, address);
+
+    userService.updateUser(doctorId, email, firstName, lastName, image);
+
+    return doctorDao.updateDoctorInfo(
+        doctorId, specialty, city, address, healthInsurances, attendingHours);
   }
 
-  @Transactional
-  @Override
-  public void updateAttendingHours(long doctorId, AttendingHours attendingHours) {
-    doctorDao.updateDoctorAttendingHours(doctorId, attendingHours);
-  }
+  // =============== Queries ===============
 
   @Override
   public Optional<Doctor> getDoctorById(long id) {
@@ -125,13 +89,12 @@ public class DoctorServiceImpl implements DoctorService {
   @Override
   public Page<Doctor> getFilteredDoctors(
       String name,
-      int specialtyCode,
-      int cityCode,
-      int healthInsuranceCode,
+      Specialty specialty,
+      City city,
+      HealthInsurance healthInsurance,
       int page,
       int pageSize) {
-    return doctorDao.getFilteredDoctors(
-        name, specialtyCode, cityCode, healthInsuranceCode, page, pageSize);
+    return doctorDao.getFilteredDoctors(name, specialty, city, healthInsurance, page, pageSize);
   }
 
   @Override
