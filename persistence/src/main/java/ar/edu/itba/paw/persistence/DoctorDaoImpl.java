@@ -8,6 +8,8 @@ import ar.edu.itba.paw.models.HealthInsurance;
 import ar.edu.itba.paw.models.Page;
 import ar.edu.itba.paw.models.Specialty;
 import ar.edu.itba.paw.models.ThirtyMinuteBlock;
+import ar.edu.itba.paw.persistence.exceptions.DoctorAlreadyExistsException;
+import ar.edu.itba.paw.persistence.exceptions.DoctorNotFoundException;
 import ar.edu.itba.paw.persistence.utils.DeleteBuilder;
 import ar.edu.itba.paw.persistence.utils.QueryBuilder;
 import ar.edu.itba.paw.persistence.utils.UpdateBuilder;
@@ -20,6 +22,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import javax.sql.DataSource;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
@@ -76,8 +79,11 @@ public class DoctorDaoImpl implements DoctorDao {
     doctorData.put("specialty_code", specialty.ordinal());
     doctorData.put("attending_hours_id", attendingHoursId);
 
-    doctorInsert.execute(doctorData);
-
+    try {
+      doctorInsert.execute(doctorData);
+    } catch (DuplicateKeyException e) {
+      throw new DoctorAlreadyExistsException();
+    }
     addLocation(userId, city.ordinal(), address);
 
     // Add health insurances
@@ -115,7 +121,7 @@ public class DoctorDaoImpl implements DoctorDao {
 
     updateAttendingHours(doctorId, attendingHours);
 
-    return getDoctorById(doctorId).orElseThrow(IllegalStateException::new);
+    return getDoctorById(doctorId).orElseThrow(DoctorNotFoundException::new);
   }
 
   // ============================ Queries =============================================
