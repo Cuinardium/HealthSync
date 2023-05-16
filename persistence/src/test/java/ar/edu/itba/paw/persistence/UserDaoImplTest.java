@@ -32,7 +32,7 @@ public class UserDaoImplTest {
   private static final String INSERTED_USER_LAST_NAME = "patient_last_name";
   private static final Long INSERTED_USER_PFP_ID = null;
 
-  private static final long AUX_ID = 3;
+  private static final long AUX_ID = 100;
   private static final String AUX_EMAIL = "notuser@email.com";
   private static final String AUX_PASSWORD = "notuser_password";
   private static final String AUX_FIRST_NAME = "notuser_first_name";
@@ -114,7 +114,7 @@ public class UserDaoImplTest {
     Assert.assertEquals(AUX_LAST_NAME, user.getLastName());
     Assert.assertEquals(INSERTED_USER_PFP_ID, user.getProfilePictureId());
 
-    Assert.assertEquals(3, JdbcTestUtils.countRowsInTable(jdbcTemplate, "users"));
+    Assert.assertEquals(4, JdbcTestUtils.countRowsInTable(jdbcTemplate, "users"));
   }
 
   @Test

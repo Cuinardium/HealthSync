@@ -3,6 +3,8 @@ package ar.edu.itba.paw.persistence;
 import ar.edu.itba.paw.interfaces.persistence.PatientDao;
 import ar.edu.itba.paw.models.HealthInsurance;
 import ar.edu.itba.paw.models.Patient;
+import ar.edu.itba.paw.persistence.exceptions.PatientAlreadyExistsException;
+import ar.edu.itba.paw.persistence.exceptions.PatientNotFoundException;
 import ar.edu.itba.paw.persistence.utils.QueryBuilder;
 import ar.edu.itba.paw.persistence.utils.UpdateBuilder;
 import java.util.HashMap;
@@ -10,6 +12,7 @@ import java.util.Map;
 import java.util.Optional;
 import javax.sql.DataSource;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
@@ -39,10 +42,12 @@ public class PatientDaoImpl implements PatientDao {
 
     data.put("patient_id", userId);
 
-    patientInsert.execute(data);
-
+    try {
+      patientInsert.execute(data);
+    } catch (DuplicateKeyException e) {
+      throw new PatientAlreadyExistsException();
+    }
     addHealthInsurance(userId, healthInsurance.ordinal());
-
     return getPatientById(userId).orElseThrow(IllegalStateException::new);
   }
 
@@ -59,7 +64,7 @@ public class PatientDaoImpl implements PatientDao {
 
     jdbcTemplate.update(update);
 
-    return getPatientById(patientId).orElseThrow(IllegalStateException::new);
+    return getPatientById(patientId).orElseThrow(PatientNotFoundException::new);
   }
 
   // ============================ Queries =============================================
