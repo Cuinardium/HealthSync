@@ -108,13 +108,13 @@ public class DoctorServiceImpl implements DoctorService {
       String address,
       Image image) {
     userService.editUser(doctorId, email, firstName, lastName, image);
-    doctorDao.updateInformation(doctorId, healthInsuranceCodes, specialtyCode, cityCode, address);
+    doctorDao.updateDoctorInfo(doctorId, healthInsuranceCodes, specialtyCode, cityCode, address);
   }
 
   @Transactional
   @Override
   public void updateAttendingHours(long doctorId, AttendingHours attendingHours) {
-    doctorDao.updateAttendingHours(doctorId, attendingHours);
+    doctorDao.updateDoctorAttendingHours(doctorId, attendingHours);
   }
 
   @Override

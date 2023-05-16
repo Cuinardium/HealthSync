@@ -110,7 +110,7 @@ public class AppointmentServiceImpl implements AppointmentService {
       throw new RuntimeException();
     }
 
-    appointmentDao.updateAppointmentStatus(appointmentId, status, cancelDescription);
+    appointmentDao.updateAppointment(appointmentId, status, cancelDescription);
 
     Appointment newAppointment =
         getAppointmentById(appointmentId).orElseThrow(RuntimeException::new);

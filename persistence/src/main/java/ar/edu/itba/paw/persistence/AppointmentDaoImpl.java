@@ -68,7 +68,7 @@ public class AppointmentDaoImpl implements AppointmentDao {
   }
 
   @Override
-  public void updateAppointmentStatus(
+  public Appointment updateAppointment(
       long appointmentId, AppointmentStatus status, String cancelDescription) {
     String update =
         new UpdateBuilder()
@@ -79,6 +79,7 @@ public class AppointmentDaoImpl implements AppointmentDao {
             .build();
 
     jdbcTemplate.update(update);
+    return getAppointmentById(appointmentId).orElseThrow(IllegalStateException::new);
   }
 
   // ========================== Queries ==========================

@@ -44,7 +44,7 @@ public class UserServiceImpl implements UserService {
     } else {
       imageService.updateImage(pfpId, image);
     }
-    userDao.editUser(userId, email, firstName, lastName, pfpId);
+    userDao.updateUserInfo(userId, email, firstName, lastName, pfpId);
   }
 
   @Override
@@ -57,7 +57,7 @@ public class UserServiceImpl implements UserService {
       return false;
     }
     // TODO: return true <-> hay afected rows?
-    userDao.changePassword(userId, passwordEncoder.encode(password));
+    userDao.updateUserPassword(userId, passwordEncoder.encode(password));
     return true;
   }
 

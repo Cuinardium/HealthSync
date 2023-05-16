@@ -43,6 +43,6 @@ public interface AppointmentDao {
       int page,
       int pageSize);
 
-  void updateAppointmentStatus(
+  Appointment updateAppointment(
       long appointmentId, AppointmentStatus status, String cancelDescription);
 }

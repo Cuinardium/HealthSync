@@ -1,6 +1,7 @@
 package ar.edu.itba.paw.persistence;
 
 import ar.edu.itba.paw.interfaces.persistence.LocationDao;
+import ar.edu.itba.paw.models.City;
 import ar.edu.itba.paw.models.Location;
 import ar.edu.itba.paw.persistence.utils.QueryBuilder;
 import java.sql.ResultSet;
@@ -30,16 +31,15 @@ public class LocationDaoImpl implements LocationDao {
   }
 
   @Override
-  public long createLocation(int cityCode, String address) {
+  public Location createLocation(int cityCode, String address) {
 
     Map<String, Object> args = new HashMap<>();
 
     args.put("city_code", cityCode);
     args.put("address", address);
 
-    Number id = jdbcInsert.executeAndReturnKey(args);
-
-    return id.longValue();
+    final Number id = jdbcInsert.executeAndReturnKey(args);
+    return new Location(id.longValue(), City.getCity(cityCode), address);
   }
 
   @Override
