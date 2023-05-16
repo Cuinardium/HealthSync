@@ -12,6 +12,8 @@ import ar.edu.itba.paw.webapp.auth.PawAuthUserDetails;
 import ar.edu.itba.paw.webapp.auth.UserRoles;
 import ar.edu.itba.paw.webapp.exceptions.UserNotFoundException;
 import ar.edu.itba.paw.webapp.form.DoctorFilterForm;
+
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -87,12 +89,13 @@ public class HomeController {
     int specialtyCode = doctorFilterForm.getSpecialtyCode();
     int cityCode = doctorFilterForm.getCityCode();
     int healthInsuranceCode = doctorFilterForm.getHealthInsuranceCode();
+    LocalDate date = doctorFilterForm.getDate();
     String name = doctorFilterForm.getName();
 
     // Get doctors
     Page<Doctor> doctors =
         doctorService.getFilteredDoctors(
-            name, specialtyCode, cityCode, healthInsuranceCode, parsedPage - 1, DEFAULT_PAGE_SIZE);
+            name, specialtyCode, cityCode, healthInsuranceCode, date, parsedPage - 1, DEFAULT_PAGE_SIZE);
 
     if (PawAuthUserDetails.getRole().equals(UserRoles.ROLE_PATIENT)) {
       PawAuthUserDetails currentUser =
@@ -116,6 +119,7 @@ public class HomeController {
     mav.addObject("specialtyCode", specialtyCode);
     mav.addObject("specialtyMap", usedSpecialties);
     mav.addObject("healthInsuranceCode", healthInsuranceCode);
+    mav.addObject("date", date);
     mav.addObject("healthInsuranceMap", usedHealthInsurances);
 
     // Pagination

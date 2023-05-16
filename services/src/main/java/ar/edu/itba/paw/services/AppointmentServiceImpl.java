@@ -23,7 +23,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class AppointmentServiceImpl implements AppointmentService {
-
   MailService mailService;
   DoctorService doctorService;
   PatientService patientService;

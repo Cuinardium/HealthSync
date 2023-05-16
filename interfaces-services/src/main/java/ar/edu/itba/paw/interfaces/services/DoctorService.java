@@ -6,6 +6,8 @@ import ar.edu.itba.paw.models.HealthInsurance;
 import ar.edu.itba.paw.models.Image;
 import ar.edu.itba.paw.models.Page;
 import ar.edu.itba.paw.models.Specialty;
+
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -42,6 +44,7 @@ public interface DoctorService {
       int specialtyCode,
       int cityCode,
       int healthInsuranceCode,
+      LocalDate date,
       int page,
       int pageSize);
 

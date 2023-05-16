@@ -5,17 +5,14 @@
     align-items: center;
 }
 
-select{
-    margin: 0.5rem 0;
-}
-
 .searchBarContainer{
     display: flex;
     flex-direction: row;
     margin-bottom: 1.5rem;
 }
 
-select, input.btn{
+select, input#date{
+    margin: 0.5rem 0;
     box-sizing: border-box !important;
 }
 

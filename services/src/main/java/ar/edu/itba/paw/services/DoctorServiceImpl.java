@@ -1,6 +1,7 @@
 package ar.edu.itba.paw.services;
 
 import ar.edu.itba.paw.interfaces.persistence.DoctorDao;
+import ar.edu.itba.paw.interfaces.services.AppointmentService;
 import ar.edu.itba.paw.interfaces.services.DoctorService;
 import ar.edu.itba.paw.interfaces.services.LocationService;
 import ar.edu.itba.paw.interfaces.services.UserService;
@@ -13,6 +14,8 @@ import ar.edu.itba.paw.models.Location;
 import ar.edu.itba.paw.models.Page;
 import ar.edu.itba.paw.models.Specialty;
 import ar.edu.itba.paw.models.User;
+
+import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -24,9 +27,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class DoctorServiceImpl implements DoctorService {
-
   private final DoctorDao doctorDao;
-
   private final UserService userService;
   private final LocationService locationService;
 
@@ -128,10 +129,11 @@ public class DoctorServiceImpl implements DoctorService {
       int specialtyCode,
       int cityCode,
       int healthInsuranceCode,
+      LocalDate date,
       int page,
       int pageSize) {
     return doctorDao.getFilteredDoctors(
-        name, specialtyCode, cityCode, healthInsuranceCode, page, pageSize);
+        name, specialtyCode, cityCode, healthInsuranceCode, date, page, pageSize);
   }
 
   @Override

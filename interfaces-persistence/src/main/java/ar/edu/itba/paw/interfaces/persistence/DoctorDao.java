@@ -3,6 +3,7 @@ package ar.edu.itba.paw.interfaces.persistence;
 import ar.edu.itba.paw.models.AttendingHours;
 import ar.edu.itba.paw.models.Doctor;
 import ar.edu.itba.paw.models.Page;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -17,6 +18,7 @@ public interface DoctorDao {
       int specialtyCode,
       int cityCode,
       int healthInsuranceCode,
+      LocalDate date,
       int page,
       int pageSize);
 

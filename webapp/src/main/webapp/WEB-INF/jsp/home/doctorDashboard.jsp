@@ -11,6 +11,8 @@
 <c:url value="/css/filters.css" var="filtersCss"/>
 <c:url value="/js/filters.js" var="filtersJs"/>
 
+<c:url value="/doctorDashboard" var="doctorDashboardUrl"/>
+
 <spring:message code="doctorDashboard.title" var="title"/>
 
 <spring:message code="doctorDashboard.button.book" var="book"/>
@@ -25,6 +27,7 @@
 <spring:message code="doctorDashboard.placeholder.search" var="search"/>
 <spring:message code="filters.title" var="filtersTitle"/>
 <spring:message code="filters.clear" var="clear"/>
+<spring:message code="form.date" var="date"/>
 
 <html>
 <head>
@@ -85,6 +88,8 @@
                         </form:option>
                     </c:forEach>
                 </form:select>
+
+                <form:input id="date" type="date" cssClass="form-control" placeholder="${date}" path="date" onchange="this.form.submit()"/>
 
                 <input type="submit" class="btn btn-danger" value="${clear}" onclick="clearFilters()">
             </div>
@@ -172,16 +177,17 @@
                 </c:if>
 
 
-                <c:url value="/doctorDashboard" var="doctorDashboardUrl">
+                <c:url value="/doctorDashboard" var="doctorDashboardFilteredUrl">
                     <c:param name="name" value="${name}"/>
                     <c:param name="cityCode" value="${cityCode}"/>
                     <c:param name="specialtyCode" value="${specialtyCode}"/>
                     <c:param name="healthInsuranceCode" value="${healthInsuranceCode}"/>
+                    <c:param name="date" value="${date}"/>
                 </c:url>
                 <jsp:include page="../components/pagination.jsp">
                     <jsp:param name="currentPage" value="${currentPage}"/>
                     <jsp:param name="totalPages" value="${totalPages}"/>
-                    <jsp:param name="url" value="${doctorDashboardUrl}"/>
+                    <jsp:param name="url" value="${doctorDashboardFilteredUrl}"/>
                 </jsp:include>
             </div>
         </div>

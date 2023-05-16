@@ -10,6 +10,7 @@ import ar.edu.itba.paw.persistence.utils.QueryBuilder;
 import ar.edu.itba.paw.persistence.utils.UpdateBuilder;
 import java.sql.ResultSet;
 import java.time.DayOfWeek;
+import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -257,6 +258,7 @@ public class DoctorDaoImpl implements DoctorDao {
       int specialtyCode,
       int cityCode,
       int healthInsuranceCode,
+      LocalDate date,
       int page,
       int pageSize) {
 
@@ -291,6 +293,18 @@ public class DoctorDaoImpl implements DoctorDao {
 
       subQuery.where("doctor.doctor_id IN (" + healthInsuranceQuery + ")");
       doctorCountQuery.where("doctor.doctor_id IN (" + healthInsuranceQuery + ")");
+    }
+
+    if(date != null) {
+      //TODO: QUERY FOR DATE
+//      String dateQuery = new QueryBuilder()
+//          .select("doctor_id")
+//          .from("appointment")
+//          .where("date = '" + date + "'")
+//          .build();
+//
+//      subQuery.where("doctor.doctor_id NOT IN (" + dateQuery + ")");
+//      doctorCountQuery.where("doctor.doctor_id NOT IN (" + dateQuery + ")");
     }
 
     if (page >= 0 && pageSize > 0) {
