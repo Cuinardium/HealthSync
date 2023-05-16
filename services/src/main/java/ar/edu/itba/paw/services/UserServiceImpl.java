@@ -37,6 +37,10 @@ public class UserServiceImpl implements UserService {
   public void editUser(long userId, String email, String firstName, String lastName, Image image) {
     Long pfpId =
         userDao.findById(userId).orElseThrow(IllegalStateException::new).getProfilePictureId();
+    if (image == null) {
+      userDao.updateUserInfo(userId, email, firstName, lastName, pfpId);
+      return;
+    }
     // Si la pfp es null -> insertamos imagen
     // si la pfp no es null -> la actualizamos para pisar la vieja
     if (pfpId == null) {
