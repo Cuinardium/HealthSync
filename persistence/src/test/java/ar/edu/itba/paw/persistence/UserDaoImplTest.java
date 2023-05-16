@@ -51,9 +51,8 @@ public class UserDaoImplTest {
   }
 
   @Test
-  public void testFindById() {
-    // 1. Precondiciones (script testUsers.sql)
-
+  public void testGetUserById() {
+    // 1. Precondiciones
     // 2. Ejercitar la class under test
     Optional<User> maybeUser = userDao.getUserById(INSERTED_USER_ID);
 
@@ -67,9 +66,8 @@ public class UserDaoImplTest {
   }
 
   @Test
-  public void testFindByIdDoesNotExist() {
-    // 1. Precondiciones (script testUsers.sql)
-
+  public void testGetUserByIdDoesNotExist() {
+    // 1. Precondiciones
     // 2. Ejercitar la class under test
     Optional<User> maybeUser = userDao.getUserById(AUX_ID);
 
@@ -78,9 +76,8 @@ public class UserDaoImplTest {
   }
 
   @Test
-  public void testFindByEmail() {
-    // 1. Precondiciones (script testUsers.sql)
-
+  public void testGetUserByEmail() {
+    // 1. Precondiciones
     // 2. Ejercitar la class under test
     Optional<User> maybeUser = userDao.getUserByEmail(INSERTED_USER_EMAIL);
 
@@ -94,9 +91,8 @@ public class UserDaoImplTest {
   }
 
   @Test
-  public void testFindByEmailDoesNotExist() {
-    // 1. Precondiciones (script testUsers.sql)
-
+  public void testGetUserByEmailDoesNotExist() {
+    // 1. Precondiciones
     // 2. Ejercitar la class under test
     Optional<User> maybeUser = userDao.getUserByEmail(AUX_EMAIL);
 
@@ -106,8 +102,7 @@ public class UserDaoImplTest {
 
   @Test
   public void testCreateUser() {
-    // 1. Precondiciones (script testUsers.sql)
-
+    // 1. Precondiciones
     // 2. Ejercitar la class under test
     User user = userDao.createUser(AUX_EMAIL, AUX_PASSWORD, AUX_FIRST_NAME, AUX_LAST_NAME);
 
@@ -124,8 +119,7 @@ public class UserDaoImplTest {
 
   @Test
   public void testCreateUserAlreadyExists() {
-    // 1. Precondiciones (script testUsers.sql)
-
+    // 1. Precondiciones
     // 2. Ejercitar la class under test
     assertThrows(
         EmailAlreadyExistsException.class,
@@ -141,7 +135,7 @@ public class UserDaoImplTest {
 
   @Test
   public void testUpdateUserInfo() {
-    // 1. Precondiciones (script testUsers.sql y testImages.sql)
+    // 1. Precondiciones
     // 2. Ejercitar la class under test
     User user =
         userDao.updateUserInfo(
@@ -158,8 +152,8 @@ public class UserDaoImplTest {
   }
 
   @Test
-  public void testEditUserDoesNotExist() {
-    // 1. Precondiciones (script testUsers.sql)
+  public void testUpdateUserInfoUserDoesNotExist() {
+    // 1. Precondiciones
     // 2. Ejercitar la class under test
     assertThrows(
         UserNotFoundException.class,
@@ -169,7 +163,7 @@ public class UserDaoImplTest {
 
   @Test
   public void testUpdatePassword() {
-    // 1. Precondiciones (script testUsers.sql)
+    // 1. Precondiciones
     // 2. Ejercitar la class under test
     String password = userDao.updateUserPassword(INSERTED_USER_ID, AUX_PASSWORD);
     // 3. Meaningful assertions
@@ -177,8 +171,8 @@ public class UserDaoImplTest {
   }
 
   @Test
-  public void testChangePasswordUserDoesNotExist() {
-    // 1. Precondiciones (script testUsers.sql)
+  public void testUpdatePasswordUserDoesNotExist() {
+    // 1. Precondiciones
     // 2. Ejercitar la class under test
     assertThrows(
         UserNotFoundException.class, () -> userDao.updateUserPassword(AUX_ID, AUX_PASSWORD));
