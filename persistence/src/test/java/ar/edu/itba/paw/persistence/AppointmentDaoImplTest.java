@@ -31,29 +31,58 @@ public class AppointmentDaoImplTest {
 
   @Test
   public void testCreateAppointment() {
-    // TODO: implement test
+    // 1. Precondiciones
+    // 2. Ejercitar la class under test
+    // Appointment appointment = appointmentDao.createAppointment();
+    // 3. Meaninful assertions
   }
 
   @Test
-  public void testUpdateAppointment() {}
+  public void testUpdateAppointment() {
+    // 1. Precondiciones
+    // 2. Ejercitar la class under test
+    // 3. Meaninful assertions
+  }
 
   @Test
   public void testGetAppointmentById() {
-    // TODO: implement test
+    // 1. Precondiciones
+    // 2. Ejercitar la class under test
+    // 3. Meaninful assertions
   }
 
   @Test
-  public void testGetAppointment() {}
+  public void testGetAppointment() {
+    // 1. Precondiciones
+    // 2. Ejercitar la class under test
+    // 3. Meaninful assertions
+  }
 
   @Test
-  public void testGetAppointmentsForPatient() {}
+  public void testGetAppointmentsForPatient() {
+    // 1. Precondiciones
+    // 2. Ejercitar la class under test
+    // 3. Meaninful assertions
+  }
 
   @Test
-  public void testGetAppointmentsForDoctor() {}
+  public void testGetAppointmentsForDoctor() {
+    // 1. Precondiciones
+    // 2. Ejercitar la class under test
+    // 3. Meaninful assertions
+  }
 
   @Test
-  public void testGetFilteredAppointmentsForPatient() {}
+  public void testGetFilteredAppointmentsForPatient() {
+    // 1. Precondiciones
+    // 2. Ejercitar la class under test
+    // 3. Meaninful assertions
+  }
 
   @Test
-  public void testGetFilteredAppointmentsForDoctor() {}
+  public void testGetFilteredAppointmentsForDoctor() {
+    // 1. Precondiciones
+    // 2. Ejercitar la class under test
+    // 3. Meaninful assertions
+  }
 }

@@ -42,6 +42,16 @@ public class PatientDaoImplTest {
   private static final Long AUX_PATIENT_PFP_ID = 2L;
   private static final HealthInsurance AUX_PATIENT_HEALTH_INSURANCE = HealthInsurance.OSDE;
 
+  private static final Patient PATIENT_1 =
+      new Patient(
+          INSERTED_PATIENT_ID,
+          INSERTED_PATIENT_EMAIL,
+          INSERTED_PATIENT_PASSWORD,
+          INSERTED_PATIENT_FIRST_NAME,
+          INSERTED_PATIENT_LAST_NAME,
+          INSERTED_PATIENT_PFP_ID,
+          INSERTED_PATIENT_HEALTH_INSURANCE);
+
   @Autowired private DataSource ds;
 
   private JdbcTemplate jdbcTemplate;
@@ -115,13 +125,7 @@ public class PatientDaoImplTest {
     Optional<Patient> maybePatient = patientDao.getPatientById(INSERTED_PATIENT_ID);
     // 3. Meaningful assertions
     Assert.assertTrue(maybePatient.isPresent());
-    Assert.assertEquals(INSERTED_PATIENT_ID, maybePatient.get().getId());
-    Assert.assertEquals(INSERTED_PATIENT_EMAIL, maybePatient.get().getEmail());
-    Assert.assertEquals(INSERTED_PATIENT_PASSWORD, maybePatient.get().getPassword());
-    Assert.assertEquals(INSERTED_PATIENT_FIRST_NAME, maybePatient.get().getFirstName());
-    Assert.assertEquals(INSERTED_PATIENT_LAST_NAME, maybePatient.get().getLastName());
-    Assert.assertEquals(INSERTED_PATIENT_PFP_ID, maybePatient.get().getProfilePictureId());
-    Assert.assertEquals(INSERTED_PATIENT_HEALTH_INSURANCE, maybePatient.get().getHealthInsurance());
+    Assert.assertEquals(PATIENT_1, maybePatient.get());
   }
 
   @Test

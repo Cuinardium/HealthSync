@@ -28,4 +28,12 @@ public class Location {
   public String toString() {
     return "Location [id=" + id + ", city=" + city + ", address=" + address + "]";
   }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj) return true;
+    if (!(obj instanceof Location)) return false;
+    Location other = (Location) obj;
+    return id == other.id && city.equals(other.city) && address.equals(other.address);
+  }
 }

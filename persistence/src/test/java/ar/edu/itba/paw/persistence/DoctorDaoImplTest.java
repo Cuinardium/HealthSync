@@ -6,6 +6,7 @@ import ar.edu.itba.paw.models.AttendingHours;
 import ar.edu.itba.paw.models.City;
 import ar.edu.itba.paw.models.Doctor;
 import ar.edu.itba.paw.models.HealthInsurance;
+import ar.edu.itba.paw.models.Location;
 import ar.edu.itba.paw.models.Specialty;
 import ar.edu.itba.paw.models.ThirtyMinuteBlock;
 import ar.edu.itba.paw.persistence.config.TestConfig;
@@ -78,6 +79,20 @@ public class DoctorDaoImplTest {
           attendingHoursForDay,
           attendingHoursForDay);
 
+  private static final Location LOCATION_FOR_DOCTOR_3 =
+      new Location(1, INSERTED_DOCTOR_CITY, INSERTED_DOCTOR_ADDRESS);
+  private static final Doctor DOCTOR_3 =
+      new Doctor(
+          INSERTED_DOCTOR_ID,
+          INSERTED_DOCTOR_EMAIL,
+          INSERTED_DOCTOR_PASSWORD,
+          INSERTED_DOCTOR_FIRST_NAME,
+          INSERTED_DOCTOR_LAST_NAME,
+          INSERTED_DOCTOR_PFP_ID,
+          INSERTED_DOCTOR_INSURANCES,
+          INSERTED_DOCTOR_SPECIALTY,
+          LOCATION_FOR_DOCTOR_3,
+          INSERTED_DOCTOR_ATTENDING_HOURS);
   @Autowired private DataSource ds;
 
   private JdbcTemplate jdbcTemplate;
@@ -187,17 +202,7 @@ public class DoctorDaoImplTest {
     Optional<Doctor> maybeDoctor = doctorDao.getDoctorById(INSERTED_DOCTOR_ID);
     // 3. Meaningful assertions
     Assert.assertTrue(maybeDoctor.isPresent());
-    Assert.assertEquals(INSERTED_DOCTOR_ID, maybeDoctor.get().getId());
-    Assert.assertEquals(INSERTED_DOCTOR_EMAIL, maybeDoctor.get().getEmail());
-    Assert.assertEquals(INSERTED_DOCTOR_PASSWORD, maybeDoctor.get().getPassword());
-    Assert.assertEquals(INSERTED_DOCTOR_FIRST_NAME, maybeDoctor.get().getFirstName());
-    Assert.assertEquals(INSERTED_DOCTOR_LAST_NAME, maybeDoctor.get().getLastName());
-    Assert.assertEquals(INSERTED_DOCTOR_PFP_ID, maybeDoctor.get().getProfilePictureId());
-    Assert.assertEquals(INSERTED_DOCTOR_INSURANCES, maybeDoctor.get().getHealthInsurances());
-    Assert.assertEquals(INSERTED_DOCTOR_ADDRESS, maybeDoctor.get().getLocation().getAddress());
-    Assert.assertEquals(INSERTED_DOCTOR_CITY, maybeDoctor.get().getLocation().getCity());
-    Assert.assertEquals(INSERTED_DOCTOR_SPECIALTY, maybeDoctor.get().getSpecialty());
-    Assert.assertEquals(INSERTED_DOCTOR_ATTENDING_HOURS, maybeDoctor.get().getAttendingHours());
+    Assert.assertEquals(DOCTOR_3, maybeDoctor.get());
   }
 
   @Test

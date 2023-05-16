@@ -53,12 +53,8 @@ public class AttendingHours {
 
   @Override
   public boolean equals(Object obj) {
-    if (this == obj) {
-      return true;
-    }
-    if (!(obj instanceof AttendingHours)) {
-      return false;
-    }
+    if (this == obj) return true;
+    if (!(obj instanceof AttendingHours)) return false;
     AttendingHours other = (AttendingHours) obj;
     return this.attendingHours.equals(other.attendingHours);
   }
