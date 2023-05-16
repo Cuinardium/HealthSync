@@ -26,21 +26,27 @@ public class UserServiceImpl implements UserService {
     this.passwordEncoder = passwordEncoder;
   }
 
+  // =============== Inserts ===============
+
   @Transactional
   @Override
   public User createUser(String email, String password, String firstName, String lastName) {
     return userDao.createUser(email, passwordEncoder.encode(password), firstName, lastName);
   }
 
+  // =============== Updates ===============
+
   @Transactional
   @Override
-  public void editUser(long userId, String email, String firstName, String lastName, Image image) {
+  public User updateUser(
+      long userId, String email, String firstName, String lastName, Image image) {
+
     Long pfpId =
-        userDao.findById(userId).orElseThrow(IllegalStateException::new).getProfilePictureId();
+        userDao.getUserById(userId).orElseThrow(IllegalStateException::new).getProfilePictureId();
     if (image == null) {
-      userDao.updateUserInfo(userId, email, firstName, lastName, pfpId);
-      return;
+      return userDao.updateUserInfo(userId, email, firstName, lastName, pfpId);
     }
+
     // Si la pfp es null -> insertamos imagen
     // si la pfp no es null -> la actualizamos para pisar la vieja
     if (pfpId == null) {
@@ -48,15 +54,16 @@ public class UserServiceImpl implements UserService {
     } else {
       imageService.updateImage(pfpId, image);
     }
-    userDao.updateUserInfo(userId, email, firstName, lastName, pfpId);
+
+    return userDao.updateUserInfo(userId, email, firstName, lastName, pfpId);
   }
 
   @Override
-  public boolean changePassword(long userId, String oldPassword, String password)
+  public boolean updatePassword(long userId, String oldPassword, String password)
       throws IllegalStateException {
     if (!passwordEncoder.matches(
         oldPassword,
-        userDao.findById(userId).orElseThrow(IllegalStateException::new).getPassword())) {
+        userDao.getUserById(userId).orElseThrow(IllegalStateException::new).getPassword())) {
       // En clase vimos que era mejor retornar true o false, para verificar si se actualizo la pass
       return false;
     }
@@ -65,13 +72,15 @@ public class UserServiceImpl implements UserService {
     return true;
   }
 
+  // =============== Queries ===============
+
   @Override
-  public Optional<User> findById(long id) {
-    return userDao.findById(id);
+  public Optional<User> getUserById(long id) {
+    return userDao.getUserById(id);
   }
 
   @Override
-  public Optional<User> findByEmail(String email) {
-    return userDao.findByEmail(email);
+  public Optional<User> getUserByEmail(String email) {
+    return userDao.getUserByEmail(email);
   }
 }

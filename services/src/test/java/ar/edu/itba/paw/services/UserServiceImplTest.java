@@ -37,11 +37,7 @@ public class UserServiceImplTest {
     Mockito.when(passwordEncoder.encode(Mockito.eq(PASSWORD))).thenReturn(PASSWORD_ENCODED);
     Mockito.when(
             userDao.createUser(
-                Mockito.anyString(),
-                Mockito.anyString(),
-                Mockito.anyString(),
-                Mockito.anyString()
-                ))
+                Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyString()))
         .thenReturn(new User(ID, EMAIL, PASSWORD_ENCODED, FIRST_NAME, LAST_NAME, PFP_ID));
 
     // TODO: mock this?
@@ -78,13 +74,12 @@ public class UserServiceImplTest {
   public void testFindById() {
     // 1. Precondiciones
     // UserDao mock = Mockito.mock(UserDao.class);
-    Mockito.when(userDao.findById(Mockito.eq(ID)))
-        .thenReturn(
-            Optional.of(new User(ID, EMAIL, PASSWORD, FIRST_NAME, LAST_NAME, PFP_ID)));
+    Mockito.when(userDao.getUserById(Mockito.eq(ID)))
+        .thenReturn(Optional.of(new User(ID, EMAIL, PASSWORD, FIRST_NAME, LAST_NAME, PFP_ID)));
     // .thenThrow(SQLException.class);
 
     // 2. Ejercitar la class under test
-    Optional<User> newUser = us.findById(ID);
+    Optional<User> newUser = us.getUserById(ID);
 
     // 3. Meaningful assertions
     Assert.assertTrue(newUser.isPresent());

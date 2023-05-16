@@ -33,16 +33,7 @@ public class ImageDaoImpl implements ImageDao {
             .usingGeneratedKeyColumns(TABLE_PKEY_COLUMN);
   }
 
-  @Override
-  public Optional<Image> getImage(long id) {
-    String query =
-        new QueryBuilder()
-            .select("*")
-            .from(TABLE_NAME)
-            .where(TABLE_PKEY_COLUMN + " = " + id)
-            .build();
-    return jdbcTemplate.query(query, RowMappers.IMAGE_MAPPER).stream().findFirst();
-  }
+  // =============== Inserts ===============
 
   @Override
   public Image createImage(Image image) {
@@ -55,6 +46,8 @@ public class ImageDaoImpl implements ImageDao {
     final Number key = imageInsert.executeAndReturnKey(data);
     return getImage(key.longValue()).orElseThrow(IllegalStateException::new);
   }
+
+  // =============== Updates ===============
 
   @Override
   public Image updateImage(Long pfpId, Image image) {
@@ -73,6 +66,21 @@ public class ImageDaoImpl implements ImageDao {
     jdbcTemplate.update(updateQuery);
     return getImage(pfpId).orElseThrow(ImageNotFoundException::new);
   }
+
+  // =============== Queries ===============
+
+  @Override
+  public Optional<Image> getImage(long id) {
+    String query =
+        new QueryBuilder()
+            .select("*")
+            .from(TABLE_NAME)
+            .where(TABLE_PKEY_COLUMN + " = " + id)
+            .build();
+    return jdbcTemplate.query(query, RowMappers.IMAGE_MAPPER).stream().findFirst();
+  }
+
+  // =============== Private ===============
 
   private String getHexString(byte[] bytea) {
     StringBuilder sb = new StringBuilder();

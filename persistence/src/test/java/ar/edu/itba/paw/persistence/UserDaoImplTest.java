@@ -55,7 +55,7 @@ public class UserDaoImplTest {
     // 1. Precondiciones (script testUsers.sql)
 
     // 2. Ejercitar la class under test
-    Optional<User> maybeUser = userDao.findById(INSERTED_USER_ID);
+    Optional<User> maybeUser = userDao.getUserById(INSERTED_USER_ID);
 
     // 3. Meaningful assertions
     Assert.assertEquals(INSERTED_USER_ID, maybeUser.get().getId());
@@ -71,7 +71,7 @@ public class UserDaoImplTest {
     // 1. Precondiciones (script testUsers.sql)
 
     // 2. Ejercitar la class under test
-    Optional<User> maybeUser = userDao.findById(AUX_ID);
+    Optional<User> maybeUser = userDao.getUserById(AUX_ID);
 
     // 3. Meaningful assertions
     Assert.assertFalse(maybeUser.isPresent());
@@ -82,7 +82,7 @@ public class UserDaoImplTest {
     // 1. Precondiciones (script testUsers.sql)
 
     // 2. Ejercitar la class under test
-    Optional<User> maybeUser = userDao.findByEmail(INSERTED_USER_EMAIL);
+    Optional<User> maybeUser = userDao.getUserByEmail(INSERTED_USER_EMAIL);
 
     // 3. Meaningful assertions
     Assert.assertEquals(INSERTED_USER_ID, maybeUser.get().getId());
@@ -98,7 +98,7 @@ public class UserDaoImplTest {
     // 1. Precondiciones (script testUsers.sql)
 
     // 2. Ejercitar la class under test
-    Optional<User> maybeUser = userDao.findByEmail(AUX_EMAIL);
+    Optional<User> maybeUser = userDao.getUserByEmail(AUX_EMAIL);
 
     // 3. Meaningful assertions
     Assert.assertFalse(maybeUser.isPresent());

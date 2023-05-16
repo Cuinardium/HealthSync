@@ -1,6 +1,7 @@
 package ar.edu.itba.paw.persistence;
 
 import ar.edu.itba.paw.interfaces.persistence.PatientDao;
+import ar.edu.itba.paw.models.HealthInsurance;
 import ar.edu.itba.paw.models.Patient;
 import ar.edu.itba.paw.persistence.utils.QueryBuilder;
 import ar.edu.itba.paw.persistence.utils.UpdateBuilder;
@@ -31,39 +32,34 @@ public class PatientDaoImpl implements PatientDao {
   // ======================== Inserts =========================================
 
   @Override
-  public void addHealthInsurance(long patientId, int healthInsuranceCode) {
+  public Patient createPatient(long userId, HealthInsurance healthInsurance) {
 
-    Map<String, Object> data = new HashMap<>();
-
-    data.put("patient_id", patientId);
-    data.put("health_insurance_code", healthInsuranceCode);
-
-    patientHealthInsuranceInsert.execute(data);
-  }
-
-  @Override
-  public long createPatient(long userId) {
-
+    // Insert data in patient table
     Map<String, Object> data = new HashMap<>();
 
     data.put("patient_id", userId);
 
     patientInsert.execute(data);
 
-    return userId;
+    addHealthInsurance(userId, healthInsurance.ordinal());
+
+    return getPatientById(userId).orElseThrow(IllegalStateException::new);
   }
 
   // ======================== Updates =========================================
+
   @Override
-  public void updatePatientInfo(long patientId, int healthInsuranceCode) {
+  public Patient updatePatientInfo(long patientId, HealthInsurance healthInsurance) {
     String update =
         new UpdateBuilder()
             .update("health_insurance_for_patient")
-            .set("health_insurance_code", "'" + healthInsuranceCode + "'")
+            .set("health_insurance_code", "'" + healthInsurance.ordinal() + "'")
             .where("patient_id = (" + patientId + ")")
             .build();
 
     jdbcTemplate.update(update);
+
+    return getPatientById(patientId).orElseThrow(IllegalStateException::new);
   }
 
   // ============================ Queries =============================================
@@ -77,6 +73,17 @@ public class PatientDaoImpl implements PatientDao {
   }
 
   // ================================= Private ======================================
+
+  private void addHealthInsurance(long patientId, int healthInsuranceCode) {
+
+    Map<String, Object> data = new HashMap<>();
+
+    data.put("patient_id", patientId);
+    data.put("health_insurance_code", healthInsuranceCode);
+
+    patientHealthInsuranceInsert.execute(data);
+  }
+
   private QueryBuilder patientQuery() {
     return new QueryBuilder()
         .select(

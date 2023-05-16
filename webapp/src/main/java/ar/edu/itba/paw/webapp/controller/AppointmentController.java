@@ -97,7 +97,7 @@ public class AppointmentController {
     AppointmentStatus appointmentStatus = AppointmentStatus.values()[status];
 
     try {
-      appointmentService.updateAppointmentStatus(
+      appointmentService.updateAppointment(
           appointmentId,
           appointmentStatus,
           modalForm.getDescription(),

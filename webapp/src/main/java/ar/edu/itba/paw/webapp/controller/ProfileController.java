@@ -13,6 +13,7 @@ import ar.edu.itba.paw.webapp.form.PatientEditForm;
 import java.io.IOException;
 import java.time.DayOfWeek;
 import java.util.Arrays;
+import java.util.List;
 import java.util.stream.Collectors;
 import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,28 +50,17 @@ public class ProfileController {
       return doctorEdit(doctorEditForm);
     }
 
-    // Q: static fromMultiPartFile method
-    try {
-      Image image = null;
-      if (!doctorEditForm.getImage().isEmpty()) {
-        image = new Image(doctorEditForm.getImage().getBytes());
-      }
-      doctorService.updateInformation(
-          PawAuthUserDetails.getCurrentUserId(),
-          doctorEditForm.getEmail(),
-          doctorEditForm.getName(),
-          doctorEditForm.getLastname(),
-          doctorEditForm.getHealthInsuranceCodes(),
-          doctorEditForm.getSpecialtyCode(),
-          doctorEditForm.getCityCode(),
-          doctorEditForm.getAddress(),
-          image);
-    } catch (IOException e) {
-      // TODO: handle
-    }
+    Specialty specialty = Specialty.values()[doctorEditForm.getSpecialtyCode()];
+    City city = City.values()[doctorEditForm.getCityCode()];
+
+    List<HealthInsurance> healthInsurances =
+        doctorEditForm
+            .getHealthInsuranceCodes()
+            .stream()
+            .map(code -> HealthInsurance.values()[code])
+            .collect(Collectors.toList());
 
     ThirtyMinuteBlock[] values = ThirtyMinuteBlock.values();
-
     AttendingHours attendingHours =
         new AttendingHours(
             doctorEditForm
@@ -109,7 +99,26 @@ public class ProfileController {
                 .map(i -> values[i])
                 .collect(Collectors.toList()));
 
-    doctorService.updateAttendingHours(PawAuthUserDetails.getCurrentUserId(), attendingHours);
+    // Q: static fromMultiPartFile method
+    try {
+      Image image = null;
+      if (!doctorEditForm.getImage().isEmpty()) {
+        image = new Image(doctorEditForm.getImage().getBytes());
+      }
+      doctorService.updateDoctor(
+          PawAuthUserDetails.getCurrentUserId(),
+          doctorEditForm.getEmail(),
+          doctorEditForm.getName(),
+          doctorEditForm.getLastname(),
+          specialty,
+          city,
+          doctorEditForm.getAddress(),
+          healthInsurances,
+          attendingHours,
+          image);
+    } catch (IOException e) {
+      // TODO: handle
+    }
 
     ModelAndView mav = new ModelAndView("components/operationSuccessful");
     mav.addObject("showHeader", true);
@@ -208,12 +217,16 @@ public class ProfileController {
       if (!patientEditForm.getImage().isEmpty()) {
         image = new Image(patientEditForm.getImage().getBytes());
       }
-      patientService.updateInformation(
+
+      HealthInsurance healthInsurance =
+          HealthInsurance.values()[patientEditForm.getHealthInsuranceCode()];
+
+      patientService.updatePatient(
           PawAuthUserDetails.getCurrentUserId(),
           patientEditForm.getEmail(),
           patientEditForm.getName(),
           patientEditForm.getLastname(),
-          patientEditForm.getHealthInsuranceCode(),
+          healthInsurance,
           image);
     } catch (IOException e) {
       // TODO: handle this
@@ -256,7 +269,7 @@ public class ProfileController {
 
     try {
       boolean changedPassword =
-          userService.changePassword(
+          userService.updatePassword(
               PawAuthUserDetails.getCurrentUserId(),
               changePasswordForm.getOldPassword(),
               changePasswordForm.getPassword());

@@ -18,10 +18,7 @@ public class ImageServiceImpl implements ImageService {
     this.imageDao = imageDao;
   }
 
-  @Override
-  public Optional<Image> getImage(long id) {
-    return imageDao.getImage(id);
-  }
+  // =============== Inserts ===============
 
   @Transactional
   @Override
@@ -29,9 +26,18 @@ public class ImageServiceImpl implements ImageService {
     return imageDao.createImage(image).getImageId();
   }
 
+  // =============== Updates ===============
+
   @Transactional
   @Override
   public void updateImage(Long pfpId, Image image) {
     imageDao.updateImage(pfpId, image);
+  }
+
+  // =============== Queries ===============
+
+  @Override
+  public Optional<Image> getImage(long id) {
+    return imageDao.getImage(id);
   }
 }

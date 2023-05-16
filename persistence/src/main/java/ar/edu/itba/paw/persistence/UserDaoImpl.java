@@ -29,6 +29,8 @@ public class UserDaoImpl implements UserDao {
         new SimpleJdbcInsert(ds).withTableName("users").usingGeneratedKeyColumns("user_id");
   }
 
+  // =============== Inserts ===============
+
   @Override
   public User createUser(String email, String password, String firstName, String lastName)
       throws EmailAlreadyExistsException {
@@ -47,6 +49,8 @@ public class UserDaoImpl implements UserDao {
     }
   }
 
+  // =============== Updates ===============
+
   @Override
   public User updateUserInfo(
       long userId, String email, String firstName, String lastName, Long pfpId)
@@ -58,12 +62,13 @@ public class UserDaoImpl implements UserDao {
             .set("first_name", "'" + firstName + "'")
             .set("last_name", "'" + lastName + "'")
             .where("user_id = (" + userId + ")");
+
     if (pfpId != null) {
       update.set("profile_picture_id", pfpId.toString());
     }
 
     jdbcTemplate.update(update.build());
-    return findById(userId).orElseThrow(UserNotFoundException::new);
+    return getUserById(userId).orElseThrow(UserNotFoundException::new);
   }
 
   @Override
@@ -76,12 +81,14 @@ public class UserDaoImpl implements UserDao {
             .build();
 
     jdbcTemplate.update(update);
-    return findById(userId).orElseThrow(UserNotFoundException::new).getPassword();
+    return getUserById(userId).orElseThrow(UserNotFoundException::new).getPassword();
   }
+
+  // =============== Queries ===============
 
   // Optional garantiza que no va a ser null, pero no significa q se vaya a devolver un usuario
   @Override
-  public Optional<User> findById(final long id) {
+  public Optional<User> getUserById(final long id) {
 
     String query = new QueryBuilder().select().from("users").where("user_id = " + id).build();
 
@@ -89,7 +96,7 @@ public class UserDaoImpl implements UserDao {
   }
 
   @Override
-  public Optional<User> findByEmail(String email) {
+  public Optional<User> getUserByEmail(String email) {
     String query =
         new QueryBuilder().select().from("users").where("email = '" + email + "'").build();
     return jdbcTemplate.query(query, RowMappers.USER_MAPPER).stream().findFirst();

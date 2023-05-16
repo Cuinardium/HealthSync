@@ -37,6 +37,7 @@ public class AppointmentDaoImpl implements AppointmentDao {
   }
 
   // ========================== Inserts ==========================
+
   @Override
   public Appointment createAppointment(
       Patient patient,
@@ -83,6 +84,7 @@ public class AppointmentDaoImpl implements AppointmentDao {
   }
 
   // ========================== Queries ==========================
+
   @Override
   public Optional<Appointment> getAppointmentById(long appointmentId) {
     String query =

@@ -24,42 +24,44 @@ public class PatientServiceImpl implements PatientService {
     this.userService = userService;
   }
 
+  // =============== Inserts ===============
+
   @Transactional
   @Override
   public Patient createPatient(
-      String email, String password, String firstName, String lastName, int healthInsuranceCode) {
+      String email,
+      String password,
+      String firstName,
+      String lastName,
+      HealthInsurance healthInsurance) {
 
     // Create User
     User user = userService.createUser(email, password, firstName, lastName);
 
     // Create Patient
-    long patientId = patientDao.createPatient(user.getId());
+    Patient patient = patientDao.createPatient(user.getId(), healthInsurance);
 
-    // Add Health Insurance
-    patientDao.addHealthInsurance(patientId, healthInsuranceCode);
-
-    return new Patient(
-        patientId,
-        email,
-        password,
-        firstName,
-        lastName,
-        user.getProfilePictureId(),
-        HealthInsurance.values()[healthInsuranceCode]);
+    return patient;
   }
+
+  // =============== Updates ===============
 
   @Transactional
   @Override
-  public void updateInformation(
+  public Patient updatePatient(
       long patientId,
       String email,
       String firstName,
       String lastName,
-      int healthInsuranceCode,
+      HealthInsurance healthInsurance,
       Image image) {
-    userService.editUser(patientId, email, firstName, lastName, image);
-    patientDao.updatePatientInfo(patientId, healthInsuranceCode);
+
+    userService.updateUser(patientId, email, firstName, lastName, image);
+
+    return patientDao.updatePatientInfo(patientId, healthInsurance);
   }
+
+  // =============== Queries ===============
 
   @Override
   public Optional<Patient> getPatientById(long id) {
