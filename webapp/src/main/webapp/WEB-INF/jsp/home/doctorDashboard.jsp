@@ -50,7 +50,6 @@
 
     <div class="cardsContainer">
         <c:forEach items="${doctors}" var="doctor">
-            <c:url value="/${doctor.id}/appointment" var="appointmentUrl"/>
             <spring:message code="${doctor.specialty.messageID}" var="doctorSpecialty"/>
             <spring:message code="${doctor.location.city.messageID}" var="doctorCity"/>
             <c:url value="/${doctor.id}/detailed_doctor" var="detailedUrl"/>
@@ -77,7 +76,7 @@
                         <div class="card-body">
                             <a class="btn btn-primary"
                                onclick="checkInsurance(
-                                       '${appointmentUrl}',
+                                       '${detailedUrl}',
                                         [<c:forEach items="${doctor.healthInsurances}" var="healthInsurance" varStatus="status">
                                             ${healthInsurance.ordinal()}${status.last ? "" : ", "}
                                         </c:forEach>])">
