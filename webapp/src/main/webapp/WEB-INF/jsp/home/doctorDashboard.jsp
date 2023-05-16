@@ -9,8 +9,6 @@
 <c:url value="/css/main.css" var="mainCss"/>
 <c:url value="/css/doctorDashboard.css" var="doctorDashboardCss"/>
 
-<c:url value="/img/doctorCardDefault.jpg" var="doctorCardDefaultImg"/>
-
 <spring:message code="doctorDashboard.title" var="title"/>
 
 <spring:message code="doctorDashboard.button.book" var="book"/>
@@ -58,7 +56,7 @@
             <c:url value="/${doctor.id}/detailed_doctor" var="detailedUrl"/>
             <div class="card">
                 <div class="imageContainer">
-                    <c:url value="/img/${doctor.getProfilePictureId()}" var="doctorImg"/>
+                    <c:url value="/img/${doctor.getProfilePictureId() == null ? \"doctorDefault.png\" : doctor.getProfilePictureId()}" var="doctorImg"/>
                     <img src="${doctorImg}" class="card-img-top">
                 </div>
                 <div class="infoContainer">

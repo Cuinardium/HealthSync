@@ -14,12 +14,6 @@ public interface MailService {
   void sendAppointmentReminderMail(
       Appointment appointment, Doctor doctor, Patient patient, Locale locale);
 
-  void sendAppointmentConfirmedMail(
-      Appointment appointment, Doctor doctor, Patient patient, Locale locale);
-
-  void sendAppointmentRejectedMail(
-      Appointment appointment, Doctor doctor, Patient patient, Locale locale);
-
   void sendAppointmentCancelledByDoctorMail(
       Appointment appointment, Doctor doctor, Patient patient, Locale locale);
 

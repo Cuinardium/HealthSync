@@ -60,7 +60,7 @@ public class AppointmentServiceImpl implements AppointmentService {
 
     if (possibleAppointment.isPresent()
         && (possibleAppointment.get().getStatus() == AppointmentStatus.COMPLETED
-            || possibleAppointment.get().getStatus() == AppointmentStatus.ACCEPTED)) {
+            || possibleAppointment.get().getStatus() == AppointmentStatus.CONFIRMED)) {
       throw new RuntimeException();
     }
 
@@ -94,7 +94,7 @@ public class AppointmentServiceImpl implements AppointmentService {
   @Transactional
   @Override
   public void updateAppointmentStatus(
-      long appointmentId, AppointmentStatus status,String cancelDescription, long requesterId) {
+      long appointmentId, AppointmentStatus status, String cancelDescription, long requesterId) {
 
     // Get appointment
     // TODO: error handling
@@ -114,6 +114,9 @@ public class AppointmentServiceImpl implements AppointmentService {
 
     appointmentDao.updateAppointmentStatus(appointmentId, status, cancelDescription);
 
+    Appointment newAppointment =
+        getAppointmentById(appointmentId).orElseThrow(RuntimeException::new);
+
     // TODO: error handling
     Doctor doctor =
         doctorService.getDoctorById(appointment.getDoctorId()).orElseThrow(RuntimeException::new);
@@ -123,42 +126,51 @@ public class AppointmentServiceImpl implements AppointmentService {
             .orElseThrow(RuntimeException::new);
     Locale locale = LocaleContextHolder.getLocale();
 
-    switch (status) {
-      case ACCEPTED:
-        mailService.sendAppointmentConfirmedMail(appointment, doctor, patient, locale);
-        break;
-      case CANCELLED:
-        if (requesterId == appointment.getPatientId()) {
-          mailService.sendAppointmentCancelledByPatientMail(appointment, doctor, patient, locale);
-        } else {
-          mailService.sendAppointmentCancelledByDoctorMail(appointment, doctor, patient, locale);
-        }
-        break;
-      case REJECTED:
-        mailService.sendAppointmentRejectedMail(appointment, doctor, patient, locale);
-        break;
-      default:
+    if (status == AppointmentStatus.CANCELLED) {
+      if (requesterId == appointment.getPatientId()) {
+        mailService.sendAppointmentCancelledByPatientMail(newAppointment, doctor, patient, locale);
+      } else {
+        mailService.sendAppointmentCancelledByDoctorMail(newAppointment, doctor, patient, locale);
+      }
     }
   }
 
   @Override
   public List<ThirtyMinuteBlock> getAvailableHoursForDoctorOnDate(long doctorId, LocalDate date) {
+    return getAvailableHoursForDoctorOnRange(doctorId, date, date).get(0);
+  }
 
+  @Override
+  public List<List<ThirtyMinuteBlock>> getAvailableHoursForDoctorOnRange(
+      long doctorId, LocalDate from, LocalDate to) {
     // Get doctor appointments for date
-    Page<Appointment> appointments = getFilteredAppointmentsForDoctor(doctorId, null, date, date, -1, -1);
+    Page<Appointment> appointments =
+        getFilteredAppointmentsForDoctor(doctorId, null, from, to, -1, -1);
 
     Doctor doctor = doctorService.getDoctorById(doctorId).orElseThrow(RuntimeException::new);
 
     // Get doctor available hours for date
-    List<ThirtyMinuteBlock> availableHours = new ArrayList<>();
-    for (ThirtyMinuteBlock block : doctor.getAttendingHours().getAttendingBlocksForDate(date)) {
-      availableHours.add(block);
+    List<List<ThirtyMinuteBlock>> availableHours = new ArrayList<>();
+    int i = 0;
+    for (LocalDate date = from; date.isBefore(to.plusDays(1)); date = date.plusDays(1)) {
+      availableHours.add(new ArrayList<>());
+      List<ThirtyMinuteBlock> currentList = availableHours.get(i);
+      currentList.addAll(doctor.getAttendingHours().getAttendingBlocksForDate(date));
+      i++;
     }
 
+    i = 0;
+    List<ThirtyMinuteBlock> currentList = availableHours.get(i);
+    LocalDate currentDate = LocalDate.of(from.getYear(), from.getMonth(), from.getDayOfMonth());
     for (Appointment appointment : appointments.getContent()) {
-      if ((appointment.getStatus() == AppointmentStatus.ACCEPTED
+      if ((appointment.getStatus() == AppointmentStatus.CONFIRMED
           || appointment.getStatus() == AppointmentStatus.COMPLETED)) {
-        availableHours.remove(appointment.getTimeBlock());
+        currentList.remove(appointment.getTimeBlock());
+      }
+      if (appointment.getDate().isAfter(currentDate)) {
+        i++;
+        currentList = availableHours.get(i);
+        currentDate = currentDate.plusDays(1);
       }
     }
 
@@ -166,23 +178,26 @@ public class AppointmentServiceImpl implements AppointmentService {
   }
 
   @Override
-  public List<List<ThirtyMinuteBlock>> getAvailableHoursForDoctorOnRange(long doctorId, LocalDate from, LocalDate to){
-    List<List<ThirtyMinuteBlock>> availableHours = new ArrayList<>();
-    for (LocalDate date = from; date.isBefore(to.plusDays(1)); date = date.plusDays(1)) {
-      availableHours.add(getAvailableHoursForDoctorOnDate(doctorId, date));
-    }
-    return availableHours;
-  }
-
-  @Override
   public Page<Appointment> getFilteredAppointmentsForDoctor(
-      long doctorId, AppointmentStatus status, LocalDate from, LocalDate to, int page, int pageSize) {
-    return appointmentDao.getFilteredAppointmentsForDoctor(doctorId, status, from, to, page, pageSize);
+      long doctorId,
+      AppointmentStatus status,
+      LocalDate from,
+      LocalDate to,
+      int page,
+      int pageSize) {
+    return appointmentDao.getFilteredAppointmentsForDoctor(
+        doctorId, status, from, to, page, pageSize);
   }
 
   @Override
   public Page<Appointment> getFilteredAppointmentsForPatient(
-      long patientId, AppointmentStatus status, LocalDate from, LocalDate to, int page, int pageSize) {
-    return appointmentDao.getFilteredAppointmentsForPatient(patientId, status, from, to, page, pageSize);
+      long patientId,
+      AppointmentStatus status,
+      LocalDate from,
+      LocalDate to,
+      int page,
+      int pageSize) {
+    return appointmentDao.getFilteredAppointmentsForPatient(
+        patientId, status, from, to, page, pageSize);
   }
 }

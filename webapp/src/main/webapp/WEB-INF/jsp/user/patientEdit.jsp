@@ -38,7 +38,7 @@
     <form:form modelAttribute="patientEditForm" class="card" action="${patientEditUrl}" method="POST" enctype="multipart/form-data">
         <div class="formCol">
             <div class="formItem">
-                <c:url value="/img/${user.getProfilePictureId()}" var="userImg"/>
+                <c:url value="/img/${user.getProfilePictureId() == null ? \"userDefault.png\" : user.getProfilePictureId()}" var="userImg"/>
                 <img src="${userImg}" width="100" height="100" class="rounded-circle">
             </div>
             <div class="formItem">

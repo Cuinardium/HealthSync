@@ -17,7 +17,7 @@
 <spring:message code="appointments.from" var="fromTitle"/>
 <spring:message code="appointments.to" var="toTitle"/>
 <spring:message code="appointments.filter" var="filter"/>
-
+<spring:message code="detailedAppointment.status" var="statusTitle"/>
 <spring:message code="appointments.modal.title" var="modalTitle"/>
 <spring:message code="appointments.modal.desc" var="modalDesc"/>
 <spring:message code="appointments.modal.confirm" var="modalConfirm"/>
@@ -84,6 +84,8 @@
                                 <a class="detailed-link" href="${detailedUrl}">${appointment.date} ${appointment.timeBlock.blockBeginning}</a>
 
                                 <c:url value="/my-appointments/${appointment.id}/update" var="updateUrl"/>
+                                <strong>${statusTitle}: <spring:message code="${appointment.status.messageID}"/></strong>
+
                                 <div class="cardButtonContainer">
                                     <c:forEach items="${tab.allowedActions}" var="action">
                                             <button onclick="openModal('${updateUrl}/?status=${action.statusCode}')"

@@ -15,7 +15,7 @@ public class Doctor extends User {
       String password,
       String firstName,
       String lastName,
-      long pfpId,
+      Long pfpId,
       List<HealthInsurance> healthInsurances,
       Specialty specialty,
       Location location,

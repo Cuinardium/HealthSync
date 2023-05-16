@@ -30,7 +30,7 @@ public class AppointmentDaoImpl implements AppointmentDao {
         ThirtyMinuteBlock timeBlock = ThirtyMinuteBlock.values()[rs.getShort("appointment_time")];
         AppointmentStatus status = AppointmentStatus.values()[rs.getInt("status_code")];
         String description = rs.getString("appointment_description");
-        String cancelDesc = rs.getString("appointment_cancel_description");
+        String cancelDesc = rs.getString("cancel_description");
         return new Appointment(
             appointmentId, patientId, doctorId, date, timeBlock, status, description, cancelDesc);
       };
@@ -63,7 +63,7 @@ public class AppointmentDaoImpl implements AppointmentDao {
     data.put("appointment_date", Date.valueOf(date));
     data.put("appointment_time", timeBlockToSmallInt(timeBlock));
     data.put("appointment_description", description);
-    data.put("status_code", AppointmentStatus.PENDING.ordinal());
+    data.put("status_code", AppointmentStatus.CONFIRMED.ordinal());
 
     long appointmentId = appointmentInsert.executeAndReturnKey(data).longValue();
 
@@ -73,7 +73,7 @@ public class AppointmentDaoImpl implements AppointmentDao {
         doctorId,
         date,
         timeBlock,
-        AppointmentStatus.PENDING,
+        AppointmentStatus.CONFIRMED,
         description,
         null);
   }
