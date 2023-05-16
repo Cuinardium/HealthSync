@@ -84,15 +84,29 @@ public class HomeController {
     Map<City, Integer> usedCities = locationService.getUsedCities();
     Map<HealthInsurance, Integer> usedHealthInsurances = doctorService.getUsedHealthInsurances();
 
+    // Get filters
     int specialtyCode = doctorFilterForm.getSpecialtyCode();
     int cityCode = doctorFilterForm.getCityCode();
     int healthInsuranceCode = doctorFilterForm.getHealthInsuranceCode();
+
+    Specialty specialty = specialtyCode < 0 || specialtyCode >= Specialty.values().length
+        ? null
+        : Specialty.values()[specialtyCode];
+
+    City city = cityCode < 0 || cityCode >= City.values().length
+        ? null
+        : City.values()[cityCode];
+
+    HealthInsurance healthInsurance = healthInsuranceCode < 0 || healthInsuranceCode >= HealthInsurance.values().length
+        ? null
+        : HealthInsurance.values()[healthInsuranceCode];
+
     String name = doctorFilterForm.getName();
 
     // Get doctors
     Page<Doctor> doctors =
         doctorService.getFilteredDoctors(
-            name, specialtyCode, cityCode, healthInsuranceCode, parsedPage - 1, DEFAULT_PAGE_SIZE);
+            name, specialty, city, healthInsurance, parsedPage - 1, DEFAULT_PAGE_SIZE);
 
     if (PawAuthUserDetails.getRole().equals(UserRoles.ROLE_PATIENT)) {
       PawAuthUserDetails currentUser =

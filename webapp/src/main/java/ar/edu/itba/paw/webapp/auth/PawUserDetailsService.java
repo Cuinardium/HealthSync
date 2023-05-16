@@ -34,7 +34,7 @@ public class PawUserDetailsService implements UserDetailsService {
   public UserDetails loadUserByUsername(final String username) throws UsernameNotFoundException {
     final User user =
         userService
-            .findByEmail(username)
+            .getUserByEmail(username)
             .orElseThrow(() -> new UsernameNotFoundException("No user for email " + username));
 
     String role = getUserRole(user);

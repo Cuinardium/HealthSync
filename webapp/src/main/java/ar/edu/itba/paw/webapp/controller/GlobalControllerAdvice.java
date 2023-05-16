@@ -21,7 +21,7 @@ public class GlobalControllerAdvice {
   @ModelAttribute("user")
   public User getCurrentUser() {
     long userId = PawAuthUserDetails.getCurrentUserId();
-    return userService.findById(userId).orElse(null);
+    return userService.getUserById(userId).orElse(null);
   }
 
   @ModelAttribute("isDoctor")
