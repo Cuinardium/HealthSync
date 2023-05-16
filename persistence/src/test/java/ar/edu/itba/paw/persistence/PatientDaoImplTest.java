@@ -53,7 +53,7 @@ public class PatientDaoImplTest {
 
   @Test
   public void testGetPatientById() {
-    // 1. Precondiciones (script testPatients.sql)
+    // 1. Precondiciones
     // 2. Ejercitar la class under test
     Optional<Patient> maybePatient = patientDao.getPatientById(INSERTED_PATIENT_ID);
     // 3. Meaningful assertions
@@ -69,7 +69,7 @@ public class PatientDaoImplTest {
 
   @Test
   public void testGetPatientByIdDoesNotExist() {
-    // 1. Precondiciones (script testPatients.sql)
+    // 1. Precondiciones
     // 2. Ejercitar la class under test
     Optional<Patient> maybePatient = patientDao.getPatientById(AUX_PATIENT_ID);
     // 3. Meaningful assertions

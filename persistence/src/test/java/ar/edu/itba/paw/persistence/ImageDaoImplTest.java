@@ -44,7 +44,7 @@ public class ImageDaoImplTest {
 
   @Test
   public void testGetImage() {
-    // 1. Precondiciones (script testImage.sql)
+    // 1. Precondiciones
     // 2. Ejercitar la class under test
     Optional<Image> image = imageDao.getImage(INSERTED_IMAGE_ID);
     // 3. Meanignful assertions
@@ -55,7 +55,7 @@ public class ImageDaoImplTest {
 
   @Test
   public void testGetImageDoesNotExist() {
-    // 1. Precondiciones (script testImage.sql)
+    // 1. Precondiciones
     // 2. Ejercitar la class under test
     Optional<Image> image = imageDao.getImage(AUX_IMAGE_ID);
     // 3. Meanignful assertions
@@ -76,7 +76,7 @@ public class ImageDaoImplTest {
   // TODO: corregir esto
   @Test
   public void testUpdateImage() {
-    // 1. Precondiciones (script testImage.sql)
+    // 1. Precondiciones
     // 2. Ejercitar la class under test
     // Image image = imageDao.updateImage(INSERTED_IMAGE_ID, new Image(AUX_IMAGE_BYTES));
     // 3. Meanignful assertions
@@ -86,7 +86,7 @@ public class ImageDaoImplTest {
 
   @Test
   public void testUpdateImageDoesNotExist() {
-    // 1. Precondiciones (script testImage.sql)
+    // 1. Precondiciones
     // 2. Ejercitar la class under test
     assertThrows(
         ImageNotFoundException.class,
