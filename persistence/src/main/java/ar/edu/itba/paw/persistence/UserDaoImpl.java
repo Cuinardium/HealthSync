@@ -26,6 +26,8 @@ public class UserDaoImpl implements UserDao {
         new SimpleJdbcInsert(ds).withTableName("users").usingGeneratedKeyColumns("user_id");
   }
 
+  // =============== Inserts ===============
+
   @Override
   public User createUser(String email, String password, String firstName, String lastName) {
     Map<String, Object> data = new HashMap<>();
@@ -38,6 +40,8 @@ public class UserDaoImpl implements UserDao {
     final Number key = userInsert.executeAndReturnKey(data);
     return new User(key.longValue(), email, password, firstName, lastName, null);
   }
+
+  // =============== Updates ===============
 
   @Override
   public User updateUserInfo(
@@ -53,7 +57,7 @@ public class UserDaoImpl implements UserDao {
             .build();
 
     jdbcTemplate.update(update);
-    return findById(userId).orElseThrow(IllegalStateException::new);
+    return getUserById(userId).orElseThrow(IllegalStateException::new);
   }
 
   @Override
@@ -66,12 +70,14 @@ public class UserDaoImpl implements UserDao {
             .build();
 
     jdbcTemplate.update(update);
-    return findById(userId).orElseThrow(IllegalStateException::new).getPassword();
+    return getUserById(userId).orElseThrow(IllegalStateException::new).getPassword();
   }
+
+  // =============== Queries ===============
 
   // Optional garantiza que no va a ser null, pero no significa q se vaya a devolver un usuario
   @Override
-  public Optional<User> findById(final long id) {
+  public Optional<User> getUserById(final long id) {
 
     String query = new QueryBuilder().select().from("users").where("user_id = " + id).build();
 
@@ -79,7 +85,7 @@ public class UserDaoImpl implements UserDao {
   }
 
   @Override
-  public Optional<User> findByEmail(String email) {
+  public Optional<User> getUserByEmail(String email) {
     String query =
         new QueryBuilder().select().from("users").where("email = '" + email + "'").build();
     return jdbcTemplate.query(query, RowMappers.USER_MAPPER).stream().findFirst();

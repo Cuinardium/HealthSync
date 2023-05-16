@@ -38,7 +38,7 @@ public interface DoctorDao {
 
   public Page<Doctor> getFilteredDoctors(
       String name,
-      Specialty specialtyCode,
+      Specialty specialty,
       City city,
       HealthInsurance healthInsurance,
       int page,

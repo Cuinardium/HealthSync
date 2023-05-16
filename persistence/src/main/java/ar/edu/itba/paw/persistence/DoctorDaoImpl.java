@@ -2,8 +2,11 @@ package ar.edu.itba.paw.persistence;
 
 import ar.edu.itba.paw.interfaces.persistence.DoctorDao;
 import ar.edu.itba.paw.models.AttendingHours;
+import ar.edu.itba.paw.models.City;
 import ar.edu.itba.paw.models.Doctor;
+import ar.edu.itba.paw.models.HealthInsurance;
 import ar.edu.itba.paw.models.Page;
+import ar.edu.itba.paw.models.Specialty;
 import ar.edu.itba.paw.models.ThirtyMinuteBlock;
 import ar.edu.itba.paw.persistence.utils.DeleteBuilder;
 import ar.edu.itba.paw.persistence.utils.QueryBuilder;
@@ -14,6 +17,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import javax.sql.DataSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -25,6 +29,7 @@ public class DoctorDaoImpl implements DoctorDao {
 
   private final JdbcTemplate jdbcTemplate;
   private final SimpleJdbcInsert doctorInsert;
+  private final SimpleJdbcInsert locationInsert;
   private final SimpleJdbcInsert doctorLocationInsert;
   private final SimpleJdbcInsert doctorHealthInsuranceInsert;
   private final SimpleJdbcInsert doctorAttendingHoursInsert;
@@ -34,6 +39,11 @@ public class DoctorDaoImpl implements DoctorDao {
     this.jdbcTemplate = new JdbcTemplate(ds);
 
     this.doctorInsert = new SimpleJdbcInsert(ds).withTableName("doctor");
+
+    this.locationInsert =
+        new SimpleJdbcInsert(ds)
+            .withTableName("doctor_location")
+            .usingGeneratedKeyColumns("doctor_location_id");
 
     this.doctorLocationInsert = new SimpleJdbcInsert(ds).withTableName("location_for_doctor");
 
@@ -49,198 +59,66 @@ public class DoctorDaoImpl implements DoctorDao {
   // ======================== Inserts =========================================
 
   @Override
-  public void addHealthInsurance(long doctorId, int healthInsuranceCode) {
+  public Doctor createDoctor(
+      long userId,
+      Specialty specialty,
+      City city,
+      String address,
+      List<HealthInsurance> healthInsurances,
+      AttendingHours attendingHours) {
 
-    Map<String, Object> data = new HashMap<>();
+    long attendingHoursId = createAttendingHours(attendingHours);
 
-    data.put("doctor_id", doctorId);
-    data.put("health_insurance_code", healthInsuranceCode);
-
-    doctorHealthInsuranceInsert.execute(data);
-  }
-
-  @Override
-  public void addLocation(long doctorId, long locationId) {
-
-    Map<String, Object> data = new HashMap<>();
-
-    data.put("doctor_id", doctorId);
-    data.put("doctor_location_id", locationId);
-
-    doctorLocationInsert.execute(data);
-  }
-
-  @Override
-  public long createDoctor(long userId, int specialtyCode, AttendingHours attendingHours) {
-
-    Map<String, Object> attendingHoursData = new HashMap<>();
-
-    attendingHoursData.put(
-        "monday",
-        ThirtyMinuteBlock.toBits(attendingHours.getAttendingBlocksForDay(DayOfWeek.MONDAY)));
-    attendingHoursData.put(
-        "tuesday",
-        ThirtyMinuteBlock.toBits(attendingHours.getAttendingBlocksForDay(DayOfWeek.TUESDAY)));
-    attendingHoursData.put(
-        "wednesday",
-        ThirtyMinuteBlock.toBits(attendingHours.getAttendingBlocksForDay(DayOfWeek.WEDNESDAY)));
-    attendingHoursData.put(
-        "thursday",
-        ThirtyMinuteBlock.toBits(attendingHours.getAttendingBlocksForDay(DayOfWeek.THURSDAY)));
-    attendingHoursData.put(
-        "friday",
-        ThirtyMinuteBlock.toBits(attendingHours.getAttendingBlocksForDay(DayOfWeek.FRIDAY)));
-    attendingHoursData.put(
-        "saturday",
-        ThirtyMinuteBlock.toBits(attendingHours.getAttendingBlocksForDay(DayOfWeek.SATURDAY)));
-    attendingHoursData.put(
-        "sunday",
-        ThirtyMinuteBlock.toBits(attendingHours.getAttendingBlocksForDay(DayOfWeek.SUNDAY)));
-
-    long attendingHoursId =
-        doctorAttendingHoursInsert.executeAndReturnKey(attendingHoursData).longValue();
-
+    // Create doctor
     Map<String, Object> doctorData = new HashMap<>();
 
     doctorData.put("doctor_id", userId);
-    doctorData.put("specialty_code", specialtyCode);
+    doctorData.put("specialty_code", specialty.ordinal());
     doctorData.put("attending_hours_id", attendingHoursId);
+
+    addLocation(userId, city.ordinal(), address);
+
+    // Add health insurances
+    for (HealthInsurance healthInsurance : healthInsurances) {
+      addHealthInsurance(userId, healthInsurance.ordinal());
+    }
 
     doctorInsert.execute(doctorData);
 
-    return userId;
+    return getDoctorById(userId).orElseThrow(IllegalStateException::new);
   }
 
   // ======================== Updates =========================================
 
   @Override
-  public void updateDoctorInfo(
+  public Doctor updateDoctorInfo(
       long doctorId,
-      List<Integer> healthInsuranceCodes,
-      int specialtyCode,
-      int cityCode,
-      String address) {
+      Specialty specialty,
+      City city,
+      String address,
+      List<HealthInsurance> healthInsurances,
+      AttendingHours attendingHours) {
 
     String specialtyUpdate =
         new UpdateBuilder()
             .update("doctor")
-            .set("specialty_code", "'" + specialtyCode + "'")
+            .set("specialty_code", "'" + specialty.ordinal() + "'")
             .where("doctor_id = (" + doctorId + ")")
             .build();
 
     jdbcTemplate.update(specialtyUpdate);
 
-    // Get existing health insurance codes
-    String existingHealthInsuranceCodesQuery =
-        new QueryBuilder()
-            .select("health_insurance_code")
-            .from("health_insurance_accepted_by_doctor")
-            .where("doctor_id = " + doctorId)
-            .build();
+    updateLocation(doctorId, city.ordinal(), address);
 
-    List<Integer> existingHealthInsuranceCodes =
-        jdbcTemplate.queryForList(existingHealthInsuranceCodesQuery, Integer.class);
+    updateHealthInsurances(
+        doctorId, healthInsurances.stream().map(Enum::ordinal).collect(Collectors.toList()));
 
-    // Remove health insurance codes that are not in the new list
-    String deleteHealthInsurances =
-        new DeleteBuilder()
-            .delete("health_insurance_accepted_by_doctor")
-            .where("doctor_id = " + doctorId)
-            .where("health_insurance_code = ?")
-            .build();
+    updateAttendingHours(doctorId, attendingHours);
 
-    for (Integer code : existingHealthInsuranceCodes) {
-      if (!healthInsuranceCodes.contains(code)) {
-        jdbcTemplate.update(deleteHealthInsurances, code);
-      }
-    }
-
-    // Add health insurance codes that are not in the old list
-    for (Integer code : healthInsuranceCodes) {
-      if (!existingHealthInsuranceCodes.contains(code)) {
-        addHealthInsurance(doctorId, code);
-      }
-    }
-
-    String doctorLocationIdQuery =
-        new QueryBuilder()
-            .select("doctor_location_id")
-            .from("location_for_doctor")
-            .where("doctor_id = " + doctorId)
-            .build();
-
-    String doctorLocationUpdate =
-        new UpdateBuilder()
-            .update("doctor_location")
-            .set("address", "'" + address + "'")
-            .set("city_code", "'" + cityCode + "'")
-            .where("doctor_location_id = (" + doctorLocationIdQuery + ")")
-            .build();
-
-    jdbcTemplate.update(doctorLocationUpdate);
+    return getDoctorById(doctorId).orElseThrow(IllegalStateException::new);
   }
 
-  @Override
-  public void updateDoctorAttendingHours(long doctorId, AttendingHours attendingHours) {
-
-    String attendingHoursIdQuery =
-        new QueryBuilder()
-            .select("attending_hours_id")
-            .from("doctor")
-            .where("doctor_id = " + doctorId)
-            .build();
-
-    String update =
-        new UpdateBuilder()
-            .update("doctor_attending_hours")
-            .set(
-                "monday",
-                "'"
-                    + ThirtyMinuteBlock.toBits(
-                        attendingHours.getAttendingBlocksForDay(DayOfWeek.MONDAY))
-                    + "'")
-            .set(
-                "tuesday",
-                "'"
-                    + ThirtyMinuteBlock.toBits(
-                        attendingHours.getAttendingBlocksForDay(DayOfWeek.TUESDAY))
-                    + "'")
-            .set(
-                "wednesday",
-                "'"
-                    + ThirtyMinuteBlock.toBits(
-                        attendingHours.getAttendingBlocksForDay(DayOfWeek.WEDNESDAY))
-                    + "'")
-            .set(
-                "thursday",
-                "'"
-                    + ThirtyMinuteBlock.toBits(
-                        attendingHours.getAttendingBlocksForDay(DayOfWeek.THURSDAY))
-                    + "'")
-            .set(
-                "friday",
-                "'"
-                    + ThirtyMinuteBlock.toBits(
-                        attendingHours.getAttendingBlocksForDay(DayOfWeek.FRIDAY))
-                    + "'")
-            .set(
-                "saturday",
-                "'"
-                    + ThirtyMinuteBlock.toBits(
-                        attendingHours.getAttendingBlocksForDay(DayOfWeek.SATURDAY))
-                    + "'")
-            .set(
-                "sunday",
-                "'"
-                    + ThirtyMinuteBlock.toBits(
-                        attendingHours.getAttendingBlocksForDay(DayOfWeek.SUNDAY))
-                    + "'")
-            .where("attending_hours_id = (" + attendingHoursIdQuery + ")")
-            .build();
-
-    jdbcTemplate.update(update);
-  }
-
+  
   // ============================ Queries =============================================
 
   @Override
@@ -254,11 +132,15 @@ public class DoctorDaoImpl implements DoctorDao {
   @Override
   public Page<Doctor> getFilteredDoctors(
       String name,
-      int specialtyCode,
-      int cityCode,
-      int healthInsuranceCode,
+      Specialty specialty,
+      City city,
+      HealthInsurance healthInsurance,
       int page,
       int pageSize) {
+
+    int specialtyCode = specialty != null ? specialty.ordinal() : -1;
+    int cityCode = city != null ? city.ordinal() : -1;
+    int healthInsuranceCode = healthInsurance != null ? healthInsurance.ordinal() : -1;
 
     // Start building the query
     QueryBuilder subQuery = doctorQuery().distinctOn("doctor.doctor_id");
@@ -381,6 +263,186 @@ public class DoctorDaoImpl implements DoctorDao {
   }
 
   // ================================= Private ======================================
+
+  // ============ Health Insurance ========
+
+  private void addHealthInsurance(long doctorId, int healthInsuranceCode) {
+
+    Map<String, Object> data = new HashMap<>();
+
+    data.put("doctor_id", doctorId);
+    data.put("health_insurance_code", healthInsuranceCode);
+
+    doctorHealthInsuranceInsert.execute(data);
+  }
+
+  private void updateHealthInsurances(long doctorId, List<Integer> healthInsuranceCodes) {
+
+    // Get existing health insurance codes
+    String existingHealthInsuranceCodesQuery =
+        new QueryBuilder()
+            .select("health_insurance_code")
+            .from("health_insurance_accepted_by_doctor")
+            .where("doctor_id = " + doctorId)
+            .build();
+
+    List<Integer> existingHealthInsuranceCodes =
+        jdbcTemplate.queryForList(existingHealthInsuranceCodesQuery, Integer.class);
+
+    // Remove health insurance codes that are not in the new list
+    String deleteHealthInsurances =
+        new DeleteBuilder()
+            .delete("health_insurance_accepted_by_doctor")
+            .where("doctor_id = " + doctorId)
+            .where("health_insurance_code = ?")
+            .build();
+
+    for (Integer code : existingHealthInsuranceCodes) {
+      if (!healthInsuranceCodes.contains(code)) {
+        jdbcTemplate.update(deleteHealthInsurances, code);
+      }
+    }
+
+    // Add health insurance codes that are not in the old list
+    for (Integer code : healthInsuranceCodes) {
+      if (!existingHealthInsuranceCodes.contains(code)) {
+        addHealthInsurance(doctorId, code);
+      }
+    }
+  }
+
+  // ============ Location ==============
+
+  private void addLocation(long doctorId, int cityCode, String address) {
+
+    // Create the location
+    Map<String, Object> data = new HashMap<>();
+
+    data.put("city_code", cityCode);
+    data.put("address", address);
+
+    Number locationId = locationInsert.executeAndReturnKey(data);
+
+    data.clear();
+
+    data.put("doctor_id", doctorId);
+    data.put("doctor_location_id", locationId);
+
+    doctorLocationInsert.execute(data);
+  }
+
+  private void updateLocation(long doctorId, int cityCode, String address) {
+
+    String doctorLocationIdQuery =
+        new QueryBuilder()
+            .select("doctor_location_id")
+            .from("location_for_doctor")
+            .where("doctor_id = " + doctorId)
+            .build();
+
+    String doctorLocationUpdate =
+        new UpdateBuilder()
+            .update("doctor_location")
+            .set("address", "'" + address + "'")
+            .set("city_code", "'" + cityCode + "'")
+            .where("doctor_location_id = (" + doctorLocationIdQuery + ")")
+            .build();
+
+    jdbcTemplate.update(doctorLocationUpdate);
+  }
+
+  // ============ Attending Hours ========
+
+  private long createAttendingHours(AttendingHours attendingHours) {
+
+    Map<String, Object> attendingHoursData = new HashMap<>();
+
+    attendingHoursData.put(
+        "monday",
+        ThirtyMinuteBlock.toBits(attendingHours.getAttendingBlocksForDay(DayOfWeek.MONDAY)));
+    attendingHoursData.put(
+        "tuesday",
+        ThirtyMinuteBlock.toBits(attendingHours.getAttendingBlocksForDay(DayOfWeek.TUESDAY)));
+    attendingHoursData.put(
+        "wednesday",
+        ThirtyMinuteBlock.toBits(attendingHours.getAttendingBlocksForDay(DayOfWeek.WEDNESDAY)));
+    attendingHoursData.put(
+        "thursday",
+        ThirtyMinuteBlock.toBits(attendingHours.getAttendingBlocksForDay(DayOfWeek.THURSDAY)));
+    attendingHoursData.put(
+        "friday",
+        ThirtyMinuteBlock.toBits(attendingHours.getAttendingBlocksForDay(DayOfWeek.FRIDAY)));
+    attendingHoursData.put(
+        "saturday",
+        ThirtyMinuteBlock.toBits(attendingHours.getAttendingBlocksForDay(DayOfWeek.SATURDAY)));
+    attendingHoursData.put(
+        "sunday",
+        ThirtyMinuteBlock.toBits(attendingHours.getAttendingBlocksForDay(DayOfWeek.SUNDAY)));
+
+    return doctorAttendingHoursInsert.executeAndReturnKey(attendingHoursData).longValue();
+  }
+
+  private void updateAttendingHours(long doctorId, AttendingHours attendingHours) {
+
+    String attendingHoursIdQuery =
+        new QueryBuilder()
+            .select("attending_hours_id")
+            .from("doctor")
+            .where("doctor_id = " + doctorId)
+            .build();
+
+    String update =
+        new UpdateBuilder()
+            .update("doctor_attending_hours")
+            .set(
+                "monday",
+                "'"
+                    + ThirtyMinuteBlock.toBits(
+                        attendingHours.getAttendingBlocksForDay(DayOfWeek.MONDAY))
+                    + "'")
+            .set(
+                "tuesday",
+                "'"
+                    + ThirtyMinuteBlock.toBits(
+                        attendingHours.getAttendingBlocksForDay(DayOfWeek.TUESDAY))
+                    + "'")
+            .set(
+                "wednesday",
+                "'"
+                    + ThirtyMinuteBlock.toBits(
+                        attendingHours.getAttendingBlocksForDay(DayOfWeek.WEDNESDAY))
+                    + "'")
+            .set(
+                "thursday",
+                "'"
+                    + ThirtyMinuteBlock.toBits(
+                        attendingHours.getAttendingBlocksForDay(DayOfWeek.THURSDAY))
+                    + "'")
+            .set(
+                "friday",
+                "'"
+                    + ThirtyMinuteBlock.toBits(
+                        attendingHours.getAttendingBlocksForDay(DayOfWeek.FRIDAY))
+                    + "'")
+            .set(
+                "saturday",
+                "'"
+                    + ThirtyMinuteBlock.toBits(
+                        attendingHours.getAttendingBlocksForDay(DayOfWeek.SATURDAY))
+                    + "'")
+            .set(
+                "sunday",
+                "'"
+                    + ThirtyMinuteBlock.toBits(
+                        attendingHours.getAttendingBlocksForDay(DayOfWeek.SUNDAY))
+                    + "'")
+            .where("attending_hours_id = (" + attendingHoursIdQuery + ")")
+            .build();
+
+    jdbcTemplate.update(update);
+  }
+
+
   private QueryBuilder doctorQuery() {
     return new QueryBuilder()
         .select(
