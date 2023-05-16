@@ -221,7 +221,7 @@ public class DoctorDaoImpl implements DoctorDao {
 
   // Get used specialties and health insurances
   @Override
-  public Map<Integer, Integer> getUsedHealthInsurances() {
+  public Map<HealthInsurance, Integer> getUsedHealthInsurances() {
     String query =
         new QueryBuilder()
             .select("health_insurance_code")
@@ -230,7 +230,7 @@ public class DoctorDaoImpl implements DoctorDao {
             .groupBy("health_insurance_code")
             .build();
 
-    return jdbcTemplate.query(
+    Map<Integer, Integer> codeMap = jdbcTemplate.query(
         query,
         (ResultSet rs) -> {
           Map<Integer, Integer> result = new HashMap<>();
@@ -239,10 +239,21 @@ public class DoctorDaoImpl implements DoctorDao {
           }
           return result;
         });
+
+    // Convert the code to the enum
+    Map<HealthInsurance, Integer> result = new HashMap<>();
+
+    codeMap.forEach(
+        (code, qty) -> {
+          HealthInsurance healthInsurance = HealthInsurance.values()[code];
+          result.put(healthInsurance, qty);
+        });
+
+    return result;
   }
 
   @Override
-  public Map<Integer, Integer> getUsedSpecialties() {
+  public Map<Specialty, Integer> getUsedSpecialties() {
     String query =
         new QueryBuilder()
             .select("specialty_code")
@@ -251,7 +262,7 @@ public class DoctorDaoImpl implements DoctorDao {
             .groupBy("specialty_code")
             .build();
 
-    return jdbcTemplate.query(
+    Map<Integer, Integer> codeMap = jdbcTemplate.query(
         query,
         (ResultSet rs) -> {
           Map<Integer, Integer> result = new HashMap<>();
@@ -260,7 +271,52 @@ public class DoctorDaoImpl implements DoctorDao {
           }
           return result;
         });
+
+    // Convert the code to the enum
+    Map<Specialty, Integer> result = new HashMap<>();
+
+    codeMap.forEach(
+        (code, qty) -> {
+          Specialty specialty = Specialty.values()[code];
+          result.put(specialty, qty);
+        });
+
+    return result;
   }
+
+  // Get all city codes present in the database
+  @Override
+  public Map<City, Integer> getUsedCities() {
+    String query =
+        new QueryBuilder()
+            .select("city_code")
+            .select("count(*) as qtycities")
+            .from("doctor_location")
+            .groupBy("city_code")
+            .build();
+
+    Map<Integer, Integer> codeMap = jdbcTemplate.query(
+        query,
+        (ResultSet rs) -> {
+          Map<Integer, Integer> results = new HashMap<>();
+          while (rs.next()) {
+            results.put(rs.getInt("city_code"), rs.getInt("qtycities"));
+          }
+          return results;
+        });
+
+    // Convert the code to the enum
+    Map<City, Integer> result = new HashMap<>();
+
+    codeMap.forEach(
+        (code, qty) -> {
+          City city = City.values()[code];
+          result.put(city, qty);
+        });
+
+    return result;
+  }
+
 
   // ================================= Private ======================================
 

@@ -1,7 +1,6 @@
 package ar.edu.itba.paw.webapp.controller;
 
 import ar.edu.itba.paw.interfaces.services.DoctorService;
-import ar.edu.itba.paw.interfaces.services.LocationService;
 import ar.edu.itba.paw.interfaces.services.PatientService;
 import ar.edu.itba.paw.models.City;
 import ar.edu.itba.paw.models.Doctor;
@@ -32,16 +31,11 @@ public class HomeController {
   private final DoctorService doctorService;
 
   private final PatientService patientService;
-  private final LocationService locationService;
 
   @Autowired
-  public HomeController(
-      final DoctorService doctorService,
-      PatientService patientService,
-      final LocationService locationService) {
+  public HomeController(final DoctorService doctorService, PatientService patientService) {
     this.doctorService = doctorService;
     this.patientService = patientService;
-    this.locationService = locationService;
   }
 
   @RequestMapping(value = "/")
@@ -81,7 +75,7 @@ public class HomeController {
 
     // Get used specialties, cities and health insurances
     Map<Specialty, Integer> usedSpecialties = doctorService.getUsedSpecialties();
-    Map<City, Integer> usedCities = locationService.getUsedCities();
+    Map<City, Integer> usedCities = doctorService.getUsedCities();
     Map<HealthInsurance, Integer> usedHealthInsurances = doctorService.getUsedHealthInsurances();
 
     // Get filters
@@ -89,17 +83,17 @@ public class HomeController {
     int cityCode = doctorFilterForm.getCityCode();
     int healthInsuranceCode = doctorFilterForm.getHealthInsuranceCode();
 
-    Specialty specialty = specialtyCode < 0 || specialtyCode >= Specialty.values().length
-        ? null
-        : Specialty.values()[specialtyCode];
+    Specialty specialty =
+        specialtyCode < 0 || specialtyCode >= Specialty.values().length
+            ? null
+            : Specialty.values()[specialtyCode];
 
-    City city = cityCode < 0 || cityCode >= City.values().length
-        ? null
-        : City.values()[cityCode];
+    City city = cityCode < 0 || cityCode >= City.values().length ? null : City.values()[cityCode];
 
-    HealthInsurance healthInsurance = healthInsuranceCode < 0 || healthInsuranceCode >= HealthInsurance.values().length
-        ? null
-        : HealthInsurance.values()[healthInsuranceCode];
+    HealthInsurance healthInsurance =
+        healthInsuranceCode < 0 || healthInsuranceCode >= HealthInsurance.values().length
+            ? null
+            : HealthInsurance.values()[healthInsuranceCode];
 
     String name = doctorFilterForm.getName();
 

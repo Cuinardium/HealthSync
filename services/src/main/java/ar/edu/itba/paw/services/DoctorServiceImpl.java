@@ -11,7 +11,6 @@ import ar.edu.itba.paw.models.Image;
 import ar.edu.itba.paw.models.Page;
 import ar.edu.itba.paw.models.Specialty;
 import ar.edu.itba.paw.models.User;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -105,27 +104,16 @@ public class DoctorServiceImpl implements DoctorService {
   // Get all Specialties and health insurances that are used by doctors
   @Override
   public Map<HealthInsurance, Integer> getUsedHealthInsurances() {
-
-    // Get all health insurances codes present in the database
-    Map<Integer, Integer> healthInsurancesCodes = doctorDao.getUsedHealthInsurances();
-
-    Map<HealthInsurance, Integer> healthInsurancesMap = new HashMap<>();
-    healthInsurancesCodes.forEach(
-        (key, value) -> healthInsurancesMap.put(HealthInsurance.getHealthInsurance(key), value));
-
-    return healthInsurancesMap;
+    return doctorDao.getUsedHealthInsurances();
   }
 
   @Override
   public Map<Specialty, Integer> getUsedSpecialties() {
+    return doctorDao.getUsedSpecialties();
+  }
 
-    // Get all specialties codes present in the database & qty of appearences
-    Map<Integer, Integer> specialtiesCodes = doctorDao.getUsedSpecialties();
-
-    Map<Specialty, Integer> specialtyMap = new HashMap<>();
-    specialtiesCodes.forEach((key, value) -> specialtyMap.put(Specialty.getSpecialty(key), value));
-
-    // Return a list of specialties using the codes
-    return specialtyMap;
+  @Override
+  public Map<City, Integer> getUsedCities() {
+    return doctorDao.getUsedCities();
   }
 }

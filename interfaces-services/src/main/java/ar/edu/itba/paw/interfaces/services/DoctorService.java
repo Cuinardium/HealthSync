@@ -58,4 +58,7 @@ public interface DoctorService {
   public Map<Specialty, Integer> getUsedSpecialties();
 
   public Map<HealthInsurance, Integer> getUsedHealthInsurances();
+
+  // Gets all cities used by doctors & qty of appearences
+  public Map<City, Integer> getUsedCities();
 }

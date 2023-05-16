@@ -47,7 +47,10 @@ public interface DoctorDao {
   public List<Doctor> getDoctors();
 
   // Get used specialties and health insurances
-  public Map<Integer, Integer> getUsedHealthInsurances();
+  public Map<HealthInsurance, Integer> getUsedHealthInsurances();
 
-  public Map<Integer, Integer> getUsedSpecialties();
+  public Map<Specialty, Integer> getUsedSpecialties();
+
+  // Get all city present in the database & qty of appearences
+  public Map<City, Integer> getUsedCities();
 }
