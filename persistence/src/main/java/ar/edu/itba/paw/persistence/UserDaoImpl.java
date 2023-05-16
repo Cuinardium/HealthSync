@@ -2,11 +2,13 @@ package ar.edu.itba.paw.persistence;
 
 import ar.edu.itba.paw.interfaces.persistence.UserDao;
 import ar.edu.itba.paw.models.User;
+import ar.edu.itba.paw.persistence.exceptions.EmailAlreadyExistsException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import javax.sql.DataSource;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
@@ -37,7 +39,8 @@ public class UserDaoImpl implements UserDao {
   }
 
   @Override
-  public User createUser(String email, String password, String firstName, String lastName) {
+  public User createUser(String email, String password, String firstName, String lastName)
+      throws EmailAlreadyExistsException {
     Map<String, Object> data = new HashMap<>();
 
     data.put("email", email);
@@ -48,8 +51,12 @@ public class UserDaoImpl implements UserDao {
 
     // Profile Picture is default for now
 
-    final Number key = userInsert.executeAndReturnKey(data);
-    return new User(key.longValue(), email, password, firstName, lastName, DEFAULT_PFP_ID);
+    try {
+      final Number key = userInsert.executeAndReturnKey(data);
+      return new User(key.longValue(), email, password, firstName, lastName, DEFAULT_PFP_ID);
+    } catch (DuplicateKeyException e) {
+      throw new EmailAlreadyExistsException();
+    }
   }
 
   @Override

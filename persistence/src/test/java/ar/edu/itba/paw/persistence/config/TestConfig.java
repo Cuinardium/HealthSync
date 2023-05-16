@@ -25,6 +25,9 @@ public class TestConfig {
   @Value("classpath:schema.sql")
   private Resource schemaSql;
 
+  @Value("classpath:testUsers.sql")
+  private Resource testUsersSql;
+
   @Bean
   public DataSource dataSource() {
     final SimpleDriverDataSource ds = new SimpleDriverDataSource();
@@ -51,7 +54,7 @@ public class TestConfig {
     final ResourceDatabasePopulator populator = new ResourceDatabasePopulator();
     populator.addScript(hsqldbSql);
     populator.addScript(schemaSql);
-
+    populator.addScript(testUsersSql);
     return populator;
   }
 
@@ -59,5 +62,4 @@ public class TestConfig {
   public PlatformTransactionManager transactionManager(final DataSource ds) {
     return new DataSourceTransactionManager(ds);
   }
-
 }

@@ -1,8 +1,10 @@
 package ar.edu.itba.paw.persistence;
 
+import static org.junit.Assert.assertThrows;
+
 import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.persistence.config.TestConfig;
-import java.sql.SQLException;
+import ar.edu.itba.paw.persistence.exceptions.EmailAlreadyExistsException;
 import java.util.Optional;
 import javax.sql.DataSource;
 import org.junit.Assert;
@@ -25,9 +27,15 @@ public class UserDaoImplTest {
   private static final long ID = 1;
   private static final String EMAIL = "email";
   private static final String PASSWORD = "password";
-  private static final String FIRST_NAME = "firstname";
-  private static final String LAST_NAME = "lastname";
-  private static final Long PFP_ID = 1L;
+  private static final String FIRST_NAME = "first_name";
+  private static final String LAST_NAME = "last_name";
+  private static final Long PFP_ID = null;
+
+  private static final long ID2 = 2;
+  private static final String EMAIL2 = "email2";
+  private static final String PASSWORD2 = "password2";
+  private static final String FIRST_NAME2 = "first_name2";
+  private static final String LAST_NAME2 = "last_name2";
 
   @Autowired private DataSource ds;
 
@@ -38,36 +46,11 @@ public class UserDaoImplTest {
   @Before
   public void setUp() {
     jdbcTemplate = new JdbcTemplate(ds);
-    JdbcTestUtils.deleteFromTables(jdbcTemplate, "users");
-    JdbcTestUtils.deleteFromTables(jdbcTemplate, "profile_picture");
-
-    jdbcTemplate.execute(
-        "INSERT INTO profile_picture (profile_picture_id, profile_picture) VALUES ("
-            + PFP_ID
-            + ", "
-            + "CAST('30' AS BINARY)"
-            + ");");
   }
 
   @Test
-  public void testFindById() throws SQLException {
-    // 1. Precondiciones
-
-    jdbcTemplate.execute(
-        "INSERT INTO users (user_id, email, password, first_name, last_name, profile_picture_id)"
-            + " VALUES ("
-            + ID
-            + ", '"
-            + EMAIL
-            + "', '"
-            + PASSWORD
-            + "', '"
-            + FIRST_NAME
-            + "', '"
-            + LAST_NAME
-            + "', '"
-            + PFP_ID
-            + "');");
+  public void testFindById() {
+    // 1. Precondiciones (script testUsers.sql)
 
     // 2. Ejercitar la class under test
     Optional<User> maybeUser = userDao.findById(ID);
@@ -82,11 +65,11 @@ public class UserDaoImplTest {
   }
 
   @Test
-  public void testFindByIdDoesNotExist() throws SQLException {
-    // 1. Precondiciones
+  public void testFindByIdDoesNotExist() {
+    // 1. Precondiciones (script testUsers.sql)
 
     // 2. Ejercitar la class under test
-    Optional<User> maybeUser = userDao.findById(ID);
+    Optional<User> maybeUser = userDao.findById(ID2);
 
     // 3. Meaningful assertions
     Assert.assertFalse(maybeUser.isPresent());
@@ -94,18 +77,30 @@ public class UserDaoImplTest {
 
   @Test
   public void testCreateUser() {
-    // 1. Precondiciones
+    // 1. Precondiciones (script testUsers.sql)
 
     // 2. Ejercitar la class under test
-    User user = userDao.createUser(EMAIL, PASSWORD, FIRST_NAME, LAST_NAME);
+    User user = userDao.createUser(EMAIL2, PASSWORD2, FIRST_NAME2, LAST_NAME2);
 
     // 3. Meaningful assertions
     Assert.assertNotNull(user);
-    Assert.assertEquals(EMAIL, user.getEmail());
-    Assert.assertEquals(PASSWORD, user.getPassword());
-    Assert.assertEquals(FIRST_NAME, user.getFirstName());
-    Assert.assertEquals(LAST_NAME, user.getLastName());
+    Assert.assertEquals(EMAIL2, user.getEmail());
+    Assert.assertEquals(PASSWORD2, user.getPassword());
+    Assert.assertEquals(FIRST_NAME2, user.getFirstName());
+    Assert.assertEquals(LAST_NAME2, user.getLastName());
 
-    Assert.assertEquals(1, JdbcTestUtils.countRowsInTable(jdbcTemplate, "users"));
+    Assert.assertEquals(2, JdbcTestUtils.countRowsInTable(jdbcTemplate, "users"));
+  }
+
+  @Test
+  public void testCreateUserAlreadyExists() {
+    // 1. Precondiciones (script testUsers.sql)
+
+    // 2. Ejercitar la class under test
+    assertThrows(
+        EmailAlreadyExistsException.class,
+        () -> userDao.createUser(EMAIL, PASSWORD, FIRST_NAME, LAST_NAME));
+
+    // 3. Meaningful assertions
   }
 }
