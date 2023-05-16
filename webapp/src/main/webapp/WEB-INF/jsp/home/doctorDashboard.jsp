@@ -22,7 +22,6 @@
 <spring:message code="doctorDashboard.placeholder.city" var="city"/>
 <spring:message code="doctorDashboard.placeholder.specialty" var="specialty"/>
 <spring:message code="doctorDashboard.placeholder.insurance" var="insurance"/>
-<spring:message code="doctorDashboard.button.filter" var="filter"/>
 <spring:message code="doctorDashboard.placeholder.search" var="search"/>
 <spring:message code="filters.title" var="filtersTitle"/>
 <spring:message code="filters.clear" var="clear"/>
@@ -36,6 +35,9 @@
     <link href="${mainCss}" rel="stylesheet"/>
     <link href="${doctorDashboardCss}" rel="stylesheet"/>
     <link href="${filtersCss}" rel="stylesheet"/>
+
+    <script src="${filtersJs}"></script>
+
     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
             integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
             crossorigin="anonymous"></script>
@@ -57,7 +59,7 @@
             <h2>${filtersTitle}</h2>
             <hr>
             <div class="filtersContainer">
-                <form:select id="city-select" cssClass="form-select" path="cityCode">
+                <form:select id="city-select" cssClass="form-select" path="cityCode" onchange="this.form.submit()">
                     <form:option value="-1" disabled="true" hidden="true"> ${city} </form:option>
                     <c:forEach items="${cityMap}" var="city">
                         <form:option value="${city.key.ordinal()}">
@@ -66,7 +68,7 @@
                     </c:forEach>
                 </form:select>
 
-                <form:select id="specialty-select" cssClass="form-select" path="specialtyCode">
+                <form:select id="specialty-select" cssClass="form-select" path="specialtyCode" onchange="this.form.submit()">
                     <form:option value="-1" disabled="true" hidden="true"> ${specialty} </form:option>
                     <c:forEach items="${specialtyMap}" var="specialty">
                         <form:option value="${specialty.key.ordinal()}">
@@ -75,7 +77,7 @@
                     </c:forEach>
                 </form:select>
 
-                <form:select id="health-insurance-select" cssClass="form-select" path="healthInsuranceCode">
+                <form:select id="health-insurance-select" cssClass="form-select" path="healthInsuranceCode" onchange="this.form.submit()">
                     <form:option value="-1" disabled="true" hidden="true"> ${insurance} </form:option>
                     <c:forEach items="${healthInsuranceMap}" var="healthInsurance">
                         <form:option value="${healthInsurance.key.ordinal()}">
@@ -85,7 +87,6 @@
                 </form:select>
 
                 <input type="submit" class="btn btn-danger" value="${clear}" onclick="clearFilters()">
-                <input type="submit" class="btn btn-primary" value="${filter}">
             </div>
         </div>
 
