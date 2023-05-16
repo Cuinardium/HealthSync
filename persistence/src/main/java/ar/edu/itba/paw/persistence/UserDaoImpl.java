@@ -3,6 +3,7 @@ package ar.edu.itba.paw.persistence;
 import ar.edu.itba.paw.interfaces.persistence.UserDao;
 import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.persistence.exceptions.EmailAlreadyExistsException;
+import ar.edu.itba.paw.persistence.exceptions.UserNotFoundException;
 import ar.edu.itba.paw.persistence.utils.QueryBuilder;
 import ar.edu.itba.paw.persistence.utils.UpdateBuilder;
 import java.util.HashMap;
@@ -48,7 +49,8 @@ public class UserDaoImpl implements UserDao {
 
   @Override
   public User updateUserInfo(
-      long userId, String email, String firstName, String lastName, Long pfpId) {
+      long userId, String email, String firstName, String lastName, Long pfpId)
+      throws UserNotFoundException {
     String update =
         new UpdateBuilder()
             .update("users")
@@ -60,11 +62,11 @@ public class UserDaoImpl implements UserDao {
             .build();
 
     jdbcTemplate.update(update);
-    return findById(userId).orElseThrow(IllegalStateException::new);
+    return findById(userId).orElseThrow(UserNotFoundException::new);
   }
 
   @Override
-  public String updateUserPassword(long userId, String password) {
+  public String updateUserPassword(long userId, String password) throws UserNotFoundException {
     String update =
         new UpdateBuilder()
             .update("users")
@@ -73,7 +75,7 @@ public class UserDaoImpl implements UserDao {
             .build();
 
     jdbcTemplate.update(update);
-    return findById(userId).orElseThrow(IllegalStateException::new).getPassword();
+    return findById(userId).orElseThrow(UserNotFoundException::new).getPassword();
   }
 
   // Optional garantiza que no va a ser null, pero no significa q se vaya a devolver un usuario
