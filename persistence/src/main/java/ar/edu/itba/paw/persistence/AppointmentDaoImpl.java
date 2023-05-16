@@ -63,7 +63,7 @@ public class AppointmentDaoImpl implements AppointmentDao {
     data.put("appointment_date", Date.valueOf(date));
     data.put("appointment_time", timeBlockToSmallInt(timeBlock));
     data.put("appointment_description", description);
-    data.put("status_code", AppointmentStatus.PENDING.ordinal());
+    data.put("status_code", AppointmentStatus.CONFIRMED.ordinal());
 
     long appointmentId = appointmentInsert.executeAndReturnKey(data).longValue();
 
@@ -73,7 +73,7 @@ public class AppointmentDaoImpl implements AppointmentDao {
         doctorId,
         date,
         timeBlock,
-        AppointmentStatus.PENDING,
+        AppointmentStatus.CONFIRMED,
         description,
         null);
   }
