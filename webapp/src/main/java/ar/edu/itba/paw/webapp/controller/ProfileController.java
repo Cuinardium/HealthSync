@@ -104,10 +104,14 @@ public class ProfileController {
       // TODO: handle
     }
 
-    ModelAndView mav = new ModelAndView("components/operationSuccessful");
-    mav.addObject("showHeader", true);
-    mav.addObject("operationTitle", "profile.editProfileSuccessfulTitle");
-    mav.addObject("operationMsg", "profile.editProfileSuccessfulMsg");
+    final ModelAndView mav = new ModelAndView("user/doctorEdit");
+    mav.addObject("showModal", true);
+    mav.addObject("form", doctorEditForm);
+    mav.addObject("cities", Arrays.asList(City.values()));
+    mav.addObject("specialties", Arrays.asList(Specialty.values()));
+    mav.addObject("currentHealthInsuranceCodes", doctorEditForm.getHealthInsuranceCodes());
+    mav.addObject("healthInsurances", Arrays.asList(HealthInsurance.values()));
+    mav.addObject("timeEnumValues", ThirtyMinuteBlock.values());
     return mav;
   }
 
@@ -168,6 +172,7 @@ public class ProfileController {
     mav.addObject("currentHealthInsuranceCodes", doctorEditForm.getHealthInsuranceCodes());
     mav.addObject("healthInsurances", Arrays.asList(HealthInsurance.values()));
     mav.addObject("timeEnumValues", ThirtyMinuteBlock.values());
+    mav.addObject("showModal", false);
     return mav;
   }
 
@@ -200,10 +205,10 @@ public class ProfileController {
       // TODO: handle this
     }
 
-    ModelAndView mav = new ModelAndView("components/operationSuccessful");
-    mav.addObject("showHeader", true);
-    mav.addObject("operationTitle", "profile.editProfileSuccessfulTitle");
-    mav.addObject("operationMsg", "profile.editProfileSuccessfulMsg");
+    final ModelAndView mav = new ModelAndView("user/patientEdit");
+    mav.addObject("showModal", true);
+    mav.addObject("form", patientEditForm);
+    mav.addObject("healthInsurances", Arrays.asList(HealthInsurance.values()));
     return mav;
   }
 
@@ -223,6 +228,7 @@ public class ProfileController {
 
     final ModelAndView mav = new ModelAndView("user/patientEdit");
     mav.addObject("form", patientEditForm);
+    mav.addObject("showModal", false);
     mav.addObject("healthInsurances", Arrays.asList(HealthInsurance.values()));
     return mav;
   }
@@ -230,7 +236,7 @@ public class ProfileController {
   @RequestMapping(value = "/change-password", method = RequestMethod.POST)
   public ModelAndView changePasswordSubmit(
       @Valid @ModelAttribute("changePasswordForm") final ChangePasswordForm changePasswordForm,
-      final BindingResult errors) {
+      final BindingResult errors, boolean OldPasswordDoesNotMatch) {
     if (errors.hasErrors()) {
       return changePassword(changePasswordForm, false);
     }
@@ -249,10 +255,10 @@ public class ProfileController {
       // TODO: log?
       throw exception;
     }
-    ModelAndView mav = new ModelAndView("components/operationSuccessful");
-    mav.addObject("showHeader", true);
-    mav.addObject("operationTitle", "profile.changePasswordSuccessfulTitle");
-    mav.addObject("operationMsg", "profile.changePasswordSuccessfulMsg");
+    final ModelAndView mav = new ModelAndView("user/changePassword");
+    mav.addObject("showModal", true);
+    mav.addObject("oldPasswordDoesNotMatch", OldPasswordDoesNotMatch);
+    mav.addObject("form", changePasswordForm);
     return mav;
   }
 
@@ -263,6 +269,7 @@ public class ProfileController {
     final ModelAndView mav = new ModelAndView("user/changePassword");
     mav.addObject("oldPasswordDoesNotMatch", OldPasswordDoesNotMatch);
     mav.addObject("form", changePasswordForm);
+    mav.addObject("showModal", false);
     return mav;
   }
 }

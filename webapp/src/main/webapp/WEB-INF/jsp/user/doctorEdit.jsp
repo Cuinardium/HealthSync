@@ -11,6 +11,7 @@
 <c:url value="/css/forms.css" var="formsCss"/>
 
 <c:url value="/doctor-edit" var="doctorEditUrl"/>
+<c:url value="/" var="successfulUrl"/>
 
 <spring:message code="profile.edit" var="title"/>
 <spring:message code="form.name" var="name"/>
@@ -26,6 +27,9 @@
 <spring:message code="form.email" var="email"/>
 <spring:message code="form.email_hint" var="email_hint"/>
 <spring:message code="profile.saveChanges" var="saveChanges"/>
+<spring:message code="edit.modal.title" var="modalTitle"/>
+<spring:message code="edit.modal.text" var="modalDesc"/>
+<spring:message code="register.modal.button" var="modalButton"/>
 
 <html>
 <head>
@@ -35,6 +39,22 @@
     <jsp:include page="../components/favicon.jsp"/>
     <link href="${mainCss}" rel="stylesheet"/>
     <link href="${formsCss}" rel="stylesheet"/>
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+            integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+            crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js"
+            integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+            crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js"
+            integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+            crossorigin="anonymous"></script>
+    <script>
+        $(document).ready(function(){
+            if(${showModal}){
+                $('#modal').modal('show');
+            }
+        })
+    </script>
 </head>
 
 <body>
@@ -120,6 +140,22 @@
 
         <button type="submit" class="btn btn-primary submitButton">${saveChanges}</button>
     </form:form>
+    <div class="modal fade" id="modal" tabindex="-1" role="dialog" aria-labelledby="modalLabel"
+         aria-hidden="true" data-bs-backdrop="static">
+        <div class="modal-dialog" role="dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalLabel">${modalTitle}</h5>
+                </div>
+                <div class="modal-body">
+                    ${modalDesc}
+                </div>
+                <div class="modal-footer">
+                    <a type="button" href="${successfulUrl}" class="btn btn-primary">${modalButton}</a>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 </body>
 </html>

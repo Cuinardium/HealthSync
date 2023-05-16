@@ -107,11 +107,10 @@ public class AuthController {
     LOGGER.info("Registered {}", patient);
     authUser(patient.getEmail(), patientRegisterForm.getPassword());
 
-    final ModelAndView mav = new ModelAndView("components/operationSuccessful");
-    mav.addObject("showHeader", false);
-    mav.addObject("user", patient);
-    mav.addObject("operationTitle", "registerMedic.registerSuccessfulTitle");
-    mav.addObject("operationMsg", "registerMedic.registerSuccessfulMsg");
+    final ModelAndView mav = new ModelAndView("auth/patientRegister");
+    mav.addObject("form", patientRegisterForm);
+    mav.addObject("healthInsurances", Arrays.asList(HealthInsurance.values()));
+    mav.addObject("showModal", true);
     return mav;
   }
 
@@ -122,6 +121,7 @@ public class AuthController {
     final ModelAndView mav = new ModelAndView("auth/patientRegister");
     mav.addObject("form", patientRegisterForm);
     mav.addObject("healthInsurances", Arrays.asList(HealthInsurance.values()));
+    mav.addObject("showModal", false);
 
     return mav;
   }
@@ -158,11 +158,13 @@ public class AuthController {
     LOGGER.info("Registered {}", doctor);
     authUser(doctor.getEmail(), doctorRegisterForm.getPassword());
 
-    final ModelAndView mav = new ModelAndView("components/operationSuccessful");
-    mav.addObject("showHeader", false);
-    mav.addObject("user", doctor);
-    mav.addObject("operationTitle", "registerMedic.registerSuccessfulTitle");
-    mav.addObject("operationMsg", "registerMedic.registerSuccessfulMsg");
+    final ModelAndView mav = new ModelAndView("auth/doctorRegister");
+    mav.addObject("form", doctorRegisterForm);
+    mav.addObject("showModal", true);
+    mav.addObject("cities", Arrays.asList(City.values()));
+    mav.addObject("specialties", Arrays.asList(Specialty.values()));
+    mav.addObject("healthInsurances", Arrays.asList(HealthInsurance.values()));
+
     return mav;
   }
 
@@ -174,6 +176,7 @@ public class AuthController {
     mav.addObject("cities", Arrays.asList(City.values()));
     mav.addObject("specialties", Arrays.asList(Specialty.values()));
     mav.addObject("healthInsurances", Arrays.asList(HealthInsurance.values()));
+    mav.addObject("showModal", false);
     return mav;
   }
 
