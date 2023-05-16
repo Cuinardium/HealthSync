@@ -57,7 +57,7 @@ public class AppointmentServiceImpl implements AppointmentService {
 
     if (possibleAppointment.isPresent()
         && (possibleAppointment.get().getStatus() == AppointmentStatus.COMPLETED
-            || possibleAppointment.get().getStatus() == AppointmentStatus.ACCEPTED)) {
+            || possibleAppointment.get().getStatus() == AppointmentStatus.CONFIRMED)) {
       throw new RuntimeException();
     }
 
@@ -112,59 +112,60 @@ public class AppointmentServiceImpl implements AppointmentService {
 
     appointmentDao.updateAppointmentStatus(appointmentId, status, cancelDescription);
 
+    Appointment newAppointment =
+        getAppointmentById(appointmentId).orElseThrow(RuntimeException::new);
+
     // TODO: error handling
     Locale locale = LocaleContextHolder.getLocale();
 
-    switch (status) {
-      case ACCEPTED:
-        mailService.sendAppointmentConfirmedMail(appointment, locale);
-        break;
-      case CANCELLED:
-        if (requesterId == appointment.getPatientId()) {
-          mailService.sendAppointmentCancelledByPatientMail(appointment, locale);
-        } else {
-          mailService.sendAppointmentCancelledByDoctorMail(appointment, locale);
-        }
-        break;
-      case REJECTED:
-        mailService.sendAppointmentRejectedMail(appointment, locale);
-        break;
-      default:
+    if (status == AppointmentStatus.CANCELLED) {
+      if (requesterId == appointment.getPatientId()) {
+        mailService.sendAppointmentCancelledByPatientMail(newAppointment, locale);
+      } else {
+        mailService.sendAppointmentCancelledByDoctorMail(newAppointment, locale);
+      }
     }
   }
 
   @Override
   public List<ThirtyMinuteBlock> getAvailableHoursForDoctorOnDate(long doctorId, LocalDate date) {
-
-    // Get doctor appointments for date
-    Page<Appointment> appointments =
-        getFilteredAppointmentsForDoctor(doctorId, null, date, date, -1, -1);
-
-    Doctor doctor = doctorService.getDoctorById(doctorId).orElseThrow(RuntimeException::new);
-
-    // Get doctor available hours for date
-    List<ThirtyMinuteBlock> availableHours = new ArrayList<>();
-    for (ThirtyMinuteBlock block : doctor.getAttendingHours().getAttendingBlocksForDate(date)) {
-      availableHours.add(block);
-    }
-
-    for (Appointment appointment : appointments.getContent()) {
-      if ((appointment.getStatus() == AppointmentStatus.ACCEPTED
-          || appointment.getStatus() == AppointmentStatus.COMPLETED)) {
-        availableHours.remove(appointment.getTimeBlock());
-      }
-    }
-
-    return availableHours;
+    return getAvailableHoursForDoctorOnRange(doctorId, date, date).get(0);
   }
 
   @Override
   public List<List<ThirtyMinuteBlock>> getAvailableHoursForDoctorOnRange(
       long doctorId, LocalDate from, LocalDate to) {
+    // Get doctor appointments for date
+    Page<Appointment> appointments =
+        getFilteredAppointmentsForDoctor(doctorId, null, from, to, -1, -1);
+
+    Doctor doctor = doctorService.getDoctorById(doctorId).orElseThrow(RuntimeException::new);
+
+    // Get doctor available hours for date
     List<List<ThirtyMinuteBlock>> availableHours = new ArrayList<>();
+    int i = 0;
     for (LocalDate date = from; date.isBefore(to.plusDays(1)); date = date.plusDays(1)) {
-      availableHours.add(getAvailableHoursForDoctorOnDate(doctorId, date));
+      availableHours.add(new ArrayList<>());
+      List<ThirtyMinuteBlock> currentList = availableHours.get(i);
+      currentList.addAll(doctor.getAttendingHours().getAttendingBlocksForDate(date));
+      i++;
     }
+
+    i = 0;
+    List<ThirtyMinuteBlock> currentList = availableHours.get(i);
+    LocalDate currentDate = LocalDate.of(from.getYear(), from.getMonth(), from.getDayOfMonth());
+    for (Appointment appointment : appointments.getContent()) {
+      if ((appointment.getStatus() == AppointmentStatus.CONFIRMED
+          || appointment.getStatus() == AppointmentStatus.COMPLETED)) {
+        currentList.remove(appointment.getTimeBlock());
+      }
+      if (appointment.getDate().isAfter(currentDate)) {
+        i++;
+        currentList = availableHours.get(i);
+        currentDate = currentDate.plusDays(1);
+      }
+    }
+
     return availableHours;
   }
 

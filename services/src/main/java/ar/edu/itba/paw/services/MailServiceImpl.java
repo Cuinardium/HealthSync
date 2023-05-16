@@ -135,6 +135,8 @@ public class MailServiceImpl implements MailService {
 
     String doctorEmail = appointment.getDoctor().getEmail();
 
+    String cancelDesc= appointment.getCancelDesc();
+
     // Load model
     templateModel.put("baseUrl", env.getProperty("webapp.baseUrl"));
     templateModel.put("userName", patientName);
@@ -143,7 +145,7 @@ public class MailServiceImpl implements MailService {
 
     templateModel.put("date", dateTime);
     templateModel.put("description", description);
-    templateModel.put("cancelDesc", appointment.getCancelDesc());
+    templateModel.put("cancelDesc", cancelDesc);
 
     String htmlBody = getHtmlBody("appointmentCancelledByPatient", templateModel, locale);
 
@@ -196,77 +198,6 @@ public class MailServiceImpl implements MailService {
 
   @Override
   @Async
-  public void sendAppointmentConfirmedMail(Appointment appointment, Locale locale) {
-    Map<String, Object> templateModel = new HashMap<>();
-
-    String patientName =
-        appointment.getPatient().getFirstName() + " " + appointment.getPatient().getLastName();
-    String dateTime =
-        appointment.getDate().toString() + " " + appointment.getTimeBlock().getBlockBeginning();
-    String description = appointment.getDescription();
-    String patientHealthInsurance =
-        messageSource.getMessage(
-            appointment.getPatient().getHealthInsurance().getMessageID(), null, locale);
-    String patientEmail = appointment.getPatient().getEmail();
-    String doctorName =
-        appointment.getDoctor().getFirstName() + " " + appointment.getDoctor().getLastName();
-    String doctorAddress = appointment.getDoctor().getLocation().getAddress();
-    String doctorCity =
-        messageSource.getMessage(
-            appointment.getDoctor().getLocation().getCity().getMessageID(), null, locale);
-
-    // Load model
-    templateModel.put("baseUrl", env.getProperty("webapp.baseUrl"));
-    templateModel.put("userName", patientName);
-    templateModel.put("userMail", patientEmail);
-    templateModel.put("docName", doctorName);
-    templateModel.put("address", doctorAddress);
-    templateModel.put("city", doctorCity);
-    templateModel.put("date", dateTime);
-    templateModel.put("description", description);
-    templateModel.put("userHealthcare", patientHealthInsurance);
-
-    String htmlBody = getHtmlBody("appointmentConfirmed", templateModel, locale);
-
-    String subject = mailMessageSource.getMessage("appointmentConfirmed.subject", null, locale);
-
-    sendHtmlMessage(patientEmail, subject, htmlBody);
-  }
-
-  @Override
-  @Async
-  public void sendAppointmentRejectedMail(Appointment appointment, Locale locale) {
-    Map<String, Object> templateModel = new HashMap<>();
-
-    String patientName =
-        appointment.getPatient().getFirstName() + " " + appointment.getPatient().getLastName();
-    String dateTime =
-        appointment.getDate().toString() + " " + appointment.getTimeBlock().getBlockBeginning();
-    String patientEmail = appointment.getPatient().getEmail();
-    String doctorName =
-        appointment.getDoctor().getFirstName() + " " + appointment.getDoctor().getLastName();
-
-    String baseUrl = env.getProperty("webapp.baseUrl");
-
-    String doctorAppointmentUrl = baseUrl + appointment.getDoctor().getId() + "/appointment";
-
-    // Load model
-    templateModel.put("baseUrl", baseUrl);
-    templateModel.put("userName", patientName);
-    templateModel.put("docName", doctorName);
-    templateModel.put("appointmentUrl", doctorAppointmentUrl);
-
-    templateModel.put("date", dateTime);
-
-    String htmlBody = getHtmlBody("appointmentRejected", templateModel, locale);
-
-    String subject = mailMessageSource.getMessage("appointmentRejected.subject", null, locale);
-
-    sendHtmlMessage(patientEmail, subject, htmlBody);
-  }
-
-  @Override
-  @Async
   public void sendAppointmentCancelledByDoctorMail(Appointment appointment, Locale locale) {
     Map<String, Object> templateModel = new HashMap<>();
 
@@ -280,13 +211,15 @@ public class MailServiceImpl implements MailService {
 
     String doctorAppointmentUrl = baseUrl + appointment.getDoctor().getId() + "/appointment";
 
+    String cancelDesc= appointment.getCancelDesc();
+
     // Load model
     templateModel.put("baseUrl", baseUrl);
     templateModel.put("userMail", patientEmail);
     templateModel.put("docName", doctorName);
     templateModel.put("appointmentUrl", doctorAppointmentUrl);
     templateModel.put("date", dateTime);
-    templateModel.put("cancelDesc", appointment.getCancelDesc());
+    templateModel.put("cancelDesc", cancelDesc);
 
     String htmlBody = getHtmlBody("appointmentCancelledByDoctor", templateModel, locale);
 

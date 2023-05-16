@@ -61,6 +61,7 @@ public class HomeController {
     return mav;
   }
 
+  // TODO: REFACTOR THIS
   @RequestMapping(value = "/doctorDashboard", method = RequestMethod.GET)
   public ModelAndView doctorDashboard(
       @ModelAttribute("doctorFilterForm") DoctorFilterForm doctorFilterForm,

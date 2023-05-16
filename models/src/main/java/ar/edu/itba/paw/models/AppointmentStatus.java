@@ -4,9 +4,7 @@ public enum AppointmentStatus {
 
   // NO CAMBIAR EL ORDEN, SIEMPRE INSERTAR AL FONDO
   // appointmentStatus.<appointmentStatus> tiene que estar internacionalizado en los i18n
-  PENDING("appointmentStatus.pending"),
-  ACCEPTED("appointmentStatus.accepted"),
-  REJECTED("appointmentStatus.rejected"),
+  CONFIRMED("appointmentStatus.confirmed"),
   CANCELLED("appointmentStatus.cancelled"),
   COMPLETED("appointmentStatus.completed");
 
