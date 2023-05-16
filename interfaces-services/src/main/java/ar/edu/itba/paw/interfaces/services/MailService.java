@@ -10,7 +10,7 @@ public interface MailService {
 
   void sendAppointmentReminderMail(Appointment appointment, Locale locale);
 
-  void sendAppointmentCancelledByDoctorMail(Appointment appointment, Locale locale);
+  void sendAppointmentCancelledByDoctorMail(Appointment appointment, String cancelDescription,Locale locale);
 
-  void sendAppointmentCancelledByPatientMail(Appointment appointment, Locale locale);
+  void sendAppointmentCancelledByPatientMail(Appointment appointment, String cancelDescription,Locale locale);
 }
