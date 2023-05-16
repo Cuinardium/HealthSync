@@ -1,6 +1,7 @@
 package ar.edu.itba.paw.interfaces.services;
 
 import ar.edu.itba.paw.models.AttendingHours;
+import ar.edu.itba.paw.models.City;
 import ar.edu.itba.paw.models.Doctor;
 import ar.edu.itba.paw.models.HealthInsurance;
 import ar.edu.itba.paw.models.Image;
@@ -11,37 +12,43 @@ import java.util.Map;
 import java.util.Optional;
 
 public interface DoctorService {
+
+  // =============== Inserts ===============
+  
   public Doctor createDoctor(
       String email,
       String password,
       String firstName,
       String lastName,
-      List<Integer> healthInsuranceCodes,
-      int specialtyCode,
-      int cityCode,
+      Specialty specialty,
+      City city,
       String address,
+      List<HealthInsurance> healthInsurances,
       AttendingHours attendingHours);
 
-  public void updateInformation(
+  // =============== Updates ===============
+
+  public Doctor updateDoctor(
       long doctorId,
       String email,
       String firstName,
       String lastName,
-      List<Integer> healthInsuranceCodes,
-      int specialtyCode,
-      int cityCode,
+      Specialty specialty,
+      City city,
       String address,
+      List<HealthInsurance> healthInsurances,
+      AttendingHours attendingHours,
       Image image);
 
-  public void updateAttendingHours(long doctorId, AttendingHours attendingHours);
+  // =============== Queries ===============
 
   public Optional<Doctor> getDoctorById(long id);
 
   public Page<Doctor> getFilteredDoctors(
       String name,
-      int specialtyCode,
-      int cityCode,
-      int healthInsuranceCode,
+      Specialty specialty,
+      City city,
+      HealthInsurance healthInsurance,
       int page,
       int pageSize);
 

@@ -4,9 +4,16 @@ import ar.edu.itba.paw.models.Image;
 import java.util.Optional;
 
 public interface ImageService {
-  Optional<Image> getImage(long id);
+
+  // =============== Inserts ===============
 
   long uploadImage(Image image);
 
+  // =============== Updates ===============
+
   void updateImage(Long pfpId, Image image);
+
+  // =============== Queries ===============
+
+  Optional<Image> getImage(long id);
 }

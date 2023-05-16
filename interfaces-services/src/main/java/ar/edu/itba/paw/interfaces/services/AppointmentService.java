@@ -10,12 +10,21 @@ import java.util.Optional;
 
 public interface AppointmentService {
 
+  // =============== Inserts ===============
+
   Appointment createAppointment(
       Long patientId,
       Long doctorId,
       LocalDate date,
       ThirtyMinuteBlock timeBlock,
       String description);
+
+  // =============== Updates ===============
+
+  Appointment updateAppointment(
+      long appointmentId, AppointmentStatus status, String cancelDescription, long requesterId);
+
+  // =============== Queries ===============
 
   Optional<Appointment> getAppointmentById(long appointmentId);
 
@@ -38,9 +47,6 @@ public interface AppointmentService {
       LocalDate to,
       int page,
       int pageSize);
-
-  void updateAppointmentStatus(
-      long appointmentId, AppointmentStatus status, String cancelDescription, long requesterId);
 
   public List<ThirtyMinuteBlock> getAvailableHoursForDoctorOnDate(long doctorId, LocalDate date);
 
