@@ -70,15 +70,13 @@ public class PatientDaoImpl implements PatientDao {
 
   // ======================== Updates =========================================
   @Override
-  public void updateInformation(long patientId, int healthInsuranceCode){
+  public void updatePatientInfo(long patientId, int healthInsuranceCode) {
     String update =
-            new UpdateBuilder()
-                    .update("health_insurance_for_patient")
-                    .set(
-                            "health_insurance_code",
-                            "'" + healthInsuranceCode + "'")
-                    .where("patient_id = (" + patientId + ")")
-                    .build();
+        new UpdateBuilder()
+            .update("health_insurance_for_patient")
+            .set("health_insurance_code", "'" + healthInsuranceCode + "'")
+            .where("patient_id = (" + patientId + ")")
+            .build();
 
     jdbcTemplate.update(update);
   }

@@ -38,16 +38,15 @@ public class LocationDaoImpl implements LocationDao {
   }
 
   @Override
-  public long createLocation(int cityCode, String address) {
+  public Location createLocation(int cityCode, String address) {
 
     Map<String, Object> args = new HashMap<>();
 
     args.put("city_code", cityCode);
     args.put("address", address);
 
-    Number id = jdbcInsert.executeAndReturnKey(args);
-
-    return id.longValue();
+    final Number id = jdbcInsert.executeAndReturnKey(args);
+    return new Location(id.longValue(), City.getCity(cityCode), address);
   }
 
   @Override

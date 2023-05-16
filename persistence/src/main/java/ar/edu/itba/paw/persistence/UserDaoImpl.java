@@ -15,7 +15,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public class UserDaoImpl implements UserDao {
 
-  private static final long DEFAULT_PFP_ID = 1;
   private static final RowMapper<User> ROW_MAPPER =
       (rs, rowNum) ->
           new User(
@@ -44,16 +43,14 @@ public class UserDaoImpl implements UserDao {
     data.put("password", password);
     data.put("first_name", firstName);
     data.put("last_name", lastName);
-    // data.put("profile_picture_id", DEFAULT_PFP_ID);
-
-    // Profile Picture is default for now
 
     final Number key = userInsert.executeAndReturnKey(data);
-    return new User(key.longValue(), email, password, firstName, lastName, DEFAULT_PFP_ID);
+    return new User(key.longValue(), email, password, firstName, lastName, null);
   }
 
   @Override
-  public void editUser(long userId, String email, String firstName, String lastName, Long pfpId) {
+  public User updateUserInfo(
+      long userId, String email, String firstName, String lastName, Long pfpId) {
     String update =
         new UpdateBuilder()
             .update("users")
@@ -65,10 +62,11 @@ public class UserDaoImpl implements UserDao {
             .build();
 
     jdbcTemplate.update(update);
+    return findById(userId).orElseThrow(IllegalStateException::new);
   }
 
   @Override
-  public void changePassword(long userId, String password) {
+  public String updateUserPassword(long userId, String password) {
     String update =
         new UpdateBuilder()
             .update("users")
@@ -77,6 +75,7 @@ public class UserDaoImpl implements UserDao {
             .build();
 
     jdbcTemplate.update(update);
+    return findById(userId).orElseThrow(IllegalStateException::new).getPassword();
   }
 
   // Optional garantiza que no va a ser null, pero no significa q se vaya a devolver un usuario

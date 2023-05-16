@@ -121,7 +121,7 @@ public class DoctorDaoImpl implements DoctorDao {
   // ======================== Updates =========================================
 
   @Override
-  public void updateInformation(
+  public void updateDoctorInfo(
       long doctorId,
       List<Integer> healthInsuranceCodes,
       int specialtyCode,
@@ -188,7 +188,7 @@ public class DoctorDaoImpl implements DoctorDao {
   }
 
   @Override
-  public void updateAttendingHours(long doctorId, AttendingHours attendingHours) {
+  public void updateDoctorAttendingHours(long doctorId, AttendingHours attendingHours) {
 
     String attendingHoursIdQuery =
         new QueryBuilder()

@@ -58,7 +58,7 @@ public class PatientServiceImpl implements PatientService {
       int healthInsuranceCode,
       Image image) {
     userService.editUser(patientId, email, firstName, lastName, image);
-    patientDao.updateInformation(patientId, healthInsuranceCode);
+    patientDao.updatePatientInfo(patientId, healthInsuranceCode);
   }
 
   @Override
