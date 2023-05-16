@@ -60,7 +60,7 @@ public class AppointmentServiceImpl implements AppointmentService {
 
     if (possibleAppointment.isPresent()
         && (possibleAppointment.get().getStatus() == AppointmentStatus.COMPLETED
-            || possibleAppointment.get().getStatus() == AppointmentStatus.ACCEPTED)) {
+            || possibleAppointment.get().getStatus() == AppointmentStatus.CONFIRMED)) {
       throw new RuntimeException();
     }
 
@@ -123,21 +123,12 @@ public class AppointmentServiceImpl implements AppointmentService {
             .orElseThrow(RuntimeException::new);
     Locale locale = LocaleContextHolder.getLocale();
 
-    switch (status) {
-      case ACCEPTED:
-        mailService.sendAppointmentConfirmedMail(appointment, doctor, patient, locale);
-        break;
-      case CANCELLED:
-        if (requesterId == appointment.getPatientId()) {
-          mailService.sendAppointmentCancelledByPatientMail(appointment, doctor, patient, locale);
-        } else {
-          mailService.sendAppointmentCancelledByDoctorMail(appointment, doctor, patient, locale);
-        }
-        break;
-      case REJECTED:
-        mailService.sendAppointmentRejectedMail(appointment, doctor, patient, locale);
-        break;
-      default:
+    if (status == AppointmentStatus.CANCELLED) {
+      if (requesterId == appointment.getPatientId()) {
+        mailService.sendAppointmentCancelledByPatientMail(appointment, doctor, patient, locale);
+      } else {
+        mailService.sendAppointmentCancelledByDoctorMail(appointment, doctor, patient, locale);
+      }
     }
   }
 
@@ -156,7 +147,7 @@ public class AppointmentServiceImpl implements AppointmentService {
     }
 
     for (Appointment appointment : appointments.getContent()) {
-      if ((appointment.getStatus() == AppointmentStatus.ACCEPTED
+      if ((appointment.getStatus() == AppointmentStatus.CONFIRMED
           || appointment.getStatus() == AppointmentStatus.COMPLETED)) {
         availableHours.remove(appointment.getTimeBlock());
       }
