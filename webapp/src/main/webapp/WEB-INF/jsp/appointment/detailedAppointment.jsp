@@ -28,6 +28,7 @@
 <spring:message code="detailedAppointment.healthInsurance" var="healthInsurance_title"/>
 <spring:message code="detailedAppointment.status" var="statusTitle"/>
 <spring:message code="detailedAppointment.description" var="description"/>
+<spring:message code="detailedAppointment.cancelDesc" var="cancelDescriptionTitle"/>
 <spring:message code="appointments.modal.title" var="modalTitle"/>
 <spring:message code="appointments.modal.desc" var="modalDesc"/>
 <spring:message code="appointments.modal.confirm" var="modalConfirm"/>
@@ -65,6 +66,9 @@
       <div class="card-title"><strong>${address}: </strong>${address}, ${city}</div>
       <div class="card-title"><strong>${healthInsurance_title}: </strong>${healthInsurance}</div>
       <div class="card-title"><strong>${description}: </strong>${appointmentDesc}</div>
+      <c:if test="${not empty cancelDescription}">
+        <div class="card-title"><strong>${cancelDescriptionTitle}: </strong>${cancelDescription}</div>
+      </c:if>
       <div class="cardButtonContainer">
         <c:forEach items="${actions}" var="action">
           <button onclick="openModal('${updateUrl}/?status=${action.statusCode}')"

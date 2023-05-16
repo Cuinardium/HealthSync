@@ -112,17 +112,14 @@ public class AppointmentServiceImpl implements AppointmentService {
 
     appointmentDao.updateAppointment(appointmentId, status, cancelDescription);
 
-    Appointment newAppointment =
-        getAppointmentById(appointmentId).orElseThrow(RuntimeException::new);
-
     // TODO: error handling
     Locale locale = LocaleContextHolder.getLocale();
 
     if (status == AppointmentStatus.CANCELLED) {
       if (requesterId == appointment.getPatientId()) {
-        mailService.sendAppointmentCancelledByPatientMail(newAppointment, locale);
+        mailService.sendAppointmentCancelledByPatientMail(appointment, cancelDescription, locale);
       } else {
-        mailService.sendAppointmentCancelledByDoctorMail(newAppointment, locale);
+        mailService.sendAppointmentCancelledByDoctorMail(appointment, cancelDescription, locale);
       }
     }
   }
