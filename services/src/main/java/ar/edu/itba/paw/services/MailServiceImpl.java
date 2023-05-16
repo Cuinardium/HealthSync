@@ -118,7 +118,7 @@ public class MailServiceImpl implements MailService {
 
   @Override
   @Async
-  public void sendAppointmentCancelledByPatientMail(Appointment appointment, Locale locale) {
+  public void sendAppointmentCancelledByPatientMail(Appointment appointment,String cancelDescription,Locale locale) {
 
     Map<String, Object> templateModel = new HashMap<>();
 
@@ -135,8 +135,6 @@ public class MailServiceImpl implements MailService {
 
     String doctorEmail = appointment.getDoctor().getEmail();
 
-    String cancelDesc= appointment.getCancelDesc();
-
     // Load model
     templateModel.put("baseUrl", env.getProperty("webapp.baseUrl"));
     templateModel.put("userName", patientName);
@@ -145,7 +143,7 @@ public class MailServiceImpl implements MailService {
 
     templateModel.put("date", dateTime);
     templateModel.put("description", description);
-    templateModel.put("cancelDesc", cancelDesc);
+    templateModel.put("cancelDesc", cancelDescription);
 
     String htmlBody = getHtmlBody("appointmentCancelledByPatient", templateModel, locale);
 
@@ -198,7 +196,7 @@ public class MailServiceImpl implements MailService {
 
   @Override
   @Async
-  public void sendAppointmentCancelledByDoctorMail(Appointment appointment, Locale locale) {
+  public void sendAppointmentCancelledByDoctorMail(Appointment appointment, String cancelDescription,Locale locale) {
     Map<String, Object> templateModel = new HashMap<>();
 
     String dateTime =
@@ -211,15 +209,13 @@ public class MailServiceImpl implements MailService {
 
     String doctorAppointmentUrl = baseUrl + appointment.getDoctor().getId() + "/appointment";
 
-    String cancelDesc= appointment.getCancelDesc();
-
     // Load model
     templateModel.put("baseUrl", baseUrl);
     templateModel.put("userMail", patientEmail);
     templateModel.put("docName", doctorName);
     templateModel.put("appointmentUrl", doctorAppointmentUrl);
     templateModel.put("date", dateTime);
-    templateModel.put("cancelDesc", cancelDesc);
+    templateModel.put("cancelDesc", cancelDescription);
 
     String htmlBody = getHtmlBody("appointmentCancelledByDoctor", templateModel, locale);
 
