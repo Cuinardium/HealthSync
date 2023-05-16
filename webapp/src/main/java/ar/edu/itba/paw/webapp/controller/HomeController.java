@@ -10,12 +10,11 @@ import ar.edu.itba.paw.models.Page;
 import ar.edu.itba.paw.models.Specialty;
 import ar.edu.itba.paw.webapp.auth.PawAuthUserDetails;
 import ar.edu.itba.paw.webapp.auth.UserRoles;
+import ar.edu.itba.paw.webapp.exceptions.UserNotFoundException;
 import ar.edu.itba.paw.webapp.form.DoctorFilterForm;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-
-import ar.edu.itba.paw.webapp.exceptions.UserNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -36,7 +35,10 @@ public class HomeController {
   private final LocationService locationService;
 
   @Autowired
-  public HomeController(final DoctorService doctorService, PatientService patientService, final LocationService locationService) {
+  public HomeController(
+      final DoctorService doctorService,
+      PatientService patientService,
+      final LocationService locationService) {
     this.doctorService = doctorService;
     this.patientService = patientService;
     this.locationService = locationService;
@@ -59,6 +61,7 @@ public class HomeController {
     return mav;
   }
 
+  // TODO: REFACTOR THIS
   @RequestMapping(value = "/doctorDashboard", method = RequestMethod.GET)
   public ModelAndView doctorDashboard(
       @ModelAttribute("doctorFilterForm") DoctorFilterForm doctorFilterForm,
@@ -86,19 +89,23 @@ public class HomeController {
     int healthInsuranceCode = doctorFilterForm.getHealthInsuranceCode();
     String name = doctorFilterForm.getName();
 
-
     // Get doctors
     Page<Doctor> doctors =
         doctorService.getFilteredDoctors(
             name, specialtyCode, cityCode, healthInsuranceCode, parsedPage - 1, DEFAULT_PAGE_SIZE);
 
-
-    if(PawAuthUserDetails.getRole().equals(UserRoles.ROLE_PATIENT)){
-      PawAuthUserDetails currentUser = (PawAuthUserDetails) (SecurityContextHolder.getContext().getAuthentication().getPrincipal());
-      HealthInsurance patientHealthInsurance= patientService.getPatientById(currentUser.getId()).orElseThrow(UserNotFoundException::new).getHealthInsurance();
+    if (PawAuthUserDetails.getRole().equals(UserRoles.ROLE_PATIENT)) {
+      PawAuthUserDetails currentUser =
+          (PawAuthUserDetails)
+              (SecurityContextHolder.getContext().getAuthentication().getPrincipal());
+      HealthInsurance patientHealthInsurance =
+          patientService
+              .getPatientById(currentUser.getId())
+              .orElseThrow(UserNotFoundException::new)
+              .getHealthInsurance();
 
       mav.addObject("patientHealthInsurance", patientHealthInsurance);
-    }else {
+    } else {
       mav.addObject("patientHealthInsurance", null);
     }
 
@@ -116,11 +123,9 @@ public class HomeController {
     mav.addObject("totalPages", doctors.getContent().size() == 0 ? 1 : doctors.getTotalPages());
 
     // Only patients can book appointments
-    boolean notLogged=PawAuthUserDetails.getRole().equals(UserRoles.ROLE_NULL);
+    boolean notLogged = PawAuthUserDetails.getRole().equals(UserRoles.ROLE_NULL);
     mav.addObject("notLogged", notLogged);
-    boolean canBook =
-        PawAuthUserDetails.getRole().equals(UserRoles.ROLE_PATIENT)
-            || notLogged;
+    boolean canBook = PawAuthUserDetails.getRole().equals(UserRoles.ROLE_PATIENT) || notLogged;
     mav.addObject("canBook", canBook);
 
     return mav;
