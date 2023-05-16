@@ -57,7 +57,9 @@ public class RowMappers {
                     rs.getString("password"),
                     rs.getString("first_name"),
                     rs.getString("last_name"),
-                    rs.getLong("profile_picture_id"),
+                    rs.getObject("profile_picture_id") == null
+                        ? null
+                        : rs.getLong("profile_picture_id"),
                     new ArrayList<>(),
                     specialty,
                     location,
@@ -93,7 +95,9 @@ public class RowMappers {
             rs.getString("patient_password"),
             rs.getString("patient_first_name"),
             rs.getString("patient_last_name"),
-            rs.getLong("patient_profile_picture_id"),
+            rs.getObject("patient_profile_picture_id") == null
+                ? null
+                : rs.getLong("patient_profile_picture_id"),
             healthInsurance);
       };
 
@@ -135,7 +139,10 @@ public class RowMappers {
             String doctorPassword = rs.getString("password");
             String doctorFirstName = rs.getString("first_name");
             String doctorLastName = rs.getString("last_name");
-            long doctorPfpId = rs.getLong("profile_picture_id");
+            Long doctorPfpId =
+                rs.getObject("profile_picture_id") == null
+                    ? null
+                    : rs.getLong("profile_picture_id");
 
             Specialty specialty = specialties[rs.getInt("specialty_code")];
 
