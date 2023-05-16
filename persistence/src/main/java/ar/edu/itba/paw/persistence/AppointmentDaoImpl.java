@@ -1,8 +1,6 @@
 package ar.edu.itba.paw.persistence;
 
 import ar.edu.itba.paw.interfaces.persistence.AppointmentDao;
-import ar.edu.itba.paw.interfaces.persistence.DoctorDao;
-import ar.edu.itba.paw.interfaces.persistence.PatientDao;
 import ar.edu.itba.paw.models.Appointment;
 import ar.edu.itba.paw.models.AppointmentStatus;
 import ar.edu.itba.paw.models.Doctor;
@@ -26,21 +24,16 @@ import org.springframework.stereotype.Repository;
 @Repository
 public class AppointmentDaoImpl implements AppointmentDao {
 
-  private final PatientDao patientDao;
-  private final DoctorDao doctorDao;
-
   private final JdbcTemplate jdbcTemplate;
   private final SimpleJdbcInsert appointmentInsert;
 
   @Autowired
-  public AppointmentDaoImpl(DataSource ds, PatientDao patientDao, DoctorDao doctorDao) {
+  public AppointmentDaoImpl(DataSource ds) {
     this.jdbcTemplate = new JdbcTemplate(ds);
     this.appointmentInsert =
         new SimpleJdbcInsert(ds)
             .withTableName("appointment")
             .usingGeneratedKeyColumns("appointment_id");
-    this.patientDao = patientDao;
-    this.doctorDao = doctorDao;
   }
 
   // ========================== Inserts ==========================
@@ -96,7 +89,7 @@ public class AppointmentDaoImpl implements AppointmentDao {
             .where("appointment_id = '" + appointmentId + "'")
             .build();
 
-    return jdbcTemplate.query(query, RowMappers.APPOINTMENT_MAPPER).stream().findFirst();
+    return jdbcTemplate.query(query, RowMappers.APPOINTMENT_EXTRACTOR).stream().findFirst();
   }
 
   @Override
@@ -111,7 +104,7 @@ public class AppointmentDaoImpl implements AppointmentDao {
             .where("appointment_time = " + timeBlockToSmallInt(timeBlock))
             .build();
 
-    return jdbcTemplate.query(query, RowMappers.APPOINTMENT_MAPPER).stream().findFirst();
+    return jdbcTemplate.query(query, RowMappers.APPOINTMENT_EXTRACTOR).stream().findFirst();
   }
 
   @Override
@@ -125,7 +118,7 @@ public class AppointmentDaoImpl implements AppointmentDao {
             .orderByAsc("appointment_time")
             .build();
 
-    return jdbcTemplate.query(query, RowMappers.APPOINTMENT_MAPPER);
+    return jdbcTemplate.query(query, RowMappers.APPOINTMENT_EXTRACTOR);
   }
 
   @Override
@@ -139,7 +132,7 @@ public class AppointmentDaoImpl implements AppointmentDao {
             .orderByAsc("appointment_time")
             .build();
 
-    return jdbcTemplate.query(query, RowMappers.APPOINTMENT_MAPPER);
+    return jdbcTemplate.query(query, RowMappers.APPOINTMENT_EXTRACTOR);
   }
 
   @Override
@@ -156,7 +149,7 @@ public class AppointmentDaoImpl implements AppointmentDao {
         appointmentsQuery(doctorId, true, status, from, to, page, pageSize).build();
 
     List<Appointment> appointments =
-        jdbcTemplate.query(appointmentsQuery, RowMappers.APPOINTMENT_MAPPER);
+        jdbcTemplate.query(appointmentsQuery, RowMappers.APPOINTMENT_EXTRACTOR);
 
     // Get the total number of appointments for the doctor
     String appointmentsCountQuery =
@@ -181,7 +174,7 @@ public class AppointmentDaoImpl implements AppointmentDao {
         appointmentsQuery(patientId, false, status, from, to, page, pageSize).build();
 
     List<Appointment> appointments =
-        jdbcTemplate.query(appointmentsQuery, RowMappers.APPOINTMENT_MAPPER);
+        jdbcTemplate.query(appointmentsQuery, RowMappers.APPOINTMENT_EXTRACTOR);
 
     // Get the total number of appointments for the patient
     String appointmentsCountQuery =

@@ -107,22 +107,20 @@ public class RowMappers {
               rs.getString("last_name"),
               rs.getObject("profile_picture_id") == null ? null : rs.getLong("profile_picture_id"));
 
-  protected static final ResultSetExtractor<List<Appointment>> APPOINTMENT_MAPPER =
+  protected static final ResultSetExtractor<List<Appointment>> APPOINTMENT_EXTRACTOR =
       (rs) -> {
-        List<Appointment> appointments = new ArrayList<>();
+        Map<Long, Appointment> appointments = new HashMap<>();
+
         Specialty[] specialties = Specialty.values();
         HealthInsurance[] healthInsurances = HealthInsurance.values();
         City[] cities = City.values();
 
         int rowNum = 0;
-        long currentAppointmentId = 0;
-        Appointment currentAppointment = null;
 
         while (rs.next()) {
-          if (currentAppointmentId != rs.getLong("appointment_id")) {
+          long appointmentId = rs.getLong("appointment_id");
 
-            currentAppointmentId = rs.getLong("appointment_id");
-
+          if (appointments.get(appointmentId) == null) {
             Patient patient = RowMappers.PATIENT_MAPPER.mapRow(rs, rowNum);
 
             LocalDate date = rs.getDate("appointment_date").toLocalDate();
@@ -138,9 +136,6 @@ public class RowMappers {
             String doctorFirstName = rs.getString("first_name");
             String doctorLastName = rs.getString("last_name");
             long doctorPfpId = rs.getLong("profile_picture_id");
-
-            List<HealthInsurance> doctorHealthInsurances = new ArrayList<>();
-            doctorHealthInsurances.add(healthInsurances[rs.getInt("health_insurance_code")]);
 
             Specialty specialty = specialties[rs.getInt("specialty_code")];
 
@@ -167,14 +162,14 @@ public class RowMappers {
                     doctorFirstName,
                     doctorLastName,
                     doctorPfpId,
-                    doctorHealthInsurances,
+                    new ArrayList<>(),
                     specialty,
                     location,
                     attendingHours);
 
-            currentAppointment =
+            Appointment appointment =
                 new Appointment(
-                    currentAppointmentId,
+                    appointmentId,
                     patient,
                     doctor,
                     date,
@@ -182,19 +177,18 @@ public class RowMappers {
                     status,
                     description,
                     cancelDesc);
-            appointments.add(currentAppointment);
-          } else {
-            if (currentAppointment != null) {
-              currentAppointment
-                  .getDoctor()
-                  .getHealthInsurances()
-                  .add(healthInsurances[rs.getInt("health_insurance_code")]);
-            }
+            appointments.put(appointmentId, appointment);
           }
+
+          appointments
+              .get(appointmentId)
+              .getDoctor()
+              .getHealthInsurances()
+              .add(healthInsurances[rs.getInt("health_insurance_code")]);
 
           rowNum++;
         }
-        System.out.println(appointments);
-        return appointments;
+
+        return new ArrayList<>(appointments.values());
       };
 }

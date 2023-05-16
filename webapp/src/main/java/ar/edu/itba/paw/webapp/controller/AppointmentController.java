@@ -1,8 +1,6 @@
 package ar.edu.itba.paw.webapp.controller;
 
 import ar.edu.itba.paw.interfaces.services.AppointmentService;
-import ar.edu.itba.paw.interfaces.services.DoctorService;
-import ar.edu.itba.paw.interfaces.services.PatientService;
 import ar.edu.itba.paw.models.Appointment;
 import ar.edu.itba.paw.models.AppointmentStatus;
 import ar.edu.itba.paw.webapp.auth.PawAuthUserDetails;
@@ -28,17 +26,11 @@ import org.springframework.web.servlet.ModelAndView;
 @Controller
 public class AppointmentController {
   private final AppointmentService appointmentService;
-  private final PatientService patientService;
-  private final DoctorService doctorService;
 
   @Autowired
   public AppointmentController(
-      final AppointmentService appointmentService,
-      final PatientService patientService,
-      final DoctorService doctorService) {
+      final AppointmentService appointmentService) {
     this.appointmentService = appointmentService;
-    this.patientService = patientService;
-    this.doctorService = doctorService;
   }
 
   // ==================================  My Appointments   ========================================
