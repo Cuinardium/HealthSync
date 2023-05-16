@@ -4,9 +4,16 @@ import ar.edu.itba.paw.models.Image;
 import java.util.Optional;
 
 public interface ImageDao {
-  Optional<Image> getImage(long id);
+
+  // =============== Inserts ===============
 
   Image createImage(Image image);
-
+  
+  // =============== Updates ===============
+  
   Image updateImage(Long imageId, Image image);
+
+  // =============== Queries ===============
+  
+  Optional<Image> getImage(long id);
 }

@@ -12,12 +12,21 @@ import java.util.Optional;
 
 public interface AppointmentDao {
 
+  // =============== Inserts ===============
+
   Appointment createAppointment(
       Patient patient,
       Doctor doctor,
       LocalDate date,
       ThirtyMinuteBlock timeBlock,
       String description);
+
+  // =============== Updates ===============
+
+  Appointment updateAppointment(
+      long appointmentId, AppointmentStatus status, String cancelDescription);
+
+  // =============== Queries ===============
 
   Optional<Appointment> getAppointmentById(long appointmentId);
 
@@ -42,7 +51,4 @@ public interface AppointmentDao {
       LocalDate to,
       int page,
       int pageSize);
-
-  Appointment updateAppointment(
-      long appointmentId, AppointmentStatus status, String cancelDescription);
 }

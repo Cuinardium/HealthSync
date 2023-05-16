@@ -1,39 +1,50 @@
 package ar.edu.itba.paw.interfaces.persistence;
 
 import ar.edu.itba.paw.models.AttendingHours;
+import ar.edu.itba.paw.models.City;
 import ar.edu.itba.paw.models.Doctor;
+import ar.edu.itba.paw.models.HealthInsurance;
 import ar.edu.itba.paw.models.Page;
+import ar.edu.itba.paw.models.Specialty;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
 public interface DoctorDao {
-  public long createDoctor(long userId, int specialtyCode, AttendingHours attendingHours);
+
+  // =============== Inserts ===============
+
+  public Doctor createDoctor(
+      long userId,
+      Specialty specialty,
+      City city,
+      String address,
+      List<HealthInsurance> healthInsurances,
+      AttendingHours attendingHours);
+
+  // =============== Updates ===============
+
+  public Doctor updateDoctorInfo(
+      long doctorId,
+      Specialty specialty,
+      City city,
+      String address,
+      List<HealthInsurance> healthInsurances,
+      AttendingHours attendingHours);
+
+  // =============== Queries ===============
 
   public Optional<Doctor> getDoctorById(long id);
 
   public Page<Doctor> getFilteredDoctors(
       String name,
-      int specialtyCode,
-      int cityCode,
-      int healthInsuranceCode,
+      Specialty specialtyCode,
+      City city,
+      HealthInsurance healthInsurance,
       int page,
       int pageSize);
 
   public List<Doctor> getDoctors();
-
-  public void addLocation(long doctorId, long locationId);
-
-  public void addHealthInsurance(long doctorId, int healthInsuranceCode);
-
-  public void updateDoctorInfo(
-      long doctorId,
-      List<Integer> healthInsuranceCodes,
-      int specialtyCode,
-      int cityCode,
-      String address);
-
-  public void updateDoctorAttendingHours(long doctorId, AttendingHours attendingHours);
 
   // Get used specialties and health insurances
   public Map<Integer, Integer> getUsedHealthInsurances();
