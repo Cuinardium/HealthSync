@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.servlet.ModelAndView;
 
 @ControllerAdvice
-public class ExceptionController {
+public class ExceptionControllerAdvice {
   @ExceptionHandler(ImageNotFoundException.class)
   @ResponseStatus(code = HttpStatus.NOT_FOUND)
   public ModelAndView noSuchImage(ImageNotFoundException e) {

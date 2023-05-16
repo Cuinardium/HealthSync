@@ -54,6 +54,7 @@ public class Doctor extends User {
         + location
         + ", attendingHours="
         + attendingHours
+        + " "
         + super.toString()
         + "]";
   }

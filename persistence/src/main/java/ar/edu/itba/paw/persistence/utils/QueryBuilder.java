@@ -1,4 +1,4 @@
-package ar.edu.itba.paw.persistence;
+package ar.edu.itba.paw.persistence.utils;
 
 import java.util.ArrayList;
 import java.util.Arrays;

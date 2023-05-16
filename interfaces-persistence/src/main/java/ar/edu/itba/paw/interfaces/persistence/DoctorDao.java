@@ -26,10 +26,14 @@ public interface DoctorDao {
 
   public void addHealthInsurance(long doctorId, int healthInsuranceCode);
 
-  public void updateInformation(
-      long doctorId, List<Integer> healthInsuranceCodes, int specialtyCode, int cityCode, String address);
+  public void updateDoctorInfo(
+      long doctorId,
+      List<Integer> healthInsuranceCodes,
+      int specialtyCode,
+      int cityCode,
+      String address);
 
-  public void updateAttendingHours(long doctorId, AttendingHours attendingHours);
+  public void updateDoctorAttendingHours(long doctorId, AttendingHours attendingHours);
 
   // Get used specialties and health insurances
   public Map<Integer, Integer> getUsedHealthInsurances();

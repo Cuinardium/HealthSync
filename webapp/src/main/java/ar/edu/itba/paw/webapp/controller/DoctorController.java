@@ -42,7 +42,7 @@ public class DoctorController {
 
   @RequestMapping(value = "/{id:\\d+}/detailed_doctor", method = RequestMethod.GET)
   public ModelAndView detailedDoctor(
-      @PathVariable("id") final int doctorId,
+      @PathVariable("id") final long doctorId,
       @ModelAttribute("appointmentForm") final AppointmentForm appointmentForm) {
 
     Doctor doctor = doctorService.getDoctorById(doctorId).orElseThrow(UserNotFoundException::new);
@@ -71,7 +71,7 @@ public class DoctorController {
 
   @RequestMapping(value = "/{id:\\d+}/detailed_doctor", method = RequestMethod.POST)
   public ModelAndView sendAppointment(
-      @PathVariable("id") final int doctorId,
+      @PathVariable("id") final long doctorId,
       @Valid @ModelAttribute("appointmentForm") final AppointmentForm appointmentForm,
       final BindingResult errors) {
 
@@ -93,6 +93,10 @@ public class DoctorController {
               appointmentForm.getDescription());
 
       LOGGER.info("Created {}", appointment);
+    } catch (IllegalStateException e) {
+      // No deberia pasar
+      // TODO: log?
+      throw e;
     } catch (RuntimeException e) {
       // TODO: CORRECT exception handling
       LOGGER.error(

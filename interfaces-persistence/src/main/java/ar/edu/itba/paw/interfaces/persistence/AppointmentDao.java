@@ -1,23 +1,27 @@
-package ar.edu.itba.paw.interfaces.services;
+package ar.edu.itba.paw.interfaces.persistence;
 
 import ar.edu.itba.paw.models.Appointment;
 import ar.edu.itba.paw.models.AppointmentStatus;
+import ar.edu.itba.paw.models.Doctor;
 import ar.edu.itba.paw.models.Page;
+import ar.edu.itba.paw.models.Patient;
 import ar.edu.itba.paw.models.ThirtyMinuteBlock;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
-public interface AppointmentService {
+public interface AppointmentDao {
 
   Appointment createAppointment(
-      long patientId,
-      long doctorId,
+      Patient patient,
+      Doctor doctor,
       LocalDate date,
       ThirtyMinuteBlock timeBlock,
       String description);
 
   Optional<Appointment> getAppointmentById(long appointmentId);
+
+  Optional<Appointment> getAppointment(long doctorId, LocalDate date, ThirtyMinuteBlock timeBlock);
 
   List<Appointment> getAppointmentsForPatient(long patientId);
 
@@ -39,10 +43,6 @@ public interface AppointmentService {
       int page,
       int pageSize);
 
-  void updateAppointmentStatus(long appointmentId, AppointmentStatus status,String cancelDescription, long requesterId);
-
-  public List<ThirtyMinuteBlock> getAvailableHoursForDoctorOnDate(long doctorId, LocalDate date);
-
-  public List<List<ThirtyMinuteBlock>> getAvailableHoursForDoctorOnRange(
-      long doctorId, LocalDate from, LocalDate to);
+  Appointment updateAppointment(
+      long appointmentId, AppointmentStatus status, String cancelDescription);
 }

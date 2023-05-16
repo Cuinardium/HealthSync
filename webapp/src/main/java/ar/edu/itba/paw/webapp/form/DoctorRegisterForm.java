@@ -7,13 +7,11 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
-
 import org.hibernate.validator.constraints.NotEmpty;
 
 public class DoctorRegisterForm extends UserRegisterForm {
 
-  @NotEmpty
-  private List<Integer> healthInsuranceCodes = new ArrayList<>();
+  @NotEmpty private List<Integer> healthInsuranceCodes = new ArrayList<>();
 
   @ExistsInEnum(enumClass = City.class)
   private Integer cityCode = -1;

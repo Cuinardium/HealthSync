@@ -1,12 +1,8 @@
 package ar.edu.itba.paw.webapp.controller;
 
 import ar.edu.itba.paw.interfaces.services.AppointmentService;
-import ar.edu.itba.paw.interfaces.services.DoctorService;
-import ar.edu.itba.paw.interfaces.services.PatientService;
 import ar.edu.itba.paw.models.Appointment;
 import ar.edu.itba.paw.models.AppointmentStatus;
-import ar.edu.itba.paw.models.Doctor;
-import ar.edu.itba.paw.models.Patient;
 import ar.edu.itba.paw.webapp.auth.PawAuthUserDetails;
 import ar.edu.itba.paw.webapp.auth.UserRoles;
 import ar.edu.itba.paw.webapp.exceptions.AppointmentForbiddenException;
@@ -30,17 +26,10 @@ import org.springframework.web.servlet.ModelAndView;
 @Controller
 public class AppointmentController {
   private final AppointmentService appointmentService;
-  private final PatientService patientService;
-  private final DoctorService doctorService;
 
   @Autowired
-  public AppointmentController(
-      final AppointmentService appointmentService,
-      final PatientService patientService,
-      final DoctorService doctorService) {
+  public AppointmentController(final AppointmentService appointmentService) {
     this.appointmentService = appointmentService;
-    this.patientService = patientService;
-    this.doctorService = doctorService;
   }
 
   // ==================================  My Appointments   ========================================
@@ -135,26 +124,15 @@ public class AppointmentController {
         appointmentService
             .getAppointmentById(appointmentId)
             .orElseThrow(AppointmentNotFoundException::new);
-
-    // Get Appointment patient
-    Patient patient =
-        patientService
-            .getPatientById(appointment.getPatientId())
-            .orElseThrow(UserNotFoundException::new);
-
-    Doctor doctor =
-        doctorService
-            .getDoctorById(appointment.getDoctorId())
-            .orElseThrow(UserNotFoundException::new);
-
-    // If user is nor the patient nor the doctor, unauthorized
-    if (PawAuthUserDetails.getCurrentUserId() != patient.getId()
-        && PawAuthUserDetails.getCurrentUserId() != doctor.getId()) {
+    // If user is neither the patient nor the doctor, unauthorized
+    if (PawAuthUserDetails.getCurrentUserId() != appointment.getPatient().getId()
+        && PawAuthUserDetails.getCurrentUserId() != appointment.getDoctor().getId()) {
       throw new AppointmentForbiddenException();
     }
 
     ModelAndView mav = new ModelAndView("appointment/detailedAppointment");
     List<AllowedActions> allowedActions = new ArrayList<>();
+
     if (appointment.getStatus().equals(AppointmentStatus.CONFIRMED)) {
       allowedActions.add(AllowedActions.CANCEL);
     }
@@ -167,11 +145,17 @@ public class AppointmentController {
         "appointmentDateTime",
         appointment.getDate() + " " + appointment.getTimeBlock().getBlockBeginning());
     mav.addObject("appointmentStatusMessageId", appointment.getStatus().getMessageID());
-    mav.addObject("patientName", patient.getFirstName() + " " + patient.getLastName());
-    mav.addObject("doctorName", doctor.getFirstName() + " " + doctor.getLastName());
-    mav.addObject("cityMessageId", doctor.getLocation().getCity().getMessageID());
-    mav.addObject("address", doctor.getLocation().getAddress());
-    mav.addObject("patientHealthInsuranceMessageId", patient.getHealthInsurance().getMessageID());
+    mav.addObject(
+        "patientName",
+        appointment.getPatient().getFirstName() + " " + appointment.getPatient().getLastName());
+    mav.addObject(
+        "doctorName",
+        appointment.getDoctor().getFirstName() + " " + appointment.getDoctor().getLastName());
+    mav.addObject("cityMessageId", appointment.getDoctor().getLocation().getCity().getMessageID());
+    mav.addObject("address", appointment.getDoctor().getLocation().getAddress());
+    mav.addObject(
+        "patientHealthInsuranceMessageId",
+        appointment.getPatient().getHealthInsurance().getMessageID());
 
     mav.addObject("selectedTab", selectedTab);
     mav.addObject("from", from);
@@ -198,7 +182,6 @@ public class AppointmentController {
                 -1,
                 -1)
             .getContent();
-
 
     List<Appointment> cancelledAppointments =
         appointmentService
@@ -278,7 +261,6 @@ public class AppointmentController {
                 100)
             .getContent();
 
-
     List<Appointment> cancelledAppointments =
         appointmentService
             .getFilteredAppointmentsForPatient(
@@ -318,12 +300,12 @@ public class AppointmentController {
             "appointments.confirmed"));
 
     tabs.add(
-            new AppointmentTab(
-                    "history",
-                    (x) -> (x == 4),
-                    completedAppointments,
-                    new ArrayList<>(),
-                    "appointments.history"));
+        new AppointmentTab(
+            "history",
+            (x) -> (x == 4),
+            completedAppointments,
+            new ArrayList<>(),
+            "appointments.history"));
 
     // Patient can only see rejected, cancelled and completed appointments
     tabs.add(
@@ -333,7 +315,6 @@ public class AppointmentController {
             cancelledAppointments,
             new ArrayList<>(),
             "appointments.cancelled"));
-
 
     // Add values to model
     mav.addObject("from", fromDate == null ? "" : fromDate.toString());

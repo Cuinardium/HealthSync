@@ -209,7 +209,9 @@
 
         <module>persistence</module>
 
-        <module>interfaces</module>
+        <module>interfaces-services</module>
+
+        <module>interfaces-persistence</module>
     </modules>
 
 </project>

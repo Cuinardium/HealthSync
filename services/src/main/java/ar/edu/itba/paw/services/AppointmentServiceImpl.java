@@ -45,15 +45,12 @@ public class AppointmentServiceImpl implements AppointmentService {
   @Transactional
   @Override
   public Appointment createAppointment(
-      long patientId,
-      long doctorId,
+      Long patientId,
+      Long doctorId,
       LocalDate date,
       ThirtyMinuteBlock timeBlock,
-      String description) {
-
-    // TODO: error handling
-    Doctor doctor = doctorService.getDoctorById(doctorId).orElseThrow(RuntimeException::new);
-    Patient patient = patientService.getPatientById(patientId).orElseThrow(RuntimeException::new);
+      String description)
+      throws IllegalStateException {
 
     Optional<Appointment> possibleAppointment =
         appointmentDao.getAppointment(doctorId, date, timeBlock);
@@ -64,14 +61,15 @@ public class AppointmentServiceImpl implements AppointmentService {
       throw new RuntimeException();
     }
 
+    Patient patient =
+        patientService.getPatientById(patientId).orElseThrow(IllegalStateException::new);
+    Doctor doctor = doctorService.getDoctorById(doctorId).orElseThrow(IllegalStateException::new);
     Appointment appointment =
-        appointmentDao.createAppointment(patientId, doctorId, date, timeBlock, description);
+        appointmentDao.createAppointment(patient, doctor, date, timeBlock, description);
 
     // TODO: locale should be determined by the patient's language
-    mailService.sendAppointmentRequestMail(
-        appointment, doctor, patient, LocaleContextHolder.getLocale());
-    mailService.sendAppointmentReminderMail(
-        appointment, doctor, patient, LocaleContextHolder.getLocale());
+    mailService.sendAppointmentRequestMail(appointment, LocaleContextHolder.getLocale());
+    mailService.sendAppointmentReminderMail(appointment, LocaleContextHolder.getLocale());
 
     return appointment;
   }
@@ -112,25 +110,19 @@ public class AppointmentServiceImpl implements AppointmentService {
       throw new RuntimeException();
     }
 
-    appointmentDao.updateAppointmentStatus(appointmentId, status, cancelDescription);
+    appointmentDao.updateAppointment(appointmentId, status, cancelDescription);
 
     Appointment newAppointment =
         getAppointmentById(appointmentId).orElseThrow(RuntimeException::new);
 
     // TODO: error handling
-    Doctor doctor =
-        doctorService.getDoctorById(appointment.getDoctorId()).orElseThrow(RuntimeException::new);
-    Patient patient =
-        patientService
-            .getPatientById(appointment.getPatientId())
-            .orElseThrow(RuntimeException::new);
     Locale locale = LocaleContextHolder.getLocale();
 
     if (status == AppointmentStatus.CANCELLED) {
       if (requesterId == appointment.getPatientId()) {
-        mailService.sendAppointmentCancelledByPatientMail(newAppointment, doctor, patient, locale);
+        mailService.sendAppointmentCancelledByPatientMail(newAppointment, locale);
       } else {
-        mailService.sendAppointmentCancelledByDoctorMail(newAppointment, doctor, patient, locale);
+        mailService.sendAppointmentCancelledByDoctorMail(newAppointment, locale);
       }
     }
   }

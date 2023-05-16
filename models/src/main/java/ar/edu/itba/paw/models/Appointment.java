@@ -8,10 +8,6 @@ public class Appointment {
   public String toString() {
     return "Appointment [id="
         + id
-        + ", patientId="
-        + patientId
-        + ", doctorId="
-        + doctorId
         + ", date="
         + date
         + ", timeBlock="
@@ -20,14 +16,18 @@ public class Appointment {
         + status
         + ", description="
         + description
-            + ", cancelDesc="
-            +cancelDesc
+        + ", cancelDesc="
+        + cancelDesc
+        + " "
+        + patient
+        + " "
+        + doctor
         + "]";
   }
 
   private final long id;
-  private final long patientId;
-  private final long doctorId;
+  private final Patient patient;
+  private final Doctor doctor;
 
   private final LocalDate date;
   private final ThirtyMinuteBlock timeBlock;
@@ -39,21 +39,21 @@ public class Appointment {
 
   public Appointment(
       long id,
-      long patientId,
-      long doctorId,
+      Patient patient,
+      Doctor doctor,
       LocalDate date,
       ThirtyMinuteBlock timeBlock,
       AppointmentStatus status,
       String description,
       String cancelDesc) {
     this.id = id;
-    this.patientId = patientId;
-    this.doctorId = doctorId;
+    this.patient = patient;
+    this.doctor = doctor;
     this.date = date;
     this.timeBlock = timeBlock;
     this.status = status;
     this.description = description;
-    this.cancelDesc=cancelDesc;
+    this.cancelDesc = cancelDesc;
   }
 
   public long getId() {
@@ -61,11 +61,19 @@ public class Appointment {
   }
 
   public long getPatientId() {
-    return patientId;
+    return patient.getId();
+  }
+
+  public Patient getPatient() {
+    return patient;
   }
 
   public long getDoctorId() {
-    return doctorId;
+    return doctor.getId();
+  }
+
+  public Doctor getDoctor() {
+    return doctor;
   }
 
   public LocalDate getDate() {
@@ -84,5 +92,7 @@ public class Appointment {
     return description;
   }
 
-  public String getCancelDesc() {return cancelDesc;}
+  public String getCancelDesc() {
+    return cancelDesc;
+  }
 }

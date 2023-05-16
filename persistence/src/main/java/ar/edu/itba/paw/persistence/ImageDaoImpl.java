@@ -2,13 +2,14 @@ package ar.edu.itba.paw.persistence;
 
 import ar.edu.itba.paw.interfaces.persistence.ImageDao;
 import ar.edu.itba.paw.models.Image;
+import ar.edu.itba.paw.persistence.utils.QueryBuilder;
+import ar.edu.itba.paw.persistence.utils.UpdateBuilder;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import javax.sql.DataSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
 
@@ -31,9 +32,6 @@ public class ImageDaoImpl implements ImageDao {
             .usingGeneratedKeyColumns(TABLE_PKEY_COLUMN);
   }
 
-  private static final RowMapper<Image> ROW_MAPPER =
-      (rs, rowNum) -> new Image(rs.getBytes(TABLE_BYTEA_COLUMN));
-
   @Override
   public Optional<Image> getImage(long id) {
     String query =
@@ -42,26 +40,26 @@ public class ImageDaoImpl implements ImageDao {
             .from(TABLE_NAME)
             .where(TABLE_PKEY_COLUMN + " = " + id)
             .build();
-    return jdbcTemplate.query(query, ROW_MAPPER).stream().findFirst();
+    return jdbcTemplate.query(query, RowMappers.IMAGE_MAPPER).stream().findFirst();
   }
 
   @Override
-  public long uploadImage(Image image) {
-    // TODO: throw IllegalState?
+  public Image createImage(Image image) {
+    // TODO: throw IllegalArgument?
     if (image == null) {
-      return -1;
+      return null;
     }
     Map<String, Object> data = new HashMap<>();
     data.put(TABLE_BYTEA_COLUMN, image.getBytes());
     final Number key = imageInsert.executeAndReturnKey(data);
-    return key.longValue();
+    return getImage(key.longValue()).orElseThrow(IllegalStateException::new);
   }
 
   @Override
-  public void updateImage(Long pfpId, Image image) {
-    // TODO: throw illegalState?
+  public Image updateImage(Long pfpId, Image image) {
+    // TODO: throw IllegalArgument?
     if (pfpId == null || image == null) {
-      return;
+      return null;
     }
 
     String updateQuery =
@@ -72,6 +70,7 @@ public class ImageDaoImpl implements ImageDao {
             .build();
 
     jdbcTemplate.update(updateQuery);
+    return getImage(pfpId).orElseThrow(IllegalStateException::new);
   }
 
   private String getHexString(byte[] bytea) {

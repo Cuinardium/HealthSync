@@ -6,7 +6,7 @@ import java.util.Optional;
 public interface ImageDao {
   Optional<Image> getImage(long id);
 
-  long uploadImage(Image image);
+  Image createImage(Image image);
 
-  void updateImage(Long pfpId, Image image);
+  Image updateImage(Long imageId, Image image);
 }

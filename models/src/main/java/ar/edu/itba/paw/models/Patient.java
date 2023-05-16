@@ -10,7 +10,7 @@ public class Patient extends User {
       String password,
       String firstName,
       String lastName,
-      long profilePictureId,
+      Long profilePictureId,
       HealthInsurance healthInsurance) {
     super(id, email, password, firstName, lastName, profilePictureId);
     this.healthInsurance = healthInsurance;
@@ -22,6 +22,6 @@ public class Patient extends User {
 
   @Override
   public String toString() {
-    return "Patient [healthInsurance=" + healthInsurance + super.toString() + "]";
+    return "Patient [healthInsurance=" + healthInsurance + " " + super.toString() + "]";
   }
 }

@@ -26,7 +26,7 @@ public class ImageServiceImpl implements ImageService {
   @Transactional
   @Override
   public long uploadImage(Image image) {
-    return imageDao.uploadImage(image);
+    return imageDao.createImage(image).getImageId();
   }
 
   @Transactional

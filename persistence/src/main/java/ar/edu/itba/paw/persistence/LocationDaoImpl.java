@@ -3,6 +3,7 @@ package ar.edu.itba.paw.persistence;
 import ar.edu.itba.paw.interfaces.persistence.LocationDao;
 import ar.edu.itba.paw.models.City;
 import ar.edu.itba.paw.models.Location;
+import ar.edu.itba.paw.persistence.utils.QueryBuilder;
 import java.sql.ResultSet;
 import java.util.HashMap;
 import java.util.Map;
@@ -10,19 +11,11 @@ import java.util.Optional;
 import javax.sql.DataSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
 
 @Repository
 public class LocationDaoImpl implements LocationDao {
-
-  private static final RowMapper<Location> ROW_MAPPER =
-      (rs, rowNum) -> {
-        City city = City.values()[rs.getInt("city_code")];
-
-        return new Location(rs.getLong("doctor_location_id"), city, rs.getString("address"));
-      };
 
   private final JdbcTemplate jdbcTemplate;
   private final SimpleJdbcInsert jdbcInsert;
@@ -38,16 +31,15 @@ public class LocationDaoImpl implements LocationDao {
   }
 
   @Override
-  public long createLocation(int cityCode, String address) {
+  public Location createLocation(int cityCode, String address) {
 
     Map<String, Object> args = new HashMap<>();
 
     args.put("city_code", cityCode);
     args.put("address", address);
 
-    Number id = jdbcInsert.executeAndReturnKey(args);
-
-    return id.longValue();
+    final Number id = jdbcInsert.executeAndReturnKey(args);
+    return new Location(id.longValue(), City.getCity(cityCode), address);
   }
 
   @Override
@@ -59,7 +51,7 @@ public class LocationDaoImpl implements LocationDao {
             .where("doctor_location_id = " + id)
             .build();
 
-    return jdbcTemplate.query(query, ROW_MAPPER).stream().findFirst();
+    return jdbcTemplate.query(query, RowMappers.LOCATION_MAPPER).stream().findFirst();
   }
 
   // Get all city codes present in the database

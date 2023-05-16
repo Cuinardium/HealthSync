@@ -24,7 +24,7 @@ public class LocationServiceImpl implements LocationService {
   @Transactional
   @Override
   public long createLocation(int cityCode, String address) {
-    return locationDao.createLocation(cityCode, address);
+    return locationDao.createLocation(cityCode, address).getId();
   }
 
   @Override
