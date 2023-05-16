@@ -1,11 +1,25 @@
 .filtersContainer{
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
     justify-content: space-between;
     align-items: center;
+}
+
+select{
+    margin: 0.5rem 0;
 }
 
 .searchBarContainer{
     display: flex;
     flex-direction: row;
+    margin-bottom: 1.5rem;
+}
+
+select, input.btn{
+    box-sizing: border-box !important;
+}
+
+input.btn{
+    margin: 2rem 0;
+    width: -webkit-fill-available;
 }

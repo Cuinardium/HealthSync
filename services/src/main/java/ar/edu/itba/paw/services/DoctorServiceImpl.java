@@ -56,7 +56,7 @@ public class DoctorServiceImpl implements DoctorService {
     // Create user
     User user = userService.createUser(email, password, firstName, lastName);
     long userId = user.getId();
-    long pfpId = user.getProfilePictureId();
+    Long pfpId = user.getProfilePictureId();
 
     // Create Location
     long locationId = locationService.createLocation(cityCode, address);
