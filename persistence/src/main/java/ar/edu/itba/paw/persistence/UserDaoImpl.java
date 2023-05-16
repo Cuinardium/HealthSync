@@ -2,13 +2,14 @@ package ar.edu.itba.paw.persistence;
 
 import ar.edu.itba.paw.interfaces.persistence.UserDao;
 import ar.edu.itba.paw.models.User;
+import ar.edu.itba.paw.persistence.utils.QueryBuilder;
+import ar.edu.itba.paw.persistence.utils.UpdateBuilder;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import javax.sql.DataSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
 
@@ -16,16 +17,6 @@ import org.springframework.stereotype.Repository;
 public class UserDaoImpl implements UserDao {
 
   private static final long DEFAULT_PFP_ID = 1;
-  private static final RowMapper<User> ROW_MAPPER =
-      (rs, rowNum) ->
-          new User(
-              rs.getLong("user_id"),
-              rs.getString("email"),
-              rs.getString("password"),
-              rs.getString("first_name"),
-              rs.getString("last_name"),
-              rs.getObject("profile_picture_id") == null ? null : rs.getLong("profile_picture_id"));
-
   private final JdbcTemplate jdbcTemplate;
   private final SimpleJdbcInsert userInsert;
 
@@ -85,13 +76,13 @@ public class UserDaoImpl implements UserDao {
 
     String query = new QueryBuilder().select().from("users").where("user_id = " + id).build();
 
-    return jdbcTemplate.query(query, ROW_MAPPER).stream().findFirst();
+    return jdbcTemplate.query(query, RowMappers.USER_MAPPER).stream().findFirst();
   }
 
   @Override
   public Optional<User> findByEmail(String email) {
     String query =
         new QueryBuilder().select().from("users").where("email = '" + email + "'").build();
-    return jdbcTemplate.query(query, ROW_MAPPER).stream().findFirst();
+    return jdbcTemplate.query(query, RowMappers.USER_MAPPER).stream().findFirst();
   }
 }

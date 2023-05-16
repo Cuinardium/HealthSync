@@ -1,4 +1,4 @@
-package ar.edu.itba.paw.persistence;
+package ar.edu.itba.paw.persistence.utils;
 
 // Just like my class QueryBuilder, this class is used to build a query. However, this class is used
 // to build an update query.
@@ -49,7 +49,7 @@ public class UpdateBuilder {
         update.append(", ");
       }
     }
-    
+
     if (!whereConditions.isEmpty()) {
       update.append(" WHERE ").append(String.join(" AND ", whereConditions));
     }

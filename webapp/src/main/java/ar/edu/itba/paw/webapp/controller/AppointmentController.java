@@ -5,8 +5,6 @@ import ar.edu.itba.paw.interfaces.services.DoctorService;
 import ar.edu.itba.paw.interfaces.services.PatientService;
 import ar.edu.itba.paw.models.Appointment;
 import ar.edu.itba.paw.models.AppointmentStatus;
-import ar.edu.itba.paw.models.Doctor;
-import ar.edu.itba.paw.models.Patient;
 import ar.edu.itba.paw.webapp.auth.PawAuthUserDetails;
 import ar.edu.itba.paw.webapp.auth.UserRoles;
 import ar.edu.itba.paw.webapp.exceptions.AppointmentForbiddenException;
@@ -135,28 +133,16 @@ public class AppointmentController {
         appointmentService
             .getAppointmentById(appointmentId)
             .orElseThrow(AppointmentNotFoundException::new);
-
-    // Get Appointment patient
-    Patient patient =
-        patientService
-            .getPatientById(appointment.getPatientId())
-            .orElseThrow(UserNotFoundException::new);
-
-    Doctor doctor =
-        doctorService
-            .getDoctorById(appointment.getDoctorId())
-            .orElseThrow(UserNotFoundException::new);
-
-    // If user is nor the patient nor the doctor, unauthorized
-    if (PawAuthUserDetails.getCurrentUserId() != patient.getId()
-        && PawAuthUserDetails.getCurrentUserId() != doctor.getId()) {
+    // If user is neither the patient nor the doctor, unauthorized
+    if (PawAuthUserDetails.getCurrentUserId() != appointment.getPatient().getId()
+        && PawAuthUserDetails.getCurrentUserId() != appointment.getDoctor().getId()) {
       throw new AppointmentForbiddenException();
     }
 
     ModelAndView mav = new ModelAndView("appointment/detailedAppointment");
     List<AllowedActions> allowedActions = new ArrayList<>();
     if (appointment.getStatus().equals(AppointmentStatus.PENDING)) {
-      if (PawAuthUserDetails.getCurrentUserId() == doctor.getId()) {
+      if (PawAuthUserDetails.getCurrentUserId() == appointment.getDoctor().getId()) {
         allowedActions.add(AllowedActions.CONFIRM);
         allowedActions.add(AllowedActions.REJECT);
       }
@@ -172,11 +158,17 @@ public class AppointmentController {
         "appointmentDateTime",
         appointment.getDate() + " " + appointment.getTimeBlock().getBlockBeginning());
     mav.addObject("appointmentStatusMessageId", appointment.getStatus().getMessageID());
-    mav.addObject("patientName", patient.getFirstName() + " " + patient.getLastName());
-    mav.addObject("doctorName", doctor.getFirstName() + " " + doctor.getLastName());
-    mav.addObject("cityMessageId", doctor.getLocation().getCity().getMessageID());
-    mav.addObject("address", doctor.getLocation().getAddress());
-    mav.addObject("patientHealthInsuranceMessageId", patient.getHealthInsurance().getMessageID());
+    mav.addObject(
+        "patientName",
+        appointment.getPatient().getFirstName() + " " + appointment.getPatient().getLastName());
+    mav.addObject(
+        "doctorName",
+        appointment.getDoctor().getFirstName() + " " + appointment.getDoctor().getLastName());
+    mav.addObject("cityMessageId", appointment.getDoctor().getLocation().getCity().getMessageID());
+    mav.addObject("address", appointment.getDoctor().getLocation().getAddress());
+    mav.addObject(
+        "patientHealthInsuranceMessageId",
+        appointment.getPatient().getHealthInsurance().getMessageID());
 
     mav.addObject("selectedTab", selectedTab);
     mav.addObject("from", from);

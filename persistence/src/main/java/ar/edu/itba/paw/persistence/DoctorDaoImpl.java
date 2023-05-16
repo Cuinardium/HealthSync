@@ -2,34 +2,27 @@ package ar.edu.itba.paw.persistence;
 
 import ar.edu.itba.paw.interfaces.persistence.DoctorDao;
 import ar.edu.itba.paw.models.AttendingHours;
-import ar.edu.itba.paw.models.City;
 import ar.edu.itba.paw.models.Doctor;
-import ar.edu.itba.paw.models.HealthInsurance;
-import ar.edu.itba.paw.models.Location;
 import ar.edu.itba.paw.models.Page;
-import ar.edu.itba.paw.models.Specialty;
 import ar.edu.itba.paw.models.ThirtyMinuteBlock;
+import ar.edu.itba.paw.persistence.utils.DeleteBuilder;
+import ar.edu.itba.paw.persistence.utils.QueryBuilder;
+import ar.edu.itba.paw.persistence.utils.UpdateBuilder;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.time.DayOfWeek;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import javax.sql.DataSource;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
 
 @Repository
 public class DoctorDaoImpl implements DoctorDao {
 
-  private final ResultSetExtractor<List<Doctor>> doctorExtractor = new DoctorExtractor();
   private final JdbcTemplate jdbcTemplate;
   private final SimpleJdbcInsert doctorInsert;
   private final SimpleJdbcInsert doctorLocationInsert;
@@ -255,7 +248,7 @@ public class DoctorDaoImpl implements DoctorDao {
 
     String query = doctorQuery().where("doctor.doctor_id = " + id).build();
 
-    return jdbcTemplate.query(query, doctorExtractor).stream().findFirst();
+    return jdbcTemplate.query(query, RowMappers.DOCTOR_EXTRACTOR).stream().findFirst();
   }
 
   @Override
@@ -332,7 +325,7 @@ public class DoctorDaoImpl implements DoctorDao {
                 "subquery.doctor_id = health_insurance_accepted_by_doctor.doctor_id")
             .build();
 
-    List<Doctor> doctors = jdbcTemplate.query(query, doctorExtractor);
+    List<Doctor> doctors = jdbcTemplate.query(query, RowMappers.DOCTOR_EXTRACTOR);
 
     int totalDoctors = jdbcTemplate.queryForObject(doctorCountQuery.build(), Integer.class);
 
@@ -341,7 +334,7 @@ public class DoctorDaoImpl implements DoctorDao {
 
   @Override
   public List<Doctor> getDoctors() {
-    return jdbcTemplate.query(doctorQuery().build(), doctorExtractor);
+    return jdbcTemplate.query(doctorQuery().build(), RowMappers.DOCTOR_EXTRACTOR);
   }
 
   // Get used specialties and health insurances
@@ -438,77 +431,5 @@ public class DoctorDaoImpl implements DoctorDao {
         .innerJoin(
             "doctor_attending_hours",
             "doctor.attending_hours_id = doctor_attending_hours.attending_hours_id");
-  }
-
-  private class DoctorExtractor implements ResultSetExtractor<List<Doctor>> {
-
-    // Most significant 16 bits dont encode anything
-    // The 48 least significant bits encode 30 minute blocks
-    // If the bit is 1 the doctor is available, otherwise it is not
-    // The least significant bit encodes the (0:00, 0:30) block
-    // The 48th bit encodes the (23:3, 0:00) block
-    private Collection<ThirtyMinuteBlock> attendingHoursFromBits(long bits) {
-
-      Collection<ThirtyMinuteBlock> blocks = new ArrayList<>();
-      ThirtyMinuteBlock[] values = ThirtyMinuteBlock.values();
-
-      for (int i = 0; i < 48; i++) {
-        if ((bits & (1L << i)) != 0) {
-          blocks.add(values[i]);
-        }
-      }
-
-      return blocks;
-    }
-
-    @Override
-    public List<Doctor> extractData(ResultSet rs) throws SQLException, DataAccessException {
-      Map<Long, Doctor> doctors = new HashMap<>();
-      Specialty[] specialties = Specialty.values();
-      City[] cities = City.values();
-      HealthInsurance[] healthInsurances = HealthInsurance.values();
-
-      while (rs.next()) {
-        long doctorId = rs.getLong("doctor_id");
-        Doctor doctor = doctors.get(doctorId);
-
-        if (doctor == null) {
-          Specialty specialty = specialties[rs.getInt("specialty_code")];
-
-          City city = cities[rs.getInt("city_code")];
-          Location location =
-              new Location(rs.getLong("doctor_location_id"), city, rs.getString("address"));
-
-          AttendingHours attendingHours =
-              new AttendingHours(
-                  attendingHoursFromBits(rs.getLong("monday")),
-                  attendingHoursFromBits(rs.getLong("tuesday")),
-                  attendingHoursFromBits(rs.getLong("wednesday")),
-                  attendingHoursFromBits(rs.getLong("thursday")),
-                  attendingHoursFromBits(rs.getLong("friday")),
-                  attendingHoursFromBits(rs.getLong("saturday")),
-                  attendingHoursFromBits(rs.getLong("sunday")));
-
-          doctor =
-              new Doctor(
-                  rs.getLong("doctor_id"),
-                  rs.getString("email"),
-                  rs.getString("password"),
-                  rs.getString("first_name"),
-                  rs.getString("last_name"),
-                  rs.getLong("profile_picture_id"),
-                  new ArrayList<>(),
-                  specialty,
-                  location,
-                  attendingHours);
-
-          doctors.put(doctorId, doctor);
-        }
-
-        doctor.getHealthInsurances().add(healthInsurances[rs.getInt("health_insurance_code")]);
-      }
-
-      return new ArrayList<>(doctors.values());
-    }
   }
 }
