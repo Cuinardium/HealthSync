@@ -114,6 +114,8 @@ public class AppointmentServiceImpl implements AppointmentService {
 
     appointmentDao.updateAppointmentStatus(appointmentId, status, cancelDescription);
 
+    Appointment newAppointment=getAppointmentById(appointmentId).orElseThrow(RuntimeException::new);
+
     // TODO: error handling
     Doctor doctor =
         doctorService.getDoctorById(appointment.getDoctorId()).orElseThrow(RuntimeException::new);
@@ -125,9 +127,9 @@ public class AppointmentServiceImpl implements AppointmentService {
 
     if (status == AppointmentStatus.CANCELLED) {
       if (requesterId == appointment.getPatientId()) {
-        mailService.sendAppointmentCancelledByPatientMail(appointment, doctor, patient, locale);
+        mailService.sendAppointmentCancelledByPatientMail(newAppointment, doctor, patient, locale);
       } else {
-        mailService.sendAppointmentCancelledByDoctorMail(appointment, doctor, patient, locale);
+        mailService.sendAppointmentCancelledByDoctorMail(newAppointment, doctor, patient, locale);
       }
     }
   }
