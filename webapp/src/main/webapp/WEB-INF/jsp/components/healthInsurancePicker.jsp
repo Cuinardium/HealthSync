@@ -47,7 +47,7 @@
             <ul id="healthInsuranceDropdownMenu" class="dropdown-menu">
                 <c:forEach items="${healthInsurances}" var="healthInsurance" varStatus="status">
                     <li>
-                        <div class="dropdown-item healthInsuranceItem" data-index="${status.index}">
+                      <div class="dropdown-item healthInsuranceItem ${currentHealthInsuranceCodes.contains(status.index) ? "hidden" : "" }" data-index="${status.index}">
                             <spring:message code="${healthInsurance.messageID}"/>
                         </div>
                     </li>
