@@ -47,12 +47,21 @@ public class AppointmentController {
     long userId = PawAuthUserDetails.getCurrentUserId();
 
     // Get relevant appointments
-    List<Appointment> upcomingAppointments = appointmentService.getFilteredAppointments(userId, AppointmentStatus.CONFIRMED, null, null, isPatient).getContent();
-       
-    List<Appointment> cancelledAppointments = appointmentService.getFilteredAppointments(userId, AppointmentStatus.CANCELLED, null, null, isPatient).getContent();
-        
-    List<Appointment> completedAppointments = appointmentService.getFilteredAppointments(userId, AppointmentStatus.COMPLETED, null, null, isPatient).getContent();
-        
+    List<Appointment> upcomingAppointments =
+        appointmentService
+            .getFilteredAppointments(userId, AppointmentStatus.CONFIRMED, null, null, isPatient)
+            .getContent();
+
+    List<Appointment> cancelledAppointments =
+        appointmentService
+            .getFilteredAppointments(userId, AppointmentStatus.CANCELLED, null, null, isPatient)
+            .getContent();
+
+    List<Appointment> completedAppointments =
+        appointmentService
+            .getFilteredAppointments(userId, AppointmentStatus.COMPLETED, null, null, isPatient)
+            .getContent();
+
     // Create tabs
     List<AppointmentTab> tabs = new ArrayList<>();
 
@@ -130,7 +139,7 @@ public class AppointmentController {
 
   // ================================== Detailed Appointment =======================================
 
-  @RequestMapping(value = "/{id:\\d+}/detailed_appointment", method = RequestMethod.GET)
+  @RequestMapping(value = "/{id:\\d+}/detailed-appointment", method = RequestMethod.GET)
   public ModelAndView getDetailedAppointment(
       @ModelAttribute("modalForm") final ModalForm modalForm,
       @PathVariable("id") final int appointmentId,
