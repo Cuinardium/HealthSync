@@ -24,9 +24,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 @Controller
 public class HomeController {
-
-  private static final int DEFAULT_PAGE_SIZE = 10;
-
+  private static final int DEFAULT_PAGE_SIZE = 2;
   private final DoctorService doctorService;
   private final PatientService patientService;
 
@@ -125,7 +123,7 @@ public class HomeController {
     mav.addObject("specialtyCode", specialtyCode);
     mav.addObject("specialtyMap", usedSpecialties);
     mav.addObject("healthInsuranceCode", healthInsuranceCode);
-    mav.addObject("date", date);
+    mav.addObject("dateFilter", date);
 //    mav.addObject("from", from);
 //    mav.addObject("to", to);
     mav.addObject("possibleAttendingHours", ThirtyMinuteBlock.values());

@@ -120,7 +120,7 @@ public class DoctorDaoImpl implements DoctorDao {
     return getDoctorById(doctorId).orElseThrow(IllegalStateException::new);
   }
 
-  
+
   // ============================ Queries =============================================
 
   @Override
@@ -183,15 +183,22 @@ public class DoctorDaoImpl implements DoctorDao {
 
       String appointmentSumQuery =
           new QueryBuilder()
-              .select("sum(power(2, appointment.appointment_time))")
+              .select("sum(1 << appointment.appointment_time)")
               .from("appointment")
               .innerJoin("doctor", "appointment.doctor_id = doctor.doctor_id")
               .where("appointment.appointment_date = '" + Date.valueOf(date) + "'")
               .groupBy("doctor.doctor_id")
               .build();
 
-      subQuery.where(dayColumn + " > (" + appointmentSumQuery + ")");
-      doctorCountQuery.where(dayColumn + " > (" + appointmentSumQuery + ")");
+      subQuery.where(dayColumn + " > (select coalesce((" + appointmentSumQuery + "), 0))");
+      doctorCountQuery.where(dayColumn + " > (select coalesce((" + appointmentSumQuery + "), 0))");
+
+      /*
+      WHERE wednesday > (SELECT COALESCE((SELECT SUM(1 << appointment.appointment_time)
+                        FROM appointment INNER JOIN doctor ON appointment.doctor_id = doctor.doctor_id
+                        WHERE appointment.appointment_date = '2023-05-17'
+                        GROUP BY doctor.doctor_id), 0))
+       */
     }
 
     if (page >= 0 && pageSize > 0) {
@@ -219,8 +226,7 @@ public class DoctorDaoImpl implements DoctorDao {
                 "thursday",
                 "friday",
                 "saturday",
-                "sunday",
-                "occupied_hours")
+                "sunday")
             .from("(" + subQuery.build() + ") as subquery")
             .leftJoin(
                 "health_insurance_accepted_by_doctor",
@@ -231,7 +237,7 @@ public class DoctorDaoImpl implements DoctorDao {
 
     int totalDoctors = jdbcTemplate.queryForObject(doctorCountQuery.build(), Integer.class);
 
-    return new Page<>(doctors, page, totalDoctors);
+    return new Page<>(doctors, page, totalDoctors, pageSize);
   }
 
   @Override
@@ -547,8 +553,8 @@ public class DoctorDaoImpl implements DoctorDao {
             "doctor_location",
             "location_for_doctor.doctor_location_id = doctor_location.doctor_location_id")
         .innerJoin(
-            "health_insurance_accepted_by_doctor",
-            "doctor.doctor_id = health_insurance_accepted_by_doctor.doctor_id")
+                "health_insurance_accepted_by_doctor",
+                "doctor.doctor_id = health_insurance_accepted_by_doctor.doctor_id")
         .innerJoin(
             "doctor_attending_hours",
             "doctor.attending_hours_id = doctor_attending_hours.attending_hours_id");

@@ -182,7 +182,7 @@
                     <c:param name="cityCode" value="${cityCode}"/>
                     <c:param name="specialtyCode" value="${specialtyCode}"/>
                     <c:param name="healthInsuranceCode" value="${healthInsuranceCode}"/>
-                    <c:param name="date" value="${date}"/>
+                    <c:param name="date" value="${dateFilter}"/>
                 </c:url>
                 <jsp:include page="../components/pagination.jsp">
                     <jsp:param name="currentPage" value="${currentPage}"/>
