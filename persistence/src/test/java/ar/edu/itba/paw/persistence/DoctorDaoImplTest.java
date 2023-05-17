@@ -7,6 +7,7 @@ import ar.edu.itba.paw.models.City;
 import ar.edu.itba.paw.models.Doctor;
 import ar.edu.itba.paw.models.HealthInsurance;
 import ar.edu.itba.paw.models.Location;
+import ar.edu.itba.paw.models.Page;
 import ar.edu.itba.paw.models.Specialty;
 import ar.edu.itba.paw.models.ThirtyMinuteBlock;
 import ar.edu.itba.paw.persistence.config.TestConfig;
@@ -125,7 +126,6 @@ public class DoctorDaoImplTest {
     Assert.assertEquals(AUX_DOCTOR_FIRST_NAME, doctor.getFirstName());
     Assert.assertEquals(AUX_DOCTOR_LAST_NAME, doctor.getLastName());
     Assert.assertEquals(INSERTED_DOCTOR_PFP_ID, doctor.getProfilePictureId());
-    // TODO: revisar importancia del orden
     Assert.assertEquals(AUX_DOCTOR_INSURANCES, doctor.getHealthInsurances());
     Assert.assertEquals(AUX_DOCTOR_ADDRESS, doctor.getLocation().getAddress());
     Assert.assertEquals(AUX_DOCTOR_CITY, doctor.getLocation().getCity());
@@ -213,17 +213,16 @@ public class DoctorDaoImplTest {
     Assert.assertFalse(maybeDoctor.isPresent());
   }
 
-  // TODO: revisar porque falla
   @Test
   public void testGetFilteredDoctors() {
     // 1.Precondiciones
     // 2. Ejercitar la class under test
-    // Page<Doctor> doctors = doctorDao.getFilteredDoctors(null, null, null, null, -1, -1);
+    Page<Doctor> doctors = doctorDao.getFilteredDoctors(null, null, null, null, null, null, null, null, null);
     // 3. Meaningful assertions
-    // Assert.assertEquals(1, doctors.getTotalPages());
-    // Assert.assertEquals(1, doctors.getTotalContentCount());
-    // Assert.assertEquals(-1, doctors.getCurrentPage());
-    // Assert.assertEquals(1, doctors.getContent().size());
+    Assert.assertNull(doctors.getTotalPages());
+    Assert.assertNull(doctors.getCurrentPage());
+    Assert.assertEquals(1, doctors.getContent().size());
+    Assert.assertEquals(DOCTOR_3, doctors.getContent().get(0));
   }
 
   @Test

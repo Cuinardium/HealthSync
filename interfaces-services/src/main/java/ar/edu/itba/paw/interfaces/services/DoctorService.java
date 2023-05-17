@@ -48,8 +48,8 @@ public interface DoctorService {
           Specialty specialty,
           City city,
           HealthInsurance healthInsurance,
-          int page,
-          int pageSize);
+          Integer page,
+          Integer pageSize);
 
   public List<Doctor> getDoctors();
 

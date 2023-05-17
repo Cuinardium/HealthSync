@@ -107,7 +107,6 @@ public class DoctorDaoImpl implements DoctorDao {
       List<HealthInsurance> healthInsurances,
       AttendingHours attendingHours) {
 
-
     // Check if doctor exists
     String doctorExistsQuery =
         new QueryBuilder()
@@ -146,7 +145,14 @@ public class DoctorDaoImpl implements DoctorDao {
   @Override
   public Optional<Doctor> getDoctorById(long id) {
 
-    String query = doctorQuery().where("doctor.doctor_id = " + id).build();
+    String query =
+        doctorQuery()
+            .select("health_insurance_code")
+            .innerJoin(
+                "health_insurance_accepted_by_doctor",
+                "doctor.doctor_id = health_insurance_accepted_by_doctor.doctor_id")
+            .where("doctor.doctor_id = " + id)
+            .build();
 
     return jdbcTemplate.query(query, RowMappers.DOCTOR_EXTRACTOR).stream().findFirst();
   }
@@ -160,16 +166,15 @@ public class DoctorDaoImpl implements DoctorDao {
       Specialty specialty,
       City city,
       HealthInsurance healthInsurance,
-      int page,
-      int pageSize) {
+      Integer page,
+      Integer pageSize) {
 
     int specialtyCode = specialty != null ? specialty.ordinal() : -1;
     int cityCode = city != null ? city.ordinal() : -1;
     int healthInsuranceCode = healthInsurance != null ? healthInsurance.ordinal() : -1;
 
-
     // Start building the query
-    QueryBuilder subQuery = doctorQuery().distinctOn("doctor.doctor_id");
+    QueryBuilder subQuery = doctorQuery();
     QueryBuilder doctorCountQuery = doctorCountQuery();
 
     // Add the filters to the query, if it is the first filter, don't add AND
@@ -213,11 +218,15 @@ public class DoctorDaoImpl implements DoctorDao {
 
       Long fromRange = null, toRange = null;
       if (fromTime != null) {
-          fromRange = ThirtyMinuteBlock.toBits(ThirtyMinuteBlock.fromRange(fromTime, ThirtyMinuteBlock.BLOCK_23_30));
+        fromRange =
+            ThirtyMinuteBlock.toBits(
+                ThirtyMinuteBlock.fromRange(fromTime, ThirtyMinuteBlock.BLOCK_23_30));
       }
 
       if (toTime != null) {
-          toRange = ThirtyMinuteBlock.toBits(ThirtyMinuteBlock.fromRange(ThirtyMinuteBlock.BLOCK_00_00, toTime));
+        toRange =
+            ThirtyMinuteBlock.toBits(
+                ThirtyMinuteBlock.fromRange(ThirtyMinuteBlock.BLOCK_00_00, toTime));
       }
 
       String appointmentSumQueryString = appointmentSumQuery.build();
@@ -226,15 +235,21 @@ public class DoctorDaoImpl implements DoctorDao {
       StringBuilder whereClauseBuilder = new StringBuilder();
       whereClauseBuilder.append(dayColumn);
 
-      if(fromRange != null) {
-          whereClauseBuilder.append(" & ").append(fromRange);
+      if (fromRange != null) {
+        whereClauseBuilder.append(" & ").append(fromRange);
       }
 
-      if(toRange != null) {
-          whereClauseBuilder.append(" & ").append(toRange);
+      if (toRange != null) {
+        whereClauseBuilder.append(" & ").append(toRange);
       }
 
-      whereClauseBuilder.append(" > ").append(dayColumn).append(" & ").append(" (select coalesce((").append(appointmentSumQueryString).append("), 0))");
+      whereClauseBuilder
+          .append(" > ")
+          .append(dayColumn)
+          .append(" & ")
+          .append(" (select coalesce((")
+          .append(appointmentSumQueryString)
+          .append("), 0))");
 
       String whereClauseString = whereClauseBuilder.toString();
 
@@ -242,7 +257,7 @@ public class DoctorDaoImpl implements DoctorDao {
       doctorCountQuery.where(whereClauseString);
     }
 
-    if (page >= 0 && pageSize > 0) {
+    if (page != null && page >= 0 && pageSize != null && pageSize > 0) {
       subQuery.limit(pageSize).offset(page * pageSize);
     }
 
@@ -283,7 +298,14 @@ public class DoctorDaoImpl implements DoctorDao {
 
   @Override
   public List<Doctor> getDoctors() {
-    return jdbcTemplate.query(doctorQuery().build(), RowMappers.DOCTOR_EXTRACTOR);
+    String query =
+        doctorQuery()
+            .select("health_insurance_code")
+            .innerJoin(
+                "health_insurance_accepted_by_doctor",
+                "doctor.doctor_id = health_insurance_accepted_by_doctor.doctor_id")
+            .build();
+    return jdbcTemplate.query(query, RowMappers.DOCTOR_EXTRACTOR);
   }
 
   // Get used specialties and health insurances
@@ -577,7 +599,6 @@ public class DoctorDaoImpl implements DoctorDao {
             "first_name",
             "last_name",
             "profile_picture_id",
-            "health_insurance_code",
             "doctor_location.doctor_location_id",
             "city_code",
             "address",
@@ -594,9 +615,6 @@ public class DoctorDaoImpl implements DoctorDao {
         .innerJoin(
             "doctor_location",
             "location_for_doctor.doctor_location_id = doctor_location.doctor_location_id")
-        .innerJoin(
-                "health_insurance_accepted_by_doctor",
-                "doctor.doctor_id = health_insurance_accepted_by_doctor.doctor_id")
         .innerJoin(
             "doctor_attending_hours",
             "doctor.attending_hours_id = doctor_attending_hours.attending_hours_id");

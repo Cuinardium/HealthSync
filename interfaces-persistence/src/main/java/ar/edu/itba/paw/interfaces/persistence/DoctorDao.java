@@ -40,8 +40,8 @@ public interface DoctorDao {
       Specialty specialty,
       City city,
       HealthInsurance healthInsurance,
-      int page,
-      int pageSize);
+      Integer page,
+      Integer pageSize);
 
   List<Doctor> getDoctors();
 

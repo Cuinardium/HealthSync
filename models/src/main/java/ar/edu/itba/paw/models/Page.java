@@ -5,11 +5,11 @@ import java.util.List;
 public class Page<T> {
 
   private final List<T> content;
-  private final int currentPage;
-  private final int totalContentCount;
-  private final int pageSize;
+  private final Integer currentPage;
+  private final Integer totalContentCount;
+  private final Integer pageSize;
 
-  public Page(List<T> content, int currentPage, int totalContentCount, int pageSize) {
+  public Page(List<T> content, Integer currentPage, Integer totalContentCount, Integer pageSize) {
     this.content = content;
     this.currentPage = currentPage;
     this.totalContentCount = totalContentCount;
@@ -20,11 +20,16 @@ public class Page<T> {
     return content;
   }
 
-  public int getCurrentPage() {
+  public Integer getCurrentPage() {
     return currentPage;
   }
 
-  public int getTotalPages() {
+  public Integer getTotalPages() {
+
+    if (pageSize == null || totalContentCount == null) {
+      return null;
+    }
+
     return (int) Math.ceil((double) totalContentCount / pageSize);
   }
 }

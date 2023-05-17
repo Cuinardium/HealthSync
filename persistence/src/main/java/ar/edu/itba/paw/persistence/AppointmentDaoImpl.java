@@ -126,8 +126,8 @@ public class AppointmentDaoImpl implements AppointmentDao {
       AppointmentStatus status,
       LocalDate from,
       LocalDate to,
-      int page,
-      int pageSize) {
+      Integer page,
+      Integer pageSize) {
 
     // Get the appointments for the doctor
     String appointmentsQuery =
@@ -151,8 +151,8 @@ public class AppointmentDaoImpl implements AppointmentDao {
       AppointmentStatus status,
       LocalDate from,
       LocalDate to,
-      int page,
-      int pageSize) {
+      Integer page,
+      Integer pageSize) {
 
     // Get the appointments for the patient
     String appointmentsQuery =
@@ -178,8 +178,8 @@ public class AppointmentDaoImpl implements AppointmentDao {
       AppointmentStatus status,
       LocalDate from,
       LocalDate to,
-      int page,
-      int pageSize) {
+      Integer page,
+      Integer pageSize) {
 
     QueryBuilder appointmentsQuery =
         new QueryBuilder()
@@ -254,7 +254,7 @@ public class AppointmentDaoImpl implements AppointmentDao {
 
     appointmentsQuery.orderByAsc("appointment_date").orderByAsc("appointment_time");
 
-    if (page >= 0 && pageSize > 0) {
+    if (page != null && page >= 0 && pageSize != null && pageSize > 0) {
       appointmentsQuery.limit(pageSize).offset(page * pageSize);
     }
 

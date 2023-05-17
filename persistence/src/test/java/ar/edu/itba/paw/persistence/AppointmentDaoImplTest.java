@@ -246,11 +246,10 @@ public class AppointmentDaoImplTest {
     // 2. Ejercitar la class under test
     Page<Appointment> appointments =
         appointmentDao.getFilteredAppointmentsForPatient(
-            PATIENT_1.getId(), null, null, null, -1, -1);
+            PATIENT_1.getId(), null, null, null, null, null);
     // 3. Meaninful assertions
-    // TODO: revisar -2
-    Assert.assertEquals(-2, appointments.getTotalPages());
-    Assert.assertEquals(-1, appointments.getCurrentPage());
+    Assert.assertNull(appointments.getTotalPages());
+    Assert.assertNull(appointments.getCurrentPage());
     Assert.assertEquals(APPOINTMENT_1, appointments.getContent().get(0));
     // Assert.assertEquals(APPOINTMENT_2, appointments.getContent().get(1));
   }
@@ -260,11 +259,10 @@ public class AppointmentDaoImplTest {
     // 1. Precondiciones
     // 2. Ejercitar la class under test
     Page<Appointment> appointments =
-        appointmentDao.getFilteredAppointmentsForDoctor(DOCTOR_3.getId(), null, null, null, -1, -1);
+        appointmentDao.getFilteredAppointmentsForDoctor(DOCTOR_3.getId(), null, null, null, null, null);
     // 3. Meaninful assertions
-    // TODO: revisar -2
-    Assert.assertEquals(-2, appointments.getTotalPages());
-    Assert.assertEquals(-1, appointments.getCurrentPage());
+    Assert.assertNull(appointments.getTotalPages());
+    Assert.assertNull(appointments.getCurrentPage());
     Assert.assertEquals(APPOINTMENT_1, appointments.getContent().get(0));
     // Assert.assertEquals(APPOINTMENT_2, appointments.getContent().get(1));
   }

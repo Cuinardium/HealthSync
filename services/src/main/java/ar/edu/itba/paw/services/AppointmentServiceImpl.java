@@ -182,8 +182,8 @@ public class AppointmentServiceImpl implements AppointmentService {
       AppointmentStatus status,
       LocalDate from,
       LocalDate to,
-      int page,
-      int pageSize) {
+      Integer page,
+      Integer pageSize) {
     return appointmentDao.getFilteredAppointmentsForDoctor(
         doctorId, status, from, to, page, pageSize);
   }
@@ -194,8 +194,8 @@ public class AppointmentServiceImpl implements AppointmentService {
       AppointmentStatus status,
       LocalDate from,
       LocalDate to,
-      int page,
-      int pageSize) {
+      Integer page,
+      Integer pageSize) {
     return appointmentDao.getFilteredAppointmentsForPatient(
         patientId, status, from, to, page, pageSize);
   }
