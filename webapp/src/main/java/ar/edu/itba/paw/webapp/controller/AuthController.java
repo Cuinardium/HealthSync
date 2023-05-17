@@ -58,7 +58,7 @@ public class AuthController {
     // si ?error no esta -> error es null, en cambio si ?error esta -> error es un string vacio
     mav.addObject("hasError", error != null);
     if (error != null) {
-      LOGGER.warn("Login failed");
+      LOGGER.warn("Login failed due to bad credentials");
     } else {
       LOGGER.debug("Login page requested");
     }
