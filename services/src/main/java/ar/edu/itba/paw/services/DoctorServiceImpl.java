@@ -4,14 +4,9 @@ import ar.edu.itba.paw.interfaces.persistence.DoctorDao;
 import ar.edu.itba.paw.interfaces.services.DoctorService;
 import ar.edu.itba.paw.interfaces.services.UserService;
 import java.time.LocalDate;
-import ar.edu.itba.paw.models.AttendingHours;
-import ar.edu.itba.paw.models.City;
-import ar.edu.itba.paw.models.Doctor;
-import ar.edu.itba.paw.models.HealthInsurance;
-import ar.edu.itba.paw.models.Image;
-import ar.edu.itba.paw.models.Page;
-import ar.edu.itba.paw.models.Specialty;
-import ar.edu.itba.paw.models.User;
+
+import ar.edu.itba.paw.models.*;
+
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -88,12 +83,14 @@ public class DoctorServiceImpl implements DoctorService {
   public Page<Doctor> getFilteredDoctors(
       String name,
       LocalDate date,
+      ThirtyMinuteBlock fromTime,
+      ThirtyMinuteBlock toTime,
       Specialty specialty,
       City city,
       HealthInsurance healthInsurance,
       int page,
       int pageSize) {
-    return doctorDao.getFilteredDoctors(name, date, specialty, city, healthInsurance, page, pageSize);
+    return doctorDao.getFilteredDoctors(name, date, fromTime, toTime, specialty, city, healthInsurance, page, pageSize);
   }
 
   @Override

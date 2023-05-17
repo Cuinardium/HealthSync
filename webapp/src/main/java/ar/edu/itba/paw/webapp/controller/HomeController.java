@@ -79,8 +79,11 @@ public class HomeController {
     int cityCode = doctorFilterForm.getCityCode();
     int healthInsuranceCode = doctorFilterForm.getHealthInsuranceCode();
     LocalDate date = doctorFilterForm.getDate();
-//    String from = doctorFilterForm.getFrom();
-//    String to = doctorFilterForm.getTo();
+    int fromOrdinal = doctorFilterForm.getFrom();
+    int toOrdinal = doctorFilterForm.getTo();
+
+    ThirtyMinuteBlock fromTime = ThirtyMinuteBlock.values()[fromOrdinal];
+    ThirtyMinuteBlock toTime = ThirtyMinuteBlock.values()[toOrdinal];
 
     Specialty specialty =
         specialtyCode < 0 || specialtyCode >= Specialty.values().length
@@ -99,7 +102,7 @@ public class HomeController {
     // Get doctors
     Page<Doctor> doctors =
         doctorService.getFilteredDoctors(
-            name, date, specialty, city, healthInsurance, parsedPage - 1, DEFAULT_PAGE_SIZE);
+            name, date, fromTime, toTime, specialty, city, healthInsurance, parsedPage - 1, DEFAULT_PAGE_SIZE);
 
     if (PawAuthUserDetails.getRole().equals(UserRoles.ROLE_PATIENT)) {
       PawAuthUserDetails currentUser =
@@ -124,8 +127,8 @@ public class HomeController {
     mav.addObject("specialtyMap", usedSpecialties);
     mav.addObject("healthInsuranceCode", healthInsuranceCode);
     mav.addObject("dateFilter", date);
-//    mav.addObject("from", from);
-//    mav.addObject("to", to);
+    mav.addObject("fromBlock", fromTime);
+    mav.addObject("toBlock", toTime);
     mav.addObject("possibleAttendingHours", ThirtyMinuteBlock.values());
     mav.addObject("healthInsuranceMap", usedHealthInsurances);
 

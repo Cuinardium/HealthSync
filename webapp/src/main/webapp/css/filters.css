@@ -1,8 +1,6 @@
 .filtersContainer{
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
-    align-items: center;
 }
 
 .searchBarContainer{
@@ -17,6 +15,5 @@ select, input#date{
 }
 
 input.btn{
-    margin: 2rem 0;
-    width: -webkit-fill-available;
+    width: auto;
 }

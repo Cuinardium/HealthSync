@@ -20,7 +20,7 @@ public class DoctorFilterForm {
   @DateTimeFormat(pattern = "yyyy-MM-dd")
   private LocalDate date;
 
-  private String from, to;
+  private int from = 0, to = ThirtyMinuteBlock.values().length - 1;
 
   public int getCityCode() {
     if (cityCode < 0 || cityCode > City.values().length) {
@@ -74,19 +74,19 @@ public class DoctorFilterForm {
       this.date = date;
   }
 
-  public String getFrom() {
+  public int getFrom() {
     return from;
   }
 
-  public void setFrom(String from) {
+  public void setFrom(int from) {
     this.from = from;
   }
 
-  public String getTo() {
+  public int getTo() {
     return to;
   }
 
-  public void setTo(String to) {
+  public void setTo(int to) {
     this.to = to;
   }
 }

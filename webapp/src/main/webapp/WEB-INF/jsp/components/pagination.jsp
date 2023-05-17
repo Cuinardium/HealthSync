@@ -7,7 +7,6 @@
     <link href="${paginationCss}" rel="stylesheet"/>
 </head>
 <body>
-${param.totalPages}hola
 <c:if test="${param.totalPages > 1}">
     <nav class="paginationContainer">
         <ul class="pagination">

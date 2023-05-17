@@ -13,6 +13,12 @@
     margin: 4px 4px 4px 0;
 }
 
+.titleFilterContainer{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
 .sidebarContainer{
     display: flex;
     flex-direction: column;
@@ -57,4 +63,12 @@
 .noDoctorsMsg{
     display: flex;
     justify-content: center;
+}
+
+.hidden{
+    display: none;
+}
+
+h4, .h4{
+    margin-top: 1rem;
 }

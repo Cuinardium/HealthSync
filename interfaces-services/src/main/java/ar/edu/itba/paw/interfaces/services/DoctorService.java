@@ -1,12 +1,6 @@
 package ar.edu.itba.paw.interfaces.services;
 
-import ar.edu.itba.paw.models.AttendingHours;
-import ar.edu.itba.paw.models.City;
-import ar.edu.itba.paw.models.Doctor;
-import ar.edu.itba.paw.models.HealthInsurance;
-import ar.edu.itba.paw.models.Image;
-import ar.edu.itba.paw.models.Page;
-import ar.edu.itba.paw.models.Specialty;
+import ar.edu.itba.paw.models.*;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -47,13 +41,15 @@ public interface DoctorService {
   public Optional<Doctor> getDoctorById(long id);
 
   public Page<Doctor> getFilteredDoctors(
-      String name,
-      LocalDate date,
-      Specialty specialty,
-      City city,
-      HealthInsurance healthInsurance,
-      int page,
-      int pageSize);
+          String name,
+          LocalDate date,
+          ThirtyMinuteBlock fromTime,
+          ThirtyMinuteBlock toTime,
+          Specialty specialty,
+          City city,
+          HealthInsurance healthInsurance,
+          int page,
+          int pageSize);
 
   public List<Doctor> getDoctors();
 

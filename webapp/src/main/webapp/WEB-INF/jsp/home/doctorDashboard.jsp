@@ -25,6 +25,8 @@
 <spring:message code="doctorDashboard.placeholder.specialty" var="specialty"/>
 <spring:message code="doctorDashboard.placeholder.insurance" var="insurance"/>
 <spring:message code="doctorDashboard.placeholder.search" var="search"/>
+<spring:message code="doctorDashboard.placeholder.from" var="fromTitle"/>
+<spring:message code="doctorDashboard.placeholder.to" var="toTitle"/>
 <spring:message code="filters.title" var="filtersTitle"/>
 <spring:message code="filters.clear" var="clear"/>
 <spring:message code="form.date" var="date"/>
@@ -59,9 +61,12 @@
 <form:form id="filter-form" modelAttribute="doctorFilterForm" method="get" action="${doctorDashboardUrl}">
     <div class="dashboardContainer">
         <div class="sidebarContainer">
-            <h2>${filtersTitle}</h2>
-            <hr>
             <div class="filtersContainer">
+                <div class="titleFilterContainer">
+                    <h2>${filtersTitle}</h2>
+                    <input type="submit" class="btn btn-danger" value="${clear}" onclick="clearFilters()">
+                </div>
+                <hr>
                 <form:select id="city-select" cssClass="form-select" path="cityCode" onchange="this.form.submit()">
                     <form:option value="-1" disabled="true" hidden="true"> ${city} </form:option>
                     <c:forEach items="${cityMap}" var="city">
@@ -91,7 +96,34 @@
 
                 <form:input id="date" type="date" cssClass="form-control" placeholder="${date}" path="date" onchange="this.form.submit()"/>
 
-                <input type="submit" class="btn btn-danger" value="${clear}" onclick="clearFilters()">
+                <c:if test="${dateFilter != null}">
+                    <h4>${fromTitle}</h4>
+                    <form:select id="from-select" cssClass="form-select" path="from" onchange="this.form.submit()">
+                        <form:option value="-1" disabled="true" hidden="true"/>
+                        <c:forEach items="${possibleAttendingHours}" var="attHour">
+                            <c:if test="${toBlock.ordinal() > attHour.ordinal()}">
+                                <form:option value="${attHour.ordinal()}">
+                                    ${attHour.getBlockBeginning()}
+                                </form:option>
+                            </c:if>
+                        </c:forEach>
+                    </form:select>
+                </c:if>
+
+
+                <c:if test="${dateFilter != null}">
+                    <h4>${toTitle}</h4>
+                    <form:select id="to-select" cssClass="form-select" path="to" onchange="this.form.submit()">
+                        <form:option value="-1" disabled="true" hidden="true"/>
+                        <c:forEach items="${possibleAttendingHours}" var="attHour">
+                            <c:if test="${fromBlock.ordinal() < attHour.ordinal()}">
+                                <form:option value="${attHour.ordinal()}">
+                                    ${attHour.getBlockBeginning()}
+                                </form:option>
+                            </c:if>
+                        </c:forEach>
+                    </form:select>
+                </c:if>
             </div>
         </div>
 
@@ -183,6 +215,8 @@
                     <c:param name="specialtyCode" value="${specialtyCode}"/>
                     <c:param name="healthInsuranceCode" value="${healthInsuranceCode}"/>
                     <c:param name="date" value="${dateFilter}"/>
+                    <c:param name="from" value="${fromBlock.ordinal()}"/>
+                    <c:param name="to" value="${toBlock.ordinal()}"/>
                 </c:url>
                 <jsp:include page="../components/pagination.jsp">
                     <jsp:param name="currentPage" value="${currentPage}"/>

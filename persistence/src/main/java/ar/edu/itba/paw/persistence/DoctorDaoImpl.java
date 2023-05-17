@@ -135,6 +135,8 @@ public class DoctorDaoImpl implements DoctorDao {
   public Page<Doctor> getFilteredDoctors(
       String name,
       LocalDate date,
+      ThirtyMinuteBlock fromTime,
+      ThirtyMinuteBlock toTime,
       Specialty specialty,
       City city,
       HealthInsurance healthInsurance,
@@ -144,6 +146,7 @@ public class DoctorDaoImpl implements DoctorDao {
     int specialtyCode = specialty != null ? specialty.ordinal() : -1;
     int cityCode = city != null ? city.ordinal() : -1;
     int healthInsuranceCode = healthInsurance != null ? healthInsurance.ordinal() : -1;
+
 
     // Start building the query
     QueryBuilder subQuery = doctorQuery().distinctOn("doctor.doctor_id");
@@ -179,26 +182,44 @@ public class DoctorDaoImpl implements DoctorDao {
     }
 
     if (date != null) {
-      String dayColumn = date.getDayOfWeek().name().toLowerCase();
 
-      String appointmentSumQuery =
+      QueryBuilder appointmentSumQuery =
           new QueryBuilder()
               .select("sum(1 << appointment.appointment_time)")
               .from("appointment")
-              .innerJoin("doctor", "appointment.doctor_id = doctor.doctor_id")
+              .where("appointment.doctor_id = doctor.doctor_id")
               .where("appointment.appointment_date = '" + Date.valueOf(date) + "'")
-              .groupBy("doctor.doctor_id")
-              .build();
+              .groupBy("doctor.doctor_id");
 
-      subQuery.where(dayColumn + " > (select coalesce((" + appointmentSumQuery + "), 0))");
-      doctorCountQuery.where(dayColumn + " > (select coalesce((" + appointmentSumQuery + "), 0))");
+      Long fromRange = null, toRange = null;
+      if (fromTime != null) {
+          fromRange = ThirtyMinuteBlock.toBits(ThirtyMinuteBlock.fromRange(fromTime, ThirtyMinuteBlock.BLOCK_23_30));
+      }
 
-      /*
-      WHERE wednesday > (SELECT COALESCE((SELECT SUM(1 << appointment.appointment_time)
-                        FROM appointment INNER JOIN doctor ON appointment.doctor_id = doctor.doctor_id
-                        WHERE appointment.appointment_date = '2023-05-17'
-                        GROUP BY doctor.doctor_id), 0))
-       */
+      if (toTime != null) {
+          toRange = ThirtyMinuteBlock.toBits(ThirtyMinuteBlock.fromRange(ThirtyMinuteBlock.BLOCK_00_00, toTime));
+      }
+
+      String appointmentSumQueryString = appointmentSumQuery.build();
+
+      String dayColumn = date.getDayOfWeek().name().toLowerCase();
+      StringBuilder whereClauseBuilder = new StringBuilder();
+      whereClauseBuilder.append(dayColumn);
+
+      if(fromRange != null) {
+          whereClauseBuilder.append(" & ").append(fromRange);
+      }
+
+      if(toRange != null) {
+          whereClauseBuilder.append(" & ").append(toRange);
+      }
+
+      whereClauseBuilder.append(" > ").append(dayColumn).append(" & ").append(" (select coalesce((").append(appointmentSumQueryString).append("), 0))");
+
+      String whereClauseString = whereClauseBuilder.toString();
+
+      subQuery.where(whereClauseString);
+      doctorCountQuery.where(whereClauseString);
     }
 
     if (page >= 0 && pageSize > 0) {
