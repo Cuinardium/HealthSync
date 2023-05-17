@@ -31,3 +31,10 @@ VALUES (3, 1), (3, 2);
 INSERT INTO appointment (appointment_id, patient_id, doctor_id, appointment_date, appointment_time, status_code, appointment_description, cancel_description)
 VALUES (1, 1, 3, '2023-05-17', 1, 0, 'Me duele la cabeza', NULL),
        (2, 1, 3, '2023-05-17', 2, 0, 'Hola', NULL);
+
+INSERT INTO review (review_id, patient_id, doctor_id, review_date, review_description, rating)
+VALUES (1, 1, 3, '2023-05-17', 'Muy buen doctor', 5),
+       (2, 1, 3, '2023-05-16', 'Buen doctor', 4),
+       (3, 1, 3, '2023-05-15', 'Regular doctor', 3),
+       (4, 1, 3, '2023-05-14', 'Malo doctor', 2),
+       (5, 1, 3, '2023-05-13', 'Muy malo doctor', 1);
