@@ -162,7 +162,7 @@ public class AppointmentDaoImplTest {
   }
 
   @Test
-  public void testUpdateAppointment() {
+  public void testUpdateAppointment() throws AppointmentNotFoundException {
     // 1. Precondiciones
     // 2. Ejercitar la class under test
     Appointment appointment =
