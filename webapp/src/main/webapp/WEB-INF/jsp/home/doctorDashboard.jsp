@@ -31,6 +31,7 @@
 <spring:message code="filters.clear" var="clear"/>
 <spring:message code="form.date" var="date"/>
 <spring:message code="doctor.noReviews" var="noReviews"/>
+<spring:message code="filters.byAvailability" var="byAvailability"/>
 
 <html>
 <head>
@@ -77,7 +78,8 @@
                     </c:forEach>
                 </form:select>
 
-                <form:select id="specialty-select" cssClass="form-select" path="specialtyCode" onchange="this.form.submit()">
+                <form:select id="specialty-select" cssClass="form-select" path="specialtyCode"
+                             onchange="this.form.submit()">
                     <form:option value="-1" disabled="true" hidden="true"> ${specialty} </form:option>
                     <c:forEach items="${specialtyMap}" var="specialty">
                         <form:option value="${specialty.key.ordinal()}">
@@ -86,7 +88,8 @@
                     </c:forEach>
                 </form:select>
 
-                <form:select id="health-insurance-select" cssClass="form-select" path="healthInsuranceCode" onchange="this.form.submit()">
+                <form:select id="health-insurance-select" cssClass="form-select" path="healthInsuranceCode"
+                             onchange="this.form.submit()">
                     <form:option value="-1" disabled="true" hidden="true"> ${insurance} </form:option>
                     <c:forEach items="${healthInsuranceMap}" var="healthInsurance">
                         <form:option value="${healthInsurance.key.ordinal()}">
@@ -95,7 +98,12 @@
                     </c:forEach>
                 </form:select>
 
-                <form:input id="date" type="date" cssClass="form-control" placeholder="${date}" path="date" onchange="this.form.submit()"/>
+                <hr>
+                <h2>${byAvailability}</h2>
+                <hr>
+
+                <form:input id="date" type="date" cssClass="form-control" placeholder="${date}" path="date"
+                            onchange="this.form.submit()"/>
 
                 <c:if test="${dateFilter != null}">
                     <h4>${fromTitle}</h4>
@@ -166,25 +174,25 @@
                                     </c:forEach>
                                 </p>
 
-                                <c:choose >
-                            <c:when test="${doctor.rating != null}">
-                                <div class="starContainer card-text">
-                                    <c:forEach begin="1" end="5" step="1" var="i">
-                                        <div class="star ${doctor.rating >= i ? "selected" : "unselected"}">
-                                            <i class="fa fa-lg fa-star"></i>
+                                <c:choose>
+                                    <c:when test="${doctor.rating != null}">
+                                        <div class="starContainer card-text">
+                                            <c:forEach begin="1" end="5" step="1" var="i">
+                                                <div class="star ${doctor.rating >= i ? "selected" : "unselected"}">
+                                                    <i class="fa fa-lg fa-star"></i>
+                                                </div>
+                                            </c:forEach>
+                                            <div class="ratingCount">
+                                                (${doctor.ratingCount})
+                                            </div>
                                         </div>
-                                    </c:forEach>
-                                    <div class="ratingCount">
-                                        (${doctor.ratingCount})
-                                    </div>
-                                </div>
-                            </c:when>
-                            <c:otherwise>
-                                <div class="card-text">
-                                    ${noReviews}
-                                </div>
-                            </c:otherwise>
-                        </c:choose>
+                                    </c:when>
+                                    <c:otherwise>
+                                        <div class="card-text">
+                                                ${noReviews}
+                                        </div>
+                                    </c:otherwise>
+                                </c:choose>
 
                             </div>
                         </div>
