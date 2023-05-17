@@ -53,7 +53,7 @@ public class DoctorController {
     this.reviewService = reviewService;
   }
 
-  @RequestMapping(value = "/{id:\\d+}/detailed_doctor", method = RequestMethod.GET)
+  @RequestMapping(value = "/{id:\\d+}/detailed-doctor", method = RequestMethod.GET)
   public ModelAndView detailedDoctor(
       @PathVariable("id") final long doctorId,
       @RequestParam(value = "page", required = false, defaultValue = "1") final int page,
@@ -95,7 +95,7 @@ public class DoctorController {
     return mav;
   }
 
-  @RequestMapping(value = "/{id:\\d+}/detailed_doctor", method = RequestMethod.POST)
+  @RequestMapping(value = "/{id:\\d+}/detailed-doctor", method = RequestMethod.POST)
   public ModelAndView sendAppointment(
       @PathVariable("id") final long doctorId,
       @RequestParam(value = "page", required = false, defaultValue = "1") final int page,
