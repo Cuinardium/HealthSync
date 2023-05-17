@@ -60,6 +60,9 @@ public class DoctorDaoImplTest {
           new ArrayList<>());
   private static final Long INSERTED_DOCTOR_PFP_ID = null;
 
+  private static final Float INSERTED_DOCTOR_RATING = null;
+  private static final Integer INSERTED_DOCTOR_RATING_COUNT = 0;
+
   private static final long AUX_DOCTOR_ID = 4;
   private static final String AUX_DOCTOR_EMAIL = "notdoctor@email.com";
   private static final String AUX_DOCTOR_PASSWORD = "notdoctor_password";
@@ -95,7 +98,10 @@ public class DoctorDaoImplTest {
           INSERTED_DOCTOR_INSURANCES,
           INSERTED_DOCTOR_SPECIALTY,
           LOCATION_FOR_DOCTOR_3,
-          INSERTED_DOCTOR_ATTENDING_HOURS);
+          INSERTED_DOCTOR_ATTENDING_HOURS, 
+          INSERTED_DOCTOR_RATING,
+          INSERTED_DOCTOR_RATING_COUNT);
+
   @Autowired private DataSource ds;
 
   private JdbcTemplate jdbcTemplate;

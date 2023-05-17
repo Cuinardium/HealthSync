@@ -80,6 +80,9 @@ public class AppointmentDaoImplTest {
           new ArrayList<>());
   private static final Long INSERTED_DOCTOR_PFP_ID = null;
 
+  private static final Float INSERTED_DOCTOR_RATING = null;
+  private static final Integer INSERTED_DOCTOR_RATING_COUNT = 0;
+
   private static final Location LOCATION_FOR_DOCTOR_3 =
       new Location(1, INSERTED_DOCTOR_CITY, INSERTED_DOCTOR_ADDRESS);
   private static final Doctor DOCTOR_3 =
@@ -93,7 +96,9 @@ public class AppointmentDaoImplTest {
           INSERTED_DOCTOR_INSURANCES,
           INSERTED_DOCTOR_SPECIALTY,
           LOCATION_FOR_DOCTOR_3,
-          INSERTED_DOCTOR_ATTENDING_HOURS);
+          INSERTED_DOCTOR_ATTENDING_HOURS,
+          INSERTED_DOCTOR_RATING,
+          INSERTED_DOCTOR_RATING_COUNT);
 
   private static final ThirtyMinuteBlock INSERTED_TIME = ThirtyMinuteBlock.BLOCK_00_30;
   private static final long INSERTED_APP_ID = 1;
@@ -259,7 +264,8 @@ public class AppointmentDaoImplTest {
     // 1. Precondiciones
     // 2. Ejercitar la class under test
     Page<Appointment> appointments =
-        appointmentDao.getFilteredAppointmentsForDoctor(DOCTOR_3.getId(), null, null, null, null, null);
+        appointmentDao.getFilteredAppointmentsForDoctor(
+            DOCTOR_3.getId(), null, null, null, null, null);
     // 3. Meaninful assertions
     Assert.assertNull(appointments.getTotalPages());
     Assert.assertNull(appointments.getCurrentPage());
