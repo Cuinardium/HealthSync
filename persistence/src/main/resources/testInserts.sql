@@ -29,5 +29,5 @@ INSERT INTO health_insurance_accepted_by_doctor (doctor_id, health_insurance_cod
 VALUES (3, 1), (3, 2);
 
 INSERT INTO appointment (appointment_id, patient_id, doctor_id, appointment_date, appointment_time, status_code, appointment_description, cancel_description)
-VALUES (1, 1, 3, CURRENT_DATE, 1, 0, 'Me duele la cabeza', NULL),
-       (2, 1, 3, CURRENT_DATE, 2, 1, 'Hola', NULL);
+VALUES (1, 1, 3, '2023-05-17', 1, 0, 'Me duele la cabeza', NULL),
+       (2, 1, 3, '2023-05-17', 2, 0, 'Hola', NULL);

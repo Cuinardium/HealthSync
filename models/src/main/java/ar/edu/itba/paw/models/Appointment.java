@@ -4,27 +4,6 @@ import java.time.LocalDate;
 
 public class Appointment {
 
-  @Override
-  public String toString() {
-    return "Appointment [id="
-        + id
-        + ", date="
-        + date
-        + ", timeBlock="
-        + timeBlock
-        + ", status="
-        + status
-        + ", description="
-        + description
-        + ", cancelDesc="
-        + cancelDesc
-        + " "
-        + patient
-        + " "
-        + doctor
-        + "]";
-  }
-
   private final long id;
   private final Patient patient;
   private final Doctor doctor;
@@ -94,5 +73,42 @@ public class Appointment {
 
   public String getCancelDesc() {
     return cancelDesc;
+  }
+
+  @Override
+  public String toString() {
+    return "Appointment [id="
+        + id
+        + ", date="
+        + date
+        + ", timeBlock="
+        + timeBlock
+        + ", status="
+        + status
+        + ", description="
+        + description
+        + ", cancelDesc="
+        + cancelDesc
+        + " "
+        + patient
+        + " "
+        + doctor
+        + "]";
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj) return true;
+    if (!(obj instanceof Appointment)) return false;
+    // el || es para rescatarme de la nullptrexcep
+    Appointment other = (Appointment) obj;
+    return id == other.id
+        && date.equals(other.date)
+        && timeBlock.equals(other.timeBlock)
+        && status.equals(other.status)
+        && description.equals(other.description)
+        && (cancelDesc == other.cancelDesc || cancelDesc.equals(other.cancelDesc))
+        && patient.equals(patient)
+        && doctor.equals(doctor);
   }
 }

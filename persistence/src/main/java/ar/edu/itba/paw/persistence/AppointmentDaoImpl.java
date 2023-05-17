@@ -7,6 +7,7 @@ import ar.edu.itba.paw.models.Doctor;
 import ar.edu.itba.paw.models.Page;
 import ar.edu.itba.paw.models.Patient;
 import ar.edu.itba.paw.models.ThirtyMinuteBlock;
+import ar.edu.itba.paw.persistence.exceptions.AppointmentNotFoundException;
 import ar.edu.itba.paw.persistence.utils.QueryBuilder;
 import ar.edu.itba.paw.persistence.utils.UpdateBuilder;
 import java.sql.Date;
@@ -80,7 +81,7 @@ public class AppointmentDaoImpl implements AppointmentDao {
             .build();
 
     jdbcTemplate.update(update);
-    return getAppointmentById(appointmentId).orElseThrow(IllegalStateException::new);
+    return getAppointmentById(appointmentId).orElseThrow(AppointmentNotFoundException::new);
   }
 
   // ========================== Queries ==========================
@@ -99,10 +100,7 @@ public class AppointmentDaoImpl implements AppointmentDao {
   public Optional<Appointment> getAppointment(
       long doctorId, LocalDate date, ThirtyMinuteBlock timeBlock) {
     String query =
-        new QueryBuilder()
-            .select("*")
-            .from("appointment")
-            .where("doctor_id = " + doctorId)
+        appointmentsQuery(doctorId, true, null, null, null, -1, -1)
             .where("appointment_date = '" + Date.valueOf(date) + "'")
             .where("appointment_time = " + timeBlockToSmallInt(timeBlock))
             .build();
@@ -112,29 +110,13 @@ public class AppointmentDaoImpl implements AppointmentDao {
 
   @Override
   public List<Appointment> getAppointmentsForPatient(long patientId) {
-    String query =
-        new QueryBuilder()
-            .select("*")
-            .from("appointment")
-            .where("patient_id = " + patientId)
-            .orderByAsc("appointment_date")
-            .orderByAsc("appointment_time")
-            .build();
-
+    String query = appointmentsQuery(patientId, false, null, null, null, -1, -1).build();
     return jdbcTemplate.query(query, RowMappers.APPOINTMENT_EXTRACTOR);
   }
 
   @Override
   public List<Appointment> getAppointmentsForDoctor(long doctorId) {
-    String query =
-        new QueryBuilder()
-            .select("*")
-            .from("appointment")
-            .where("doctor_id = " + doctorId)
-            .orderByAsc("appointment_date")
-            .orderByAsc("appointment_time")
-            .build();
-
+    String query = appointmentsQuery(doctorId, true, null, null, null, -1, -1).build();
     return jdbcTemplate.query(query, RowMappers.APPOINTMENT_EXTRACTOR);
   }
 
