@@ -50,15 +50,21 @@ h1, .h1{
     margin-bottom: 1.5rem;
 }
 
-.form-control{
+.form-control, .form-select{
     width: 50%;
 }
 
-.form-select{
-    width: 50%;
+@media (max-width: 1250px) {
+    .form-control, .form-select{
+        width: 60%;
+    }
 }
 
 .form-check{
     display: flex;
     align-items: center;
+}
+
+.form-check-input{
+    margin: 5px;
 }

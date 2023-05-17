@@ -14,6 +14,12 @@
     padding: 3rem 8rem;
 }
 
+@media screen and (max-width: 1250px) {
+    .generalPadding {
+        padding: 2rem 4rem;
+    }
+}
+
 .horizontalPadding{
     padding-left: 8rem;
     padding-right: 8rem;
