@@ -113,8 +113,6 @@ CREATE TABLE IF NOT EXISTS review (
     FOREIGN KEY (patient_id)    REFERENCES patient (patient_id)
 );
 
--- Alter table appointment add column cancelDescription VARCHAR(1000);
-
 /*
     DROP TABLE IF EXISTS appointment;
     DROP TABLE IF EXISTS health_insurance_accepted_by_doctor;
