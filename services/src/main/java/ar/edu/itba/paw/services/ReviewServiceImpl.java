@@ -61,7 +61,7 @@ public class ReviewServiceImpl implements ReviewService {
       return false;
     }
 
-    boolean canReview = appointmentService.hasPatientMetDoctor(doctorId, patientId);
+    boolean canReview = appointmentService.hasPatientMetDoctor(patientId, doctorId);
 
     return canReview;
   }

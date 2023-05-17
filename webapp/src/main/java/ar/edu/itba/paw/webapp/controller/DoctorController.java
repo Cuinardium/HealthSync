@@ -57,6 +57,7 @@ public class DoctorController {
   public ModelAndView detailedDoctor(
       @PathVariable("id") final long doctorId,
       @RequestParam(value = "page", required = false, defaultValue = "1") final int page,
+      @RequestParam(value = "modal", required = false, defaultValue = "false") final boolean modal,
       @ModelAttribute("appointmentForm") final AppointmentForm appointmentForm) {
 
     Doctor doctor = doctorService.getDoctorById(doctorId).orElseThrow(UserNotFoundException::new);
@@ -89,7 +90,8 @@ public class DoctorController {
     mav.addObject("reviews", reviews.getContent());
     mav.addObject("currentPage", reviews.getCurrentPage() + 1);
     mav.addObject("totalPages", reviews.getContent().size() == 0 ? 1 : reviews.getTotalPages());
-    mav.addObject("showModal", false);
+    mav.addObject("showModal", modal);
+    mav.addObject("errorModal", modal);
 
     LOGGER.debug("Detailed doctor page for doctor: {} requested", doctorId);
     return mav;
@@ -103,7 +105,7 @@ public class DoctorController {
       final BindingResult errors) {
 
     if (errors.hasErrors()) {
-      return detailedDoctor(doctorId, page, appointmentForm);
+      return detailedDoctor(doctorId, page, true,appointmentForm);
     }
 
     PawAuthUserDetails currentUser =
@@ -151,7 +153,7 @@ public class DoctorController {
         appointmentService.getAvailableHoursForDoctorOnRange(
             doctorId, tomorrow, tomorrow.plusMonths(3));
     mav.addObject("showModal", true);
-
+    mav.addObject("errorModal", false);
     mav.addObject("form", appointmentForm);
     mav.addObject("canBook", canBook);
     mav.addObject("hoursAvailable", hoursAvailable);

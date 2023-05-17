@@ -58,3 +58,9 @@ input, textarea {
 .form-control, .form-select{
     border-bottom: 2px solid blue;
 }
+
+.card-img-top{
+    object-fit: cover;
+    width: inherit;
+    height: inherit;
+}

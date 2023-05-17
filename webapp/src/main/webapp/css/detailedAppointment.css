@@ -11,5 +11,16 @@
 .cardButtonContainer{
     display: flex;
     justify-content: end;
+}
 
+.backButtonContainer{
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    margin-bottom: 1%;
+}
+
+.backButton{
+    padding: 12px;
+    border-radius: 50%;
 }

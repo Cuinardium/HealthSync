@@ -51,7 +51,7 @@ function initCalendar(date) {
             var appointments = checkAppointments(day, month+1, year);
             if(today===day && $(".active-date").length===0) {
                 currDate.addClass("active-date");
-                showAppointments(appointments, months[month], day);
+                showAppointments(appointments);
             }
             // If this date has any appointments, style it with .appointment-date
             if(appointments.length!==0) {
@@ -82,7 +82,7 @@ function dateClick(appointment) {
     $(this).addClass("active-date");
     let date = new Date($(".year").text(), months.indexOf(appointment.data.month), appointment.data.day);
     document.getElementById("date").value = date.toLocaleDateString("fr-CA");
-    showAppointments(appointment.data.appointments, appointment.data.month, appointment.data.day);
+    showAppointments(appointment.data.appointments);
 };
 
 // Appointment handler for when a month is clicked
@@ -118,14 +118,14 @@ function prevYear(appointment) {
 }
 
 // Display all appointments of the selected date in card views
-function showAppointments(appointments, month, day) {
+function showAppointments(appointments) {
     // Clear the dates container
     $(".appointments-container").empty();
     $(".appointments-container").show(250);
     // If there are no appointments for this date, notify the user
     if (appointments.length === 0) {
         var appointmentCard = $("<div class='card noAppointments'></div>");
-        var appointmentTime = $("<div class='appointment-time'>There are no appointments available for " + month + " " + day + "</div>");
+        var appointmentTime = $("<div class='appointment-time'>" + document.getElementById("noAppointmentsAvailableMsg").value + "</div>");
         $(appointmentCard).append(appointmentTime);
         $(".appointments-container").append(appointmentCard);
     } else {

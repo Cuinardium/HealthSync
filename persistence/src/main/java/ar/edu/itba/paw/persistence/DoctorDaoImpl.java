@@ -176,7 +176,26 @@ public class DoctorDaoImpl implements DoctorDao {
     int healthInsuranceCode = healthInsurance != null ? healthInsurance.ordinal() : -1;
 
     // Start building the query
-    QueryBuilder subQuery = doctorQuery();
+    QueryBuilder subQuery =
+        doctorQuery()
+            .groupBy(
+                "doctor.doctor_id",
+                "specialty_code",
+                "email",
+                "password",
+                "first_name",
+                "last_name",
+                "profile_picture_id",
+                "doctor_location.doctor_location_id",
+                "city_code",
+                "address",
+                "monday",
+                "tuesday",
+                "wednesday",
+                "thursday",
+                "friday",
+                "saturday",
+                "sunday");
     QueryBuilder doctorCountQuery = doctorCountQuery();
 
     // Add the filters to the query, if it is the first filter, don't add AND

@@ -68,3 +68,7 @@ h1, .h1{
 .form-check-input{
     margin: 5px;
 }
+
+.formItem > .rounded-circle{
+    margin-top: 2rem;
+}

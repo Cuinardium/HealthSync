@@ -10,13 +10,8 @@
 <c:url value="/css/detailedAppointment.css" var="detailedAppointmentCss"/>
 
 
-<c:url value="/my-appointments" var="myAppointmentsUrl">
-  <c:param name="from" value="${from}" />
-  <c:param name="to" value="${to}" />
-  <c:param name="selected_tab" value="${selectedTab}" />
-</c:url>
+<c:url value="/my-appointments" var="myAppointmentsUrl"/>
 <c:url value="/my-appointments/${appointmentId}/update" var="updateUrl"/>
-
 <spring:message code="${cityMessageId}" var="city"/>
 <spring:message code="${patientHealthInsuranceMessageId}" var="healthInsurance"/>
 <spring:message code="${appointmentStatusMessageId}" var="status"/>
