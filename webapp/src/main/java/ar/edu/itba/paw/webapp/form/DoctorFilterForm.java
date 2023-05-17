@@ -3,16 +3,24 @@ package ar.edu.itba.paw.webapp.form;
 import ar.edu.itba.paw.models.City;
 import ar.edu.itba.paw.models.HealthInsurance;
 import ar.edu.itba.paw.models.Specialty;
+import ar.edu.itba.paw.models.ThirtyMinuteBlock;
+import org.springframework.format.annotation.DateTimeFormat;
+
+import java.time.LocalDate;
 
 public class DoctorFilterForm {
-
-  private String name = null;
+  private String name;
 
   private int cityCode = -1;
 
   private int specialtyCode = -1;
 
   private int healthInsuranceCode = -1;
+
+  @DateTimeFormat(pattern = "yyyy-MM-dd")
+  private LocalDate date;
+
+  private int from = 0, to = ThirtyMinuteBlock.values().length - 1;
 
   public int getCityCode() {
     if (cityCode < 0 || cityCode > City.values().length) {
@@ -56,5 +64,29 @@ public class DoctorFilterForm {
 
   public void setName(String name) {
     this.name = name;
+  }
+
+  public LocalDate getDate() {
+    return date;
+  }
+
+  public void setDate(LocalDate date) {
+      this.date = date;
+  }
+
+  public int getFrom() {
+    return from;
+  }
+
+  public void setFrom(int from) {
+    this.from = from;
+  }
+
+  public int getTo() {
+    return to;
+  }
+
+  public void setTo(int to) {
+    this.to = to;
   }
 }
