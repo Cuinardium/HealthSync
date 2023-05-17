@@ -2,11 +2,11 @@ package ar.edu.itba.paw.webapp.controller;
 
 import ar.edu.itba.paw.interfaces.services.DoctorService;
 import ar.edu.itba.paw.interfaces.services.PatientService;
+import ar.edu.itba.paw.interfaces.services.exceptions.EmailInUseException;
 import ar.edu.itba.paw.models.*;
 import ar.edu.itba.paw.webapp.form.DoctorRegisterForm;
 import ar.edu.itba.paw.webapp.form.LoginForm;
 import ar.edu.itba.paw.webapp.form.PatientRegisterForm;
-
 import java.time.DayOfWeek;
 import java.util.Arrays;
 import java.util.List;
@@ -77,36 +77,41 @@ public class AuthController {
       final BindingResult errors) {
     if (errors.hasErrors()) {
       LOGGER.warn("Failed to register patient due to form errors");
-      return patientRegister(patientRegisterForm);
+      return patientRegister(patientRegisterForm, false);
     }
 
     HealthInsurance healthInsurance =
         HealthInsurance.values()[patientRegisterForm.getHealthInsuranceCode()];
 
-    // TODO: check for exceptions
-    final Patient patient =
-        patientService.createPatient(
-            patientRegisterForm.getEmail(),
-            patientRegisterForm.getPassword(),
-            patientRegisterForm.getName(),
-            patientRegisterForm.getLastname(),
-            healthInsurance);
+    try {
+      final Patient patient =
+          patientService.createPatient(
+              patientRegisterForm.getEmail(),
+              patientRegisterForm.getPassword(),
+              patientRegisterForm.getName(),
+              patientRegisterForm.getLastname(),
+              healthInsurance);
 
-    LOGGER.info("Registered {}", patient);
-    authUser(patient.getEmail(), patientRegisterForm.getPassword());
+      LOGGER.info("Registered {}", patient);
+      authUser(patient.getEmail(), patientRegisterForm.getPassword());
 
-    final ModelAndView mav = new ModelAndView("auth/patientRegister");
-    mav.addObject("form", patientRegisterForm);
-    mav.addObject("healthInsurances", Arrays.asList(HealthInsurance.values()));
-    mav.addObject("showModal", true);
-    return mav;
+      final ModelAndView mav = new ModelAndView("auth/patientRegister");
+      mav.addObject("form", patientRegisterForm);
+      mav.addObject("healthInsurances", Arrays.asList(HealthInsurance.values()));
+      mav.addObject("showModal", true);
+      return mav;
+    } catch (EmailInUseException e) {
+      LOGGER.warn("Failed to register patient due to email unique constraint");
+      return patientRegister(patientRegisterForm, true);
+    }
   }
 
-  // register user?
   @RequestMapping(value = "/patient-register", method = RequestMethod.GET)
   public ModelAndView patientRegister(
-      @ModelAttribute("patientRegisterForm") final PatientRegisterForm patientRegisterForm) {
+      @ModelAttribute("patientRegisterForm") final PatientRegisterForm patientRegisterForm,
+      Boolean emailAlreadyInUse) {
     final ModelAndView mav = new ModelAndView("auth/patientRegister");
+    mav.addObject("emailAlreadyInUse", emailAlreadyInUse);
     mav.addObject("form", patientRegisterForm);
     mav.addObject("healthInsurances", Arrays.asList(HealthInsurance.values()));
     mav.addObject("showModal", false);
@@ -121,7 +126,7 @@ public class AuthController {
       final BindingResult errors) {
     if (errors.hasErrors()) {
       LOGGER.warn("Failed to register doctor due to form errors");
-      return doctorRegisterForm(doctorRegisterForm);
+      return doctorRegisterForm(doctorRegisterForm, false);
     }
 
     Specialty specialty = Specialty.values()[doctorRegisterForm.getSpecialtyCode()];
@@ -136,119 +141,124 @@ public class AuthController {
 
     ThirtyMinuteBlock[] values = ThirtyMinuteBlock.values();
     AttendingHours attendingHours =
-            new AttendingHours(
-                    doctorRegisterForm
-                            .getMondayAttendingHours()
-                            .stream()
-                            .map(i -> values[i])
-                            .collect(Collectors.toList()),
-                    doctorRegisterForm
-                            .getTuesdayAttendingHours()
-                            .stream()
-                            .map(i -> values[i])
-                            .collect(Collectors.toList()),
-                    doctorRegisterForm
-                            .getWednesdayAttendingHours()
-                            .stream()
-                            .map(i -> values[i])
-                            .collect(Collectors.toList()),
-                    doctorRegisterForm
-                            .getThursdayAttendingHours()
-                            .stream()
-                            .map(i -> values[i])
-                            .collect(Collectors.toList()),
-                    doctorRegisterForm
-                            .getFridayAttendingHours()
-                            .stream()
-                            .map(i -> values[i])
-                            .collect(Collectors.toList()),
-                    doctorRegisterForm
-                            .getSaturdayAttendingHours()
-                            .stream()
-                            .map(i -> values[i])
-                            .collect(Collectors.toList()),
-                    doctorRegisterForm
-                            .getSundayAttendingHours()
-                            .stream()
-                            .map(i -> values[i])
-                            .collect(Collectors.toList()));
+        new AttendingHours(
+            doctorRegisterForm
+                .getMondayAttendingHours()
+                .stream()
+                .map(i -> values[i])
+                .collect(Collectors.toList()),
+            doctorRegisterForm
+                .getTuesdayAttendingHours()
+                .stream()
+                .map(i -> values[i])
+                .collect(Collectors.toList()),
+            doctorRegisterForm
+                .getWednesdayAttendingHours()
+                .stream()
+                .map(i -> values[i])
+                .collect(Collectors.toList()),
+            doctorRegisterForm
+                .getThursdayAttendingHours()
+                .stream()
+                .map(i -> values[i])
+                .collect(Collectors.toList()),
+            doctorRegisterForm
+                .getFridayAttendingHours()
+                .stream()
+                .map(i -> values[i])
+                .collect(Collectors.toList()),
+            doctorRegisterForm
+                .getSaturdayAttendingHours()
+                .stream()
+                .map(i -> values[i])
+                .collect(Collectors.toList()),
+            doctorRegisterForm
+                .getSundayAttendingHours()
+                .stream()
+                .map(i -> values[i])
+                .collect(Collectors.toList()));
 
-    // TODO: check for exceptions
-    final Doctor doctor =
-        doctorService.createDoctor(
-            doctorRegisterForm.getEmail(),
-            doctorRegisterForm.getPassword(),
-            doctorRegisterForm.getName(),
-            doctorRegisterForm.getLastname(),
-            specialty,
-            city,
-            doctorRegisterForm.getAddress(),
-            healthInsurances,
-            attendingHours);
+    try {
+      final Doctor doctor =
+          doctorService.createDoctor(
+              doctorRegisterForm.getEmail(),
+              doctorRegisterForm.getPassword(),
+              doctorRegisterForm.getName(),
+              doctorRegisterForm.getLastname(),
+              specialty,
+              city,
+              doctorRegisterForm.getAddress(),
+              healthInsurances,
+              attendingHours);
+      LOGGER.info("Registered {}", doctor);
+      authUser(doctor.getEmail(), doctorRegisterForm.getPassword());
 
-    LOGGER.info("Registered {}", doctor);
-    authUser(doctor.getEmail(), doctorRegisterForm.getPassword());
+      final ModelAndView mav = new ModelAndView("auth/doctorRegister");
+      mav.addObject("form", doctorRegisterForm);
+      mav.addObject("showModal", true);
+      mav.addObject("cities", Arrays.asList(City.values()));
+      mav.addObject("specialties", Arrays.asList(Specialty.values()));
+      mav.addObject("healthInsurances", Arrays.asList(HealthInsurance.values()));
+      mav.addObject("timeEnumValues", ThirtyMinuteBlock.values());
 
-    final ModelAndView mav = new ModelAndView("auth/doctorRegister");
-    mav.addObject("form", doctorRegisterForm);
-    mav.addObject("showModal", true);
-    mav.addObject("cities", Arrays.asList(City.values()));
-    mav.addObject("specialties", Arrays.asList(Specialty.values()));
-    mav.addObject("healthInsurances", Arrays.asList(HealthInsurance.values()));
-    mav.addObject("timeEnumValues", ThirtyMinuteBlock.values());
-
-    return mav;
+      return mav;
+    } catch (EmailInUseException e) {
+      LOGGER.warn("Failed to register doctor due to email unique constraint");
+      return doctorRegisterForm(doctorRegisterForm, true);
+    }
   }
 
   @RequestMapping(value = "/doctor-register", method = RequestMethod.GET)
   public ModelAndView doctorRegisterForm(
-      @ModelAttribute("doctorRegisterForm") final DoctorRegisterForm doctorRegisterForm) {
+      @ModelAttribute("doctorRegisterForm") final DoctorRegisterForm doctorRegisterForm,
+      Boolean emailAlreadyInUse) {
     // Attending hours
     AttendingHours attendingHours = AttendingHours.DEFAULT_ATTENDING_HOURS;
     doctorRegisterForm.setMondayAttendingHours(
-            attendingHours
-                    .getAttendingBlocksForDay(DayOfWeek.MONDAY)
-                    .stream()
-                    .map(ThirtyMinuteBlock::ordinal)
-                    .collect(Collectors.toList()));
+        attendingHours
+            .getAttendingBlocksForDay(DayOfWeek.MONDAY)
+            .stream()
+            .map(ThirtyMinuteBlock::ordinal)
+            .collect(Collectors.toList()));
     doctorRegisterForm.setTuesdayAttendingHours(
-            attendingHours
-                    .getAttendingBlocksForDay(DayOfWeek.TUESDAY)
-                    .stream()
-                    .map(ThirtyMinuteBlock::ordinal)
-                    .collect(Collectors.toList()));
+        attendingHours
+            .getAttendingBlocksForDay(DayOfWeek.TUESDAY)
+            .stream()
+            .map(ThirtyMinuteBlock::ordinal)
+            .collect(Collectors.toList()));
     doctorRegisterForm.setWednesdayAttendingHours(
-            attendingHours
-                    .getAttendingBlocksForDay(DayOfWeek.WEDNESDAY)
-                    .stream()
-                    .map(ThirtyMinuteBlock::ordinal)
-                    .collect(Collectors.toList()));
+        attendingHours
+            .getAttendingBlocksForDay(DayOfWeek.WEDNESDAY)
+            .stream()
+            .map(ThirtyMinuteBlock::ordinal)
+            .collect(Collectors.toList()));
     doctorRegisterForm.setThursdayAttendingHours(
-            attendingHours
-                    .getAttendingBlocksForDay(DayOfWeek.THURSDAY)
-                    .stream()
-                    .map(ThirtyMinuteBlock::ordinal)
-                    .collect(Collectors.toList()));
+        attendingHours
+            .getAttendingBlocksForDay(DayOfWeek.THURSDAY)
+            .stream()
+            .map(ThirtyMinuteBlock::ordinal)
+            .collect(Collectors.toList()));
     doctorRegisterForm.setFridayAttendingHours(
-            attendingHours
-                    .getAttendingBlocksForDay(DayOfWeek.FRIDAY)
-                    .stream()
-                    .map(ThirtyMinuteBlock::ordinal)
-                    .collect(Collectors.toList()));
+        attendingHours
+            .getAttendingBlocksForDay(DayOfWeek.FRIDAY)
+            .stream()
+            .map(ThirtyMinuteBlock::ordinal)
+            .collect(Collectors.toList()));
     doctorRegisterForm.setSaturdayAttendingHours(
-            attendingHours
-                    .getAttendingBlocksForDay(DayOfWeek.SATURDAY)
-                    .stream()
-                    .map(ThirtyMinuteBlock::ordinal)
-                    .collect(Collectors.toList()));
+        attendingHours
+            .getAttendingBlocksForDay(DayOfWeek.SATURDAY)
+            .stream()
+            .map(ThirtyMinuteBlock::ordinal)
+            .collect(Collectors.toList()));
     doctorRegisterForm.setSundayAttendingHours(
-            attendingHours
-                    .getAttendingBlocksForDay(DayOfWeek.SUNDAY)
-                    .stream()
-                    .map(ThirtyMinuteBlock::ordinal)
-                    .collect(Collectors.toList()));
+        attendingHours
+            .getAttendingBlocksForDay(DayOfWeek.SUNDAY)
+            .stream()
+            .map(ThirtyMinuteBlock::ordinal)
+            .collect(Collectors.toList()));
 
     final ModelAndView mav = new ModelAndView("auth/doctorRegister");
+    mav.addObject("emailAlreadyInUse", emailAlreadyInUse);
     mav.addObject("form", doctorRegisterForm);
     mav.addObject("cities", Arrays.asList(City.values()));
     mav.addObject("specialties", Arrays.asList(Specialty.values()));

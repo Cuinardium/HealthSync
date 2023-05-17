@@ -4,6 +4,7 @@ import ar.edu.itba.paw.interfaces.persistence.UserDao;
 import ar.edu.itba.paw.interfaces.persistence.exceptions.EmailAlreadyExistsException;
 import ar.edu.itba.paw.interfaces.persistence.exceptions.UserNotFoundException;
 import ar.edu.itba.paw.interfaces.services.ImageService;
+import ar.edu.itba.paw.interfaces.services.exceptions.EmailInUseException;
 import ar.edu.itba.paw.models.Image;
 import ar.edu.itba.paw.models.User;
 import java.util.Optional;
@@ -45,7 +46,7 @@ public class UserServiceImplTest {
   @InjectMocks private UserServiceImpl us;
 
   @Test
-  public void testCreateUser() throws EmailAlreadyExistsException {
+  public void testCreateUser() throws EmailAlreadyExistsException, EmailInUseException {
     // 1. Precondiciones
     // UserDao mock = Mockito.mock(UserDao.class);
     Mockito.when(passwordEncoder.encode(Mockito.eq(PASSWORD))).thenReturn(PASSWORD_ENCODED);
@@ -68,9 +69,9 @@ public class UserServiceImplTest {
     Assert.assertEquals(LAST_NAME, newUser.getLastName());
   }
 
-  // TODO: change exception
-  @Test(expected = RuntimeException.class)
-  public void testCreateUserAlreadyExists() throws EmailAlreadyExistsException {
+  @Test(expected = EmailInUseException.class)
+  public void testCreateUserAlreadyExists()
+      throws EmailAlreadyExistsException, EmailInUseException {
     // 1. Precondiciones
     Mockito.when(passwordEncoder.encode(Mockito.eq(PASSWORD))).thenReturn(PASSWORD_ENCODED);
     Mockito.when(
@@ -79,7 +80,7 @@ public class UserServiceImplTest {
                 Mockito.eq(PASSWORD_ENCODED),
                 Mockito.eq(FIRST_NAME),
                 Mockito.eq(LAST_NAME)))
-        .thenThrow(RuntimeException.class);
+        .thenThrow(EmailAlreadyExistsException.class);
 
     // 2. Ejercitar la class under test
     us.createUser(EMAIL, PASSWORD, FIRST_NAME, LAST_NAME);

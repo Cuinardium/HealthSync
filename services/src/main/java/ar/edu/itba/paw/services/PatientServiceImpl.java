@@ -5,6 +5,7 @@ import ar.edu.itba.paw.interfaces.persistence.exceptions.PatientAlreadyExistsExc
 import ar.edu.itba.paw.interfaces.persistence.exceptions.PatientNotFoundException;
 import ar.edu.itba.paw.interfaces.services.PatientService;
 import ar.edu.itba.paw.interfaces.services.UserService;
+import ar.edu.itba.paw.interfaces.services.exceptions.EmailInUseException;
 import ar.edu.itba.paw.models.HealthInsurance;
 import ar.edu.itba.paw.models.Image;
 import ar.edu.itba.paw.models.Patient;
@@ -35,17 +36,17 @@ public class PatientServiceImpl implements PatientService {
       String password,
       String firstName,
       String lastName,
-      HealthInsurance healthInsurance) {
-
-    // Create User
-    User user = userService.createUser(email, password, firstName, lastName);
+      HealthInsurance healthInsurance)
+      throws EmailInUseException {
 
     try {
+      // Create User
+      User user = userService.createUser(email, password, firstName, lastName);
       // Create Patient
       Patient patient = patientDao.createPatient(user.getId(), healthInsurance);
       return patient;
     } catch (PatientAlreadyExistsException e) {
-      throw new RuntimeException();
+      throw new IllegalStateException();
     }
   }
 

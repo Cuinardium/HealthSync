@@ -5,6 +5,7 @@ import ar.edu.itba.paw.interfaces.persistence.exceptions.EmailAlreadyExistsExcep
 import ar.edu.itba.paw.interfaces.persistence.exceptions.UserNotFoundException;
 import ar.edu.itba.paw.interfaces.services.ImageService;
 import ar.edu.itba.paw.interfaces.services.UserService;
+import ar.edu.itba.paw.interfaces.services.exceptions.EmailInUseException;
 import ar.edu.itba.paw.models.Image;
 import ar.edu.itba.paw.models.User;
 import java.util.Optional;
@@ -32,11 +33,12 @@ public class UserServiceImpl implements UserService {
 
   @Transactional
   @Override
-  public User createUser(String email, String password, String firstName, String lastName) {
+  public User createUser(String email, String password, String firstName, String lastName)
+      throws EmailInUseException {
     try {
       return userDao.createUser(email, passwordEncoder.encode(password), firstName, lastName);
     } catch (EmailAlreadyExistsException e) {
-      throw new RuntimeException();
+      throw new EmailInUseException();
     }
   }
 

@@ -4,6 +4,7 @@ import ar.edu.itba.paw.interfaces.persistence.DoctorDao;
 import ar.edu.itba.paw.interfaces.persistence.exceptions.DoctorAlreadyExistsException;
 import ar.edu.itba.paw.interfaces.persistence.exceptions.DoctorNotFoundException;
 import ar.edu.itba.paw.interfaces.services.UserService;
+import ar.edu.itba.paw.interfaces.services.exceptions.EmailInUseException;
 import ar.edu.itba.paw.models.AttendingHours;
 import ar.edu.itba.paw.models.City;
 import ar.edu.itba.paw.models.Doctor;
@@ -112,7 +113,8 @@ public class DoctorServiceImplTest {
   @InjectMocks private DoctorServiceImpl ds;
 
   @Test
-  public void testCreateDoctor() throws IllegalStateException, DoctorAlreadyExistsException {
+  public void testCreateDoctor()
+      throws IllegalStateException, DoctorAlreadyExistsException, EmailInUseException {
     // 1. Precondiciones
     Mockito.when(userService.createUser(EMAIL, PASSWORD, FIRST_NAME, LAST_NAME)).thenReturn(USER);
     Mockito.when(
@@ -135,16 +137,35 @@ public class DoctorServiceImplTest {
     Assert.assertEquals(DOCTOR, doctor);
   }
 
-  // TODO: cng excep
-  @Test(expected = RuntimeException.class)
+  @Test(expected = IllegalStateException.class)
   public void testCreateDoctorAlreadyExists()
-      throws IllegalStateException, DoctorAlreadyExistsException {
+      throws IllegalStateException, DoctorAlreadyExistsException, EmailInUseException {
     // 1. Precondiciones
     Mockito.when(userService.createUser(EMAIL, PASSWORD, FIRST_NAME, LAST_NAME)).thenReturn(USER);
     Mockito.when(
             doctorDao.createDoctor(
                 ID, SPECIALTY, CITY, ADDRESS, HEALTH_INSURANCES, ATTENDING_HOURS))
         .thenThrow(DoctorAlreadyExistsException.class);
+    // 2. Ejercitar la class under test
+    ds.createDoctor(
+        EMAIL,
+        PASSWORD,
+        FIRST_NAME,
+        LAST_NAME,
+        SPECIALTY,
+        CITY,
+        ADDRESS,
+        HEALTH_INSURANCES,
+        ATTENDING_HOURS);
+    // 3. Meaningful assertions
+  }
+
+  @Test(expected = EmailInUseException.class)
+  public void testCreateDoctorUserAlreadyExists()
+      throws IllegalStateException, DoctorAlreadyExistsException, EmailInUseException {
+    // 1. Precondiciones
+    Mockito.when(userService.createUser(EMAIL, PASSWORD, FIRST_NAME, LAST_NAME))
+        .thenThrow(EmailInUseException.class);
     // 2. Ejercitar la class under test
     ds.createDoctor(
         EMAIL,

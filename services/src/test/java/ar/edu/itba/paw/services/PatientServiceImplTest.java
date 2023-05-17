@@ -4,6 +4,7 @@ import ar.edu.itba.paw.interfaces.persistence.PatientDao;
 import ar.edu.itba.paw.interfaces.persistence.exceptions.PatientAlreadyExistsException;
 import ar.edu.itba.paw.interfaces.persistence.exceptions.PatientNotFoundException;
 import ar.edu.itba.paw.interfaces.services.UserService;
+import ar.edu.itba.paw.interfaces.services.exceptions.EmailInUseException;
 import ar.edu.itba.paw.models.HealthInsurance;
 import ar.edu.itba.paw.models.Image;
 import ar.edu.itba.paw.models.Patient;
@@ -48,7 +49,8 @@ public class PatientServiceImplTest {
   @InjectMocks private PatientServiceImpl ps;
 
   @Test
-  public void testCreatePatient() throws IllegalStateException, PatientAlreadyExistsException {
+  public void testCreatePatient()
+      throws IllegalStateException, PatientAlreadyExistsException, EmailInUseException {
     // 1. Precondiciones
     Mockito.when(userService.createUser(EMAIL, PASSWORD, FIRST_NAME, LAST_NAME)).thenReturn(USER);
     Mockito.when(patientDao.createPatient(ID, HEALTH_INSURANCE)).thenReturn(PATIENT);
@@ -58,14 +60,24 @@ public class PatientServiceImplTest {
     Assert.assertEquals(PATIENT, patient);
   }
 
-  // TODO: cng excep
-  @Test(expected = RuntimeException.class)
+  @Test(expected = IllegalStateException.class)
   public void testCreatePatientAlreadyExists()
-      throws IllegalStateException, PatientAlreadyExistsException {
+      throws IllegalStateException, PatientAlreadyExistsException, EmailInUseException {
     // 1. Precondiciones
     Mockito.when(userService.createUser(EMAIL, PASSWORD, FIRST_NAME, LAST_NAME)).thenReturn(USER);
     Mockito.when(patientDao.createPatient(ID, HEALTH_INSURANCE))
         .thenThrow(PatientAlreadyExistsException.class);
+    // 2. Ejercitar la class under test
+    ps.createPatient(EMAIL, PASSWORD, FIRST_NAME, LAST_NAME, HEALTH_INSURANCE);
+    // 3. Meaningful assertions
+  }
+
+  @Test(expected = EmailInUseException.class)
+  public void testCreatePatientUserAlreadyExists()
+      throws IllegalStateException, PatientAlreadyExistsException, EmailInUseException {
+    // 1. Precondiciones
+    Mockito.when(userService.createUser(EMAIL, PASSWORD, FIRST_NAME, LAST_NAME))
+        .thenThrow(EmailInUseException.class);
     // 2. Ejercitar la class under test
     ps.createPatient(EMAIL, PASSWORD, FIRST_NAME, LAST_NAME, HEALTH_INSURANCE);
     // 3. Meaningful assertions

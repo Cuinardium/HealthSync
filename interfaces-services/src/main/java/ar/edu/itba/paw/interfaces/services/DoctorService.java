@@ -1,7 +1,7 @@
 package ar.edu.itba.paw.interfaces.services;
 
+import ar.edu.itba.paw.interfaces.services.exceptions.EmailInUseException;
 import ar.edu.itba.paw.models.*;
-
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
@@ -20,7 +20,8 @@ public interface DoctorService {
       City city,
       String address,
       List<HealthInsurance> healthInsurances,
-      AttendingHours attendingHours);
+      AttendingHours attendingHours)
+      throws EmailInUseException, IllegalStateException;
 
   // =============== Updates ===============
 
@@ -41,15 +42,15 @@ public interface DoctorService {
   public Optional<Doctor> getDoctorById(long id);
 
   public Page<Doctor> getFilteredDoctors(
-          String name,
-          LocalDate date,
-          ThirtyMinuteBlock fromTime,
-          ThirtyMinuteBlock toTime,
-          Specialty specialty,
-          City city,
-          HealthInsurance healthInsurance,
-          Integer page,
-          Integer pageSize);
+      String name,
+      LocalDate date,
+      ThirtyMinuteBlock fromTime,
+      ThirtyMinuteBlock toTime,
+      Specialty specialty,
+      City city,
+      HealthInsurance healthInsurance,
+      Integer page,
+      Integer pageSize);
 
   public List<Doctor> getDoctors();
 

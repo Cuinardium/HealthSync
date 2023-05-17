@@ -1,5 +1,6 @@
 package ar.edu.itba.paw.interfaces.services;
 
+import ar.edu.itba.paw.interfaces.services.exceptions.EmailInUseException;
 import ar.edu.itba.paw.models.HealthInsurance;
 import ar.edu.itba.paw.models.Image;
 import ar.edu.itba.paw.models.Patient;
@@ -14,7 +15,8 @@ public interface PatientService {
       String password,
       String firstName,
       String lastName,
-      HealthInsurance healthInsurance);
+      HealthInsurance healthInsurance)
+      throws EmailInUseException, IllegalStateException;
 
   // =============== Updates ===============
 

@@ -5,6 +5,7 @@ import ar.edu.itba.paw.interfaces.persistence.exceptions.DoctorAlreadyExistsExce
 import ar.edu.itba.paw.interfaces.persistence.exceptions.DoctorNotFoundException;
 import ar.edu.itba.paw.interfaces.services.DoctorService;
 import ar.edu.itba.paw.interfaces.services.UserService;
+import ar.edu.itba.paw.interfaces.services.exceptions.EmailInUseException;
 import ar.edu.itba.paw.models.*;
 import java.time.LocalDate;
 import java.util.List;
@@ -40,17 +41,16 @@ public class DoctorServiceImpl implements DoctorService {
       City city,
       String address,
       List<HealthInsurance> healthInsurances,
-      AttendingHours attendingHours) {
-
-    // Create user
-    User user = userService.createUser(email, password, firstName, lastName);
-
+      AttendingHours attendingHours)
+      throws EmailInUseException {
     try {
+      // Create user
+      User user = userService.createUser(email, password, firstName, lastName);
       // Create doctor
       return doctorDao.createDoctor(
           user.getId(), specialty, city, address, healthInsurances, attendingHours);
     } catch (DoctorAlreadyExistsException e) {
-      throw new RuntimeException();
+      throw new IllegalStateException();
     }
   }
 
