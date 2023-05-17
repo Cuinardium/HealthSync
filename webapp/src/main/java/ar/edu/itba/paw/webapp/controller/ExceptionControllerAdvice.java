@@ -3,6 +3,7 @@ package ar.edu.itba.paw.webapp.controller;
 import ar.edu.itba.paw.webapp.exceptions.AppointmentForbiddenException;
 import ar.edu.itba.paw.webapp.exceptions.AppointmentNotFoundException;
 import ar.edu.itba.paw.webapp.exceptions.ImageNotFoundException;
+import ar.edu.itba.paw.webapp.exceptions.ReviewForbiddenException;
 import ar.edu.itba.paw.webapp.exceptions.UserNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -51,4 +52,14 @@ public class ExceptionControllerAdvice {
 
     return mav;
   }
+
+  @ExceptionHandler(ReviewForbiddenException.class)
+  @ResponseStatus(code = HttpStatus.FORBIDDEN)
+  public ModelAndView forbidden(ReviewForbiddenException e) {
+    ModelAndView mav = new ModelAndView("/errors/403");
+    mav.addObject("message", e.getMessage());
+
+    return mav;
+  }
+
 }

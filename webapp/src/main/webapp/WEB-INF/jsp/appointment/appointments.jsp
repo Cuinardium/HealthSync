@@ -69,7 +69,7 @@
     </ul>
 
     <div class="cardsContainer">
-        <c:forEach items="${tabs}" var="tab">
+        <c:forEach items="${tabs}" var="tab" varStatus="status">
             <div id="${tab.tabName}" class="tabContent ${tab.isActive(selectedTab) ? 'active' : ''}">
                 <c:forEach items="${tab.appointments}" var="appointment">
 
@@ -87,7 +87,8 @@
                             </div>
 
                             <spring:message code="${appointment.doctor.location.city.messageID}" var="city"/>
-                            <div class="card-title"><strong>${address}: </strong>${appointment.doctor.location.address}, ${city}</div>
+                            <div class="card-title">
+                                <strong>${address}: </strong>${appointment.doctor.location.address}, ${city}</div>
 
                             <spring:message code="${appointment.patient.healthInsurance.messageID}"
                                             var="healthInsurance"/>
@@ -100,18 +101,18 @@
                             </c:if>
 
                             <div class="cardButtonContainer">
-                                <c:forEach items="${tab.allowedActions}" var="action">
+                                <c:if test="${status.index == 1}">
                                     <c:url value="/my-appointments/${appointment.id}/update" var="updateUrl">
                                         <c:param name="selected_tab" value="${selectedTab}"/>
-                                        <c:param name="status" value="${action.statusCode}"/>
+                                        <c:param name="status" value="${tab.allowedAction.statusCode}"/>
                                     </c:url>
                                     <button onclick="openModal('${updateUrl}')"
-                                        class="post-button btn ${action.buttonClass}">
-                                        <spring:message code="${action.messageID}"/>
+                                            class="post-button btn ${tab.allowedAction.buttonClass}">
+                                        <spring:message code="${tab.allowedAction.messageID}"/>
                                     </button>
                                     <div class="modal fade" id="modal" tabindex="-1" role="dialog"
-                                        aria-labelledby="modalLabel"
-                                        aria-hidden="true">
+                                         aria-labelledby="modalLabel"
+                                         aria-hidden="true">
                                         <div class="modal-dialog" role="dialog">
                                             <div class="modal-content">
                                                 <div class="modal-header">
@@ -119,21 +120,21 @@
                                                 </div>
                                                 <form:form modelAttribute="modalForm" id="post-modal">
                                                     <div class="modal-body">
-                                                        ${modalDesc}
+                                                            ${modalDesc}
                                                         <div class="form-group">
                                                             <form:label path="description" for="cancelDescription"
-                                                                class="col-form-label">${cancelDesc}</form:label>
+                                                                        class="col-form-label">${cancelDesc}</form:label>
                                                             <form:input path="description" class="form-control"
-                                                                id="cancelDescription"/>
+                                                                        id="cancelDescription"/>
                                                         </div>
                                                     </div>
                                                     <div class="modal-footer">
 
                                                         <div class="cardButtonContainer">
                                                             <button type="button" class="btn btn-danger"
-                                                            onclick="closeModal()">${modalDeny}</button>
+                                                                    onclick="closeModal()">${modalDeny}</button>
                                                             <button type="submit"
-                                                            class="btn btn-primary">${modalConfirm}</button>
+                                                                    class="btn btn-primary">${modalConfirm}</button>
                                                         </div>
 
                                                     </div>
@@ -141,17 +142,23 @@
                                             </div>
                                         </div>
                                     </div>
-                                </c:forEach>
+                                </c:if>
+                                <c:if test="${status.index == 2 && tab.allowedAction != null}">
+                                    <c:url value="/${appointment.doctor.id}/review" var="reviewUrl"/>
+                                    <a href="${reviewUrl}" class="btn ${tab.allowedAction.buttonClass}">
+                                        <spring:message code="${tab.allowedAction.messageID}"/>
+                                    </a>
+                                </c:if>
                             </div>
                         </div>
                     </div>
-                    </c:forEach>
-                    <c:if test="${empty tab.appointments}">
-                        <div class="noAppointmentsMsg">
-                            <div class="alert alert-info">${noAppointments}</div>
-                        </div>
-                    </c:if>
-                </div>
+                </c:forEach>
+                <c:if test="${empty tab.appointments}">
+                    <div class="noAppointmentsMsg">
+                        <div class="alert alert-info">${noAppointments}</div>
+                    </div>
+                </c:if>
+            </div>
         </c:forEach>
     </div>
 </div>

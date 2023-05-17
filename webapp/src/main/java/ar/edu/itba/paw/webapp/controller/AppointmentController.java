@@ -66,28 +66,22 @@ public class AppointmentController {
     List<AppointmentTab> tabs = new ArrayList<>();
 
     // User can cancel an upcoming appointment
-    List<AllowedActions> confirmedAllowedActions = new ArrayList<>();
-    confirmedAllowedActions.add(AllowedActions.CANCEL);
     tabs.add(
         new AppointmentTab(
-            "confirmed",
-            (x) -> (x == 1),
-            upcomingAppointments,
-            confirmedAllowedActions,
-            "appointments.upcoming"));
+            "confirmed", (x) -> (x == 1), upcomingAppointments, null, "appointments.upcoming"));
     tabs.add(
         new AppointmentTab(
             "cancelled",
             (x) -> (x == 2),
             cancelledAppointments,
-            new ArrayList<>(),
+             AllowedActions.CANCEL,
             "appointments.cancelled"));
     tabs.add(
         new AppointmentTab(
             "history",
             (x) -> (x == 3),
             completedAppointments,
-            new ArrayList<>(),
+            isPatient ? AllowedActions.REVIEW : null,
             "appointments.history"));
 
     // Add values to model
@@ -194,7 +188,8 @@ public class AppointmentController {
 
   // ==================================  Inner Classes  ===========================================
   public enum AllowedActions {
-    CANCEL(AppointmentStatus.CANCELLED.ordinal(), "btn-danger", "appointments.cancel");
+    CANCEL(AppointmentStatus.CANCELLED.ordinal(), "btn-danger", "appointments.cancel"),
+    REVIEW(AppointmentStatus.COMPLETED.ordinal(), "btn-primary", "appointments.review");
 
     private final Integer statusCode;
     private final String buttonClass;
@@ -223,19 +218,19 @@ public class AppointmentController {
     private final String tabName;
     private final IntPredicate intPredicate;
     private final List<Appointment> appointments;
-    private final List<AllowedActions> allowedActions;
+    private final AllowedActions allowedAction;
     private final String messageID;
 
     private AppointmentTab(
         String tabName,
         IntPredicate intPredicate,
         List<Appointment> appointments,
-        List<AllowedActions> allowedActions,
+        AllowedActions allowedAction,
         String messageID) {
       this.tabName = tabName;
       this.intPredicate = intPredicate;
       this.appointments = appointments;
-      this.allowedActions = allowedActions;
+      this.allowedAction = allowedAction;
       this.messageID = messageID;
     }
 
@@ -247,8 +242,8 @@ public class AppointmentController {
       return appointments;
     }
 
-    public List<AllowedActions> getAllowedActions() {
-      return allowedActions;
+    public AllowedActions getAllowedAction() {
+      return allowedAction;
     }
 
     public boolean isActive(Integer status) {
