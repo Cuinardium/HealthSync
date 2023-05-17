@@ -1,6 +1,7 @@
 package ar.edu.itba.paw.services;
 
 import ar.edu.itba.paw.interfaces.persistence.PatientDao;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -14,4 +15,22 @@ public class PatientServiceImplTest {
   @Mock private PatientDao patientDao;
 
   @InjectMocks private PatientServiceImpl ps;
+
+  @Test
+  public void testCreatePatient() {}
+
+  @Test
+  public void testCreatePatientAlreadyExists() {}
+
+  @Test
+  public void testUpdatePatient() {}
+
+  @Test
+  public void testUpdatePatientDoesNotExist() {}
+
+  @Test
+  public void testGetPatientById() {}
+
+  @Test
+  public void testGetPatientByIdDoesNotExist() {}
 }
