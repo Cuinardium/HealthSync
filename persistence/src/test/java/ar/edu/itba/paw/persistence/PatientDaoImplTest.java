@@ -64,7 +64,7 @@ public class PatientDaoImplTest {
   }
 
   @Test
-  public void testCreatePatient() {
+  public void testCreatePatient() throws PatientAlreadyExistsException {
     // 1. Precondiciones
     // 2. Ejercitar la class under test
     Patient patient = patientDao.createPatient(AUX_PATIENT_ID, AUX_PATIENT_HEALTH_INSURANCE);
@@ -92,7 +92,7 @@ public class PatientDaoImplTest {
   }
 
   @Test
-  public void testUpdatePatientInfo() {
+  public void testUpdatePatientInfo() throws PatientNotFoundException {
     // 1. Precondiciones
     // 2. Ejercitar la class under test
     Patient patient =

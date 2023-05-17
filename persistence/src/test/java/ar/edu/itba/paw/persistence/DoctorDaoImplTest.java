@@ -3,6 +3,7 @@ package ar.edu.itba.paw.persistence;
 import static org.junit.Assert.assertThrows;
 
 import ar.edu.itba.paw.interfaces.persistence.exceptions.DoctorAlreadyExistsException;
+import ar.edu.itba.paw.interfaces.persistence.exceptions.DoctorNotFoundException;
 import ar.edu.itba.paw.models.AttendingHours;
 import ar.edu.itba.paw.models.City;
 import ar.edu.itba.paw.models.Doctor;
@@ -105,7 +106,7 @@ public class DoctorDaoImplTest {
   }
 
   @Test
-  public void testCreateDoctor() {
+  public void testCreateDoctor() throws DoctorAlreadyExistsException {
     // 1. Precondiciones
     // 2. Ejercitar la class under test
     Doctor doctor =
@@ -152,7 +153,7 @@ public class DoctorDaoImplTest {
   }
 
   @Test
-  public void testUpdateDoctorInfo() {
+  public void testUpdateDoctorInfo() throws DoctorNotFoundException {
     // 1.Precondiciones
     // 2. Ejercitar la class under test
     Doctor doctor =
@@ -178,7 +179,7 @@ public class DoctorDaoImplTest {
   }
 
   @Test
-  public void testUpdateDoctorInfoDoctorNotFound() {
+  public void testUpdateDoctorInfoDoctorNotFound() throws DoctorNotFoundException {
     // 1.Precondiciones
     // 2. Ejercitar la class under test
     // TODO: fix
