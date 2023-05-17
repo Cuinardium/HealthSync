@@ -56,7 +56,7 @@ public class UserServiceImplTest {
   }
 
   @Test(expected = RuntimeException.class)
-  public void testCreateAlreadyExists() throws EmailAlreadyExistsException {
+  public void testCreateUserAlreadyExists() throws EmailAlreadyExistsException {
     // 1. Precondiciones
     Mockito.when(passwordEncoder.encode(Mockito.eq(PASSWORD))).thenReturn(PASSWORD_ENCODED);
     Mockito.when(
@@ -72,7 +72,7 @@ public class UserServiceImplTest {
   }
 
   @Test
-  public void testFindById() {
+  public void testGetUserById() {
     // 1. Precondiciones
     // UserDao mock = Mockito.mock(UserDao.class);
     Mockito.when(userDao.getUserById(Mockito.eq(ID)))
@@ -86,4 +86,28 @@ public class UserServiceImplTest {
     Assert.assertTrue(newUser.isPresent());
     Assert.assertEquals(ID, newUser.get().getId());
   }
+
+  @Test
+  public void testGetUserByIdUserDoesNotExist() {}
+
+  @Test
+  public void testGetUserByEmail() {}
+
+  @Test
+  public void testGetUserByEmailUserDoesNotExist() {}
+
+  @Test
+  public void testUpdateUser() {}
+
+  @Test
+  public void testUpdateUserDoesNotExist() {}
+
+  @Test
+  public void testUpdatePassword() {}
+
+  @Test
+  public void testUpdatePasswordOldPasswordDoesNotMatch() {}
+
+  @Test
+  public void testUpdatePasswordUserDoesNotExist() {}
 }
