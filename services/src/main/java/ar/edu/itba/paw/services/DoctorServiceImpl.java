@@ -3,14 +3,10 @@ package ar.edu.itba.paw.services;
 import ar.edu.itba.paw.interfaces.persistence.DoctorDao;
 import ar.edu.itba.paw.interfaces.services.DoctorService;
 import ar.edu.itba.paw.interfaces.services.UserService;
-import ar.edu.itba.paw.models.AttendingHours;
-import ar.edu.itba.paw.models.City;
-import ar.edu.itba.paw.models.Doctor;
-import ar.edu.itba.paw.models.HealthInsurance;
-import ar.edu.itba.paw.models.Image;
-import ar.edu.itba.paw.models.Page;
-import ar.edu.itba.paw.models.Specialty;
-import ar.edu.itba.paw.models.User;
+import java.time.LocalDate;
+
+import ar.edu.itba.paw.models.*;
+
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -20,9 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class DoctorServiceImpl implements DoctorService {
-
   private final DoctorDao doctorDao;
-
   private final UserService userService;
 
   @Autowired
@@ -88,12 +82,15 @@ public class DoctorServiceImpl implements DoctorService {
   @Override
   public Page<Doctor> getFilteredDoctors(
       String name,
+      LocalDate date,
+      ThirtyMinuteBlock fromTime,
+      ThirtyMinuteBlock toTime,
       Specialty specialty,
       City city,
       HealthInsurance healthInsurance,
       int page,
       int pageSize) {
-    return doctorDao.getFilteredDoctors(name, specialty, city, healthInsurance, page, pageSize);
+    return doctorDao.getFilteredDoctors(name, date, fromTime, toTime, specialty, city, healthInsurance, page, pageSize);
   }
 
   @Override

@@ -1,8 +1,43 @@
+.dashboardContainer{
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    height: 92%;
+}
+
+.h2, h2{
+    margin-top: 0.3rem;
+}
+
+.searchBarContainer.form-control{
+    margin: 4px 4px 4px 0;
+}
+
+.titleFilterContainer{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.sidebarContainer{
+    display: flex;
+    flex-direction: column;
+    background: lightgray;
+    width: 22.3%;
+    padding: 1rem;
+}
+
+.discoveryContainer{
+    flex: 1;
+    overflow-y: scroll;
+}
+
 .cardsContainer {
     margin-top: 10px;
     display: flex;
     flex-direction: column;
     justify-content: center;
+    overflow-y: scroll;
 }
 
 .card{
@@ -28,4 +63,12 @@
 .noDoctorsMsg{
     display: flex;
     justify-content: center;
+}
+
+.hidden{
+    display: none;
+}
+
+h4, .h4{
+    margin-top: 1rem;
 }

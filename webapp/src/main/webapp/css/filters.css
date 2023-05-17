@@ -1,11 +1,19 @@
 .filtersContainer{
     display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
+    flex-direction: column;
 }
 
 .searchBarContainer{
     display: flex;
     flex-direction: row;
+    margin-bottom: 1.5rem;
+}
+
+select, input#date{
+    margin: 0.5rem 0;
+    box-sizing: border-box !important;
+}
+
+input.btn{
+    width: auto;
 }

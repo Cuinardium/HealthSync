@@ -13,8 +13,10 @@ import ar.edu.itba.paw.persistence.exceptions.DoctorNotFoundException;
 import ar.edu.itba.paw.persistence.utils.DeleteBuilder;
 import ar.edu.itba.paw.persistence.utils.QueryBuilder;
 import ar.edu.itba.paw.persistence.utils.UpdateBuilder;
+import java.sql.Date;
 import java.sql.ResultSet;
 import java.time.DayOfWeek;
+import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -152,6 +154,9 @@ public class DoctorDaoImpl implements DoctorDao {
   @Override
   public Page<Doctor> getFilteredDoctors(
       String name,
+      LocalDate date,
+      ThirtyMinuteBlock fromTime,
+      ThirtyMinuteBlock toTime,
       Specialty specialty,
       City city,
       HealthInsurance healthInsurance,
@@ -161,6 +166,7 @@ public class DoctorDaoImpl implements DoctorDao {
     int specialtyCode = specialty != null ? specialty.ordinal() : -1;
     int cityCode = city != null ? city.ordinal() : -1;
     int healthInsuranceCode = healthInsurance != null ? healthInsurance.ordinal() : -1;
+
 
     // Start building the query
     QueryBuilder subQuery = doctorQuery().distinctOn("doctor.doctor_id");
@@ -193,6 +199,47 @@ public class DoctorDaoImpl implements DoctorDao {
 
       subQuery.where("doctor.doctor_id IN (" + healthInsuranceQuery + ")");
       doctorCountQuery.where("doctor.doctor_id IN (" + healthInsuranceQuery + ")");
+    }
+
+    if (date != null) {
+
+      QueryBuilder appointmentSumQuery =
+          new QueryBuilder()
+              .select("sum(1 << appointment.appointment_time)")
+              .from("appointment")
+              .where("appointment.doctor_id = doctor.doctor_id")
+              .where("appointment.appointment_date = '" + Date.valueOf(date) + "'")
+              .groupBy("doctor.doctor_id");
+
+      Long fromRange = null, toRange = null;
+      if (fromTime != null) {
+          fromRange = ThirtyMinuteBlock.toBits(ThirtyMinuteBlock.fromRange(fromTime, ThirtyMinuteBlock.BLOCK_23_30));
+      }
+
+      if (toTime != null) {
+          toRange = ThirtyMinuteBlock.toBits(ThirtyMinuteBlock.fromRange(ThirtyMinuteBlock.BLOCK_00_00, toTime));
+      }
+
+      String appointmentSumQueryString = appointmentSumQuery.build();
+
+      String dayColumn = date.getDayOfWeek().name().toLowerCase();
+      StringBuilder whereClauseBuilder = new StringBuilder();
+      whereClauseBuilder.append(dayColumn);
+
+      if(fromRange != null) {
+          whereClauseBuilder.append(" & ").append(fromRange);
+      }
+
+      if(toRange != null) {
+          whereClauseBuilder.append(" & ").append(toRange);
+      }
+
+      whereClauseBuilder.append(" > ").append(dayColumn).append(" & ").append(" (select coalesce((").append(appointmentSumQueryString).append("), 0))");
+
+      String whereClauseString = whereClauseBuilder.toString();
+
+      subQuery.where(whereClauseString);
+      doctorCountQuery.where(whereClauseString);
     }
 
     if (page >= 0 && pageSize > 0) {
@@ -231,7 +278,7 @@ public class DoctorDaoImpl implements DoctorDao {
 
     int totalDoctors = jdbcTemplate.queryForObject(doctorCountQuery.build(), Integer.class);
 
-    return new Page<>(doctors, page, totalDoctors);
+    return new Page<>(doctors, page, totalDoctors, pageSize);
   }
 
   @Override
@@ -548,8 +595,8 @@ public class DoctorDaoImpl implements DoctorDao {
             "doctor_location",
             "location_for_doctor.doctor_location_id = doctor_location.doctor_location_id")
         .innerJoin(
-            "health_insurance_accepted_by_doctor",
-            "doctor.doctor_id = health_insurance_accepted_by_doctor.doctor_id")
+                "health_insurance_accepted_by_doctor",
+                "doctor.doctor_id = health_insurance_accepted_by_doctor.doctor_id")
         .innerJoin(
             "doctor_attending_hours",
             "doctor.attending_hours_id = doctor_attending_hours.attending_hours_id");

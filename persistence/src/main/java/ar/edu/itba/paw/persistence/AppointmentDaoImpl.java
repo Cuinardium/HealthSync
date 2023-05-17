@@ -142,7 +142,7 @@ public class AppointmentDaoImpl implements AppointmentDao {
 
     int totalAppointments = jdbcTemplate.queryForObject(appointmentsCountQuery, Integer.class);
 
-    return new Page<>(appointments, page, totalAppointments);
+    return new Page<>(appointments, page, totalAppointments, pageSize);
   }
 
   @Override
@@ -167,7 +167,7 @@ public class AppointmentDaoImpl implements AppointmentDao {
 
     int totalAppointments = jdbcTemplate.queryForObject(appointmentsCountQuery, Integer.class);
 
-    return new Page<>(appointments, page, totalAppointments);
+    return new Page<>(appointments, page, totalAppointments, pageSize);
   }
 
   // ========================== Private ==========================

@@ -36,7 +36,7 @@
 #get-button{
     align-self: end;
     margin-left: 40px;
-    width: 60px;
+    width: auto;
 }
 
 /* Appointmnet cards */
