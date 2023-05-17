@@ -55,6 +55,11 @@ public class AuthController {
 
     // si ?error no esta -> error es null, en cambio si ?error esta -> error es un string vacio
     mav.addObject("hasError", error != null);
+    if (error != null) {
+      LOGGER.warn("Login failed");
+    } else {
+      LOGGER.debug("Login page requested");
+    }
     return mav;
   }
 
@@ -69,6 +74,7 @@ public class AuthController {
       @Valid @ModelAttribute("patientRegisterForm") final PatientRegisterForm patientRegisterForm,
       final BindingResult errors) {
     if (errors.hasErrors()) {
+      LOGGER.warn("Failed to register patient due to form errors");
       return patientRegister(patientRegisterForm);
     }
 
@@ -102,7 +108,7 @@ public class AuthController {
     mav.addObject("form", patientRegisterForm);
     mav.addObject("healthInsurances", Arrays.asList(HealthInsurance.values()));
     mav.addObject("showModal", false);
-
+    LOGGER.debug("Patient register page requested");
     return mav;
   }
 
@@ -112,6 +118,7 @@ public class AuthController {
       @Valid @ModelAttribute("doctorRegisterForm") final DoctorRegisterForm doctorRegisterForm,
       final BindingResult errors) {
     if (errors.hasErrors()) {
+      LOGGER.warn("Failed to register doctor due to form errors");
       return doctorRegisterForm(doctorRegisterForm);
     }
 
@@ -160,6 +167,7 @@ public class AuthController {
     mav.addObject("specialties", Arrays.asList(Specialty.values()));
     mav.addObject("healthInsurances", Arrays.asList(HealthInsurance.values()));
     mav.addObject("showModal", false);
+    LOGGER.debug("Doctor register page requested");
     return mav;
   }
 

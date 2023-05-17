@@ -14,6 +14,8 @@ import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.IntPredicate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -26,6 +28,7 @@ import org.springframework.web.servlet.ModelAndView;
 @Controller
 public class AppointmentController {
   private final AppointmentService appointmentService;
+  private static final Logger LOGGER = LoggerFactory.getLogger(AppointmentController.class);
 
   @Autowired
   public AppointmentController(final AppointmentService appointmentService) {
@@ -62,11 +65,13 @@ public class AppointmentController {
     if (PawAuthUserDetails.getRole().equals(UserRoles.ROLE_PATIENT)) {
       ModelAndView mav = getAppointmentsForPatient(fromDate, toDate, selectedTab);
       mav.addObject("modalForm", modalForm);
+      LOGGER.debug("Patient requested his appointments");
       return mav;
     }
     if (PawAuthUserDetails.getRole().equals(UserRoles.ROLE_DOCTOR)) {
       ModelAndView mav = getAppointmentsForDoctor(fromDate, toDate, selectedTab);
       mav.addObject("modalForm", modalForm);
+      LOGGER.debug("Doctor requested his appointments");
       return mav;
     }
     return null;
@@ -96,12 +101,15 @@ public class AppointmentController {
     AppointmentStatus appointmentStatus = AppointmentStatus.values()[status];
 
     try {
-      appointmentService.updateAppointment(
-          appointmentId,
-          appointmentStatus,
-          modalForm.getDescription(),
-          PawAuthUserDetails.getCurrentUserId());
+      Appointment appointment =
+          appointmentService.updateAppointment(
+              appointmentId,
+              appointmentStatus,
+              modalForm.getDescription(),
+              PawAuthUserDetails.getCurrentUserId());
+      LOGGER.info("Updated {}", appointment);
     } catch (RuntimeException e) {
+      LOGGER.error("Appointment could not be updated, because user did not exist");
       throw new UserNotFoundException();
     }
 

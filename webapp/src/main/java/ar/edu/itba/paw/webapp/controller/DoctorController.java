@@ -33,7 +33,7 @@ import org.springframework.web.servlet.ModelAndView;
 @Controller
 public class DoctorController {
 
-  private static final Logger LOGGER = LoggerFactory.getLogger(AppointmentController.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(DoctorController.class);
 
   private final DoctorService doctorService;
 
@@ -79,7 +79,7 @@ public class DoctorController {
 
     // Get reviews
     Page<Review> reviews = reviewService.getReviewsForDoctor(doctorId, page - 1, PAGE_SIZE);
-    
+
     System.out.println(reviews.getContent());
     System.out.println(reviews.getTotalPages());
 
@@ -91,6 +91,7 @@ public class DoctorController {
     mav.addObject("totalPages", reviews.getContent().size() == 0 ? 1 : reviews.getTotalPages());
     mav.addObject("showModal", false);
 
+    LOGGER.debug("Detailed doctor page for doctor: {} requested", doctorId);
     return mav;
   }
 
@@ -189,11 +190,14 @@ public class DoctorController {
       throw new ReviewForbiddenException();
     }
 
-    reviewService.createReview(
-        doctorId,
-        PawAuthUserDetails.getCurrentUserId(),
-        reviewForm.getRating(),
-        reviewForm.getDescription());
+    Review review =
+        reviewService.createReview(
+            doctorId,
+            PawAuthUserDetails.getCurrentUserId(),
+            reviewForm.getRating(),
+            reviewForm.getDescription());
+
+    LOGGER.info("Created {}", review);
 
     final ModelAndView mav = new ModelAndView("doctor/review");
 
