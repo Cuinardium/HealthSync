@@ -1,6 +1,6 @@
 package ar.edu.itba.paw.interfaces.persistence.exceptions;
 
-public class DoctorNotFoundException extends RuntimeException {
+public class DoctorNotFoundException extends Exception {
   private static final String MESSAGE = "Doctor not found";
 
   public DoctorNotFoundException() {

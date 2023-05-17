@@ -1,6 +1,6 @@
 package ar.edu.itba.paw.interfaces.persistence.exceptions;
 
-public class DoctorAlreadyExistsException extends RuntimeException {
+public class DoctorAlreadyExistsException extends Exception {
   private static final String MESSAGE = "Doctor already exists";
 
   public DoctorAlreadyExistsException() {
