@@ -11,6 +11,8 @@ import ar.edu.itba.paw.models.Specialty;
 import ar.edu.itba.paw.models.ThirtyMinuteBlock;
 import ar.edu.itba.paw.persistence.config.TestConfig;
 import ar.edu.itba.paw.persistence.exceptions.DoctorAlreadyExistsException;
+import ar.edu.itba.paw.persistence.exceptions.DoctorNotFoundException;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -181,8 +183,7 @@ public class DoctorDaoImplTest {
   public void testUpdateDoctorInfoDoctorNotFound() {
     // 1.Precondiciones
     // 2. Ejercitar la class under test
-    // TODO: fix
-    /*
+    
     assertThrows(DoctorNotFoundException.class,
     () -> doctorDao.updateDoctorInfo(
             AUX_DOCTOR_ID,
@@ -191,8 +192,6 @@ public class DoctorDaoImplTest {
             AUX_DOCTOR_ADDRESS,
             AUX_DOCTOR_INSURANCES,
             AUX_DOCTOR_ATTENDING_HOURS));
-    */
-    // 3. Meaningful assertions
   }
 
   @Test

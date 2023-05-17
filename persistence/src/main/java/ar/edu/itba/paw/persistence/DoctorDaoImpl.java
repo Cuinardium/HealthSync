@@ -105,6 +105,21 @@ public class DoctorDaoImpl implements DoctorDao {
       List<HealthInsurance> healthInsurances,
       AttendingHours attendingHours) {
 
+
+    // Check if doctor exists
+    String doctorExistsQuery =
+        new QueryBuilder()
+            .select("Count(doctor_id)")
+            .from("doctor")
+            .where("doctor_id = " + doctorId)
+            .build();
+
+    boolean doctorExists = jdbcTemplate.queryForObject(doctorExistsQuery, Integer.class) > 0;
+
+    if (!doctorExists) {
+      throw new DoctorNotFoundException();
+    }
+
     String specialtyUpdate =
         new UpdateBuilder()
             .update("doctor")
@@ -121,7 +136,7 @@ public class DoctorDaoImpl implements DoctorDao {
 
     updateAttendingHours(doctorId, attendingHours);
 
-    return getDoctorById(doctorId).orElseThrow(DoctorNotFoundException::new);
+    return getDoctorById(doctorId).orElseThrow(IllegalStateException::new);
   }
 
   // ============================ Queries =============================================
