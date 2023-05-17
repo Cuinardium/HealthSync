@@ -62,6 +62,13 @@
 <div class="formContainer generalPadding">
     <h1>${title}</h1>
     <form:form modelAttribute="patientRegisterForm" class="card" action="${patientRegisterUrl}" method="POST">
+        <c:if test="${emailAlreadyInUse}">
+          <div class="formRow">
+            <p class="error">
+              ${emailAlreadyInUseError}
+            </p>
+          </div>
+        </c:if>
         <div class="formRow">
             <div class="formItem">
                 <form:label path="name">${name}</form:label>

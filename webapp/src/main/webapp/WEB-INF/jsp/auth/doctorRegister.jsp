@@ -35,7 +35,6 @@
 <spring:message code="register.modal.text" var="modalDesc"/>
 <spring:message code="register.modal.button" var="modalButton"/>
 
-
 <html>
 <head>
     <title>${title}</title>
@@ -70,6 +69,13 @@
     <h1>${title}</h1>
     <form:form modelAttribute="doctorRegisterForm" id="regForm" class="card" action="${doctorRegisterUrl}"
                method="POST">
+        <c:if test="${emailAlreadyInUse}">
+          <div class="formRow">
+            <p class="error">
+              ${emailAlreadyInUseError}
+            </p>
+          </div>
+        </c:if>
         <div class="formRow">
             <div class="formItem">
                 <form:label path="name">${name}</form:label>
