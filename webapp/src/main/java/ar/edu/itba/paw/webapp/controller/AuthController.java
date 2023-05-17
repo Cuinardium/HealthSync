@@ -6,6 +6,8 @@ import ar.edu.itba.paw.models.*;
 import ar.edu.itba.paw.webapp.form.DoctorRegisterForm;
 import ar.edu.itba.paw.webapp.form.LoginForm;
 import ar.edu.itba.paw.webapp.form.PatientRegisterForm;
+
+import java.time.DayOfWeek;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -125,6 +127,45 @@ public class AuthController {
             .map(code -> HealthInsurance.values()[code])
             .collect(Collectors.toList());
 
+    ThirtyMinuteBlock[] values = ThirtyMinuteBlock.values();
+    AttendingHours attendingHours =
+            new AttendingHours(
+                    doctorRegisterForm
+                            .getMondayAttendingHours()
+                            .stream()
+                            .map(i -> values[i])
+                            .collect(Collectors.toList()),
+                    doctorRegisterForm
+                            .getTuesdayAttendingHours()
+                            .stream()
+                            .map(i -> values[i])
+                            .collect(Collectors.toList()),
+                    doctorRegisterForm
+                            .getWednesdayAttendingHours()
+                            .stream()
+                            .map(i -> values[i])
+                            .collect(Collectors.toList()),
+                    doctorRegisterForm
+                            .getThursdayAttendingHours()
+                            .stream()
+                            .map(i -> values[i])
+                            .collect(Collectors.toList()),
+                    doctorRegisterForm
+                            .getFridayAttendingHours()
+                            .stream()
+                            .map(i -> values[i])
+                            .collect(Collectors.toList()),
+                    doctorRegisterForm
+                            .getSaturdayAttendingHours()
+                            .stream()
+                            .map(i -> values[i])
+                            .collect(Collectors.toList()),
+                    doctorRegisterForm
+                            .getSundayAttendingHours()
+                            .stream()
+                            .map(i -> values[i])
+                            .collect(Collectors.toList()));
+
     // TODO: check for exceptions
     final Doctor doctor =
         doctorService.createDoctor(
@@ -136,7 +177,7 @@ public class AuthController {
             city,
             doctorRegisterForm.getAddress(),
             healthInsurances,
-            AttendingHours.DEFAULT_ATTENDING_HOURS);
+            attendingHours);
 
     LOGGER.info("Registered {}", doctor);
     authUser(doctor.getEmail(), doctorRegisterForm.getPassword());
@@ -147,6 +188,7 @@ public class AuthController {
     mav.addObject("cities", Arrays.asList(City.values()));
     mav.addObject("specialties", Arrays.asList(Specialty.values()));
     mav.addObject("healthInsurances", Arrays.asList(HealthInsurance.values()));
+    mav.addObject("timeEnumValues", ThirtyMinuteBlock.values());
 
     return mav;
   }
@@ -154,12 +196,59 @@ public class AuthController {
   @RequestMapping(value = "/doctor-register", method = RequestMethod.GET)
   public ModelAndView doctorRegisterForm(
       @ModelAttribute("doctorRegisterForm") final DoctorRegisterForm doctorRegisterForm) {
+    // Attending hours
+    AttendingHours attendingHours = AttendingHours.DEFAULT_ATTENDING_HOURS;
+    doctorRegisterForm.setMondayAttendingHours(
+            attendingHours
+                    .getAttendingBlocksForDay(DayOfWeek.MONDAY)
+                    .stream()
+                    .map(ThirtyMinuteBlock::ordinal)
+                    .collect(Collectors.toList()));
+    doctorRegisterForm.setTuesdayAttendingHours(
+            attendingHours
+                    .getAttendingBlocksForDay(DayOfWeek.TUESDAY)
+                    .stream()
+                    .map(ThirtyMinuteBlock::ordinal)
+                    .collect(Collectors.toList()));
+    doctorRegisterForm.setWednesdayAttendingHours(
+            attendingHours
+                    .getAttendingBlocksForDay(DayOfWeek.WEDNESDAY)
+                    .stream()
+                    .map(ThirtyMinuteBlock::ordinal)
+                    .collect(Collectors.toList()));
+    doctorRegisterForm.setThursdayAttendingHours(
+            attendingHours
+                    .getAttendingBlocksForDay(DayOfWeek.THURSDAY)
+                    .stream()
+                    .map(ThirtyMinuteBlock::ordinal)
+                    .collect(Collectors.toList()));
+    doctorRegisterForm.setFridayAttendingHours(
+            attendingHours
+                    .getAttendingBlocksForDay(DayOfWeek.FRIDAY)
+                    .stream()
+                    .map(ThirtyMinuteBlock::ordinal)
+                    .collect(Collectors.toList()));
+    doctorRegisterForm.setSaturdayAttendingHours(
+            attendingHours
+                    .getAttendingBlocksForDay(DayOfWeek.SATURDAY)
+                    .stream()
+                    .map(ThirtyMinuteBlock::ordinal)
+                    .collect(Collectors.toList()));
+    doctorRegisterForm.setSundayAttendingHours(
+            attendingHours
+                    .getAttendingBlocksForDay(DayOfWeek.SUNDAY)
+                    .stream()
+                    .map(ThirtyMinuteBlock::ordinal)
+                    .collect(Collectors.toList()));
+
     final ModelAndView mav = new ModelAndView("auth/doctorRegister");
     mav.addObject("form", doctorRegisterForm);
     mav.addObject("cities", Arrays.asList(City.values()));
     mav.addObject("specialties", Arrays.asList(Specialty.values()));
     mav.addObject("healthInsurances", Arrays.asList(HealthInsurance.values()));
+    mav.addObject("timeEnumValues", ThirtyMinuteBlock.values());
     mav.addObject("showModal", false);
+
     return mav;
   }
 
