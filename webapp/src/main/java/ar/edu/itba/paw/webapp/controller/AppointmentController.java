@@ -39,7 +39,7 @@ public class AppointmentController {
       @ModelAttribute("modalForm") final ModalForm modalForm,
       @RequestParam(name = "from", required = false, defaultValue = "") final String from,
       @RequestParam(name = "to", required = false, defaultValue = "") final String to,
-      @RequestParam(name = "selected_tab", required = false, defaultValue = "0")
+      @RequestParam(name = "selected_tab", required = false, defaultValue = "1")
           final int selectedTab) {
 
     LocalDate fromDate;
@@ -69,7 +69,6 @@ public class AppointmentController {
       mav.addObject("modalForm", modalForm);
       return mav;
     }
-    // TODO: what do i do here????
     return null;
   }
 
