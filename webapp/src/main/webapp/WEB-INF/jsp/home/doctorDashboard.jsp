@@ -103,35 +103,36 @@
                             onchange="this.form.submit()"/>
 
                 <c:if test="${!empty dateFilter}">
-                <div class="fromToContainer">
-                    <div class="hourPicker">
-                        <h4>${fromTitle}</h4>
-                        <form:select id="from-select" cssClass="form-select" path="from" onchange="this.form.submit()">
-                            <form:option value="-1" disabled="true" hidden="true"/>
-                            <c:forEach items="${possibleAttendingHours}" var="attHour">
-                                <c:if test="${toBlock.ordinal() > attHour.ordinal()}">
-                                    <form:option value="${attHour.ordinal()}">
-                                        ${attHour.getBlockBeginning()}
-                                    </form:option>
-                                </c:if>
-                            </c:forEach>
-                        </form:select>
-                    </div>
+                    <div class="fromToContainer">
+                        <div class="hourPicker">
+                            <h4>${fromTitle}</h4>
+                            <form:select id="from-select" cssClass="form-select" path="from"
+                                         onchange="this.form.submit()">
+                                <form:option value="-1" disabled="true" hidden="true"/>
+                                <c:forEach items="${possibleAttendingHours}" var="attHour">
+                                    <c:if test="${toBlock.ordinal() > attHour.ordinal()}">
+                                        <form:option value="${attHour.ordinal()}">
+                                            ${attHour.getBlockBeginning()}
+                                        </form:option>
+                                    </c:if>
+                                </c:forEach>
+                            </form:select>
+                        </div>
 
-                    <div class="hourPicker">
-                        <h4>${toTitle}</h4>
-                        <form:select id="to-select" cssClass="form-select" path="to" onchange="this.form.submit()">
-                            <form:option value="-1" disabled="true" hidden="true"/>
-                            <c:forEach items="${possibleAttendingHours}" var="attHour">
-                                <c:if test="${fromBlock.ordinal() < attHour.ordinal()}">
-                                    <form:option value="${attHour.ordinal()}">
-                                        ${attHour.getBlockBeginning()}
-                                    </form:option>
-                                </c:if>
-                            </c:forEach>
-                        </form:select>
+                        <div class="hourPicker">
+                            <h4>${toTitle}</h4>
+                            <form:select id="to-select" cssClass="form-select" path="to" onchange="this.form.submit()">
+                                <form:option value="-1" disabled="true" hidden="true"/>
+                                <c:forEach items="${possibleAttendingHours}" var="attHour">
+                                    <c:if test="${fromBlock.ordinal() < attHour.ordinal()}">
+                                        <form:option value="${attHour.ordinal()}">
+                                            ${attHour.getBlockBeginning()}
+                                        </form:option>
+                                    </c:if>
+                                </c:forEach>
+                            </form:select>
+                        </div>
                     </div>
-                </div>
                 </c:if>
 
 
@@ -175,7 +176,8 @@
                                 <div class="chipsContainer">
                                     <div class="card-text">${insurances}</div>
                                     <c:forEach items="${doctor.healthInsurances}" var="healthInsurance">
-                                        <spring:message code="${healthInsurance.messageID}" var="doctorHealthInsurance"/>
+                                        <spring:message code="${healthInsurance.messageID}"
+                                                        var="doctorHealthInsurance"/>
                                         <div class="chip" data-mdb-close="true">
                                             <a class="stretched-link"
                                                href="${healthInsuranceFilter}${healthInsurance.ordinal()}">${doctorHealthInsurance}</a>
@@ -246,19 +248,11 @@
                 </c:if>
 
 
-                <c:url value="/doctor-dashboard" var="doctorDashboardFilteredUrl">
-                    <c:param name="name" value="${name}"/>
-                    <c:param name="cityCode" value="${cityCode}"/>
-                    <c:param name="specialtyCode" value="${specialtyCode}"/>
-                    <c:param name="healthInsuranceCode" value="${healthInsuranceCode}"/>
-                    <c:param name="date" value="${dateFilter}"/>
-                    <c:param name="from" value="${fromBlock.ordinal()}"/>
-                    <c:param name="to" value="${toBlock.ordinal()}"/>
-                </c:url>
                 <jsp:include page="../components/pagination.jsp">
                     <jsp:param name="currentPage" value="${currentPage}"/>
                     <jsp:param name="totalPages" value="${totalPages}"/>
-                    <jsp:param name="url" value="${doctorDashboardFilteredUrl}"/>
+                    <jsp:param name="url"
+                               value="/doctor-dashboard?name=${name}&cityCode=${cityCode}&specialtyCode=${specialtyCode}&date=${dateFilter}&from=${fromBlock.ordinal()}&to=${toBlock.ordinal()}"/>
                 </jsp:include>
             </div>
         </div>
