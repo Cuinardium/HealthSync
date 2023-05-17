@@ -69,6 +69,26 @@
                                 ${healthInsuranceMsg}${status.last ? "" : ", "}
                             </c:forEach>
                         </p>
+                        <c:choose >
+                            <c:when test="${doctor.rating != null}">
+                                <div class="starContainer card-text">
+                                    <c:forEach begin="1" end="5" step="1" var="i">
+                                        <div class="star ${doctor.rating >= i ? "selected" : "unselected"}">
+                                            <i class="fa fa-lg fa-star"></i>
+                                        </div>
+                                    </c:forEach>
+                                    <div class="ratingCount">
+                                        (${doctor.ratingCount})
+                                    </div>
+                                </div>
+                            </c:when>
+                            <c:otherwise>
+                                <div class="card-text">
+                                    No Ratings
+                                </div>
+                            </c:otherwise>
+                        </c:choose>
+
                     </div>
                 </div>
                 <c:if test="${canBook}">

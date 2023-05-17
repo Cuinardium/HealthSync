@@ -52,4 +52,6 @@ public interface AppointmentService {
 
   public List<List<ThirtyMinuteBlock>> getAvailableHoursForDoctorOnRange(
       long doctorId, LocalDate from, LocalDate to);
+
+  public boolean hasPatientMetDoctor(long patientId, long doctorId);
 }

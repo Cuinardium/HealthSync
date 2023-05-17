@@ -9,6 +9,7 @@ import ar.edu.itba.paw.models.HealthInsurance;
 import ar.edu.itba.paw.models.Image;
 import ar.edu.itba.paw.models.Location;
 import ar.edu.itba.paw.models.Patient;
+import ar.edu.itba.paw.models.Review;
 import ar.edu.itba.paw.models.Specialty;
 import ar.edu.itba.paw.models.ThirtyMinuteBlock;
 import ar.edu.itba.paw.models.User;
@@ -21,6 +22,8 @@ import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.jdbc.core.RowMapper;
 
 public class RowMappers {
+
+  // ================================= Doctor =================================
 
   protected static final ResultSetExtractor<List<Doctor>> DOCTOR_EXTRACTOR =
       (rs) -> {
@@ -64,7 +67,8 @@ public class RowMappers {
                     specialty,
                     location,
                     attendingHours,
-                    rs.getFloat("rating"));
+                    rs.getObject("rating") == null ? null : rs.getFloat("rating"),
+                    rs.getInt("rating_count"));
 
             doctors.put(doctorId, doctor);
           }
@@ -75,15 +79,12 @@ public class RowMappers {
         return new ArrayList<>(doctors.values());
       };
 
+  // ================================= Image =================================
+
   protected static final RowMapper<Image> IMAGE_MAPPER =
       (rs, rowNum) -> new Image(rs.getBytes("profile_picture"));
 
-  protected static final RowMapper<Location> LOCATION_MAPPER =
-      (rs, rowNum) -> {
-        City city = City.values()[rs.getInt("city_code")];
-
-        return new Location(rs.getLong("doctor_location_id"), city, rs.getString("address"));
-      };
+  // ================================= Patient =================================
 
   protected static final RowMapper<Patient> PATIENT_MAPPER =
       (rs, rowNum) -> {
@@ -102,6 +103,8 @@ public class RowMappers {
             healthInsurance);
       };
 
+  // ================================= User =================================
+
   protected static final RowMapper<User> USER_MAPPER =
       (rs, rowNum) ->
           new User(
@@ -111,6 +114,8 @@ public class RowMappers {
               rs.getString("first_name"),
               rs.getString("last_name"),
               rs.getObject("profile_picture_id") == null ? null : rs.getLong("profile_picture_id"));
+
+  // ================================= Appointment =================================
 
   protected static final ResultSetExtractor<List<Appointment>> APPOINTMENT_EXTRACTOR =
       (rs) -> {
@@ -162,7 +167,9 @@ public class RowMappers {
                     ThirtyMinuteBlock.fromBits(rs.getLong("saturday")),
                     ThirtyMinuteBlock.fromBits(rs.getLong("sunday")));
 
-            float rating = rs.getFloat("rating");
+            Float rating = rs.getObject("rating") == null ? null : rs.getFloat("rating");
+
+            Integer ratingCount = rs.getInt("rating_count");
 
             Doctor doctor =
                 new Doctor(
@@ -176,7 +183,8 @@ public class RowMappers {
                     specialty,
                     location,
                     attendingHours,
-                    rating);
+                    rating,
+                    ratingCount);
 
             Appointment appointment =
                 new Appointment(
@@ -202,5 +210,18 @@ public class RowMappers {
         }
 
         return new ArrayList<>(appointments.values());
+      };
+
+  // ================================= Review =================================
+
+  protected static final RowMapper<Review> REVIEW_MAPPER =
+      (rs, rowNum) -> {
+        long reviewId = rs.getLong("review_id");
+        Patient patient = PATIENT_MAPPER.mapRow(rs, rowNum);
+        LocalDate date = rs.getDate("review_date").toLocalDate();
+        String description = rs.getString("review_description");
+        Short rating = rs.getShort("rating");
+
+        return new Review(reviewId, patient, date, description, rating);
       };
 }

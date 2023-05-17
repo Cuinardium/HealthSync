@@ -118,7 +118,6 @@ public class DoctorDaoImpl implements DoctorDao {
     return getDoctorById(doctorId).orElseThrow(IllegalStateException::new);
   }
 
-  
   // ============================ Queries =============================================
 
   @Override
@@ -192,6 +191,7 @@ public class DoctorDaoImpl implements DoctorDao {
                 "profile_picture_id",
                 "health_insurance_accepted_by_doctor.health_insurance_code",
                 "rating",
+                "rating_count",
                 "doctor_location_id",
                 "city_code",
                 "address",
@@ -231,15 +231,16 @@ public class DoctorDaoImpl implements DoctorDao {
             .groupBy("health_insurance_code")
             .build();
 
-    Map<Integer, Integer> codeMap = jdbcTemplate.query(
-        query,
-        (ResultSet rs) -> {
-          Map<Integer, Integer> result = new HashMap<>();
-          while (rs.next()) {
-            result.put(rs.getInt("health_insurance_code"), rs.getInt("qtyhealthinsurances"));
-          }
-          return result;
-        });
+    Map<Integer, Integer> codeMap =
+        jdbcTemplate.query(
+            query,
+            (ResultSet rs) -> {
+              Map<Integer, Integer> result = new HashMap<>();
+              while (rs.next()) {
+                result.put(rs.getInt("health_insurance_code"), rs.getInt("qtyhealthinsurances"));
+              }
+              return result;
+            });
 
     // Convert the code to the enum
     Map<HealthInsurance, Integer> result = new HashMap<>();
@@ -263,15 +264,16 @@ public class DoctorDaoImpl implements DoctorDao {
             .groupBy("specialty_code")
             .build();
 
-    Map<Integer, Integer> codeMap = jdbcTemplate.query(
-        query,
-        (ResultSet rs) -> {
-          Map<Integer, Integer> result = new HashMap<>();
-          while (rs.next()) {
-            result.put(rs.getInt("specialty_code"), rs.getInt("qtyspecialties"));
-          }
-          return result;
-        });
+    Map<Integer, Integer> codeMap =
+        jdbcTemplate.query(
+            query,
+            (ResultSet rs) -> {
+              Map<Integer, Integer> result = new HashMap<>();
+              while (rs.next()) {
+                result.put(rs.getInt("specialty_code"), rs.getInt("qtyspecialties"));
+              }
+              return result;
+            });
 
     // Convert the code to the enum
     Map<Specialty, Integer> result = new HashMap<>();
@@ -296,15 +298,16 @@ public class DoctorDaoImpl implements DoctorDao {
             .groupBy("city_code")
             .build();
 
-    Map<Integer, Integer> codeMap = jdbcTemplate.query(
-        query,
-        (ResultSet rs) -> {
-          Map<Integer, Integer> results = new HashMap<>();
-          while (rs.next()) {
-            results.put(rs.getInt("city_code"), rs.getInt("qtycities"));
-          }
-          return results;
-        });
+    Map<Integer, Integer> codeMap =
+        jdbcTemplate.query(
+            query,
+            (ResultSet rs) -> {
+              Map<Integer, Integer> results = new HashMap<>();
+              while (rs.next()) {
+                results.put(rs.getInt("city_code"), rs.getInt("qtycities"));
+              }
+              return results;
+            });
 
     // Convert the code to the enum
     Map<City, Integer> result = new HashMap<>();
@@ -317,7 +320,6 @@ public class DoctorDaoImpl implements DoctorDao {
 
     return result;
   }
-
 
   // ================================= Private ======================================
 
@@ -499,14 +501,21 @@ public class DoctorDaoImpl implements DoctorDao {
     jdbcTemplate.update(update);
   }
 
-
   private QueryBuilder doctorQuery() {
 
-    String ratingQuery = new QueryBuilder()
-        .select("avg(rating)")
-        .from("review")
-        .where("doctor_id = doctor.doctor_id")
-        .build();
+    String ratingQuery =
+        new QueryBuilder()
+            .select("avg(rating)")
+            .from("review")
+            .where("doctor_id = doctor.doctor_id")
+            .build();
+
+    String ratingCountQuery =
+        new QueryBuilder()
+            .select("count(*)")
+            .from("review")
+            .where("doctor_id = doctor.doctor_id")
+            .build();
 
     return new QueryBuilder()
         .select(
@@ -519,6 +528,7 @@ public class DoctorDaoImpl implements DoctorDao {
             "profile_picture_id",
             "health_insurance_code",
             "(" + ratingQuery + ") as rating",
+            "(" + ratingCountQuery + ") as rating_count",
             "doctor_location.doctor_location_id",
             "city_code",
             "address",

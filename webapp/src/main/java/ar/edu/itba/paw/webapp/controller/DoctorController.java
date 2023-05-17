@@ -2,13 +2,16 @@ package ar.edu.itba.paw.webapp.controller;
 
 import ar.edu.itba.paw.interfaces.services.AppointmentService;
 import ar.edu.itba.paw.interfaces.services.DoctorService;
+import ar.edu.itba.paw.interfaces.services.ReviewService;
 import ar.edu.itba.paw.models.Appointment;
 import ar.edu.itba.paw.models.Doctor;
 import ar.edu.itba.paw.models.ThirtyMinuteBlock;
 import ar.edu.itba.paw.webapp.auth.PawAuthUserDetails;
 import ar.edu.itba.paw.webapp.auth.UserRoles;
+import ar.edu.itba.paw.webapp.exceptions.ReviewForbiddenException;
 import ar.edu.itba.paw.webapp.exceptions.UserNotFoundException;
 import ar.edu.itba.paw.webapp.form.AppointmentForm;
+import ar.edu.itba.paw.webapp.form.ReviewForm;
 import java.time.LocalDate;
 import java.util.List;
 import javax.validation.Valid;
@@ -33,11 +36,16 @@ public class DoctorController {
 
   private final AppointmentService appointmentService;
 
+  private final ReviewService reviewService;
+
   @Autowired
   public DoctorController(
-      final DoctorService doctorService, final AppointmentService appointmentService) {
+      final DoctorService doctorService,
+      final AppointmentService appointmentService,
+      final ReviewService reviewService) {
     this.doctorService = doctorService;
     this.appointmentService = appointmentService;
+    this.reviewService = reviewService;
   }
 
   @RequestMapping(value = "/{id:\\d+}/detailed_doctor", method = RequestMethod.GET)
@@ -66,6 +74,13 @@ public class DoctorController {
     mav.addObject("form", appointmentForm);
     mav.addObject("canBook", canBook);
     mav.addObject("hoursAvailable", hoursAvailable);
+
+    System.out.println(
+        "====================================================================================================");
+    System.out.println(reviewService.getReviewsForDoctor(doctorId));
+    System.out.println(
+        "====================================================================================================");
+
     return mav;
   }
 
@@ -113,5 +128,62 @@ public class DoctorController {
   @RequestMapping(value = "/appointment_sent", method = RequestMethod.GET)
   public ModelAndView appointmentSent() {
     return new ModelAndView("appointment/appointmentSent");
+  }
+
+  // ========================== Review ==========================
+  @RequestMapping(value = "/{id:\\d+}/review", method = RequestMethod.GET)
+  public ModelAndView review(
+      @PathVariable("id") final long doctorId,
+      @ModelAttribute("reviewForm") final ReviewForm reviewForm) {
+
+     doctorService.getDoctorById(doctorId).orElseThrow(UserNotFoundException::new);
+
+    boolean hasPatientMetDoctor =
+        appointmentService.hasPatientMetDoctor(PawAuthUserDetails.getCurrentUserId(), doctorId);
+
+    if (!hasPatientMetDoctor) {
+      throw new ReviewForbiddenException();
+    }
+
+    final ModelAndView mav = new ModelAndView("doctor/review");
+    mav.addObject("showModal", false);
+    mav.addObject("doctorId", doctorId);
+    mav.addObject("selcetdRating", reviewForm.getRating());
+
+    return mav;
+  }
+
+  @RequestMapping(value = "/{id:\\d+}/review", method = RequestMethod.POST)
+  public ModelAndView submitReview(
+      @PathVariable("id") final long doctorId,
+      @Valid @ModelAttribute("reviewForm") final ReviewForm reviewForm,
+      final BindingResult errors) {
+
+    if (errors.hasErrors()) {
+      return review(doctorId, reviewForm);
+    }
+
+    doctorService.getDoctorById(doctorId).orElseThrow(UserNotFoundException::new);
+
+    boolean hasPatientMetDoctor =
+        appointmentService.hasPatientMetDoctor(PawAuthUserDetails.getCurrentUserId(), doctorId);
+
+    if (!hasPatientMetDoctor) {
+      throw new ReviewForbiddenException();
+    }
+
+    reviewService.createReview(
+        doctorId,
+        PawAuthUserDetails.getCurrentUserId(),
+        reviewForm.getRating(),
+        reviewForm.getDescription());
+
+    final ModelAndView mav = new ModelAndView("doctor/review");
+
+    mav.addObject("showModal", true);
+    mav.addObject("doctorId", doctorId);
+    mav.addObject("selcetdRating", reviewForm.getRating());
+
+    return mav;
   }
 }

@@ -200,4 +200,9 @@ public class AppointmentServiceImpl implements AppointmentService {
     return appointmentDao.getFilteredAppointmentsForPatient(
         patientId, status, from, to, page, pageSize);
   }
+
+  @Override
+  public boolean hasPatientMetDoctor(long patientId, long doctorId) {
+    return appointmentDao.hasPatientMetDoctor(patientId, doctorId);
+  }
 }

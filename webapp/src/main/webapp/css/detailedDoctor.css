@@ -341,3 +341,22 @@ a:hover{
 .chip:hover{
     background: #223E6A;
 }
+
+.starContainer {
+    display: flex;
+    flex-direction: row;
+    justify-content: start;
+    align-items: center;
+}
+
+.ratingCount {
+    margin-left: 8px;
+}
+
+.unselected {
+    color: lightgray;
+}
+
+.selected {
+    color: gold;
+}
