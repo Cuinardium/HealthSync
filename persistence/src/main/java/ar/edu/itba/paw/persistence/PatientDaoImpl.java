@@ -1,6 +1,8 @@
 package ar.edu.itba.paw.persistence;
 
 import ar.edu.itba.paw.interfaces.persistence.PatientDao;
+import ar.edu.itba.paw.interfaces.persistence.exceptions.PatientAlreadyExistsException;
+import ar.edu.itba.paw.interfaces.persistence.exceptions.PatientNotFoundException;
 import ar.edu.itba.paw.models.HealthInsurance;
 import ar.edu.itba.paw.models.Patient;
 import ar.edu.itba.paw.persistence.utils.QueryBuilder;
@@ -10,6 +12,7 @@ import java.util.Map;
 import java.util.Optional;
 import javax.sql.DataSource;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
@@ -32,24 +35,28 @@ public class PatientDaoImpl implements PatientDao {
   // ======================== Inserts =========================================
 
   @Override
-  public Patient createPatient(long userId, HealthInsurance healthInsurance) {
+  public Patient createPatient(long userId, HealthInsurance healthInsurance)
+      throws PatientAlreadyExistsException, IllegalStateException {
 
     // Insert data in patient table
     Map<String, Object> data = new HashMap<>();
 
     data.put("patient_id", userId);
 
-    patientInsert.execute(data);
-
+    try {
+      patientInsert.execute(data);
+    } catch (DuplicateKeyException e) {
+      throw new PatientAlreadyExistsException();
+    }
     addHealthInsurance(userId, healthInsurance.ordinal());
-
     return getPatientById(userId).orElseThrow(IllegalStateException::new);
   }
 
   // ======================== Updates =========================================
-  
+
   @Override
-  public Patient updatePatientInfo(long patientId, HealthInsurance healthInsurance) {
+  public Patient updatePatientInfo(long patientId, HealthInsurance healthInsurance)
+      throws PatientNotFoundException {
     String update =
         new UpdateBuilder()
             .update("health_insurance_for_patient")
@@ -59,7 +66,7 @@ public class PatientDaoImpl implements PatientDao {
 
     jdbcTemplate.update(update);
 
-    return getPatientById(patientId).orElseThrow(IllegalStateException::new);
+    return getPatientById(patientId).orElseThrow(PatientNotFoundException::new);
   }
 
   // ============================ Queries =============================================

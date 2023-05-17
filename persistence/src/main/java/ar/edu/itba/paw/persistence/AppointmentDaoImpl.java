@@ -1,6 +1,7 @@
 package ar.edu.itba.paw.persistence;
 
 import ar.edu.itba.paw.interfaces.persistence.AppointmentDao;
+import ar.edu.itba.paw.interfaces.persistence.exceptions.AppointmentNotFoundException;
 import ar.edu.itba.paw.models.Appointment;
 import ar.edu.itba.paw.models.AppointmentStatus;
 import ar.edu.itba.paw.models.Doctor;
@@ -70,7 +71,8 @@ public class AppointmentDaoImpl implements AppointmentDao {
 
   @Override
   public Appointment updateAppointment(
-      long appointmentId, AppointmentStatus status, String cancelDescription) {
+      long appointmentId, AppointmentStatus status, String cancelDescription)
+      throws AppointmentNotFoundException {
     String update =
         new UpdateBuilder()
             .update("appointment")
@@ -80,7 +82,7 @@ public class AppointmentDaoImpl implements AppointmentDao {
             .build();
 
     jdbcTemplate.update(update);
-    return getAppointmentById(appointmentId).orElseThrow(IllegalStateException::new);
+    return getAppointmentById(appointmentId).orElseThrow(AppointmentNotFoundException::new);
   }
 
   // ========================== Queries ==========================
@@ -99,10 +101,7 @@ public class AppointmentDaoImpl implements AppointmentDao {
   public Optional<Appointment> getAppointment(
       long doctorId, LocalDate date, ThirtyMinuteBlock timeBlock) {
     String query =
-        new QueryBuilder()
-            .select("*")
-            .from("appointment")
-            .where("doctor_id = " + doctorId)
+        appointmentsQuery(doctorId, true, null, null, null, -1, -1)
             .where("appointment_date = '" + Date.valueOf(date) + "'")
             .where("appointment_time = " + timeBlockToSmallInt(timeBlock))
             .build();
@@ -112,29 +111,13 @@ public class AppointmentDaoImpl implements AppointmentDao {
 
   @Override
   public List<Appointment> getAppointmentsForPatient(long patientId) {
-    String query =
-        new QueryBuilder()
-            .select("*")
-            .from("appointment")
-            .where("patient_id = " + patientId)
-            .orderByAsc("appointment_date")
-            .orderByAsc("appointment_time")
-            .build();
-
+    String query = appointmentsQuery(patientId, false, null, null, null, -1, -1).build();
     return jdbcTemplate.query(query, RowMappers.APPOINTMENT_EXTRACTOR);
   }
 
   @Override
   public List<Appointment> getAppointmentsForDoctor(long doctorId) {
-    String query =
-        new QueryBuilder()
-            .select("*")
-            .from("appointment")
-            .where("doctor_id = " + doctorId)
-            .orderByAsc("appointment_date")
-            .orderByAsc("appointment_time")
-            .build();
-
+    String query = appointmentsQuery(doctorId, true, null, null, null, -1, -1).build();
     return jdbcTemplate.query(query, RowMappers.APPOINTMENT_EXTRACTOR);
   }
 
@@ -144,8 +127,8 @@ public class AppointmentDaoImpl implements AppointmentDao {
       AppointmentStatus status,
       LocalDate from,
       LocalDate to,
-      int page,
-      int pageSize) {
+      Integer page,
+      Integer pageSize) {
 
     // Get the appointments for the doctor
     String appointmentsQuery =
@@ -160,7 +143,7 @@ public class AppointmentDaoImpl implements AppointmentDao {
 
     int totalAppointments = jdbcTemplate.queryForObject(appointmentsCountQuery, Integer.class);
 
-    return new Page<>(appointments, page, totalAppointments);
+    return new Page<>(appointments, page, totalAppointments, pageSize);
   }
 
   @Override
@@ -169,8 +152,8 @@ public class AppointmentDaoImpl implements AppointmentDao {
       AppointmentStatus status,
       LocalDate from,
       LocalDate to,
-      int page,
-      int pageSize) {
+      Integer page,
+      Integer pageSize) {
 
     // Get the appointments for the patient
     String appointmentsQuery =
@@ -185,7 +168,7 @@ public class AppointmentDaoImpl implements AppointmentDao {
 
     int totalAppointments = jdbcTemplate.queryForObject(appointmentsCountQuery, Integer.class);
 
-    return new Page<>(appointments, page, totalAppointments);
+    return new Page<>(appointments, page, totalAppointments, pageSize);
   }
 
   @Override
@@ -210,8 +193,8 @@ public class AppointmentDaoImpl implements AppointmentDao {
       AppointmentStatus status,
       LocalDate from,
       LocalDate to,
-      int page,
-      int pageSize) {
+      Integer page,
+      Integer pageSize) {
 
     String ratingQuery =
         new QueryBuilder()
@@ -302,7 +285,7 @@ public class AppointmentDaoImpl implements AppointmentDao {
 
     appointmentsQuery.orderByAsc("appointment_date").orderByAsc("appointment_time");
 
-    if (page >= 0 && pageSize > 0) {
+    if (page != null && page >= 0 && pageSize != null && pageSize > 0) {
       appointmentsQuery.limit(pageSize).offset(page * pageSize);
     }
 

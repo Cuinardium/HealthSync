@@ -74,12 +74,7 @@ public class DoctorController {
     mav.addObject("form", appointmentForm);
     mav.addObject("canBook", canBook);
     mav.addObject("hoursAvailable", hoursAvailable);
-
-    System.out.println(
-        "====================================================================================================");
-    System.out.println(reviewService.getReviewsForDoctor(doctorId));
-    System.out.println(
-        "====================================================================================================");
+    mav.addObject("showModal", false);
 
     return mav;
   }
@@ -121,13 +116,29 @@ public class DoctorController {
           new RuntimeException());
     }
 
-    return appointmentSent();
-  }
+    final ModelAndView mav = new ModelAndView("doctor/detailedDoctor");
 
-  // ========================== Appointment Sent ==========================
-  @RequestMapping(value = "/appointment_sent", method = RequestMethod.GET)
-  public ModelAndView appointmentSent() {
-    return new ModelAndView("appointment/appointmentSent");
+    Doctor doctor = doctorService.getDoctorById(doctorId).orElseThrow(UserNotFoundException::new);
+
+    mav.addObject("doctor", doctor);
+
+    // Only patients can book appointments
+    boolean canBook = PawAuthUserDetails.getRole().equals(UserRoles.ROLE_PATIENT);
+
+    // Booking starts from the day after today because of not allowing to book appointments in the
+    // past
+    LocalDate tomorrow = LocalDate.now().plusDays(1);
+
+    // Patients will only be able to book appointments between tomorrow and 3 months from now
+    List<List<ThirtyMinuteBlock>> hoursAvailable =
+        appointmentService.getAvailableHoursForDoctorOnRange(
+            doctorId, tomorrow, tomorrow.plusMonths(3));
+    mav.addObject("showModal", true);
+
+    mav.addObject("form", appointmentForm);
+    mav.addObject("canBook", canBook);
+    mav.addObject("hoursAvailable", hoursAvailable);
+    return mav;
   }
 
   // ========================== Review ==========================

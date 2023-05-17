@@ -1,6 +1,7 @@
 package ar.edu.itba.paw.services;
 
 import ar.edu.itba.paw.interfaces.persistence.AppointmentDao;
+import ar.edu.itba.paw.interfaces.persistence.exceptions.AppointmentNotFoundException;
 import ar.edu.itba.paw.interfaces.services.AppointmentService;
 import ar.edu.itba.paw.interfaces.services.DoctorService;
 import ar.edu.itba.paw.interfaces.services.MailService;
@@ -23,7 +24,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class AppointmentServiceImpl implements AppointmentService {
-
   MailService mailService;
   DoctorService doctorService;
   PatientService patientService;
@@ -99,23 +99,26 @@ public class AppointmentServiceImpl implements AppointmentService {
       throw new RuntimeException();
     }
 
-    Appointment updatedAppointment = appointmentDao.updateAppointment(appointmentId, status, cancelDescription);
+    try {
+      Appointment updatedAppointment =
+          appointmentDao.updateAppointment(appointmentId, status, cancelDescription);
+      // TODO: error handling
+      Locale locale = LocaleContextHolder.getLocale();
 
-
-    // TODO: error handling
-    Locale locale = LocaleContextHolder.getLocale();
-
-    if (status == AppointmentStatus.CANCELLED) {
-      if (requesterId == appointment.getPatientId()) {
-        mailService.sendAppointmentCancelledByPatientMail(updatedAppointment, cancelDescription,locale);
-      } else {
-        mailService.sendAppointmentCancelledByDoctorMail(updatedAppointment, cancelDescription,locale);
+      if (status == AppointmentStatus.CANCELLED) {
+        if (requesterId == appointment.getPatientId()) {
+          mailService.sendAppointmentCancelledByPatientMail(
+              updatedAppointment, cancelDescription, locale);
+        } else {
+          mailService.sendAppointmentCancelledByDoctorMail(
+              updatedAppointment, cancelDescription, locale);
+        }
       }
+      return updatedAppointment;
+    } catch (AppointmentNotFoundException e) {
+      throw new RuntimeException();
     }
-
-    return updatedAppointment;
   }
-
 
   // =============== Queries ===============
 
@@ -134,7 +137,6 @@ public class AppointmentServiceImpl implements AppointmentService {
     return appointmentDao.getAppointmentsForDoctor(doctorId);
   }
 
-  
   @Override
   public List<ThirtyMinuteBlock> getAvailableHoursForDoctorOnDate(long doctorId, LocalDate date) {
     return getAvailableHoursForDoctorOnRange(doctorId, date, date).get(0);
@@ -183,8 +185,8 @@ public class AppointmentServiceImpl implements AppointmentService {
       AppointmentStatus status,
       LocalDate from,
       LocalDate to,
-      int page,
-      int pageSize) {
+      Integer page,
+      Integer pageSize) {
     return appointmentDao.getFilteredAppointmentsForDoctor(
         doctorId, status, from, to, page, pageSize);
   }
@@ -195,8 +197,8 @@ public class AppointmentServiceImpl implements AppointmentService {
       AppointmentStatus status,
       LocalDate from,
       LocalDate to,
-      int page,
-      int pageSize) {
+      Integer page,
+      Integer pageSize) {
     return appointmentDao.getFilteredAppointmentsForPatient(
         patientId, status, from, to, page, pageSize);
   }

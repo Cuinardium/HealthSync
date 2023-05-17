@@ -334,7 +334,7 @@ a{
     text-decoration: none;
 }
 
-a:hover{
+a.stretched-link:hover{
     color: white;
 }
 

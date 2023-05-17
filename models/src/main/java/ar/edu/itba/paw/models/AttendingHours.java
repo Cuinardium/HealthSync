@@ -50,4 +50,12 @@ public class AttendingHours {
   public List<ThirtyMinuteBlock> getAttendingBlocksForDate(LocalDate date) {
     return attendingHours.get(date.getDayOfWeek());
   }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj) return true;
+    if (!(obj instanceof AttendingHours)) return false;
+    AttendingHours other = (AttendingHours) obj;
+    return this.attendingHours.equals(other.attendingHours);
+  }
 }

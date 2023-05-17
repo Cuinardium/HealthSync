@@ -39,13 +39,10 @@ input, textarea {
     width: 18rem;
     border: black;
     border-bottom: 2px solid blue;
-
-    margin: 4px;
-    box-sizing: content-box;
 }
 
 .search{
-    margin: 4px;
+    margin-left: 8px;
 }
 
 .container{
@@ -54,6 +51,4 @@ input, textarea {
 
 .form-control, .form-select{
     border-bottom: 2px solid blue;
-    margin: 4px;
-    box-sizing: content-box;
 }

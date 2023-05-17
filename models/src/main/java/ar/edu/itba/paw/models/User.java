@@ -68,4 +68,18 @@ public class User {
         + lastName
         + "]";
   }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj) return true;
+    if (!(obj instanceof User)) return false;
+    User other = (User) obj;
+    // el || es para rescatarme del nullptrexcep
+    return id == other.id
+        && (profilePictureId == other.profilePictureId
+            || profilePictureId.equals(other.profilePictureId))
+        && email.equals(other.email)
+        && firstName.equals(other.firstName)
+        && lastName.equals(other.lastName);
+  }
 }

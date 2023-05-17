@@ -1,8 +1,11 @@
 package ar.edu.itba.paw.persistence;
 
+import static org.junit.Assert.assertThrows;
+
+import ar.edu.itba.paw.interfaces.persistence.exceptions.EmailAlreadyExistsException;
+import ar.edu.itba.paw.interfaces.persistence.exceptions.UserNotFoundException;
 import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.persistence.config.TestConfig;
-import java.sql.SQLException;
 import java.util.Optional;
 import javax.sql.DataSource;
 import org.junit.Assert;
@@ -11,19 +14,30 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.jdbc.JdbcTestUtils;
+import org.springframework.transaction.annotation.Transactional;
 
+@Transactional
+@Rollback
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = TestConfig.class)
 public class UserDaoImplTest {
-  private static final long ID = 1;
-  private static final String EMAIL = "email";
-  private static final String PASSWORD = "password";
-  private static final String FIRST_NAME = "firstname";
-  private static final String LAST_NAME = "lastname";
-  private static final Long PFP_ID = 1L;
+  private static final long INSERTED_USER_ID = 1;
+  private static final String INSERTED_USER_EMAIL = "patient@email.com";
+  private static final String INSERTED_USER_PASSWORD = "patient_password";
+  private static final String INSERTED_USER_FIRST_NAME = "patient_first_name";
+  private static final String INSERTED_USER_LAST_NAME = "patient_last_name";
+  private static final Long INSERTED_USER_PFP_ID = null;
+
+  private static final long AUX_ID = 100;
+  private static final String AUX_EMAIL = "notuser@email.com";
+  private static final String AUX_PASSWORD = "notuser_password";
+  private static final String AUX_FIRST_NAME = "notuser_first_name";
+  private static final String AUX_LAST_NAME = "notuser_last_name";
+  private static final Long AUX_PFP_ID = 1L;
 
   @Autowired private DataSource ds;
 
@@ -34,74 +48,134 @@ public class UserDaoImplTest {
   @Before
   public void setUp() {
     jdbcTemplate = new JdbcTemplate(ds);
-    JdbcTestUtils.deleteFromTables(jdbcTemplate, "users");
-    JdbcTestUtils.deleteFromTables(jdbcTemplate, "profile_picture");
-
-    jdbcTemplate.execute(
-        "INSERT INTO profile_picture (profile_picture_id, profile_picture) VALUES ("
-            + PFP_ID
-            + ", "
-            + "CAST('30' AS BINARY)"
-            + ");");
   }
 
   @Test
-  public void testFindById() throws SQLException {
+  public void testGetUserById() {
     // 1. Precondiciones
-
-    jdbcTemplate.execute(
-        "INSERT INTO users (user_id, email, password, first_name, last_name, profile_picture_id)"
-            + " VALUES ("
-            + ID
-            + ", '"
-            + EMAIL
-            + "', '"
-            + PASSWORD
-            + "', '"
-            + FIRST_NAME
-            + "', '"
-            + LAST_NAME
-            + "', '"
-            + PFP_ID
-            + "');");
-
     // 2. Ejercitar la class under test
-    Optional<User> maybeUser = userDao.getUserById(ID);
+    Optional<User> maybeUser = userDao.getUserById(INSERTED_USER_ID);
 
     // 3. Meaningful assertions
-    Assert.assertEquals(ID, maybeUser.get().getId());
-    Assert.assertEquals(EMAIL, maybeUser.get().getEmail());
-    Assert.assertEquals(PASSWORD, maybeUser.get().getPassword());
-    Assert.assertEquals(FIRST_NAME, maybeUser.get().getFirstName());
-    Assert.assertEquals(LAST_NAME, maybeUser.get().getLastName());
-    Assert.assertEquals(PFP_ID, maybeUser.get().getProfilePictureId());
+    Assert.assertEquals(INSERTED_USER_ID, maybeUser.get().getId());
+    Assert.assertEquals(INSERTED_USER_EMAIL, maybeUser.get().getEmail());
+    Assert.assertEquals(INSERTED_USER_PASSWORD, maybeUser.get().getPassword());
+    Assert.assertEquals(INSERTED_USER_FIRST_NAME, maybeUser.get().getFirstName());
+    Assert.assertEquals(INSERTED_USER_LAST_NAME, maybeUser.get().getLastName());
+    Assert.assertEquals(INSERTED_USER_PFP_ID, maybeUser.get().getProfilePictureId());
   }
 
   @Test
-  public void testFindByIdDoesNotExist() throws SQLException {
+  public void testGetUserByIdDoesNotExist() {
     // 1. Precondiciones
-
     // 2. Ejercitar la class under test
-    Optional<User> maybeUser = userDao.getUserById(ID);
+    Optional<User> maybeUser = userDao.getUserById(AUX_ID);
 
     // 3. Meaningful assertions
     Assert.assertFalse(maybeUser.isPresent());
   }
 
   @Test
-  public void testCreateUser() {
+  public void testGetUserByEmail() {
     // 1. Precondiciones
-
     // 2. Ejercitar la class under test
-    User user = userDao.createUser(EMAIL, PASSWORD, FIRST_NAME, LAST_NAME);
+    Optional<User> maybeUser = userDao.getUserByEmail(INSERTED_USER_EMAIL);
+
+    // 3. Meaningful assertions
+    Assert.assertEquals(INSERTED_USER_ID, maybeUser.get().getId());
+    Assert.assertEquals(INSERTED_USER_EMAIL, maybeUser.get().getEmail());
+    Assert.assertEquals(INSERTED_USER_PASSWORD, maybeUser.get().getPassword());
+    Assert.assertEquals(INSERTED_USER_FIRST_NAME, maybeUser.get().getFirstName());
+    Assert.assertEquals(INSERTED_USER_LAST_NAME, maybeUser.get().getLastName());
+    Assert.assertEquals(INSERTED_USER_PFP_ID, maybeUser.get().getProfilePictureId());
+  }
+
+  @Test
+  public void testGetUserByEmailDoesNotExist() {
+    // 1. Precondiciones
+    // 2. Ejercitar la class under test
+    Optional<User> maybeUser = userDao.getUserByEmail(AUX_EMAIL);
+
+    // 3. Meaningful assertions
+    Assert.assertFalse(maybeUser.isPresent());
+  }
+
+  @Test
+  public void testCreateUser() throws EmailAlreadyExistsException {
+    // 1. Precondiciones
+    // 2. Ejercitar la class under test
+    User user = userDao.createUser(AUX_EMAIL, AUX_PASSWORD, AUX_FIRST_NAME, AUX_LAST_NAME);
 
     // 3. Meaningful assertions
     Assert.assertNotNull(user);
-    Assert.assertEquals(EMAIL, user.getEmail());
-    Assert.assertEquals(PASSWORD, user.getPassword());
-    Assert.assertEquals(FIRST_NAME, user.getFirstName());
-    Assert.assertEquals(LAST_NAME, user.getLastName());
+    Assert.assertEquals(AUX_EMAIL, user.getEmail());
+    Assert.assertEquals(AUX_PASSWORD, user.getPassword());
+    Assert.assertEquals(AUX_FIRST_NAME, user.getFirstName());
+    Assert.assertEquals(AUX_LAST_NAME, user.getLastName());
+    Assert.assertEquals(INSERTED_USER_PFP_ID, user.getProfilePictureId());
 
-    Assert.assertEquals(1, JdbcTestUtils.countRowsInTable(jdbcTemplate, "users"));
+    Assert.assertEquals(5, JdbcTestUtils.countRowsInTable(jdbcTemplate, "users"));
+  }
+
+  @Test
+  public void testCreateUserAlreadyExists() {
+    // 1. Precondiciones
+    // 2. Ejercitar la class under test
+    assertThrows(
+        EmailAlreadyExistsException.class,
+        () ->
+            userDao.createUser(
+                INSERTED_USER_EMAIL,
+                INSERTED_USER_PASSWORD,
+                INSERTED_USER_FIRST_NAME,
+                INSERTED_USER_LAST_NAME));
+
+    // 3. Meaningful assertions
+  }
+
+  @Test
+  public void testUpdateUserInfo() throws UserNotFoundException {
+    // 1. Precondiciones
+    // 2. Ejercitar la class under test
+    User user =
+        userDao.updateUserInfo(
+            INSERTED_USER_ID, AUX_EMAIL, AUX_FIRST_NAME, AUX_LAST_NAME, AUX_PFP_ID);
+
+    // 3. Meaningful assertions
+    Assert.assertNotNull(user);
+    Assert.assertEquals(INSERTED_USER_ID, user.getId());
+    Assert.assertEquals(AUX_EMAIL, user.getEmail());
+    Assert.assertEquals(INSERTED_USER_PASSWORD, user.getPassword());
+    Assert.assertEquals(AUX_FIRST_NAME, user.getFirstName());
+    Assert.assertEquals(AUX_LAST_NAME, user.getLastName());
+    Assert.assertEquals(AUX_PFP_ID, user.getProfilePictureId());
+  }
+
+  @Test
+  public void testUpdateUserInfoUserDoesNotExist() {
+    // 1. Precondiciones
+    // 2. Ejercitar la class under test
+    assertThrows(
+        UserNotFoundException.class,
+        () -> userDao.updateUserInfo(AUX_ID, AUX_EMAIL, AUX_FIRST_NAME, AUX_LAST_NAME, AUX_PFP_ID));
+    // 3. Meaningful assertions
+  }
+
+  @Test
+  public void testUpdatePassword() throws UserNotFoundException {
+    // 1. Precondiciones
+    // 2. Ejercitar la class under test
+    String password = userDao.updateUserPassword(INSERTED_USER_ID, AUX_PASSWORD);
+    // 3. Meaningful assertions
+    Assert.assertEquals(AUX_PASSWORD, password);
+  }
+
+  @Test
+  public void testUpdatePasswordUserDoesNotExist() {
+    // 1. Precondiciones
+    // 2. Ejercitar la class under test
+    assertThrows(
+        UserNotFoundException.class, () -> userDao.updateUserPassword(AUX_ID, AUX_PASSWORD));
+    // 3. Meaningful assertions
   }
 }

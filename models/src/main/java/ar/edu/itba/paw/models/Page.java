@@ -3,29 +3,33 @@ package ar.edu.itba.paw.models;
 import java.util.List;
 
 public class Page<T> {
-  private final List<T> content;
-  private final int currentPage;
-  private final int totalContentCount;
 
-  public Page(List<T> content, int currentPage, int totalContentCount) {
+  private final List<T> content;
+  private final Integer currentPage;
+  private final Integer totalContentCount;
+  private final Integer pageSize;
+
+  public Page(List<T> content, Integer currentPage, Integer totalContentCount, Integer pageSize) {
     this.content = content;
     this.currentPage = currentPage;
     this.totalContentCount = totalContentCount;
+    this.pageSize = pageSize;
   }
 
   public List<T> getContent() {
     return content;
   }
 
-  public int getCurrentPage() {
+  public Integer getCurrentPage() {
     return currentPage;
   }
 
-  public int getTotalContentCount() {
-    return totalContentCount;
-  }
+  public Integer getTotalPages() {
 
-  public int getTotalPages() {
-    return (int) Math.ceil((double) totalContentCount / content.size());
+    if (pageSize == null || totalContentCount == null) {
+      return null;
+    }
+
+    return (int) Math.ceil((double) totalContentCount / pageSize);
   }
 }

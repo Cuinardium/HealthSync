@@ -1,16 +1,12 @@
 package ar.edu.itba.paw.services;
 
 import ar.edu.itba.paw.interfaces.persistence.DoctorDao;
+import ar.edu.itba.paw.interfaces.persistence.exceptions.DoctorAlreadyExistsException;
+import ar.edu.itba.paw.interfaces.persistence.exceptions.DoctorNotFoundException;
 import ar.edu.itba.paw.interfaces.services.DoctorService;
 import ar.edu.itba.paw.interfaces.services.UserService;
-import ar.edu.itba.paw.models.AttendingHours;
-import ar.edu.itba.paw.models.City;
-import ar.edu.itba.paw.models.Doctor;
-import ar.edu.itba.paw.models.HealthInsurance;
-import ar.edu.itba.paw.models.Image;
-import ar.edu.itba.paw.models.Page;
-import ar.edu.itba.paw.models.Specialty;
-import ar.edu.itba.paw.models.User;
+import ar.edu.itba.paw.models.*;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -20,9 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class DoctorServiceImpl implements DoctorService {
-
   private final DoctorDao doctorDao;
-
   private final UserService userService;
 
   @Autowired
@@ -51,9 +45,13 @@ public class DoctorServiceImpl implements DoctorService {
     // Create user
     User user = userService.createUser(email, password, firstName, lastName);
 
-    // Create doctor
-    return doctorDao.createDoctor(
-        user.getId(), specialty, city, address, healthInsurances, attendingHours);
+    try {
+      // Create doctor
+      return doctorDao.createDoctor(
+          user.getId(), specialty, city, address, healthInsurances, attendingHours);
+    } catch (DoctorAlreadyExistsException e) {
+      throw new RuntimeException();
+    }
   }
 
   // =============== Updates ===============
@@ -74,8 +72,12 @@ public class DoctorServiceImpl implements DoctorService {
 
     userService.updateUser(doctorId, email, firstName, lastName, image);
 
-    return doctorDao.updateDoctorInfo(
-        doctorId, specialty, city, address, healthInsurances, attendingHours);
+    try {
+      return doctorDao.updateDoctorInfo(
+          doctorId, specialty, city, address, healthInsurances, attendingHours);
+    } catch (DoctorNotFoundException e) {
+      throw new RuntimeException();
+    }
   }
 
   // =============== Queries ===============
@@ -88,12 +90,16 @@ public class DoctorServiceImpl implements DoctorService {
   @Override
   public Page<Doctor> getFilteredDoctors(
       String name,
+      LocalDate date,
+      ThirtyMinuteBlock fromTime,
+      ThirtyMinuteBlock toTime,
       Specialty specialty,
       City city,
       HealthInsurance healthInsurance,
-      int page,
-      int pageSize) {
-    return doctorDao.getFilteredDoctors(name, specialty, city, healthInsurance, page, pageSize);
+      Integer page,
+      Integer pageSize) {
+    return doctorDao.getFilteredDoctors(
+        name, date, fromTime, toTime, specialty, city, healthInsurance, page, pageSize);
   }
 
   @Override

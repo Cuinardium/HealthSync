@@ -1,11 +1,9 @@
 package ar.edu.itba.paw.interfaces.persistence;
 
-import ar.edu.itba.paw.models.AttendingHours;
-import ar.edu.itba.paw.models.City;
-import ar.edu.itba.paw.models.Doctor;
-import ar.edu.itba.paw.models.HealthInsurance;
-import ar.edu.itba.paw.models.Page;
-import ar.edu.itba.paw.models.Specialty;
+import ar.edu.itba.paw.interfaces.persistence.exceptions.DoctorAlreadyExistsException;
+import ar.edu.itba.paw.interfaces.persistence.exceptions.DoctorNotFoundException;
+import ar.edu.itba.paw.models.*;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -14,43 +12,48 @@ public interface DoctorDao {
 
   // =============== Inserts ===============
 
-  public Doctor createDoctor(
+  Doctor createDoctor(
       long userId,
       Specialty specialty,
       City city,
       String address,
       List<HealthInsurance> healthInsurances,
-      AttendingHours attendingHours);
+      AttendingHours attendingHours)
+      throws DoctorAlreadyExistsException, IllegalStateException;
 
   // =============== Updates ===============
 
-  public Doctor updateDoctorInfo(
+  Doctor updateDoctorInfo(
       long doctorId,
       Specialty specialty,
       City city,
       String address,
       List<HealthInsurance> healthInsurances,
-      AttendingHours attendingHours);
+      AttendingHours attendingHours)
+      throws DoctorNotFoundException;
 
   // =============== Queries ===============
 
-  public Optional<Doctor> getDoctorById(long id);
+  Optional<Doctor> getDoctorById(long id);
 
-  public Page<Doctor> getFilteredDoctors(
+  Page<Doctor> getFilteredDoctors(
       String name,
+      LocalDate date,
+      ThirtyMinuteBlock fromTime,
+      ThirtyMinuteBlock toTime,
       Specialty specialty,
       City city,
       HealthInsurance healthInsurance,
-      int page,
-      int pageSize);
+      Integer page,
+      Integer pageSize);
 
-  public List<Doctor> getDoctors();
+  List<Doctor> getDoctors();
 
   // Get used specialties and health insurances
-  public Map<HealthInsurance, Integer> getUsedHealthInsurances();
+  Map<HealthInsurance, Integer> getUsedHealthInsurances();
 
-  public Map<Specialty, Integer> getUsedSpecialties();
+  Map<Specialty, Integer> getUsedSpecialties();
 
   // Get all city present in the database & qty of appearences
-  public Map<City, Integer> getUsedCities();
+  Map<City, Integer> getUsedCities();
 }

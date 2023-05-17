@@ -1,6 +1,7 @@
 package ar.edu.itba.paw.persistence;
 
 import ar.edu.itba.paw.interfaces.persistence.ImageDao;
+import ar.edu.itba.paw.interfaces.persistence.exceptions.ImageNotFoundException;
 import ar.edu.itba.paw.models.Image;
 import ar.edu.itba.paw.persistence.utils.QueryBuilder;
 import ar.edu.itba.paw.persistence.utils.UpdateBuilder;
@@ -43,13 +44,13 @@ public class ImageDaoImpl implements ImageDao {
     Map<String, Object> data = new HashMap<>();
     data.put(TABLE_BYTEA_COLUMN, image.getBytes());
     final Number key = imageInsert.executeAndReturnKey(data);
-    return getImage(key.longValue()).orElseThrow(IllegalStateException::new);
+    return new Image(key.longValue(), image.getBytes());
   }
 
   // =============== Updates ===============
 
   @Override
-  public Image updateImage(Long pfpId, Image image) {
+  public Image updateImage(Long pfpId, Image image) throws ImageNotFoundException {
     // TODO: throw IllegalArgument?
     if (pfpId == null || image == null) {
       return null;
@@ -63,16 +64,16 @@ public class ImageDaoImpl implements ImageDao {
             .build();
 
     jdbcTemplate.update(updateQuery);
-    return getImage(pfpId).orElseThrow(IllegalStateException::new);
+    return getImage(pfpId).orElseThrow(ImageNotFoundException::new);
   }
-  
+
   // =============== Queries ===============
 
   @Override
   public Optional<Image> getImage(long id) {
     String query =
         new QueryBuilder()
-            .select(TABLE_BYTEA_COLUMN)
+            .select("*")
             .from(TABLE_NAME)
             .where(TABLE_PKEY_COLUMN + " = " + id)
             .build();

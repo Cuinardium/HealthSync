@@ -28,8 +28,7 @@ public class AppointmentController {
   private final AppointmentService appointmentService;
 
   @Autowired
-  public AppointmentController(
-      final AppointmentService appointmentService) {
+  public AppointmentController(final AppointmentService appointmentService) {
     this.appointmentService = appointmentService;
   }
 
@@ -40,7 +39,7 @@ public class AppointmentController {
       @ModelAttribute("modalForm") final ModalForm modalForm,
       @RequestParam(name = "from", required = false, defaultValue = "") final String from,
       @RequestParam(name = "to", required = false, defaultValue = "") final String to,
-      @RequestParam(name = "selected_tab", required = false, defaultValue = "0")
+      @RequestParam(name = "selected_tab", required = false, defaultValue = "1")
           final int selectedTab) {
 
     LocalDate fromDate;
@@ -70,7 +69,6 @@ public class AppointmentController {
       mav.addObject("modalForm", modalForm);
       return mav;
     }
-    // TODO: what do i do here????
     return null;
   }
 
@@ -185,7 +183,6 @@ public class AppointmentController {
                 -1)
             .getContent();
 
-
     List<Appointment> cancelledAppointments =
         appointmentService
             .getFilteredAppointmentsForDoctor(
@@ -264,7 +261,6 @@ public class AppointmentController {
                 100)
             .getContent();
 
-
     List<Appointment> cancelledAppointments =
         appointmentService
             .getFilteredAppointmentsForPatient(
@@ -304,12 +300,12 @@ public class AppointmentController {
             "appointments.confirmed"));
 
     tabs.add(
-            new AppointmentTab(
-                    "history",
-                    (x) -> (x == 4),
-                    completedAppointments,
-                    new ArrayList<>(),
-                    "appointments.history"));
+        new AppointmentTab(
+            "history",
+            (x) -> (x == 4),
+            completedAppointments,
+            new ArrayList<>(),
+            "appointments.history"));
 
     // Patient can only see rejected, cancelled and completed appointments
     tabs.add(
@@ -319,7 +315,6 @@ public class AppointmentController {
             cancelledAppointments,
             new ArrayList<>(),
             "appointments.cancelled"));
-
 
     // Add values to model
     mav.addObject("from", fromDate == null ? "" : fromDate.toString());

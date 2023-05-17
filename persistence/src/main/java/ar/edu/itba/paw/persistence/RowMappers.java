@@ -82,7 +82,7 @@ public class RowMappers {
   // ================================= Image =================================
 
   protected static final RowMapper<Image> IMAGE_MAPPER =
-      (rs, rowNum) -> new Image(rs.getBytes("profile_picture"));
+      (rs, rowNum) -> new Image(rs.getLong("profile_picture_id"), rs.getBytes("profile_picture"));
 
   // ================================= Patient =================================
 

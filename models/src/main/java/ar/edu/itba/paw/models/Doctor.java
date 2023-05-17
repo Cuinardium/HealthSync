@@ -72,4 +72,16 @@ public class Doctor extends User {
         + super.toString()
         + "]";
   }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj) return true;
+    if (!(obj instanceof Doctor)) return false;
+    Doctor other = (Doctor) obj;
+    return super.equals(other)
+        && healthInsurances.equals(other.healthInsurances)
+        && specialty.equals(other.specialty)
+        && location.equals(other.location)
+        && attendingHours.equals(other.attendingHours);
+  }
 }

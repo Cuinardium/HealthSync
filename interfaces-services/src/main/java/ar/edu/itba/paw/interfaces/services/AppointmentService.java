@@ -37,16 +37,16 @@ public interface AppointmentService {
       AppointmentStatus status,
       LocalDate from,
       LocalDate to,
-      int page,
-      int pageSize);
+      Integer page,
+      Integer pageSize);
 
   Page<Appointment> getFilteredAppointmentsForDoctor(
       long doctorId,
       AppointmentStatus status,
       LocalDate from,
       LocalDate to,
-      int page,
-      int pageSize);
+      Integer page,
+      Integer pageSize);
 
   public List<ThirtyMinuteBlock> getAvailableHoursForDoctorOnDate(long doctorId, LocalDate date);
 

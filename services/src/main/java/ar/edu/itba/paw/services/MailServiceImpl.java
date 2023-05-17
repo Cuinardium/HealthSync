@@ -118,7 +118,8 @@ public class MailServiceImpl implements MailService {
 
   @Override
   @Async
-  public void sendAppointmentCancelledByPatientMail(Appointment appointment,String cancelDescription,Locale locale) {
+  public void sendAppointmentCancelledByPatientMail(
+      Appointment appointment, String cancelDescription, Locale locale) {
 
     Map<String, Object> templateModel = new HashMap<>();
 
@@ -134,6 +135,8 @@ public class MailServiceImpl implements MailService {
     String description = appointment.getDescription();
 
     String doctorEmail = appointment.getDoctor().getEmail();
+
+    String cancelDesc = appointment.getCancelDesc();
 
     // Load model
     templateModel.put("baseUrl", env.getProperty("webapp.baseUrl"));
@@ -196,7 +199,8 @@ public class MailServiceImpl implements MailService {
 
   @Override
   @Async
-  public void sendAppointmentCancelledByDoctorMail(Appointment appointment, String cancelDescription,Locale locale) {
+  public void sendAppointmentCancelledByDoctorMail(
+      Appointment appointment, String cancelDescription, Locale locale) {
     Map<String, Object> templateModel = new HashMap<>();
 
     String dateTime =
@@ -208,6 +212,8 @@ public class MailServiceImpl implements MailService {
     String baseUrl = env.getProperty("webapp.baseUrl");
 
     String doctorAppointmentUrl = baseUrl + appointment.getDoctor().getId() + "/appointment";
+
+    String cancelDesc = appointment.getCancelDesc();
 
     // Load model
     templateModel.put("baseUrl", baseUrl);

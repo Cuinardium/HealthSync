@@ -1,6 +1,8 @@
 package ar.edu.itba.paw.services;
 
 import ar.edu.itba.paw.interfaces.persistence.PatientDao;
+import ar.edu.itba.paw.interfaces.persistence.exceptions.PatientAlreadyExistsException;
+import ar.edu.itba.paw.interfaces.persistence.exceptions.PatientNotFoundException;
 import ar.edu.itba.paw.interfaces.services.PatientService;
 import ar.edu.itba.paw.interfaces.services.UserService;
 import ar.edu.itba.paw.models.HealthInsurance;
@@ -29,15 +31,22 @@ public class PatientServiceImpl implements PatientService {
   @Transactional
   @Override
   public Patient createPatient(
-      String email, String password, String firstName, String lastName, HealthInsurance healthInsurance) {
+      String email,
+      String password,
+      String firstName,
+      String lastName,
+      HealthInsurance healthInsurance) {
 
     // Create User
     User user = userService.createUser(email, password, firstName, lastName);
 
-    // Create Patient
-    Patient patient = patientDao.createPatient(user.getId(), healthInsurance);
-
-    return patient;
+    try {
+      // Create Patient
+      Patient patient = patientDao.createPatient(user.getId(), healthInsurance);
+      return patient;
+    } catch (PatientAlreadyExistsException e) {
+      throw new RuntimeException();
+    }
   }
 
   // =============== Updates ===============
@@ -53,8 +62,11 @@ public class PatientServiceImpl implements PatientService {
       Image image) {
 
     userService.updateUser(patientId, email, firstName, lastName, image);
-
-    return patientDao.updatePatientInfo(patientId, healthInsurance);
+    try {
+      return patientDao.updatePatientInfo(patientId, healthInsurance);
+    } catch (PatientNotFoundException e) {
+      throw new RuntimeException();
+    }
   }
 
   // =============== Queries ===============

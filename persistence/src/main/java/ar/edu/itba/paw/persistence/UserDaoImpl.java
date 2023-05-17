@@ -1,6 +1,8 @@
 package ar.edu.itba.paw.persistence;
 
 import ar.edu.itba.paw.interfaces.persistence.UserDao;
+import ar.edu.itba.paw.interfaces.persistence.exceptions.EmailAlreadyExistsException;
+import ar.edu.itba.paw.interfaces.persistence.exceptions.UserNotFoundException;
 import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.persistence.utils.QueryBuilder;
 import ar.edu.itba.paw.persistence.utils.UpdateBuilder;
@@ -9,6 +11,7 @@ import java.util.Map;
 import java.util.Optional;
 import javax.sql.DataSource;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
@@ -29,7 +32,8 @@ public class UserDaoImpl implements UserDao {
   // =============== Inserts ===============
 
   @Override
-  public User createUser(String email, String password, String firstName, String lastName) {
+  public User createUser(String email, String password, String firstName, String lastName)
+      throws EmailAlreadyExistsException {
     Map<String, Object> data = new HashMap<>();
 
     data.put("email", email);
@@ -37,15 +41,20 @@ public class UserDaoImpl implements UserDao {
     data.put("first_name", firstName);
     data.put("last_name", lastName);
 
-    final Number key = userInsert.executeAndReturnKey(data);
-    return new User(key.longValue(), email, password, firstName, lastName, null);
+    try {
+      final Number key = userInsert.executeAndReturnKey(data);
+      return new User(key.longValue(), email, password, firstName, lastName, null);
+    } catch (DuplicateKeyException e) {
+      throw new EmailAlreadyExistsException();
+    }
   }
 
   // =============== Updates ===============
 
   @Override
   public User updateUserInfo(
-      long userId, String email, String firstName, String lastName, Long pfpId) {
+      long userId, String email, String firstName, String lastName, Long pfpId)
+      throws UserNotFoundException {
     UpdateBuilder update =
         new UpdateBuilder()
             .update("users")
@@ -59,11 +68,11 @@ public class UserDaoImpl implements UserDao {
     }
 
     jdbcTemplate.update(update.build());
-    return getUserById(userId).orElseThrow(IllegalStateException::new);
+    return getUserById(userId).orElseThrow(UserNotFoundException::new);
   }
 
   @Override
-  public String updateUserPassword(long userId, String password) {
+  public String updateUserPassword(long userId, String password) throws UserNotFoundException {
     String update =
         new UpdateBuilder()
             .update("users")
@@ -72,7 +81,7 @@ public class UserDaoImpl implements UserDao {
             .build();
 
     jdbcTemplate.update(update);
-    return getUserById(userId).orElseThrow(IllegalStateException::new).getPassword();
+    return getUserById(userId).orElseThrow(UserNotFoundException::new).getPassword();
   }
 
   // =============== Queries ===============
