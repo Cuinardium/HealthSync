@@ -1,6 +1,7 @@
 package ar.edu.itba.paw.services;
 
 import ar.edu.itba.paw.interfaces.persistence.ImageDao;
+import ar.edu.itba.paw.interfaces.persistence.exceptions.ImageNotFoundException;
 import ar.edu.itba.paw.interfaces.services.ImageService;
 import ar.edu.itba.paw.models.Image;
 import java.util.Optional;
@@ -31,7 +32,11 @@ public class ImageServiceImpl implements ImageService {
   @Transactional
   @Override
   public void updateImage(Long pfpId, Image image) {
-    imageDao.updateImage(pfpId, image);
+    try {
+      imageDao.updateImage(pfpId, image);
+    } catch (ImageNotFoundException e) {
+      throw new RuntimeException();
+    }
   }
 
   // =============== Queries ===============

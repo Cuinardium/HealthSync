@@ -1,6 +1,8 @@
 package ar.edu.itba.paw.services;
 
 import ar.edu.itba.paw.interfaces.persistence.UserDao;
+import ar.edu.itba.paw.interfaces.persistence.exceptions.EmailAlreadyExistsException;
+import ar.edu.itba.paw.interfaces.persistence.exceptions.UserNotFoundException;
 import ar.edu.itba.paw.interfaces.services.ImageService;
 import ar.edu.itba.paw.interfaces.services.UserService;
 import ar.edu.itba.paw.models.Image;
@@ -31,7 +33,11 @@ public class UserServiceImpl implements UserService {
   @Transactional
   @Override
   public User createUser(String email, String password, String firstName, String lastName) {
-    return userDao.createUser(email, passwordEncoder.encode(password), firstName, lastName);
+    try {
+      return userDao.createUser(email, passwordEncoder.encode(password), firstName, lastName);
+    } catch (EmailAlreadyExistsException e) {
+      throw new RuntimeException();
+    }
   }
 
   // =============== Updates ===============
@@ -43,19 +49,21 @@ public class UserServiceImpl implements UserService {
 
     Long pfpId =
         userDao.getUserById(userId).orElseThrow(IllegalStateException::new).getProfilePictureId();
-    if (image == null) {
+    if (image != null) {
+      // Si la pfp es null -> insertamos imagen
+      // si la pfp no es null -> la actualizamos para pisar la vieja
+      if (pfpId == null) {
+        pfpId = imageService.uploadImage(image);
+      } else {
+        imageService.updateImage(pfpId, image);
+      }
+    }
+
+    try {
       return userDao.updateUserInfo(userId, email, firstName, lastName, pfpId);
+    } catch (UserNotFoundException e) {
+      throw new RuntimeException();
     }
-
-    // Si la pfp es null -> insertamos imagen
-    // si la pfp no es null -> la actualizamos para pisar la vieja
-    if (pfpId == null) {
-      pfpId = imageService.uploadImage(image);
-    } else {
-      imageService.updateImage(pfpId, image);
-    }
-
-    return userDao.updateUserInfo(userId, email, firstName, lastName, pfpId);
   }
 
   @Override
@@ -67,9 +75,13 @@ public class UserServiceImpl implements UserService {
       // En clase vimos que era mejor retornar true o false, para verificar si se actualizo la pass
       return false;
     }
-    // TODO: return true <-> hay afected rows?
-    userDao.updateUserPassword(userId, passwordEncoder.encode(password));
-    return true;
+    try {
+      // TODO: return true <-> hay afected rows?
+      userDao.updateUserPassword(userId, passwordEncoder.encode(password));
+      return true;
+    } catch (UserNotFoundException e) {
+      throw new RuntimeException();
+    }
   }
 
   // =============== Queries ===============

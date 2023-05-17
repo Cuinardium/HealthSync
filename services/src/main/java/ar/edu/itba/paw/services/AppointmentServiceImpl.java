@@ -1,6 +1,7 @@
 package ar.edu.itba.paw.services;
 
 import ar.edu.itba.paw.interfaces.persistence.AppointmentDao;
+import ar.edu.itba.paw.interfaces.persistence.exceptions.AppointmentNotFoundException;
 import ar.edu.itba.paw.interfaces.services.AppointmentService;
 import ar.edu.itba.paw.interfaces.services.DoctorService;
 import ar.edu.itba.paw.interfaces.services.MailService;
@@ -98,23 +99,25 @@ public class AppointmentServiceImpl implements AppointmentService {
       throw new RuntimeException();
     }
 
-    Appointment updatedAppointment =
-        appointmentDao.updateAppointment(appointmentId, status, cancelDescription);
+    try {
+      Appointment updatedAppointment =
+          appointmentDao.updateAppointment(appointmentId, status, cancelDescription);
+      // TODO: error handling
+      Locale locale = LocaleContextHolder.getLocale();
 
-    // TODO: error handling
-    Locale locale = LocaleContextHolder.getLocale();
-
-    if (status == AppointmentStatus.CANCELLED) {
-      if (requesterId == appointment.getPatientId()) {
-        mailService.sendAppointmentCancelledByPatientMail(
-            updatedAppointment, cancelDescription, locale);
-      } else {
-        mailService.sendAppointmentCancelledByDoctorMail(
-            updatedAppointment, cancelDescription, locale);
+      if (status == AppointmentStatus.CANCELLED) {
+        if (requesterId == appointment.getPatientId()) {
+          mailService.sendAppointmentCancelledByPatientMail(
+              updatedAppointment, cancelDescription, locale);
+        } else {
+          mailService.sendAppointmentCancelledByDoctorMail(
+              updatedAppointment, cancelDescription, locale);
+        }
       }
+      return updatedAppointment;
+    } catch (AppointmentNotFoundException e) {
+      throw new RuntimeException();
     }
-
-    return updatedAppointment;
   }
 
   // =============== Queries ===============
