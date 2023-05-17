@@ -30,6 +30,7 @@
 <spring:message code="register.modal.title" var="modalTitle"/>
 <spring:message code="register.modal.text" var="modalDesc"/>
 <spring:message code="register.modal.button" var="modalButton"/>
+<spring:message code="register.emailInUse.error" var="emailAlreadyInUseError"/>
 
 <html>
 <head>
