@@ -6,7 +6,7 @@
 <c:url value="/css/header.css" var="headerCss"/>
 
 <c:url value="/" var="homeUrl"/>
-<c:url value="/doctorDashboard" var="dashboardUrl"/>
+<c:url value="/doctor-dashboard" var="dashboardUrl"/>
 <c:url value="/my-appointments" var="myAppointmentsUrl"/>
 <c:url value="/doctor-register" var="doctorRegisterUrl"/>
 <c:url value="/patient-register" var="patientRegisterUrl"/>
@@ -61,12 +61,7 @@
         <c:when test="${not empty user}">
             <nav class="navbar navbar-expand-lg">
                 <div class="container-fluid">
-                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
-                            data-bs-target="#profileDropdown" aria-controls="profileDropdown" aria-expanded="false"
-                            aria-label="Toggle navigation">
-                        <span class="navbar-toggler-icon"></span>
-                    </button>
-                    <div class="collapse navbar-collapse" id="profileDropdown">
+                    <div id="profileDropdown">
                         <ul class="navbar-nav">
                             <li class="nav-item dropdown">
                                 <a class="nav-link dropdown-toggle" href="" role="button" data-bs-toggle="dropdown"
@@ -101,12 +96,7 @@
 
             <nav class="navbar navbar-expand-lg">
                 <div class="container-fluid">
-                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
-                            data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false"
-                            aria-label="Toggle navigation">
-                        <span class="navbar-toggler-icon"></span>
-                    </button>
-                    <div class="collapse navbar-collapse" id="navbarNavDropdown">
+                    <div id="navbarNavDropdown">
                         <ul class="navbar-nav">
                             <li class="nav-item dropdown">
                                 <button class="btn dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">

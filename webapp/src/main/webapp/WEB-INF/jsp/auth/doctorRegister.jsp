@@ -68,7 +68,7 @@
 <!-- Content -->
 <div class="formContainer generalPadding">
     <h1>${title}</h1>
-    <form:form modelAttribute="doctorRegisterForm" class="card" action="${doctorRegisterUrl}"
+    <form:form modelAttribute="doctorRegisterForm" id="regForm" class="card" action="${doctorRegisterUrl}"
                method="POST">
         <div class="formRow">
             <div class="formItem">
@@ -145,7 +145,13 @@
                 <form:errors/>
             </div>
         </div>
-        <button type="submit" class="btn btn-primary submitButton">${submit}</button>
+            <!-- Doctor schedule selector -->
+            <c:set var="timeEnumValues" value="${timeEnumValues}" scope="request"/>
+            <jsp:include page="../components/scheduleSelector.jsp"/>
+        <div class="formRow">
+            <button type="submit" class="btn btn-primary">${submit}</button>
+        </div>
+
     </form:form>
     <div class="modal fade" id="modal" tabindex="-1" role="dialog" aria-labelledby="modalLabel"
          aria-hidden="true" data-bs-backdrop="static">
@@ -166,3 +172,4 @@
 </div>
 </body>
 </html>
+

@@ -57,8 +57,7 @@ public class ReviewDaoImplTest {
     Assert.assertNull(reviews.getCurrentPage());
   }
 
-
-  @Test 
+  @Test
   public void testGetReviewsForNonExistingDoctor() {
     // 1. Precondiciones
     // 2. Ejercitar la class under test

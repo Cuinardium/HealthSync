@@ -1,6 +1,5 @@
 package ar.edu.itba.paw.webapp.controller;
 
-import ar.edu.itba.paw.interfaces.services.AppointmentService;
 import ar.edu.itba.paw.interfaces.services.DoctorService;
 import ar.edu.itba.paw.interfaces.services.PatientService;
 import ar.edu.itba.paw.models.*;
@@ -8,11 +7,12 @@ import ar.edu.itba.paw.webapp.auth.PawAuthUserDetails;
 import ar.edu.itba.paw.webapp.auth.UserRoles;
 import ar.edu.itba.paw.webapp.exceptions.UserNotFoundException;
 import ar.edu.itba.paw.webapp.form.DoctorFilterForm;
-
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -27,6 +27,8 @@ public class HomeController {
   private static final int DEFAULT_PAGE_SIZE = 2;
   private final DoctorService doctorService;
   private final PatientService patientService;
+
+  private static final Logger LOGGER = LoggerFactory.getLogger(HomeController.class);
 
   @Autowired
   public HomeController(final DoctorService doctorService, PatientService patientService) {
@@ -48,11 +50,12 @@ public class HomeController {
     featuredSpecialties.add(Specialty.UROLOGY);
 
     mav.addObject("featuredSpecialties", featuredSpecialties);
+    LOGGER.debug("Landing page requested");
     return mav;
   }
 
   // TODO: REFACTOR THIS
-  @RequestMapping(value = "/doctorDashboard", method = RequestMethod.GET)
+  @RequestMapping(value = "/doctor-dashboard", method = RequestMethod.GET)
   public ModelAndView doctorDashboard(
       @ModelAttribute("doctorFilterForm") DoctorFilterForm doctorFilterForm,
       @RequestParam(value = "page", required = false, defaultValue = "1") String page) {
@@ -102,7 +105,15 @@ public class HomeController {
     // Get doctors
     Page<Doctor> doctors =
         doctorService.getFilteredDoctors(
-            name, date, fromTime, toTime, specialty, city, healthInsurance, parsedPage - 1, DEFAULT_PAGE_SIZE);
+            name,
+            date,
+            fromTime,
+            toTime,
+            specialty,
+            city,
+            healthInsurance,
+            parsedPage - 1,
+            DEFAULT_PAGE_SIZE);
 
     if (PawAuthUserDetails.getRole().equals(UserRoles.ROLE_PATIENT)) {
       PawAuthUserDetails currentUser =

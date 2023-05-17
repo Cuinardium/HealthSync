@@ -7,7 +7,6 @@
     font-size: 85%;
 }
 
-
 .head{
     display: flex;
     flex-wrap: nowrap;
@@ -38,4 +37,8 @@
 .logo {
     max-height: 3rem;
     margin-right: 10px;
+}
+
+.navbar-nav .dropdown-menu {
+    position: absolute;
 }

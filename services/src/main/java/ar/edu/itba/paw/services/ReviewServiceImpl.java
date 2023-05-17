@@ -62,7 +62,7 @@ public class ReviewServiceImpl implements ReviewService {
     }
 
     boolean canReview = appointmentService.hasPatientMetDoctor(doctorId, patientId);
-    
+
     return canReview;
   }
 

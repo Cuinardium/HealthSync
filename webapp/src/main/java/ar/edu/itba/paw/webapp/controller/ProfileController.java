@@ -16,6 +16,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 import javax.validation.Valid;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -30,6 +32,8 @@ public class ProfileController {
   private final PatientService patientService;
 
   private final UserService userService;
+
+  private static final Logger LOGGER = LoggerFactory.getLogger(ProfileController.class);
 
   @Autowired
   public ProfileController(
@@ -47,6 +51,7 @@ public class ProfileController {
       @Valid @ModelAttribute("doctorEditForm") final DoctorEditForm doctorEditForm,
       final BindingResult errors) {
     if (errors.hasErrors()) {
+      LOGGER.warn("Failed to edit doctor due to form errors");
       return doctorEdit(doctorEditForm);
     }
 
@@ -105,17 +110,19 @@ public class ProfileController {
       if (!doctorEditForm.getImage().isEmpty()) {
         image = new Image(doctorEditForm.getImage().getBytes());
       }
-      doctorService.updateDoctor(
-          PawAuthUserDetails.getCurrentUserId(),
-          doctorEditForm.getEmail(),
-          doctorEditForm.getName(),
-          doctorEditForm.getLastname(),
-          specialty,
-          city,
-          doctorEditForm.getAddress(),
-          healthInsurances,
-          attendingHours,
-          image);
+      Doctor doctor =
+          doctorService.updateDoctor(
+              PawAuthUserDetails.getCurrentUserId(),
+              doctorEditForm.getEmail(),
+              doctorEditForm.getName(),
+              doctorEditForm.getLastname(),
+              specialty,
+              city,
+              doctorEditForm.getAddress(),
+              healthInsurances,
+              attendingHours,
+              image);
+      LOGGER.info("Updated {}", doctor);
     } catch (IOException e) {
       // TODO: handle
     }
@@ -205,6 +212,7 @@ public class ProfileController {
     mav.addObject("healthInsurances", Arrays.asList(HealthInsurance.values()));
     mav.addObject("timeEnumValues", ThirtyMinuteBlock.values());
     mav.addObject("showModal", false);
+    LOGGER.debug("Doctor edit page requested");
     return mav;
   }
 
@@ -213,6 +221,7 @@ public class ProfileController {
       @Valid @ModelAttribute("patientEditForm") final PatientEditForm patientEditForm,
       final BindingResult errors) {
     if (errors.hasErrors()) {
+      LOGGER.warn("Failed to edit patient due to form errors");
       return patientEdit(patientEditForm);
     }
 
@@ -226,13 +235,15 @@ public class ProfileController {
       HealthInsurance healthInsurance =
           HealthInsurance.values()[patientEditForm.getHealthInsuranceCode()];
 
-      patientService.updatePatient(
-          PawAuthUserDetails.getCurrentUserId(),
-          patientEditForm.getEmail(),
-          patientEditForm.getName(),
-          patientEditForm.getLastname(),
-          healthInsurance,
-          image);
+      Patient patient =
+          patientService.updatePatient(
+              PawAuthUserDetails.getCurrentUserId(),
+              patientEditForm.getEmail(),
+              patientEditForm.getName(),
+              patientEditForm.getLastname(),
+              healthInsurance,
+              image);
+      LOGGER.info("Updated {}", patient);
     } catch (IOException e) {
       // TODO: handle this
     }
@@ -262,6 +273,7 @@ public class ProfileController {
     mav.addObject("form", patientEditForm);
     mav.addObject("showModal", false);
     mav.addObject("healthInsurances", Arrays.asList(HealthInsurance.values()));
+    LOGGER.debug("Patient edit page requested");
     return mav;
   }
 
@@ -271,6 +283,7 @@ public class ProfileController {
       final BindingResult errors,
       boolean OldPasswordDoesNotMatch) {
     if (errors.hasErrors()) {
+      LOGGER.warn("Change password failed due to form errors");
       return changePassword(changePasswordForm, false);
     }
 
@@ -281,8 +294,10 @@ public class ProfileController {
               changePasswordForm.getOldPassword(),
               changePasswordForm.getPassword());
       if (!changedPassword) {
+        LOGGER.warn("Change password failed due to old password not matching");
         return changePassword(changePasswordForm, true);
       }
+      LOGGER.info("Updated password");
     } catch (IllegalStateException exception) {
       // No deberia pasar
       // TODO: log?
@@ -303,6 +318,7 @@ public class ProfileController {
     mav.addObject("oldPasswordDoesNotMatch", OldPasswordDoesNotMatch);
     mav.addObject("form", changePasswordForm);
     mav.addObject("showModal", false);
+    LOGGER.debug("Change password page requested");
     return mav;
   }
 }

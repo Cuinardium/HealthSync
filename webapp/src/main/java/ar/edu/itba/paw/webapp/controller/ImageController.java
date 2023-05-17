@@ -3,6 +3,8 @@ package ar.edu.itba.paw.webapp.controller;
 import ar.edu.itba.paw.interfaces.services.ImageService;
 import ar.edu.itba.paw.models.Image;
 import ar.edu.itba.paw.webapp.exceptions.ImageNotFoundException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +18,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 public class ImageController {
 
   private ImageService imageService;
+  private static final Logger LOGGER = LoggerFactory.getLogger(ImageController.class);
 
   @Autowired
   public ImageController(ImageService imageService) {
@@ -29,10 +32,16 @@ public class ImageController {
   )
   @ResponseBody
   public ResponseEntity<byte[]> getImage(@PathVariable("id") final long id) {
-    Image image = imageService.getImage(id).orElseThrow(ImageNotFoundException::new);
-    return ResponseEntity.ok()
-        .contentLength(image.getBytes().length)
-        .contentType(MediaType.IMAGE_JPEG)
-        .body(image.getBytes());
+    try {
+      Image image = imageService.getImage(id).orElseThrow(ImageNotFoundException::new);
+      LOGGER.info("Returning Image with id: {}", id);
+      return ResponseEntity.ok()
+          .contentLength(image.getBytes().length)
+          .contentType(MediaType.IMAGE_JPEG)
+          .body(image.getBytes());
+    } catch (ImageNotFoundException e) {
+      LOGGER.error("Image with id: {} not found!", id);
+      throw e; // TODO: return empty image
+    }
   }
 }

@@ -12,6 +12,8 @@ import ar.edu.itba.paw.webapp.form.ModalForm;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.IntPredicate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -24,6 +26,7 @@ import org.springframework.web.servlet.ModelAndView;
 @Controller
 public class AppointmentController {
   private final AppointmentService appointmentService;
+  private static final Logger LOGGER = LoggerFactory.getLogger(AppointmentController.class);
 
   @Autowired
   public AppointmentController(final AppointmentService appointmentService) {
@@ -82,6 +85,9 @@ public class AppointmentController {
     mav.addObject("selectedTab", selectedTab);
     mav.addObject("tabs", tabs);
     mav.addObject("modalForm", modalForm);
+
+    LOGGER.debug("Patient requested his appointments");
+
     return mav;
   }
 
@@ -107,12 +113,15 @@ public class AppointmentController {
     AppointmentStatus appointmentStatus = AppointmentStatus.values()[status];
 
     try {
-      appointmentService.updateAppointment(
-          appointmentId,
-          appointmentStatus,
-          modalForm.getDescription(),
-          PawAuthUserDetails.getCurrentUserId());
+      Appointment appointment =
+          appointmentService.updateAppointment(
+              appointmentId,
+              appointmentStatus,
+              modalForm.getDescription(),
+              PawAuthUserDetails.getCurrentUserId());
+      LOGGER.info("Updated {}", appointment);
     } catch (RuntimeException e) {
+      LOGGER.error("Appointment could not be updated, because user did not exist");
       throw new UserNotFoundException();
     }
 

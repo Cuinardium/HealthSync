@@ -3,7 +3,7 @@
 
 <c:url value="/css/main.css" var="mainCss"/>
 
-<c:url value="/doctorDashboard" var="doctorDashboardUrl"/>
+<c:url value="/doctor-dashboard" var="doctorDashboardUrl"/>
 
 <spring:message code="doctorDashboard.placeholder.search" var="search"/>
 
