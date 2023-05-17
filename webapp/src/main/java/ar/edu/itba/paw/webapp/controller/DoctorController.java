@@ -81,9 +81,6 @@ public class DoctorController {
     // Get reviews
     Page<Review> reviews = reviewService.getReviewsForDoctor(doctorId, page - 1, PAGE_SIZE);
 
-    System.out.println(reviews.getContent());
-    System.out.println(reviews.getTotalPages());
-
     mav.addObject("form", appointmentForm);
     mav.addObject("canBook", canBook);
     mav.addObject("hoursAvailable", hoursAvailable);
@@ -105,7 +102,7 @@ public class DoctorController {
       final BindingResult errors) {
 
     if (errors.hasErrors()) {
-      return detailedDoctor(doctorId, page, true,appointmentForm);
+      return detailedDoctor(doctorId, page, true, appointmentForm);
     }
 
     PawAuthUserDetails currentUser =
