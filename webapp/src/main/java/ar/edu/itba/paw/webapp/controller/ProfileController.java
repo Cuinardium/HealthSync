@@ -125,6 +125,9 @@ public class ProfileController {
       LOGGER.info("Updated {}", doctor);
     } catch (IOException e) {
       // TODO: handle
+    } catch (ar.edu.itba.paw.interfaces.services.exceptions.UserNotFoundException e) {
+      LOGGER.error("Failed to update doctor because doctor does not exist");
+      throw new UserNotFoundException();
     }
 
     final ModelAndView mav = new ModelAndView("user/doctorEdit");
@@ -246,6 +249,9 @@ public class ProfileController {
       LOGGER.info("Updated {}", patient);
     } catch (IOException e) {
       // TODO: handle this
+    } catch (ar.edu.itba.paw.interfaces.services.exceptions.UserNotFoundException e) {
+      LOGGER.error("Failed to update patient because patient does not exist");
+      throw new UserNotFoundException();
     }
 
     final ModelAndView mav = new ModelAndView("user/patientEdit");
@@ -302,6 +308,10 @@ public class ProfileController {
       // No deberia pasar
       // TODO: log?
       throw exception;
+    } catch (ar.edu.itba.paw.interfaces.services.exceptions.UserNotFoundException e) {
+      LOGGER.error("Change password failed due to user nott existing found");
+      // TODO: q hago en este caso?
+      throw new UserNotFoundException();
     }
     final ModelAndView mav = new ModelAndView("user/changePassword");
     mav.addObject("showModal", true);

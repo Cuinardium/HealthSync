@@ -5,6 +5,7 @@ import ar.edu.itba.paw.interfaces.persistence.exceptions.DoctorAlreadyExistsExce
 import ar.edu.itba.paw.interfaces.persistence.exceptions.DoctorNotFoundException;
 import ar.edu.itba.paw.interfaces.services.UserService;
 import ar.edu.itba.paw.interfaces.services.exceptions.EmailInUseException;
+import ar.edu.itba.paw.interfaces.services.exceptions.UserNotFoundException;
 import ar.edu.itba.paw.models.AttendingHours;
 import ar.edu.itba.paw.models.City;
 import ar.edu.itba.paw.models.Doctor;
@@ -181,7 +182,7 @@ public class DoctorServiceImplTest {
   }
 
   @Test
-  public void testUpdateDoctor() throws DoctorNotFoundException {
+  public void testUpdateDoctor() throws DoctorNotFoundException, UserNotFoundException {
     // 1. Precondiciones
     Mockito.when(
             doctorDao.updateDoctorInfo(
@@ -211,7 +212,7 @@ public class DoctorServiceImplTest {
 
   // TODO: cng excep
   @Test(expected = RuntimeException.class)
-  public void testUpdateDoctorDoesNotExist() throws DoctorNotFoundException {
+  public void testUpdateDoctorDoesNotExist() throws DoctorNotFoundException, UserNotFoundException {
     // 1. Precondiciones
     Mockito.when(
             doctorDao.updateDoctorInfo(
@@ -222,6 +223,27 @@ public class DoctorServiceImplTest {
                 HEALTH_INSURANCES_NEW,
                 ATTENDING_HOURS_NEW))
         .thenThrow(DoctorNotFoundException.class);
+    // 2. Ejercitar la class under test
+    ds.updateDoctor(
+        ID,
+        EMAIL_NEW,
+        FIRST_NAME_NEW,
+        LAST_NAME_NEW,
+        SPECIALTY_NEW,
+        CITY_NEW,
+        ADDRESS_NEW,
+        HEALTH_INSURANCES_NEW,
+        ATTENDING_HOURS_NEW,
+        IMAGE);
+    // 3. Meaningful assertions
+  }
+
+  @Test(expected = UserNotFoundException.class)
+  public void testUpdateDoctorUserDoesNotExist()
+      throws DoctorNotFoundException, UserNotFoundException {
+    // 1. Precondiciones
+    Mockito.when(userService.updateUser(ID, EMAIL_NEW, FIRST_NAME_NEW, LAST_NAME_NEW, IMAGE))
+        .thenThrow(UserNotFoundException.class);
     // 2. Ejercitar la class under test
     ds.updateDoctor(
         ID,

@@ -6,6 +6,7 @@ import ar.edu.itba.paw.interfaces.persistence.exceptions.PatientNotFoundExceptio
 import ar.edu.itba.paw.interfaces.services.PatientService;
 import ar.edu.itba.paw.interfaces.services.UserService;
 import ar.edu.itba.paw.interfaces.services.exceptions.EmailInUseException;
+import ar.edu.itba.paw.interfaces.services.exceptions.UserNotFoundException;
 import ar.edu.itba.paw.models.HealthInsurance;
 import ar.edu.itba.paw.models.Image;
 import ar.edu.itba.paw.models.Patient;
@@ -60,10 +61,11 @@ public class PatientServiceImpl implements PatientService {
       String firstName,
       String lastName,
       HealthInsurance healthInsurance,
-      Image image) {
+      Image image)
+      throws UserNotFoundException {
 
-    userService.updateUser(patientId, email, firstName, lastName, image);
     try {
+      userService.updateUser(patientId, email, firstName, lastName, image);
       return patientDao.updatePatientInfo(patientId, healthInsurance);
     } catch (PatientNotFoundException e) {
       throw new RuntimeException();

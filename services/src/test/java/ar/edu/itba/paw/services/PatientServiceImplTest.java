@@ -5,6 +5,7 @@ import ar.edu.itba.paw.interfaces.persistence.exceptions.PatientAlreadyExistsExc
 import ar.edu.itba.paw.interfaces.persistence.exceptions.PatientNotFoundException;
 import ar.edu.itba.paw.interfaces.services.UserService;
 import ar.edu.itba.paw.interfaces.services.exceptions.EmailInUseException;
+import ar.edu.itba.paw.interfaces.services.exceptions.UserNotFoundException;
 import ar.edu.itba.paw.models.HealthInsurance;
 import ar.edu.itba.paw.models.Image;
 import ar.edu.itba.paw.models.Patient;
@@ -84,7 +85,7 @@ public class PatientServiceImplTest {
   }
 
   @Test
-  public void testUpdatePatient() throws PatientNotFoundException {
+  public void testUpdatePatient() throws PatientNotFoundException, UserNotFoundException {
     // 1. Precondiciones
     Mockito.when(patientDao.updatePatientInfo(ID, HEALTH_INSURANCE_NEW))
         .thenReturn(PATIENT_UPDATED);
@@ -97,7 +98,8 @@ public class PatientServiceImplTest {
 
   // TODO: cng excep
   @Test(expected = RuntimeException.class)
-  public void testUpdatePatientDoesNotExist() throws PatientNotFoundException {
+  public void testUpdatePatientDoesNotExist()
+      throws PatientNotFoundException, UserNotFoundException {
     // 1. Precondiciones
     Mockito.when(patientDao.updatePatientInfo(ID, HEALTH_INSURANCE_NEW))
         .thenThrow(PatientNotFoundException.class);

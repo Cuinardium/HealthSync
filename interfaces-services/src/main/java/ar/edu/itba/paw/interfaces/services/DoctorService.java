@@ -1,6 +1,7 @@
 package ar.edu.itba.paw.interfaces.services;
 
 import ar.edu.itba.paw.interfaces.services.exceptions.EmailInUseException;
+import ar.edu.itba.paw.interfaces.services.exceptions.UserNotFoundException;
 import ar.edu.itba.paw.models.*;
 import java.time.LocalDate;
 import java.util.List;
@@ -35,7 +36,8 @@ public interface DoctorService {
       String address,
       List<HealthInsurance> healthInsurances,
       AttendingHours attendingHours,
-      Image image);
+      Image image)
+      throws UserNotFoundException;
 
   // =============== Queries ===============
 

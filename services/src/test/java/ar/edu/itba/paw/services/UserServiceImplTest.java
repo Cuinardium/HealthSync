@@ -135,7 +135,9 @@ public class UserServiceImplTest {
   }
 
   @Test
-  public void testUpdateUser() throws UserNotFoundException {
+  public void testUpdateUser()
+      throws UserNotFoundException,
+          ar.edu.itba.paw.interfaces.services.exceptions.UserNotFoundException {
     // 1. Precondiciones
     User USER = new User(ID, EMAIL, PASSWORD, FIRST_NAME, LAST_NAME, PFP_ID);
     User USER_UPDATED =
@@ -156,7 +158,8 @@ public class UserServiceImplTest {
   }
 
   @Test(expected = IllegalStateException.class)
-  public void testUpdateUserDoesNotExist() {
+  public void testUpdateUserDoesNotExist()
+      throws ar.edu.itba.paw.interfaces.services.exceptions.UserNotFoundException {
     // 1. Precondiciones
     Mockito.when(userDao.getUserById(ID)).thenReturn(Optional.empty());
     // 2. Ejercitar la class under test
@@ -165,7 +168,9 @@ public class UserServiceImplTest {
   }
 
   @Test
-  public void testUpdatePassword() throws UserNotFoundException {
+  public void testUpdatePassword()
+      throws UserNotFoundException, IllegalStateException,
+          ar.edu.itba.paw.interfaces.services.exceptions.UserNotFoundException {
     // 1. Precondiciones
     User USER = new User(ID, EMAIL, PASSWORD_ENCODED, FIRST_NAME, LAST_NAME, PFP_ID);
     User USER_UPDATED = new User(ID, EMAIL, PASSWORD, FIRST_NAME, LAST_NAME, PFP_ID);
@@ -182,7 +187,9 @@ public class UserServiceImplTest {
   }
 
   @Test
-  public void testUpdatePasswordOldPasswordDoesNotMatch() {
+  public void testUpdatePasswordOldPasswordDoesNotMatch()
+      throws IllegalStateException,
+          ar.edu.itba.paw.interfaces.services.exceptions.UserNotFoundException {
     // 1. Precondiciones
     User USER = new User(ID, EMAIL, PASSWORD_ENCODED, FIRST_NAME, LAST_NAME, PFP_ID);
     Mockito.when(userDao.getUserById(Mockito.eq(ID))).thenReturn(Optional.of(USER));
@@ -194,9 +201,10 @@ public class UserServiceImplTest {
     Assert.assertFalse(passwordUpdated);
   }
 
-  // TODO: change exception
-  @Test(expected = RuntimeException.class)
-  public void testUpdatePasswordUserDoesNotExist() throws UserNotFoundException {
+  @Test(expected = ar.edu.itba.paw.interfaces.services.exceptions.UserNotFoundException.class)
+  public void testUpdatePasswordUserDoesNotExist()
+      throws UserNotFoundException, IllegalStateException,
+          ar.edu.itba.paw.interfaces.services.exceptions.UserNotFoundException {
     // 1. Precondiciones
     User USER = new User(ID, EMAIL, PASSWORD_ENCODED, FIRST_NAME, LAST_NAME, PFP_ID);
     Mockito.when(userDao.getUserById(Mockito.eq(ID))).thenReturn(Optional.of(USER));

@@ -6,6 +6,7 @@ import ar.edu.itba.paw.interfaces.persistence.exceptions.DoctorNotFoundException
 import ar.edu.itba.paw.interfaces.services.DoctorService;
 import ar.edu.itba.paw.interfaces.services.UserService;
 import ar.edu.itba.paw.interfaces.services.exceptions.EmailInUseException;
+import ar.edu.itba.paw.interfaces.services.exceptions.UserNotFoundException;
 import ar.edu.itba.paw.models.*;
 import java.time.LocalDate;
 import java.util.List;
@@ -68,11 +69,11 @@ public class DoctorServiceImpl implements DoctorService {
       String address,
       List<HealthInsurance> healthInsurances,
       AttendingHours attendingHours,
-      Image image) {
-
-    userService.updateUser(doctorId, email, firstName, lastName, image);
+      Image image)
+      throws UserNotFoundException {
 
     try {
+      userService.updateUser(doctorId, email, firstName, lastName, image);
       return doctorDao.updateDoctorInfo(
           doctorId, specialty, city, address, healthInsurances, attendingHours);
     } catch (DoctorNotFoundException e) {

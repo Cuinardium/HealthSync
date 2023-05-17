@@ -2,10 +2,10 @@ package ar.edu.itba.paw.services;
 
 import ar.edu.itba.paw.interfaces.persistence.UserDao;
 import ar.edu.itba.paw.interfaces.persistence.exceptions.EmailAlreadyExistsException;
-import ar.edu.itba.paw.interfaces.persistence.exceptions.UserNotFoundException;
 import ar.edu.itba.paw.interfaces.services.ImageService;
 import ar.edu.itba.paw.interfaces.services.UserService;
 import ar.edu.itba.paw.interfaces.services.exceptions.EmailInUseException;
+import ar.edu.itba.paw.interfaces.services.exceptions.UserNotFoundException;
 import ar.edu.itba.paw.models.Image;
 import ar.edu.itba.paw.models.User;
 import java.util.Optional;
@@ -46,32 +46,31 @@ public class UserServiceImpl implements UserService {
 
   @Transactional
   @Override
-  public User updateUser(
-      long userId, String email, String firstName, String lastName, Image image) {
-
-    Long pfpId =
-        userDao.getUserById(userId).orElseThrow(IllegalStateException::new).getProfilePictureId();
-    if (image != null) {
-      // Si la pfp es null -> insertamos imagen
-      // si la pfp no es null -> la actualizamos para pisar la vieja
-      if (pfpId == null) {
-        pfpId = imageService.uploadImage(image);
-      } else {
-        imageService.updateImage(pfpId, image);
-      }
-    }
+  public User updateUser(long userId, String email, String firstName, String lastName, Image image)
+      throws UserNotFoundException {
 
     try {
+      Long pfpId =
+          userDao.getUserById(userId).orElseThrow(IllegalStateException::new).getProfilePictureId();
+      if (image != null) {
+        // Si la pfp es null -> insertamos imagen
+        // si la pfp no es null -> la actualizamos para pisar la vieja
+        if (pfpId == null) {
+          pfpId = imageService.uploadImage(image);
+        } else {
+          imageService.updateImage(pfpId, image);
+        }
+      }
       return userDao.updateUserInfo(userId, email, firstName, lastName, pfpId);
-    } catch (UserNotFoundException e) {
-      throw new RuntimeException();
+    } catch (ar.edu.itba.paw.interfaces.persistence.exceptions.UserNotFoundException e) {
+      throw new UserNotFoundException();
     }
   }
 
   @Transactional
   @Override
   public boolean updatePassword(long userId, String oldPassword, String password)
-      throws IllegalStateException {
+      throws IllegalStateException, UserNotFoundException {
     if (!passwordEncoder.matches(
         oldPassword,
         userDao.getUserById(userId).orElseThrow(IllegalStateException::new).getPassword())) {
@@ -82,8 +81,8 @@ public class UserServiceImpl implements UserService {
       // TODO: return true <-> hay afected rows?
       userDao.updateUserPassword(userId, passwordEncoder.encode(password));
       return true;
-    } catch (UserNotFoundException e) {
-      throw new RuntimeException();
+    } catch (ar.edu.itba.paw.interfaces.persistence.exceptions.UserNotFoundException e) {
+      throw new UserNotFoundException();
     }
   }
 
