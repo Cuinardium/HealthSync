@@ -12,4 +12,6 @@ public interface ReviewService {
   // =============== Queries ===============
   
   Page<Review> getReviewsForDoctor(long doctorId, Integer page, Integer pageSize);
+
+  public boolean canReview(long doctorId, long patientId);
 }

@@ -163,12 +163,7 @@ public class DoctorController {
       @PathVariable("id") final long doctorId,
       @ModelAttribute("reviewForm") final ReviewForm reviewForm) {
 
-    doctorService.getDoctorById(doctorId).orElseThrow(UserNotFoundException::new);
-
-    boolean hasPatientMetDoctor =
-        appointmentService.hasPatientMetDoctor(PawAuthUserDetails.getCurrentUserId(), doctorId);
-
-    if (!hasPatientMetDoctor) {
+    if (!reviewService.canReview(doctorId, PawAuthUserDetails.getCurrentUserId())) {
       throw new ReviewForbiddenException();
     }
 
@@ -190,12 +185,7 @@ public class DoctorController {
       return review(doctorId, reviewForm);
     }
 
-    doctorService.getDoctorById(doctorId).orElseThrow(UserNotFoundException::new);
-
-    boolean hasPatientMetDoctor =
-        appointmentService.hasPatientMetDoctor(PawAuthUserDetails.getCurrentUserId(), doctorId);
-
-    if (!hasPatientMetDoctor) {
+    if (!reviewService.canReview(doctorId, PawAuthUserDetails.getCurrentUserId())) {
       throw new ReviewForbiddenException();
     }
 
