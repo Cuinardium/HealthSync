@@ -91,7 +91,6 @@
         </c:when>
         <c:otherwise>
         <div class="buttons">
-            <!-- TODO: ver si se puede dejar en "<button>" como antes -->
             <a href="${loginUrl}" class="btn btn-primary" role="button">${login}</a>
 
             <nav class="navbar navbar-expand-lg">

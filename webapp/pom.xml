@@ -187,7 +187,6 @@
                     <version>2.8.2</version>
                 </plugin>
 
-                <!-- TODO preguntar si esto esta bien-->
                 <plugin>
                     <groupId>org.eclipse.jetty</groupId>
                     <artifactId>jetty-maven-plugin</artifactId>
