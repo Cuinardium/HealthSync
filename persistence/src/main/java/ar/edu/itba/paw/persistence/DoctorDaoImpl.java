@@ -8,6 +8,7 @@ import ar.edu.itba.paw.models.ThirtyMinuteBlock;
 import ar.edu.itba.paw.persistence.utils.DeleteBuilder;
 import ar.edu.itba.paw.persistence.utils.QueryBuilder;
 import ar.edu.itba.paw.persistence.utils.UpdateBuilder;
+import java.sql.Date;
 import java.sql.ResultSet;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
@@ -295,16 +296,20 @@ public class DoctorDaoImpl implements DoctorDao {
       doctorCountQuery.where("doctor.doctor_id IN (" + healthInsuranceQuery + ")");
     }
 
-    if(date != null) {
-      //TODO: QUERY FOR DATE
-//      String dateQuery = new QueryBuilder()
-//          .select("doctor_id")
-//          .from("appointment")
-//          .where("date = '" + date + "'")
-//          .build();
-//
-//      subQuery.where("doctor.doctor_id NOT IN (" + dateQuery + ")");
-//      doctorCountQuery.where("doctor.doctor_id NOT IN (" + dateQuery + ")");
+    if (date != null) {
+      String dayColumn = date.getDayOfWeek().name().toLowerCase();
+
+      String appointmentSumQuery =
+          new QueryBuilder()
+              .select("sum(power(2, appointment.appointment_time))")
+              .from("appointment")
+              .innerJoin("doctor", "appointment.doctor_id = doctor.doctor_id")
+              .where("appointment.appointment_date = '" + Date.valueOf(date) + "'")
+              .groupBy("doctor.doctor_id")
+              .build();
+
+      subQuery.where(dayColumn + " > (" + appointmentSumQuery + ")");
+      doctorCountQuery.where(dayColumn + " > (" + appointmentSumQuery + ")");
     }
 
     if (page >= 0 && pageSize > 0) {
@@ -332,7 +337,8 @@ public class DoctorDaoImpl implements DoctorDao {
                 "thursday",
                 "friday",
                 "saturday",
-                "sunday")
+                "sunday",
+                "occupied_hours")
             .from("(" + subQuery.build() + ") as subquery")
             .leftJoin(
                 "health_insurance_accepted_by_doctor",

@@ -1,13 +1,10 @@
 package ar.edu.itba.paw.webapp.controller;
 
+import ar.edu.itba.paw.interfaces.services.AppointmentService;
 import ar.edu.itba.paw.interfaces.services.DoctorService;
 import ar.edu.itba.paw.interfaces.services.LocationService;
 import ar.edu.itba.paw.interfaces.services.PatientService;
-import ar.edu.itba.paw.models.City;
-import ar.edu.itba.paw.models.Doctor;
-import ar.edu.itba.paw.models.HealthInsurance;
-import ar.edu.itba.paw.models.Page;
-import ar.edu.itba.paw.models.Specialty;
+import ar.edu.itba.paw.models.*;
 import ar.edu.itba.paw.webapp.auth.PawAuthUserDetails;
 import ar.edu.itba.paw.webapp.auth.UserRoles;
 import ar.edu.itba.paw.webapp.exceptions.UserNotFoundException;
@@ -33,17 +30,21 @@ public class HomeController {
 
   private final DoctorService doctorService;
 
+  private final AppointmentService appointmentService;
+
   private final PatientService patientService;
   private final LocationService locationService;
 
   @Autowired
   public HomeController(
       final DoctorService doctorService,
-      PatientService patientService,
-      final LocationService locationService) {
+      final PatientService patientService,
+      final LocationService locationService,
+      final AppointmentService appointmentService) {
     this.doctorService = doctorService;
     this.patientService = patientService;
     this.locationService = locationService;
+    this.appointmentService = appointmentService;
   }
 
   @RequestMapping(value = "/")
@@ -77,7 +78,7 @@ public class HomeController {
     } catch (NumberFormatException e) {
       parsedPage = 1;
     }
-    parsedPage = parsedPage < 1 ? 1 : parsedPage;
+    parsedPage = Math.max(parsedPage, 1);
 
     final ModelAndView mav = new ModelAndView("home/doctorDashboard");
 
@@ -90,6 +91,8 @@ public class HomeController {
     int cityCode = doctorFilterForm.getCityCode();
     int healthInsuranceCode = doctorFilterForm.getHealthInsuranceCode();
     LocalDate date = doctorFilterForm.getDate();
+//    String from = doctorFilterForm.getFrom();
+//    String to = doctorFilterForm.getTo();
     String name = doctorFilterForm.getName();
 
     // Get doctors
@@ -120,6 +123,9 @@ public class HomeController {
     mav.addObject("specialtyMap", usedSpecialties);
     mav.addObject("healthInsuranceCode", healthInsuranceCode);
     mav.addObject("date", date);
+//    mav.addObject("from", from);
+//    mav.addObject("to", to);
+    mav.addObject("possibleAttendingHours", ThirtyMinuteBlock.values());
     mav.addObject("healthInsuranceMap", usedHealthInsurances);
 
     // Pagination
