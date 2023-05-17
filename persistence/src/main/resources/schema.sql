@@ -102,6 +102,17 @@ CREATE TABLE IF NOT EXISTS appointment (
     FOREIGN KEY (patient_id)    REFERENCES patient (patient_id)
 );
 
+CREATE TABLE IF NOT EXISTS review (
+    review_id        SERIAL PRIMARY KEY,
+    doctor_id        INTEGER NOT NULL,
+    patient_id       INTEGER NOT NULL,
+    review_date      DATE NOT NULL,
+    review_description VARCHAR(1000),
+    rating           SMALLINT NOT NULL,
+    FOREIGN KEY (doctor_id)     REFERENCES doctor (doctor_id),
+    FOREIGN KEY (patient_id)    REFERENCES patient (patient_id)
+);
+
 -- Alter table appointment add column cancelDescription VARCHAR(1000);
 
 /*

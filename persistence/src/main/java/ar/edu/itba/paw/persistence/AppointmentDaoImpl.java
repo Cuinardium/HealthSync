@@ -171,6 +171,20 @@ public class AppointmentDaoImpl implements AppointmentDao {
     return new Page<>(appointments, page, totalAppointments, pageSize);
   }
 
+  @Override
+  public boolean hasPatientMetDoctor(long patientId, long doctorId) {
+    String query =
+        new QueryBuilder()
+            .select("count(*)")
+            .from("appointment")
+            .where("patient_id = " + patientId)
+            .where("doctor_id = " + doctorId)
+            .where("status_code = " + AppointmentStatus.COMPLETED.ordinal())
+            .build();
+
+    return jdbcTemplate.queryForObject(query, Integer.class) > 0;
+  }
+
   // ========================== Private ==========================
 
   private QueryBuilder appointmentsQuery(
@@ -181,6 +195,20 @@ public class AppointmentDaoImpl implements AppointmentDao {
       LocalDate to,
       Integer page,
       Integer pageSize) {
+
+    String ratingQuery =
+        new QueryBuilder()
+            .select("AVG(rating)")
+            .from("review")
+            .where("doctor_id = appointment.doctor_id")
+            .build();
+
+    String ratingCountQuery =
+        new QueryBuilder()
+            .select("COUNT(*)")
+            .from("review")
+            .where("doctor_id = appointment.doctor_id")
+            .build();
 
     QueryBuilder appointmentsQuery =
         new QueryBuilder()
@@ -207,6 +235,8 @@ public class AppointmentDaoImpl implements AppointmentDao {
                 "specialty_code",
                 "city_code",
                 "location_for_doctor.doctor_location_id",
+                "(" + ratingQuery + ") as rating",
+                "(" + ratingCountQuery + ") as rating_count",
                 "health_insurance_accepted_by_doctor.health_insurance_code",
                 "address",
                 "monday",

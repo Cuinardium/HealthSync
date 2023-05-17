@@ -8,6 +8,8 @@ public class Doctor extends User {
   private final Specialty specialty;
   private final Location location;
   private final AttendingHours attendingHours;
+  private final Float rating;
+  private final Integer ratingCount;
 
   public Doctor(
       long id,
@@ -19,12 +21,16 @@ public class Doctor extends User {
       List<HealthInsurance> healthInsurances,
       Specialty specialty,
       Location location,
-      AttendingHours attendingHours) {
+      AttendingHours attendingHours,
+      Float rating,
+      Integer ratingCount) {
     super(id, email, password, firstName, lastName, pfpId);
     this.healthInsurances = healthInsurances;
     this.specialty = specialty;
     this.location = location;
     this.attendingHours = attendingHours;
+    this.rating = rating;
+    this.ratingCount = ratingCount;
   }
 
   // Getters
@@ -42,6 +48,14 @@ public class Doctor extends User {
 
   public AttendingHours getAttendingHours() {
     return attendingHours;
+  }
+
+  public Float getRating() {
+    return rating;
+  }
+
+  public Integer getRatingCount() {
+    return ratingCount;
   }
 
   @Override

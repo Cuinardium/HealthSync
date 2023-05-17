@@ -53,4 +53,6 @@ public interface AppointmentDao {
       LocalDate to,
       Integer page,
       Integer pageSize);
+
+  boolean hasPatientMetDoctor(long patientId, long doctorId);
 }

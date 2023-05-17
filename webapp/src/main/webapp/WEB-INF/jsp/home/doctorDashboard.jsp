@@ -30,6 +30,7 @@
 <spring:message code="filters.title" var="filtersTitle"/>
 <spring:message code="filters.clear" var="clear"/>
 <spring:message code="form.date" var="date"/>
+<spring:message code="doctor.noReviews" var="noReviews"/>
 
 <html>
 <head>
@@ -139,7 +140,7 @@
                 </button>
             </div>
 
-            <div class="cardsContainer">
+            <div class="z">
                 <c:forEach items="${doctors}" var="doctor">
                     <spring:message code="${doctor.specialty.messageID}" var="doctorSpecialty"/>
                     <spring:message code="${doctor.location.city.messageID}" var="doctorCity"/>
@@ -164,6 +165,27 @@
                                         ${healthInsuranceMsg}${status.last ? "" : ", "}
                                     </c:forEach>
                                 </p>
+
+                                <c:choose >
+                            <c:when test="${doctor.rating != null}">
+                                <div class="starContainer card-text">
+                                    <c:forEach begin="1" end="5" step="1" var="i">
+                                        <div class="star ${doctor.rating >= i ? "selected" : "unselected"}">
+                                            <i class="fa fa-lg fa-star"></i>
+                                        </div>
+                                    </c:forEach>
+                                    <div class="ratingCount">
+                                        (${doctor.ratingCount})
+                                    </div>
+                                </div>
+                            </c:when>
+                            <c:otherwise>
+                                <div class="card-text">
+                                    ${noReviews}
+                                </div>
+                            </c:otherwise>
+                        </c:choose>
+
                             </div>
                         </div>
                         <c:if test="${canBook}">

@@ -2,13 +2,18 @@ package ar.edu.itba.paw.webapp.controller;
 
 import ar.edu.itba.paw.interfaces.services.AppointmentService;
 import ar.edu.itba.paw.interfaces.services.DoctorService;
+import ar.edu.itba.paw.interfaces.services.ReviewService;
 import ar.edu.itba.paw.models.Appointment;
 import ar.edu.itba.paw.models.Doctor;
+import ar.edu.itba.paw.models.Page;
+import ar.edu.itba.paw.models.Review;
 import ar.edu.itba.paw.models.ThirtyMinuteBlock;
 import ar.edu.itba.paw.webapp.auth.PawAuthUserDetails;
 import ar.edu.itba.paw.webapp.auth.UserRoles;
+import ar.edu.itba.paw.webapp.exceptions.ReviewForbiddenException;
 import ar.edu.itba.paw.webapp.exceptions.UserNotFoundException;
 import ar.edu.itba.paw.webapp.form.AppointmentForm;
+import ar.edu.itba.paw.webapp.form.ReviewForm;
 import java.time.LocalDate;
 import java.util.List;
 import javax.validation.Valid;
@@ -22,6 +27,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 @Controller
@@ -33,16 +39,24 @@ public class DoctorController {
 
   private final AppointmentService appointmentService;
 
+  private final ReviewService reviewService;
+
+  private static final int PAGE_SIZE = 10;
+
   @Autowired
   public DoctorController(
-      final DoctorService doctorService, final AppointmentService appointmentService) {
+      final DoctorService doctorService,
+      final AppointmentService appointmentService,
+      final ReviewService reviewService) {
     this.doctorService = doctorService;
     this.appointmentService = appointmentService;
+    this.reviewService = reviewService;
   }
 
   @RequestMapping(value = "/{id:\\d+}/detailed_doctor", method = RequestMethod.GET)
   public ModelAndView detailedDoctor(
       @PathVariable("id") final long doctorId,
+      @RequestParam(value = "page", required = false, defaultValue = "1") final int page,
       @ModelAttribute("appointmentForm") final AppointmentForm appointmentForm) {
 
     Doctor doctor = doctorService.getDoctorById(doctorId).orElseThrow(UserNotFoundException::new);
@@ -63,21 +77,32 @@ public class DoctorController {
         appointmentService.getAvailableHoursForDoctorOnRange(
             doctorId, tomorrow, tomorrow.plusMonths(3));
 
+    // Get reviews
+    Page<Review> reviews = reviewService.getReviewsForDoctor(doctorId, page - 1, PAGE_SIZE);
+    
+    System.out.println(reviews.getContent());
+    System.out.println(reviews.getTotalPages());
+
     mav.addObject("form", appointmentForm);
     mav.addObject("canBook", canBook);
     mav.addObject("hoursAvailable", hoursAvailable);
+    mav.addObject("reviews", reviews.getContent());
+    mav.addObject("currentPage", reviews.getCurrentPage() + 1);
+    mav.addObject("totalPages", reviews.getContent().size() == 0 ? 1 : reviews.getTotalPages());
     mav.addObject("showModal", false);
+
     return mav;
   }
 
   @RequestMapping(value = "/{id:\\d+}/detailed_doctor", method = RequestMethod.POST)
   public ModelAndView sendAppointment(
       @PathVariable("id") final long doctorId,
+      @RequestParam(value = "page", required = false, defaultValue = "1") final int page,
       @Valid @ModelAttribute("appointmentForm") final AppointmentForm appointmentForm,
       final BindingResult errors) {
 
     if (errors.hasErrors()) {
-      return detailedDoctor(doctorId, appointmentForm);
+      return detailedDoctor(doctorId, page, appointmentForm);
     }
 
     PawAuthUserDetails currentUser =
@@ -129,6 +154,53 @@ public class DoctorController {
     mav.addObject("form", appointmentForm);
     mav.addObject("canBook", canBook);
     mav.addObject("hoursAvailable", hoursAvailable);
+    return mav;
+  }
+
+  // ========================== Review ==========================
+  @RequestMapping(value = "/{id:\\d+}/review", method = RequestMethod.GET)
+  public ModelAndView review(
+      @PathVariable("id") final long doctorId,
+      @ModelAttribute("reviewForm") final ReviewForm reviewForm) {
+
+    if (!reviewService.canReview(doctorId, PawAuthUserDetails.getCurrentUserId())) {
+      throw new ReviewForbiddenException();
+    }
+
+    final ModelAndView mav = new ModelAndView("doctor/review");
+    mav.addObject("showModal", false);
+    mav.addObject("doctorId", doctorId);
+    mav.addObject("selcetdRating", reviewForm.getRating());
+
+    return mav;
+  }
+
+  @RequestMapping(value = "/{id:\\d+}/review", method = RequestMethod.POST)
+  public ModelAndView submitReview(
+      @PathVariable("id") final long doctorId,
+      @Valid @ModelAttribute("reviewForm") final ReviewForm reviewForm,
+      final BindingResult errors) {
+
+    if (errors.hasErrors()) {
+      return review(doctorId, reviewForm);
+    }
+
+    if (!reviewService.canReview(doctorId, PawAuthUserDetails.getCurrentUserId())) {
+      throw new ReviewForbiddenException();
+    }
+
+    reviewService.createReview(
+        doctorId,
+        PawAuthUserDetails.getCurrentUserId(),
+        reviewForm.getRating(),
+        reviewForm.getDescription());
+
+    final ModelAndView mav = new ModelAndView("doctor/review");
+
+    mav.addObject("showModal", true);
+    mav.addObject("doctorId", doctorId);
+    mav.addObject("selcetdRating", reviewForm.getRating());
+
     return mav;
   }
 }
