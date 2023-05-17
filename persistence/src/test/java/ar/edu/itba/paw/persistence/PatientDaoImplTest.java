@@ -2,11 +2,11 @@ package ar.edu.itba.paw.persistence;
 
 import static org.junit.Assert.assertThrows;
 
+import ar.edu.itba.paw.interfaces.persistence.exceptions.PatientAlreadyExistsException;
+import ar.edu.itba.paw.interfaces.persistence.exceptions.PatientNotFoundException;
 import ar.edu.itba.paw.models.HealthInsurance;
 import ar.edu.itba.paw.models.Patient;
 import ar.edu.itba.paw.persistence.config.TestConfig;
-import ar.edu.itba.paw.persistence.exceptions.PatientAlreadyExistsException;
-import ar.edu.itba.paw.persistence.exceptions.PatientNotFoundException;
 import java.util.Optional;
 import javax.sql.DataSource;
 import org.junit.Assert;
@@ -64,7 +64,7 @@ public class PatientDaoImplTest {
   }
 
   @Test
-  public void testCreatePatient() {
+  public void testCreatePatient() throws PatientAlreadyExistsException {
     // 1. Precondiciones
     // 2. Ejercitar la class under test
     Patient patient = patientDao.createPatient(AUX_PATIENT_ID, AUX_PATIENT_HEALTH_INSURANCE);
@@ -92,7 +92,7 @@ public class PatientDaoImplTest {
   }
 
   @Test
-  public void testUpdatePatientInfo() {
+  public void testUpdatePatientInfo() throws PatientNotFoundException {
     // 1. Precondiciones
     // 2. Ejercitar la class under test
     Patient patient =

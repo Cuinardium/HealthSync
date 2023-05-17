@@ -1,6 +1,6 @@
-package ar.edu.itba.paw.persistence.exceptions;
+package ar.edu.itba.paw.interfaces.persistence.exceptions;
 
-public class EmailAlreadyExistsException extends RuntimeException {
+public class EmailAlreadyExistsException extends Exception {
   private static final String MESSAGE = "Email already exists";
 
   public EmailAlreadyExistsException() {

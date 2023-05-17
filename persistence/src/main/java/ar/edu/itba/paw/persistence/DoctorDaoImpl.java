@@ -1,6 +1,8 @@
 package ar.edu.itba.paw.persistence;
 
 import ar.edu.itba.paw.interfaces.persistence.DoctorDao;
+import ar.edu.itba.paw.interfaces.persistence.exceptions.DoctorAlreadyExistsException;
+import ar.edu.itba.paw.interfaces.persistence.exceptions.DoctorNotFoundException;
 import ar.edu.itba.paw.models.AttendingHours;
 import ar.edu.itba.paw.models.City;
 import ar.edu.itba.paw.models.Doctor;
@@ -8,8 +10,6 @@ import ar.edu.itba.paw.models.HealthInsurance;
 import ar.edu.itba.paw.models.Page;
 import ar.edu.itba.paw.models.Specialty;
 import ar.edu.itba.paw.models.ThirtyMinuteBlock;
-import ar.edu.itba.paw.persistence.exceptions.DoctorAlreadyExistsException;
-import ar.edu.itba.paw.persistence.exceptions.DoctorNotFoundException;
 import ar.edu.itba.paw.persistence.utils.DeleteBuilder;
 import ar.edu.itba.paw.persistence.utils.QueryBuilder;
 import ar.edu.itba.paw.persistence.utils.UpdateBuilder;
@@ -70,7 +70,8 @@ public class DoctorDaoImpl implements DoctorDao {
       City city,
       String address,
       List<HealthInsurance> healthInsurances,
-      AttendingHours attendingHours) {
+      AttendingHours attendingHours)
+      throws DoctorAlreadyExistsException, IllegalStateException {
 
     long attendingHoursId = createAttendingHours(attendingHours);
 
@@ -105,7 +106,8 @@ public class DoctorDaoImpl implements DoctorDao {
       City city,
       String address,
       List<HealthInsurance> healthInsurances,
-      AttendingHours attendingHours) {
+      AttendingHours attendingHours)
+      throws DoctorNotFoundException {
 
     // Check if doctor exists
     String doctorExistsQuery =

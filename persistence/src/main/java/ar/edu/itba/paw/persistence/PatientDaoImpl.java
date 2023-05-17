@@ -1,10 +1,10 @@
 package ar.edu.itba.paw.persistence;
 
 import ar.edu.itba.paw.interfaces.persistence.PatientDao;
+import ar.edu.itba.paw.interfaces.persistence.exceptions.PatientAlreadyExistsException;
+import ar.edu.itba.paw.interfaces.persistence.exceptions.PatientNotFoundException;
 import ar.edu.itba.paw.models.HealthInsurance;
 import ar.edu.itba.paw.models.Patient;
-import ar.edu.itba.paw.persistence.exceptions.PatientAlreadyExistsException;
-import ar.edu.itba.paw.persistence.exceptions.PatientNotFoundException;
 import ar.edu.itba.paw.persistence.utils.QueryBuilder;
 import ar.edu.itba.paw.persistence.utils.UpdateBuilder;
 import java.util.HashMap;
@@ -35,7 +35,8 @@ public class PatientDaoImpl implements PatientDao {
   // ======================== Inserts =========================================
 
   @Override
-  public Patient createPatient(long userId, HealthInsurance healthInsurance) {
+  public Patient createPatient(long userId, HealthInsurance healthInsurance)
+      throws PatientAlreadyExistsException, IllegalStateException {
 
     // Insert data in patient table
     Map<String, Object> data = new HashMap<>();
@@ -54,7 +55,8 @@ public class PatientDaoImpl implements PatientDao {
   // ======================== Updates =========================================
 
   @Override
-  public Patient updatePatientInfo(long patientId, HealthInsurance healthInsurance) {
+  public Patient updatePatientInfo(long patientId, HealthInsurance healthInsurance)
+      throws PatientNotFoundException {
     String update =
         new UpdateBuilder()
             .update("health_insurance_for_patient")

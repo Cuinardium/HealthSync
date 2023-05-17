@@ -1,12 +1,12 @@
 package ar.edu.itba.paw.services;
 
 import ar.edu.itba.paw.interfaces.persistence.DoctorDao;
+import ar.edu.itba.paw.interfaces.persistence.exceptions.DoctorAlreadyExistsException;
+import ar.edu.itba.paw.interfaces.persistence.exceptions.DoctorNotFoundException;
 import ar.edu.itba.paw.interfaces.services.DoctorService;
 import ar.edu.itba.paw.interfaces.services.UserService;
-import java.time.LocalDate;
-
 import ar.edu.itba.paw.models.*;
-
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -45,9 +45,13 @@ public class DoctorServiceImpl implements DoctorService {
     // Create user
     User user = userService.createUser(email, password, firstName, lastName);
 
-    // Create doctor
-    return doctorDao.createDoctor(
-        user.getId(), specialty, city, address, healthInsurances, attendingHours);
+    try {
+      // Create doctor
+      return doctorDao.createDoctor(
+          user.getId(), specialty, city, address, healthInsurances, attendingHours);
+    } catch (DoctorAlreadyExistsException e) {
+      throw new RuntimeException();
+    }
   }
 
   // =============== Updates ===============
@@ -68,8 +72,12 @@ public class DoctorServiceImpl implements DoctorService {
 
     userService.updateUser(doctorId, email, firstName, lastName, image);
 
-    return doctorDao.updateDoctorInfo(
-        doctorId, specialty, city, address, healthInsurances, attendingHours);
+    try {
+      return doctorDao.updateDoctorInfo(
+          doctorId, specialty, city, address, healthInsurances, attendingHours);
+    } catch (DoctorNotFoundException e) {
+      throw new RuntimeException();
+    }
   }
 
   // =============== Queries ===============
@@ -90,7 +98,8 @@ public class DoctorServiceImpl implements DoctorService {
       HealthInsurance healthInsurance,
       Integer page,
       Integer pageSize) {
-    return doctorDao.getFilteredDoctors(name, date, fromTime, toTime, specialty, city, healthInsurance, page, pageSize);
+    return doctorDao.getFilteredDoctors(
+        name, date, fromTime, toTime, specialty, city, healthInsurance, page, pageSize);
   }
 
   @Override

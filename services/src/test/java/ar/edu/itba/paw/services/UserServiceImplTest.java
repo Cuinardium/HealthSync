@@ -1,6 +1,7 @@
 package ar.edu.itba.paw.services;
 
 import ar.edu.itba.paw.interfaces.persistence.UserDao;
+import ar.edu.itba.paw.interfaces.persistence.exceptions.EmailAlreadyExistsException;
 import ar.edu.itba.paw.models.User;
 import java.util.Optional;
 import org.junit.Assert;
@@ -31,7 +32,7 @@ public class UserServiceImplTest {
   @InjectMocks private UserServiceImpl us;
 
   @Test
-  public void testCreateUser() {
+  public void testCreateUser() throws EmailAlreadyExistsException {
     // 1. Precondiciones
     // UserDao mock = Mockito.mock(UserDao.class);
     Mockito.when(passwordEncoder.encode(Mockito.eq(PASSWORD))).thenReturn(PASSWORD_ENCODED);
@@ -55,7 +56,7 @@ public class UserServiceImplTest {
   }
 
   @Test(expected = RuntimeException.class)
-  public void testCreateAlreadyExists() {
+  public void testCreateAlreadyExists() throws EmailAlreadyExistsException {
     // 1. Precondiciones
     Mockito.when(passwordEncoder.encode(Mockito.eq(PASSWORD))).thenReturn(PASSWORD_ENCODED);
     Mockito.when(

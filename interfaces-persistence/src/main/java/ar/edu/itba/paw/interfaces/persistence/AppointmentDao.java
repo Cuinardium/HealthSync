@@ -1,5 +1,6 @@
 package ar.edu.itba.paw.interfaces.persistence;
 
+import ar.edu.itba.paw.interfaces.persistence.exceptions.AppointmentNotFoundException;
 import ar.edu.itba.paw.models.Appointment;
 import ar.edu.itba.paw.models.AppointmentStatus;
 import ar.edu.itba.paw.models.Doctor;
@@ -24,7 +25,8 @@ public interface AppointmentDao {
   // =============== Updates ===============
 
   Appointment updateAppointment(
-      long appointmentId, AppointmentStatus status, String cancelDescription);
+      long appointmentId, AppointmentStatus status, String cancelDescription)
+      throws AppointmentNotFoundException;
 
   // =============== Queries ===============
 

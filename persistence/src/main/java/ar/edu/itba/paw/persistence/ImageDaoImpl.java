@@ -1,8 +1,8 @@
 package ar.edu.itba.paw.persistence;
 
 import ar.edu.itba.paw.interfaces.persistence.ImageDao;
+import ar.edu.itba.paw.interfaces.persistence.exceptions.ImageNotFoundException;
 import ar.edu.itba.paw.models.Image;
-import ar.edu.itba.paw.persistence.exceptions.ImageNotFoundException;
 import ar.edu.itba.paw.persistence.utils.QueryBuilder;
 import ar.edu.itba.paw.persistence.utils.UpdateBuilder;
 import java.util.HashMap;
@@ -44,13 +44,13 @@ public class ImageDaoImpl implements ImageDao {
     Map<String, Object> data = new HashMap<>();
     data.put(TABLE_BYTEA_COLUMN, image.getBytes());
     final Number key = imageInsert.executeAndReturnKey(data);
-    return getImage(key.longValue()).orElseThrow(IllegalStateException::new);
+    return new Image(key.longValue(), image.getBytes());
   }
 
   // =============== Updates ===============
 
   @Override
-  public Image updateImage(Long pfpId, Image image) {
+  public Image updateImage(Long pfpId, Image image) throws ImageNotFoundException {
     // TODO: throw IllegalArgument?
     if (pfpId == null || image == null) {
       return null;

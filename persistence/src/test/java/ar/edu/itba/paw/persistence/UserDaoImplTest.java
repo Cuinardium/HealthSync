@@ -2,10 +2,10 @@ package ar.edu.itba.paw.persistence;
 
 import static org.junit.Assert.assertThrows;
 
+import ar.edu.itba.paw.interfaces.persistence.exceptions.EmailAlreadyExistsException;
+import ar.edu.itba.paw.interfaces.persistence.exceptions.UserNotFoundException;
 import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.persistence.config.TestConfig;
-import ar.edu.itba.paw.persistence.exceptions.EmailAlreadyExistsException;
-import ar.edu.itba.paw.persistence.exceptions.UserNotFoundException;
 import java.util.Optional;
 import javax.sql.DataSource;
 import org.junit.Assert;
@@ -101,7 +101,7 @@ public class UserDaoImplTest {
   }
 
   @Test
-  public void testCreateUser() {
+  public void testCreateUser() throws EmailAlreadyExistsException {
     // 1. Precondiciones
     // 2. Ejercitar la class under test
     User user = userDao.createUser(AUX_EMAIL, AUX_PASSWORD, AUX_FIRST_NAME, AUX_LAST_NAME);
@@ -134,7 +134,7 @@ public class UserDaoImplTest {
   }
 
   @Test
-  public void testUpdateUserInfo() {
+  public void testUpdateUserInfo() throws UserNotFoundException {
     // 1. Precondiciones
     // 2. Ejercitar la class under test
     User user =
@@ -162,7 +162,7 @@ public class UserDaoImplTest {
   }
 
   @Test
-  public void testUpdatePassword() {
+  public void testUpdatePassword() throws UserNotFoundException {
     // 1. Precondiciones
     // 2. Ejercitar la class under test
     String password = userDao.updateUserPassword(INSERTED_USER_ID, AUX_PASSWORD);

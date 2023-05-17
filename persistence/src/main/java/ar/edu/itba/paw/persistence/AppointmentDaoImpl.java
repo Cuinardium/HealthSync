@@ -1,13 +1,13 @@
 package ar.edu.itba.paw.persistence;
 
 import ar.edu.itba.paw.interfaces.persistence.AppointmentDao;
+import ar.edu.itba.paw.interfaces.persistence.exceptions.AppointmentNotFoundException;
 import ar.edu.itba.paw.models.Appointment;
 import ar.edu.itba.paw.models.AppointmentStatus;
 import ar.edu.itba.paw.models.Doctor;
 import ar.edu.itba.paw.models.Page;
 import ar.edu.itba.paw.models.Patient;
 import ar.edu.itba.paw.models.ThirtyMinuteBlock;
-import ar.edu.itba.paw.persistence.exceptions.AppointmentNotFoundException;
 import ar.edu.itba.paw.persistence.utils.QueryBuilder;
 import ar.edu.itba.paw.persistence.utils.UpdateBuilder;
 import java.sql.Date;
@@ -71,7 +71,8 @@ public class AppointmentDaoImpl implements AppointmentDao {
 
   @Override
   public Appointment updateAppointment(
-      long appointmentId, AppointmentStatus status, String cancelDescription) {
+      long appointmentId, AppointmentStatus status, String cancelDescription)
+      throws AppointmentNotFoundException {
     String update =
         new UpdateBuilder()
             .update("appointment")
