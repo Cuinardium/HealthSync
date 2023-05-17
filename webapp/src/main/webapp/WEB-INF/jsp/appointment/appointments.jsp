@@ -87,7 +87,7 @@
                             </div>
 
                             <spring:message code="${appointment.doctor.location.city.messageID}" var="city"/>
-                            <div class="card-title"><strong>${address}: </strong>${address}, ${city}</div>
+                            <div class="card-title"><strong>${address}: </strong>${appointment.doctor.location.address}, ${city}</div>
 
                             <spring:message code="${appointment.patient.healthInsurance.messageID}"
                                             var="healthInsurance"/>
