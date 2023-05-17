@@ -347,10 +347,24 @@ a.stretched-link:hover{
     flex-direction: row;
     justify-content: start;
     align-items: center;
+    align-self: center;
 }
 
 .ratingCount {
     margin-left: 8px;
+}
+
+.reviewCard{
+    margin-top: 10px;
+    margin-bottom: 10px;
+    flex-direction: column;
+}
+
+.card-header{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
 }
 
 .unselected {

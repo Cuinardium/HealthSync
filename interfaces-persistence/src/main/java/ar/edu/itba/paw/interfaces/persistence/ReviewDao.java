@@ -1,8 +1,8 @@
 package ar.edu.itba.paw.interfaces.persistence;
 
 import java.time.LocalDate;
-import java.util.List;
 
+import ar.edu.itba.paw.models.Page;
 import ar.edu.itba.paw.models.Review;
 
 public interface ReviewDao {
@@ -13,5 +13,5 @@ public interface ReviewDao {
   
   // =============== Queries ===============
   
-  List<Review> getReviewsForDoctor(long doctorId);
+  Page<Review> getReviewsForDoctor(long doctorId, Integer page, Integer pageSize);
 }

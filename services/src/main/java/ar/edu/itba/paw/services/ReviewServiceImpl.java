@@ -1,13 +1,13 @@
 package ar.edu.itba.paw.services;
 
 import java.time.LocalDate;
-import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import ar.edu.itba.paw.interfaces.persistence.ReviewDao;
 import ar.edu.itba.paw.interfaces.services.ReviewService;
+import ar.edu.itba.paw.models.Page;
 import ar.edu.itba.paw.models.Review;
 
 @Service
@@ -30,7 +30,7 @@ public class ReviewServiceImpl implements ReviewService {
   // =============== Queries ===============
 
   @Override
-  public List<Review> getReviewsForDoctor(long doctorId) {
-    return reviewDao.getReviewsForDoctor(doctorId);
+  public Page<Review> getReviewsForDoctor(long doctorId, Integer page, Integer pageSize) {
+    return reviewDao.getReviewsForDoctor(doctorId, page, pageSize);
   }
 }

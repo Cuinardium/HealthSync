@@ -1,7 +1,6 @@
 package ar.edu.itba.paw.interfaces.services;
 
-import java.util.List;
-
+import ar.edu.itba.paw.models.Page;
 import ar.edu.itba.paw.models.Review;
 
 public interface ReviewService {
@@ -12,5 +11,5 @@ public interface ReviewService {
   
   // =============== Queries ===============
   
-  List<Review> getReviewsForDoctor(long doctorId);
+  Page<Review> getReviewsForDoctor(long doctorId, Integer page, Integer pageSize);
 }

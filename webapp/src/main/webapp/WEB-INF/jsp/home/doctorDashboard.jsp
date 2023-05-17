@@ -30,6 +30,7 @@
 <spring:message code="filters.title" var="filtersTitle"/>
 <spring:message code="filters.clear" var="clear"/>
 <spring:message code="form.date" var="date"/>
+<spring:message code="doctor.noReviews" var="noReviews"/>
 
 <html>
 <head>
@@ -139,7 +140,7 @@
                 </button>
             </div>
 
-            <div class="cardsContainer">
+            <div class="z">
                 <c:forEach items="${doctors}" var="doctor">
                     <spring:message code="${doctor.specialty.messageID}" var="doctorSpecialty"/>
                     <spring:message code="${doctor.location.city.messageID}" var="doctorCity"/>
@@ -180,7 +181,7 @@
                             </c:when>
                             <c:otherwise>
                                 <div class="card-text">
-                                    No Ratings
+                                    ${noReviews}
                                 </div>
                             </c:otherwise>
                         </c:choose>
