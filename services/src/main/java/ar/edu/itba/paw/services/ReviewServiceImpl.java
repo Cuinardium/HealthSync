@@ -4,6 +4,7 @@ import java.time.LocalDate;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import ar.edu.itba.paw.interfaces.persistence.ReviewDao;
 import ar.edu.itba.paw.interfaces.services.ReviewService;
@@ -22,6 +23,7 @@ public class ReviewServiceImpl implements ReviewService {
 
   // =============== Inserts ===============
 
+  @Transactional
   @Override
   public Review createReview(long doctorId, long patientId, int rating, String description) {
     return reviewDao.createReview(doctorId, patientId, rating, LocalDate.now(), description);
