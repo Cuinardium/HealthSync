@@ -133,11 +133,9 @@
                 <form:errors path="email" cssClass="error" element="p"/>
             </div>
         </div>
-
         <!-- Doctor schedule selector -->
         <c:set var="timeEnumValues" value="${timeEnumValues}" scope="request"/>
         <jsp:include page="../components/scheduleSelector.jsp"/>
-
         <button type="submit" class="btn btn-primary submitButton">${saveChanges}</button>
     </form:form>
     <div class="modal fade" id="modal" tabindex="-1" role="dialog" aria-labelledby="modalLabel"
