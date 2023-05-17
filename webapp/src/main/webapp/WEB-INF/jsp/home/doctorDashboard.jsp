@@ -11,7 +11,7 @@
 <c:url value="/css/filters.css" var="filtersCss"/>
 <c:url value="/js/filters.js" var="filtersJs"/>
 
-<c:url value="/doctorDashboard" var="doctorDashboardUrl"/>
+<c:url value="/doctor-dashboard" var="doctorDashboardUrl"/>
 
 <spring:message code="doctorDashboard.title" var="title"/>
 
@@ -143,7 +143,7 @@
                 <c:forEach items="${doctors}" var="doctor">
                     <spring:message code="${doctor.specialty.messageID}" var="doctorSpecialty"/>
                     <spring:message code="${doctor.location.city.messageID}" var="doctorCity"/>
-                    <c:url value="/${doctor.id}/detailed_doctor" var="detailedUrl"/>
+                    <c:url value="/${doctor.id}/detailed-doctor" var="detailedUrl"/>
                     <div class="card">
                         <div class="imageContainer">
                             <c:url value="/img/${doctor.getProfilePictureId() == null ? \"doctorDefault.png\" : doctor.getProfilePictureId()}"
@@ -209,7 +209,7 @@
                 </c:if>
 
 
-                <c:url value="/doctorDashboard" var="doctorDashboardFilteredUrl">
+                <c:url value="/doctor-dashboard" var="doctorDashboardFilteredUrl">
                     <c:param name="name" value="${name}"/>
                     <c:param name="cityCode" value="${cityCode}"/>
                     <c:param name="specialtyCode" value="${specialtyCode}"/>

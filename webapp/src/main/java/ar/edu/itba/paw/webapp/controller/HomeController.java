@@ -52,7 +52,7 @@ public class HomeController {
   }
 
   // TODO: REFACTOR THIS
-  @RequestMapping(value = "/doctorDashboard", method = RequestMethod.GET)
+  @RequestMapping(value = "/doctor-dashboard", method = RequestMethod.GET)
   public ModelAndView doctorDashboard(
       @ModelAttribute("doctorFilterForm") DoctorFilterForm doctorFilterForm,
       @RequestParam(value = "page", required = false, defaultValue = "1") String page) {

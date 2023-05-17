@@ -6,7 +6,7 @@
 <c:url value="/css/header.css" var="headerCss"/>
 
 <c:url value="/" var="homeUrl"/>
-<c:url value="/doctorDashboard" var="dashboardUrl"/>
+<c:url value="/doctor-dashboard" var="dashboardUrl"/>
 <c:url value="/my-appointments" var="myAppointmentsUrl"/>
 <c:url value="/doctor-register" var="doctorRegisterUrl"/>
 <c:url value="/patient-register" var="patientRegisterUrl"/>

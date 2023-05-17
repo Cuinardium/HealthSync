@@ -300,10 +300,7 @@
     font-size: 28px; }
 
 .form-container {
-    margin-top: 25%; }
-
-.form-control{
-    max-width: -webkit-fill-available;
+    margin-top: 25%;
 }
 
 .form-label {
