@@ -20,41 +20,41 @@ public class PatientServiceImplTest {
   public void testCreatePatient() {
     // 1. Precondiciones
     // 2. Ejercitar la class under test
-    // 3. Meaninful assertions
+    // 3. Meaningful assertions
   }
 
   @Test
   public void testCreatePatientAlreadyExists() {
     // 1. Precondiciones
     // 2. Ejercitar la class under test
-    // 3. Meaninful assertions
+    // 3. Meaningful assertions
   }
 
   @Test
   public void testUpdatePatient() {
     // 1. Precondiciones
     // 2. Ejercitar la class under test
-    // 3. Meaninful assertions
+    // 3. Meaningful assertions
   }
 
   @Test
   public void testUpdatePatientDoesNotExist() {
     // 1. Precondiciones
     // 2. Ejercitar la class under test
-    // 3. Meaninful assertions
+    // 3. Meaningful assertions
   }
 
   @Test
   public void testGetPatientById() {
     // 1. Precondiciones
     // 2. Ejercitar la class under test
-    // 3. Meaninful assertions
+    // 3. Meaningful assertions
   }
 
   @Test
   public void testGetPatientByIdDoesNotExist() {
     // 1. Precondiciones
     // 2. Ejercitar la class under test
-    // 3. Meaninful assertions
+    // 3. Meaningful assertions
   }
 }

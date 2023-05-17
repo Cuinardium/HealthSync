@@ -20,76 +20,76 @@ public class DoctorServiceImplTest {
   public void testCreateDoctor() {
     // 1. Precondiciones
     // 2. Ejercitar la class under test
-    // 3. Meaninful assertions
+    // 3. Meaningful assertions
   }
 
   @Test
   public void testCreateDoctorAlreadyExists() {
     // 1. Precondiciones
     // 2. Ejercitar la class under test
-    // 3. Meaninful assertions
+    // 3. Meaningful assertions
   }
 
   @Test
   public void testUpdateDoctor() {
     // 1. Precondiciones
     // 2. Ejercitar la class under test
-    // 3. Meaninful assertions
+    // 3. Meaningful assertions
   }
 
   @Test
   public void testUpdateDoctorDoesNotExist() {
     // 1. Precondiciones
     // 2. Ejercitar la class under test
-    // 3. Meaninful assertions
+    // 3. Meaningful assertions
   }
 
   @Test
   public void testGetDoctorById() {
     // 1. Precondiciones
     // 2. Ejercitar la class under test
-    // 3. Meaninful assertions
+    // 3. Meaningful assertions
   }
 
   @Test
   public void testGetDoctorByIdDoesNotExist() {
     // 1. Precondiciones
     // 2. Ejercitar la class under test
-    // 3. Meaninful assertions
+    // 3. Meaningful assertions
   }
 
   @Test
   public void testGetFilteredDoctors() {
     // 1. Precondiciones
     // 2. Ejercitar la class under test
-    // 3. Meaninful assertions
+    // 3. Meaningful assertions
   }
 
   @Test
   public void testGetDoctors() {
     // 1. Precondiciones
     // 2. Ejercitar la class under test
-    // 3. Meaninful assertions
+    // 3. Meaningful assertions
   }
 
   @Test
   public void testGetUsedSpecialties() {
     // 1. Precondiciones
     // 2. Ejercitar la class under test
-    // 3. Meaninful assertions
+    // 3. Meaningful assertions
   }
 
   @Test
   public void testGetUsedHealthInsurances() {
     // 1. Precondiciones
     // 2. Ejercitar la class under test
-    // 3. Meaninful assertions
+    // 3. Meaningful assertions
   }
 
   @Test
   public void testGetUsedCities() {
     // 1. Precondiciones
     // 2. Ejercitar la class under test
-    // 3. Meaninful assertions
+    // 3. Meaningful assertions
   }
 }

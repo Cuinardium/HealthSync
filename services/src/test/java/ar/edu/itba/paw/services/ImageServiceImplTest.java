@@ -20,34 +20,34 @@ public class ImageServiceImplTest {
   public void testUploadImage() {
     // 1. Precondiciones
     // 2. Ejercitar la class under test
-    // 3. Meaninful assertions
+    // 3. Meaningful assertions
   }
 
   @Test
   public void testUpdateImage() {
     // 1. Precondiciones
     // 2. Ejercitar la class under test
-    // 3. Meaninful assertions
+    // 3. Meaningful assertions
   }
 
   @Test
   public void testUpdateImageDoesNotExist() {
     // 1. Precondiciones
     // 2. Ejercitar la class under test
-    // 3. Meaninful assertions
+    // 3. Meaningful assertions
   }
 
   @Test
   public void testGetImage() {
     // 1. Precondiciones
     // 2. Ejercitar la class under test
-    // 3. Meaninful assertions
+    // 3. Meaningful assertions
   }
 
   @Test
   public void testGetImageNotFound() {
     // 1. Precondiciones
     // 2. Ejercitar la class under test
-    // 3. Meaninful assertions
+    // 3. Meaningful assertions
   }
 }

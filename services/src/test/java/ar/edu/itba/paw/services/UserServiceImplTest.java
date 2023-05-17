@@ -68,6 +68,7 @@ public class UserServiceImplTest {
     Assert.assertEquals(LAST_NAME, newUser.getLastName());
   }
 
+  // TODO: change exception
   @Test(expected = RuntimeException.class)
   public void testCreateUserAlreadyExists() throws EmailAlreadyExistsException {
     // 1. Precondiciones
@@ -106,7 +107,7 @@ public class UserServiceImplTest {
     Mockito.when(userDao.getUserById(Mockito.eq(ID))).thenReturn(Optional.empty());
     // 2. Ejercitar la class under test
     Optional<User> noUser = us.getUserById(ID);
-    // 3. Meaninful assertions
+    // 3. Meaningful assertions
     Assert.assertFalse(noUser.isPresent());
   }
 
@@ -117,7 +118,7 @@ public class UserServiceImplTest {
     Mockito.when(userDao.getUserByEmail(Mockito.eq(EMAIL))).thenReturn(Optional.of(expectedUser));
     // 2. Ejercitar la class under test
     Optional<User> user = us.getUserByEmail(EMAIL);
-    // 3. Meaninful assertions
+    // 3. Meaningful assertions
     Assert.assertTrue(user.isPresent());
     Assert.assertEquals(expectedUser, user.get());
   }
@@ -128,7 +129,7 @@ public class UserServiceImplTest {
     Mockito.when(userDao.getUserByEmail(Mockito.eq(EMAIL))).thenReturn(Optional.empty());
     // 2. Ejercitar la class under test
     Optional<User> noUser = us.getUserByEmail(EMAIL);
-    // 3. Meaninful assertions
+    // 3. Meaningful assertions
     Assert.assertFalse(noUser.isPresent());
   }
 
@@ -149,7 +150,7 @@ public class UserServiceImplTest {
         .thenReturn(USER_UPDATED);
     // 2. Ejercitar la class under test
     User user = us.updateUser(ID, EMAIL_NEW, FIRST_NAME_NEW, LAST_NAME_NEW, IMAGE);
-    // 3. Meaninful assertions
+    // 3. Meaningful assertions
     Assert.assertEquals(USER_UPDATED, user);
   }
 
@@ -159,7 +160,7 @@ public class UserServiceImplTest {
     Mockito.when(userDao.getUserById(ID)).thenReturn(Optional.empty());
     // 2. Ejercitar la class under test
     us.updateUser(ID, EMAIL_NEW, FIRST_NAME_NEW, LAST_NAME_NEW, IMAGE);
-    // 3. Meaninful assertions
+    // 3. Meaningful assertions
   }
 
   @Test
@@ -175,7 +176,7 @@ public class UserServiceImplTest {
         .thenReturn(USER_UPDATED.getPassword());
     // 2. Ejercitar la class under test
     boolean passwordUpdated = us.updatePassword(ID, PASSWORD, PASSWORD_NEW);
-    // 3. Meaninful assertions
+    // 3. Meaningful assertions
     Assert.assertTrue(passwordUpdated);
   }
 
@@ -188,7 +189,7 @@ public class UserServiceImplTest {
         .thenReturn(false);
     // 2. Ejercitar la class under test
     boolean passwordUpdated = us.updatePassword(ID, NOT_PASSWORD, PASSWORD_NEW);
-    // 3. Meaninful assertions
+    // 3. Meaningful assertions
     Assert.assertFalse(passwordUpdated);
   }
 
@@ -205,6 +206,6 @@ public class UserServiceImplTest {
         .thenThrow(UserNotFoundException.class);
     // 2. Ejercitar la class under test
     us.updatePassword(ID, PASSWORD, PASSWORD_NEW);
-    // 3. Meaninful assertions
+    // 3. Meaningful assertions
   }
 }
