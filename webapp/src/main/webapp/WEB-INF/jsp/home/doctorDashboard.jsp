@@ -12,9 +12,15 @@
 <c:url value="/js/filters.js" var="filtersJs"/>
 
 <c:url value="/doctor-dashboard" var="doctorDashboardUrl"/>
+<c:url value="/doctor-dashboard?specialtyCode=" var="specialtyFilter"/>
+<c:url value="/doctor-dashboard?healthInsuranceCode=" var="healthInsuranceFilter"/>
 
 <spring:message code="doctorDashboard.title" var="title"/>
 
+<spring:message code="detailedDoctor.title" var="title"/>
+<spring:message code="detailedDoctor.specialties" var="specialties"/>
+<spring:message code="detailedDoctor.address" var="address"/>
+<spring:message code="detailedDoctor.insurance" var="insurances"/>
 <spring:message code="doctorDashboard.button.book" var="book"/>
 <spring:message code="doctorDashboard.no.doctors" var="noDoctors"/>
 <spring:message code="doctorDashboard.modal.title" var="modalTitle"/>
@@ -148,7 +154,7 @@
                 </button>
             </div>
 
-            <div class="z">
+            <div class="cardsContainer">
                 <c:forEach items="${doctors}" var="doctor">
                     <spring:message code="${doctor.specialty.messageID}" var="doctorSpecialty"/>
                     <spring:message code="${doctor.location.city.messageID}" var="doctorCity"/>
@@ -161,19 +167,25 @@
                         </div>
                         <div class="infoContainer">
                             <div class="card-body">
-                                <h5 class="card-title"><a
-                                        href="${detailedUrl}">${doctor.firstName} ${doctor.lastName}</a>
-                                </h5>
-                                <p class="card-text">${doctorSpecialty}. ${doctor.location.address}, ${doctorCity}</p>
-
-                                <p class="card-text">
-                                    <c:forEach items="${doctor.healthInsurances}" var="healthInsurance"
-                                               varStatus="status">
-                                        <spring:message code="${healthInsurance.messageID}" var="healthInsuranceMsg"/>
-                                        ${healthInsuranceMsg}${status.last ? "" : ", "}
+                                <h5 class="card-title">${doctor.firstName} ${doctor.lastName}</h5>
+                                <div class="chipsContainer">
+                                    <div class="card-text">${specialties}</div>
+                                    <div class="chip" data-mdb-close="true">
+                                        <a class="stretched-link"
+                                           href="${specialtyFilter}${doctor.specialty.ordinal()}">${doctorSpecialty}</a>
+                                    </div>
+                                </div>
+                                <div class="card-text">${address} ${doctor.location.address}, ${doctorCity}</div>
+                                <div class="chipsContainer">
+                                    <div class="card-text">${insurances}</div>
+                                    <c:forEach items="${doctor.healthInsurances}" var="healthInsurance">
+                                        <spring:message code="${healthInsurance.messageID}" var="doctorHealthInsurance"/>
+                                        <div class="chip" data-mdb-close="true">
+                                            <a class="stretched-link"
+                                               href="${healthInsuranceFilter}${healthInsurance.ordinal()}">${doctorHealthInsurance}</a>
+                                        </div>
                                     </c:forEach>
-                                </p>
-
+                                </div>
                                 <c:choose>
                                     <c:when test="${doctor.rating != null}">
                                         <div class="starContainer card-text">
@@ -193,7 +205,6 @@
                                         </div>
                                     </c:otherwise>
                                 </c:choose>
-
                             </div>
                         </div>
                         <c:if test="${canBook}">

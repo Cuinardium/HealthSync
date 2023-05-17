@@ -40,6 +40,35 @@
     overflow-y: scroll;
 }
 
+.chip {
+    display: flex;
+    align-items: center;
+    padding: 0 15px;
+    margin: 1%;
+    font-size: medium;
+    height: 2rem;
+    border-radius: 25px;
+    background-color: #f1f1f1;
+    transform: rotate(0);
+}
+
+.chipsContainer{
+    display: flex;
+    align-items: center;
+}
+
+a{
+    text-decoration: none;
+}
+
+a.stretched-link:hover{
+    color: white;
+}
+
+.chip:hover{
+    background: #223E6A;
+}
+
 .card{
     display: flex;
     flex-direction: row;
