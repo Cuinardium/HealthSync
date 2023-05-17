@@ -24,6 +24,15 @@
 <spring:message code="appointments.modal.deny" var="modalDeny"/>
 <spring:message code="appointments.modal.cancelDesc" var="cancelDesc"/>
 
+<spring:message code="detailedAppointment.title" var="title"/>
+<spring:message code="detailedAppointment.doctor" var="doctor"/>
+<spring:message code="detailedAppointment.patient" var="patient"/>
+<spring:message code="detailedAppointment.address" var="address"/>
+<spring:message code="detailedAppointment.healthInsurance" var="healthInsurance_title"/>
+<spring:message code="detailedAppointment.status" var="statusTitle"/>
+<spring:message code="detailedAppointment.description" var="description"/>
+<spring:message code="detailedAppointment.cancelDesc" var="cancelDescriptionTitle"/>
+
 <html>
 <head>
     <title>${title}</title>
@@ -33,83 +42,109 @@
     <link href="${mainCss}" rel="stylesheet"/>
     <link href="${appointmentsCss}" rel="stylesheet"/>
     <script src="${myAppointmentsJs}"></script>
-    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+            integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+            crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js"
+            integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+            crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js"
+            integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+            crossorigin="anonymous"></script>
 </head>
 
 <body>
 <jsp:include page="../components/header.jsp"/>
 
 
-    <div class="contentContainer">
-        <ul id="nav" class="nav nav-tabs">
-            <c:forEach items="${tabs}" var="tab">
-                <li class="nav-item">
-                    <spring:message code="${tab.messageID}" var="tabTitle"/>
-                    <a class="nav-link tab ${tab.isActive(selectedTab) ? 'active bg-primary text-white' : ''}"
-                            href="#${tab.tabName}">${tabTitle}</a>
-                </li>
-            </c:forEach>
-        </ul>
+<div class="contentContainer">
+    <ul id="nav" class="nav nav-tabs">
+        <c:forEach items="${tabs}" var="tab">
+            <li class="nav-item">
+                <spring:message code="${tab.messageID}" var="tabTitle"/>
+                <a class="nav-link tab ${tab.isActive(selectedTab) ? 'active bg-primary text-white' : ''}"
+                   href="#${tab.tabName}">${tabTitle}</a>
+            </li>
+        </c:forEach>
+    </ul>
 
-        <div class="cardsContainer">
-            <c:forEach items="${tabs}" var="tab">
-                <div id="${tab.tabName}" class="tabContent ${tab.isActive(selectedTab) ? 'active' : ''}">
-                    <c:forEach items="${tab.appointments}" var="appointment">
-                        <c:url value="/${appointment.id}/detailed_appointment" var="detailedUrl">
-                            <c:param name="from" value="${from}" />
-                            <c:param name="to" value="${to}" />
-                            <c:param name="selected_tab" value="${selectedTab}" />
-                        </c:url>
-                        <div class="card">
-                            <div class="card-header">
-                                <a class="detailed-link" href="${detailedUrl}">${appointment.date} ${appointment.timeBlock.blockBeginning}</a>
+    <div class="cardsContainer">
+        <c:forEach items="${tabs}" var="tab">
+            <div id="${tab.tabName}" class="tabContent ${tab.isActive(selectedTab) ? 'active' : ''}">
+                <c:forEach items="${tab.appointments}" var="appointment">
 
-                                <c:url value="/my-appointments/${appointment.id}/update" var="updateUrl"/>
-                                <strong>${statusTitle}: <spring:message code="${appointment.status.messageID}"/></strong>
+                    <div class="card">
+                        <div class="card-header">
+                            <strong>${appointment.date} ${appointment.timeBlock.blockBeginning}</strong>
+                        </div>
+                        <div class="card-body">
 
-                                <div class="cardButtonContainer">
-                                    <c:forEach items="${tab.allowedActions}" var="action">
-                                            <button onclick="openModal('${updateUrl}/?status=${action.statusCode}')"
-                                                    class="post-button btn ${action.buttonClass}">
-                                                <spring:message code="${action.messageID}"/>
-                                            </button>
-                                        <div class="modal fade" id="modal" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
-                                            <div class="modal-dialog" role="dialog">
-                                                <div class="modal-content">
-                                                    <div class="modal-header">
-                                                        <h5 class="modal-title" id="modalLabel">${modalTitle}</h5>
-                                                    </div>
-                                                    <form:form modelAttribute="modalForm" id="post-modal">
+                            <div class="card-title">
+                                <strong>${doctor}: </strong>${appointment.doctor.firstName} ${appointment.doctor.lastName}
+                            </div>
+                            <div class="card-title">
+                                <strong>${patient}: </strong>${appointment.patient.firstName} ${appointment.patient.lastName}
+                            </div>
+
+                            <spring:message code="${appointment.doctor.location.city.messageID}" var="city"/>
+                            <div class="card-title"><strong>${address}: </strong>${address}, ${city}</div>
+
+                            <spring:message code="${appointment.patient.healthInsurance.messageID}"
+                                            var="healthInsurance"/>
+                            <div class="card-title"><strong>${healthInsurance_title}: </strong>${healthInsurance}</div>
+
+                            <div class="card-title"><strong>${description}: </strong>${appointment.description}</div>
+                            <c:if test="${not empty appointment.cancelDesc}">
+                                <div class="card-title">
+                                    <strong>${cancelDescriptionTitle}: </strong>${appointment.cancelDesc}</div>
+                            </c:if>
+
+                            <div class="cardButtonContainer">
+                                <c:forEach items="${tab.allowedActions}" var="action">
+                                    <c:url value="/my-appointments/${appointment.id}/update" var="updateUrl">
+                                        <c:param name="selected_tab" value="${selectedTab}"/>
+                                        <c:param name="status" value="${action.statusCode}"/>
+                                    </c:url>
+                                    <button onclick="openModal('${updateUrl}')"
+                                        class="post-button btn ${action.buttonClass}">
+                                        <spring:message code="${action.messageID}"/>
+                                    </button>
+                                    <div class="modal fade" id="modal" tabindex="-1" role="dialog"
+                                        aria-labelledby="modalLabel"
+                                        aria-hidden="true">
+                                        <div class="modal-dialog" role="dialog">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title" id="modalLabel">${modalTitle}</h5>
+                                                </div>
+                                                <form:form modelAttribute="modalForm" id="post-modal">
                                                     <div class="modal-body">
-
-                                                            ${modalDesc}
-                                                            <div class="form-group">
-                                                                <form:label path="description" for="cancelDescription" class="col-form-label">${cancelDesc}</form:label>
-                                                                <form:input path="description" class="form-control" id="cancelDescription"/>
-                                                            </div>
-
+                                                        ${modalDesc}
+                                                        <div class="form-group">
+                                                            <form:label path="description" for="cancelDescription"
+                                                                class="col-form-label">${cancelDesc}</form:label>
+                                                            <form:input path="description" class="form-control"
+                                                                id="cancelDescription"/>
+                                                        </div>
                                                     </div>
                                                     <div class="modal-footer">
 
-                                                            <div class="cardButtonContainer">
-                                                                <button type="button" class="btn btn-danger" onclick="closeModal()">${modalDeny}</button>
-                                                                <button type="submit" class="btn btn-primary">${modalConfirm}</button>
-                                                            </div>
+                                                        <div class="cardButtonContainer">
+                                                            <button type="button" class="btn btn-danger"
+                                                            onclick="closeModal()">${modalDeny}</button>
+                                                            <button type="submit"
+                                                            class="btn btn-primary">${modalConfirm}</button>
+                                                        </div>
 
                                                     </div>
-                                                    </form:form>
-                                                </div>
+                                                </form:form>
                                             </div>
                                         </div>
-                                    </c:forEach>
-                                </div>
-                            </div>
-                            <div class="card-body">
-                                    ${appointment.description}
+                                    </div>
+                                </c:forEach>
                             </div>
                         </div>
+                    </div>
                     </c:forEach>
                     <c:if test="${empty tab.appointments}">
                         <div class="noAppointmentsMsg">
@@ -117,17 +152,18 @@
                         </div>
                     </c:if>
                 </div>
-            </c:forEach>
-        </div>
+        </c:forEach>
     </div>
+</div>
 </body>
 </html>
 <script>
-    function openModal(action){
+    function openModal(action) {
         $('#modal').modal('show');
         $('#post-modal').attr('action', action);
     }
-    function closeModal(){
+
+    function closeModal() {
         $('#modal').modal('hide')
     }
 </script>
