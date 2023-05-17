@@ -66,7 +66,7 @@ public class UserDaoImplTest {
             + "');");
 
     // 2. Ejercitar la class under test
-    Optional<User> maybeUser = userDao.findById(ID);
+    Optional<User> maybeUser = userDao.getUserById(ID);
 
     // 3. Meaningful assertions
     Assert.assertEquals(ID, maybeUser.get().getId());
@@ -82,7 +82,7 @@ public class UserDaoImplTest {
     // 1. Precondiciones
 
     // 2. Ejercitar la class under test
-    Optional<User> maybeUser = userDao.findById(ID);
+    Optional<User> maybeUser = userDao.getUserById(ID);
 
     // 3. Meaningful assertions
     Assert.assertFalse(maybeUser.isPresent());

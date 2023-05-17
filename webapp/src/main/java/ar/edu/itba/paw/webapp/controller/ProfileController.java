@@ -13,6 +13,7 @@ import ar.edu.itba.paw.webapp.form.PatientEditForm;
 import java.io.IOException;
 import java.time.DayOfWeek;
 import java.util.Arrays;
+import java.util.List;
 import java.util.stream.Collectors;
 import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,72 +50,68 @@ public class ProfileController {
       return doctorEdit(doctorEditForm);
     }
 
+    Specialty specialty = Specialty.values()[doctorEditForm.getSpecialtyCode()];
+    City city = City.values()[doctorEditForm.getCityCode()];
+
+    List<HealthInsurance> healthInsurances =
+        doctorEditForm.getHealthInsuranceCodes().stream()
+            .map(code -> HealthInsurance.values()[code])
+            .collect(Collectors.toList());
+
+    ThirtyMinuteBlock[] values = ThirtyMinuteBlock.values();
+    AttendingHours attendingHours =
+        new AttendingHours(
+            doctorEditForm.getMondayAttendingHours().stream()
+                .map(i -> values[i])
+                .collect(Collectors.toList()),
+            doctorEditForm.getTuesdayAttendingHours().stream()
+                .map(i -> values[i])
+                .collect(Collectors.toList()),
+            doctorEditForm.getWednesdayAttendingHours().stream()
+                .map(i -> values[i])
+                .collect(Collectors.toList()),
+            doctorEditForm.getThursdayAttendingHours().stream()
+                .map(i -> values[i])
+                .collect(Collectors.toList()),
+            doctorEditForm.getFridayAttendingHours().stream()
+                .map(i -> values[i])
+                .collect(Collectors.toList()),
+            doctorEditForm.getSaturdayAttendingHours().stream()
+                .map(i -> values[i])
+                .collect(Collectors.toList()),
+            doctorEditForm.getSundayAttendingHours().stream()
+                .map(i -> values[i])
+                .collect(Collectors.toList()));
+
     // Q: static fromMultiPartFile method
     try {
       Image image = null;
       if (!doctorEditForm.getImage().isEmpty()) {
         image = new Image(doctorEditForm.getImage().getBytes());
       }
-      doctorService.updateInformation(
+      doctorService.updateDoctor(
           PawAuthUserDetails.getCurrentUserId(),
           doctorEditForm.getEmail(),
           doctorEditForm.getName(),
           doctorEditForm.getLastname(),
-          doctorEditForm.getHealthInsuranceCodes(),
-          doctorEditForm.getSpecialtyCode(),
-          doctorEditForm.getCityCode(),
+          specialty,
+          city,
           doctorEditForm.getAddress(),
+          healthInsurances,
+          attendingHours,
           image);
     } catch (IOException e) {
       // TODO: handle
     }
 
-    ThirtyMinuteBlock[] values = ThirtyMinuteBlock.values();
-
-    AttendingHours attendingHours =
-        new AttendingHours(
-            doctorEditForm
-                .getMondayAttendingHours()
-                .stream()
-                .map(i -> values[i])
-                .collect(Collectors.toList()),
-            doctorEditForm
-                .getTuesdayAttendingHours()
-                .stream()
-                .map(i -> values[i])
-                .collect(Collectors.toList()),
-            doctorEditForm
-                .getWednesdayAttendingHours()
-                .stream()
-                .map(i -> values[i])
-                .collect(Collectors.toList()),
-            doctorEditForm
-                .getThursdayAttendingHours()
-                .stream()
-                .map(i -> values[i])
-                .collect(Collectors.toList()),
-            doctorEditForm
-                .getFridayAttendingHours()
-                .stream()
-                .map(i -> values[i])
-                .collect(Collectors.toList()),
-            doctorEditForm
-                .getSaturdayAttendingHours()
-                .stream()
-                .map(i -> values[i])
-                .collect(Collectors.toList()),
-            doctorEditForm
-                .getSundayAttendingHours()
-                .stream()
-                .map(i -> values[i])
-                .collect(Collectors.toList()));
-
-    doctorService.updateAttendingHours(PawAuthUserDetails.getCurrentUserId(), attendingHours);
-
-    ModelAndView mav = new ModelAndView("components/operationSuccessful");
-    mav.addObject("showHeader", true);
-    mav.addObject("operationTitle", "profile.editProfileSuccessfulTitle");
-    mav.addObject("operationMsg", "profile.editProfileSuccessfulMsg");
+    final ModelAndView mav = new ModelAndView("user/doctorEdit");
+    mav.addObject("showModal", true);
+    mav.addObject("form", doctorEditForm);
+    mav.addObject("cities", Arrays.asList(City.values()));
+    mav.addObject("specialties", Arrays.asList(Specialty.values()));
+    mav.addObject("currentHealthInsuranceCodes", doctorEditForm.getHealthInsuranceCodes());
+    mav.addObject("healthInsurances", Arrays.asList(HealthInsurance.values()));
+    mav.addObject("timeEnumValues", ThirtyMinuteBlock.values());
     return mav;
   }
 
@@ -130,9 +127,7 @@ public class ProfileController {
     doctorEditForm.setLastname(doctor.getLastName());
     doctorEditForm.setEmail(doctor.getEmail());
     doctorEditForm.setHealthInsuranceCodes(
-        doctor
-            .getHealthInsurances()
-            .stream()
+        doctor.getHealthInsurances().stream()
             .map(HealthInsurance::ordinal)
             .collect(Collectors.toList()));
     doctorEditForm.setAddress(doctor.getLocation().getAddress());
@@ -142,45 +137,31 @@ public class ProfileController {
     // Attending hours
     AttendingHours attendingHours = doctor.getAttendingHours();
     doctorEditForm.setMondayAttendingHours(
-        attendingHours
-            .getAttendingBlocksForDay(DayOfWeek.MONDAY)
-            .stream()
+        attendingHours.getAttendingBlocksForDay(DayOfWeek.MONDAY).stream()
             .map(ThirtyMinuteBlock::ordinal)
             .collect(Collectors.toList()));
     doctorEditForm.setTuesdayAttendingHours(
-        attendingHours
-            .getAttendingBlocksForDay(DayOfWeek.TUESDAY)
-            .stream()
+        attendingHours.getAttendingBlocksForDay(DayOfWeek.TUESDAY).stream()
             .map(ThirtyMinuteBlock::ordinal)
             .collect(Collectors.toList()));
     doctorEditForm.setWednesdayAttendingHours(
-        attendingHours
-            .getAttendingBlocksForDay(DayOfWeek.WEDNESDAY)
-            .stream()
+        attendingHours.getAttendingBlocksForDay(DayOfWeek.WEDNESDAY).stream()
             .map(ThirtyMinuteBlock::ordinal)
             .collect(Collectors.toList()));
     doctorEditForm.setThursdayAttendingHours(
-        attendingHours
-            .getAttendingBlocksForDay(DayOfWeek.THURSDAY)
-            .stream()
+        attendingHours.getAttendingBlocksForDay(DayOfWeek.THURSDAY).stream()
             .map(ThirtyMinuteBlock::ordinal)
             .collect(Collectors.toList()));
     doctorEditForm.setFridayAttendingHours(
-        attendingHours
-            .getAttendingBlocksForDay(DayOfWeek.FRIDAY)
-            .stream()
+        attendingHours.getAttendingBlocksForDay(DayOfWeek.FRIDAY).stream()
             .map(ThirtyMinuteBlock::ordinal)
             .collect(Collectors.toList()));
     doctorEditForm.setSaturdayAttendingHours(
-        attendingHours
-            .getAttendingBlocksForDay(DayOfWeek.SATURDAY)
-            .stream()
+        attendingHours.getAttendingBlocksForDay(DayOfWeek.SATURDAY).stream()
             .map(ThirtyMinuteBlock::ordinal)
             .collect(Collectors.toList()));
     doctorEditForm.setSundayAttendingHours(
-        attendingHours
-            .getAttendingBlocksForDay(DayOfWeek.SUNDAY)
-            .stream()
+        attendingHours.getAttendingBlocksForDay(DayOfWeek.SUNDAY).stream()
             .map(ThirtyMinuteBlock::ordinal)
             .collect(Collectors.toList()));
 
@@ -191,6 +172,7 @@ public class ProfileController {
     mav.addObject("currentHealthInsuranceCodes", doctorEditForm.getHealthInsuranceCodes());
     mav.addObject("healthInsurances", Arrays.asList(HealthInsurance.values()));
     mav.addObject("timeEnumValues", ThirtyMinuteBlock.values());
+    mav.addObject("showModal", false);
     return mav;
   }
 
@@ -208,21 +190,25 @@ public class ProfileController {
       if (!patientEditForm.getImage().isEmpty()) {
         image = new Image(patientEditForm.getImage().getBytes());
       }
-      patientService.updateInformation(
+
+      HealthInsurance healthInsurance =
+          HealthInsurance.values()[patientEditForm.getHealthInsuranceCode()];
+
+      patientService.updatePatient(
           PawAuthUserDetails.getCurrentUserId(),
           patientEditForm.getEmail(),
           patientEditForm.getName(),
           patientEditForm.getLastname(),
-          patientEditForm.getHealthInsuranceCode(),
+          healthInsurance,
           image);
     } catch (IOException e) {
       // TODO: handle this
     }
 
-    ModelAndView mav = new ModelAndView("components/operationSuccessful");
-    mav.addObject("showHeader", true);
-    mav.addObject("operationTitle", "profile.editProfileSuccessfulTitle");
-    mav.addObject("operationMsg", "profile.editProfileSuccessfulMsg");
+    final ModelAndView mav = new ModelAndView("user/patientEdit");
+    mav.addObject("showModal", true);
+    mav.addObject("form", patientEditForm);
+    mav.addObject("healthInsurances", Arrays.asList(HealthInsurance.values()));
     return mav;
   }
 
@@ -242,6 +228,7 @@ public class ProfileController {
 
     final ModelAndView mav = new ModelAndView("user/patientEdit");
     mav.addObject("form", patientEditForm);
+    mav.addObject("showModal", false);
     mav.addObject("healthInsurances", Arrays.asList(HealthInsurance.values()));
     return mav;
   }
@@ -249,14 +236,14 @@ public class ProfileController {
   @RequestMapping(value = "/change-password", method = RequestMethod.POST)
   public ModelAndView changePasswordSubmit(
       @Valid @ModelAttribute("changePasswordForm") final ChangePasswordForm changePasswordForm,
-      final BindingResult errors) {
+      final BindingResult errors, boolean OldPasswordDoesNotMatch) {
     if (errors.hasErrors()) {
       return changePassword(changePasswordForm, false);
     }
 
     try {
       boolean changedPassword =
-          userService.changePassword(
+          userService.updatePassword(
               PawAuthUserDetails.getCurrentUserId(),
               changePasswordForm.getOldPassword(),
               changePasswordForm.getPassword());
@@ -268,10 +255,10 @@ public class ProfileController {
       // TODO: log?
       throw exception;
     }
-    ModelAndView mav = new ModelAndView("components/operationSuccessful");
-    mav.addObject("showHeader", true);
-    mav.addObject("operationTitle", "profile.changePasswordSuccessfulTitle");
-    mav.addObject("operationMsg", "profile.changePasswordSuccessfulMsg");
+    final ModelAndView mav = new ModelAndView("user/changePassword");
+    mav.addObject("showModal", true);
+    mav.addObject("oldPasswordDoesNotMatch", OldPasswordDoesNotMatch);
+    mav.addObject("form", changePasswordForm);
     return mav;
   }
 
@@ -282,6 +269,7 @@ public class ProfileController {
     final ModelAndView mav = new ModelAndView("user/changePassword");
     mav.addObject("oldPasswordDoesNotMatch", OldPasswordDoesNotMatch);
     mav.addObject("form", changePasswordForm);
+    mav.addObject("showModal", false);
     return mav;
   }
 }

@@ -2,7 +2,6 @@ package ar.edu.itba.paw.webapp.controller;
 
 import ar.edu.itba.paw.interfaces.services.AppointmentService;
 import ar.edu.itba.paw.interfaces.services.DoctorService;
-import ar.edu.itba.paw.interfaces.services.LocationService;
 import ar.edu.itba.paw.interfaces.services.PatientService;
 import ar.edu.itba.paw.models.*;
 import ar.edu.itba.paw.webapp.auth.PawAuthUserDetails;
@@ -29,22 +28,12 @@ public class HomeController {
   private static final int DEFAULT_PAGE_SIZE = 10;
 
   private final DoctorService doctorService;
-
-  private final AppointmentService appointmentService;
-
   private final PatientService patientService;
-  private final LocationService locationService;
 
   @Autowired
-  public HomeController(
-      final DoctorService doctorService,
-      final PatientService patientService,
-      final LocationService locationService,
-      final AppointmentService appointmentService) {
+  public HomeController(final DoctorService doctorService, PatientService patientService) {
     this.doctorService = doctorService;
     this.patientService = patientService;
-    this.locationService = locationService;
-    this.appointmentService = appointmentService;
   }
 
   @RequestMapping(value = "/")
@@ -84,21 +73,35 @@ public class HomeController {
 
     // Get used specialties, cities and health insurances
     Map<Specialty, Integer> usedSpecialties = doctorService.getUsedSpecialties();
-    Map<City, Integer> usedCities = locationService.getUsedCities();
+    Map<City, Integer> usedCities = doctorService.getUsedCities();
     Map<HealthInsurance, Integer> usedHealthInsurances = doctorService.getUsedHealthInsurances();
 
+    // Get filters
     int specialtyCode = doctorFilterForm.getSpecialtyCode();
     int cityCode = doctorFilterForm.getCityCode();
     int healthInsuranceCode = doctorFilterForm.getHealthInsuranceCode();
     LocalDate date = doctorFilterForm.getDate();
 //    String from = doctorFilterForm.getFrom();
 //    String to = doctorFilterForm.getTo();
+
+    Specialty specialty =
+        specialtyCode < 0 || specialtyCode >= Specialty.values().length
+            ? null
+            : Specialty.values()[specialtyCode];
+
+    City city = cityCode < 0 || cityCode >= City.values().length ? null : City.values()[cityCode];
+
+    HealthInsurance healthInsurance =
+        healthInsuranceCode < 0 || healthInsuranceCode >= HealthInsurance.values().length
+            ? null
+            : HealthInsurance.values()[healthInsuranceCode];
+
     String name = doctorFilterForm.getName();
 
     // Get doctors
     Page<Doctor> doctors =
         doctorService.getFilteredDoctors(
-            name, specialtyCode, cityCode, healthInsuranceCode, date, parsedPage - 1, DEFAULT_PAGE_SIZE);
+            name, date, specialty, city, healthInsurance, parsedPage - 1, DEFAULT_PAGE_SIZE);
 
     if (PawAuthUserDetails.getRole().equals(UserRoles.ROLE_PATIENT)) {
       PawAuthUserDetails currentUser =

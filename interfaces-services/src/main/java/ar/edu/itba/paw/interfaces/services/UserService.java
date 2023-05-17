@@ -6,14 +6,20 @@ import java.util.Optional;
 
 public interface UserService {
 
+  // =============== Inserts ===============
+
   User createUser(String email, String password, String firstName, String lastName);
 
-  void editUser(long userId, String email, String firstName, String lastName, Image image);
+  // =============== Updates ===============
 
-  boolean changePassword(long userId, String oldPassword, String password)
+  User updateUser(long userId, String email, String firstName, String lastName, Image image);
+
+  boolean updatePassword(long userId, String oldPassword, String password)
       throws IllegalStateException;
 
-  Optional<User> findById(long id);
+  // =============== Queries ===============
 
-  Optional<User> findByEmail(String email);
+  Optional<User> getUserById(long id);
+
+  Optional<User> getUserByEmail(String email);
 }

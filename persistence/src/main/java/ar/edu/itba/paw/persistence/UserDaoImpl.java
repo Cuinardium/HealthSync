@@ -26,6 +26,8 @@ public class UserDaoImpl implements UserDao {
         new SimpleJdbcInsert(ds).withTableName("users").usingGeneratedKeyColumns("user_id");
   }
 
+  // =============== Inserts ===============
+
   @Override
   public User createUser(String email, String password, String firstName, String lastName) {
     Map<String, Object> data = new HashMap<>();
@@ -39,21 +41,25 @@ public class UserDaoImpl implements UserDao {
     return new User(key.longValue(), email, password, firstName, lastName, null);
   }
 
+  // =============== Updates ===============
+
   @Override
   public User updateUserInfo(
       long userId, String email, String firstName, String lastName, Long pfpId) {
-    String update =
+    UpdateBuilder update =
         new UpdateBuilder()
             .update("users")
             .set("email", "'" + email + "'")
             .set("first_name", "'" + firstName + "'")
             .set("last_name", "'" + lastName + "'")
-            .set("profile_picture_id", pfpId.toString())
-            .where("user_id = (" + userId + ")")
-            .build();
+            .where("user_id = (" + userId + ")");
 
-    jdbcTemplate.update(update);
-    return findById(userId).orElseThrow(IllegalStateException::new);
+    if (pfpId != null) {
+      update.set("profile_picture_id", pfpId.toString());
+    }
+
+    jdbcTemplate.update(update.build());
+    return getUserById(userId).orElseThrow(IllegalStateException::new);
   }
 
   @Override
@@ -66,12 +72,14 @@ public class UserDaoImpl implements UserDao {
             .build();
 
     jdbcTemplate.update(update);
-    return findById(userId).orElseThrow(IllegalStateException::new).getPassword();
+    return getUserById(userId).orElseThrow(IllegalStateException::new).getPassword();
   }
+
+  // =============== Queries ===============
 
   // Optional garantiza que no va a ser null, pero no significa q se vaya a devolver un usuario
   @Override
-  public Optional<User> findById(final long id) {
+  public Optional<User> getUserById(final long id) {
 
     String query = new QueryBuilder().select().from("users").where("user_id = " + id).build();
 
@@ -79,7 +87,7 @@ public class UserDaoImpl implements UserDao {
   }
 
   @Override
-  public Optional<User> findByEmail(String email) {
+  public Optional<User> getUserByEmail(String email) {
     String query =
         new QueryBuilder().select().from("users").where("email = '" + email + "'").build();
     return jdbcTemplate.query(query, RowMappers.USER_MAPPER).stream().findFirst();

@@ -41,6 +41,8 @@ public class AppointmentServiceImpl implements AppointmentService {
     this.appointmentDao = appointmentDao;
   }
 
+  // =============== Inserts ===============
+
   @Transactional
   @Override
   public Appointment createAppointment(
@@ -73,24 +75,11 @@ public class AppointmentServiceImpl implements AppointmentService {
     return appointment;
   }
 
-  @Override
-  public Optional<Appointment> getAppointmentById(long appointmentId) {
-    return appointmentDao.getAppointmentById(appointmentId);
-  }
-
-  @Override
-  public List<Appointment> getAppointmentsForPatient(long patientId) {
-    return appointmentDao.getAppointmentsForPatient(patientId);
-  }
-
-  @Override
-  public List<Appointment> getAppointmentsForDoctor(long doctorId) {
-    return appointmentDao.getAppointmentsForDoctor(doctorId);
-  }
+  // =============== Updates ===============
 
   @Transactional
   @Override
-  public void updateAppointmentStatus(
+  public Appointment updateAppointment(
       long appointmentId, AppointmentStatus status, String cancelDescription, long requesterId) {
 
     // Get appointment
@@ -109,23 +98,42 @@ public class AppointmentServiceImpl implements AppointmentService {
       throw new RuntimeException();
     }
 
-    appointmentDao.updateAppointment(appointmentId, status, cancelDescription);
+    Appointment updatedAppointment = appointmentDao.updateAppointment(appointmentId, status, cancelDescription);
 
-    Appointment newAppointment =
-        getAppointmentById(appointmentId).orElseThrow(RuntimeException::new);
 
     // TODO: error handling
     Locale locale = LocaleContextHolder.getLocale();
 
     if (status == AppointmentStatus.CANCELLED) {
       if (requesterId == appointment.getPatientId()) {
-        mailService.sendAppointmentCancelledByPatientMail(newAppointment, locale);
+        mailService.sendAppointmentCancelledByPatientMail(updatedAppointment, cancelDescription,locale);
       } else {
-        mailService.sendAppointmentCancelledByDoctorMail(newAppointment, locale);
+        mailService.sendAppointmentCancelledByDoctorMail(updatedAppointment, cancelDescription,locale);
       }
     }
+
+    return updatedAppointment;
   }
 
+
+  // =============== Queries ===============
+
+  @Override
+  public Optional<Appointment> getAppointmentById(long appointmentId) {
+    return appointmentDao.getAppointmentById(appointmentId);
+  }
+
+  @Override
+  public List<Appointment> getAppointmentsForPatient(long patientId) {
+    return appointmentDao.getAppointmentsForPatient(patientId);
+  }
+
+  @Override
+  public List<Appointment> getAppointmentsForDoctor(long doctorId) {
+    return appointmentDao.getAppointmentsForDoctor(doctorId);
+  }
+
+  
   @Override
   public List<ThirtyMinuteBlock> getAvailableHoursForDoctorOnDate(long doctorId, LocalDate date) {
     return getAvailableHoursForDoctorOnRange(doctorId, date, date).get(0);

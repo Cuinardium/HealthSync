@@ -40,7 +40,7 @@ public class AppointmentController {
       @ModelAttribute("modalForm") final ModalForm modalForm,
       @RequestParam(name = "from", required = false, defaultValue = "") final String from,
       @RequestParam(name = "to", required = false, defaultValue = "") final String to,
-      @RequestParam(name = "selected_tab", required = false, defaultValue = "0")
+      @RequestParam(name = "selected_tab", required = false, defaultValue = "1")
           final int selectedTab) {
 
     LocalDate fromDate;
@@ -98,7 +98,7 @@ public class AppointmentController {
     AppointmentStatus appointmentStatus = AppointmentStatus.values()[status];
 
     try {
-      appointmentService.updateAppointmentStatus(
+      appointmentService.updateAppointment(
           appointmentId,
           appointmentStatus,
           modalForm.getDescription(),

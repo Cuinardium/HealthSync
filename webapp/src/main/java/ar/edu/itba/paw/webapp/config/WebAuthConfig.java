@@ -10,6 +10,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.Resource;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -52,10 +53,11 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
         .invalidSessionUrl("/")
         .and()
         .authorizeRequests()
-        .antMatchers("/appointment", "/patient-edit")
+            .antMatchers(HttpMethod.POST,"/{id:\\d+}/detailed_doctor").hasRole("PATIENT")
+            .antMatchers("/doctorDashboard", "/","/{id:\\d+}/detailed_doctor")
+            .permitAll()
+        .antMatchers( "/patient-edit")
         .hasRole("PATIENT")
-        .antMatchers("/doctorDashboard", "/", "detailed_doctor")
-        .permitAll()
         .antMatchers("/login", "/patient-register", "/doctor-register")
         .anonymous()
         .antMatchers("/doctor-edit")
