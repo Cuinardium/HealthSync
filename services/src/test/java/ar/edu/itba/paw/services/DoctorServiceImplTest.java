@@ -52,6 +52,8 @@ public class DoctorServiceImplTest {
           attendingHoursForDay,
           attendingHoursForDay,
           attendingHoursForDay);
+  private static final Float RATING = 3F;
+  private static final Integer RATING_COUNT = 1;
   private static final User USER = new User(ID, EMAIL, PASSWORD, FIRST_NAME, LAST_NAME, PFP_ID);
   private static final Doctor DOCTOR =
       new Doctor(
@@ -64,7 +66,9 @@ public class DoctorServiceImplTest {
           HEALTH_INSURANCES,
           SPECIALTY,
           LOCATION,
-          ATTENDING_HOURS);
+          ATTENDING_HOURS,
+          RATING,
+          RATING_COUNT);
 
   private static final String EMAIL_NEW = "new_email";
   private static final String FIRST_NAME_NEW = "new_fist_name";
@@ -98,7 +102,9 @@ public class DoctorServiceImplTest {
           HEALTH_INSURANCES_NEW,
           SPECIALTY_NEW,
           LOCATION_NEW,
-          ATTENDING_HOURS_NEW);
+          ATTENDING_HOURS_NEW,
+          RATING,
+          RATING_COUNT);
 
   @Mock private DoctorDao doctorDao;
   @Mock private UserService userService;
