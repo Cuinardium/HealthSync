@@ -16,9 +16,6 @@ document.addEventListener('DOMContentLoaded', function () {
     document.querySelectorAll(".post-button").forEach(function (button) {
         button.addEventListener("click", function (event) {
             event.preventDefault();
-            // get the values from the get-form
-            var from = document.getElementById("get-form").elements.namedItem("from").value;
-            var to = document.getElementById("get-form").elements.namedItem("to").value;
 
             // get the selected tab's index
             var selectedTab = document.querySelector("#nav .nav-link.active");
@@ -28,7 +25,7 @@ document.addEventListener('DOMContentLoaded', function () {
             // modify the action attribute of the post-form to include query parameters
             var postForm = this.parentNode;
             var postAction = postForm.getAttribute("action");
-            postAction += "&from=" + encodeURIComponent(from) + "&to=" + encodeURIComponent(to) + "&selected_tab=" + encodeURIComponent(selectedIndex);
+            postAction += "&selected_tab=" + encodeURIComponent(selectedIndex);
             postForm.setAttribute("action", postAction);
 
             // submit the post-form

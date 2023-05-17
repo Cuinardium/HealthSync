@@ -34,25 +34,16 @@ public interface AppointmentDao {
 
   Optional<Appointment> getAppointment(long doctorId, LocalDate date, ThirtyMinuteBlock timeBlock);
 
-  List<Appointment> getAppointmentsForPatient(long patientId);
+  List<Appointment> getAppointments(long userId, boolean isPatient);
 
-  List<Appointment> getAppointmentsForDoctor(long doctorId);
-
-  Page<Appointment> getFilteredAppointmentsForPatient(
-      long patientId,
+  Page<Appointment> getFilteredAppointments(
+      long userId,
       AppointmentStatus status,
       LocalDate from,
       LocalDate to,
       Integer page,
-      Integer pageSize);
-
-  Page<Appointment> getFilteredAppointmentsForDoctor(
-      long doctorId,
-      AppointmentStatus status,
-      LocalDate from,
-      LocalDate to,
-      Integer page,
-      Integer pageSize);
+      Integer pageSize,
+      boolean isPatient);
 
   boolean hasPatientMetDoctor(long patientId, long doctorId);
 }

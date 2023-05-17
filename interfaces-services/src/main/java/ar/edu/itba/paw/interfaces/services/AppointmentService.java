@@ -28,25 +28,10 @@ public interface AppointmentService {
 
   Optional<Appointment> getAppointmentById(long appointmentId);
 
-  List<Appointment> getAppointmentsForPatient(long patientId);
+  List<Appointment> getAppointments(long userId, boolean isPatient);
 
-  List<Appointment> getAppointmentsForDoctor(long doctorId);
-
-  Page<Appointment> getFilteredAppointmentsForPatient(
-      long patientId,
-      AppointmentStatus status,
-      LocalDate from,
-      LocalDate to,
-      Integer page,
-      Integer pageSize);
-
-  Page<Appointment> getFilteredAppointmentsForDoctor(
-      long doctorId,
-      AppointmentStatus status,
-      LocalDate from,
-      LocalDate to,
-      Integer page,
-      Integer pageSize);
+  Page<Appointment> getFilteredAppointments(
+      long userId, AppointmentStatus status, Integer page, Integer pageSize, boolean isPatient);
 
   public List<ThirtyMinuteBlock> getAvailableHoursForDoctorOnDate(long doctorId, LocalDate date);
 

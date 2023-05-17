@@ -128,13 +128,8 @@ public class AppointmentServiceImpl implements AppointmentService {
   }
 
   @Override
-  public List<Appointment> getAppointmentsForPatient(long patientId) {
-    return appointmentDao.getAppointmentsForPatient(patientId);
-  }
-
-  @Override
-  public List<Appointment> getAppointmentsForDoctor(long doctorId) {
-    return appointmentDao.getAppointmentsForDoctor(doctorId);
+  public List<Appointment> getAppointments(long userId, boolean isPatient) {
+    return appointmentDao.getAppointments(userId, isPatient);
   }
 
   @Override
@@ -147,7 +142,7 @@ public class AppointmentServiceImpl implements AppointmentService {
       long doctorId, LocalDate from, LocalDate to) {
     // Get doctor appointments for date
     Page<Appointment> appointments =
-        getFilteredAppointmentsForDoctor(doctorId, null, from, to, -1, -1);
+        appointmentDao.getFilteredAppointments(doctorId, null, from, to, -1, -1, false);
 
     Doctor doctor = doctorService.getDoctorById(doctorId).orElseThrow(RuntimeException::new);
 
@@ -180,27 +175,10 @@ public class AppointmentServiceImpl implements AppointmentService {
   }
 
   @Override
-  public Page<Appointment> getFilteredAppointmentsForDoctor(
-      long doctorId,
-      AppointmentStatus status,
-      LocalDate from,
-      LocalDate to,
-      Integer page,
-      Integer pageSize) {
-    return appointmentDao.getFilteredAppointmentsForDoctor(
-        doctorId, status, from, to, page, pageSize);
-  }
-
-  @Override
-  public Page<Appointment> getFilteredAppointmentsForPatient(
-      long patientId,
-      AppointmentStatus status,
-      LocalDate from,
-      LocalDate to,
-      Integer page,
-      Integer pageSize) {
-    return appointmentDao.getFilteredAppointmentsForPatient(
-        patientId, status, from, to, page, pageSize);
+  public Page<Appointment> getFilteredAppointments(
+      long userId, AppointmentStatus status, Integer page, Integer pageSize, boolean isPatient) {
+    return appointmentDao.getFilteredAppointments(
+        userId, status, null, null, page, pageSize, isPatient);
   }
 
   @Override

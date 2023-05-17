@@ -101,7 +101,7 @@ public class AppointmentDaoImpl implements AppointmentDao {
   public Optional<Appointment> getAppointment(
       long doctorId, LocalDate date, ThirtyMinuteBlock timeBlock) {
     String query =
-        appointmentsQuery(doctorId, true, null, null, null, -1, -1)
+        appointmentsQuery(doctorId, false, null, null, null, -1, -1)
             .where("appointment_date = '" + Date.valueOf(date) + "'")
             .where("appointment_time = " + timeBlockToSmallInt(timeBlock))
             .build();
@@ -110,61 +110,31 @@ public class AppointmentDaoImpl implements AppointmentDao {
   }
 
   @Override
-  public List<Appointment> getAppointmentsForPatient(long patientId) {
-    String query = appointmentsQuery(patientId, false, null, null, null, -1, -1).build();
+  public List<Appointment> getAppointments(long userId, boolean isPatient) {
+    String query = appointmentsQuery(userId, isPatient, null, null, null, -1, -1).build();
     return jdbcTemplate.query(query, RowMappers.APPOINTMENT_EXTRACTOR);
   }
 
   @Override
-  public List<Appointment> getAppointmentsForDoctor(long doctorId) {
-    String query = appointmentsQuery(doctorId, true, null, null, null, -1, -1).build();
-    return jdbcTemplate.query(query, RowMappers.APPOINTMENT_EXTRACTOR);
-  }
-
-  @Override
-  public Page<Appointment> getFilteredAppointmentsForDoctor(
-      long doctorId,
+  public Page<Appointment> getFilteredAppointments(
+      long userId,
       AppointmentStatus status,
       LocalDate from,
       LocalDate to,
       Integer page,
-      Integer pageSize) {
+      Integer pageSize,
+      boolean isPatient) {
 
     // Get the appointments for the doctor
     String appointmentsQuery =
-        appointmentsQuery(doctorId, true, status, from, to, page, pageSize).build();
+        appointmentsQuery(userId, isPatient, status, from, to, page, pageSize).build();
 
     List<Appointment> appointments =
         jdbcTemplate.query(appointmentsQuery, RowMappers.APPOINTMENT_EXTRACTOR);
 
     // Get the total number of appointments for the doctor
     String appointmentsCountQuery =
-        appointmentsCountQuery(doctorId, true, status, from, to).build();
-
-    int totalAppointments = jdbcTemplate.queryForObject(appointmentsCountQuery, Integer.class);
-
-    return new Page<>(appointments, page, totalAppointments, pageSize);
-  }
-
-  @Override
-  public Page<Appointment> getFilteredAppointmentsForPatient(
-      long patientId,
-      AppointmentStatus status,
-      LocalDate from,
-      LocalDate to,
-      Integer page,
-      Integer pageSize) {
-
-    // Get the appointments for the patient
-    String appointmentsQuery =
-        appointmentsQuery(patientId, false, status, from, to, page, pageSize).build();
-
-    List<Appointment> appointments =
-        jdbcTemplate.query(appointmentsQuery, RowMappers.APPOINTMENT_EXTRACTOR);
-
-    // Get the total number of appointments for the patient
-    String appointmentsCountQuery =
-        appointmentsCountQuery(patientId, false, status, from, to).build();
+        appointmentsCountQuery(userId, isPatient, status, from, to).build();
 
     int totalAppointments = jdbcTemplate.queryForObject(appointmentsCountQuery, Integer.class);
 
@@ -189,7 +159,7 @@ public class AppointmentDaoImpl implements AppointmentDao {
 
   private QueryBuilder appointmentsQuery(
       long userId,
-      Boolean isDoctor,
+      Boolean isPatient,
       AppointmentStatus status,
       LocalDate from,
       LocalDate to,
@@ -225,7 +195,8 @@ public class AppointmentDaoImpl implements AppointmentDao {
                 "patient_data.password as patient_password",
                 "patient_data.first_name as patient_first_name",
                 "patient_data.last_name as patient_last_name",
-                "health_insurance_for_patient.health_insurance_code as patient_health_insurance_code",
+                "health_insurance_for_patient.health_insurance_code as"
+                    + " patient_health_insurance_code",
                 "patient_data.profile_picture_id as patient_profile_picture_id",
                 "doctor_data.email",
                 "doctor_data.password",
@@ -266,8 +237,8 @@ public class AppointmentDaoImpl implements AppointmentDao {
                 "health_insurance_for_patient",
                 "appointment.patient_id = health_insurance_for_patient.patient_id");
 
-    if (isDoctor != null) {
-      String userField = isDoctor ? "appointment.doctor_id" : "appointment.patient_id";
+    if (isPatient != null) {
+      String userField = isPatient ? "appointment.patient_id" : "appointment.doctor_id";
       appointmentsQuery.where(userField + "=" + userId);
     }
 

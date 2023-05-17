@@ -43,23 +43,6 @@
 
 
     <div class="contentContainer">
-        <form id="get-form" action="${myAppointmentUrl}" method="get" class="dateFilter">
-            <div class="datePickerContainer">
-                <div class="fromDatePicker">
-                    <label for="from">${fromTitle}</label>
-                    <input id="from" type="date" name="from" class="form-control" value="${from}"/>
-                </div>
-                <div class="toDatePicker">
-                    <label for="to">${toTitle}</label>
-                    <input id="to" type="date" name="to" class="form-control" value="${to}">
-                </div>
-            </div>
-
-            <input type="hidden" id="selected_tab" name="selected_tab" value="${selectedTab}"/>
-
-            <input id="get-button" type="submit" value="${filter}" class="btn btn-primary"/>
-        </form>
-
         <ul id="nav" class="nav nav-tabs">
             <c:forEach items="${tabs}" var="tab">
                 <li class="nav-item">

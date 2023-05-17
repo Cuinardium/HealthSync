@@ -227,7 +227,7 @@ public class AppointmentDaoImplTest {
   public void testGetAppointmentsForPatient() {
     // 1. Precondiciones
     // 2. Ejercitar la class under test
-    List<Appointment> appointments = appointmentDao.getAppointmentsForPatient(PATIENT_1.getId());
+    List<Appointment> appointments = appointmentDao.getAppointments(PATIENT_1.getId(), true);
     // 3. Meaninful assertions
     Assert.assertEquals(2, appointments.size());
     Assert.assertEquals(APPOINTMENT_1, appointments.get(0));
@@ -238,7 +238,7 @@ public class AppointmentDaoImplTest {
   public void testGetAppointmentsForDoctor() {
     // 1. Precondiciones
     // 2. Ejercitar la class under test
-    List<Appointment> appointments = appointmentDao.getAppointmentsForDoctor(DOCTOR_3.getId());
+    List<Appointment> appointments = appointmentDao.getAppointments(DOCTOR_3.getId(), false);
     // 3. Meaninful assertions
     Assert.assertEquals(2, appointments.size());
     Assert.assertEquals(APPOINTMENT_1, appointments.get(0));
@@ -250,8 +250,8 @@ public class AppointmentDaoImplTest {
     // 1. Precondiciones
     // 2. Ejercitar la class under test
     Page<Appointment> appointments =
-        appointmentDao.getFilteredAppointmentsForPatient(
-            PATIENT_1.getId(), null, null, null, null, null);
+        appointmentDao.getFilteredAppointments(
+            PATIENT_1.getId(), null, null, null, null, null, true);
     // 3. Meaninful assertions
     Assert.assertNull(appointments.getTotalPages());
     Assert.assertNull(appointments.getCurrentPage());
@@ -264,8 +264,8 @@ public class AppointmentDaoImplTest {
     // 1. Precondiciones
     // 2. Ejercitar la class under test
     Page<Appointment> appointments =
-        appointmentDao.getFilteredAppointmentsForDoctor(
-            DOCTOR_3.getId(), null, null, null, null, null);
+        appointmentDao.getFilteredAppointments(
+            DOCTOR_3.getId(), null, null, null, null, null, false);
     // 3. Meaninful assertions
     Assert.assertNull(appointments.getTotalPages());
     Assert.assertNull(appointments.getCurrentPage());
