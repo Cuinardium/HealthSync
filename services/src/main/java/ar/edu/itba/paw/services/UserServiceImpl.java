@@ -66,6 +66,7 @@ public class UserServiceImpl implements UserService {
     }
   }
 
+  @Transactional
   @Override
   public boolean updatePassword(long userId, String oldPassword, String password)
       throws IllegalStateException {
