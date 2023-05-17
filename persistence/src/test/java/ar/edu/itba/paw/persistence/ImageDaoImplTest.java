@@ -2,9 +2,9 @@ package ar.edu.itba.paw.persistence;
 
 import static org.junit.Assert.assertThrows;
 
+import ar.edu.itba.paw.interfaces.persistence.exceptions.ImageNotFoundException;
 import ar.edu.itba.paw.models.Image;
 import ar.edu.itba.paw.persistence.config.TestConfig;
-import ar.edu.itba.paw.persistence.exceptions.ImageNotFoundException;
 import java.util.Optional;
 import javax.sql.DataSource;
 import org.junit.Assert;

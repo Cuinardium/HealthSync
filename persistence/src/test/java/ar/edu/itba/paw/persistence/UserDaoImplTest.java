@@ -2,10 +2,10 @@ package ar.edu.itba.paw.persistence;
 
 import static org.junit.Assert.assertThrows;
 
+import ar.edu.itba.paw.interfaces.persistence.exceptions.EmailAlreadyExistsException;
+import ar.edu.itba.paw.interfaces.persistence.exceptions.UserNotFoundException;
 import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.persistence.config.TestConfig;
-import ar.edu.itba.paw.persistence.exceptions.EmailAlreadyExistsException;
-import ar.edu.itba.paw.persistence.exceptions.UserNotFoundException;
 import java.util.Optional;
 import javax.sql.DataSource;
 import org.junit.Assert;

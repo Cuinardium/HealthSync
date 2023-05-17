@@ -1,4 +1,4 @@
-package ar.edu.itba.paw.persistence.exceptions;
+package ar.edu.itba.paw.interfaces.persistence.exceptions;
 
 public class ImageNotFoundException extends RuntimeException {
   private static final String MESSAGE = "Image not found";

@@ -1,5 +1,7 @@
 package ar.edu.itba.paw.interfaces.persistence;
 
+import ar.edu.itba.paw.interfaces.persistence.exceptions.DoctorAlreadyExistsException;
+import ar.edu.itba.paw.interfaces.persistence.exceptions.DoctorNotFoundException;
 import ar.edu.itba.paw.models.*;
 import java.time.LocalDate;
 import java.util.List;
@@ -16,7 +18,8 @@ public interface DoctorDao {
       City city,
       String address,
       List<HealthInsurance> healthInsurances,
-      AttendingHours attendingHours);
+      AttendingHours attendingHours)
+      throws DoctorAlreadyExistsException, IllegalStateException;
 
   // =============== Updates ===============
 
@@ -26,7 +29,8 @@ public interface DoctorDao {
       City city,
       String address,
       List<HealthInsurance> healthInsurances,
-      AttendingHours attendingHours);
+      AttendingHours attendingHours)
+      throws DoctorNotFoundException;
 
   // =============== Queries ===============
 

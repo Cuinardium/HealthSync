@@ -2,6 +2,7 @@ package ar.edu.itba.paw.persistence;
 
 import static org.junit.Assert.assertThrows;
 
+import ar.edu.itba.paw.interfaces.persistence.exceptions.DoctorAlreadyExistsException;
 import ar.edu.itba.paw.models.AttendingHours;
 import ar.edu.itba.paw.models.City;
 import ar.edu.itba.paw.models.Doctor;
@@ -10,7 +11,6 @@ import ar.edu.itba.paw.models.Location;
 import ar.edu.itba.paw.models.Specialty;
 import ar.edu.itba.paw.models.ThirtyMinuteBlock;
 import ar.edu.itba.paw.persistence.config.TestConfig;
-import ar.edu.itba.paw.persistence.exceptions.DoctorAlreadyExistsException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;

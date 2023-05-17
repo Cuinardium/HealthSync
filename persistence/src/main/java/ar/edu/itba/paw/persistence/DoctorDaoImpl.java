@@ -1,6 +1,8 @@
 package ar.edu.itba.paw.persistence;
 
 import ar.edu.itba.paw.interfaces.persistence.DoctorDao;
+import ar.edu.itba.paw.interfaces.persistence.exceptions.DoctorAlreadyExistsException;
+import ar.edu.itba.paw.interfaces.persistence.exceptions.DoctorNotFoundException;
 import ar.edu.itba.paw.models.AttendingHours;
 import ar.edu.itba.paw.models.City;
 import ar.edu.itba.paw.models.Doctor;
@@ -8,8 +10,6 @@ import ar.edu.itba.paw.models.HealthInsurance;
 import ar.edu.itba.paw.models.Page;
 import ar.edu.itba.paw.models.Specialty;
 import ar.edu.itba.paw.models.ThirtyMinuteBlock;
-import ar.edu.itba.paw.persistence.exceptions.DoctorAlreadyExistsException;
-import ar.edu.itba.paw.persistence.exceptions.DoctorNotFoundException;
 import ar.edu.itba.paw.persistence.utils.DeleteBuilder;
 import ar.edu.itba.paw.persistence.utils.QueryBuilder;
 import ar.edu.itba.paw.persistence.utils.UpdateBuilder;
@@ -70,7 +70,8 @@ public class DoctorDaoImpl implements DoctorDao {
       City city,
       String address,
       List<HealthInsurance> healthInsurances,
-      AttendingHours attendingHours) {
+      AttendingHours attendingHours)
+      throws DoctorAlreadyExistsException, IllegalStateException {
 
     long attendingHoursId = createAttendingHours(attendingHours);
 
@@ -105,7 +106,8 @@ public class DoctorDaoImpl implements DoctorDao {
       City city,
       String address,
       List<HealthInsurance> healthInsurances,
-      AttendingHours attendingHours) {
+      AttendingHours attendingHours)
+      throws DoctorNotFoundException {
 
     String specialtyUpdate =
         new UpdateBuilder()
@@ -152,7 +154,6 @@ public class DoctorDaoImpl implements DoctorDao {
     int cityCode = city != null ? city.ordinal() : -1;
     int healthInsuranceCode = healthInsurance != null ? healthInsurance.ordinal() : -1;
 
-
     // Start building the query
     QueryBuilder subQuery = doctorQuery().distinctOn("doctor.doctor_id");
     QueryBuilder doctorCountQuery = doctorCountQuery();
@@ -198,11 +199,15 @@ public class DoctorDaoImpl implements DoctorDao {
 
       Long fromRange = null, toRange = null;
       if (fromTime != null) {
-          fromRange = ThirtyMinuteBlock.toBits(ThirtyMinuteBlock.fromRange(fromTime, ThirtyMinuteBlock.BLOCK_23_30));
+        fromRange =
+            ThirtyMinuteBlock.toBits(
+                ThirtyMinuteBlock.fromRange(fromTime, ThirtyMinuteBlock.BLOCK_23_30));
       }
 
       if (toTime != null) {
-          toRange = ThirtyMinuteBlock.toBits(ThirtyMinuteBlock.fromRange(ThirtyMinuteBlock.BLOCK_00_00, toTime));
+        toRange =
+            ThirtyMinuteBlock.toBits(
+                ThirtyMinuteBlock.fromRange(ThirtyMinuteBlock.BLOCK_00_00, toTime));
       }
 
       String appointmentSumQueryString = appointmentSumQuery.build();
@@ -211,15 +216,21 @@ public class DoctorDaoImpl implements DoctorDao {
       StringBuilder whereClauseBuilder = new StringBuilder();
       whereClauseBuilder.append(dayColumn);
 
-      if(fromRange != null) {
-          whereClauseBuilder.append(" & ").append(fromRange);
+      if (fromRange != null) {
+        whereClauseBuilder.append(" & ").append(fromRange);
       }
 
-      if(toRange != null) {
-          whereClauseBuilder.append(" & ").append(toRange);
+      if (toRange != null) {
+        whereClauseBuilder.append(" & ").append(toRange);
       }
 
-      whereClauseBuilder.append(" > ").append(dayColumn).append(" & ").append(" (select coalesce((").append(appointmentSumQueryString).append("), 0))");
+      whereClauseBuilder
+          .append(" > ")
+          .append(dayColumn)
+          .append(" & ")
+          .append(" (select coalesce((")
+          .append(appointmentSumQueryString)
+          .append("), 0))");
 
       String whereClauseString = whereClauseBuilder.toString();
 
@@ -580,8 +591,8 @@ public class DoctorDaoImpl implements DoctorDao {
             "doctor_location",
             "location_for_doctor.doctor_location_id = doctor_location.doctor_location_id")
         .innerJoin(
-                "health_insurance_accepted_by_doctor",
-                "doctor.doctor_id = health_insurance_accepted_by_doctor.doctor_id")
+            "health_insurance_accepted_by_doctor",
+            "doctor.doctor_id = health_insurance_accepted_by_doctor.doctor_id")
         .innerJoin(
             "doctor_attending_hours",
             "doctor.attending_hours_id = doctor_attending_hours.attending_hours_id");
