@@ -47,23 +47,6 @@ public class AuthController {
     this.authenticationManager = authenticationManager;
   }
 
-  // @RequestMapping(value = "/login", method = RequestMethod.POST)
-  // public ModelAndView login(
-  //     @Valid @ModelAttribute("loginForm") final LoginForm loginForm, final BindingResult errors)
-  // {
-  //
-  //   // TODO: IF LOGIN UNSUCCESFULL
-  //   // show errors in view
-  //   // return login form
-  //   if (errors.hasErrors() /* || login unsuccesfull*/) {
-  //     return loginForm(loginForm);
-  //   }
-  //
-  //   // TODO: CHECK IF LOGIN SUCCESFULL
-  //   final ModelAndView mav = new ModelAndView("home/doctorDashboard");
-  //   return mav;
-  // }
-
   @RequestMapping(value = "/login")
   public ModelAndView loginForm(
       @ModelAttribute("loginForm") final LoginForm loginForm,
@@ -78,8 +61,6 @@ public class AuthController {
 
   @RequestMapping(value = "/logout", method = RequestMethod.POST)
   public ModelAndView logout() {
-    // TODO: Log out logic here
-    //
     return new ModelAndView("home/home");
   }
 

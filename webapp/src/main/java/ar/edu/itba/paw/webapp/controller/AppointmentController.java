@@ -70,7 +70,6 @@ public class AppointmentController {
       mav.addObject("modalForm", modalForm);
       return mav;
     }
-    // TODO: what do i do here????
     return null;
   }
 
