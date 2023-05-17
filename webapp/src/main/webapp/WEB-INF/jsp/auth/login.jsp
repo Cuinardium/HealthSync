@@ -10,6 +10,7 @@
 <c:url value="/css/forms.css" var="formsCss"/>
 
 <c:url value="/login" var="loginUrl"/>
+<c:url value="/patient-register" var="patientRegister"/>
 
 <spring:message code="login.title" var="title"/>
 <spring:message code="form.email" var="email"/>
@@ -69,7 +70,7 @@
         <button type="submit" class="btn btn-primary submitButton">${submit}</button>
 
         <div class="formRow">
-            <a href="/patient-register">${register}</a>
+            <a href="${patientRegister}">${register}</a>
         </div>
     </form:form>
 </div>
