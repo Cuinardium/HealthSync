@@ -17,20 +17,44 @@ public class PatientServiceImplTest {
   @InjectMocks private PatientServiceImpl ps;
 
   @Test
-  public void testCreatePatient() {}
+  public void testCreatePatient() {
+    // 1. Precondiciones
+    // 2. Ejercitar la class under test
+    // 3. Meaninful assertions
+  }
 
   @Test
-  public void testCreatePatientAlreadyExists() {}
+  public void testCreatePatientAlreadyExists() {
+    // 1. Precondiciones
+    // 2. Ejercitar la class under test
+    // 3. Meaninful assertions
+  }
 
   @Test
-  public void testUpdatePatient() {}
+  public void testUpdatePatient() {
+    // 1. Precondiciones
+    // 2. Ejercitar la class under test
+    // 3. Meaninful assertions
+  }
 
   @Test
-  public void testUpdatePatientDoesNotExist() {}
+  public void testUpdatePatientDoesNotExist() {
+    // 1. Precondiciones
+    // 2. Ejercitar la class under test
+    // 3. Meaninful assertions
+  }
 
   @Test
-  public void testGetPatientById() {}
+  public void testGetPatientById() {
+    // 1. Precondiciones
+    // 2. Ejercitar la class under test
+    // 3. Meaninful assertions
+  }
 
   @Test
-  public void testGetPatientByIdDoesNotExist() {}
+  public void testGetPatientByIdDoesNotExist() {
+    // 1. Precondiciones
+    // 2. Ejercitar la class under test
+    // 3. Meaninful assertions
+  }
 }

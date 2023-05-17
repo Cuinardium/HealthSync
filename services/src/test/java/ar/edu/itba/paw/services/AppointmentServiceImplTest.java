@@ -17,50 +17,114 @@ public class AppointmentServiceImplTest {
   @InjectMocks private AppointmentServiceImpl as;
 
   @Test
-  public void testCreateAppointment() {}
+  public void testCreateAppointment() {
+    // 1. Precondiciones
+    // 2. Ejercitar la class under test
+    // 3. Meaninful assertions
+  }
 
   @Test
-  public void testCreateAppointmentAlreadyExists() {}
+  public void testCreateAppointmentAlreadyExists() {
+    // 1. Precondiciones
+    // 2. Ejercitar la class under test
+    // 3. Meaninful assertions
+  }
 
   @Test
-  public void testUpdateAppointment() {}
+  public void testUpdateAppointment() {
+    // 1. Precondiciones
+    // 2. Ejercitar la class under test
+    // 3. Meaninful assertions
+  }
 
   @Test
-  public void testUpdateAppointmentDoesNotExist() {}
+  public void testUpdateAppointmentDoesNotExist() {
+    // 1. Precondiciones
+    // 2. Ejercitar la class under test
+    // 3. Meaninful assertions
+  }
 
   @Test
-  public void testGetAppointmentById() {}
+  public void testGetAppointmentById() {
+    // 1. Precondiciones
+    // 2. Ejercitar la class under test
+    // 3. Meaninful assertions
+  }
 
   @Test
-  public void testGetAppointmentByIdDoesNotExist() {}
+  public void testGetAppointmentByIdDoesNotExist() {
+    // 1. Precondiciones
+    // 2. Ejercitar la class under test
+    // 3. Meaninful assertions
+  }
 
   @Test
-  public void testGetAppointmentsForPatient() {}
+  public void testGetAppointmentsForPatient() {
+    // 1. Precondiciones
+    // 2. Ejercitar la class under test
+    // 3. Meaninful assertions
+  }
 
   @Test
-  public void testGetAppointmentsForPatientDoesNotExist() {}
+  public void testGetAppointmentsForPatientDoesNotExist() {
+    // 1. Precondiciones
+    // 2. Ejercitar la class under test
+    // 3. Meaninful assertions
+  }
 
   @Test
-  public void testGetAppointmentsForDoctor() {}
+  public void testGetAppointmentsForDoctor() {
+    // 1. Precondiciones
+    // 2. Ejercitar la class under test
+    // 3. Meaninful assertions
+  }
 
   @Test
-  public void testGetAppointmentsForDoctorDoesNotExist() {}
+  public void testGetAppointmentsForDoctorDoesNotExist() {
+    // 1. Precondiciones
+    // 2. Ejercitar la class under test
+    // 3. Meaninful assertions
+  }
 
   @Test
-  public void testGetFilteredAppointmentsForPatient() {}
+  public void testGetFilteredAppointmentsForPatient() {
+    // 1. Precondiciones
+    // 2. Ejercitar la class under test
+    // 3. Meaninful assertions
+  }
 
   @Test
-  public void testGetFilteredAppointmentsForPatientDoesNotExist() {}
+  public void testGetFilteredAppointmentsForPatientDoesNotExist() {
+    // 1. Precondiciones
+    // 2. Ejercitar la class under test
+    // 3. Meaninful assertions
+  }
 
   @Test
-  public void testGetFilteredAppointmentsForDoctor() {}
+  public void testGetFilteredAppointmentsForDoctor() {
+    // 1. Precondiciones
+    // 2. Ejercitar la class under test
+    // 3. Meaninful assertions
+  }
 
   @Test
-  public void testGetFilteredAppointmentsForDoctorDoesNotExist() {}
+  public void testGetFilteredAppointmentsForDoctorDoesNotExist() {
+    // 1. Precondiciones
+    // 2. Ejercitar la class under test
+    // 3. Meaninful assertions
+  }
 
   @Test
-  public void testGetAvailableHoursForDoctorOnDate() {}
+  public void testGetAvailableHoursForDoctorOnDate() {
+    // 1. Precondiciones
+    // 2. Ejercitar la class under test
+    // 3. Meaninful assertions
+  }
 
   @Test
-  public void testGetAvailableHoursForDoctorOnRange() {}
+  public void testGetAvailableHoursForDoctorOnRange() {
+    // 1. Precondiciones
+    // 2. Ejercitar la class under test
+    // 3. Meaninful assertions
+  }
 }

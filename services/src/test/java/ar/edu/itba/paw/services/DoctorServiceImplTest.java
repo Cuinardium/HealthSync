@@ -17,35 +17,79 @@ public class DoctorServiceImplTest {
   @InjectMocks private DoctorServiceImpl ds;
 
   @Test
-  public void testCreateDoctor() {}
+  public void testCreateDoctor() {
+    // 1. Precondiciones
+    // 2. Ejercitar la class under test
+    // 3. Meaninful assertions
+  }
 
   @Test
-  public void testCreateDoctorAlreadyExists() {}
+  public void testCreateDoctorAlreadyExists() {
+    // 1. Precondiciones
+    // 2. Ejercitar la class under test
+    // 3. Meaninful assertions
+  }
 
   @Test
-  public void testUpdateDoctor() {}
+  public void testUpdateDoctor() {
+    // 1. Precondiciones
+    // 2. Ejercitar la class under test
+    // 3. Meaninful assertions
+  }
 
   @Test
-  public void testUpdateDoctorDoesNotExist() {}
+  public void testUpdateDoctorDoesNotExist() {
+    // 1. Precondiciones
+    // 2. Ejercitar la class under test
+    // 3. Meaninful assertions
+  }
 
   @Test
-  public void testGetDoctorById() {}
+  public void testGetDoctorById() {
+    // 1. Precondiciones
+    // 2. Ejercitar la class under test
+    // 3. Meaninful assertions
+  }
 
   @Test
-  public void testGetDoctorByIdDoesNotExist() {}
+  public void testGetDoctorByIdDoesNotExist() {
+    // 1. Precondiciones
+    // 2. Ejercitar la class under test
+    // 3. Meaninful assertions
+  }
 
   @Test
-  public void testGetFilteredDoctors() {}
+  public void testGetFilteredDoctors() {
+    // 1. Precondiciones
+    // 2. Ejercitar la class under test
+    // 3. Meaninful assertions
+  }
 
   @Test
-  public void testGetDoctors() {}
+  public void testGetDoctors() {
+    // 1. Precondiciones
+    // 2. Ejercitar la class under test
+    // 3. Meaninful assertions
+  }
 
   @Test
-  public void testGetUsedSpecialties() {}
+  public void testGetUsedSpecialties() {
+    // 1. Precondiciones
+    // 2. Ejercitar la class under test
+    // 3. Meaninful assertions
+  }
 
   @Test
-  public void testGetUsedHealthInsurances() {}
+  public void testGetUsedHealthInsurances() {
+    // 1. Precondiciones
+    // 2. Ejercitar la class under test
+    // 3. Meaninful assertions
+  }
 
   @Test
-  public void testGetUsedCities() {}
+  public void testGetUsedCities() {
+    // 1. Precondiciones
+    // 2. Ejercitar la class under test
+    // 3. Meaninful assertions
+  }
 }

@@ -88,26 +88,58 @@ public class UserServiceImplTest {
   }
 
   @Test
-  public void testGetUserByIdUserDoesNotExist() {}
+  public void testGetUserByIdUserDoesNotExist() {
+    // 1. Precondiciones
+    // 2. Ejercitar la class under test
+    // 3. Meaninful assertions
+  }
 
   @Test
-  public void testGetUserByEmail() {}
+  public void testGetUserByEmail() {
+    // 1. Precondiciones
+    // 2. Ejercitar la class under test
+    // 3. Meaninful assertions
+  }
 
   @Test
-  public void testGetUserByEmailUserDoesNotExist() {}
+  public void testGetUserByEmailUserDoesNotExist() {
+    // 1. Precondiciones
+    // 2. Ejercitar la class under test
+    // 3. Meaninful assertions
+  }
 
   @Test
-  public void testUpdateUser() {}
+  public void testUpdateUser() {
+    // 1. Precondiciones
+    // 2. Ejercitar la class under test
+    // 3. Meaninful assertions
+  }
 
   @Test
-  public void testUpdateUserDoesNotExist() {}
+  public void testUpdateUserDoesNotExist() {
+    // 1. Precondiciones
+    // 2. Ejercitar la class under test
+    // 3. Meaninful assertions
+  }
 
   @Test
-  public void testUpdatePassword() {}
+  public void testUpdatePassword() {
+    // 1. Precondiciones
+    // 2. Ejercitar la class under test
+    // 3. Meaninful assertions
+  }
 
   @Test
-  public void testUpdatePasswordOldPasswordDoesNotMatch() {}
+  public void testUpdatePasswordOldPasswordDoesNotMatch() {
+    // 1. Precondiciones
+    // 2. Ejercitar la class under test
+    // 3. Meaninful assertions
+  }
 
   @Test
-  public void testUpdatePasswordUserDoesNotExist() {}
+  public void testUpdatePasswordUserDoesNotExist() {
+    // 1. Precondiciones
+    // 2. Ejercitar la class under test
+    // 3. Meaninful assertions
+  }
 }

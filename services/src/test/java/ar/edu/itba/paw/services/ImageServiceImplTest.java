@@ -17,17 +17,37 @@ public class ImageServiceImplTest {
   @InjectMocks private ImageServiceImpl is;
 
   @Test
-  public void testUploadImage() {}
+  public void testUploadImage() {
+    // 1. Precondiciones
+    // 2. Ejercitar la class under test
+    // 3. Meaninful assertions
+  }
 
   @Test
-  public void testUpdateImage() {}
+  public void testUpdateImage() {
+    // 1. Precondiciones
+    // 2. Ejercitar la class under test
+    // 3. Meaninful assertions
+  }
 
   @Test
-  public void testUpdateImageDoesNotExist() {}
+  public void testUpdateImageDoesNotExist() {
+    // 1. Precondiciones
+    // 2. Ejercitar la class under test
+    // 3. Meaninful assertions
+  }
 
   @Test
-  public void testGetImage() {}
+  public void testGetImage() {
+    // 1. Precondiciones
+    // 2. Ejercitar la class under test
+    // 3. Meaninful assertions
+  }
 
   @Test
-  public void testGetImageNotFound() {}
+  public void testGetImageNotFound() {
+    // 1. Precondiciones
+    // 2. Ejercitar la class under test
+    // 3. Meaninful assertions
+  }
 }
