@@ -125,7 +125,7 @@ function showAppointments(appointments, month, day) {
     // If there are no appointments for this date, notify the user
     if (appointments.length === 0) {
         var appointmentCard = $("<div class='card noAppointments'></div>");
-        var appointmentTime = $("<div class='appointment-time'>There are no appointments available for " + month + " " + day + "</div>");
+        var appointmentTime = $("<div class='appointment-time'>" + document.getElementById("noAppointmentsAvailableMsg").value + "</div>");
         $(appointmentCard).append(appointmentTime);
         $(".appointments-container").append(appointmentCard);
     } else {
