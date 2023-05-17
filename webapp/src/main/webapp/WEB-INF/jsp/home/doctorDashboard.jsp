@@ -111,34 +111,39 @@
                 <form:input id="date" type="date" cssClass="form-control" placeholder="${date}" path="date"
                             onchange="this.form.submit()"/>
 
-                <c:if test="${dateFilter != null}">
-                    <h4>${fromTitle}</h4>
-                    <form:select id="from-select" cssClass="form-select" path="from" onchange="this.form.submit()">
-                        <form:option value="-1" disabled="true" hidden="true"/>
-                        <c:forEach items="${possibleAttendingHours}" var="attHour">
-                            <c:if test="${toBlock.ordinal() > attHour.ordinal()}">
-                                <form:option value="${attHour.ordinal()}">
-                                    ${attHour.getBlockBeginning()}
-                                </form:option>
-                            </c:if>
-                        </c:forEach>
-                    </form:select>
+                <c:if test="${!empty dateFilter}">
+                <div class="fromToContainer">
+                    <div class="hourPicker">
+                        <h4>${fromTitle}</h4>
+                        <form:select id="from-select" cssClass="form-select" path="from" onchange="this.form.submit()">
+                            <form:option value="-1" disabled="true" hidden="true"/>
+                            <c:forEach items="${possibleAttendingHours}" var="attHour">
+                                <c:if test="${toBlock.ordinal() > attHour.ordinal()}">
+                                    <form:option value="${attHour.ordinal()}">
+                                        ${attHour.getBlockBeginning()}
+                                    </form:option>
+                                </c:if>
+                            </c:forEach>
+                        </form:select>
+                    </div>
+
+                    <div class="hourPicker">
+                        <h4>${toTitle}</h4>
+                        <form:select id="to-select" cssClass="form-select" path="to" onchange="this.form.submit()">
+                            <form:option value="-1" disabled="true" hidden="true"/>
+                            <c:forEach items="${possibleAttendingHours}" var="attHour">
+                                <c:if test="${fromBlock.ordinal() < attHour.ordinal()}">
+                                    <form:option value="${attHour.ordinal()}">
+                                        ${attHour.getBlockBeginning()}
+                                    </form:option>
+                                </c:if>
+                            </c:forEach>
+                        </form:select>
+                    </div>
+                </div>
                 </c:if>
 
 
-                <c:if test="${dateFilter != null}">
-                    <h4>${toTitle}</h4>
-                    <form:select id="to-select" cssClass="form-select" path="to" onchange="this.form.submit()">
-                        <form:option value="-1" disabled="true" hidden="true"/>
-                        <c:forEach items="${possibleAttendingHours}" var="attHour">
-                            <c:if test="${fromBlock.ordinal() < attHour.ordinal()}">
-                                <form:option value="${attHour.ordinal()}">
-                                    ${attHour.getBlockBeginning()}
-                                </form:option>
-                            </c:if>
-                        </c:forEach>
-                    </form:select>
-                </c:if>
             </div>
         </div>
 

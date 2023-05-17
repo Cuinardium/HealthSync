@@ -1,25 +1,25 @@
-.dashboardContainer{
+.dashboardContainer {
     display: flex;
     flex-direction: row;
     flex-wrap: nowrap;
     height: 92%;
 }
 
-.h2, h2{
+.h2, h2 {
     margin-top: 0.3rem;
 }
 
-.searchBarContainer.form-control{
+.searchBarContainer.form-control {
     margin: 4px 4px 4px 0;
 }
 
-.titleFilterContainer{
+.titleFilterContainer {
     display: flex;
     justify-content: space-between;
     align-items: center;
 }
 
-.sidebarContainer{
+.sidebarContainer {
     display: flex;
     flex-direction: column;
     background: lightgray;
@@ -27,7 +27,7 @@
     padding: 1rem;
 }
 
-.discoveryContainer{
+.discoveryContainer {
     flex: 1;
     overflow-y: scroll;
 }
@@ -52,46 +52,46 @@
     transform: rotate(0);
 }
 
-.chipsContainer{
+.chipsContainer {
     display: flex;
     align-items: center;
 }
 
-a{
+a {
     text-decoration: none;
 }
 
-a.stretched-link:hover{
+a.stretched-link:hover {
     color: white;
 }
 
-.chip:hover{
+.chip:hover {
     background: #223E6A;
 }
 
-.card{
+.card {
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
     margin: 1% 0;
 }
 
-.imageContainer{
+.imageContainer {
     width: 15rem;
     height: 15rem;
     object-fit: cover;
 }
 
-.infoContainer{
+.infoContainer {
     flex: 1;
 }
 
-.buttonsContainer{
+.buttonsContainer {
     display: flex;
     align-items: center;
 }
 
-.noDoctorsMsg{
+.noDoctorsMsg {
     display: flex;
     justify-content: center;
 }
@@ -115,10 +115,22 @@ a.stretched-link:hover{
     color: gold;
 }
 
-.hidden{
+.hidden {
     display: none;
 }
 
-h4, .h4{
+h4, .h4 {
     margin-top: 1rem;
+}
+
+.fromToContainer {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.hourPicker {
+    display: flex;
+    flex-direction: column;
+    width: 45%;
 }
