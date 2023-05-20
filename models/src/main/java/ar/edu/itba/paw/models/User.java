@@ -1,16 +1,31 @@
 package ar.edu.itba.paw.models;
 
+import javax.persistence.Entity;
+import javax.persistence.Table;
+
+@Entity
+@Table(name = "users") // Si la clase no tiene el mismo nombre que la DB table
 public class User {
-  private final long id;
+  // TODO: agregar restricciones (solo las usa si levanto la DB con Hibernate)
+  // @Id
+  // @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "users_userid_seq")
+  // @SequenceGenerator(sequenceName = "users_userid_seq", name = "users_userid_seq", allocationSize
+  // = 1)
+  // @Column(name = "userid")
+  private final Long id; // uso Long para q si es nulo inserte
   private final Long profilePictureId;
 
+  // @Column(length = 100, unique = true, nullable = false)
   private final String email;
+
+  // @Column(length = 60, nullable = false)
   private String password;
+
   private final String firstName;
   private final String lastName;
 
   public User(
-      long id,
+      Long id,
       String email,
       String password,
       String firstName,
@@ -37,7 +52,7 @@ public class User {
     this.password = password;
   }
 
-  public long getId() {
+  public Long getId() {
     return id;
   }
 
@@ -75,7 +90,7 @@ public class User {
     if (!(obj instanceof User)) return false;
     User other = (User) obj;
     // el || es para rescatarme del nullptrexcep
-    return id == other.id
+    return (id == other.id || id.equals(other.id))
         && (profilePictureId == other.profilePictureId
             || profilePictureId.equals(other.profilePictureId))
         && email.equals(other.email)
