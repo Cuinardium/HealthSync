@@ -22,7 +22,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @RunWith(MockitoJUnitRunner.class)
 public class UserServiceImplTest {
 
-  private static final long ID = 1;
+  private static final Long ID = 1L;
   private static final String EMAIL = "email";
   private static final String FIRST_NAME = "firstname";
   private static final String LAST_NAME = "lastname";

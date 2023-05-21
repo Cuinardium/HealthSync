@@ -26,7 +26,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = TestConfig.class)
 public class PatientDaoImplTest {
-  private static final long INSERTED_PATIENT_ID = 1;
+  private static final Long INSERTED_PATIENT_ID = 1L;
   private static final String INSERTED_PATIENT_EMAIL = "patient@email.com";
   private static final String INSERTED_PATIENT_PASSWORD = "patient_password";
   private static final String INSERTED_PATIENT_FIRST_NAME = "patient_first_name";
@@ -34,7 +34,7 @@ public class PatientDaoImplTest {
   private static final Long INSERTED_PATIENT_PFP_ID = null;
   private static final HealthInsurance INSERTED_PATIENT_HEALTH_INSURANCE = HealthInsurance.OMINT;
 
-  private static final long AUX_PATIENT_ID = 2L;
+  private static final Long AUX_PATIENT_ID = 2L;
   private static final String AUX_PATIENT_EMAIL = "notpatient@email.com";
   private static final String AUX_PATIENT_PASSWORD = "notpatient_password";
   private static final String AUX_PATIENT_FIRST_NAME = "notpatient_first_name";

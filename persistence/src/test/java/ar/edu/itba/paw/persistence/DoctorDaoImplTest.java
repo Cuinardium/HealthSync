@@ -13,7 +13,6 @@ import ar.edu.itba.paw.models.Page;
 import ar.edu.itba.paw.models.Specialty;
 import ar.edu.itba.paw.models.ThirtyMinuteBlock;
 import ar.edu.itba.paw.persistence.config.TestConfig;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -38,7 +37,7 @@ import org.springframework.transaction.annotation.Transactional;
 @ContextConfiguration(classes = TestConfig.class)
 public class DoctorDaoImplTest {
 
-  private static final long INSERTED_DOCTOR_ID = 3;
+  private static final Long INSERTED_DOCTOR_ID = 3L;
   private static final String INSERTED_DOCTOR_EMAIL = "doctor@email.com";
   private static final String INSERTED_DOCTOR_PASSWORD = "doctor_password";
   private static final String INSERTED_DOCTOR_FIRST_NAME = "doctor_first_name";
@@ -63,7 +62,7 @@ public class DoctorDaoImplTest {
   private static final Float INSERTED_DOCTOR_RATING = null;
   private static final Integer INSERTED_DOCTOR_RATING_COUNT = 0;
 
-  private static final long AUX_DOCTOR_ID = 4;
+  private static final Long AUX_DOCTOR_ID = 4L;
   private static final String AUX_DOCTOR_EMAIL = "notdoctor@email.com";
   private static final String AUX_DOCTOR_PASSWORD = "notdoctor_password";
   private static final String AUX_DOCTOR_FIRST_NAME = "notdoctor_first_name";
@@ -98,7 +97,7 @@ public class DoctorDaoImplTest {
           INSERTED_DOCTOR_INSURANCES,
           INSERTED_DOCTOR_SPECIALTY,
           LOCATION_FOR_DOCTOR_3,
-          INSERTED_DOCTOR_ATTENDING_HOURS, 
+          INSERTED_DOCTOR_ATTENDING_HOURS,
           INSERTED_DOCTOR_RATING,
           INSERTED_DOCTOR_RATING_COUNT);
 
@@ -189,15 +188,17 @@ public class DoctorDaoImplTest {
   public void testUpdateDoctorInfoDoctorNotFound() throws DoctorNotFoundException {
     // 1.Precondiciones
     // 2. Ejercitar la class under test
-    
-    assertThrows(DoctorNotFoundException.class,
-    () -> doctorDao.updateDoctorInfo(
-            AUX_DOCTOR_ID,
-            AUX_DOCTOR_SPECIALTY,
-            AUX_DOCTOR_CITY,
-            AUX_DOCTOR_ADDRESS,
-            AUX_DOCTOR_INSURANCES,
-            AUX_DOCTOR_ATTENDING_HOURS));
+
+    assertThrows(
+        DoctorNotFoundException.class,
+        () ->
+            doctorDao.updateDoctorInfo(
+                AUX_DOCTOR_ID,
+                AUX_DOCTOR_SPECIALTY,
+                AUX_DOCTOR_CITY,
+                AUX_DOCTOR_ADDRESS,
+                AUX_DOCTOR_INSURANCES,
+                AUX_DOCTOR_ATTENDING_HOURS));
   }
 
   @Test
@@ -223,7 +224,8 @@ public class DoctorDaoImplTest {
   public void testGetFilteredDoctors() {
     // 1.Precondiciones
     // 2. Ejercitar la class under test
-    Page<Doctor> doctors = doctorDao.getFilteredDoctors(null, null, null, null, null, null, null, null, null);
+    Page<Doctor> doctors =
+        doctorDao.getFilteredDoctors(null, null, null, null, null, null, null, null, null);
     // 3. Meaningful assertions
     Assert.assertNull(doctors.getTotalPages());
     Assert.assertNull(doctors.getCurrentPage());

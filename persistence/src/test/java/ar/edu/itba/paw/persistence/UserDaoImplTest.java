@@ -2,6 +2,7 @@ package ar.edu.itba.paw.persistence;
 
 import static org.junit.Assert.assertThrows;
 
+import ar.edu.itba.paw.interfaces.persistence.UserDao;
 import ar.edu.itba.paw.interfaces.persistence.exceptions.EmailAlreadyExistsException;
 import ar.edu.itba.paw.interfaces.persistence.exceptions.UserNotFoundException;
 import ar.edu.itba.paw.models.User;
@@ -25,14 +26,14 @@ import org.springframework.transaction.annotation.Transactional;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = TestConfig.class)
 public class UserDaoImplTest {
-  private static final long INSERTED_USER_ID = 1;
+  private static final Long INSERTED_USER_ID = 1L;
   private static final String INSERTED_USER_EMAIL = "patient@email.com";
   private static final String INSERTED_USER_PASSWORD = "patient_password";
   private static final String INSERTED_USER_FIRST_NAME = "patient_first_name";
   private static final String INSERTED_USER_LAST_NAME = "patient_last_name";
   private static final Long INSERTED_USER_PFP_ID = null;
 
-  private static final long AUX_ID = 100;
+  private static final Long AUX_ID = 100L;
   private static final String AUX_EMAIL = "notuser@email.com";
   private static final String AUX_PASSWORD = "notuser_password";
   private static final String AUX_FIRST_NAME = "notuser_first_name";
@@ -43,7 +44,7 @@ public class UserDaoImplTest {
 
   private JdbcTemplate jdbcTemplate;
 
-  @Autowired private UserDaoImpl userDao;
+  @Autowired private UserDao userDao;
 
   @Before
   public void setUp() {

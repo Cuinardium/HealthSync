@@ -1,16 +1,20 @@
 package ar.edu.itba.paw.persistence.config;
 
+import java.util.Properties;
+import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.Resource;
-import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 import org.springframework.jdbc.datasource.init.DataSourceInitializer;
 import org.springframework.jdbc.datasource.init.DatabasePopulator;
 import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
+import org.springframework.orm.jpa.JpaTransactionManager;
+import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
+import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
@@ -59,7 +63,37 @@ public class TestConfig {
   }
 
   @Bean
-  public PlatformTransactionManager transactionManager(final DataSource ds) {
-    return new DataSourceTransactionManager(ds);
+  public PlatformTransactionManager transactionManager(final EntityManagerFactory emf) {
+    return new JpaTransactionManager(emf);
+  }
+
+  @Bean
+  public LocalContainerEntityManagerFactoryBean entityManagerFactory() {
+    final LocalContainerEntityManagerFactoryBean factoryBean =
+        new LocalContainerEntityManagerFactoryBean();
+    // Donde estan las entidades que queremos mapear en la db
+    factoryBean.setPackagesToScan("ar.edu.itba.paw.models");
+
+    factoryBean.setDataSource(dataSource());
+
+    // Que implementacion de JPA queremos utilizar
+    final HibernateJpaVendorAdapter jpaVendorAdapter = new HibernateJpaVendorAdapter();
+    factoryBean.setJpaVendorAdapter(jpaVendorAdapter);
+
+    final Properties jpaProperties = new Properties();
+    // Dialecto
+    jpaProperties.setProperty("hibernate.dialect", "org.hibernate.dialect.HSQLDialect");
+    // MUY LIMITADAMENTE va a intentar actualizar la base de datos
+    jpaProperties.setProperty("hibernate.hbm2ddl.auto", "update");
+    // Este dropea la DB
+    // jpaProperties.setProperty("hibernate.hdb2ddl.auto", "create");
+
+    // Imprimime a STDOUT las consultas
+    // jpaProperties.setProperty("hibernate.show_sql", "true");
+    // jpaProperties.setProperty("format_sql", "true");
+
+    factoryBean.setJpaProperties(jpaProperties);
+
+    return factoryBean;
   }
 }
