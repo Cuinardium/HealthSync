@@ -142,7 +142,7 @@ public class WebConfig extends WebMvcConfigurerAdapter {
     // Dialecto
     jpaProperties.setProperty("hibernate.dialect", "org.hibernate.dialect.PostgreSQL92Dialect");
     // MUY LIMITADAMENTE va a intentar actualizar la base de datos
-    jpaProperties.setProperty("hibernate.hdb2ddl.auto", "update");
+    jpaProperties.setProperty("hibernate.hbm2ddl.auto", "update");
     // Este dropea la DB
     // jpaProperties.setProperty("hibernate.hdb2ddl.auto", "create");
 
