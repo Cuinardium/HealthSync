@@ -192,9 +192,9 @@
                     <artifactId>jetty-maven-plugin</artifactId>
                     <version>9.4.8.v20180619</version>
                     <configuration>
-                    <scanIntervalSeconds>10</scanIntervalSeconds>
+                        <!-- to deploy webapp on localhost/paw-2023a-02 -->
                         <webApp>
-                          <contextPath>/paw-2023a-02</contextPath> <!-- this line is the important one -->
+                          <contextPath>/paw-2023a-02</contextPath>
                         </webApp>
                     </configuration>
                 </plugin>
