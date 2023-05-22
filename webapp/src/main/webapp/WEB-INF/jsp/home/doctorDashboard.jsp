@@ -126,7 +126,7 @@
                                 <c:forEach items="${possibleAttendingHours}" var="attHour">
                                     <c:if test="${fromBlock.ordinal() < attHour.ordinal()}">
                                         <form:option value="${attHour.ordinal()}">
-                                            ${attHour.getBlockBeginning()}
+                                            ${attHour.blockEnd}
                                         </form:option>
                                     </c:if>
                                 </c:forEach>
