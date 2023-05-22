@@ -6,6 +6,8 @@ import ar.edu.itba.paw.interfaces.persistence.exceptions.ImageNotFoundException;
 import ar.edu.itba.paw.models.Image;
 import ar.edu.itba.paw.persistence.config.TestConfig;
 import java.util.Optional;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import javax.sql.DataSource;
 import org.junit.Assert;
 import org.junit.Before;
@@ -25,17 +27,19 @@ import org.springframework.transaction.annotation.Transactional;
 @ContextConfiguration(classes = TestConfig.class)
 public class ImageDaoImplTest {
 
-  private static final Long INSERTED_IMAGE_ID = 1L;
+  private static final Long INSERTED_IMAGE_ID = 2L;
   private static final byte[] INSERTED_IMAGE_BYTES = {16};
 
-  private static final Long AUX_IMAGE_ID = 2L;
+  private static final Long AUX_IMAGE_ID = 3L;
   private static final byte[] AUX_IMAGE_BYTES = {12, 15, 1, 2};
+
+  @PersistenceContext EntityManager em;
 
   @Autowired private DataSource ds;
 
   private JdbcTemplate jdbcTemplate;
 
-  @Autowired private ImageDaoImpl imageDao;
+  @Autowired private ImageDaoJpa imageDao;
 
   @Before
   public void setUp() {
@@ -63,25 +67,27 @@ public class ImageDaoImplTest {
   }
 
   @Test
-  public void testUploadImage() {
+  public void testCreateImage() {
     // 1. Precondiciones (script testImage.sql)
     // 2. Ejercitar la class under test
     Image image = imageDao.createImage(new Image(AUX_IMAGE_BYTES));
+
+    em.flush();
+
     // 3. Meanignful assertions
     Assert.assertArrayEquals(AUX_IMAGE_BYTES, image.getBytes());
 
     Assert.assertEquals(2, JdbcTestUtils.countRowsInTable(jdbcTemplate, "profile_picture"));
   }
 
-  // TODO: corregir esto
   @Test
-  public void testUpdateImage() {
+  public void testUpdateImage() throws ImageNotFoundException {
     // 1. Precondiciones
     // 2. Ejercitar la class under test
-    // Image image = imageDao.updateImage(INSERTED_IMAGE_ID, new Image(AUX_IMAGE_BYTES));
+    Image image = imageDao.updateImage(INSERTED_IMAGE_ID, new Image(AUX_IMAGE_BYTES));
     // 3. Meanignful assertions
-    // Assert.assertEquals(INSERTED_IMAGE_ID, image.getImageId());
-    // Assert.assertArrayEquals(AUX_IMAGE_BYTES, image.getBytes());
+    Assert.assertEquals(INSERTED_IMAGE_ID, image.getImageId());
+    Assert.assertArrayEquals(AUX_IMAGE_BYTES, image.getBytes());
   }
 
   @Test
