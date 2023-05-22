@@ -4,7 +4,7 @@ import java.time.LocalDate;
 
 public class Appointment {
 
-  private final long id;
+  private final Long id;
   private final Patient patient;
   private final Doctor doctor;
 
@@ -17,7 +17,7 @@ public class Appointment {
   private final String cancelDesc;
 
   public Appointment(
-      long id,
+      Long id,
       Patient patient,
       Doctor doctor,
       LocalDate date,
@@ -35,7 +35,7 @@ public class Appointment {
     this.cancelDesc = cancelDesc;
   }
 
-  public long getId() {
+  public Long getId() {
     return id;
   }
 

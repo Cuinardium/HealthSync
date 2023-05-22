@@ -13,6 +13,7 @@ import org.springframework.jdbc.datasource.init.DataSourceInitializer;
 import org.springframework.jdbc.datasource.init.DatabasePopulator;
 import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
 import org.springframework.orm.jpa.JpaTransactionManager;
+import org.springframework.orm.jpa.JpaVendorAdapter;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -77,7 +78,7 @@ public class TestConfig {
     factoryBean.setDataSource(dataSource());
 
     // Que implementacion de JPA queremos utilizar
-    final HibernateJpaVendorAdapter jpaVendorAdapter = new HibernateJpaVendorAdapter();
+    final JpaVendorAdapter jpaVendorAdapter = new HibernateJpaVendorAdapter();
     factoryBean.setJpaVendorAdapter(jpaVendorAdapter);
 
     final Properties jpaProperties = new Properties();
@@ -89,8 +90,8 @@ public class TestConfig {
     // jpaProperties.setProperty("hibernate.hdb2ddl.auto", "create");
 
     // Imprimime a STDOUT las consultas
-    // jpaProperties.setProperty("hibernate.show_sql", "true");
-    // jpaProperties.setProperty("format_sql", "true");
+    jpaProperties.setProperty("hibernate.show_sql", "true");
+    jpaProperties.setProperty("format_sql", "true");
 
     factoryBean.setJpaProperties(jpaProperties);
 

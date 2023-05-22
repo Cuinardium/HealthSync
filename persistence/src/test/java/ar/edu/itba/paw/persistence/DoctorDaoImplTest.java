@@ -37,7 +37,7 @@ import org.springframework.transaction.annotation.Transactional;
 @ContextConfiguration(classes = TestConfig.class)
 public class DoctorDaoImplTest {
 
-  private static final Long INSERTED_DOCTOR_ID = 3L;
+  private static final Long INSERTED_DOCTOR_ID = 7L;
   private static final String INSERTED_DOCTOR_EMAIL = "doctor@email.com";
   private static final String INSERTED_DOCTOR_PASSWORD = "doctor_password";
   private static final String INSERTED_DOCTOR_FIRST_NAME = "doctor_first_name";
@@ -62,7 +62,7 @@ public class DoctorDaoImplTest {
   private static final Float INSERTED_DOCTOR_RATING = null;
   private static final Integer INSERTED_DOCTOR_RATING_COUNT = 0;
 
-  private static final Long AUX_DOCTOR_ID = 4L;
+  private static final Long AUX_DOCTOR_ID = 8L;
   private static final String AUX_DOCTOR_EMAIL = "notdoctor@email.com";
   private static final String AUX_DOCTOR_PASSWORD = "notdoctor_password";
   private static final String AUX_DOCTOR_FIRST_NAME = "notdoctor_first_name";
@@ -84,9 +84,9 @@ public class DoctorDaoImplTest {
           attendingHoursForDay,
           attendingHoursForDay);
 
-  private static final Location LOCATION_FOR_DOCTOR_3 =
-      new Location(1, INSERTED_DOCTOR_CITY, INSERTED_DOCTOR_ADDRESS);
-  private static final Doctor DOCTOR_3 =
+  private static final Location LOCATION_FOR_DOCTOR_7 =
+      new Location(3, INSERTED_DOCTOR_CITY, INSERTED_DOCTOR_ADDRESS);
+  private static final Doctor DOCTOR_7 =
       new Doctor(
           INSERTED_DOCTOR_ID,
           INSERTED_DOCTOR_EMAIL,
@@ -96,7 +96,7 @@ public class DoctorDaoImplTest {
           INSERTED_DOCTOR_PFP_ID,
           INSERTED_DOCTOR_INSURANCES,
           INSERTED_DOCTOR_SPECIALTY,
-          LOCATION_FOR_DOCTOR_3,
+          LOCATION_FOR_DOCTOR_7,
           INSERTED_DOCTOR_ATTENDING_HOURS,
           INSERTED_DOCTOR_RATING,
           INSERTED_DOCTOR_RATING_COUNT);
@@ -208,7 +208,7 @@ public class DoctorDaoImplTest {
     Optional<Doctor> maybeDoctor = doctorDao.getDoctorById(INSERTED_DOCTOR_ID);
     // 3. Meaningful assertions
     Assert.assertTrue(maybeDoctor.isPresent());
-    Assert.assertEquals(DOCTOR_3, maybeDoctor.get());
+    Assert.assertEquals(DOCTOR_7, maybeDoctor.get());
   }
 
   @Test
@@ -230,7 +230,7 @@ public class DoctorDaoImplTest {
     Assert.assertNull(doctors.getTotalPages());
     Assert.assertNull(doctors.getCurrentPage());
     Assert.assertEquals(1, doctors.getContent().size());
-    Assert.assertEquals(DOCTOR_3, doctors.getContent().get(0));
+    Assert.assertEquals(DOCTOR_7, doctors.getContent().get(0));
   }
 
   @Test

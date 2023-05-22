@@ -15,11 +15,13 @@ public class UserDaoJpa implements UserDao {
 
   @PersistenceContext private EntityManager em;
 
-  // TODO: ver pq esto no anda
   @Override
   public User createUser(String email, String password, String firstName, String lastName)
       throws EmailAlreadyExistsException {
     final User user = new User(null, email, password, firstName, lastName, null);
+    if (getUserByEmail(email).isPresent()) {
+      throw new EmailAlreadyExistsException();
+    }
     em.persist(user);
     return user;
   }

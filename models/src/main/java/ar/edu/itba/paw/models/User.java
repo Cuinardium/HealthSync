@@ -11,12 +11,11 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "users") // Si la clase no tiene el mismo nombre que la DB table
 public class User {
-  // TODO: agregar restricciones (solo las usa si levanto la DB con Hibernate)
   @Id
-  @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "users_userid_seq")
+  @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "users_user_id_seq")
   @SequenceGenerator(
-    sequenceName = "users_userid_seq",
-    name = "users_userid_seq",
+    sequenceName = "users_user_id_seq",
+    name = "users_user_id_seq",
     allocationSize = 1
   )
   @Column(name = "user_id")
@@ -34,6 +33,7 @@ public class User {
   @Column(name = "last_name", length = 100, nullable = false)
   private String lastName;
 
+  // TODO: agregar fk contraint
   @Column(name = "profile_picture_id")
   private Long profilePictureId;
 

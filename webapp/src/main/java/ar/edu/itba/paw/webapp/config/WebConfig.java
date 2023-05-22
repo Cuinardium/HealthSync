@@ -20,6 +20,7 @@ import org.springframework.jdbc.datasource.init.DataSourceInitializer;
 import org.springframework.jdbc.datasource.init.DatabasePopulator;
 import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
 import org.springframework.orm.jpa.JpaTransactionManager;
+import org.springframework.orm.jpa.JpaVendorAdapter;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.scheduling.annotation.EnableScheduling;
@@ -135,7 +136,7 @@ public class WebConfig extends WebMvcConfigurerAdapter {
     factoryBean.setDataSource(dataSource());
 
     // Que implementacion de JPA queremos utilizar
-    final HibernateJpaVendorAdapter jpaVendorAdapter = new HibernateJpaVendorAdapter();
+    final JpaVendorAdapter jpaVendorAdapter = new HibernateJpaVendorAdapter();
     factoryBean.setJpaVendorAdapter(jpaVendorAdapter);
 
     final Properties jpaProperties = new Properties();

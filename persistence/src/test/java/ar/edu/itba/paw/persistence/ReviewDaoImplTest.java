@@ -21,8 +21,8 @@ public class ReviewDaoImplTest {
 
   private static final int INSERTED_REVIEWS = 5;
 
-  private static final Long INSERTED_DOCTOR_ID = 3L;
-  private static final Long INSERTED_PATIENT_ID = 1L;
+  private static final Long INSERTED_DOCTOR_ID = 7L;
+  private static final Long INSERTED_PATIENT_ID = 5L;
   private static final long NON_EXISTING_DOCTOR_ID = 100;
 
   private static final int RATING = 5;

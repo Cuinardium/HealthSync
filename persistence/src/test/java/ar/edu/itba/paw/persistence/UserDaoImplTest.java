@@ -2,12 +2,13 @@ package ar.edu.itba.paw.persistence;
 
 import static org.junit.Assert.assertThrows;
 
-import ar.edu.itba.paw.interfaces.persistence.UserDao;
 import ar.edu.itba.paw.interfaces.persistence.exceptions.EmailAlreadyExistsException;
 import ar.edu.itba.paw.interfaces.persistence.exceptions.UserNotFoundException;
 import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.persistence.config.TestConfig;
 import java.util.Optional;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import javax.sql.DataSource;
 import org.junit.Assert;
 import org.junit.Before;
@@ -26,7 +27,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = TestConfig.class)
 public class UserDaoImplTest {
-  private static final Long INSERTED_USER_ID = 1L;
+  private static final Long INSERTED_USER_ID = 5L;
   private static final String INSERTED_USER_EMAIL = "patient@email.com";
   private static final String INSERTED_USER_PASSWORD = "patient_password";
   private static final String INSERTED_USER_FIRST_NAME = "patient_first_name";
@@ -44,7 +45,9 @@ public class UserDaoImplTest {
 
   private JdbcTemplate jdbcTemplate;
 
-  @Autowired private UserDao userDao;
+  @PersistenceContext private EntityManager em;
+
+  @Autowired private UserDaoJpa userDao;
 
   @Before
   public void setUp() {
@@ -106,6 +109,8 @@ public class UserDaoImplTest {
     // 1. Precondiciones
     // 2. Ejercitar la class under test
     User user = userDao.createUser(AUX_EMAIL, AUX_PASSWORD, AUX_FIRST_NAME, AUX_LAST_NAME);
+
+    em.flush();
 
     // 3. Meaningful assertions
     Assert.assertNotNull(user);
