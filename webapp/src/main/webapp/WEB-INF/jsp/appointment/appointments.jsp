@@ -120,7 +120,9 @@
                             </c:if>
 
                             <div class="cardButtonContainer">
-                                <c:url value="/${appointment.id}/detailed-appointment" var="detailsUrl"/>
+                                <c:url value="/${appointment.id}/detailed-appointment" var="detailsUrl">
+                                    <c:param name="selected_tab" value="${selectedTab}"/>
+                                </c:url>
                                 <a href="${detailsUrl}" class="btn btn-outline-primary detailed-link">
                                     ${seeDetails}
                                 </a>
@@ -163,12 +165,6 @@
                                             </div>
                                         </div>
                                     </div>
-                                </c:if>
-                                <c:if test="${i == 3 && isPatient}">
-                                    <c:url value="/${appointment.doctor.id}/review" var="reviewUrl"/>
-                                    <a href="${reviewUrl}" class="btn btn-primary">
-                                        <spring:message code="appointments.review"/>
-                                    </a>
                                 </c:if>
                             </div>
                         </div>

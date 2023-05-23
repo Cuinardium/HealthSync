@@ -52,9 +52,6 @@
     </div>
     <div class="card">
 
-        <c:set var="showButton"
-               value="${appointment.status == 'CONFIRMED' || (appointment.status == 'COMPLETED' && isPatient)}"/>
-
         <div class="card-header">
             <strong>${appointment.date} ${appointment.timeBlock.blockBeginning}</strong>
             <strong>${statusTitle}: ${status}</strong>
@@ -80,20 +77,15 @@
                 <div class="card-title"><strong>${cancelDescriptionTitle}: </strong>${appointment.cancelDesc}</div>
             </c:if>
             <div class="cardButtonContainer">
-                <c:if test="${showButton}">
-
-                    <c:set value="${appointment.status == 'CONFIRMED' ? 'btn-danger' : 'btn-primary'}"
-                           var="buttonClass"/>
-                    <c:set value="${appointment.status == 'CONFIRMED' ? 'appointments.cancel' : 'appointments.review'}"
-                           var="buttonMessageId"/>
+                <c:if test="${appointment.status == 'CONFIRMED'}">
 
                     <c:url value="/my-appointments/${appointment.id}/cancel" var="cancelUrl">
                         <c:param name="selected_tab" value="${selectedTab}"/>
                     </c:url>
 
                     <button onclick="openModal('${cancelUrl}')"
-                            class="post-button btn ${buttonClass}">
-                        <spring:message code="${buttonMessageId}"/>
+                            class="post-button btn btn-danger">
+                        <spring:message code="appointments.cancel"/>
                     </button>
                     <div class="modal fade" id="modal" tabindex="-1" role="dialog" aria-labelledby="modalLabel"
                          aria-hidden="true">
