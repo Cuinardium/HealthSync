@@ -91,16 +91,22 @@
                         </div>
                         <div class="card-body">
 
-                            <div class="card-title">
-                                <strong>${doctor}: </strong>${appointment.doctor.firstName} ${appointment.doctor.lastName}
-                            </div>
-                            <div class="card-title">
-                                <strong>${patient}: </strong>${appointment.patient.firstName} ${appointment.patient.lastName}
-                            </div>
+                            <c:choose>
+                                <c:when test="${isDoctor}">
+                                    <div class="card-title">
+                                        <strong>${patient}: </strong>${appointment.patient.firstName} ${appointment.patient.lastName}
+                                    </div>
+                                </c:when>
+                                <c:otherwise>
+                                    <div class="card-title">
+                                        <strong>${doctor}: </strong>${appointment.doctor.firstName} ${appointment.doctor.lastName}
+                                    </div>
 
-                            <spring:message code="${appointment.doctor.location.city.messageID}" var="city"/>
-                            <div class="card-title">
-                                <strong>${address}: </strong>${appointment.doctor.location.address}, ${city}</div>
+                                    <spring:message code="${appointment.doctor.location.city.messageID}" var="city"/>
+                                    <div class="card-title">
+                                        <strong>${address}: </strong>${appointment.doctor.location.address}, ${city}</div>
+                                </c:otherwise>
+                            </c:choose>
 
                             <spring:message code="${appointment.patient.healthInsurance.messageID}"
                                             var="healthInsurance"/>
@@ -155,7 +161,7 @@
                                         </div>
                                     </div>
                                 </c:if>
-                                <c:if test="${i == 3}">
+                                <c:if test="${i == 3 && isPatient}">
                                     <c:url value="/${appointment.doctor.id}/review" var="reviewUrl"/>
                                     <a href="${reviewUrl}" class="btn btn-primary">
                                         <spring:message code="appointments.review"/>

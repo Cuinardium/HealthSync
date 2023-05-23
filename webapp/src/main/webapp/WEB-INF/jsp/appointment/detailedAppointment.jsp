@@ -34,92 +34,113 @@
 
 <html>
 <head>
-  <title>${title}</title>
+    <title>${title}</title>
 
-  <jsp:include page="../components/favicon.jsp"/>
-  <link href="${mainCss}" rel="stylesheet"/>
-  <link href="${detailedAppointmentCss}" rel="stylesheet"/>
+    <jsp:include page="../components/favicon.jsp"/>
+    <link href="${mainCss}" rel="stylesheet"/>
+    <link href="${detailedAppointmentCss}" rel="stylesheet"/>
 
 </head>
 <body>
 <jsp:include page="../components/header.jsp"/>
 
 <div class="generalPadding">
-  <div class="backButtonContainer">
-    <a href="${myAppointmentsUrl}" class="btn btn-primary backButton">
-      <i class="fa-solid fa-arrow-left"></i>
-    </a>
-  </div>
-  <div class="card">
-    <div class="card-header">
-        <strong>${appointment.date} ${appointment.timeBlock.blockBeginning}</strong>
-        <strong>${statusTitle}: ${status}</strong>
+    <div class="backButtonContainer">
+        <a href="${myAppointmentsUrl}" class="btn btn-primary backButton">
+            <i class="fa-solid fa-arrow-left"></i>
+        </a>
     </div>
-    <div class="card-body">
-      <div class="card-title"><strong>${doctor}: </strong>${appointment.doctor.firstName} ${appointment.doctor.lastName}</div>
-      <div class="card-title"><strong>${patient}: </strong>${appointment.patient.firstName} ${appointment.patient.lastName}</div>
-      <div class="card-title"><strong>${address}: </strong>${address}, ${city}</div>
-      <div class="card-title"><strong>${healthInsurance_title}: </strong>${healthInsurance}</div>
-      <div class="card-title"><strong>${description}: </strong>${appointment.description}</div>
-      <c:if test="${not empty appointment.cancelDesc}">
-        <div class="card-title"><strong>${cancelDescriptionTitle}: </strong>${appointment.cancelDesc}</div>
-      </c:if>
-      <div class="cardButtonContainer">
-        <c:if test="${appointment.status.ordinal() == 0 || appointment.status.ordinal() == 2 }">
+    <div class="card">
 
-          <c:set value="${appointment.status.ordinal() == 0 ? 'btn-danger' : 'btn-primary'}" var="buttonClass"/>
-          <c:set value="${appointment.status.ordinal() == 0 ? 'appointments.cancel' : 'appointments.review'}" var="buttonMessageId"/>
+        <c:set var="showButton"
+               value="${appointment.status == 'CONFIRMED' || (appointment.status == 'COMPLETED' && isPatient)}"/>
 
-          <c:url value="/my-appointments/${appointment.id}/update" var="cancelUrl">
-            <c:param name="selected_tab" value="${selectedTab}"/>
-            <c:param name="status" value="1"/>
-          </c:url>
+        <div class="card-header">
+            <strong>${appointment.date} ${appointment.timeBlock.blockBeginning}</strong>
+            <strong>${statusTitle}: ${status}</strong>
+        </div>
+        <div class="card-body">
 
-          <button onclick="openModal('${cancelUrl}')"
-                  class="post-button btn ${buttonClass}">
-            <spring:message code="${buttonMessageId}"/>
-          </button>
-          <div class="modal fade" id="modal" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
-            <div class="modal-dialog" role="dialog">
-              <div class="modal-content">
-                <div class="modal-header">
-                  <h5 class="modal-title" id="modalLabel">${modalTitle}</h5>
+
+            <div class="card-title">
+                <div class="card-title">
+                    <strong>${patient}: </strong>${appointment.patient.firstName} ${appointment.patient.lastName}
                 </div>
-                <form:form modelAttribute="modalForm" id="post-modal">
-                <div class="modal-body">
-
-                      ${modalDesc}
-                    <div class="form-group">
-                      <form:label path="description" for="cancelDescription" class="col-form-label">${cancelDesc}</form:label>
-                      <form:input path="description" class="form-control" id="cancelDescription"/>
-                    </div>
-
-                </div>
-                <div class="modal-footer">
-
-                    <div class="cardButtonContainer">
-                      <button type="button" class="btn btn-danger" onclick="closeModal()">${modalDeny}</button>
-                      <button type="submit" class="btn btn-primary">${modalConfirm}</button>
-                    </div>
-
-                </div>
-                </form:form>
-              </div>
             </div>
-          </div>
-        </c:if>
-      </div>
+
+            <div class="card-title">
+                <strong>${doctor}: </strong>${appointment.doctor.firstName} ${appointment.doctor.lastName}</div>
+
+            <div class="card-title"><strong>${address}: </strong>${address}, ${city}</div>
+             
+
+            <div class="card-title"><strong>${healthInsurance_title}: </strong>${healthInsurance}</div>
+            <div class="card-title"><strong>${description}: </strong>${appointment.description}</div>
+            <c:if test="${not empty appointment.cancelDesc}">
+                <div class="card-title"><strong>${cancelDescriptionTitle}: </strong>${appointment.cancelDesc}</div>
+            </c:if>
+            <div class="cardButtonContainer">
+                <c:if test="${showButton}">
+
+                    <c:set value="${appointment.status == 'CONFIRMED' ? 'btn-danger' : 'btn-primary'}"
+                           var="buttonClass"/>
+                    <c:set value="${appointment.status == 'CONFIRMED' ? 'appointments.cancel' : 'appointments.review'}"
+                           var="buttonMessageId"/>
+
+                    <c:url value="/my-appointments/${appointment.id}/update" var="cancelUrl">
+                        <c:param name="selected_tab" value="${selectedTab}"/>
+                        <c:param name="status" value="1"/>
+                    </c:url>
+
+                    <button onclick="openModal('${cancelUrl}')"
+                            class="post-button btn ${buttonClass}">
+                        <spring:message code="${buttonMessageId}"/>
+                    </button>
+                    <div class="modal fade" id="modal" tabindex="-1" role="dialog" aria-labelledby="modalLabel"
+                         aria-hidden="true">
+                        <div class="modal-dialog" role="dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="modalLabel">${modalTitle}</h5>
+                                </div>
+                                <form:form modelAttribute="modalForm" id="post-modal">
+                                    <div class="modal-body">
+
+                                            ${modalDesc}
+                                        <div class="form-group">
+                                            <form:label path="description" for="cancelDescription"
+                                                        class="col-form-label">${cancelDesc}</form:label>
+                                            <form:input path="description" class="form-control" id="cancelDescription"/>
+                                        </div>
+
+                                    </div>
+                                    <div class="modal-footer">
+
+                                        <div class="cardButtonContainer">
+                                            <button type="button" class="btn btn-danger"
+                                                    onclick="closeModal()">${modalDeny}</button>
+                                            <button type="submit" class="btn btn-primary">${modalConfirm}</button>
+                                        </div>
+
+                                    </div>
+                                </form:form>
+                            </div>
+                        </div>
+                    </div>
+                </c:if>
+            </div>
+        </div>
     </div>
-  </div>
 </div>
 </body>
 </html>
 <script>
-  function openModal(action){
-    $('#modal').modal('show');
-    $('#post-modal').attr('action', action);
-  }
-  function closeModal(){
-    $('#modal').modal('hide')
-  }
+    function openModal(action) {
+        $('#modal').modal('show');
+        $('#post-modal').attr('action', action);
+    }
+
+    function closeModal() {
+        $('#modal').modal('hide')
+    }
 </script>
