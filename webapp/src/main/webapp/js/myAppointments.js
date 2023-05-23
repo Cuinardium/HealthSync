@@ -33,7 +33,7 @@ function updateTab(e, selectedIndex) {
     }
 
     // get all the <a class="detailed-link"> tags in the document
-    const links = document.querySelectorAll("a.detailed-link");
+    const links = document.querySelectorAll(".detailed-link");
 
     // loop through all the links and modify their href attributes
     for (let k = 0; k < links.length; k++) {

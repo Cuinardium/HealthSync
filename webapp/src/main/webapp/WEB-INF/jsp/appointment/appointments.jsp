@@ -23,6 +23,7 @@
 <spring:message code="appointments.modal.confirm" var="modalConfirm"/>
 <spring:message code="appointments.modal.deny" var="modalDeny"/>
 <spring:message code="appointments.modal.cancelDesc" var="cancelDesc"/>
+<spring:message code="appointments.details" var="seeDetails"/>
 
 <spring:message code="detailedAppointment.title" var="title"/>
 <spring:message code="detailedAppointment.doctor" var="doctor"/>
@@ -119,6 +120,10 @@
                             </c:if>
 
                             <div class="cardButtonContainer">
+                                <c:url value="/${appointment.id}/detailed-appointment" var="detailsUrl"/>
+                                <a href="${detailsUrl}" class="btn btn-outline-primary detailed-link">
+                                    ${seeDetails}
+                                </a>
                                 <c:if test="${i == 1}">
                                     <c:url value="/my-appointments/${appointment.id}/cancel" var="cancelUrl"/>
 
