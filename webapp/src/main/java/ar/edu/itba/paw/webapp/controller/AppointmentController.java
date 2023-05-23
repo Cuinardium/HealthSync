@@ -9,9 +9,7 @@ import ar.edu.itba.paw.webapp.exceptions.AppointmentForbiddenException;
 import ar.edu.itba.paw.webapp.exceptions.AppointmentNotFoundException;
 import ar.edu.itba.paw.webapp.exceptions.UserNotFoundException;
 import ar.edu.itba.paw.webapp.form.ModalForm;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.function.IntPredicate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -62,31 +60,11 @@ public class AppointmentController {
             .getFilteredAppointments(userId, AppointmentStatus.COMPLETED, null, null, isPatient)
             .getContent();
 
-    // Create tabs
-    List<AppointmentTab> tabs = new ArrayList<>();
-
-    // User can cancel an upcoming appointment
-    tabs.add(
-        new AppointmentTab(
-            "confirmed", (x) -> (x == 1), upcomingAppointments, null, "appointments.upcoming"));
-    tabs.add(
-        new AppointmentTab(
-            "cancelled",
-            (x) -> (x == 2),
-            cancelledAppointments,
-             AllowedActions.CANCEL,
-            "appointments.cancelled"));
-    tabs.add(
-        new AppointmentTab(
-            "history",
-            (x) -> (x == 3),
-            completedAppointments,
-            isPatient ? AllowedActions.REVIEW : null,
-            "appointments.history"));
-
     // Add values to model
     mav.addObject("selectedTab", selectedTab);
-    mav.addObject("tabs", tabs);
+    mav.addObject("upcomingAppointments", upcomingAppointments);
+    mav.addObject("cancelledAppointments", cancelledAppointments);
+    mav.addObject("completedAppointments", completedAppointments);
     mav.addObject("modalForm", modalForm);
 
     LOGGER.debug("Patient requested his appointments");
@@ -104,13 +82,13 @@ public class AppointmentController {
 
     // TODO: feedback?
     if (status < 0 || status >= AppointmentStatus.values().length) {
-      return getAppointments(modalForm, selectedTab);
+      return new ModelAndView("redirect:/my-appointments?selected_tab=" + selectedTab);
     }
 
     // A patient can only cancel an appointment
     if (PawAuthUserDetails.getRole().equals(UserRoles.ROLE_PATIENT)
         && status != AppointmentStatus.CANCELLED.ordinal()) {
-      return getAppointments(modalForm, selectedTab);
+      return new ModelAndView("redirect:/my-appointments?selected_tab=" + selectedTab);
     }
 
     AppointmentStatus appointmentStatus = AppointmentStatus.values()[status];
@@ -128,7 +106,7 @@ public class AppointmentController {
       throw new UserNotFoundException();
     }
 
-    return getAppointments(modalForm, selectedTab);
+    return new ModelAndView("redirect:/my-appointments?selected_tab=" + selectedTab);
   }
 
   // ================================== Detailed Appointment =======================================
@@ -152,106 +130,11 @@ public class AppointmentController {
     }
 
     ModelAndView mav = new ModelAndView("appointment/detailedAppointment");
-    List<AllowedActions> allowedActions = new ArrayList<>();
-
-    if (appointment.getStatus().equals(AppointmentStatus.CONFIRMED)) {
-      allowedActions.add(AllowedActions.CANCEL);
-    }
 
     // Add values to model
-    mav.addObject("appointmentId", appointmentId);
-    mav.addObject("actions", allowedActions);
-    mav.addObject("appointmentDesc", appointment.getDescription());
-    mav.addObject("cancelDescription", appointment.getCancelDesc());
-    mav.addObject(
-        "appointmentDateTime",
-        appointment.getDate() + " " + appointment.getTimeBlock().getBlockBeginning());
-    mav.addObject("appointmentStatusMessageId", appointment.getStatus().getMessageID());
-    mav.addObject(
-        "patientName",
-        appointment.getPatient().getFirstName() + " " + appointment.getPatient().getLastName());
-    mav.addObject(
-        "doctorName",
-        appointment.getDoctor().getFirstName() + " " + appointment.getDoctor().getLastName());
-    mav.addObject("cityMessageId", appointment.getDoctor().getLocation().getCity().getMessageID());
-    mav.addObject("address", appointment.getDoctor().getLocation().getAddress());
-    mav.addObject(
-        "patientHealthInsuranceMessageId",
-        appointment.getPatient().getHealthInsurance().getMessageID());
-
+    mav.addObject("appointment", appointment);
     mav.addObject("selectedTab", selectedTab);
 
     return mav;
-  }
-
-  // ==================================  Private   =================================================
-
-  // ==================================  Inner Classes  ===========================================
-  public enum AllowedActions {
-    CANCEL(AppointmentStatus.CANCELLED.ordinal(), "btn-danger", "appointments.cancel"),
-    REVIEW(AppointmentStatus.COMPLETED.ordinal(), "btn-primary", "appointments.review");
-
-    private final Integer statusCode;
-    private final String buttonClass;
-    private final String messageID;
-
-    private AllowedActions(Integer statusCode, String buttonClass, String messageID) {
-      this.statusCode = statusCode;
-      this.buttonClass = buttonClass;
-      this.messageID = messageID;
-    }
-
-    public Integer getStatusCode() {
-      return statusCode;
-    }
-
-    public String getButtonClass() {
-      return buttonClass;
-    }
-
-    public String getMessageID() {
-      return messageID;
-    }
-  }
-
-  public class AppointmentTab {
-    private final String tabName;
-    private final IntPredicate intPredicate;
-    private final List<Appointment> appointments;
-    private final AllowedActions allowedAction;
-    private final String messageID;
-
-    private AppointmentTab(
-        String tabName,
-        IntPredicate intPredicate,
-        List<Appointment> appointments,
-        AllowedActions allowedAction,
-        String messageID) {
-      this.tabName = tabName;
-      this.intPredicate = intPredicate;
-      this.appointments = appointments;
-      this.allowedAction = allowedAction;
-      this.messageID = messageID;
-    }
-
-    public String getTabName() {
-      return tabName;
-    }
-
-    public List<Appointment> getAppointments() {
-      return appointments;
-    }
-
-    public AllowedActions getAllowedAction() {
-      return allowedAction;
-    }
-
-    public boolean isActive(Integer status) {
-      return intPredicate.test(status);
-    }
-
-    public String getMessageID() {
-      return messageID;
-    }
   }
 }
