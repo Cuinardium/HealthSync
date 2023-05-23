@@ -10,6 +10,7 @@ import ar.edu.itba.paw.models.AttendingHours;
 import ar.edu.itba.paw.models.City;
 import ar.edu.itba.paw.models.Doctor;
 import ar.edu.itba.paw.models.HealthInsurance;
+import ar.edu.itba.paw.models.Image;
 import ar.edu.itba.paw.models.Location;
 import ar.edu.itba.paw.models.Page;
 import ar.edu.itba.paw.models.Patient;
@@ -45,7 +46,7 @@ public class AppointmentDaoImplTest {
   private static final String INSERTED_PATIENT_PASSWORD = "patient_password";
   private static final String INSERTED_PATIENT_FIRST_NAME = "patient_first_name";
   private static final String INSERTED_PATIENT_LAST_NAME = "patient_last_name";
-  private static final Long INSERTED_PATIENT_PFP_ID = null;
+  private static final Image INSERTED_PATIENT_IMAGE = null;
   private static final HealthInsurance INSERTED_PATIENT_HEALTH_INSURANCE = HealthInsurance.OMINT;
 
   private static final Patient PATIENT_5 =
@@ -55,7 +56,7 @@ public class AppointmentDaoImplTest {
           INSERTED_PATIENT_PASSWORD,
           INSERTED_PATIENT_FIRST_NAME,
           INSERTED_PATIENT_LAST_NAME,
-          INSERTED_PATIENT_PFP_ID,
+          INSERTED_PATIENT_IMAGE,
           INSERTED_PATIENT_HEALTH_INSURANCE);
 
   private static final Long INSERTED_DOCTOR_ID = 7L;
@@ -78,7 +79,7 @@ public class AppointmentDaoImplTest {
           Arrays.asList(ThirtyMinuteBlock.BLOCK_00_00),
           new ArrayList<>(),
           new ArrayList<>());
-  private static final Long INSERTED_DOCTOR_PFP_ID = null;
+  private static final Image INSERTED_DOCTOR_IMAGE = null;
 
   private static final Float INSERTED_DOCTOR_RATING = null;
   private static final Integer INSERTED_DOCTOR_RATING_COUNT = 0;
@@ -92,7 +93,7 @@ public class AppointmentDaoImplTest {
           INSERTED_DOCTOR_PASSWORD,
           INSERTED_DOCTOR_FIRST_NAME,
           INSERTED_DOCTOR_LAST_NAME,
-          INSERTED_DOCTOR_PFP_ID,
+          INSERTED_DOCTOR_IMAGE,
           INSERTED_DOCTOR_INSURANCES,
           INSERTED_DOCTOR_SPECIALTY,
           LOCATION_FOR_DOCTOR_7,

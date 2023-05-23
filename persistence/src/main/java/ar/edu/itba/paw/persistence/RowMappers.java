@@ -62,7 +62,7 @@ public class RowMappers {
                     rs.getString("last_name"),
                     rs.getObject("profile_picture_id") == null
                         ? null
-                        : rs.getLong("profile_picture_id"),
+                        : new Image(rs.getLong("profile_picture_id"), null),
                     new ArrayList<>(),
                     specialty,
                     location,
@@ -99,7 +99,7 @@ public class RowMappers {
             rs.getString("patient_last_name"),
             rs.getObject("patient_profile_picture_id") == null
                 ? null
-                : rs.getLong("patient_profile_picture_id"),
+                : new Image(rs.getLong("profile_picture_id"), null),
             healthInsurance);
       };
 
@@ -113,7 +113,9 @@ public class RowMappers {
               rs.getString("password"),
               rs.getString("first_name"),
               rs.getString("last_name"),
-              rs.getObject("profile_picture_id") == null ? null : rs.getLong("profile_picture_id"));
+              rs.getObject("profile_picture_id") == null
+                  ? null
+                  : new Image(rs.getLong("profile_picture_id"), null));
 
   // ================================= Appointment =================================
 
@@ -145,10 +147,10 @@ public class RowMappers {
             String doctorPassword = rs.getString("password");
             String doctorFirstName = rs.getString("first_name");
             String doctorLastName = rs.getString("last_name");
-            Long doctorPfpId =
+            Image doctorImage =
                 rs.getObject("profile_picture_id") == null
                     ? null
-                    : rs.getLong("profile_picture_id");
+                    : new Image(rs.getLong("profile_picture_id"), null);
 
             Specialty specialty = specialties[rs.getInt("specialty_code")];
 
@@ -178,7 +180,7 @@ public class RowMappers {
                     doctorPassword,
                     doctorFirstName,
                     doctorLastName,
-                    doctorPfpId,
+                    doctorImage,
                     new ArrayList<>(),
                     specialty,
                     location,

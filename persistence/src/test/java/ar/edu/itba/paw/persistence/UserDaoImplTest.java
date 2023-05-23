@@ -4,6 +4,7 @@ import static org.junit.Assert.assertThrows;
 
 import ar.edu.itba.paw.interfaces.persistence.exceptions.EmailAlreadyExistsException;
 import ar.edu.itba.paw.interfaces.persistence.exceptions.UserNotFoundException;
+import ar.edu.itba.paw.models.Image;
 import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.persistence.config.TestConfig;
 import java.util.Optional;
@@ -32,14 +33,14 @@ public class UserDaoImplTest {
   private static final String INSERTED_USER_PASSWORD = "patient_password";
   private static final String INSERTED_USER_FIRST_NAME = "patient_first_name";
   private static final String INSERTED_USER_LAST_NAME = "patient_last_name";
-  private static final Long INSERTED_USER_PFP_ID = null;
+  private static final Image INSERTED_USER_IMAGE = null;
 
   private static final Long AUX_ID = 100L;
   private static final String AUX_EMAIL = "notuser@email.com";
   private static final String AUX_PASSWORD = "notuser_password";
   private static final String AUX_FIRST_NAME = "notuser_first_name";
   private static final String AUX_LAST_NAME = "notuser_last_name";
-  private static final Long AUX_PFP_ID = 1L;
+  private static final Image AUX_IMAGE = new Image(2L, null);
 
   @Autowired private DataSource ds;
 
@@ -66,7 +67,7 @@ public class UserDaoImplTest {
     Assert.assertEquals(INSERTED_USER_PASSWORD, maybeUser.get().getPassword());
     Assert.assertEquals(INSERTED_USER_FIRST_NAME, maybeUser.get().getFirstName());
     Assert.assertEquals(INSERTED_USER_LAST_NAME, maybeUser.get().getLastName());
-    Assert.assertEquals(INSERTED_USER_PFP_ID, maybeUser.get().getProfilePictureId());
+    Assert.assertEquals(INSERTED_USER_IMAGE, maybeUser.get().getImage());
   }
 
   @Test
@@ -91,7 +92,7 @@ public class UserDaoImplTest {
     Assert.assertEquals(INSERTED_USER_PASSWORD, maybeUser.get().getPassword());
     Assert.assertEquals(INSERTED_USER_FIRST_NAME, maybeUser.get().getFirstName());
     Assert.assertEquals(INSERTED_USER_LAST_NAME, maybeUser.get().getLastName());
-    Assert.assertEquals(INSERTED_USER_PFP_ID, maybeUser.get().getProfilePictureId());
+    Assert.assertEquals(INSERTED_USER_IMAGE, maybeUser.get().getImage());
   }
 
   @Test
@@ -118,7 +119,7 @@ public class UserDaoImplTest {
     Assert.assertEquals(AUX_PASSWORD, user.getPassword());
     Assert.assertEquals(AUX_FIRST_NAME, user.getFirstName());
     Assert.assertEquals(AUX_LAST_NAME, user.getLastName());
-    Assert.assertEquals(INSERTED_USER_PFP_ID, user.getProfilePictureId());
+    Assert.assertEquals(INSERTED_USER_IMAGE, user.getImage());
 
     Assert.assertEquals(5, JdbcTestUtils.countRowsInTable(jdbcTemplate, "users"));
   }
@@ -145,7 +146,7 @@ public class UserDaoImplTest {
     // 2. Ejercitar la class under test
     User user =
         userDao.updateUserInfo(
-            INSERTED_USER_ID, AUX_EMAIL, AUX_FIRST_NAME, AUX_LAST_NAME, AUX_PFP_ID);
+            INSERTED_USER_ID, AUX_EMAIL, AUX_FIRST_NAME, AUX_LAST_NAME, AUX_IMAGE);
 
     // 3. Meaningful assertions
     Assert.assertNotNull(user);
@@ -154,7 +155,7 @@ public class UserDaoImplTest {
     Assert.assertEquals(INSERTED_USER_PASSWORD, user.getPassword());
     Assert.assertEquals(AUX_FIRST_NAME, user.getFirstName());
     Assert.assertEquals(AUX_LAST_NAME, user.getLastName());
-    Assert.assertEquals(AUX_PFP_ID, user.getProfilePictureId());
+    Assert.assertEquals(AUX_IMAGE, user.getImage());
   }
 
   @Test
@@ -163,7 +164,7 @@ public class UserDaoImplTest {
     // 2. Ejercitar la class under test
     assertThrows(
         UserNotFoundException.class,
-        () -> userDao.updateUserInfo(AUX_ID, AUX_EMAIL, AUX_FIRST_NAME, AUX_LAST_NAME, AUX_PFP_ID));
+        () -> userDao.updateUserInfo(AUX_ID, AUX_EMAIL, AUX_FIRST_NAME, AUX_LAST_NAME, AUX_IMAGE));
     // 3. Meaningful assertions
   }
 

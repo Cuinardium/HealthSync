@@ -38,7 +38,7 @@ public class DoctorServiceImplTest {
   private static final String LAST_NAME = "last_name";
   private static final List<HealthInsurance> HEALTH_INSURANCES =
       Arrays.asList(HealthInsurance.OSDE, HealthInsurance.OMINT);
-  private static final Long PFP_ID = null;
+  private static final Image IMAGE = new Image(null, null);
   private static final Specialty SPECIALTY = Specialty.CARDIOLOGY;
   private static final City CITY = City.AYACUCHO;
   private static final String ADDRESS = "1234";
@@ -56,7 +56,7 @@ public class DoctorServiceImplTest {
           attendingHoursForDay);
   private static final Float RATING = 3F;
   private static final Integer RATING_COUNT = 1;
-  private static final User USER = new User(ID, EMAIL, PASSWORD, FIRST_NAME, LAST_NAME, PFP_ID);
+  private static final User USER = new User(ID, EMAIL, PASSWORD, FIRST_NAME, LAST_NAME, IMAGE);
   private static final Doctor DOCTOR =
       new Doctor(
           ID,
@@ -64,7 +64,7 @@ public class DoctorServiceImplTest {
           PASSWORD,
           FIRST_NAME,
           LAST_NAME,
-          PFP_ID,
+          IMAGE,
           HEALTH_INSURANCES,
           SPECIALTY,
           LOCATION,
@@ -75,7 +75,6 @@ public class DoctorServiceImplTest {
   private static final String EMAIL_NEW = "new_email";
   private static final String FIRST_NAME_NEW = "new_fist_name";
   private static final String LAST_NAME_NEW = "new_last_name";
-  private static final Image IMAGE = new Image(new byte[0]);
   private static final List<HealthInsurance> HEALTH_INSURANCES_NEW =
       Arrays.asList(HealthInsurance.NONE, HealthInsurance.SWISS_MEDICAL);
   private static final Specialty SPECIALTY_NEW = Specialty.ALLERGY_AND_IMMUNOLOGY;
@@ -100,7 +99,7 @@ public class DoctorServiceImplTest {
           PASSWORD,
           FIRST_NAME_NEW,
           LAST_NAME_NEW,
-          PFP_ID,
+          IMAGE,
           HEALTH_INSURANCES_NEW,
           SPECIALTY_NEW,
           LOCATION_NEW,

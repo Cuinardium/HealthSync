@@ -63,4 +63,13 @@ public class Image {
   public String toString() {
     return "Image [imageId=" + imageId + ", image=" + Arrays.toString(bytes) + "]";
   }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj) return true;
+    if (!(obj instanceof Image)) return false;
+    Image other = (Image) obj;
+    return (imageId == other.imageId || imageId.equals(other.imageId))
+        && (bytes.equals(other.bytes));
+  }
 }

@@ -17,14 +17,14 @@ public class Doctor extends User {
       String password,
       String firstName,
       String lastName,
-      Long pfpId,
+      Image image,
       List<HealthInsurance> healthInsurances,
       Specialty specialty,
       Location location,
       AttendingHours attendingHours,
       Float rating,
       Integer ratingCount) {
-    super(id, email, password, firstName, lastName, pfpId);
+    super(id, email, password, firstName, lastName, image);
     this.healthInsurances = healthInsurances;
     this.specialty = specialty;
     this.location = location;

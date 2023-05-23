@@ -31,9 +31,9 @@ public class ImageServiceImplTest {
     // 1. Precondiciones
     Mockito.when(imageDao.createImage(IMAGE)).thenReturn(IMAGE);
     // 2. Ejercitar la class under test
-    long imageId = is.uploadImage(IMAGE);
+    Image image = is.uploadImage(IMAGE);
     // 3. Meaningful assertions
-    Assert.assertEquals(ID, imageId);
+    Assert.assertEquals(IMAGE, image);
   }
 
   // TODO: no lo puedo testear, si update image retorna void
@@ -48,9 +48,9 @@ public class ImageServiceImplTest {
   @Test(expected = RuntimeException.class)
   public void testUpdateImageDoesNotExist() throws ImageNotFoundException {
     // 1. Precondiciones
-    Mockito.when(imageDao.updateImage(ID, IMAGE)).thenThrow(ImageNotFoundException.class);
+    Mockito.when(imageDao.updateImage(IMAGE)).thenThrow(ImageNotFoundException.class);
     // 2. Ejercitar la class under test
-    is.updateImage(ID, IMAGE);
+    is.updateImage(IMAGE);
     // 3. Meaningful assertions
   }
 

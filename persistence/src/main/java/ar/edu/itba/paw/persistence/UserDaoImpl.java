@@ -3,6 +3,7 @@ package ar.edu.itba.paw.persistence;
 import ar.edu.itba.paw.interfaces.persistence.UserDao;
 import ar.edu.itba.paw.interfaces.persistence.exceptions.EmailAlreadyExistsException;
 import ar.edu.itba.paw.interfaces.persistence.exceptions.UserNotFoundException;
+import ar.edu.itba.paw.models.Image;
 import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.persistence.utils.QueryBuilder;
 import ar.edu.itba.paw.persistence.utils.UpdateBuilder;
@@ -49,27 +50,6 @@ public class UserDaoImpl implements UserDao {
   }
 
   // =============== Updates ===============
-
-  @Override
-  public User updateUserInfo(
-      long userId, String email, String firstName, String lastName, Long pfpId)
-      throws UserNotFoundException {
-    UpdateBuilder update =
-        new UpdateBuilder()
-            .update("users")
-            .set("email", "'" + email + "'")
-            .set("first_name", "'" + firstName + "'")
-            .set("last_name", "'" + lastName + "'")
-            .where("user_id = (" + userId + ")");
-
-    if (pfpId != null) {
-      update.set("profile_picture_id", pfpId.toString());
-    }
-
-    jdbcTemplate.update(update.build());
-    return getUserById(userId).orElseThrow(UserNotFoundException::new);
-  }
-
   @Override
   public String updateUserPassword(long userId, String password) throws UserNotFoundException {
     String update =
@@ -99,5 +79,13 @@ public class UserDaoImpl implements UserDao {
     String query =
         new QueryBuilder().select().from("users").where("email = '" + email + "'").build();
     return jdbcTemplate.query(query, RowMappers.USER_MAPPER).stream().findFirst();
+  }
+
+  @Override
+  public User updateUserInfo(
+      long userId, String email, String firstName, String lastName, Image image)
+      throws UserNotFoundException {
+    // TODO Auto-generated method stub
+    throw new UnsupportedOperationException("Unimplemented method 'updateUserInfo'");
   }
 }

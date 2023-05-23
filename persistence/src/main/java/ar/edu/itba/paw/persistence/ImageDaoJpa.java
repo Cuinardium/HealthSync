@@ -21,11 +21,11 @@ public class ImageDaoJpa implements ImageDao {
   }
 
   @Override
-  public Image updateImage(Long imageId, Image image) throws ImageNotFoundException {
-    if (imageId == null) {
+  public Image updateImage(Image image) throws ImageNotFoundException {
+    if (image.getImageId() == null) {
       throw new ImageNotFoundException();
     }
-    final Image oldImage = getImage(imageId).orElseThrow(ImageNotFoundException::new);
+    final Image oldImage = getImage(image.getImageId()).orElseThrow(ImageNotFoundException::new);
     oldImage.setBytes(image.getBytes());
     em.persist(oldImage);
     return oldImage;

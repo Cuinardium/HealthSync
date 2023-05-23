@@ -2,9 +2,12 @@ package ar.edu.itba.paw.models;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
@@ -33,27 +36,22 @@ public class User {
   @Column(name = "last_name", length = 100, nullable = false)
   private String lastName;
 
-  // TODO: agregar fk contraint
-  @Column(name = "profile_picture_id")
-  private Long profilePictureId;
+  @OneToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "profile_picture_id")
+  private Image image;
 
   /* package */ User() {
     // Solo para hibernate
   }
 
   public User(
-      Long id,
-      String email,
-      String password,
-      String firstName,
-      String lastName,
-      Long profilePictureId) {
+      Long id, String email, String password, String firstName, String lastName, Image image) {
     this.id = id;
     this.email = email;
     this.password = password;
     this.firstName = firstName;
     this.lastName = lastName;
-    this.profilePictureId = profilePictureId;
+    this.image = image;
   }
 
   // Getters and setters
@@ -93,20 +91,20 @@ public class User {
     this.lastName = lastName;
   }
 
-  public Long getProfilePictureId() {
-    return profilePictureId;
+  public Image getImage() {
+    return image;
   }
 
-  public void setProfilePictureId(Long profilePictureId) {
-    this.profilePictureId = profilePictureId;
+  public void setImage(Image image) {
+    this.image = image;
   }
 
   @Override
   public String toString() {
     return "User [id="
         + id
-        + ", profilePictureId="
-        + profilePictureId
+        + " "
+        + image
         + ", email="
         + email
         + ", password=<redacted>"
@@ -124,8 +122,7 @@ public class User {
     User other = (User) obj;
     // el || es para rescatarme del nullptrexcep
     return (id == other.id || id.equals(other.id))
-        && (profilePictureId == other.profilePictureId
-            || profilePictureId.equals(other.profilePictureId))
+        && (image == other.image || image.equals(other.image))
         && email.equals(other.email)
         && firstName.equals(other.firstName)
         && lastName.equals(other.lastName);

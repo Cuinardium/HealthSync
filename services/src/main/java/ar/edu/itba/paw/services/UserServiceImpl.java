@@ -50,18 +50,20 @@ public class UserServiceImpl implements UserService {
       throws UserNotFoundException {
 
     try {
-      Long pfpId =
-          userDao.getUserById(userId).orElseThrow(IllegalStateException::new).getProfilePictureId();
+      Image old_image =
+          userDao.getUserById(userId).orElseThrow(IllegalStateException::new).getImage();
       if (image != null) {
         // Si la pfp es null -> insertamos imagen
         // si la pfp no es null -> la actualizamos para pisar la vieja
-        if (pfpId == null) {
-          pfpId = imageService.uploadImage(image);
+        if (image.getImageId() == null) {
+          image = imageService.uploadImage(image);
         } else {
-          imageService.updateImage(pfpId, image);
+
+          image.setImageId(old_image.getImageId());
+          image = imageService.updateImage(image);
         }
       }
-      return userDao.updateUserInfo(userId, email, firstName, lastName, pfpId);
+      return userDao.updateUserInfo(userId, email, firstName, lastName, image);
     } catch (ar.edu.itba.paw.interfaces.persistence.exceptions.UserNotFoundException e) {
       throw new UserNotFoundException();
     }

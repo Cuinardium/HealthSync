@@ -12,7 +12,7 @@ public interface ImageDao {
 
   // =============== Updates ===============
 
-  Image updateImage(Long imageId, Image image) throws ImageNotFoundException;
+  Image updateImage(Image image) throws ImageNotFoundException;
 
   // =============== Queries ===============
 

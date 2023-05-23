@@ -49,9 +49,9 @@ public class ImageDaoImpl implements ImageDao {
   // =============== Updates ===============
 
   @Override
-  public Image updateImage(Long pfpId, Image image) throws ImageNotFoundException {
+  public Image updateImage(Image image) throws ImageNotFoundException {
     // TODO: throw IllegalArgument?
-    if (pfpId == null || image == null) {
+    if (image.getImageId() == null || image == null) {
       return null;
     }
 
@@ -59,11 +59,11 @@ public class ImageDaoImpl implements ImageDao {
         new UpdateBuilder()
             .update(TABLE_NAME)
             .set(TABLE_BYTEA_COLUMN, "'\\x" + getHexString(image.getBytes()) + "'")
-            .where(TABLE_PKEY_COLUMN + " = " + pfpId)
+            .where(TABLE_PKEY_COLUMN + " = " + image.getImageId())
             .build();
 
     jdbcTemplate.update(updateQuery);
-    return getImage(pfpId).orElseThrow(ImageNotFoundException::new);
+    return getImage(image.getImageId()).orElseThrow(ImageNotFoundException::new);
   }
 
   // =============== Queries ===============

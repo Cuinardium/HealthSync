@@ -10,9 +10,9 @@ public class Patient extends User {
       String password,
       String firstName,
       String lastName,
-      Long profilePictureId,
+      Image image,
       HealthInsurance healthInsurance) {
-    super(id, email, password, firstName, lastName, profilePictureId);
+    super(id, email, password, firstName, lastName, image);
     this.healthInsurance = healthInsurance;
   }
 

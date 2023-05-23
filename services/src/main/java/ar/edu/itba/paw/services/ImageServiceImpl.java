@@ -23,17 +23,17 @@ public class ImageServiceImpl implements ImageService {
 
   @Transactional
   @Override
-  public long uploadImage(Image image) {
-    return imageDao.createImage(image).getImageId();
+  public Image uploadImage(Image image) {
+    return imageDao.createImage(image);
   }
 
   // =============== Updates ===============
 
   @Transactional
   @Override
-  public void updateImage(Long pfpId, Image image) {
+  public Image updateImage(Image image) {
     try {
-      imageDao.updateImage(pfpId, image);
+      return imageDao.updateImage(image);
     } catch (ImageNotFoundException e) {
       throw new RuntimeException();
     }

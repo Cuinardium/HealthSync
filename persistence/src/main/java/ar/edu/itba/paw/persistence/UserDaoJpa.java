@@ -3,6 +3,7 @@ package ar.edu.itba.paw.persistence;
 import ar.edu.itba.paw.interfaces.persistence.UserDao;
 import ar.edu.itba.paw.interfaces.persistence.exceptions.EmailAlreadyExistsException;
 import ar.edu.itba.paw.interfaces.persistence.exceptions.UserNotFoundException;
+import ar.edu.itba.paw.models.Image;
 import ar.edu.itba.paw.models.User;
 import java.util.Optional;
 import javax.persistence.EntityManager;
@@ -28,13 +29,13 @@ public class UserDaoJpa implements UserDao {
 
   @Override
   public User updateUserInfo(
-      long userId, String email, String firstName, String lastName, Long pfpId)
+      long userId, String email, String firstName, String lastName, Image image)
       throws UserNotFoundException {
     User user = getUserById(userId).orElseThrow(UserNotFoundException::new);
     user.setEmail(email);
     user.setFirstName(firstName);
     user.setLastName(lastName);
-    user.setProfilePictureId(pfpId);
+    user.setImage(image);
     em.persist(user);
     return user;
   }

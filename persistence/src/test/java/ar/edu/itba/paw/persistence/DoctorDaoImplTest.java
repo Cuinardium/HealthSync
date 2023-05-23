@@ -8,6 +8,7 @@ import ar.edu.itba.paw.models.AttendingHours;
 import ar.edu.itba.paw.models.City;
 import ar.edu.itba.paw.models.Doctor;
 import ar.edu.itba.paw.models.HealthInsurance;
+import ar.edu.itba.paw.models.Image;
 import ar.edu.itba.paw.models.Location;
 import ar.edu.itba.paw.models.Page;
 import ar.edu.itba.paw.models.Specialty;
@@ -57,7 +58,7 @@ public class DoctorDaoImplTest {
           Arrays.asList(ThirtyMinuteBlock.BLOCK_00_00),
           new ArrayList<>(),
           new ArrayList<>());
-  private static final Long INSERTED_DOCTOR_PFP_ID = null;
+  private static final Image INSERTED_DOCTOR_IMAGE = null;
 
   private static final Float INSERTED_DOCTOR_RATING = null;
   private static final Integer INSERTED_DOCTOR_RATING_COUNT = 0;
@@ -93,7 +94,7 @@ public class DoctorDaoImplTest {
           INSERTED_DOCTOR_PASSWORD,
           INSERTED_DOCTOR_FIRST_NAME,
           INSERTED_DOCTOR_LAST_NAME,
-          INSERTED_DOCTOR_PFP_ID,
+          INSERTED_DOCTOR_IMAGE,
           INSERTED_DOCTOR_INSURANCES,
           INSERTED_DOCTOR_SPECIALTY,
           LOCATION_FOR_DOCTOR_7,
@@ -130,7 +131,7 @@ public class DoctorDaoImplTest {
     Assert.assertEquals(AUX_DOCTOR_PASSWORD, doctor.getPassword());
     Assert.assertEquals(AUX_DOCTOR_FIRST_NAME, doctor.getFirstName());
     Assert.assertEquals(AUX_DOCTOR_LAST_NAME, doctor.getLastName());
-    Assert.assertEquals(INSERTED_DOCTOR_PFP_ID, doctor.getProfilePictureId());
+    Assert.assertEquals(INSERTED_DOCTOR_IMAGE, doctor.getImage());
     Assert.assertEquals(AUX_DOCTOR_INSURANCES, doctor.getHealthInsurances());
     Assert.assertEquals(AUX_DOCTOR_ADDRESS, doctor.getLocation().getAddress());
     Assert.assertEquals(AUX_DOCTOR_CITY, doctor.getLocation().getCity());
@@ -176,7 +177,7 @@ public class DoctorDaoImplTest {
     Assert.assertEquals(INSERTED_DOCTOR_PASSWORD, doctor.getPassword());
     Assert.assertEquals(INSERTED_DOCTOR_FIRST_NAME, doctor.getFirstName());
     Assert.assertEquals(INSERTED_DOCTOR_LAST_NAME, doctor.getLastName());
-    Assert.assertEquals(INSERTED_DOCTOR_PFP_ID, doctor.getProfilePictureId());
+    Assert.assertEquals(INSERTED_DOCTOR_IMAGE, doctor.getImage());
     Assert.assertEquals(AUX_DOCTOR_SPECIALTY, doctor.getSpecialty());
     Assert.assertEquals(AUX_DOCTOR_CITY, doctor.getLocation().getCity());
     Assert.assertEquals(AUX_DOCTOR_ADDRESS, doctor.getLocation().getAddress());
@@ -245,7 +246,7 @@ public class DoctorDaoImplTest {
     Assert.assertEquals(INSERTED_DOCTOR_PASSWORD, doctors.get(0).getPassword());
     Assert.assertEquals(INSERTED_DOCTOR_FIRST_NAME, doctors.get(0).getFirstName());
     Assert.assertEquals(INSERTED_DOCTOR_LAST_NAME, doctors.get(0).getLastName());
-    Assert.assertEquals(INSERTED_DOCTOR_PFP_ID, doctors.get(0).getProfilePictureId());
+    Assert.assertEquals(INSERTED_DOCTOR_IMAGE, doctors.get(0).getImage());
     Assert.assertEquals(INSERTED_DOCTOR_INSURANCES, doctors.get(0).getHealthInsurances());
     Assert.assertEquals(INSERTED_DOCTOR_ADDRESS, doctors.get(0).getLocation().getAddress());
     Assert.assertEquals(INSERTED_DOCTOR_CITY, doctors.get(0).getLocation().getCity());

@@ -5,6 +5,7 @@ import static org.junit.Assert.assertThrows;
 import ar.edu.itba.paw.interfaces.persistence.exceptions.PatientAlreadyExistsException;
 import ar.edu.itba.paw.interfaces.persistence.exceptions.PatientNotFoundException;
 import ar.edu.itba.paw.models.HealthInsurance;
+import ar.edu.itba.paw.models.Image;
 import ar.edu.itba.paw.models.Patient;
 import ar.edu.itba.paw.persistence.config.TestConfig;
 import java.util.Optional;
@@ -31,7 +32,7 @@ public class PatientDaoImplTest {
   private static final String INSERTED_PATIENT_PASSWORD = "patient_password";
   private static final String INSERTED_PATIENT_FIRST_NAME = "patient_first_name";
   private static final String INSERTED_PATIENT_LAST_NAME = "patient_last_name";
-  private static final Long INSERTED_PATIENT_PFP_ID = null;
+  private static final Image INSERTED_PATIENT_IMAGE = null;
   private static final HealthInsurance INSERTED_PATIENT_HEALTH_INSURANCE = HealthInsurance.OMINT;
 
   private static final Long AUX_PATIENT_ID = 6L;
@@ -39,7 +40,7 @@ public class PatientDaoImplTest {
   private static final String AUX_PATIENT_PASSWORD = "notpatient_password";
   private static final String AUX_PATIENT_FIRST_NAME = "notpatient_first_name";
   private static final String AUX_PATIENT_LAST_NAME = "notpatient_last_name";
-  private static final Long AUX_PATIENT_PFP_ID = 2L;
+  private static final Image AUX_PATIENT_IMAGE = new Image(2L, null);
   private static final HealthInsurance AUX_PATIENT_HEALTH_INSURANCE = HealthInsurance.OSDE;
 
   private static final Patient PATIENT_5 =
@@ -49,7 +50,7 @@ public class PatientDaoImplTest {
           INSERTED_PATIENT_PASSWORD,
           INSERTED_PATIENT_FIRST_NAME,
           INSERTED_PATIENT_LAST_NAME,
-          INSERTED_PATIENT_PFP_ID,
+          INSERTED_PATIENT_IMAGE,
           INSERTED_PATIENT_HEALTH_INSURANCE);
 
   @Autowired private DataSource ds;
@@ -75,7 +76,7 @@ public class PatientDaoImplTest {
     Assert.assertEquals(AUX_PATIENT_PASSWORD, patient.getPassword());
     Assert.assertEquals(AUX_PATIENT_FIRST_NAME, patient.getFirstName());
     Assert.assertEquals(AUX_PATIENT_LAST_NAME, patient.getLastName());
-    Assert.assertEquals(INSERTED_PATIENT_PFP_ID, patient.getProfilePictureId());
+    Assert.assertEquals(INSERTED_PATIENT_IMAGE, patient.getImage());
     Assert.assertEquals(AUX_PATIENT_HEALTH_INSURANCE, patient.getHealthInsurance());
 
     Assert.assertEquals(2, JdbcTestUtils.countRowsInTable(jdbcTemplate, "patient"));
@@ -104,7 +105,7 @@ public class PatientDaoImplTest {
     Assert.assertEquals(INSERTED_PATIENT_PASSWORD, patient.getPassword());
     Assert.assertEquals(INSERTED_PATIENT_FIRST_NAME, patient.getFirstName());
     Assert.assertEquals(INSERTED_PATIENT_LAST_NAME, patient.getLastName());
-    Assert.assertEquals(INSERTED_PATIENT_PFP_ID, patient.getProfilePictureId());
+    Assert.assertEquals(INSERTED_PATIENT_IMAGE, patient.getImage());
     Assert.assertEquals(AUX_PATIENT_HEALTH_INSURANCE, patient.getHealthInsurance());
   }
 

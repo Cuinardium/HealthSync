@@ -30,19 +30,18 @@ public class PatientServiceImplTest {
   private static final String FIRST_NAME = "first_name";
   private static final String LAST_NAME = "last_name";
   private static final HealthInsurance HEALTH_INSURANCE = HealthInsurance.NONE;
-  private static final Long PFP_ID = null;
+  private static final Image IMAGE = null;
 
-  private static final User USER = new User(ID, EMAIL, PASSWORD, FIRST_NAME, LAST_NAME, PFP_ID);
+  private static final User USER = new User(ID, EMAIL, PASSWORD, FIRST_NAME, LAST_NAME, IMAGE);
   private static final Patient PATIENT =
-      new Patient(ID, EMAIL, PASSWORD, FIRST_NAME, LAST_NAME, PFP_ID, HEALTH_INSURANCE);
+      new Patient(ID, EMAIL, PASSWORD, FIRST_NAME, LAST_NAME, IMAGE, HEALTH_INSURANCE);
   private static final String EMAIL_NEW = "new_email";
   private static final String FIRST_NAME_NEW = "new_fist_name";
   private static final String LAST_NAME_NEW = "new_last_name";
-  private static final Image IMAGE = new Image(new byte[0]);
   private static final HealthInsurance HEALTH_INSURANCE_NEW = HealthInsurance.OMINT;
   private static final Patient PATIENT_UPDATED =
       new Patient(
-          ID, EMAIL_NEW, PASSWORD, FIRST_NAME_NEW, LAST_NAME_NEW, PFP_ID, HEALTH_INSURANCE_NEW);
+          ID, EMAIL_NEW, PASSWORD, FIRST_NAME_NEW, LAST_NAME_NEW, IMAGE, HEALTH_INSURANCE_NEW);
 
   @Mock private PatientDao patientDao;
   @Mock private UserService userService;
