@@ -33,12 +33,6 @@
     margin-left: 10px;
 }
 
-#get-button{
-    align-self: end;
-    margin-left: 40px;
-    width: auto;
-}
-
 /* Appointmnet cards */
 
 .card{
@@ -65,6 +59,10 @@
     align-items: center;
     margin-left: 10px;
     margin-top: 10px;
+}
+
+.detailed-link {
+    margin-right: 10px;
 }
 
 .noAppointmentsMsg{

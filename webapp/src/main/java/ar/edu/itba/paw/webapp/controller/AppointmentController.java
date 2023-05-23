@@ -9,9 +9,7 @@ import ar.edu.itba.paw.webapp.exceptions.AppointmentForbiddenException;
 import ar.edu.itba.paw.webapp.exceptions.AppointmentNotFoundException;
 import ar.edu.itba.paw.webapp.exceptions.UserNotFoundException;
 import ar.edu.itba.paw.webapp.form.ModalForm;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.function.IntPredicate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -62,31 +60,11 @@ public class AppointmentController {
             .getFilteredAppointments(userId, AppointmentStatus.COMPLETED, null, null, isPatient)
             .getContent();
 
-    // Create tabs
-    List<AppointmentTab> tabs = new ArrayList<>();
-
-    // User can cancel an upcoming appointment
-    tabs.add(
-        new AppointmentTab(
-            "confirmed", (x) -> (x == 1), upcomingAppointments, null, "appointments.upcoming"));
-    tabs.add(
-        new AppointmentTab(
-            "cancelled",
-            (x) -> (x == 2),
-            cancelledAppointments,
-             AllowedActions.CANCEL,
-            "appointments.cancelled"));
-    tabs.add(
-        new AppointmentTab(
-            "history",
-            (x) -> (x == 3),
-            completedAppointments,
-            isPatient ? AllowedActions.REVIEW : null,
-            "appointments.history"));
-
     // Add values to model
-    mav.addObject("selectedTab", selectedTab);
-    mav.addObject("tabs", tabs);
+    mav.addObject("selectedTab", selectedTab >= 1 && selectedTab <= 3 ? selectedTab : 1);
+    mav.addObject("upcomingAppointments", upcomingAppointments);
+    mav.addObject("cancelledAppointments", cancelledAppointments);
+    mav.addObject("completedAppointments", completedAppointments);
     mav.addObject("modalForm", modalForm);
 
     LOGGER.debug("Patient requested his appointments");
@@ -94,41 +72,29 @@ public class AppointmentController {
     return mav;
   }
 
-  @RequestMapping(value = "/my-appointments/{id:\\d+}/update", method = RequestMethod.POST)
-  public ModelAndView updateAppointment(
+  @RequestMapping(value = "/my-appointments/{id:\\d+}/cancel", method = RequestMethod.POST)
+  public ModelAndView cancelAppointment(
       @ModelAttribute("modalForm") final ModalForm modalForm,
       @PathVariable("id") final int appointmentId,
-      @RequestParam(name = "status") final int status,
-      @RequestParam(name = "selected_tab", required = false, defaultValue = "0")
+      @RequestParam(name = "selected_tab", required = false, defaultValue = "1")
           final int selectedTab) {
-
-    // TODO: feedback?
-    if (status < 0 || status >= AppointmentStatus.values().length) {
-      return getAppointments(modalForm, selectedTab);
-    }
-
-    // A patient can only cancel an appointment
-    if (PawAuthUserDetails.getRole().equals(UserRoles.ROLE_PATIENT)
-        && status != AppointmentStatus.CANCELLED.ordinal()) {
-      return getAppointments(modalForm, selectedTab);
-    }
-
-    AppointmentStatus appointmentStatus = AppointmentStatus.values()[status];
 
     try {
       Appointment appointment =
           appointmentService.updateAppointment(
               appointmentId,
-              appointmentStatus,
+              AppointmentStatus.CANCELLED,
               modalForm.getDescription(),
               PawAuthUserDetails.getCurrentUserId());
-      LOGGER.info("Updated {}", appointment);
+
+      LOGGER.info("Cancelled {}", appointment);
+
     } catch (RuntimeException e) {
-      LOGGER.error("Appointment could not be updated, because user did not exist");
+      LOGGER.error("Appointment could not be cancelled, because user did not exist");
       throw new UserNotFoundException();
     }
 
-    return getAppointments(modalForm, selectedTab);
+    return new ModelAndView("redirect:/my-appointments?selected_tab=" + selectedTab);
   }
 
   // ================================== Detailed Appointment =======================================
@@ -137,7 +103,7 @@ public class AppointmentController {
   public ModelAndView getDetailedAppointment(
       @ModelAttribute("modalForm") final ModalForm modalForm,
       @PathVariable("id") final int appointmentId,
-      @RequestParam(name = "selected_tab", required = false, defaultValue = "0")
+      @RequestParam(name = "selected_tab", required = false, defaultValue = "1")
           final int selectedTab) {
 
     Appointment appointment =
@@ -152,106 +118,11 @@ public class AppointmentController {
     }
 
     ModelAndView mav = new ModelAndView("appointment/detailedAppointment");
-    List<AllowedActions> allowedActions = new ArrayList<>();
-
-    if (appointment.getStatus().equals(AppointmentStatus.CONFIRMED)) {
-      allowedActions.add(AllowedActions.CANCEL);
-    }
 
     // Add values to model
-    mav.addObject("appointmentId", appointmentId);
-    mav.addObject("actions", allowedActions);
-    mav.addObject("appointmentDesc", appointment.getDescription());
-    mav.addObject("cancelDescription", appointment.getCancelDesc());
-    mav.addObject(
-        "appointmentDateTime",
-        appointment.getDate() + " " + appointment.getTimeBlock().getBlockBeginning());
-    mav.addObject("appointmentStatusMessageId", appointment.getStatus().getMessageID());
-    mav.addObject(
-        "patientName",
-        appointment.getPatient().getFirstName() + " " + appointment.getPatient().getLastName());
-    mav.addObject(
-        "doctorName",
-        appointment.getDoctor().getFirstName() + " " + appointment.getDoctor().getLastName());
-    mav.addObject("cityMessageId", appointment.getDoctor().getLocation().getCity().getMessageID());
-    mav.addObject("address", appointment.getDoctor().getLocation().getAddress());
-    mav.addObject(
-        "patientHealthInsuranceMessageId",
-        appointment.getPatient().getHealthInsurance().getMessageID());
-
-    mav.addObject("selectedTab", selectedTab);
+    mav.addObject("appointment", appointment);
+    mav.addObject("selectedTab", selectedTab >= 1 && selectedTab <= 3 ? selectedTab : 1);
 
     return mav;
-  }
-
-  // ==================================  Private   =================================================
-
-  // ==================================  Inner Classes  ===========================================
-  public enum AllowedActions {
-    CANCEL(AppointmentStatus.CANCELLED.ordinal(), "btn-danger", "appointments.cancel"),
-    REVIEW(AppointmentStatus.COMPLETED.ordinal(), "btn-primary", "appointments.review");
-
-    private final Integer statusCode;
-    private final String buttonClass;
-    private final String messageID;
-
-    private AllowedActions(Integer statusCode, String buttonClass, String messageID) {
-      this.statusCode = statusCode;
-      this.buttonClass = buttonClass;
-      this.messageID = messageID;
-    }
-
-    public Integer getStatusCode() {
-      return statusCode;
-    }
-
-    public String getButtonClass() {
-      return buttonClass;
-    }
-
-    public String getMessageID() {
-      return messageID;
-    }
-  }
-
-  public class AppointmentTab {
-    private final String tabName;
-    private final IntPredicate intPredicate;
-    private final List<Appointment> appointments;
-    private final AllowedActions allowedAction;
-    private final String messageID;
-
-    private AppointmentTab(
-        String tabName,
-        IntPredicate intPredicate,
-        List<Appointment> appointments,
-        AllowedActions allowedAction,
-        String messageID) {
-      this.tabName = tabName;
-      this.intPredicate = intPredicate;
-      this.appointments = appointments;
-      this.allowedAction = allowedAction;
-      this.messageID = messageID;
-    }
-
-    public String getTabName() {
-      return tabName;
-    }
-
-    public List<Appointment> getAppointments() {
-      return appointments;
-    }
-
-    public AllowedActions getAllowedAction() {
-      return allowedAction;
-    }
-
-    public boolean isActive(Integer status) {
-      return intPredicate.test(status);
-    }
-
-    public String getMessageID() {
-      return messageID;
-    }
   }
 }
