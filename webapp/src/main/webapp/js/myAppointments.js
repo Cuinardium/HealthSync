@@ -40,10 +40,10 @@ function updateTab(e, selectedIndex) {
 
         // get the original href attribute
         let originalHref = links[k].getAttribute("href");
-        originalHref = originalHref.replace(/[?&]selected_tab=\d+/, "");
+        originalHref = originalHref.replace(/\?selected_tab=\d+/, "");
 
         // modify the href attribute to include the query parameters
-        const newHref = originalHref + "&selected_tab=" + encodeURIComponent(selectedTab);
+        const newHref = originalHref + "?selected_tab=" + encodeURIComponent(selectedTab);
         links[k].setAttribute("href", newHref);
     }
 }

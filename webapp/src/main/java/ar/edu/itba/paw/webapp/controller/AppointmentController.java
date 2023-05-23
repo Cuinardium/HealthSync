@@ -61,7 +61,7 @@ public class AppointmentController {
             .getContent();
 
     // Add values to model
-    mav.addObject("selectedTab", selectedTab);
+    mav.addObject("selectedTab", selectedTab >= 1 && selectedTab <= 3 ? selectedTab : 1);
     mav.addObject("upcomingAppointments", upcomingAppointments);
     mav.addObject("cancelledAppointments", cancelledAppointments);
     mav.addObject("completedAppointments", completedAppointments);
@@ -72,37 +72,25 @@ public class AppointmentController {
     return mav;
   }
 
-  @RequestMapping(value = "/my-appointments/{id:\\d+}/update", method = RequestMethod.POST)
-  public ModelAndView updateAppointment(
+  @RequestMapping(value = "/my-appointments/{id:\\d+}/cancel", method = RequestMethod.POST)
+  public ModelAndView cancelAppointment(
       @ModelAttribute("modalForm") final ModalForm modalForm,
       @PathVariable("id") final int appointmentId,
-      @RequestParam(name = "status") final int status,
-      @RequestParam(name = "selected_tab", required = false, defaultValue = "0")
+      @RequestParam(name = "selected_tab", required = false, defaultValue = "1")
           final int selectedTab) {
-
-    // TODO: feedback?
-    if (status < 0 || status >= AppointmentStatus.values().length) {
-      return new ModelAndView("redirect:/my-appointments?selected_tab=" + selectedTab);
-    }
-
-    // A patient can only cancel an appointment
-    if (PawAuthUserDetails.getRole().equals(UserRoles.ROLE_PATIENT)
-        && status != AppointmentStatus.CANCELLED.ordinal()) {
-      return new ModelAndView("redirect:/my-appointments?selected_tab=" + selectedTab);
-    }
-
-    AppointmentStatus appointmentStatus = AppointmentStatus.values()[status];
 
     try {
       Appointment appointment =
           appointmentService.updateAppointment(
               appointmentId,
-              appointmentStatus,
+              AppointmentStatus.CANCELLED,
               modalForm.getDescription(),
               PawAuthUserDetails.getCurrentUserId());
-      LOGGER.info("Updated {}", appointment);
+
+      LOGGER.info("Cancelled {}", appointment);
+
     } catch (RuntimeException e) {
-      LOGGER.error("Appointment could not be updated, because user did not exist");
+      LOGGER.error("Appointment could not be cancelled, because user did not exist");
       throw new UserNotFoundException();
     }
 
@@ -115,7 +103,7 @@ public class AppointmentController {
   public ModelAndView getDetailedAppointment(
       @ModelAttribute("modalForm") final ModalForm modalForm,
       @PathVariable("id") final int appointmentId,
-      @RequestParam(name = "selected_tab", required = false, defaultValue = "0")
+      @RequestParam(name = "selected_tab", required = false, defaultValue = "1")
           final int selectedTab) {
 
     Appointment appointment =
@@ -133,7 +121,7 @@ public class AppointmentController {
 
     // Add values to model
     mav.addObject("appointment", appointment);
-    mav.addObject("selectedTab", selectedTab);
+    mav.addObject("selectedTab", selectedTab >= 1 && selectedTab <= 3 ? selectedTab : 1);
 
     return mav;
   }

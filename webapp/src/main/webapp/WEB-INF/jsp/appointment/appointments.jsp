@@ -120,11 +120,9 @@
 
                             <div class="cardButtonContainer">
                                 <c:if test="${i == 1}">
-                                    <c:url value="/my-appointments/${appointment.id}/update" var="updateUrl">
-                                        <c:param name="status" value="${i}"/>
-                                    </c:url>
+                                    <c:url value="/my-appointments/${appointment.id}/cancel" var="cancelUrl"/>
 
-                                    <button onclick="openModal('${updateUrl}')"
+                                    <button onclick="openModal('${cancelUrl}')"
                                             class="post-button btn btn-danger">
                                         <spring:message code="appointments.cancel"/>
                                     </button>
@@ -188,7 +186,7 @@
 
     function openModal(action) {
         $('#modal').modal('show');
-        $('#post-modal').attr('action', action + '&selected_tab=' + selectedTab);
+        $('#post-modal').attr('action', action + '?selected_tab=' + selectedTab);
     }
 
     function closeModal() {

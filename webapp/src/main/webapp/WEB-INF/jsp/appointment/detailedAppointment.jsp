@@ -72,7 +72,7 @@
                 <strong>${doctor}: </strong>${appointment.doctor.firstName} ${appointment.doctor.lastName}</div>
 
             <div class="card-title"><strong>${address}: </strong>${address}, ${city}</div>
-             
+
 
             <div class="card-title"><strong>${healthInsurance_title}: </strong>${healthInsurance}</div>
             <div class="card-title"><strong>${description}: </strong>${appointment.description}</div>
@@ -87,9 +87,8 @@
                     <c:set value="${appointment.status == 'CONFIRMED' ? 'appointments.cancel' : 'appointments.review'}"
                            var="buttonMessageId"/>
 
-                    <c:url value="/my-appointments/${appointment.id}/update" var="cancelUrl">
+                    <c:url value="/my-appointments/${appointment.id}/cancel" var="cancelUrl">
                         <c:param name="selected_tab" value="${selectedTab}"/>
-                        <c:param name="status" value="1"/>
                     </c:url>
 
                     <button onclick="openModal('${cancelUrl}')"
