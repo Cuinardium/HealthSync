@@ -96,7 +96,7 @@ public class MailServiceImpl implements MailService {
 
     String baseUrl = env.getProperty("webapp.baseUrl");
 
-    String appointmentsUrl = baseUrl + "my-appointments";
+    String appointmentUrl = baseUrl + appointment.getId() + "/detailed-appointment";
 
     // Load model
     templateModel.put("baseUrl", baseUrl);
@@ -105,7 +105,7 @@ public class MailServiceImpl implements MailService {
     templateModel.put("description", description);
     templateModel.put("userHealthcare", patientHealthInsurance);
     templateModel.put("userMail", patientEmail);
-    templateModel.put("appointmentsUrl", appointmentsUrl);
+    templateModel.put("appointmentUrl", appointmentUrl);
 
     String htmlBody = getHtmlBody("appointmentRequest", templateModel, locale);
 
@@ -211,7 +211,7 @@ public class MailServiceImpl implements MailService {
 
     String baseUrl = env.getProperty("webapp.baseUrl");
 
-    String doctorAppointmentUrl = baseUrl + appointment.getDoctor().getId() + "/appointment";
+    String doctorUrl = baseUrl + appointment.getDoctor().getId() + "/detailed-doctor";
 
     String cancelDescription = appointment.getCancelDesc();
 
@@ -219,7 +219,7 @@ public class MailServiceImpl implements MailService {
     templateModel.put("baseUrl", baseUrl);
     templateModel.put("userMail", patientEmail);
     templateModel.put("docName", doctorName);
-    templateModel.put("appointmentUrl", doctorAppointmentUrl);
+    templateModel.put("doctorUrl", doctorUrl);
     templateModel.put("date", dateTime);
     templateModel.put("cancelDesc", cancelDescription);
 
