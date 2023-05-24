@@ -39,4 +39,9 @@ public interface AppointmentService {
       long doctorId, LocalDate from, LocalDate to);
 
   public boolean hasPatientMetDoctor(long patientId, long doctorId);
+  
+  // ================ Tasks ================
+  void sendAppointmentReminders();
+
+  void updateCompletedAppointmentsStatus();
 }

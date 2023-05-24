@@ -19,6 +19,7 @@ import java.util.Locale;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -119,13 +120,15 @@ public class AppointmentServiceImpl implements AppointmentService {
   // =============== Queries ===============
 
   @Override
-  public Optional<Appointment> getAppointmentById(long appointmentId) {
-    return appointmentDao.getAppointmentById(appointmentId);
-  }
-
-  @Override
   public List<Appointment> getAppointments(long userId, boolean isPatient) {
     return appointmentDao.getAppointments(userId, isPatient);
+  }
+
+  // ============================= QUERIES =============================
+
+  @Override
+  public Optional<Appointment> getAppointmentById(long appointmentId) {
+    return appointmentDao.getAppointmentById(appointmentId);
   }
 
   @Override
@@ -180,5 +183,44 @@ public class AppointmentServiceImpl implements AppointmentService {
   @Override
   public boolean hasPatientMetDoctor(long patientId, long doctorId) {
     return appointmentDao.hasPatientMetDoctor(patientId, doctorId);
+  }
+
+  // ======================================== TASKS ========================================
+
+  // Run at midnight every day
+  @Scheduled(cron = "0 0 0 * * ?")
+  @Override
+  public void sendAppointmentReminders() {
+
+    // Get tomorrow's date
+    LocalDate tomorrow = LocalDate.now().plusDays(1);
+
+    // Get all appointments for tomorrow
+    List<Appointment> tomorrowAppointments = appointmentDao.getAllConfirmedAppointmentsInDate(tomorrow);
+
+    // For each appointment, send reminder to patient
+    for (Appointment appointment : tomorrowAppointments) {
+      mailService.sendAppointmentReminderMail(appointment, LocaleContextHolder.getLocale());
+    }
+  }
+
+  // Run at midnight every day
+  @Scheduled(cron = "0 0 0 * * ?")
+  @Override
+  public void updateCompletedAppointmentsStatus() {
+
+    // Get yesterday's date
+    LocalDate yesterday = LocalDate.now().minusDays(1);
+
+    // Complete all appointments for yesterday
+    appointmentDao.completeAppointmentsInDate(yesterday);
+
+    // Get all appointments for yesterday
+    List<Appointment> yesterdayAppointments = appointmentDao.getAllConfirmedAppointmentsInDate(yesterday);
+
+    // Send email to patient
+    for (Appointment appointment : yesterdayAppointments) {
+      mailService.sendAppointmentCompletedMail(appointment, LocaleContextHolder.getLocale());
+    }
   }
 }
