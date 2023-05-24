@@ -57,43 +57,12 @@ public class DoctorController {
   public ModelAndView detailedDoctor(
       @PathVariable("id") final long doctorId,
       @RequestParam(value = "page", required = false, defaultValue = "1") final int page,
-      @RequestParam(value = "modal", required = false, defaultValue = "false") final boolean modal,
       @ModelAttribute("appointmentForm") final AppointmentForm appointmentForm) {
 
-    Doctor doctor = doctorService.getDoctorById(doctorId).orElseThrow(UserNotFoundException::new);
-
-    final ModelAndView mav = new ModelAndView("doctor/detailedDoctor");
-
-    mav.addObject("doctor", doctor);
-
-    // Only patients can book appointments
-    boolean canBook = PawAuthUserDetails.getRole().equals(UserRoles.ROLE_PATIENT);
-
-    // Booking starts from the day after today because of not allowing to book appointments in the
-    // past
-    LocalDate tomorrow = LocalDate.now().plusDays(1);
-
-    // Patients will only be able to book appointments between tomorrow and 3 months from now
-    List<List<ThirtyMinuteBlock>> hoursAvailable =
-        appointmentService.getAvailableHoursForDoctorOnRange(
-            doctorId, tomorrow, tomorrow.plusMonths(3));
-
-    // Get reviews
-    Page<Review> reviews = reviewService.getReviewsForDoctor(doctorId, page - 1, PAGE_SIZE);
-    boolean canReview = reviewService.canReview(doctorId, PawAuthUserDetails.getCurrentUserId());
-
-    mav.addObject("form", appointmentForm);
-    mav.addObject("canBook", canBook);
-    mav.addObject("hoursAvailable", hoursAvailable);
-    mav.addObject("reviews", reviews.getContent());
-    mav.addObject("canReview", canReview);
-    mav.addObject("currentPage", reviews.getCurrentPage() + 1);
-    mav.addObject("totalPages", reviews.getContent().size() == 0 ? 1 : reviews.getTotalPages());
-    mav.addObject("showModal", modal);
-    mav.addObject("errorModal", modal);
+    ModelAndView detailedDoctorMav = getDetailedDoctorMav(doctorId, page, appointmentForm, false, false);
 
     LOGGER.debug("Detailed doctor page for doctor: {} requested", doctorId);
-    return mav;
+    return detailedDoctorMav;
   }
 
   @RequestMapping(value = "/{id:\\d+}/detailed-doctor", method = RequestMethod.POST)
@@ -104,7 +73,7 @@ public class DoctorController {
       final BindingResult errors) {
 
     if (errors.hasErrors()) {
-      return detailedDoctor(doctorId, page, true, appointmentForm);
+      return getDetailedDoctorMav(doctorId, page, appointmentForm, true, true);
     }
 
     PawAuthUserDetails currentUser =
@@ -134,37 +103,7 @@ public class DoctorController {
           new RuntimeException());
     }
 
-    final ModelAndView mav = new ModelAndView("doctor/detailedDoctor");
-
-    Doctor doctor = doctorService.getDoctorById(doctorId).orElseThrow(UserNotFoundException::new);
-
-    mav.addObject("doctor", doctor);
-
-    // Only patients can book appointments
-    boolean canBook = PawAuthUserDetails.getRole().equals(UserRoles.ROLE_PATIENT);
-
-    // Booking starts from the day after today because of not allowing to book appointments in the
-    // past
-    LocalDate tomorrow = LocalDate.now().plusDays(1);
-
-    // Patients will only be able to book appointments between tomorrow and 3 months from now
-    List<List<ThirtyMinuteBlock>> hoursAvailable =
-        appointmentService.getAvailableHoursForDoctorOnRange(
-            doctorId, tomorrow, tomorrow.plusMonths(3));
-
-    // Get reviews
-    Page<Review> reviews = reviewService.getReviewsForDoctor(doctorId, page - 1, PAGE_SIZE);
-    boolean canReview = reviewService.canReview(doctorId, PawAuthUserDetails.getCurrentUserId());
-
-    mav.addObject("showModal", true);
-    mav.addObject("errorModal", false);
-    mav.addObject("form", appointmentForm);
-    mav.addObject("canBook", canBook);
-    mav.addObject("hoursAvailable", hoursAvailable);
-    mav.addObject("reviews", reviews.getContent());
-    mav.addObject("canReview", canReview);
-
-    return mav;
+    return getDetailedDoctorMav(doctorId, page, appointmentForm, true, false);
   }
 
   // ========================== Review ==========================
@@ -213,6 +152,43 @@ public class DoctorController {
     mav.addObject("showModal", true);
     mav.addObject("doctorId", doctorId);
     mav.addObject("selectedRating", reviewForm.getRating());
+
+    return mav;
+  }
+
+  // ========================= Private ====================================
+  private ModelAndView getDetailedDoctorMav(long doctorId, int page, AppointmentForm appointmentForm, boolean showModal, boolean errorModal) {
+    Doctor doctor = doctorService.getDoctorById(doctorId).orElseThrow(UserNotFoundException::new);
+
+    final ModelAndView mav = new ModelAndView("doctor/detailedDoctor");
+
+    mav.addObject("doctor", doctor);
+
+    // Only patients can book appointments
+    boolean canBook = PawAuthUserDetails.getRole().equals(UserRoles.ROLE_PATIENT);
+
+    // Booking starts from the day after today because of not allowing to book appointments in the
+    // past
+    LocalDate tomorrow = LocalDate.now().plusDays(1);
+
+    // Patients will only be able to book appointments between tomorrow and 3 months from now
+    List<List<ThirtyMinuteBlock>> hoursAvailable =
+            appointmentService.getAvailableHoursForDoctorOnRange(
+                    doctorId, tomorrow, tomorrow.plusMonths(3));
+
+    // Get reviews
+    Page<Review> reviews = reviewService.getReviewsForDoctor(doctorId, page - 1, PAGE_SIZE);
+    boolean canReview = reviewService.canReview(doctorId, PawAuthUserDetails.getCurrentUserId());
+
+    mav.addObject("form", appointmentForm);
+    mav.addObject("canBook", canBook);
+    mav.addObject("hoursAvailable", hoursAvailable);
+    mav.addObject("reviews", reviews.getContent());
+    mav.addObject("canReview", canReview);
+    mav.addObject("currentPage", reviews.getCurrentPage() + 1);
+    mav.addObject("totalPages", reviews.getContent().size() == 0 ? 1 : reviews.getTotalPages());
+    mav.addObject("showModal", showModal);
+    mav.addObject("errorModal", errorModal);
 
     return mav;
   }
