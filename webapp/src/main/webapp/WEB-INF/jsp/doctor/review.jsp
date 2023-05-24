@@ -24,6 +24,7 @@
 <c:url value="/js/review.js" var="reviewJs"/>
 
 <c:url value="/${doctorId}/review" var="reviewUrl"/>
+<c:url value="/${doctorId}/detailed-doctor" var="doctorUrl"/>
 
 <html>
 <head>
@@ -46,48 +47,54 @@
 </head>
 <body>
 <jsp:include page="../components/header.jsp"/>
-<div class="formContainer generalPadding">
-    <h1>${title}</h1>
-    <form:form modelAttribute="reviewForm" class="card" action="${reviewUrl}"
-               method="POST">
+<div class="generalPadding">
+    <div class="backButtonContainer">
+        <a href="${doctorUrl}" class="btn btn-primary backButton">
+            <i class="fa-solid fa-arrow-left"></i>
+        </a>
+    </div>
+    <div class="formContainer">
+        <h1>${title}</h1>
+        <form:form modelAttribute="reviewForm" class="card" action="${reviewUrl}"
+                   method="POST">
 
-        <div class="formItem">
-            <form:label cssClass="formLabel" path="rating">${rating}</form:label>
-            <div class="starContainer">
-                <form:input id="ratingInput" path="rating" hidden="true"/>
-                <c:forEach begin="1" end="5" step="1" var="i">
-                    <div class="star ${selcetdRating >= i ? "selected" : "unselected"}" data-index="${i}">
-                        <i class="fa fa-3x fa-star"></i>
-                    </div>
-                </c:forEach>
+            <div class="formItem">
+                <form:label cssClass="formLabel" path="rating">${rating}</form:label>
+                <div class="starContainer">
+                    <form:input id="ratingInput" path="rating" hidden="true"/>
+                    <c:forEach begin="1" end="5" step="1" var="i">
+                        <div class="star ${selectedRating >= i ? "selected" : "unselected"}" data-index="${i}">
+                            <i class="fa fa-3x fa-star"></i>
+                        </div>
+                    </c:forEach>
+                </div>
             </div>
-        </div>
-        <div class="formItem">
-            <form:label cssClass="formLabel" path="description">${description}</form:label>
-            <form:textarea cols="50" rows="10" class="form-control" type="text" placeholder="${descriptionPlaceholder}" path="description"/>
-            <form:errors path="description" cssClass="error" element="p"/>
-        </div>
+            <div class="formItem">
+                <form:label cssClass="formLabel" path="description">${description}</form:label>
+                <form:textarea cols="50" rows="10" class="form-control" type="text" placeholder="${descriptionPlaceholder}" path="description"/>
+                <form:errors path="description" cssClass="error" element="p"/>
+            </div>
 
-        <button type="submit" class="btn btn-primary submitButton">${submit}</button>
-    </form:form>
+            <button type="submit" class="btn btn-primary submitButton">${submit}</button>
+        </form:form>
 
-    <div class="modal fade" id="modalSuccess" tabindex="-1" role="dialog" aria-labelledby="modalLabel"
-         aria-hidden="true" data-bs-backdrop="static">
-        <div class="modal-dialog" role="dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="modalLabelSuccess">${modalTitle}</h5>
-                </div>
-                <div class="modal-body">
-                    ${modalDesc}
-                </div>
-                <div class="modal-footer">
-                    <a type="button" href="${successfulUrl}" class="btn btn-primary">${modalButton}</a>
+        <div class="modal fade" id="modalSuccess" tabindex="-1" role="dialog" aria-labelledby="modalLabel"
+             aria-hidden="true" data-bs-backdrop="static">
+            <div class="modal-dialog" role="dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="modalLabelSuccess">${modalTitle}</h5>
+                    </div>
+                    <div class="modal-body">
+                        ${modalDesc}
+                    </div>
+                    <div class="modal-footer">
+                        <a type="button" href="${successfulUrl}" class="btn btn-primary">${modalButton}</a>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
-
 </body>
 </html>

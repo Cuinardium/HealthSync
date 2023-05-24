@@ -80,11 +80,13 @@ public class DoctorController {
 
     // Get reviews
     Page<Review> reviews = reviewService.getReviewsForDoctor(doctorId, page - 1, PAGE_SIZE);
+    boolean canReview = reviewService.canReview(doctorId, PawAuthUserDetails.getCurrentUserId());
 
     mav.addObject("form", appointmentForm);
     mav.addObject("canBook", canBook);
     mav.addObject("hoursAvailable", hoursAvailable);
     mav.addObject("reviews", reviews.getContent());
+    mav.addObject("canReview", canReview);
     mav.addObject("currentPage", reviews.getCurrentPage() + 1);
     mav.addObject("totalPages", reviews.getContent().size() == 0 ? 1 : reviews.getTotalPages());
     mav.addObject("showModal", modal);
@@ -149,11 +151,19 @@ public class DoctorController {
     List<List<ThirtyMinuteBlock>> hoursAvailable =
         appointmentService.getAvailableHoursForDoctorOnRange(
             doctorId, tomorrow, tomorrow.plusMonths(3));
+
+    // Get reviews
+    Page<Review> reviews = reviewService.getReviewsForDoctor(doctorId, page - 1, PAGE_SIZE);
+    boolean canReview = reviewService.canReview(doctorId, PawAuthUserDetails.getCurrentUserId());
+
     mav.addObject("showModal", true);
     mav.addObject("errorModal", false);
     mav.addObject("form", appointmentForm);
     mav.addObject("canBook", canBook);
     mav.addObject("hoursAvailable", hoursAvailable);
+    mav.addObject("reviews", reviews.getContent());
+    mav.addObject("canReview", canReview);
+
     return mav;
   }
 
@@ -170,7 +180,7 @@ public class DoctorController {
     final ModelAndView mav = new ModelAndView("doctor/review");
     mav.addObject("showModal", false);
     mav.addObject("doctorId", doctorId);
-    mav.addObject("selcetdRating", reviewForm.getRating());
+    mav.addObject("selectedRating", reviewForm.getRating());
 
     return mav;
   }
@@ -202,7 +212,7 @@ public class DoctorController {
 
     mav.addObject("showModal", true);
     mav.addObject("doctorId", doctorId);
-    mav.addObject("selcetdRating", reviewForm.getRating());
+    mav.addObject("selectedRating", reviewForm.getRating());
 
     return mav;
   }
