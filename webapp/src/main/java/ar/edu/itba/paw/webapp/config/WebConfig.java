@@ -18,7 +18,9 @@ import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 import org.springframework.jdbc.datasource.init.DataSourceInitializer;
 import org.springframework.jdbc.datasource.init.DatabasePopulator;
 import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
+import org.springframework.scheduling.TaskScheduler;
 import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.web.multipart.MultipartResolver;
@@ -119,5 +121,12 @@ public class WebConfig extends WebMvcConfigurerAdapter {
   @Bean
   public PlatformTransactionManager transactionManager(final DataSource ds) {
     return new DataSourceTransactionManager(ds);
+  }
+
+  @Bean
+  public TaskScheduler taskScheduler() {
+    ThreadPoolTaskScheduler taskScheduler = new ThreadPoolTaskScheduler();
+    taskScheduler.setPoolSize(10);
+    return taskScheduler;
   }
 }
