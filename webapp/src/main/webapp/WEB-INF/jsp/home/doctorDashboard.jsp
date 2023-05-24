@@ -110,7 +110,7 @@
                                          onchange="this.form.submit()">
                                 <form:option value="-1" disabled="true" hidden="true"/>
                                 <c:forEach items="${possibleAttendingHours}" var="attHour">
-                                    <c:if test="${toBlock.ordinal() > attHour.ordinal()}">
+                                    <c:if test="${toBlock.ordinal() >= attHour.ordinal()}">
                                         <form:option value="${attHour.ordinal()}">
                                             ${attHour.getBlockBeginning()}
                                         </form:option>
@@ -124,7 +124,7 @@
                             <form:select id="to-select" cssClass="form-select" path="to" onchange="this.form.submit()">
                                 <form:option value="-1" disabled="true" hidden="true"/>
                                 <c:forEach items="${possibleAttendingHours}" var="attHour">
-                                    <c:if test="${fromBlock.ordinal() < attHour.ordinal()}">
+                                    <c:if test="${fromBlock.ordinal() <= attHour.ordinal()}">
                                         <form:option value="${attHour.ordinal()}">
                                             ${attHour.blockEnd}
                                         </form:option>
