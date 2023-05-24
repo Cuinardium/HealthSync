@@ -87,37 +87,33 @@ public class AppointmentServiceImpl implements AppointmentService {
     // TODO: error handling
     Appointment appointment = getAppointmentById(appointmentId).orElseThrow(RuntimeException::new);
 
-    // If requester is the patient, he can only cancel the appointment
-    if (requesterId == appointment.getPatientId()) {
-      if (status != AppointmentStatus.CANCELLED) {
-        throw new RuntimeException();
-      }
-    }
-
     // If requester is nor the patient nor the doctor, he can't update the appointment
     if (requesterId != appointment.getPatientId() && requesterId != appointment.getDoctorId()) {
       throw new RuntimeException();
     }
 
-    try {
-      Appointment updatedAppointment =
-          appointmentDao.updateAppointment(appointmentId, status, cancelDescription);
-      // TODO: error handling
-      Locale locale = LocaleContextHolder.getLocale();
+    Appointment updatedAppointment;
 
-      if (status == AppointmentStatus.CANCELLED) {
-        if (requesterId == appointment.getPatientId()) {
-          mailService.sendAppointmentCancelledByPatientMail(
-              updatedAppointment, cancelDescription, locale);
-        } else {
-          mailService.sendAppointmentCancelledByDoctorMail(
-              updatedAppointment, cancelDescription, locale);
-        }
-      }
-      return updatedAppointment;
+    try {
+      updatedAppointment =
+          appointmentDao.updateAppointment(appointmentId, status, cancelDescription);
     } catch (AppointmentNotFoundException e) {
       throw new RuntimeException();
     }
+
+    Locale locale = LocaleContextHolder.getLocale();
+
+    if (status == AppointmentStatus.CANCELLED) {
+      if (requesterId == appointment.getPatientId()) {
+        mailService.sendAppointmentCancelledByPatientMail(updatedAppointment, locale);
+      } else {
+        mailService.sendAppointmentCancelledByDoctorMail(updatedAppointment, locale);
+      }
+    } else if (status == AppointmentStatus.COMPLETED) {
+      mailService.sendAppointmentCompletedMail(updatedAppointment, locale);
+    }
+
+    return updatedAppointment;
   }
 
   // =============== Queries ===============
