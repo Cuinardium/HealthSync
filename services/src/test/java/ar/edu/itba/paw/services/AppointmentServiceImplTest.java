@@ -4,8 +4,10 @@ import ar.edu.itba.paw.interfaces.persistence.AppointmentDao;
 import ar.edu.itba.paw.interfaces.services.DoctorService;
 import ar.edu.itba.paw.interfaces.services.MailService;
 import ar.edu.itba.paw.interfaces.services.PatientService;
+import ar.edu.itba.paw.interfaces.services.exceptions.AppointmentNotFoundException;
 import ar.edu.itba.paw.interfaces.services.exceptions.DoctorNotAvailableException;
 import ar.edu.itba.paw.interfaces.services.exceptions.DoctorNotFoundException;
+import ar.edu.itba.paw.interfaces.services.exceptions.ForbiddenCancelException;
 import ar.edu.itba.paw.interfaces.services.exceptions.PatientNotFoundException;
 import ar.edu.itba.paw.models.Appointment;
 import ar.edu.itba.paw.models.AppointmentStatus;
@@ -23,7 +25,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -132,6 +133,8 @@ public class AppointmentServiceImplTest {
           APPOINTMENT_DESCRIPTION,
           CANCELLED_APPOINTMENT_DESCRIPTION);
 
+  private static final long FORBIDDEN_USER_ID = 2;
+
   // ================== Mocks ==================
 
   @Mock private AppointmentDao appointmentDao;
@@ -143,17 +146,6 @@ public class AppointmentServiceImplTest {
   @Mock private MailService mailService;
 
   @InjectMocks private AppointmentServiceImpl as;
-
-  @Before
-  public void setup() {
-    // Mock mailService
-    Mockito.doNothing()
-        .when(mailService)
-        .sendAppointmentRequestMail(Mockito.any(Appointment.class), Mockito.any(Locale.class));
-    Mockito.doNothing()
-        .when(mailService)
-        .sendAppointmentReminderMail(Mockito.any(Appointment.class), Mockito.any(Locale.class));
-  }
 
   // ================== createAppointment ==================
 
@@ -175,6 +167,14 @@ public class AppointmentServiceImplTest {
 
     Mockito.when(appointmentDao.getAppointment(DOCTOR_ID, APPOINTMENT_DATE, APPOINTMENT_TIME))
         .thenReturn(Optional.empty());
+
+    // Mock mailService
+    Mockito.doNothing()
+        .when(mailService)
+        .sendAppointmentRequestMail(Mockito.any(Appointment.class), Mockito.any(Locale.class));
+    Mockito.doNothing()
+        .when(mailService)
+        .sendAppointmentReminderMail(Mockito.any(Appointment.class), Mockito.any(Locale.class));
 
     // 2. Ejercitar la class under test
     Appointment appointment =
@@ -273,6 +273,14 @@ public class AppointmentServiceImplTest {
                 PATIENT, DOCTOR, APPOINTMENT_DATE, APPOINTMENT_TIME, APPOINTMENT_DESCRIPTION))
         .thenReturn(CREATED_APPOINTMENT);
 
+    // Mock mailService
+    Mockito.doNothing()
+        .when(mailService)
+        .sendAppointmentRequestMail(Mockito.any(Appointment.class), Mockito.any(Locale.class));
+    Mockito.doNothing()
+        .when(mailService)
+        .sendAppointmentReminderMail(Mockito.any(Appointment.class), Mockito.any(Locale.class));
+
     // 2. Ejercitar la class under test
     Appointment appointment =
         as.createAppointment(
@@ -282,20 +290,93 @@ public class AppointmentServiceImplTest {
     Assert.assertEquals(CREATED_APPOINTMENT, appointment);
   }
 
-  // ================== updateAppointment ==================
+  // ================== cancelAppointment ==================
 
   @Test
-  public void testUpdateAppointment() {
+  public void testCancelAppointmentByDoctor()
+      throws AppointmentNotFoundException, ForbiddenCancelException,
+          ar.edu.itba.paw.interfaces.persistence.exceptions.AppointmentNotFoundException {
     // 1. Precondiciones
+
+    // Mock appointmentDao
+    Mockito.when(appointmentDao.getAppointmentById(APPOINTMENT_ID))
+        .thenReturn(Optional.of(CREATED_APPOINTMENT));
+
+    Mockito.when(
+            appointmentDao.updateAppointment(
+                APPOINTMENT_ID, AppointmentStatus.CANCELLED, CANCELLED_APPOINTMENT_DESCRIPTION))
+        .thenReturn(CANCELLED_APPOINTMENT);
+
+    // Mock mailService
+    Mockito.doNothing()
+        .when(mailService)
+        .sendAppointmentCancelledByDoctorMail(
+            Mockito.any(Appointment.class), Mockito.any(Locale.class));
+
     // 2. Ejercitar la class under test
+    Appointment appointment =
+        as.cancelAppointment(APPOINTMENT_ID, CANCELLED_APPOINTMENT_DESCRIPTION, DOCTOR_ID);
+
     // 3. Meaningful assertions
+    Assert.assertEquals(CANCELLED_APPOINTMENT, appointment);
   }
 
   @Test
-  public void testUpdateAppointmentDoesNotExist() {
+  public void testCancelAppointmentByPatient()
+      throws AppointmentNotFoundException, ForbiddenCancelException,
+          ar.edu.itba.paw.interfaces.persistence.exceptions.AppointmentNotFoundException {
     // 1. Precondiciones
+
+    // Mock appointmentDao
+    Mockito.when(appointmentDao.getAppointmentById(APPOINTMENT_ID))
+        .thenReturn(Optional.of(CREATED_APPOINTMENT));
+
+    Mockito.when(
+            appointmentDao.updateAppointment(
+                APPOINTMENT_ID, AppointmentStatus.CANCELLED, CANCELLED_APPOINTMENT_DESCRIPTION))
+        .thenReturn(CANCELLED_APPOINTMENT);
+
+    // Mock mailService
+    Mockito.doNothing()
+        .when(mailService)
+        .sendAppointmentCancelledByPatientMail(
+            Mockito.any(Appointment.class), Mockito.any(Locale.class));
+
     // 2. Ejercitar la class under test
+
+    Appointment appointment =
+        as.cancelAppointment(APPOINTMENT_ID, CANCELLED_APPOINTMENT_DESCRIPTION, PATIENT_ID);
+
     // 3. Meaningful assertions
+    Assert.assertEquals(CANCELLED_APPOINTMENT, appointment);
+  }
+
+  @Test(expected = AppointmentNotFoundException.class)
+  public void testCancelAppointmentDoesNotExist()
+      throws AppointmentNotFoundException, ForbiddenCancelException,
+          ar.edu.itba.paw.interfaces.persistence.exceptions.AppointmentNotFoundException {
+    // 1. Precondiciones
+
+    // Mock appointmentDao
+    Mockito.when(appointmentDao.getAppointmentById(APPOINTMENT_ID))
+        .thenReturn(Optional.empty());
+
+    // 2. Ejercitar la class under test
+    as.cancelAppointment(APPOINTMENT_ID, CANCELLED_APPOINTMENT_DESCRIPTION, DOCTOR_ID);
+  }
+
+  @Test(expected = ForbiddenCancelException.class)
+  public void testCancelAppointmentForbidden()
+      throws AppointmentNotFoundException, ForbiddenCancelException,
+          ar.edu.itba.paw.interfaces.persistence.exceptions.AppointmentNotFoundException {
+    // 1. Precondiciones
+
+    // Mock appointmentDao
+    Mockito.when(appointmentDao.getAppointmentById(APPOINTMENT_ID))
+        .thenReturn(Optional.of(CANCELLED_APPOINTMENT));
+
+    // 2. Ejercitar la class under test
+    as.cancelAppointment(APPOINTMENT_ID, CANCELLED_APPOINTMENT_DESCRIPTION, FORBIDDEN_USER_ID);
   }
 
   @Test
