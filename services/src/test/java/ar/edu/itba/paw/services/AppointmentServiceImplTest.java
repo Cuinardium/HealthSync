@@ -16,11 +16,14 @@ import ar.edu.itba.paw.models.City;
 import ar.edu.itba.paw.models.Doctor;
 import ar.edu.itba.paw.models.HealthInsurance;
 import ar.edu.itba.paw.models.Location;
+import ar.edu.itba.paw.models.Page;
 import ar.edu.itba.paw.models.Patient;
 import ar.edu.itba.paw.models.Specialty;
 import ar.edu.itba.paw.models.ThirtyMinuteBlock;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
@@ -51,17 +54,17 @@ public class AppointmentServiceImplTest {
   private static final City CITY = City.AYACUCHO;
   private static final String ADDRESS = "1234";
   private static final Location LOCATION = new Location(1, CITY, ADDRESS);
-  private static final List<ThirtyMinuteBlock> attendingHoursForDay =
-      Arrays.asList(ThirtyMinuteBlock.BLOCK_00_30);
+  private static final Collection<ThirtyMinuteBlock> ATTENDING_HOURS_FOR_DAY =
+      ThirtyMinuteBlock.fromRange(ThirtyMinuteBlock.BLOCK_08_00, ThirtyMinuteBlock.BLOCK_16_00);
   private static final AttendingHours ATTENDING_HOURS =
       new AttendingHours(
-          attendingHoursForDay,
-          attendingHoursForDay,
-          attendingHoursForDay,
-          attendingHoursForDay,
-          attendingHoursForDay,
-          attendingHoursForDay,
-          attendingHoursForDay);
+          ATTENDING_HOURS_FOR_DAY,
+          ATTENDING_HOURS_FOR_DAY,
+          ATTENDING_HOURS_FOR_DAY,
+          ATTENDING_HOURS_FOR_DAY,
+          ATTENDING_HOURS_FOR_DAY,
+          ATTENDING_HOURS_FOR_DAY,
+          ATTENDING_HOURS_FOR_DAY);
   private static final Float RATING = 3F;
   private static final Integer RATING_COUNT = 1;
 
@@ -104,7 +107,7 @@ public class AppointmentServiceImplTest {
 
   private static final long APPOINTMENT_ID = 0;
   private static final LocalDate APPOINTMENT_DATE = LocalDate.now();
-  private static final ThirtyMinuteBlock APPOINTMENT_TIME = ThirtyMinuteBlock.BLOCK_00_30;
+  private static final ThirtyMinuteBlock APPOINTMENT_TIME = ThirtyMinuteBlock.BLOCK_08_00;
   private static final ThirtyMinuteBlock UNAVAILABLE_APPOINTMENT_TIME =
       ThirtyMinuteBlock.BLOCK_00_00;
   private static final String APPOINTMENT_DESCRIPTION = "appointment_description";
@@ -133,7 +136,12 @@ public class AppointmentServiceImplTest {
           APPOINTMENT_DESCRIPTION,
           CANCELLED_APPOINTMENT_DESCRIPTION);
 
+  private static final List<Appointment> APPOINTMENTS = Arrays.asList(CREATED_APPOINTMENT);
+
   private static final long FORBIDDEN_USER_ID = 2;
+
+  private static final LocalDate RANGE_FROM = APPOINTMENT_DATE.minusDays(1);
+  private static final LocalDate RANGE_TO = APPOINTMENT_DATE.plusDays(1);
 
   // ================== Mocks ==================
 
@@ -379,87 +387,46 @@ public class AppointmentServiceImplTest {
     as.cancelAppointment(APPOINTMENT_ID, CANCELLED_APPOINTMENT_DESCRIPTION, FORBIDDEN_USER_ID);
   }
 
-  @Test
-  public void testGetAppointmentById() {
-    // 1. Precondiciones
-    // 2. Ejercitar la class under test
-    // 3. Meaningful assertions
-  }
+  // ================== getAvailableHoursOnRange ==================
 
   @Test
-  public void testGetAppointmentByIdDoesNotExist() {
+  public void testGetAvailableHoursOnRange() throws DoctorNotFoundException {
     // 1. Precondiciones
+
+    // Mock doctorService
+    Mockito.when(doctorService.getDoctorById(DOCTOR_ID)).thenReturn(Optional.of(DOCTOR));
+
+    // Mock appointmentDao
+    Mockito.when(appointmentDao.getFilteredAppointments(DOCTOR_ID, null, RANGE_FROM, RANGE_TO, null, null, false))
+        .thenReturn(new Page<>(APPOINTMENTS, null, null, null));
+
     // 2. Ejercitar la class under test
+    List<List<ThirtyMinuteBlock>> availableHours =
+        as.getAvailableHoursForDoctorOnRange(DOCTOR_ID, RANGE_FROM, RANGE_TO);
+
     // 3. Meaningful assertions
+    
+    List<List<ThirtyMinuteBlock>> expectedAvailableHours = new ArrayList<>();
+
+    expectedAvailableHours.add(new ArrayList<>(ATTENDING_HOURS_FOR_DAY));
+
+    List<ThirtyMinuteBlock> availableHoursForDay = new ArrayList<>(ATTENDING_HOURS_FOR_DAY);
+    availableHoursForDay.remove(APPOINTMENT_TIME);
+    expectedAvailableHours.add(availableHoursForDay);
+
+    expectedAvailableHours.add(new ArrayList<>(ATTENDING_HOURS_FOR_DAY));
+
+    Assert.assertEquals(expectedAvailableHours, availableHours);
   }
 
-  @Test
-  public void testGetAppointmentsForPatient() {
+  @Test(expected = DoctorNotFoundException.class)
+  public void testGetAvailableHoursOnRangeDoctorNotFound() throws DoctorNotFoundException {
     // 1. Precondiciones
-    // 2. Ejercitar la class under test
-    // 3. Meaningful assertions
-  }
 
-  @Test
-  public void testGetAppointmentsForPatientDoesNotExist() {
-    // 1. Precondiciones
-    // 2. Ejercitar la class under test
-    // 3. Meaningful assertions
-  }
+    // Mock doctorService
+    Mockito.when(doctorService.getDoctorById(DOCTOR_ID)).thenReturn(Optional.empty());
 
-  @Test
-  public void testGetAppointmentsForDoctor() {
-    // 1. Precondiciones
     // 2. Ejercitar la class under test
-    // 3. Meaningful assertions
-  }
-
-  @Test
-  public void testGetAppointmentsForDoctorDoesNotExist() {
-    // 1. Precondiciones
-    // 2. Ejercitar la class under test
-    // 3. Meaningful assertions
-  }
-
-  @Test
-  public void testGetFilteredAppointmentsForPatient() {
-    // 1. Precondiciones
-    // 2. Ejercitar la class under test
-    // 3. Meaningful assertions
-  }
-
-  @Test
-  public void testGetFilteredAppointmentsForPatientDoesNotExist() {
-    // 1. Precondiciones
-    // 2. Ejercitar la class under test
-    // 3. Meaningful assertions
-  }
-
-  @Test
-  public void testGetFilteredAppointmentsForDoctor() {
-    // 1. Precondiciones
-    // 2. Ejercitar la class under test
-    // 3. Meaningful assertions
-  }
-
-  @Test
-  public void testGetFilteredAppointmentsForDoctorDoesNotExist() {
-    // 1. Precondiciones
-    // 2. Ejercitar la class under test
-    // 3. Meaningful assertions
-  }
-
-  @Test
-  public void testGetAvailableHoursForDoctorOnDate() {
-    // 1. Precondiciones
-    // 2. Ejercitar la class under test
-    // 3. Meaningful assertions
-  }
-
-  @Test
-  public void testGetAvailableHoursForDoctorOnRange() {
-    // 1. Precondiciones
-    // 2. Ejercitar la class under test
-    // 3. Meaningful assertions
+    as.getAvailableHoursForDoctorOnRange(DOCTOR_ID, RANGE_FROM, RANGE_TO);
   }
 }
