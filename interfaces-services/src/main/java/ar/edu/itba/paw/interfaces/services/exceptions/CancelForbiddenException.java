@@ -1,13 +1,13 @@
 package ar.edu.itba.paw.interfaces.services.exceptions;
 
-public class ForbiddenCancelException extends Exception {
+public class CancelForbiddenException extends Exception {
     private static final String MESSAGE = "Requester not allowed to cancel appointment";
 
-    public ForbiddenCancelException() {
+    public CancelForbiddenException() {
         super(MESSAGE);
     }
 
-    public ForbiddenCancelException(String message) {
+    public CancelForbiddenException(String message) {
         super(message);
     }
 }

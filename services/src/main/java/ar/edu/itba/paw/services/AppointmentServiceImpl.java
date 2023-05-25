@@ -8,7 +8,7 @@ import ar.edu.itba.paw.interfaces.services.PatientService;
 import ar.edu.itba.paw.interfaces.services.exceptions.AppointmentNotFoundException;
 import ar.edu.itba.paw.interfaces.services.exceptions.DoctorNotAvailableException;
 import ar.edu.itba.paw.interfaces.services.exceptions.DoctorNotFoundException;
-import ar.edu.itba.paw.interfaces.services.exceptions.ForbiddenCancelException;
+import ar.edu.itba.paw.interfaces.services.exceptions.CancelForbiddenException;
 import ar.edu.itba.paw.interfaces.services.exceptions.PatientNotFoundException;
 import ar.edu.itba.paw.models.Appointment;
 import ar.edu.itba.paw.models.AppointmentStatus;
@@ -101,14 +101,14 @@ public class AppointmentServiceImpl implements AppointmentService {
   @Override
   public Appointment cancelAppointment(
       long appointmentId, String cancelDescription, long requesterId)
-      throws AppointmentNotFoundException, ForbiddenCancelException {
+      throws AppointmentNotFoundException, CancelForbiddenException {
 
     // Get appointment
     Appointment appointment = getAppointmentById(appointmentId).orElseThrow(AppointmentNotFoundException::new);
 
     // If requester is nor the patient nor the doctor, he can't update the appointment
     if (requesterId != appointment.getPatientId() && requesterId != appointment.getDoctorId()) {
-      throw new ForbiddenCancelException();
+      throw new CancelForbiddenException();
     }
 
     Appointment updatedAppointment;

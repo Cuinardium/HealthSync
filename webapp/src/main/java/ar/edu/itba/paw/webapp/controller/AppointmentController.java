@@ -1,7 +1,7 @@
 package ar.edu.itba.paw.webapp.controller;
 
 import ar.edu.itba.paw.interfaces.services.AppointmentService;
-import ar.edu.itba.paw.interfaces.services.exceptions.ForbiddenCancelException;
+import ar.edu.itba.paw.interfaces.services.exceptions.CancelForbiddenException;
 import ar.edu.itba.paw.models.Appointment;
 import ar.edu.itba.paw.models.AppointmentStatus;
 import ar.edu.itba.paw.webapp.auth.PawAuthUserDetails;
@@ -90,7 +90,7 @@ public class AppointmentController {
       LOGGER.error("Could not cancel appointment {} because it does not exist", appointmentId);
 
       throw new AppointmentNotFoundException();
-    } catch (ForbiddenCancelException e) {
+    } catch (CancelForbiddenException e) {
       LOGGER.error("Could not cancel the appointment {} because user {} is not in the appointment");
 
       throw new AppointmentForbiddenException();
