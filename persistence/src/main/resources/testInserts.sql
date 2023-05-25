@@ -1,5 +1,5 @@
 INSERT INTO profile_picture (profile_picture_id, profile_picture)
-VALUES (2, '\x10'); -- por alguna razon '\x10' no le gusta a hsqldb pero esto si???
+VALUES (2, X'10'); -- por alguna razon '\x10' no le gusta a hsqldb pero esto si???
 
 INSERT INTO users (user_id, email, password, first_name, last_name, profile_picture_id)
 VALUES (5, 'patient@email.com', 'patient_password', 'patient_first_name', 'patient_last_name', NULL),
