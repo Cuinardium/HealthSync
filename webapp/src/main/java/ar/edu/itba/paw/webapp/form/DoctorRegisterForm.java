@@ -18,7 +18,7 @@ public class DoctorRegisterForm extends UserRegisterForm {
   private Integer cityCode = -1;
 
   @Size(min = 1)
-  @Pattern(regexp = "[a-zA-Z0-9. ]+")
+  @Pattern(regexp = "[a-zA-Z0-9. ñÑ]+")
   private String address;
 
   @ExistsInEnum(enumClass = Specialty.class)

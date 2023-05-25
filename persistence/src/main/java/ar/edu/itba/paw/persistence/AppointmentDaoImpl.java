@@ -69,6 +69,8 @@ public class AppointmentDaoImpl implements AppointmentDao {
         null);
   }
 
+  // ========================== Updates ==========================
+
   @Override
   public Appointment updateAppointment(
       long appointmentId, AppointmentStatus status, String cancelDescription)
@@ -85,12 +87,25 @@ public class AppointmentDaoImpl implements AppointmentDao {
     return getAppointmentById(appointmentId).orElseThrow(AppointmentNotFoundException::new);
   }
 
+  @Override
+  public void completeAppointmentsInDate(LocalDate date) {
+    String update =
+        new UpdateBuilder()
+            .update("appointment")
+            .set("status_code", Integer.toString(AppointmentStatus.COMPLETED.ordinal()))
+            .where("appointment_date = '" + Date.valueOf(date) + "'")
+            .where("status_code = " + AppointmentStatus.CONFIRMED.ordinal())
+            .build();
+
+    jdbcTemplate.update(update);
+  }
+
   // ========================== Queries ==========================
 
   @Override
   public Optional<Appointment> getAppointmentById(long appointmentId) {
     String query =
-        appointmentsQuery(-1, null, null, null, null, -1, -1)
+        appointmentsQuery(null, null, null, null, null, null, null)
             .where("appointment_id = '" + appointmentId + "'")
             .build();
 
@@ -101,7 +116,7 @@ public class AppointmentDaoImpl implements AppointmentDao {
   public Optional<Appointment> getAppointment(
       long doctorId, LocalDate date, ThirtyMinuteBlock timeBlock) {
     String query =
-        appointmentsQuery(doctorId, false, null, null, null, -1, -1)
+        appointmentsQuery(doctorId, false, null, null, null, null, null)
             .where("appointment_date = '" + Date.valueOf(date) + "'")
             .where("appointment_time = " + timeBlockToSmallInt(timeBlock))
             .build();
@@ -111,7 +126,7 @@ public class AppointmentDaoImpl implements AppointmentDao {
 
   @Override
   public List<Appointment> getAppointments(long userId, boolean isPatient) {
-    String query = appointmentsQuery(userId, isPatient, null, null, null, -1, -1).build();
+    String query = appointmentsQuery(userId, isPatient, null, null, null, null, null).build();
     return jdbcTemplate.query(query, RowMappers.APPOINTMENT_EXTRACTOR);
   }
 
@@ -155,10 +170,18 @@ public class AppointmentDaoImpl implements AppointmentDao {
     return jdbcTemplate.queryForObject(query, Integer.class) > 0;
   }
 
+  @Override
+  public List<Appointment> getAllConfirmedAppointmentsInDate(LocalDate date) {
+    String query =
+        appointmentsQuery(null, null, AppointmentStatus.CONFIRMED, date, date, null, null).build();
+
+    return jdbcTemplate.query(query, RowMappers.APPOINTMENT_EXTRACTOR);
+  }
+
   // ========================== Private ==========================
 
   private QueryBuilder appointmentsQuery(
-      long userId,
+      Long userId,
       Boolean isPatient,
       AppointmentStatus status,
       LocalDate from,
@@ -237,7 +260,7 @@ public class AppointmentDaoImpl implements AppointmentDao {
                 "health_insurance_for_patient",
                 "appointment.patient_id = health_insurance_for_patient.patient_id");
 
-    if (isPatient != null) {
+    if (isPatient != null && userId != null) {
       String userField = isPatient ? "appointment.patient_id" : "appointment.doctor_id";
       appointmentsQuery.where(userField + "=" + userId);
     }

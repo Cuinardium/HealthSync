@@ -16,8 +16,8 @@ import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver;
 import org.thymeleaf.templateresolver.ITemplateResolver;
 
 @Configuration
-@ComponentScan({"ar.edu.itba.paw.interfaces.services"})
 @EnableAsync
+@ComponentScan({"ar.edu.itba.paw.interfaces.services"})
 public class MailConfig {
 
   // get property from application.properties

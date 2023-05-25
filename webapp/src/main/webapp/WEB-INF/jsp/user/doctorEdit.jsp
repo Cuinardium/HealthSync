@@ -11,7 +11,6 @@
 <c:url value="/css/forms.css" var="formsCss"/>
 
 <c:url value="/doctor-edit" var="doctorEditUrl"/>
-<c:url value="/" var="successfulUrl"/>
 
 <spring:message code="profile.edit" var="title"/>
 <spring:message code="form.name" var="name"/>
@@ -29,7 +28,7 @@
 <spring:message code="profile.saveChanges" var="saveChanges"/>
 <spring:message code="edit.modal.title" var="modalTitle"/>
 <spring:message code="edit.modal.text" var="modalDesc"/>
-<spring:message code="register.modal.button" var="modalButton"/>
+<spring:message code="profile.edit.modal.button" var="modalButton"/>
 
 <html>
 <head>
@@ -141,7 +140,7 @@
                     ${modalDesc}
                 </div>
                 <div class="modal-footer">
-                    <a type="button" href="${successfulUrl}" class="btn btn-primary">${modalButton}</a>
+                    <a type="button" href="${doctorEditUrl}" class="btn btn-primary">${modalButton}</a>
                 </div>
             </div>
         </div>
