@@ -1,13 +1,14 @@
 package ar.edu.itba.paw.services;
 
 import ar.edu.itba.paw.interfaces.persistence.AppointmentDao;
-import ar.edu.itba.paw.interfaces.persistence.exceptions.AppointmentNotFoundException;
 import ar.edu.itba.paw.interfaces.services.AppointmentService;
 import ar.edu.itba.paw.interfaces.services.DoctorService;
 import ar.edu.itba.paw.interfaces.services.MailService;
 import ar.edu.itba.paw.interfaces.services.PatientService;
+import ar.edu.itba.paw.interfaces.services.exceptions.AppointmentNotFoundException;
 import ar.edu.itba.paw.interfaces.services.exceptions.DoctorNotAvailableException;
 import ar.edu.itba.paw.interfaces.services.exceptions.DoctorNotFoundException;
+import ar.edu.itba.paw.interfaces.services.exceptions.ForbiddenCancelException;
 import ar.edu.itba.paw.interfaces.services.exceptions.PatientNotFoundException;
 import ar.edu.itba.paw.models.Appointment;
 import ar.edu.itba.paw.models.AppointmentStatus;
@@ -97,15 +98,15 @@ public class AppointmentServiceImpl implements AppointmentService {
   @Transactional
   @Override
   public Appointment cancelAppointment(
-      long appointmentId, String cancelDescription, long requesterId) {
+      long appointmentId, String cancelDescription, long requesterId)
+      throws AppointmentNotFoundException, ForbiddenCancelException {
 
     // Get appointment
-    // TODO: error handling
-    Appointment appointment = getAppointmentById(appointmentId).orElseThrow(RuntimeException::new);
+    Appointment appointment = getAppointmentById(appointmentId).orElseThrow(AppointmentNotFoundException::new);
 
     // If requester is nor the patient nor the doctor, he can't update the appointment
     if (requesterId != appointment.getPatientId() && requesterId != appointment.getDoctorId()) {
-      throw new RuntimeException();
+      throw new ForbiddenCancelException();
     }
 
     Appointment updatedAppointment;
@@ -114,10 +115,11 @@ public class AppointmentServiceImpl implements AppointmentService {
       updatedAppointment =
           appointmentDao.updateAppointment(
               appointmentId, AppointmentStatus.CANCELLED, cancelDescription);
-    } catch (AppointmentNotFoundException e) {
-      throw new RuntimeException();
+    } catch (ar.edu.itba.paw.interfaces.persistence.exceptions.AppointmentNotFoundException e) {
+      throw new IllegalStateException();
     }
 
+    // TODO: locale should be determined by the user's language
     Locale locale = LocaleContextHolder.getLocale();
 
     if (requesterId == appointment.getPatientId()) {

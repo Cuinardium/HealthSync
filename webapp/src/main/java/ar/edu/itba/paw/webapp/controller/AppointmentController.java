@@ -1,13 +1,13 @@
 package ar.edu.itba.paw.webapp.controller;
 
 import ar.edu.itba.paw.interfaces.services.AppointmentService;
+import ar.edu.itba.paw.interfaces.services.exceptions.ForbiddenCancelException;
 import ar.edu.itba.paw.models.Appointment;
 import ar.edu.itba.paw.models.AppointmentStatus;
 import ar.edu.itba.paw.webapp.auth.PawAuthUserDetails;
 import ar.edu.itba.paw.webapp.auth.UserRoles;
 import ar.edu.itba.paw.webapp.exceptions.AppointmentForbiddenException;
 import ar.edu.itba.paw.webapp.exceptions.AppointmentNotFoundException;
-import ar.edu.itba.paw.webapp.exceptions.UserNotFoundException;
 import ar.edu.itba.paw.webapp.form.ModalForm;
 import java.util.List;
 import org.slf4j.Logger;
@@ -82,15 +82,18 @@ public class AppointmentController {
     try {
       Appointment appointment =
           appointmentService.cancelAppointment(
-              appointmentId,
-                  modalForm.getDescription(),
-              PawAuthUserDetails.getCurrentUserId());
+              appointmentId, modalForm.getDescription(), PawAuthUserDetails.getCurrentUserId());
 
       LOGGER.info("Cancelled {}", appointment);
 
-    } catch (RuntimeException e) {
-      LOGGER.error("Appointment could not be cancelled, because user did not exist");
-      throw new UserNotFoundException();
+    } catch (ar.edu.itba.paw.interfaces.services.exceptions.AppointmentNotFoundException e) {
+      LOGGER.error("Could not cancel appointment {} because it does not exist", appointmentId);
+
+      throw new AppointmentNotFoundException();
+    } catch (ForbiddenCancelException e) {
+      LOGGER.error("Could not cancel the appointment {} because user {} is not in the appointment");
+
+      throw new AppointmentForbiddenException();
     }
 
     return new ModelAndView("redirect:/my-appointments?selected_tab=" + selectedTab);
