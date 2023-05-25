@@ -6,6 +6,9 @@ import ar.edu.itba.paw.interfaces.services.AppointmentService;
 import ar.edu.itba.paw.interfaces.services.DoctorService;
 import ar.edu.itba.paw.interfaces.services.MailService;
 import ar.edu.itba.paw.interfaces.services.PatientService;
+import ar.edu.itba.paw.interfaces.services.exceptions.DoctorNotAvailableException;
+import ar.edu.itba.paw.interfaces.services.exceptions.DoctorNotFoundException;
+import ar.edu.itba.paw.interfaces.services.exceptions.PatientNotFoundException;
 import ar.edu.itba.paw.models.Appointment;
 import ar.edu.itba.paw.models.AppointmentStatus;
 import ar.edu.itba.paw.models.Doctor;
@@ -53,24 +56,36 @@ public class AppointmentServiceImpl implements AppointmentService {
       LocalDate date,
       ThirtyMinuteBlock timeBlock,
       String description)
-      throws IllegalStateException {
+      throws DoctorNotFoundException, PatientNotFoundException, DoctorNotAvailableException {
+
+    Doctor doctor = doctorService.getDoctorById(doctorId).orElseThrow(DoctorNotFoundException::new);
+    Patient patient =
+        patientService.getPatientById(patientId).orElseThrow(PatientNotFoundException::new);
+
+    // Check if doctor can attend in date and time block
+    boolean attendsInDateBlock =
+        doctor.getAttendingHours().getAttendingBlocksForDate(date).contains(timeBlock);
+
+    if (!attendsInDateBlock) {
+      throw new DoctorNotAvailableException();
+    }
 
     Optional<Appointment> possibleAppointment =
         appointmentDao.getAppointment(doctorId, date, timeBlock);
 
-    if (possibleAppointment.isPresent()
-        && (possibleAppointment.get().getStatus() == AppointmentStatus.COMPLETED
-            || possibleAppointment.get().getStatus() == AppointmentStatus.CONFIRMED)) {
-      throw new RuntimeException();
+    boolean isBooked =
+        possibleAppointment.isPresent()
+            && possibleAppointment.get().getStatus() == AppointmentStatus.CONFIRMED;
+
+    if (isBooked) {
+      throw new DoctorNotAvailableException();
     }
 
-    Patient patient =
-        patientService.getPatientById(patientId).orElseThrow(IllegalStateException::new);
-    Doctor doctor = doctorService.getDoctorById(doctorId).orElseThrow(IllegalStateException::new);
+    // Create appointment
     Appointment appointment =
         appointmentDao.createAppointment(patient, doctor, date, timeBlock, description);
 
-    // TODO: locale should be determined by the patient's language
+    // TODO: locale should be determined by the user's language
     mailService.sendAppointmentRequestMail(appointment, LocaleContextHolder.getLocale());
     mailService.sendAppointmentReminderMail(appointment, LocaleContextHolder.getLocale());
 
@@ -81,8 +96,8 @@ public class AppointmentServiceImpl implements AppointmentService {
 
   @Transactional
   @Override
-  public Appointment updateAppointment(
-      long appointmentId, AppointmentStatus status, String cancelDescription, long requesterId) {
+  public Appointment cancelAppointment(
+      long appointmentId, String cancelDescription, long requesterId) {
 
     // Get appointment
     // TODO: error handling
@@ -97,21 +112,18 @@ public class AppointmentServiceImpl implements AppointmentService {
 
     try {
       updatedAppointment =
-          appointmentDao.updateAppointment(appointmentId, status, cancelDescription);
+          appointmentDao.updateAppointment(
+              appointmentId, AppointmentStatus.CANCELLED, cancelDescription);
     } catch (AppointmentNotFoundException e) {
       throw new RuntimeException();
     }
 
     Locale locale = LocaleContextHolder.getLocale();
 
-    if (status == AppointmentStatus.CANCELLED) {
-      if (requesterId == appointment.getPatientId()) {
-        mailService.sendAppointmentCancelledByPatientMail(updatedAppointment, locale);
-      } else {
-        mailService.sendAppointmentCancelledByDoctorMail(updatedAppointment, locale);
-      }
-    } else if (status == AppointmentStatus.COMPLETED) {
-      mailService.sendAppointmentCompletedMail(updatedAppointment, locale);
+    if (requesterId == appointment.getPatientId()) {
+      mailService.sendAppointmentCancelledByPatientMail(updatedAppointment, locale);
+    } else {
+      mailService.sendAppointmentCancelledByDoctorMail(updatedAppointment, locale);
     }
 
     return updatedAppointment;
@@ -196,7 +208,8 @@ public class AppointmentServiceImpl implements AppointmentService {
     LocalDate tomorrow = LocalDate.now().plusDays(1);
 
     // Get all appointments for tomorrow
-    List<Appointment> tomorrowAppointments = appointmentDao.getAllConfirmedAppointmentsInDate(tomorrow);
+    List<Appointment> tomorrowAppointments =
+        appointmentDao.getAllConfirmedAppointmentsInDate(tomorrow);
 
     // For each appointment, send reminder to patient
     for (Appointment appointment : tomorrowAppointments) {
@@ -216,7 +229,8 @@ public class AppointmentServiceImpl implements AppointmentService {
     appointmentDao.completeAppointmentsInDate(yesterday);
 
     // Get all appointments for yesterday
-    List<Appointment> yesterdayAppointments = appointmentDao.getAllConfirmedAppointmentsInDate(yesterday);
+    List<Appointment> yesterdayAppointments =
+        appointmentDao.getAllConfirmedAppointmentsInDate(yesterday);
 
     // Send email to patient
     for (Appointment appointment : yesterdayAppointments) {

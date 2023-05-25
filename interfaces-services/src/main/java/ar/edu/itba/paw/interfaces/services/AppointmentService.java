@@ -1,5 +1,8 @@
 package ar.edu.itba.paw.interfaces.services;
 
+import ar.edu.itba.paw.interfaces.services.exceptions.DoctorNotAvailableException;
+import ar.edu.itba.paw.interfaces.services.exceptions.DoctorNotFoundException;
+import ar.edu.itba.paw.interfaces.services.exceptions.PatientNotFoundException;
 import ar.edu.itba.paw.models.Appointment;
 import ar.edu.itba.paw.models.AppointmentStatus;
 import ar.edu.itba.paw.models.Page;
@@ -17,12 +20,13 @@ public interface AppointmentService {
       Long doctorId,
       LocalDate date,
       ThirtyMinuteBlock timeBlock,
-      String description);
+      String description)
+      throws DoctorNotFoundException, PatientNotFoundException, DoctorNotAvailableException;
 
   // =============== Updates ===============
 
-  Appointment updateAppointment(
-      long appointmentId, AppointmentStatus status, String cancelDescription, long requesterId);
+  Appointment cancelAppointment(
+          long appointmentId, String cancelDescription, long requesterId);
 
   // =============== Queries ===============
 
@@ -39,7 +43,7 @@ public interface AppointmentService {
       long doctorId, LocalDate from, LocalDate to);
 
   public boolean hasPatientMetDoctor(long patientId, long doctorId);
-  
+
   // ================ Tasks ================
   void sendAppointmentReminders();
 

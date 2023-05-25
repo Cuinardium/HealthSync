@@ -81,10 +81,9 @@ public class AppointmentController {
 
     try {
       Appointment appointment =
-          appointmentService.updateAppointment(
+          appointmentService.cancelAppointment(
               appointmentId,
-              AppointmentStatus.CANCELLED,
-              modalForm.getDescription(),
+                  modalForm.getDescription(),
               PawAuthUserDetails.getCurrentUserId());
 
       LOGGER.info("Cancelled {}", appointment);

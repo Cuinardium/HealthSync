@@ -3,6 +3,9 @@ package ar.edu.itba.paw.webapp.controller;
 import ar.edu.itba.paw.interfaces.services.AppointmentService;
 import ar.edu.itba.paw.interfaces.services.DoctorService;
 import ar.edu.itba.paw.interfaces.services.ReviewService;
+import ar.edu.itba.paw.interfaces.services.exceptions.DoctorNotAvailableException;
+import ar.edu.itba.paw.interfaces.services.exceptions.DoctorNotFoundException;
+import ar.edu.itba.paw.interfaces.services.exceptions.PatientNotFoundException;
 import ar.edu.itba.paw.models.Appointment;
 import ar.edu.itba.paw.models.Doctor;
 import ar.edu.itba.paw.models.Page;
@@ -59,7 +62,8 @@ public class DoctorController {
       @RequestParam(value = "page", required = false, defaultValue = "1") final int page,
       @ModelAttribute("appointmentForm") final AppointmentForm appointmentForm) {
 
-    ModelAndView detailedDoctorMav = getDetailedDoctorMav(doctorId, page, appointmentForm, false, false);
+    ModelAndView detailedDoctorMav =
+        getDetailedDoctorMav(doctorId, page, appointmentForm, false, false);
 
     LOGGER.debug("Detailed doctor page for doctor: {} requested", doctorId);
     return detailedDoctorMav;
@@ -90,17 +94,32 @@ public class DoctorController {
               appointmentForm.getDescription());
 
       LOGGER.info("Created {}", appointment);
-    } catch (IllegalStateException e) {
-      // No deberia pasar
-      // TODO: log?
-      throw e;
-    } catch (RuntimeException e) {
-      // TODO: CORRECT exception handling
+    } catch (DoctorNotFoundException e) {
       LOGGER.error(
-          "Failed to create Appointment for patient {}, {}",
+          "Failed to create Appointment for patient {} because doctor {} was not found",
           currentUser.getId(),
-          appointmentForm,
-          new RuntimeException());
+          doctorId,
+          new DoctorNotFoundException());
+
+      throw new RuntimeException(e);
+    } catch (PatientNotFoundException e) {
+      LOGGER.error(
+          "Failed to create Appointment for patient {} because patient was not found",
+          currentUser.getId(),
+          new PatientNotFoundException());
+
+      throw new RuntimeException(e);
+    } catch (DoctorNotAvailableException e) {
+      LOGGER.error(
+          "Failed to create Appointment for patient {} because doctor {}"
+              + "was not available at {} {}",
+          currentUser.getId(),
+          doctorId,
+          appointmentForm.getDate(),
+          appointmentForm.getBlockEnum().getBlockBeginning(),
+          new DoctorNotAvailableException());
+
+      throw new RuntimeException(e);
     }
 
     return getDetailedDoctorMav(doctorId, page, appointmentForm, true, false);
@@ -157,7 +176,12 @@ public class DoctorController {
   }
 
   // ========================= Private ====================================
-  private ModelAndView getDetailedDoctorMav(long doctorId, int page, AppointmentForm appointmentForm, boolean showModal, boolean errorModal) {
+  private ModelAndView getDetailedDoctorMav(
+      long doctorId,
+      int page,
+      AppointmentForm appointmentForm,
+      boolean showModal,
+      boolean errorModal) {
     Doctor doctor = doctorService.getDoctorById(doctorId).orElseThrow(UserNotFoundException::new);
 
     final ModelAndView mav = new ModelAndView("doctor/detailedDoctor");
@@ -173,8 +197,8 @@ public class DoctorController {
 
     // Patients will only be able to book appointments between tomorrow and 3 months from now
     List<List<ThirtyMinuteBlock>> hoursAvailable =
-            appointmentService.getAvailableHoursForDoctorOnRange(
-                    doctorId, tomorrow, tomorrow.plusMonths(3));
+        appointmentService.getAvailableHoursForDoctorOnRange(
+            doctorId, tomorrow, tomorrow.plusMonths(3));
 
     // Get reviews
     Page<Review> reviews = reviewService.getReviewsForDoctor(doctorId, page - 1, PAGE_SIZE);
