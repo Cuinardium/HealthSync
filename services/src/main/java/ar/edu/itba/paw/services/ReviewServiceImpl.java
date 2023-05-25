@@ -5,6 +5,9 @@ import ar.edu.itba.paw.interfaces.services.AppointmentService;
 import ar.edu.itba.paw.interfaces.services.DoctorService;
 import ar.edu.itba.paw.interfaces.services.PatientService;
 import ar.edu.itba.paw.interfaces.services.ReviewService;
+import ar.edu.itba.paw.interfaces.services.exceptions.DoctorNotFoundException;
+import ar.edu.itba.paw.interfaces.services.exceptions.PatientNotFoundException;
+import ar.edu.itba.paw.interfaces.services.exceptions.ReviewForbiddenException;
 import ar.edu.itba.paw.models.Page;
 import ar.edu.itba.paw.models.Review;
 import java.time.LocalDate;
@@ -37,10 +40,18 @@ public class ReviewServiceImpl implements ReviewService {
 
   @Transactional
   @Override
-  public Review createReview(long doctorId, long patientId, int rating, String description) {
+  public Review createReview(long doctorId, long patientId, int rating, String description) throws DoctorNotFoundException, PatientNotFoundException, ReviewForbiddenException {
 
-    if (!canReview(doctorId, patientId)) {
-      throw new RuntimeException();
+    if (!doctorService.getDoctorById(doctorId).isPresent()) {
+      throw new DoctorNotFoundException();
+    }
+
+    if (!patientService.getPatientById(patientId).isPresent()) {
+      throw new PatientNotFoundException();
+    }
+
+    if (!appointmentService.hasPatientMetDoctor(patientId, doctorId)) {
+      throw new ReviewForbiddenException();
     }
 
     return reviewDao.createReview(doctorId, patientId, rating, LocalDate.now(), description);
@@ -67,7 +78,12 @@ public class ReviewServiceImpl implements ReviewService {
   }
 
   @Override
-  public Page<Review> getReviewsForDoctor(long doctorId, Integer page, Integer pageSize) {
+  public Page<Review> getReviewsForDoctor(long doctorId, Integer page, Integer pageSize) throws DoctorNotFoundException {
+
+    if (!doctorService.getDoctorById(doctorId).isPresent()) {
+      throw new DoctorNotFoundException();
+    }
+
     return reviewDao.getReviewsForDoctor(doctorId, page, pageSize);
   }
 }
