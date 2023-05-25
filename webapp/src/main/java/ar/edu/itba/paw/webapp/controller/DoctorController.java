@@ -196,9 +196,25 @@ public class DoctorController {
     LocalDate tomorrow = LocalDate.now().plusDays(1);
 
     // Patients will only be able to book appointments between tomorrow and 3 months from now
-    List<List<ThirtyMinuteBlock>> hoursAvailable =
-        appointmentService.getAvailableHoursForDoctorOnRange(
+
+
+    List<List<ThirtyMinuteBlock>> hoursAvailable;
+
+    try {
+      hoursAvailable = appointmentService.getAvailableHoursForDoctorOnRange(
             doctorId, tomorrow, tomorrow.plusMonths(3));
+
+      LOGGER.debug("Available hours for doctor {} on range {} - {} are: {}",
+          doctorId, tomorrow, tomorrow.plusMonths(3), hoursAvailable);
+
+    } catch (DoctorNotFoundException e) {
+
+      LOGGER.error("Failed to get available hours for doctor {} because doctor was not found",
+          doctorId, new DoctorNotFoundException());
+
+      throw new UserNotFoundException();
+    }
+
 
     // Get reviews
     Page<Review> reviews = reviewService.getReviewsForDoctor(doctorId, page - 1, PAGE_SIZE);
