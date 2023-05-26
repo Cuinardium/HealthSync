@@ -46,6 +46,60 @@ public class ProfileController {
     this.userService = userService;
   }
 
+  @RequestMapping(value = "/patient-profile", method = RequestMethod.GET)
+  public ModelAndView patientProfile(
+          @ModelAttribute("patientEditForm") final PatientEditForm patientEditForm) {
+
+    Patient patient =
+            patientService
+                    .getPatientById(PawAuthUserDetails.getCurrentUserId())
+                    .orElseThrow(UserNotFoundException::new);
+
+    patientEditForm.setEmail(patient.getEmail());
+    patientEditForm.setName(patient.getFirstName());
+    patientEditForm.setLastname(patient.getLastName());
+    patientEditForm.setHealthInsuranceCode(patient.getHealthInsurance().ordinal());
+
+    final ModelAndView mav = new ModelAndView("user/patientProfile");
+    mav.addObject("form", patientEditForm);
+    mav.addObject("healthInsurances", Arrays.asList(HealthInsurance.values()));
+    LOGGER.debug("Patient profile page requested");
+    return mav;
+  }
+  @RequestMapping(value = "/doctor-profile", method = RequestMethod.GET)
+  public ModelAndView doctorProfile(
+          @ModelAttribute("doctorEditForm") final DoctorEditForm doctorEditForm) {
+    Doctor doctor =
+            doctorService
+                    .getDoctorById(PawAuthUserDetails.getCurrentUserId())
+                    .orElseThrow(UserNotFoundException::new);
+
+    doctorEditForm.setName(doctor.getFirstName());
+    doctorEditForm.setLastname(doctor.getLastName());
+    doctorEditForm.setEmail(doctor.getEmail());
+    doctorEditForm.setHealthInsuranceCodes(
+            doctor
+                    .getHealthInsurances()
+                    .stream()
+                    .map(HealthInsurance::ordinal)
+                    .collect(Collectors.toList()));
+    doctorEditForm.setAddress(doctor.getLocation().getAddress());
+    doctorEditForm.setCityCode(doctor.getLocation().getCity().ordinal());
+    doctorEditForm.setSpecialtyCode(doctor.getSpecialty().ordinal());
+
+
+    final ModelAndView mav = new ModelAndView("user/doctorProfile");
+    mav.addObject("form", doctorEditForm);
+    mav.addObject("cities", Arrays.asList(City.values()));
+    mav.addObject("specialties", Arrays.asList(Specialty.values()));
+    mav.addObject("currentHealthInsuranceCodes", doctorEditForm.getHealthInsuranceCodes());
+    mav.addObject("healthInsurances", Arrays.asList(HealthInsurance.values()));
+
+
+    LOGGER.debug("Doctor profile page requested");
+    return mav;
+  }
+
   @RequestMapping(value = "/doctor-edit", method = RequestMethod.POST)
   public ModelAndView doctorEditSubmit(
       @Valid @ModelAttribute("doctorEditForm") final DoctorEditForm doctorEditForm,
