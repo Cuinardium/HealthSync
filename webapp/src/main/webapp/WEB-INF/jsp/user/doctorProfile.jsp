@@ -98,7 +98,7 @@
             <!-- Health Insurance Picker -->
             <c:set var="healthInsurances" value="${healthInsurances}" scope="request"/>
             <c:set var="currentHealthInsuranceCodes" value="${currentHealthInsuranceCodes}" scope="request"/>
-            <jsp:include page="../components/healthInsurancePicker.jsp"/>
+            <jsp:include page="../components/healthInsuranceViewer.jsp"/>
         </div>
         <div class="formRow">
             <div class="formItem">
