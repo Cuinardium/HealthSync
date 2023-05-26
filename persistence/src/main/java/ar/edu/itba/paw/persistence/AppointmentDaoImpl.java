@@ -195,8 +195,7 @@ public class AppointmentDaoImpl implements AppointmentDao {
                 "patient_data.password as patient_password",
                 "patient_data.first_name as patient_first_name",
                 "patient_data.last_name as patient_last_name",
-                "health_insurance_for_patient.health_insurance_code as"
-                    + " patient_health_insurance_code",
+                "health_insurance_code as" + " patient_health_insurance_code",
                 "patient_data.profile_picture_id as patient_profile_picture_id",
                 "doctor_data.email",
                 "doctor_data.password",
@@ -232,10 +231,7 @@ public class AppointmentDaoImpl implements AppointmentDao {
                 "doctor_attending_hours",
                 "doctor.attending_hours_id = doctor_attending_hours.attending_hours_id")
             .innerJoin("patient", "appointment.patient_id = patient.patient_id")
-            .innerJoin("users as patient_data", "appointment.patient_id = patient_data.user_id")
-            .innerJoin(
-                "health_insurance_for_patient",
-                "appointment.patient_id = health_insurance_for_patient.patient_id");
+            .innerJoin("users as patient_data", "appointment.patient_id = patient_data.user_id");
 
     if (isPatient != null) {
       String userField = isPatient ? "appointment.patient_id" : "appointment.doctor_id";

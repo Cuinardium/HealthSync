@@ -7,10 +7,7 @@ VALUES (5, 'patient@email.com', 'patient_password', 'patient_first_name', 'patie
        (7, 'doctor@email.com', 'doctor_password', 'doctor_first_name', 'doctor_last_name', NULL),
        (8, 'notdoctor@email.com', 'notdoctor_password', 'notdoctor_first_name', 'notdoctor_last_name', NULL);
 
-INSERT INTO patient (patient_id)
-VALUES (5);
-
-INSERT INTO health_insurance_for_patient (patient_id, health_insurance_code)
+INSERT INTO patient (patient_id, health_insurance_code)
 VALUES (5, 1);
 
 INSERT INTO doctor_attending_hours (attending_hours_id, monday, tuesday, wednesday, thursday, friday, saturday, sunday)

@@ -10,7 +10,6 @@ import ar.edu.itba.paw.interfaces.services.exceptions.UserNotFoundException;
 import ar.edu.itba.paw.models.HealthInsurance;
 import ar.edu.itba.paw.models.Image;
 import ar.edu.itba.paw.models.Patient;
-import ar.edu.itba.paw.models.User;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -41,10 +40,13 @@ public class PatientServiceImpl implements PatientService {
       throws EmailInUseException {
 
     try {
-      // Create User
-      User user = userService.createUser(email, password, firstName, lastName);
+      // TODO: revisar xq comente create user y era lo que tiraba el email in use excep
+      // Create user
+      // userService.createUser(email, password, firstName, lastName);
       // Create Patient
-      Patient patient = patientDao.createPatient(user.getId(), healthInsurance);
+      Patient patient =
+          patientDao.createPatient(
+              new Patient(null, email, password, firstName, lastName, null, healthInsurance));
       return patient;
     } catch (PatientAlreadyExistsException e) {
       throw new IllegalStateException();

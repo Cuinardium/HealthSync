@@ -15,17 +15,8 @@ CREATE TABLE IF NOT EXISTS users (
 
 CREATE TABLE IF NOT EXISTS patient (
     patient_id INTEGER PRIMARY KEY,
-    FOREIGN KEY (patient_id) REFERENCES users (user_id)
-);
-
-/*
-    health_insurance_code: representa el codigo de la obra social
-*/
-CREATE TABLE IF NOT EXISTS health_insurance_for_patient (
-    patient_id            INTEGER NOT NULL,
     health_insurance_code INTEGER NOT NULL,
-    PRIMARY KEY (patient_id, health_insurance_code),
-    FOREIGN KEY (patient_id) REFERENCES patient (patient_id)
+    FOREIGN KEY (patient_id) REFERENCES users (user_id)
 );
 
 /*
@@ -120,7 +111,6 @@ CREATE TABLE IF NOT EXISTS review (
     DROP TABLE IF EXISTS doctor;
     DROP TABLE IF EXISTS doctor_attending_hours;
     DROP TABLE IF EXISTS doctor_location;
-    DROP TABLE IF EXISTS health_insurance_for_patient;
     DROP TABLE IF EXISTS patient;
     DROP TABLE IF EXISTS users;
     DROP TABLE IF EXISTS profile_picture;
