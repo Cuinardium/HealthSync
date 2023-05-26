@@ -11,6 +11,8 @@
 
 
 <c:url value="/change-password" var="changePasswordUrl"/>
+<c:url value="/doctor-profile" var="doctorProfileUrl"/>
+<c:url value="/patient-profile" var="patientProfileUrl"/>
 
 
 <spring:message code="profile.changePassword" var="title"/>
@@ -48,6 +50,21 @@
 
 <!-- Content -->
 <div class="formContainer generalPadding">
+    <div class="backButtonContainer">
+        <c:choose>
+            <c:when test="${isDoctor}">
+                <a href="${doctorProfileUrl}" class="btn btn-primary backButton">
+                    <i class="fa-solid fa-arrow-left"></i>
+                </a>
+            </c:when>
+            <c:otherwise>
+                <a href="${patientProfileUrl}" class="btn btn-primary backButton">
+                    <i class="fa-solid fa-arrow-left"></i>
+                </a>
+            </c:otherwise>
+        </c:choose>
+
+    </div>
     <h1>${title}</h1>
 <form:form modelAttribute="changePasswordForm" class="card" action="${changePasswordUrl}" method="POST">
     <div class="formRow">
@@ -90,7 +107,14 @@
                     ${modalDesc}
                 </div>
                 <div class="modal-footer">
-                    <a type="button" href="${changePasswordUrl}" class="btn btn-primary">${modalButton}</a>
+                    <c:choose>
+                        <c:when test="${isDoctor}">
+                            <a type="button" href="${doctorProfileUrl}" class="btn btn-primary">${modalButton}</a>
+                        </c:when>
+                        <c:otherwise>
+                            <a type="button" href="${patientProfileUrl}" class="btn btn-primary">${modalButton}</a>
+                        </c:otherwise>
+                    </c:choose>
                 </div>
             </div>
         </div>

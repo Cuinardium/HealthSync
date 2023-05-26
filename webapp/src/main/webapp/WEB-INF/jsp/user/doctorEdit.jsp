@@ -11,6 +11,7 @@
 <c:url value="/css/forms.css" var="formsCss"/>
 
 <c:url value="/doctor-edit" var="doctorEditUrl"/>
+<c:url value="/doctor-profile" var="doctorProfileUrl"/>
 
 <spring:message code="profile.edit" var="title"/>
 <spring:message code="form.name" var="name"/>
@@ -53,6 +54,11 @@
 
 <!-- Content -->
 <div class="formContainer generalPadding">
+    <div class="backButtonContainer">
+        <a href="${doctorProfileUrl}" class="btn btn-primary backButton">
+            <i class="fa-solid fa-arrow-left"></i>
+        </a>
+    </div>
     <h1>${title}</h1>
     <form:form modelAttribute="doctorEditForm" class="card" action="${doctorEditUrl}"
                method="POST" enctype="multipart/form-data">
@@ -140,7 +146,7 @@
                     ${modalDesc}
                 </div>
                 <div class="modal-footer">
-                    <a type="button" href="${doctorEditUrl}" class="btn btn-primary">${modalButton}</a>
+                    <a type="button" href="${doctorProfileUrl}" class="btn btn-primary">${modalButton}</a>
                 </div>
             </div>
         </div>

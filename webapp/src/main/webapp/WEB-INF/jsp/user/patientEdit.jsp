@@ -10,6 +10,7 @@
 <c:url value="/css/forms.css" var="formsCss"/>
 
 <c:url value="/patient-edit" var="patientEditUrl"/>
+<c:url value="/patient-profile" var="patientProfileUrl"/>
 
 <spring:message code="profile.edit" var="title"/>
 <spring:message code="form.name" var="name"/>
@@ -45,6 +46,11 @@
 <jsp:include page="../components/header.jsp"/>
 
 <div class="formContainer generalPadding">
+    <div class="backButtonContainer">
+        <a href="${patientProfileUrl}" class="btn btn-primary backButton">
+            <i class="fa-solid fa-arrow-left"></i>
+        </a>
+    </div>
     <h1>${title}</h1>
     <form:form modelAttribute="patientEditForm" class="card" action="${patientEditUrl}" method="POST" enctype="multipart/form-data">
         <div class="formCol">
@@ -102,7 +108,7 @@
                     ${modalDesc}
                 </div>
                 <div class="modal-footer">
-                    <a type="button" href="${patientEditUrl}" class="btn btn-primary">${modalButton}</a>
+                    <a type="button" href="${patientProfileUrl}" class="btn btn-primary">${modalButton}</a>
                 </div>
             </div>
         </div>
