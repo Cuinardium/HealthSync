@@ -1,11 +1,26 @@
 package ar.edu.itba.paw.models;
 
-public class Patient extends User {
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.PrimaryKeyJoinColumn;
+import javax.persistence.Table;
 
-  private final HealthInsurance healthInsurance;
+@Entity
+@Table(name = "patient")
+@PrimaryKeyJoinColumn(name = "patient_id", referencedColumnName = "user_id")
+public class Patient extends User {
+  @Enumerated(EnumType.ORDINAL)
+  @Column(name = "health_insurance_code", nullable = false)
+  private HealthInsurance healthInsurance;
+
+  /* package */ Patient() {
+    // Solo para hibernate
+  }
 
   public Patient(
-      long id,
+      Long id,
       String email,
       String password,
       String firstName,
@@ -18,6 +33,10 @@ public class Patient extends User {
 
   public HealthInsurance getHealthInsurance() {
     return healthInsurance;
+  }
+
+  public void setHealthInsurance(HealthInsurance healthInsurance) {
+    this.healthInsurance = healthInsurance;
   }
 
   @Override

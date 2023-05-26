@@ -9,6 +9,8 @@ import ar.edu.itba.paw.models.Image;
 import ar.edu.itba.paw.models.Patient;
 import ar.edu.itba.paw.persistence.config.TestConfig;
 import java.util.Optional;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import javax.sql.DataSource;
 import org.junit.Assert;
 import org.junit.Before;
@@ -35,8 +37,8 @@ public class PatientDaoImplTest {
   private static final Image INSERTED_PATIENT_IMAGE = null;
   private static final HealthInsurance INSERTED_PATIENT_HEALTH_INSURANCE = HealthInsurance.OMINT;
 
-  private static final Long AUX_PATIENT_ID = 6L;
-  private static final String AUX_PATIENT_EMAIL = "notpatient@email.com";
+  private static final Long AUX_PATIENT_ID = 2L;
+  private static final String AUX_PATIENT_EMAIL = "notpatient_1@email.com";
   private static final String AUX_PATIENT_PASSWORD = "notpatient_password";
   private static final String AUX_PATIENT_FIRST_NAME = "notpatient_first_name";
   private static final String AUX_PATIENT_LAST_NAME = "notpatient_last_name";
@@ -53,30 +55,54 @@ public class PatientDaoImplTest {
           INSERTED_PATIENT_IMAGE,
           INSERTED_PATIENT_HEALTH_INSURANCE);
 
+  private static final Patient AUX_PATIENT =
+      new Patient(
+          AUX_PATIENT_ID,
+          AUX_PATIENT_EMAIL,
+          AUX_PATIENT_PASSWORD,
+          AUX_PATIENT_FIRST_NAME,
+          AUX_PATIENT_LAST_NAME,
+          AUX_PATIENT_IMAGE,
+          AUX_PATIENT_HEALTH_INSURANCE);
+
   @Autowired private DataSource ds;
 
   private JdbcTemplate jdbcTemplate;
 
-  @Autowired private PatientDaoImpl patientDao;
+  @PersistenceContext private EntityManager em;
+
+  @Autowired private PatientDaoJpa patientDao;
 
   @Before
   public void setUp() {
     jdbcTemplate = new JdbcTemplate(ds);
   }
 
+  // TODO: ADDRESS COLLITION ON EMAIL
   @Test
   public void testCreatePatient() throws PatientAlreadyExistsException {
     // 1. Precondiciones
     // 2. Ejercitar la class under test
-    Patient patient = patientDao.createPatient(AUX_PATIENT_ID, AUX_PATIENT_HEALTH_INSURANCE);
+    Patient patient =
+        patientDao.createPatient(
+            new Patient(
+                null,
+                AUX_PATIENT_EMAIL,
+                AUX_PATIENT_PASSWORD,
+                AUX_PATIENT_FIRST_NAME,
+                AUX_PATIENT_LAST_NAME,
+                AUX_PATIENT_IMAGE,
+                AUX_PATIENT_HEALTH_INSURANCE));
     // 3. Meaningful assertions
+
+    em.flush();
 
     Assert.assertEquals(AUX_PATIENT_ID, patient.getId());
     Assert.assertEquals(AUX_PATIENT_EMAIL, patient.getEmail());
     Assert.assertEquals(AUX_PATIENT_PASSWORD, patient.getPassword());
     Assert.assertEquals(AUX_PATIENT_FIRST_NAME, patient.getFirstName());
     Assert.assertEquals(AUX_PATIENT_LAST_NAME, patient.getLastName());
-    Assert.assertEquals(INSERTED_PATIENT_IMAGE, patient.getImage());
+    Assert.assertEquals(AUX_PATIENT_IMAGE, patient.getImage());
     Assert.assertEquals(AUX_PATIENT_HEALTH_INSURANCE, patient.getHealthInsurance());
 
     Assert.assertEquals(2, JdbcTestUtils.countRowsInTable(jdbcTemplate, "patient"));
@@ -86,9 +112,7 @@ public class PatientDaoImplTest {
   public void testCreatePatientAlreadyExists() {
     // 1. Precondiciones
     // 2. Ejercitar la class under test
-    assertThrows(
-        PatientAlreadyExistsException.class,
-        () -> patientDao.createPatient(INSERTED_PATIENT_ID, AUX_PATIENT_HEALTH_INSURANCE));
+    assertThrows(PatientAlreadyExistsException.class, () -> patientDao.createPatient(PATIENT_5));
     // 3. Meaningful assertions
   }
 

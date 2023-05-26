@@ -98,9 +98,6 @@ public class ReviewDaoImpl implements ReviewDao {
         .from("review")
         .innerJoin("patient", "review.patient_id = patient.patient_id")
         .innerJoin("users", "patient.patient_id = users.user_id")
-        .innerJoin(
-            "health_insurance_for_patient",
-            "patient.patient_id = health_insurance_for_patient.patient_id")
         .orderByDesc("review_date");
   }
 }

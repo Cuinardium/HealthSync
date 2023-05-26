@@ -15,9 +15,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
-import org.springframework.stereotype.Repository;
 
-@Repository
+// @Repository
 public class PatientDaoImpl implements PatientDao {
 
   private final JdbcTemplate jdbcTemplate;
@@ -35,21 +34,21 @@ public class PatientDaoImpl implements PatientDao {
   // ======================== Inserts =========================================
 
   @Override
-  public Patient createPatient(long userId, HealthInsurance healthInsurance)
+  public Patient createPatient(Patient patient)
       throws PatientAlreadyExistsException, IllegalStateException {
 
     // Insert data in patient table
     Map<String, Object> data = new HashMap<>();
 
-    data.put("patient_id", userId);
+    data.put("patient_id", patient.getId());
 
     try {
       patientInsert.execute(data);
     } catch (DuplicateKeyException e) {
       throw new PatientAlreadyExistsException();
     }
-    addHealthInsurance(userId, healthInsurance.ordinal());
-    return getPatientById(userId).orElseThrow(IllegalStateException::new);
+    addHealthInsurance(patient.getId(), patient.getHealthInsurance().ordinal());
+    return getPatientById(patient.getId()).orElseThrow(IllegalStateException::new);
   }
 
   // ======================== Updates =========================================
