@@ -25,7 +25,6 @@
 <spring:message code="header.iAmDoctor" var="iAmDoctor"/>
 <spring:message code="header.iAmPatient" var="iAmPatient"/>
 <spring:message code="header.profile" var="profile"/>
-<spring:message code="header.changePassword" var="changePassword"/>
 <spring:message code="header.logout" var="logout"/>
 
 <html>
