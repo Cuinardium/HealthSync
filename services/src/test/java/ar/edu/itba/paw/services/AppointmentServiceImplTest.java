@@ -15,6 +15,7 @@ import ar.edu.itba.paw.models.AttendingHours;
 import ar.edu.itba.paw.models.City;
 import ar.edu.itba.paw.models.Doctor;
 import ar.edu.itba.paw.models.HealthInsurance;
+import ar.edu.itba.paw.models.Image;
 import ar.edu.itba.paw.models.Location;
 import ar.edu.itba.paw.models.Page;
 import ar.edu.itba.paw.models.Patient;
@@ -46,7 +47,7 @@ public class AppointmentServiceImplTest {
   private static final String DOCTOR_PASSWORD = "doctor_password";
   private static final String DOCTOR_FIRST_NAME = "doctor_first_name";
   private static final String DOCTOR_LAST_NAME = "doctor_last_name";
-  private static final Long DOCTOR_PFP_ID = null;
+  private static final Image DOCTOR_IMAGE = new Image(null, null);
 
   private static final List<HealthInsurance> DOCTOR_HEALTH_INSURANCES =
       Arrays.asList(HealthInsurance.OSDE, HealthInsurance.OMINT);
@@ -75,7 +76,7 @@ public class AppointmentServiceImplTest {
           DOCTOR_PASSWORD,
           DOCTOR_FIRST_NAME,
           DOCTOR_LAST_NAME,
-          DOCTOR_PFP_ID,
+          DOCTOR_IMAGE,
           DOCTOR_HEALTH_INSURANCES,
           SPECIALTY,
           LOCATION,
@@ -90,7 +91,7 @@ public class AppointmentServiceImplTest {
   private static final String PATIENT_PASSWORD = "patient_password";
   private static final String FIRST_NAME = "patient_first_name";
   private static final String PATIENT_LAST_NAME = "patient_last_name";
-  private static final Long PATIENT_PFP_ID = null;
+  private static final Image PATIENT_IMAGE = new Image(null, null);
 
   private static final HealthInsurance PATIENT_HEALTH_INSURANCE = HealthInsurance.NONE;
   private static final Patient PATIENT =
@@ -100,7 +101,7 @@ public class AppointmentServiceImplTest {
           PATIENT_PASSWORD,
           FIRST_NAME,
           PATIENT_LAST_NAME,
-          PATIENT_PFP_ID,
+          PATIENT_IMAGE,
           PATIENT_HEALTH_INSURANCE);
 
   // ================== Appointment Constants ==================
