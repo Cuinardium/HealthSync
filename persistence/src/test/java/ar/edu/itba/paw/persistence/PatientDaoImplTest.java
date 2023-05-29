@@ -97,7 +97,8 @@ public class PatientDaoImplTest {
 
     em.flush();
 
-    Assert.assertEquals(AUX_PATIENT_ID, patient.getId());
+    // No lo testeamos porque podria ser 1 o 2 depende el orden de los test
+    // Assert.assertEquals(AUX_PATIENT_ID, patient.getId());
     Assert.assertEquals(AUX_PATIENT_EMAIL, patient.getEmail());
     Assert.assertEquals(AUX_PATIENT_PASSWORD, patient.getPassword());
     Assert.assertEquals(AUX_PATIENT_FIRST_NAME, patient.getFirstName());
