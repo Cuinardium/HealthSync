@@ -19,7 +19,7 @@ public class Location {
   @Column(name = "address", nullable = false)
   private String address;
 
-   Location() {
+  Location() {
     // Solo para hibernate
   }
 
@@ -71,6 +71,9 @@ public class Location {
     if (this == obj) return true;
     if (!(obj instanceof Location)) return false;
     Location other = (Location) obj;
-    return id == other.id && city.equals(other.city) && address.equals(other.address);
+    // TODO: Check getter methods bc if not other variables are null
+    return id == other.getId()
+        && city.equals(other.getCity())
+        && address.equals(other.getAddress());
   }
 }

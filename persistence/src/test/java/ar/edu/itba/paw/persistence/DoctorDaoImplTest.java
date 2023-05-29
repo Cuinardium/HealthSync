@@ -97,7 +97,7 @@ public class DoctorDaoImplTest {
           INSERTED_DOCTOR_INSURANCES,
           INSERTED_DOCTOR_SPECIALTY,
           LOCATION_FOR_DOCTOR_7,
-          new HashSet<>(),
+          Collections.emptySet(),
           INSERTED_DOCTOR_RATING,
           INSERTED_DOCTOR_RATING_COUNT);
 
@@ -130,7 +130,7 @@ public class DoctorDaoImplTest {
                         AUX_DOCTOR_INSURANCES,
                         AUX_DOCTOR_SPECIALTY,
                         new Location(3, AUX_DOCTOR_CITY, AUX_DOCTOR_ADDRESS),
-                        new HashSet<>(),
+                        Collections.emptySet(),
                         INSERTED_DOCTOR_RATING,
                         INSERTED_DOCTOR_RATING_COUNT));
 
@@ -167,7 +167,7 @@ public class DoctorDaoImplTest {
                         AUX_DOCTOR_INSURANCES,
                         AUX_DOCTOR_SPECIALTY,
                         new Location(3, AUX_DOCTOR_CITY, AUX_DOCTOR_ADDRESS),
-                        new HashSet<>(),
+                        Collections.emptySet(),
                         INSERTED_DOCTOR_RATING,
                         INSERTED_DOCTOR_RATING_COUNT)));
     // 3. Meaningful assertions
@@ -185,7 +185,7 @@ public class DoctorDaoImplTest {
             AUX_DOCTOR_CITY,
             AUX_DOCTOR_ADDRESS,
             AUX_DOCTOR_INSURANCES,
-            new HashSet<>());
+            Collections.emptySet());
     // 3. Meaningful assertions
     Assert.assertEquals(INSERTED_DOCTOR_ID, doctor.getId());
     Assert.assertEquals(INSERTED_DOCTOR_EMAIL, doctor.getEmail());
@@ -214,7 +214,7 @@ public class DoctorDaoImplTest {
                 AUX_DOCTOR_CITY,
                 AUX_DOCTOR_ADDRESS,
                 AUX_DOCTOR_INSURANCES,
-                new HashSet<>()));
+                Collections.emptySet()));
   }
 
   @Test
