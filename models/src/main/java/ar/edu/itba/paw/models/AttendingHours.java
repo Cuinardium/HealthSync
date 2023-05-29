@@ -1,49 +1,46 @@
 package ar.edu.itba.paw.models;
 
-import javax.persistence.*;
 import java.io.Serializable;
 import java.time.DayOfWeek;
-import java.time.LocalDate;
 import java.util.*;
+import javax.persistence.*;
 
 @Entity
 @Table(name = "doctor_attending_hours")
 public class AttendingHours {
-  @EmbeddedId
-  private AttendingHoursId id;
+  @EmbeddedId private AttendingHoursId id;
 
-  @ManyToOne
-  @JoinColumn(name = "doctor_id", nullable = false)
-  private Doctor doctor;
-
+  @ManyToOne private Doctor doctor;
 
   // Default attending hours, monday to friday, 8am to 6pm
-//  public static final AttendingHours DEFAULT_ATTENDING_HOURS =
-//      new AttendingHours(
-//          ThirtyMinuteBlock.fromRange(ThirtyMinuteBlock.BLOCK_08_00, ThirtyMinuteBlock.BLOCK_17_30),
-//          ThirtyMinuteBlock.fromRange(ThirtyMinuteBlock.BLOCK_08_00, ThirtyMinuteBlock.BLOCK_17_30),
-//          ThirtyMinuteBlock.fromRange(ThirtyMinuteBlock.BLOCK_08_00, ThirtyMinuteBlock.BLOCK_17_30),
-//          ThirtyMinuteBlock.fromRange(ThirtyMinuteBlock.BLOCK_08_00, ThirtyMinuteBlock.BLOCK_17_30),
-//          ThirtyMinuteBlock.fromRange(ThirtyMinuteBlock.BLOCK_08_00, ThirtyMinuteBlock.BLOCK_17_30),
-//          new ArrayList<>(),
-//          new ArrayList<>());
-
-
+  //  public static final AttendingHours DEFAULT_ATTENDING_HOURS =
+  //      new AttendingHours(
+  //          ThirtyMinuteBlock.fromRange(ThirtyMinuteBlock.BLOCK_08_00,
+  // ThirtyMinuteBlock.BLOCK_17_30),
+  //          ThirtyMinuteBlock.fromRange(ThirtyMinuteBlock.BLOCK_08_00,
+  // ThirtyMinuteBlock.BLOCK_17_30),
+  //          ThirtyMinuteBlock.fromRange(ThirtyMinuteBlock.BLOCK_08_00,
+  // ThirtyMinuteBlock.BLOCK_17_30),
+  //          ThirtyMinuteBlock.fromRange(ThirtyMinuteBlock.BLOCK_08_00,
+  // ThirtyMinuteBlock.BLOCK_17_30),
+  //          ThirtyMinuteBlock.fromRange(ThirtyMinuteBlock.BLOCK_08_00,
+  // ThirtyMinuteBlock.BLOCK_17_30),
+  //          new ArrayList<>(),
+  //          new ArrayList<>());
 
   AttendingHours() {
     // Solo para hibernate
   }
 
   public AttendingHours(
-          Collection<ThirtyMinuteBlock> attendingBlocksMonday,
-          Collection<ThirtyMinuteBlock> attendingBlocksTuesday,
-          Collection<ThirtyMinuteBlock> attendingBlocksWednesday,
-          Collection<ThirtyMinuteBlock> attendingBlocksThursday,
-          Collection<ThirtyMinuteBlock> attendingBlocksFriday,
-          Collection<ThirtyMinuteBlock> attendingBlocksSaturday,
-          Collection<ThirtyMinuteBlock> attendingBlocksSunday) {
+      Collection<ThirtyMinuteBlock> attendingBlocksMonday,
+      Collection<ThirtyMinuteBlock> attendingBlocksTuesday,
+      Collection<ThirtyMinuteBlock> attendingBlocksWednesday,
+      Collection<ThirtyMinuteBlock> attendingBlocksThursday,
+      Collection<ThirtyMinuteBlock> attendingBlocksFriday,
+      Collection<ThirtyMinuteBlock> attendingBlocksSaturday,
+      Collection<ThirtyMinuteBlock> attendingBlocksSunday) {}
 
-  }
   // From collection of 30 minute blocks
 
   public AttendingHoursId getId() {
@@ -68,7 +65,6 @@ public class AttendingHours {
 
   // Getter for lists of 30 minute blocks
 
-
   @Override
   public boolean equals(Object o) {
     if (this == o) return true;
@@ -84,6 +80,9 @@ public class AttendingHours {
 
   @Embeddable
   public class AttendingHoursId implements Serializable {
+
+    @Column(name = "doctor_id", nullable = false)
+    private long id;
 
     @Enumerated(EnumType.ORDINAL)
     @Column(name = "day", nullable = false)
@@ -103,6 +102,22 @@ public class AttendingHours {
 
     public void setDay(DayOfWeek day) {
       this.day = day;
+    }
+
+    public long getId() {
+      return id;
+    }
+
+    public void setId(long id) {
+      this.id = id;
+    }
+
+    public ThirtyMinuteBlock getHourBlock() {
+      return hourBlock;
+    }
+
+    public void setHourBlock(ThirtyMinuteBlock hourBlock) {
+      this.hourBlock = hourBlock;
     }
 
     @Override

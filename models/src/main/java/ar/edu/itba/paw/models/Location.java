@@ -6,7 +6,7 @@ import javax.persistence.*;
 @Table(name = "doctor_location")
 public class Location {
   @Id
-  @Column(name = "doctor_id", nullable = false)
+  @Column(name = "doctor_location_id", nullable = false)
   private long id;
 
   @OneToOne(mappedBy = "location")

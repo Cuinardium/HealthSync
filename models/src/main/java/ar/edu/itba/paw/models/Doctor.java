@@ -10,7 +10,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @Entity
-@Table(name = "doctors")
+@Table(name = "doctor")
 @PrimaryKeyJoinColumn(name = "doctor_id", referencedColumnName = "user_id")
 public class Doctor extends User {
   @Enumerated(EnumType.ORDINAL)
@@ -22,7 +22,7 @@ public class Doctor extends User {
   private List<HealthInsurance> healthInsurances;
 
   @Enumerated(EnumType.ORDINAL)
-  @Column(name = "specialty_id", nullable = false)
+  @Column(name = "specialty_code", nullable = false)
   private Specialty specialty;
 
   @OneToOne(fetch = FetchType.LAZY)
@@ -33,7 +33,7 @@ public class Doctor extends User {
                   { @JoinColumn(name = "doctor_location_id") })
   private Location location;
 
-  @OneToMany(mappedBy = "doctor", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+  @OneToMany(mappedBy = "doctor", fetch = FetchType.LAZY)
   private Set<AttendingHours> attendingHours;
 //  @Formula("(SELECT AVG(rating) FROM review WHERE doctor_id = doctor_id)")
 //  private Float rating;
