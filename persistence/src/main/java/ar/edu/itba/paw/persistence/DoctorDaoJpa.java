@@ -20,6 +20,9 @@ public class DoctorDaoJpa implements DoctorDao {
 
     @Override
     public Doctor createDoctor(Doctor doctor) throws DoctorAlreadyExistsException, IllegalStateException {
+        if (doctor.getId() != null && getDoctorById(doctor.getId()).isPresent()) {
+            throw new DoctorAlreadyExistsException();
+        }
         em.persist(doctor);
         return doctor;
     }

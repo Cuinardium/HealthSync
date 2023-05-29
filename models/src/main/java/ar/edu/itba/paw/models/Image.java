@@ -29,7 +29,7 @@ public class Image {
   @Column(name = "profile_picture", nullable = false)
   private byte[] bytes;
 
-  /* package */ Image() {
+  protected Image() {
     // Solo para hibernate
   }
 

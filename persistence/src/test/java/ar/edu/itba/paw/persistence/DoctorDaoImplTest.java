@@ -134,6 +134,8 @@ public class DoctorDaoImplTest {
                         INSERTED_DOCTOR_RATING,
                         INSERTED_DOCTOR_RATING_COUNT));
 
+    em.flush();
+
     // 3. Meaningful assertions
     Assert.assertEquals(AUX_DOCTOR_ID, doctor.getId());
     Assert.assertEquals(AUX_DOCTOR_EMAIL, doctor.getEmail());

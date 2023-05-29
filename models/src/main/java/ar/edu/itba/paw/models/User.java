@@ -43,7 +43,7 @@ public class User {
   @JoinColumn(name = "profile_picture_id")
   private Image image;
 
-  /* package */ User() {
+  protected User() {
     // Solo para hibernate
   }
 

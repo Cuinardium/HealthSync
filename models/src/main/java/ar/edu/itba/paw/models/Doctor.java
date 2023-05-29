@@ -1,13 +1,12 @@
 package ar.edu.itba.paw.models;
 
-import javax.persistence.*;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
+import javax.persistence.*;
 
 @Entity
 @Table(name = "doctor")
@@ -16,8 +15,9 @@ public class Doctor extends User {
   @Enumerated(EnumType.ORDINAL)
   @ElementCollection(targetClass = HealthInsurance.class)
   @JoinTable(
-          name = "health_insurance_accepted_by_doctor",
-          joinColumns = @JoinColumn(name = "doctor_id"))
+    name = "health_insurance_accepted_by_doctor",
+    joinColumns = @JoinColumn(name = "doctor_id")
+  )
   @Column(name = "health_insurance_code", nullable = false)
   private List<HealthInsurance> healthInsurances;
 
@@ -26,22 +26,28 @@ public class Doctor extends User {
   private Specialty specialty;
 
   @OneToOne(fetch = FetchType.LAZY)
-  @JoinTable(name = "location_for_doctor",
-          joinColumns =
-                  { @JoinColumn(name = "doctor_id") },
-          inverseJoinColumns =
-                  { @JoinColumn(name = "doctor_location_id") })
+  @JoinTable(
+    name = "location_for_doctor",
+    joinColumns = {@JoinColumn(name = "doctor_id")},
+    inverseJoinColumns = {@JoinColumn(name = "doctor_location_id")}
+  )
   private Location location;
 
-  @OneToMany(mappedBy = "doctor", fetch = FetchType.LAZY)
+  @OneToMany(
+    mappedBy = "doctor",
+    fetch = FetchType.LAZY,
+    cascade = CascadeType.ALL,
+    orphanRemoval = true
+  )
   private Set<AttendingHours> attendingHours;
-//  @Formula("(SELECT AVG(rating) FROM review WHERE doctor_id = doctor_id)")
-//  private Float rating;
 
-//  @Formula("(SELECT count(*) FROM review WHERE doctor_id = doctor_id)")
-//  private Integer ratingCount;
+  //  @Formula("(SELECT AVG(rating) FROM review WHERE doctor_id = doctor_id)")
+  //  private Float rating;
+  //
+  //  @Formula("(SELECT count(*) FROM review WHERE doctor_id = doctor_id)")
+  //  private Integer ratingCount;
 
-  /* package */ Doctor() {
+  protected Doctor() {
     // Solo para hibernate
   }
 
@@ -63,12 +69,16 @@ public class Doctor extends User {
     this.specialty = specialty;
     this.location = location;
     this.attendingHours = attendingHours;
-//    this.rating = rating;
-//    this.ratingCount = ratingCount;
+    //    this.rating = rating;
+    //    this.ratingCount = ratingCount;
   }
 
   public List<ThirtyMinuteBlock> getAttendingBlocksForDay(DayOfWeek day) {
-    return attendingHours.stream().filter(attendingDays -> attendingDays.getId().getDay().equals(day)).map(AttendingHours::getHourBlock).collect(Collectors.toCollection(ArrayList::new));
+    return attendingHours
+        .stream()
+        .filter(attendingDays -> attendingDays.getId().getDay().equals(day))
+        .map(AttendingHours::getHourBlock)
+        .collect(Collectors.toCollection(ArrayList::new));
   }
 
   public List<ThirtyMinuteBlock> getAttendingBlocksForDate(LocalDate date) {
@@ -92,13 +102,13 @@ public class Doctor extends User {
     return attendingHours;
   }
 
-//  public Float getRating() {
-//    return rating;
-//  }
-//
-//  public Integer getRatingCount() {
-//    return ratingCount;
-//  }
+  //  public Float getRating() {
+  //    return rating;
+  //  }
+
+  //  public Integer getRatingCount() {
+  //    return ratingCount;
+  //  }
 
   public void setHealthInsurances(List<HealthInsurance> healthInsurances) {
     this.healthInsurances = healthInsurances;
@@ -117,11 +127,11 @@ public class Doctor extends User {
   }
 
   public void setRating(Float rating) {
-//    this.rating = rating;
+    //    this.rating = rating;
   }
 
   public void setRatingCount(Integer ratingCount) {
-//    this.ratingCount = ratingCount;
+    //    this.ratingCount = ratingCount;
   }
 
   @Override
@@ -145,9 +155,9 @@ public class Doctor extends User {
     if (!(obj instanceof Doctor)) return false;
     Doctor other = (Doctor) obj;
     return super.equals(other)
-            && healthInsurances.equals(other.healthInsurances)
-            && specialty.equals(other.specialty)
-            && location.equals(other.location)
-            && attendingHours.equals(other.attendingHours);
+        && healthInsurances.equals(other.healthInsurances)
+        && specialty.equals(other.specialty)
+        && location.equals(other.location)
+        && attendingHours.equals(other.attendingHours);
   }
 }

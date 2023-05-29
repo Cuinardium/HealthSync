@@ -19,7 +19,7 @@ public class Location {
   @Column(name = "address", nullable = false)
   private String address;
 
-  Location() {
+  protected Location() {
     // Solo para hibernate
   }
 
