@@ -23,6 +23,7 @@
 <spring:message code="appointments.modal.confirm" var="modalConfirm"/>
 <spring:message code="appointments.modal.deny" var="modalDeny"/>
 <spring:message code="appointments.modal.cancelDesc" var="cancelDesc"/>
+<spring:message code="appointments.details" var="seeDetails"/>
 
 <spring:message code="detailedAppointment.title" var="title"/>
 <spring:message code="detailedAppointment.doctor" var="doctor"/>
@@ -50,19 +51,40 @@
 
 <div class="contentContainer">
     <ul id="nav" class="nav nav-tabs">
-        <c:forEach items="${tabs}" var="tab">
+        <c:forEach begin="1" end="3" var="i">
             <li class="nav-item">
-                <spring:message code="${tab.messageID}" var="tabTitle"/>
-                <a class="nav-link tab ${tab.isActive(selectedTab) ? 'active bg-primary text-white' : ''}"
-                   href="#${tab.tabName}">${tabTitle}</a>
+
+                <c:set var="messageID"
+                       value="${i == 1 ? 'appointments.upcoming' : (i == 2 ? 'appointments.cancelled' : 'appointments.history')}"/>
+                <spring:message code="${messageID}" var="tabTitle"/>
+
+                <c:set var="cssClass"
+                       value="${i == selectedTab ? 'active bg-primary text-white' : ''}"/>
+                <c:set var="name"
+                       value="${i == 1 ? 'upcoming' : (i == 2 ? 'cancelled' : 'history')}"/>
+
+                <a class="nav-link tab ${cssClass}"
+                   href="#${name}">${tabTitle}</a>
             </li>
         </c:forEach>
     </ul>
 
     <div class="cardsContainer">
-        <c:forEach items="${tabs}" var="tab" varStatus="status">
-            <div id="${tab.tabName}" class="tabContent ${tab.isActive(selectedTab) ? 'active' : ''}">
-                <c:forEach items="${tab.appointments}" var="appointment">
+        <c:forEach begin="1" end="3" var="i">
+
+            <c:set var="messageID"
+                   value="${i == 1 ? 'appointments.upcoming' : (i == 2 ? 'appointments.cancelled' : 'appointments.history')}"/>
+            <spring:message code="${messageID}" var="tabTitle"/>
+
+            <c:set var="cssClass"
+                   value="${i == selectedTab ? 'active' : ''}"/>
+            <c:set var="name"
+                   value="${i == 1 ? 'upcoming' : (i == 2 ? 'cancelled' : 'history')}"/>
+            <c:set var="appointments"
+                   value="${i == 1 ? upcomingAppointments : (i == 2 ? cancelledAppointments : completedAppointments)}"/>
+
+            <div id="${name}" class="tabContent ${cssClass}">
+                <c:forEach items="${appointments}" var="appointment">
 
                     <div class="card">
                         <div class="card-header">
@@ -70,16 +92,22 @@
                         </div>
                         <div class="card-body">
 
-                            <div class="card-title">
-                                <strong>${doctor}: </strong>${appointment.doctor.firstName} ${appointment.doctor.lastName}
-                            </div>
-                            <div class="card-title">
-                                <strong>${patient}: </strong>${appointment.patient.firstName} ${appointment.patient.lastName}
-                            </div>
+                            <c:choose>
+                                <c:when test="${isDoctor}">
+                                    <div class="card-title">
+                                        <strong>${patient}: </strong>${appointment.patient.firstName} ${appointment.patient.lastName}
+                                    </div>
+                                </c:when>
+                                <c:otherwise>
+                                    <div class="card-title">
+                                        <strong>${doctor}: </strong>${appointment.doctor.firstName} ${appointment.doctor.lastName}
+                                    </div>
 
-                            <spring:message code="${appointment.doctor.location.city.messageID}" var="city"/>
-                            <div class="card-title">
-                                <strong>${address}: </strong>${appointment.doctor.location.address}, ${city}</div>
+                                    <spring:message code="${appointment.doctor.location.city.messageID}" var="city"/>
+                                    <div class="card-title">
+                                        <strong>${address}: </strong>${appointment.doctor.location.address}, ${city}</div>
+                                </c:otherwise>
+                            </c:choose>
 
                             <spring:message code="${appointment.patient.healthInsurance.messageID}"
                                             var="healthInsurance"/>
@@ -92,14 +120,18 @@
                             </c:if>
 
                             <div class="cardButtonContainer">
-                                <c:if test="${status.index == 1}">
-                                    <c:url value="/my-appointments/${appointment.id}/update" var="updateUrl">
-                                        <c:param name="selected_tab" value="${selectedTab}"/>
-                                        <c:param name="status" value="${tab.allowedAction.statusCode}"/>
-                                    </c:url>
-                                    <button onclick="openModal('${updateUrl}')"
-                                            class="post-button btn ${tab.allowedAction.buttonClass}">
-                                        <spring:message code="${tab.allowedAction.messageID}"/>
+                                <c:url value="/${appointment.id}/detailed-appointment" var="detailsUrl">
+                                    <c:param name="selected_tab" value="${selectedTab}"/>
+                                </c:url>
+                                <a href="${detailsUrl}" class="btn btn-outline-primary detailed-link">
+                                    ${seeDetails}
+                                </a>
+                                <c:if test="${i == 1}">
+                                    <c:url value="/my-appointments/${appointment.id}/cancel" var="cancelUrl"/>
+
+                                    <button onclick="openModal('${cancelUrl}')"
+                                            class="post-button btn btn-danger">
+                                        <spring:message code="appointments.cancel"/>
                                     </button>
                                     <div class="modal fade" id="modal" tabindex="-1" role="dialog"
                                          aria-labelledby="modalLabel"
@@ -134,17 +166,11 @@
                                         </div>
                                     </div>
                                 </c:if>
-                                <c:if test="${status.index == 2 && tab.allowedAction != null}">
-                                    <c:url value="/${appointment.doctor.id}/review" var="reviewUrl"/>
-                                    <a href="${reviewUrl}" class="btn ${tab.allowedAction.buttonClass}">
-                                        <spring:message code="${tab.allowedAction.messageID}"/>
-                                    </a>
-                                </c:if>
                             </div>
                         </div>
                     </div>
                 </c:forEach>
-                <c:if test="${empty tab.appointments}">
+                <c:if test="${empty appointments}">
                     <div class="noAppointmentsMsg">
                         <div class="alert alert-info">${noAppointments}</div>
                     </div>
@@ -156,9 +182,12 @@
 </body>
 </html>
 <script>
+
+    let selectedTab = ${selectedTab};
+
     function openModal(action) {
         $('#modal').modal('show');
-        $('#post-modal').attr('action', action);
+        $('#post-modal').attr('action', action + '?selected_tab=' + selectedTab);
     }
 
     function closeModal() {

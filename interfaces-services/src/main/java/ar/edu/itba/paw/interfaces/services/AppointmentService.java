@@ -1,5 +1,10 @@
 package ar.edu.itba.paw.interfaces.services;
 
+import ar.edu.itba.paw.interfaces.services.exceptions.AppointmentNotFoundException;
+import ar.edu.itba.paw.interfaces.services.exceptions.DoctorNotAvailableException;
+import ar.edu.itba.paw.interfaces.services.exceptions.DoctorNotFoundException;
+import ar.edu.itba.paw.interfaces.services.exceptions.ForbiddenCancelException;
+import ar.edu.itba.paw.interfaces.services.exceptions.PatientNotFoundException;
 import ar.edu.itba.paw.models.Appointment;
 import ar.edu.itba.paw.models.AppointmentStatus;
 import ar.edu.itba.paw.models.Page;
@@ -17,12 +22,13 @@ public interface AppointmentService {
       Long doctorId,
       LocalDate date,
       ThirtyMinuteBlock timeBlock,
-      String description);
+      String description)
+      throws DoctorNotFoundException, PatientNotFoundException, DoctorNotAvailableException;
 
   // =============== Updates ===============
 
-  Appointment updateAppointment(
-      long appointmentId, AppointmentStatus status, String cancelDescription, long requesterId);
+  Appointment cancelAppointment(long appointmentId, String cancelDescription, long requesterId)
+      throws AppointmentNotFoundException, ForbiddenCancelException;
 
   // =============== Queries ===============
 
@@ -33,10 +39,16 @@ public interface AppointmentService {
   Page<Appointment> getFilteredAppointments(
       long userId, AppointmentStatus status, Integer page, Integer pageSize, boolean isPatient);
 
-  public List<ThirtyMinuteBlock> getAvailableHoursForDoctorOnDate(long doctorId, LocalDate date);
+  public List<ThirtyMinuteBlock> getAvailableHoursForDoctorOnDate(long doctorId, LocalDate date)
+      throws DoctorNotFoundException;
 
   public List<List<ThirtyMinuteBlock>> getAvailableHoursForDoctorOnRange(
-      long doctorId, LocalDate from, LocalDate to);
+      long doctorId, LocalDate from, LocalDate to) throws DoctorNotFoundException;
 
   public boolean hasPatientMetDoctor(long patientId, long doctorId);
+
+  // ================ Tasks ================
+  void sendAppointmentReminders();
+
+  void updateCompletedAppointmentsStatus();
 }

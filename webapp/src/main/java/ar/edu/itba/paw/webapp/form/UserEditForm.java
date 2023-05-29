@@ -5,15 +5,15 @@ import javax.validation.constraints.Size;
 
 public class UserEditForm extends ImageForm {
   @Size(min = 1)
-  @Pattern(regexp = "[a-zA-Z ]+")
+  @Pattern(regexp = "[a-zA-Z nÑ]+")
   private String name;
 
   @Size(min = 1)
-  @Pattern(regexp = "[a-zA-Z ]+")
+  @Pattern(regexp = "[a-zA-Z nÑ]+")
   private String lastname;
 
   @Size(min = 1)
-  @Pattern(regexp = "[a-zA-Z0-9.+-]+@[a-zA-Z0-9.-]+(.com|.com.ar|.edu.ar)")
+  @Pattern(regexp = "[a-zA-Z0-9.+-nÑ]+@[a-zA-Z0-9.-]+(.com|.com.ar|.edu.ar)")
   private String email;
 
   public String getName() {

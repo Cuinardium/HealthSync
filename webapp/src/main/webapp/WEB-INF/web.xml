@@ -53,7 +53,8 @@
             <param-name>contextConfigLocation</param-name>
             <param-value>
                 ar.edu.itba.paw.webapp.config.WebConfig,
-                ar.edu,itba.paw.webapp.config.MailConfig,
+                ar.edu.itba.paw.webapp.config.MailConfig,
+                ar.edu.itba.paw.webapp.config.WebAuthConfig,
             </param-value>
         </init-param>
     </servlet>

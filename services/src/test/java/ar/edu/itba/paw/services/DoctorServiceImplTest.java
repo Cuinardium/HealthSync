@@ -278,40 +278,4 @@ public class DoctorServiceImplTest {
     // 3. Meaningful assertions
     Assert.assertFalse(doctor.isPresent());
   }
-
-  // TODO: Testear estos? (son pasamanos)
-  @Test
-  public void testGetFilteredDoctors() {
-    // 1. Precondiciones
-    // 2. Ejercitar la class under test
-    // 3. Meaningful assertions
-  }
-
-  @Test
-  public void testGetDoctors() {
-    // 1. Precondiciones
-    // 2. Ejercitar la class under test
-    // 3. Meaningful assertions
-  }
-
-  @Test
-  public void testGetUsedSpecialties() {
-    // 1. Precondiciones
-    // 2. Ejercitar la class under test
-    // 3. Meaningful assertions
-  }
-
-  @Test
-  public void testGetUsedHealthInsurances() {
-    // 1. Precondiciones
-    // 2. Ejercitar la class under test
-    // 3. Meaningful assertions
-  }
-
-  @Test
-  public void testGetUsedCities() {
-    // 1. Precondiciones
-    // 2. Ejercitar la class under test
-    // 3. Meaningful assertions
-  }
 }

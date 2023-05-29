@@ -6,7 +6,7 @@ import javax.validation.constraints.Size;
 public class LoginForm {
 
   @Size(min = 1)
-  @Pattern(regexp = "[a-zA-Z0-9.+-]+@[a-zA-Z0-9.-]+(.com|.com.ar|.edu.ar)")
+  @Pattern(regexp = "[a-zA-Z0-9.+-ñÑ]+@[a-zA-Z0-9.-]+(.com|.com.ar|.edu.ar)")
   private String email;
 
   @Size(min = 4)

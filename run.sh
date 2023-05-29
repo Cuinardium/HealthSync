@@ -10,7 +10,7 @@ case $key in
     shift # past argument
     ;;
     --help)    # unknown option
-    echo -e "\nUsage: deploy.sh [options]\n"
+    echo -e "\nUsage: run.sh [options]\n"
     echo -e "Options:\n"
     echo -e "--production\t\t\t\t\t\tRuns like production\n"
     echo -e "--help\t\t\t\t\t\t\tShows this help message.\n"

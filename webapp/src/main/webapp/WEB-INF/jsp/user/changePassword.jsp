@@ -11,7 +11,7 @@
 
 
 <c:url value="/change-password" var="changePasswordUrl"/>
-<c:url value="/" var="successfulUrl"/>
+
 
 <spring:message code="profile.changePassword" var="title"/>
 <spring:message code="form.password" var="password"/>
@@ -24,7 +24,7 @@
 <spring:message code="profile.oldPasswordDoesNotMatchError" var="oldPasswordDoesNotMatchError"/>
 <spring:message code="edit.modal.title" var="modalTitle"/>
 <spring:message code="edit.modal.text" var="modalDesc"/>
-<spring:message code="register.modal.button" var="modalButton"/>
+<spring:message code="profile.edit.modal.button" var="modalButton"/>
 
 <html>
 <head>
@@ -90,7 +90,7 @@
                     ${modalDesc}
                 </div>
                 <div class="modal-footer">
-                    <a type="button" href="${successfulUrl}" class="btn btn-primary">${modalButton}</a>
+                    <a type="button" href="${changePasswordUrl}" class="btn btn-primary">${modalButton}</a>
                 </div>
             </div>
         </div>

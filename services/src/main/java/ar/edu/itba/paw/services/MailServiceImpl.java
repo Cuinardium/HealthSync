@@ -96,7 +96,7 @@ public class MailServiceImpl implements MailService {
 
     String baseUrl = env.getProperty("webapp.baseUrl");
 
-    String appointmentsUrl = baseUrl + "my-appointments";
+    String appointmentUrl = baseUrl + appointment.getId() + "/detailed-appointment";
 
     // Load model
     templateModel.put("baseUrl", baseUrl);
@@ -105,7 +105,7 @@ public class MailServiceImpl implements MailService {
     templateModel.put("description", description);
     templateModel.put("userHealthcare", patientHealthInsurance);
     templateModel.put("userMail", patientEmail);
-    templateModel.put("appointmentsUrl", appointmentsUrl);
+    templateModel.put("appointmentUrl", appointmentUrl);
 
     String htmlBody = getHtmlBody("appointmentRequest", templateModel, locale);
 
@@ -118,8 +118,7 @@ public class MailServiceImpl implements MailService {
 
   @Override
   @Async
-  public void sendAppointmentCancelledByPatientMail(
-      Appointment appointment, String cancelDescription, Locale locale) {
+  public void sendAppointmentCancelledByPatientMail(Appointment appointment, Locale locale) {
 
     Map<String, Object> templateModel = new HashMap<>();
 
@@ -136,7 +135,7 @@ public class MailServiceImpl implements MailService {
 
     String doctorEmail = appointment.getDoctor().getEmail();
 
-    String cancelDesc = appointment.getCancelDesc();
+    String cancelDescription = appointment.getCancelDesc();
 
     // Load model
     templateModel.put("baseUrl", env.getProperty("webapp.baseUrl"));
@@ -199,8 +198,7 @@ public class MailServiceImpl implements MailService {
 
   @Override
   @Async
-  public void sendAppointmentCancelledByDoctorMail(
-      Appointment appointment, String cancelDescription, Locale locale) {
+  public void sendAppointmentCancelledByDoctorMail(Appointment appointment, Locale locale) {
     Map<String, Object> templateModel = new HashMap<>();
 
     String dateTime =
@@ -211,15 +209,15 @@ public class MailServiceImpl implements MailService {
 
     String baseUrl = env.getProperty("webapp.baseUrl");
 
-    String doctorAppointmentUrl = baseUrl + appointment.getDoctor().getId() + "/appointment";
+    String doctorUrl = baseUrl + appointment.getDoctor().getId() + "/detailed-doctor";
 
-    String cancelDesc = appointment.getCancelDesc();
+    String cancelDescription = appointment.getCancelDesc();
 
     // Load model
     templateModel.put("baseUrl", baseUrl);
     templateModel.put("userMail", patientEmail);
     templateModel.put("docName", doctorName);
-    templateModel.put("appointmentUrl", doctorAppointmentUrl);
+    templateModel.put("doctorUrl", doctorUrl);
     templateModel.put("date", dateTime);
     templateModel.put("cancelDesc", cancelDescription);
 
@@ -228,5 +226,33 @@ public class MailServiceImpl implements MailService {
     String subject = mailMessageSource.getMessage("appointmentCancelled.subject", null, locale);
 
     sendHtmlMessage(patientEmail, subject, htmlBody);
+  }
+
+  @Override
+  @Async
+  public void sendAppointmentCompletedMail(Appointment appointment, Locale locale) {
+
+    Map<String, Object> templateModel = new HashMap<>();
+
+    String dateTime =
+        appointment.getDate().toString() + " " + appointment.getTimeBlock().getBlockBeginning();
+
+    String doctorName =
+        appointment.getDoctor().getFirstName() + " " + appointment.getDoctor().getLastName();
+
+    String baseUrl = env.getProperty("webapp.baseUrl");
+    String reviewUrl = baseUrl + appointment.getDoctor().getId() + "/review";
+
+    // Load model
+    templateModel.put("baseUrl", baseUrl);
+    templateModel.put("reviewUrl", reviewUrl);
+    templateModel.put("docName", doctorName);
+    templateModel.put("date", dateTime);
+
+    String htmlBody = getHtmlBody("appointmentCompleted", templateModel, locale);
+
+    String subject = mailMessageSource.getMessage("appointmentCompleted.subject", null, locale);
+
+    sendHtmlMessage(appointment.getPatient().getEmail(), subject, htmlBody);
   }
 }
