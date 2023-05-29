@@ -14,10 +14,8 @@ import ar.edu.itba.paw.models.Specialty;
 import ar.edu.itba.paw.models.ThirtyMinuteBlock;
 import ar.edu.itba.paw.models.User;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+
 import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.jdbc.core.RowMapper;
 
@@ -43,15 +41,15 @@ public class RowMappers {
             Location location =
                 new Location(rs.getLong("doctor_location_id"), city, rs.getString("address"));
 
-            AttendingHours attendingHours =
-                new AttendingHours(
-                    ThirtyMinuteBlock.fromBits(rs.getLong("monday")),
-                    ThirtyMinuteBlock.fromBits(rs.getLong("tuesday")),
-                    ThirtyMinuteBlock.fromBits(rs.getLong("wednesday")),
-                    ThirtyMinuteBlock.fromBits(rs.getLong("thursday")),
-                    ThirtyMinuteBlock.fromBits(rs.getLong("friday")),
-                    ThirtyMinuteBlock.fromBits(rs.getLong("saturday")),
-                    ThirtyMinuteBlock.fromBits(rs.getLong("sunday")));
+//            AttendingHours attendingHours =
+//                new AttendingHours(
+//                    ThirtyMinuteBlock.fromBits(rs.getLong("monday")),
+//                    ThirtyMinuteBlock.fromBits(rs.getLong("tuesday")),
+//                    ThirtyMinuteBlock.fromBits(rs.getLong("wednesday")),
+//                    ThirtyMinuteBlock.fromBits(rs.getLong("thursday")),
+//                    ThirtyMinuteBlock.fromBits(rs.getLong("friday")),
+//                    ThirtyMinuteBlock.fromBits(rs.getLong("saturday")),
+//                    ThirtyMinuteBlock.fromBits(rs.getLong("sunday")));
 
             doctor =
                 new Doctor(
@@ -66,7 +64,8 @@ public class RowMappers {
                     new ArrayList<>(),
                     specialty,
                     location,
-                    attendingHours,
+//                    attendingHours,
+                        new HashSet<>(),
                     rs.getObject("rating") == null ? null : rs.getFloat("rating"),
                     rs.getInt("rating_count"));
 
@@ -184,7 +183,8 @@ public class RowMappers {
                     new ArrayList<>(),
                     specialty,
                     location,
-                    attendingHours,
+//                    attendingHours,
+                        new HashSet<>(),
                     rating,
                     ratingCount);
 

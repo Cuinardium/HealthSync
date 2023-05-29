@@ -48,8 +48,7 @@ public class DoctorServiceImpl implements DoctorService {
       // Create user
       User user = userService.createUser(email, password, firstName, lastName);
       // Create doctor
-      return doctorDao.createDoctor(
-          user.getId(), specialty, city, address, healthInsurances, attendingHours);
+      return doctorDao.createDoctor(new Doctor(user.getId(), email, password, firstName, lastName, null, healthInsurances, specialty, new Location(user.getId(), city, address) , attendingHours, 0f ,0 ));
     } catch (DoctorAlreadyExistsException e) {
       throw new IllegalStateException();
     }

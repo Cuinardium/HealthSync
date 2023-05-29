@@ -118,9 +118,9 @@ public class DoctorServiceImplTest {
     // 1. Precondiciones
     Mockito.when(userService.createUser(EMAIL, PASSWORD, FIRST_NAME, LAST_NAME)).thenReturn(USER);
     Mockito.when(
-            doctorDao.createDoctor(
-                ID, SPECIALTY, CITY, ADDRESS, HEALTH_INSURANCES, ATTENDING_HOURS))
-        .thenReturn(DOCTOR);
+            doctorDao.createDoctor(new Doctor(
+                    ID, EMAIL, PASSWORD, FIRST_NAME, LAST_NAME, IMAGE, HEALTH_INSURANCES, SPECIALTY, new Location(ID, CITY, ADDRESS), ATTENDING_HOURS, 0f,0 )))
+            .thenReturn(DOCTOR);
     // 2. Ejercitar la class under test
     Doctor doctor =
         ds.createDoctor(
@@ -143,8 +143,8 @@ public class DoctorServiceImplTest {
     // 1. Precondiciones
     Mockito.when(userService.createUser(EMAIL, PASSWORD, FIRST_NAME, LAST_NAME)).thenReturn(USER);
     Mockito.when(
-            doctorDao.createDoctor(
-                ID, SPECIALTY, CITY, ADDRESS, HEALTH_INSURANCES, ATTENDING_HOURS))
+            doctorDao.createDoctor(new Doctor(
+                ID, EMAIL, PASSWORD, FIRST_NAME, LAST_NAME, IMAGE, HEALTH_INSURANCES, SPECIALTY, new Location(ID, CITY, ADDRESS), ATTENDING_HOURS, 0f,0 )))
         .thenThrow(DoctorAlreadyExistsException.class);
     // 2. Ejercitar la class under test
     ds.createDoctor(

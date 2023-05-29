@@ -18,10 +18,7 @@ import ar.edu.itba.paw.models.Specialty;
 import ar.edu.itba.paw.models.ThirtyMinuteBlock;
 import ar.edu.itba.paw.persistence.config.TestConfig;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import javax.sql.DataSource;
 import org.junit.Assert;
 import org.junit.Before;
@@ -97,7 +94,7 @@ public class AppointmentDaoImplTest {
           INSERTED_DOCTOR_INSURANCES,
           INSERTED_DOCTOR_SPECIALTY,
           LOCATION_FOR_DOCTOR_7,
-          INSERTED_DOCTOR_ATTENDING_HOURS,
+          new HashSet<>(),
           INSERTED_DOCTOR_RATING,
           INSERTED_DOCTOR_RATING_COUNT);
 

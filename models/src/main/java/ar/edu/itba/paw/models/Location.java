@@ -1,10 +1,27 @@
 package ar.edu.itba.paw.models;
 
-public class Location {
+import javax.persistence.*;
 
-  private final long id;
-  private final City city;
-  private final String address;
+@Entity
+@Table(name = "doctor_location")
+public class Location {
+  @Id
+  @Column(name = "doctor_id", nullable = false)
+  private long id;
+
+  @OneToOne(mappedBy = "location")
+  private Doctor doctor;
+
+  @Enumerated(EnumType.ORDINAL)
+  @Column(name = "city_code", nullable = false)
+  private City city;
+
+  @Column(name = "address", nullable = false)
+  private String address;
+
+   Location() {
+    // Solo para hibernate
+  }
 
   public Location(long id, City city, String address) {
     this.id = id;
@@ -22,6 +39,26 @@ public class Location {
 
   public String getAddress() {
     return address;
+  }
+
+  public Doctor getDoctor() {
+    return doctor;
+  }
+
+  public void setId(long id) {
+    this.id = id;
+  }
+
+  public void setDoctor(Doctor doctor) {
+    this.doctor = doctor;
+  }
+
+  public void setCity(City city) {
+    this.city = city;
+  }
+
+  public void setAddress(String address) {
+    this.address = address;
   }
 
   @Override
