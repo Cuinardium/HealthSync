@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -191,7 +192,13 @@ public class AppointmentServiceImpl implements AppointmentService {
       }
     }
 
-    return new ArrayList<>(availableHours.values());
+    List<List<ThirtyMinuteBlock>> sortedAvailableHours =
+        availableHours.entrySet().stream()
+            .sorted(Map.Entry.comparingByKey())
+            .map(Map.Entry::getValue)
+            .collect(Collectors.toList());
+
+    return sortedAvailableHours;
   }
 
   @Override
@@ -208,7 +215,7 @@ public class AppointmentServiceImpl implements AppointmentService {
 
   // ======================================== TASKS ========================================
 
-  // Run every 30 minutes 
+  // Run every 30 minutes
   @Scheduled(cron = "0 0/30 * * * ?")
   @Override
   public void sendAppointmentReminders() {
@@ -229,8 +236,7 @@ public class AppointmentServiceImpl implements AppointmentService {
     }
   }
 
-
-  // Run every 30 minutes 
+  // Run every 30 minutes
   @Scheduled(cron = "0 0/30 * * * ?")
   @Override
   public void updateCompletedAppointmentsStatus() {
