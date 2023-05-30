@@ -10,7 +10,9 @@ import javax.persistence.*;
 public class AttendingHours {
   @EmbeddedId private AttendingHoursId id;
 
-  @ManyToOne private Doctor doctor;
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "doctor_id")
+  private Doctor doctor;
 
   // Default attending hours, monday to friday, 8am to 6pm
   //  public static final AttendingHours DEFAULT_ATTENDING_HOURS =
@@ -28,7 +30,7 @@ public class AttendingHours {
   //          new ArrayList<>(),
   //          new ArrayList<>());
 
-  AttendingHours() {
+  protected AttendingHours() {
     // Solo para hibernate
   }
 
@@ -40,6 +42,10 @@ public class AttendingHours {
       Collection<ThirtyMinuteBlock> attendingBlocksFriday,
       Collection<ThirtyMinuteBlock> attendingBlocksSaturday,
       Collection<ThirtyMinuteBlock> attendingBlocksSunday) {}
+
+  public AttendingHours(Long doctor_id, DayOfWeek day, ThirtyMinuteBlock hourBlock) {
+    this.id = new AttendingHoursId(doctor_id, day, hourBlock);
+  }
 
   // From collection of 30 minute blocks
 
@@ -55,14 +61,6 @@ public class AttendingHours {
     this.id = id;
   }
 
-  public Doctor getDoctor() {
-    return doctor;
-  }
-
-  public void setDoctor(Doctor doctor) {
-    this.doctor = doctor;
-  }
-
   // Getter for lists of 30 minute blocks
 
   @Override
@@ -70,19 +68,18 @@ public class AttendingHours {
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;
     AttendingHours that = (AttendingHours) o;
-    return Objects.equals(id, that.id) && Objects.equals(doctor, that.doctor);
+    return Objects.equals(id, that.id);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(id, doctor);
+    return Objects.hash(id);
   }
 
   @Embeddable
-  public class AttendingHoursId implements Serializable {
-
-    @Column(name = "doctor_id", nullable = false)
-    private long id;
+  public static class AttendingHoursId implements Serializable {
+    //    @Column(name = "doctor_id", nullable = false)
+    //    private Long id;
 
     @Enumerated(EnumType.ORDINAL)
     @Column(name = "day", nullable = false)
@@ -92,8 +89,14 @@ public class AttendingHours {
     @Column(name = "hour_block")
     private ThirtyMinuteBlock hourBlock;
 
-    AttendingHoursId() {
+    protected AttendingHoursId() {
       // Solo para hibernate
+    }
+
+    protected AttendingHoursId(Long doctor_id, DayOfWeek day, ThirtyMinuteBlock hourBlock) {
+      //      this.id = doctor_id;
+      this.day = day;
+      this.hourBlock = hourBlock;
     }
 
     public DayOfWeek getDay() {
@@ -102,14 +105,6 @@ public class AttendingHours {
 
     public void setDay(DayOfWeek day) {
       this.day = day;
-    }
-
-    public long getId() {
-      return id;
-    }
-
-    public void setId(long id) {
-      this.id = id;
     }
 
     public ThirtyMinuteBlock getHourBlock() {
@@ -130,7 +125,7 @@ public class AttendingHours {
 
     @Override
     public int hashCode() {
-      return Objects.hash(id, day, hourBlock);
+      return Objects.hash(day, hourBlock);
     }
   }
 }

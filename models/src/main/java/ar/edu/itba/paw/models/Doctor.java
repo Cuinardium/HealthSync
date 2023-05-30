@@ -34,10 +34,10 @@ public class Doctor extends User {
   private Location location;
 
   @OneToMany(
-    mappedBy = "doctor",
-    fetch = FetchType.LAZY,
-    cascade = CascadeType.ALL,
-    orphanRemoval = true
+          mappedBy = "doctor",
+          fetch = FetchType.LAZY,
+          cascade = CascadeType.ALL,
+          orphanRemoval = true
   )
   private Set<AttendingHours> attendingHours;
 
@@ -52,7 +52,7 @@ public class Doctor extends User {
   }
 
   public Doctor(
-      long id,
+      Long id,
       String email,
       String password,
       String firstName,

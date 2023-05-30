@@ -82,7 +82,7 @@ public class AppointmentDaoImplTest {
   private static final Integer INSERTED_DOCTOR_RATING_COUNT = 0;
 
   private static final Location LOCATION_FOR_DOCTOR_7 =
-      new Location(3, INSERTED_DOCTOR_CITY, INSERTED_DOCTOR_ADDRESS);
+      new Location(3L, INSERTED_DOCTOR_CITY, INSERTED_DOCTOR_ADDRESS);
   private static final Doctor DOCTOR_7 =
       new Doctor(
           INSERTED_DOCTOR_ID,

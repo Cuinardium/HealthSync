@@ -1,13 +1,15 @@
 package ar.edu.itba.paw.models;
 
 import javax.persistence.*;
+import java.util.Objects;
 
 @Entity
 @Table(name = "doctor_location")
 public class Location {
   @Id
   @Column(name = "doctor_location_id", nullable = false)
-  private long id;
+  private
+  Long id;
 
   @OneToOne(mappedBy = "location")
   private Doctor doctor;
@@ -23,13 +25,14 @@ public class Location {
     // Solo para hibernate
   }
 
-  public Location(long id, City city, String address) {
+  public Location(Long id, City city, String address) {
     this.id = id;
     this.city = city;
     this.address = address;
   }
 
-  public long getId() {
+  public
+  Long getId() {
     return id;
   }
 
@@ -45,7 +48,7 @@ public class Location {
     return doctor;
   }
 
-  public void setId(long id) {
+  public void setId(Long id) {
     this.id = id;
   }
 
@@ -72,7 +75,7 @@ public class Location {
     if (!(obj instanceof Location)) return false;
     Location other = (Location) obj;
     // TODO: Check getter methods bc if not other variables are null
-    return id == other.getId()
+    return Objects.equals(id, other.getId())
         && city.equals(other.getCity())
         && address.equals(other.getAddress());
   }
