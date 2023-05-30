@@ -12,6 +12,7 @@ public class AttendingHours {
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "doctor_id")
+  @MapsId("doctorId")
   private Doctor doctor;
 
   // Default attending hours, monday to friday, 8am to 6pm
@@ -49,6 +50,14 @@ public class AttendingHours {
 
   // From collection of 30 minute blocks
 
+  public Doctor getDoctor() {
+    return doctor;
+  }
+
+  public void setDoctor(Doctor doctor) {
+    this.doctor = doctor;
+  }
+
   public AttendingHoursId getId() {
     return id;
   }
@@ -78,8 +87,8 @@ public class AttendingHours {
 
   @Embeddable
   public static class AttendingHoursId implements Serializable {
-    //    @Column(name = "doctor_id", nullable = false)
-    //    private Long id;
+    @Column(name = "doctor_id", nullable = false)
+    private Long doctorId;
 
     @Enumerated(EnumType.ORDINAL)
     @Column(name = "day", nullable = false)
@@ -94,9 +103,17 @@ public class AttendingHours {
     }
 
     protected AttendingHoursId(Long doctor_id, DayOfWeek day, ThirtyMinuteBlock hourBlock) {
-      //      this.id = doctor_id;
+      this.doctorId = doctor_id;
       this.day = day;
       this.hourBlock = hourBlock;
+    }
+
+    public Long getDoctorId() {
+      return doctorId;
+    }
+
+    public void setDoctorId(Long doctorId) {
+      this.doctorId = doctorId;
     }
 
     public DayOfWeek getDay() {

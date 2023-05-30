@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
+import javax.print.Doc;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -23,6 +24,7 @@ public class DoctorDaoJpa implements DoctorDao {
         if (doctor.getId() != null && getDoctorById(doctor.getId()).isPresent()) {
             throw new DoctorAlreadyExistsException();
         }
+        mapAttendingHours(doctor);
         em.persist(doctor);
         return doctor;
     }
@@ -34,6 +36,7 @@ public class DoctorDaoJpa implements DoctorDao {
         doctor.setLocation(new Location(doctorId, city, address));
         doctor.setHealthInsurances(healthInsurances);
         doctor.setAttendingHours(attendingHours);
+        mapAttendingHours(doctor);
         em.persist(doctor);
         return doctor;
     }
@@ -95,6 +98,12 @@ public class DoctorDaoJpa implements DoctorDao {
         }
 
         return map;
+    }
+
+    private void mapAttendingHours(Doctor doctor){
+        for (AttendingHours att : doctor.getAttendingHours()) {
+            att.setDoctor(doctor);
+        }
     }
 
 }
