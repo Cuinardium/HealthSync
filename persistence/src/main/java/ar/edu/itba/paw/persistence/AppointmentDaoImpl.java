@@ -88,12 +88,13 @@ public class AppointmentDaoImpl implements AppointmentDao {
   }
 
   @Override
-  public void completeAppointmentsInDate(LocalDate date) {
+  public void completeAppointmentsInDateBlock(LocalDate date, ThirtyMinuteBlock timeBlock) {
     String update =
         new UpdateBuilder()
             .update("appointment")
             .set("status_code", Integer.toString(AppointmentStatus.COMPLETED.ordinal()))
             .where("appointment_date = '" + Date.valueOf(date) + "'")
+            .where("appointment_time = " + timeBlockToSmallInt(timeBlock))
             .where("status_code = " + AppointmentStatus.CONFIRMED.ordinal())
             .build();
 
@@ -171,13 +172,15 @@ public class AppointmentDaoImpl implements AppointmentDao {
   }
 
   @Override
-  public List<Appointment> getAllConfirmedAppointmentsInDate(LocalDate date) {
+  public List<Appointment> getAllConfirmedAppointmentsInDateBlock(
+      LocalDate date, ThirtyMinuteBlock timeBlock) {
     String query =
-        appointmentsQuery(null, null, AppointmentStatus.CONFIRMED, date, date, null, null).build();
+        appointmentsQuery(null, null, AppointmentStatus.CONFIRMED, date, date, null, null)
+            .where("appointment_time = " + timeBlockToSmallInt(timeBlock))
+            .build();
 
     return jdbcTemplate.query(query, RowMappers.APPOINTMENT_EXTRACTOR);
   }
-
 
   // ========================== Private ==========================
 

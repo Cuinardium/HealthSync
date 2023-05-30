@@ -1,5 +1,6 @@
 package ar.edu.itba.paw.models;
 
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -109,6 +110,17 @@ public enum ThirtyMinuteBlock {
     }
 
     return bits;
+  }
+
+  public static ThirtyMinuteBlock fromTime(LocalTime time) {
+
+    // Get which block the time belongs to
+    int blockIndex = time.getHour() * 2;
+    if (time.getMinute() >= 30) {
+      blockIndex++;
+    }
+
+    return ThirtyMinuteBlock.values()[blockIndex];
   }
 
   public static ThirtyMinuteBlock fromString(String block) {

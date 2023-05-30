@@ -6,9 +6,9 @@ import ar.edu.itba.paw.interfaces.services.DoctorService;
 import ar.edu.itba.paw.interfaces.services.MailService;
 import ar.edu.itba.paw.interfaces.services.PatientService;
 import ar.edu.itba.paw.interfaces.services.exceptions.AppointmentNotFoundException;
+import ar.edu.itba.paw.interfaces.services.exceptions.CancelForbiddenException;
 import ar.edu.itba.paw.interfaces.services.exceptions.DoctorNotAvailableException;
 import ar.edu.itba.paw.interfaces.services.exceptions.DoctorNotFoundException;
-import ar.edu.itba.paw.interfaces.services.exceptions.CancelForbiddenException;
 import ar.edu.itba.paw.interfaces.services.exceptions.PatientNotFoundException;
 import ar.edu.itba.paw.models.Appointment;
 import ar.edu.itba.paw.models.AppointmentStatus;
@@ -17,6 +17,7 @@ import ar.edu.itba.paw.models.Page;
 import ar.edu.itba.paw.models.Patient;
 import ar.edu.itba.paw.models.ThirtyMinuteBlock;
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -104,7 +105,8 @@ public class AppointmentServiceImpl implements AppointmentService {
       throws AppointmentNotFoundException, CancelForbiddenException {
 
     // Get appointment
-    Appointment appointment = getAppointmentById(appointmentId).orElseThrow(AppointmentNotFoundException::new);
+    Appointment appointment =
+        getAppointmentById(appointmentId).orElseThrow(AppointmentNotFoundException::new);
 
     // If requester is nor the patient nor the doctor, he can't update the appointment
     if (requesterId != appointment.getPatientId() && requesterId != appointment.getDoctorId()) {
@@ -148,7 +150,8 @@ public class AppointmentServiceImpl implements AppointmentService {
   }
 
   @Override
-  public List<ThirtyMinuteBlock> getAvailableHoursForDoctorOnDate(long doctorId, LocalDate date) throws DoctorNotFoundException {
+  public List<ThirtyMinuteBlock> getAvailableHoursForDoctorOnDate(long doctorId, LocalDate date)
+      throws DoctorNotFoundException {
     return getAvailableHoursForDoctorOnRange(doctorId, date, date).get(0);
   }
 
@@ -160,21 +163,25 @@ public class AppointmentServiceImpl implements AppointmentService {
 
     // Get doctor appointments for range
     List<Appointment> appointments =
-        appointmentDao.getFilteredAppointments(doctorId, null, from, to, null, null, false).getContent();
+        appointmentDao
+            .getFilteredAppointments(doctorId, null, from, to, null, null, false)
+            .getContent();
 
     // Populate map from each date for range to available hours in date
     Map<LocalDate, List<ThirtyMinuteBlock>> availableHours = new HashMap<>();
 
     for (LocalDate date = from; date.isBefore(to.plusDays(1)); date = date.plusDays(1)) {
-      List<ThirtyMinuteBlock> currentList = new ArrayList<>(doctor.getAttendingHours().getAttendingBlocksForDate(date));
+      List<ThirtyMinuteBlock> currentList =
+          new ArrayList<>(doctor.getAttendingHours().getAttendingBlocksForDate(date));
       availableHours.put(date, currentList);
     }
 
     // Remove booked hours from available hours in each date
     for (Appointment appointment : appointments) {
       if (appointment.getStatus() == AppointmentStatus.CONFIRMED) {
-        
-        List<ThirtyMinuteBlock> availableHoursOnAppointmentDate = availableHours.get(appointment.getDate());
+
+        List<ThirtyMinuteBlock> availableHoursOnAppointmentDate =
+            availableHours.get(appointment.getDate());
 
         if (availableHoursOnAppointmentDate == null) {
           throw new IllegalStateException();
@@ -201,17 +208,20 @@ public class AppointmentServiceImpl implements AppointmentService {
 
   // ======================================== TASKS ========================================
 
-  // Run at midnight every day
-  @Scheduled(cron = "0 0 0 * * ?")
+  // Run every 30 minutes 
+  @Scheduled(cron = "0 0/30 * * * ?")
   @Override
   public void sendAppointmentReminders() {
 
     // Get tomorrow's date
     LocalDate tomorrow = LocalDate.now().plusDays(1);
 
+    // Get actual thirty minute block
+    ThirtyMinuteBlock timeBlock = ThirtyMinuteBlock.fromTime(LocalTime.now());
+
     // Get all appointments for tomorrow
     List<Appointment> tomorrowAppointments =
-        appointmentDao.getAllConfirmedAppointmentsInDate(tomorrow);
+        appointmentDao.getAllConfirmedAppointmentsInDateBlock(tomorrow, timeBlock);
 
     // For each appointment, send reminder to patient
     for (Appointment appointment : tomorrowAppointments) {
@@ -219,20 +229,24 @@ public class AppointmentServiceImpl implements AppointmentService {
     }
   }
 
-  // Run at midnight every day
-  @Scheduled(cron = "0 0 0 * * ?")
+
+  // Run every 30 minutes 
+  @Scheduled(cron = "0 0/30 * * * ?")
   @Override
   public void updateCompletedAppointmentsStatus() {
 
     // Get yesterday's date
     LocalDate yesterday = LocalDate.now().minusDays(1);
 
+    // Get actual thirty minute block
+    ThirtyMinuteBlock timeBlock = ThirtyMinuteBlock.fromTime(LocalTime.now());
+
     // Complete all appointments for yesterday
-    appointmentDao.completeAppointmentsInDate(yesterday);
+    appointmentDao.completeAppointmentsInDateBlock(yesterday, timeBlock);
 
     // Get all appointments for yesterday
     List<Appointment> yesterdayAppointments =
-        appointmentDao.getAllConfirmedAppointmentsInDate(yesterday);
+        appointmentDao.getAllConfirmedAppointmentsInDateBlock(yesterday, timeBlock);
 
     // Send email to patient
     for (Appointment appointment : yesterdayAppointments) {
