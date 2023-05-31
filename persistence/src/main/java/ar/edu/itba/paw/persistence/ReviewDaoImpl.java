@@ -4,8 +4,6 @@ import ar.edu.itba.paw.interfaces.persistence.ReviewDao;
 import ar.edu.itba.paw.models.Page;
 import ar.edu.itba.paw.models.Review;
 import ar.edu.itba.paw.persistence.utils.QueryBuilder;
-import java.sql.Date;
-import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -14,9 +12,8 @@ import javax.sql.DataSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
-import org.springframework.stereotype.Repository;
 
-@Repository
+// @Repository
 public class ReviewDaoImpl implements ReviewDao {
 
   private final JdbcTemplate jdbcTemplate;
@@ -34,17 +31,16 @@ public class ReviewDaoImpl implements ReviewDao {
   // =============== Inserts ===============
 
   @Override
-  public Review createReview(
-      long doctorId, long patientId, int rating, LocalDate date, String description) {
+  public Review createReview(Review review) {
 
     Map<String, Object> data = new HashMap<>();
-
-    data.put("doctor_id", doctorId);
-    data.put("patient_id", patientId);
-    data.put("rating", rating);
-    data.put("review_date", Date.valueOf(date));
-    data.put("review_description", description);
-
+    /*
+        data.put("doctor_id", doctorId);
+        data.put("patient_id", patientId);
+        data.put("rating", rating);
+        data.put("review_date", Date.valueOf(date));
+        data.put("review_description", description);
+    */
     Number reviewId = reviewInsert.executeAndReturnKey(data);
 
     return getReviewById(reviewId.longValue()).orElseThrow(IllegalStateException::new);

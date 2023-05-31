@@ -224,6 +224,6 @@ public class RowMappers {
         String description = rs.getString("review_description");
         Short rating = rs.getShort("rating");
 
-        return new Review(reviewId, patient, date, description, rating);
+        return new Review(reviewId, null, patient, date, description, rating);
       };
 }
