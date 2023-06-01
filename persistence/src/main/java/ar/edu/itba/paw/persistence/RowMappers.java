@@ -158,16 +158,6 @@ public class RowMappers {
             long locationId = rs.getLong("doctor_location_id");
             Location location = new Location(locationId, city, address);
 
-            AttendingHours attendingHours =
-                new AttendingHours(
-                    ThirtyMinuteBlock.fromBits(rs.getLong("monday")),
-                    ThirtyMinuteBlock.fromBits(rs.getLong("tuesday")),
-                    ThirtyMinuteBlock.fromBits(rs.getLong("wednesday")),
-                    ThirtyMinuteBlock.fromBits(rs.getLong("thursday")),
-                    ThirtyMinuteBlock.fromBits(rs.getLong("friday")),
-                    ThirtyMinuteBlock.fromBits(rs.getLong("saturday")),
-                    ThirtyMinuteBlock.fromBits(rs.getLong("sunday")));
-
             Float rating = rs.getObject("rating") == null ? null : rs.getFloat("rating");
 
             Integer ratingCount = rs.getInt("rating_count");
@@ -183,8 +173,7 @@ public class RowMappers {
                     new ArrayList<>(),
                     specialty,
                     location,
-//                    attendingHours,
-                        new HashSet<>(),
+                    new HashSet<>(),
                     rating,
                     ratingCount);
 

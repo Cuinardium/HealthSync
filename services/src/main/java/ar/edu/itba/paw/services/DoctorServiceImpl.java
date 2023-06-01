@@ -12,6 +12,8 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -42,13 +44,13 @@ public class DoctorServiceImpl implements DoctorService {
       City city,
       String address,
       List<HealthInsurance> healthInsurances,
-      AttendingHours attendingHours)
-      throws EmailInUseException {
+      Set<AttendingHours> attendingHours)
+      throws IllegalStateException {
     try {
       // Create user
-      User user = userService.createUser(email, password, firstName, lastName);
+//      User user = userService.createUser(email, password, firstName, lastName);
       // Create doctor
-      return doctorDao.createDoctor(new Doctor(user.getId(), email, password, firstName, lastName, null, healthInsurances, specialty, new Location(user.getId(), city, address) , attendingHours, 0f ,0 ));
+      return doctorDao.createDoctor(new Doctor(null, email, password, firstName, lastName, new Image(null, null), healthInsurances, specialty, new Location(city, address) , attendingHours, 0f ,0 ));
     } catch (DoctorAlreadyExistsException e) {
       throw new IllegalStateException();
     }
@@ -67,7 +69,7 @@ public class DoctorServiceImpl implements DoctorService {
       City city,
       String address,
       List<HealthInsurance> healthInsurances,
-      AttendingHours attendingHours,
+      Set<AttendingHours> attendingHours,
       Image image)
       throws UserNotFoundException {
 

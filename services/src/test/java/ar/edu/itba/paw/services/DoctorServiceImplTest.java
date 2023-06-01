@@ -15,9 +15,10 @@ import ar.edu.itba.paw.models.Location;
 import ar.edu.itba.paw.models.Specialty;
 import ar.edu.itba.paw.models.ThirtyMinuteBlock;
 import ar.edu.itba.paw.models.User;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+
+import java.time.DayOfWeek;
+import java.util.*;
+
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -42,18 +43,16 @@ public class DoctorServiceImplTest {
   private static final Specialty SPECIALTY = Specialty.CARDIOLOGY;
   private static final City CITY = City.AYACUCHO;
   private static final String ADDRESS = "1234";
-  private static final Location LOCATION = new Location(1, CITY, ADDRESS);
-  private static final List<ThirtyMinuteBlock> attendingHoursForDay =
-      Arrays.asList(ThirtyMinuteBlock.BLOCK_00_30);
-  private static final AttendingHours ATTENDING_HOURS =
-      new AttendingHours(
-          attendingHoursForDay,
-          attendingHoursForDay,
-          attendingHoursForDay,
-          attendingHoursForDay,
-          attendingHoursForDay,
-          attendingHoursForDay,
-          attendingHoursForDay);
+  private static final Location LOCATION = new Location(1L, CITY, ADDRESS);
+  private static final Set<AttendingHours> ATTENDING_HOURS = new HashSet<>(
+          Arrays.asList(new AttendingHours(ID, DayOfWeek.MONDAY, ThirtyMinuteBlock.BLOCK_00_30),
+                  new AttendingHours(ID, DayOfWeek.TUESDAY, ThirtyMinuteBlock.BLOCK_00_30),
+                  new AttendingHours(ID, DayOfWeek.WEDNESDAY, ThirtyMinuteBlock.BLOCK_00_30),
+                  new AttendingHours(ID, DayOfWeek.THURSDAY, ThirtyMinuteBlock.BLOCK_00_30),
+                  new AttendingHours(ID, DayOfWeek.FRIDAY, ThirtyMinuteBlock.BLOCK_00_30),
+                  new AttendingHours(ID, DayOfWeek.SATURDAY, ThirtyMinuteBlock.BLOCK_00_30),
+                  new AttendingHours(ID, DayOfWeek.SUNDAY, ThirtyMinuteBlock.BLOCK_00_30))
+  );
   private static final Float RATING = 3F;
   private static final Integer RATING_COUNT = 1;
   private static final User USER = new User(ID, EMAIL, PASSWORD, FIRST_NAME, LAST_NAME, IMAGE);
@@ -80,18 +79,16 @@ public class DoctorServiceImplTest {
   private static final Specialty SPECIALTY_NEW = Specialty.ALLERGY_AND_IMMUNOLOGY;
   private static final City CITY_NEW = City.ARRECIFES;
   private static final String ADDRESS_NEW = "1234asdsa";
-  private static final Location LOCATION_NEW = new Location(2, CITY_NEW, ADDRESS_NEW);
-  private static final List<ThirtyMinuteBlock> attendingHoursForDayNew =
-      Arrays.asList(ThirtyMinuteBlock.BLOCK_00_30);
-  private static final AttendingHours ATTENDING_HOURS_NEW =
-      new AttendingHours(
-          attendingHoursForDayNew,
-          attendingHoursForDayNew,
-          attendingHoursForDayNew,
-          attendingHoursForDayNew,
-          attendingHoursForDayNew,
-          attendingHoursForDayNew,
-          attendingHoursForDayNew);
+  private static final Location LOCATION_NEW = new Location(2L, CITY_NEW, ADDRESS_NEW);
+  private static final Set<AttendingHours> ATTENDING_HOURS_NEW = new HashSet<>(
+          Arrays.asList(new AttendingHours(ID, DayOfWeek.MONDAY, ThirtyMinuteBlock.BLOCK_00_30),
+                  new AttendingHours(ID, DayOfWeek.TUESDAY, ThirtyMinuteBlock.BLOCK_00_30),
+                  new AttendingHours(ID, DayOfWeek.WEDNESDAY, ThirtyMinuteBlock.BLOCK_00_30),
+                  new AttendingHours(ID, DayOfWeek.THURSDAY, ThirtyMinuteBlock.BLOCK_00_30),
+                  new AttendingHours(ID, DayOfWeek.FRIDAY, ThirtyMinuteBlock.BLOCK_00_30),
+                  new AttendingHours(ID, DayOfWeek.SATURDAY, ThirtyMinuteBlock.BLOCK_00_30),
+                  new AttendingHours(ID, DayOfWeek.SUNDAY, ThirtyMinuteBlock.BLOCK_00_30))
+  );
   private static final Doctor DOCTOR_UPDATED =
       new Doctor(
           ID,
@@ -116,10 +113,10 @@ public class DoctorServiceImplTest {
   public void testCreateDoctor()
       throws IllegalStateException, DoctorAlreadyExistsException, EmailInUseException {
     // 1. Precondiciones
-    Mockito.when(userService.createUser(EMAIL, PASSWORD, FIRST_NAME, LAST_NAME)).thenReturn(USER);
+//    Mockito.when(userService.createUser(EMAIL, PASSWORD, FIRST_NAME, LAST_NAME)).thenReturn(USER);
     Mockito.when(
             doctorDao.createDoctor(new Doctor(
-                    ID, EMAIL, PASSWORD, FIRST_NAME, LAST_NAME, IMAGE, HEALTH_INSURANCES, SPECIALTY, new Location(ID, CITY, ADDRESS), ATTENDING_HOURS, 0f,0 )))
+                    null, EMAIL, PASSWORD, FIRST_NAME, LAST_NAME, IMAGE, HEALTH_INSURANCES, SPECIALTY, new Location(CITY, ADDRESS), ATTENDING_HOURS, 0f,0 )))
             .thenReturn(DOCTOR);
     // 2. Ejercitar la class under test
     Doctor doctor =
@@ -141,10 +138,9 @@ public class DoctorServiceImplTest {
   public void testCreateDoctorAlreadyExists()
       throws IllegalStateException, DoctorAlreadyExistsException, EmailInUseException {
     // 1. Precondiciones
-    Mockito.when(userService.createUser(EMAIL, PASSWORD, FIRST_NAME, LAST_NAME)).thenReturn(USER);
     Mockito.when(
             doctorDao.createDoctor(new Doctor(
-                ID, EMAIL, PASSWORD, FIRST_NAME, LAST_NAME, IMAGE, HEALTH_INSURANCES, SPECIALTY, new Location(ID, CITY, ADDRESS), ATTENDING_HOURS, 0f,0 )))
+                null, EMAIL, PASSWORD, FIRST_NAME, LAST_NAME, IMAGE, HEALTH_INSURANCES, SPECIALTY, new Location(CITY, ADDRESS), ATTENDING_HOURS, 0f,0 )))
         .thenThrow(DoctorAlreadyExistsException.class);
     // 2. Ejercitar la class under test
     ds.createDoctor(
@@ -160,12 +156,14 @@ public class DoctorServiceImplTest {
     // 3. Meaningful assertions
   }
 
-  @Test(expected = EmailInUseException.class)
+  @Test(expected = IllegalStateException.class)
   public void testCreateDoctorUserAlreadyExists()
       throws IllegalStateException, DoctorAlreadyExistsException, EmailInUseException {
     // 1. Precondiciones
-    Mockito.when(userService.createUser(EMAIL, PASSWORD, FIRST_NAME, LAST_NAME))
-        .thenThrow(EmailInUseException.class);
+    Mockito.when(
+                    doctorDao.createDoctor(new Doctor(
+                            null, EMAIL, PASSWORD, FIRST_NAME, LAST_NAME, IMAGE, HEALTH_INSURANCES, SPECIALTY, new Location(CITY, ADDRESS), ATTENDING_HOURS, 0f,0 )))
+            .thenThrow(IllegalStateException.class);
     // 2. Ejercitar la class under test
     ds.createDoctor(
         EMAIL,

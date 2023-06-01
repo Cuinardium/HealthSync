@@ -7,11 +7,12 @@ import java.util.Objects;
 @Table(name = "doctor_location")
 public class Location {
   @Id
-  @Column(name = "doctor_location_id", nullable = false)
-  private
-  Long id;
+  @Column(name = "doctor_id")
+  private Long id;
 
-  @OneToOne(mappedBy = "location")
+  @OneToOne
+  @MapsId
+  @JoinColumn(name = "doctor_id")
   private Doctor doctor;
 
   @Enumerated(EnumType.ORDINAL)
@@ -27,6 +28,11 @@ public class Location {
 
   public Location(Long id, City city, String address) {
     this.id = id;
+    this.city = city;
+    this.address = address;
+  }
+
+  public Location(City city, String address) {
     this.city = city;
     this.address = address;
   }

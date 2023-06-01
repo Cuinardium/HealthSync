@@ -25,12 +25,7 @@ public class Doctor extends User {
   @Column(name = "specialty_code", nullable = false)
   private Specialty specialty;
 
-  @OneToOne(fetch = FetchType.LAZY)
-  @JoinTable(
-    name = "location_for_doctor",
-    joinColumns = {@JoinColumn(name = "doctor_id")},
-    inverseJoinColumns = {@JoinColumn(name = "doctor_location_id")}
-  )
+  @OneToOne(mappedBy = "doctor", fetch = FetchType.LAZY)
   private Location location;
 
   @OneToMany(

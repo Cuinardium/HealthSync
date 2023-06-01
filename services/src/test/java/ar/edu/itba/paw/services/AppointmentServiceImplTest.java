@@ -21,13 +21,13 @@ import ar.edu.itba.paw.models.Page;
 import ar.edu.itba.paw.models.Patient;
 import ar.edu.itba.paw.models.Specialty;
 import ar.edu.itba.paw.models.ThirtyMinuteBlock;
+
+import java.time.DayOfWeek;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-import java.util.Locale;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -54,18 +54,21 @@ public class AppointmentServiceImplTest {
   private static final Specialty SPECIALTY = Specialty.CARDIOLOGY;
   private static final City CITY = City.AYACUCHO;
   private static final String ADDRESS = "1234";
-  private static final Location LOCATION = new Location(1, CITY, ADDRESS);
+  private static final Location LOCATION = new Location(1L, CITY, ADDRESS);
   private static final Collection<ThirtyMinuteBlock> ATTENDING_HOURS_FOR_DAY =
       ThirtyMinuteBlock.fromRange(ThirtyMinuteBlock.BLOCK_08_00, ThirtyMinuteBlock.BLOCK_16_00);
-  private static final AttendingHours ATTENDING_HOURS =
-      new AttendingHours(
-          ATTENDING_HOURS_FOR_DAY,
-          ATTENDING_HOURS_FOR_DAY,
-          ATTENDING_HOURS_FOR_DAY,
-          ATTENDING_HOURS_FOR_DAY,
-          ATTENDING_HOURS_FOR_DAY,
-          ATTENDING_HOURS_FOR_DAY,
-          ATTENDING_HOURS_FOR_DAY);
+
+  private static final Set<AttendingHours> ATTENDING_HOURS = new HashSet<>(Stream.of(
+                  AttendingHours.createFromList(DOCTOR_ID, DayOfWeek.MONDAY, ATTENDING_HOURS_FOR_DAY),
+                  AttendingHours.createFromList(DOCTOR_ID, DayOfWeek.TUESDAY, ATTENDING_HOURS_FOR_DAY),
+                  AttendingHours.createFromList(DOCTOR_ID, DayOfWeek.WEDNESDAY, ATTENDING_HOURS_FOR_DAY),
+                  AttendingHours.createFromList(DOCTOR_ID, DayOfWeek.THURSDAY, ATTENDING_HOURS_FOR_DAY),
+                  AttendingHours.createFromList(DOCTOR_ID, DayOfWeek.FRIDAY, ATTENDING_HOURS_FOR_DAY),
+                  AttendingHours.createFromList(DOCTOR_ID, DayOfWeek.SATURDAY, ATTENDING_HOURS_FOR_DAY),
+                  AttendingHours.createFromList(DOCTOR_ID, DayOfWeek.SUNDAY, ATTENDING_HOURS_FOR_DAY)
+          ).flatMap(Collection::stream)
+          .collect(Collectors.toList())
+  );
   private static final Float RATING = 3F;
   private static final Integer RATING_COUNT = 1;
 
@@ -137,7 +140,7 @@ public class AppointmentServiceImplTest {
           APPOINTMENT_DESCRIPTION,
           CANCELLED_APPOINTMENT_DESCRIPTION);
 
-  private static final List<Appointment> APPOINTMENTS = Arrays.asList(CREATED_APPOINTMENT);
+  private static final List<Appointment> APPOINTMENTS = Collections.singletonList(CREATED_APPOINTMENT);
 
   private static final long FORBIDDEN_USER_ID = 2;
 

@@ -35,17 +35,16 @@ public class AttendingHours {
     // Solo para hibernate
   }
 
-  public AttendingHours(
-      Collection<ThirtyMinuteBlock> attendingBlocksMonday,
-      Collection<ThirtyMinuteBlock> attendingBlocksTuesday,
-      Collection<ThirtyMinuteBlock> attendingBlocksWednesday,
-      Collection<ThirtyMinuteBlock> attendingBlocksThursday,
-      Collection<ThirtyMinuteBlock> attendingBlocksFriday,
-      Collection<ThirtyMinuteBlock> attendingBlocksSaturday,
-      Collection<ThirtyMinuteBlock> attendingBlocksSunday) {}
+  public AttendingHours(Long doctorId, DayOfWeek day, ThirtyMinuteBlock hourBlock) {
+    this.id = new AttendingHoursId(doctorId, day, hourBlock);
+  }
 
-  public AttendingHours(Long doctor_id, DayOfWeek day, ThirtyMinuteBlock hourBlock) {
-    this.id = new AttendingHoursId(doctor_id, day, hourBlock);
+  public static List<AttendingHours> createFromList(Long doctorId, DayOfWeek day, Collection<ThirtyMinuteBlock> blocks){
+    List<AttendingHours> attendingHours = new ArrayList<>();
+    for(ThirtyMinuteBlock block : blocks){
+      attendingHours.add(new AttendingHours(doctorId, day, block));
+    }
+    return attendingHours;
   }
 
   // From collection of 30 minute blocks

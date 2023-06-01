@@ -83,7 +83,7 @@ public class DoctorDaoImplTest {
   );
 
   private static final Location LOCATION_FOR_DOCTOR_7 =
-      new Location(3L, INSERTED_DOCTOR_CITY, INSERTED_DOCTOR_ADDRESS);
+      new Location(INSERTED_DOCTOR_ID, INSERTED_DOCTOR_CITY, INSERTED_DOCTOR_ADDRESS);
   private static final Doctor DOCTOR_7 =
       new Doctor(
           INSERTED_DOCTOR_ID,
@@ -127,7 +127,7 @@ public class DoctorDaoImplTest {
                         INSERTED_DOCTOR_IMAGE,
                         AUX_DOCTOR_INSURANCES,
                         AUX_DOCTOR_SPECIALTY,
-                        new Location(3L, AUX_DOCTOR_CITY, AUX_DOCTOR_ADDRESS),
+                        new Location(INSERTED_DOCTOR_ID, AUX_DOCTOR_CITY, AUX_DOCTOR_ADDRESS),
                         AUX_DOCTOR_ATTENDING_HOURS,
                         INSERTED_DOCTOR_RATING,
                         INSERTED_DOCTOR_RATING_COUNT));
@@ -166,7 +166,7 @@ public class DoctorDaoImplTest {
                         INSERTED_DOCTOR_IMAGE,
                         AUX_DOCTOR_INSURANCES,
                         AUX_DOCTOR_SPECIALTY,
-                        new Location(3L, AUX_DOCTOR_CITY, AUX_DOCTOR_ADDRESS),
+                        new Location(INSERTED_DOCTOR_ID, AUX_DOCTOR_CITY, AUX_DOCTOR_ADDRESS),
                         AUX_DOCTOR_ATTENDING_HOURS,
                         INSERTED_DOCTOR_RATING,
                         INSERTED_DOCTOR_RATING_COUNT)));

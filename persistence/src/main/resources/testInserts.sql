@@ -16,11 +16,8 @@ VALUES (7, 1);
 INSERT INTO doctor_attending_hours (doctor_id, day, hour_block)
 VALUES (7,0,0), (7,1,0), (7,2,0), (7,3,0), (7,4,0);
 
-INSERT INTO doctor_location(doctor_location_id, address, city_code)
-VALUES (3, 'doctor_address', 1);
-
-INSERT INTO location_for_doctor (doctor_id, doctor_location_id)
-VALUES (7, 3);
+INSERT INTO doctor_location(doctor_id, address, city_code)
+VALUES (7, 'doctor_address', 1);
 
 INSERT INTO health_insurance_accepted_by_doctor (doctor_id, health_insurance_code)
 VALUES (7, 1), (7, 2);

@@ -1,6 +1,7 @@
 package ar.edu.itba.paw.models;
 
 import java.util.Arrays;
+import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -69,7 +70,6 @@ public class Image {
     if (this == obj) return true;
     if (!(obj instanceof Image)) return false;
     Image other = (Image) obj;
-    return (imageId == other.imageId || imageId.equals(other.imageId))
-        && (bytes.equals(other.bytes));
+    return Objects.equals(imageId, other.imageId) && Arrays.equals(bytes, other.bytes);
   }
 }
