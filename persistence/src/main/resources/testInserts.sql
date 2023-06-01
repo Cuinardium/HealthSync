@@ -10,17 +10,14 @@ VALUES (5, 'patient@email.com', 'patient_password', 'patient_first_name', 'patie
 INSERT INTO patient (patient_id, health_insurance_code)
 VALUES (5, 1);
 
-INSERT INTO doctor_attending_hours (attending_hours_id, monday, tuesday, wednesday, thursday, friday, saturday, sunday)
-VALUES (3, 1, 1, 1, 1, 1, 0, 0);
+INSERT INTO doctor (doctor_id, specialty_code)
+VALUES (7, 1);
 
-INSERT INTO doctor (doctor_id, specialty_code, attending_hours_id)
-VALUES (7, 1, 3);
+INSERT INTO doctor_attending_hours (doctor_id, day, hour_block)
+VALUES (7,0,0), (7,1,0), (7,2,0), (7,3,0), (7,4,0);
 
-INSERT INTO doctor_location(doctor_location_id, address, city_code)
-VALUES (3, 'doctor_address', 1);
-
-INSERT INTO location_for_doctor (doctor_id, doctor_location_id)
-VALUES (7, 3);
+INSERT INTO doctor_location(doctor_id, address, city_code)
+VALUES (7, 'doctor_address', 1);
 
 INSERT INTO health_insurance_accepted_by_doctor (doctor_id, health_insurance_code)
 VALUES (7, 1), (7, 2);
@@ -35,3 +32,4 @@ VALUES (6, 5, 7, '2023-05-17', 'Muy buen doctor', 5),
        (8, 5, 7, '2023-05-15', 'Regular doctor', 3),
        (9, 5, 7, '2023-05-14', 'Malo doctor', 2),
        (10, 5, 7, '2023-05-13', 'Muy malo doctor', 1);
+

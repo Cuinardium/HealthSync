@@ -67,7 +67,7 @@ public class AppointmentServiceImpl implements AppointmentService {
 
     // Check if doctor can attend in date and time block
     boolean attendsInDateBlock =
-        doctor.getAttendingHours().getAttendingBlocksForDate(date).contains(timeBlock);
+        doctor.getAttendingBlocksForDate(date).contains(timeBlock);
 
     if (!attendsInDateBlock) {
       throw new DoctorNotAvailableException();
@@ -171,7 +171,7 @@ public class AppointmentServiceImpl implements AppointmentService {
 
     for (LocalDate date = from; date.isBefore(to.plusDays(1)); date = date.plusDays(1)) {
       List<ThirtyMinuteBlock> currentList =
-          new ArrayList<>(doctor.getAttendingHours().getAttendingBlocksForDate(date));
+          new ArrayList<>(doctor.getAttendingBlocksForDate(date));
       availableHours.put(date, currentList);
     }
 

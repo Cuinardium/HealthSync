@@ -7,6 +7,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 public interface DoctorService {
 
@@ -21,7 +22,7 @@ public interface DoctorService {
       City city,
       String address,
       List<HealthInsurance> healthInsurances,
-      AttendingHours attendingHours)
+      Set<AttendingHours> attendingHours)
       throws EmailInUseException, IllegalStateException;
 
   // =============== Updates ===============
@@ -35,7 +36,7 @@ public interface DoctorService {
       City city,
       String address,
       List<HealthInsurance> healthInsurances,
-      AttendingHours attendingHours,
+      Set<AttendingHours> attendingHours,
       Image image)
       throws UserNotFoundException;
 

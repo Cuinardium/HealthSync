@@ -14,11 +14,11 @@ import ar.edu.itba.paw.models.Page;
 import ar.edu.itba.paw.models.Specialty;
 import ar.edu.itba.paw.models.ThirtyMinuteBlock;
 import ar.edu.itba.paw.persistence.config.TestConfig;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+
+import java.time.DayOfWeek;
+import java.util.*;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import javax.sql.DataSource;
 import org.junit.Assert;
 import org.junit.Before;
@@ -49,22 +49,21 @@ public class DoctorDaoImplTest {
       Specialty.PEDIATRIC_ALLERGY_AND_IMMUNOLOGY;
   private static final City INSERTED_DOCTOR_CITY = City.ADOLFO_GONZALES_CHAVES;
   private static final String INSERTED_DOCTOR_ADDRESS = "doctor_address";
-  private static final AttendingHours INSERTED_DOCTOR_ATTENDING_HOURS =
-      new AttendingHours(
-          Arrays.asList(ThirtyMinuteBlock.BLOCK_00_00),
-          Arrays.asList(ThirtyMinuteBlock.BLOCK_00_00),
-          Arrays.asList(ThirtyMinuteBlock.BLOCK_00_00),
-          Arrays.asList(ThirtyMinuteBlock.BLOCK_00_00),
-          Arrays.asList(ThirtyMinuteBlock.BLOCK_00_00),
-          new ArrayList<>(),
-          new ArrayList<>());
+  private static final Set<AttendingHours> INSERTED_DOCTOR_ATTENDING_HOURS = new HashSet<>(
+        Arrays.asList(new AttendingHours(INSERTED_DOCTOR_ID, DayOfWeek.MONDAY, ThirtyMinuteBlock.BLOCK_00_00),
+                new AttendingHours(INSERTED_DOCTOR_ID, DayOfWeek.TUESDAY, ThirtyMinuteBlock.BLOCK_00_00),
+                new AttendingHours(INSERTED_DOCTOR_ID, DayOfWeek.WEDNESDAY, ThirtyMinuteBlock.BLOCK_00_00),
+                new AttendingHours(INSERTED_DOCTOR_ID, DayOfWeek.THURSDAY, ThirtyMinuteBlock.BLOCK_00_00),
+                new AttendingHours(INSERTED_DOCTOR_ID, DayOfWeek.FRIDAY, ThirtyMinuteBlock.BLOCK_00_00))
+  );
+
   private static final Image INSERTED_DOCTOR_IMAGE = null;
 
   private static final Float INSERTED_DOCTOR_RATING = null;
   private static final Integer INSERTED_DOCTOR_RATING_COUNT = 0;
 
   private static final Long AUX_DOCTOR_ID = 8L;
-  private static final String AUX_DOCTOR_EMAIL = "notdoctor@email.com";
+  private static final String AUX_DOCTOR_EMAIL = "notdoctor_1@email.com";
   private static final String AUX_DOCTOR_PASSWORD = "notdoctor_password";
   private static final String AUX_DOCTOR_FIRST_NAME = "notdoctor_first_name";
   private static final String AUX_DOCTOR_LAST_NAME = "notdoctor_last_name";
@@ -73,20 +72,18 @@ public class DoctorDaoImplTest {
   private static final Specialty AUX_DOCTOR_SPECIALTY = Specialty.NEPHROLOGY;
   private static final City AUX_DOCTOR_CITY = City.CASEROS;
   private static final String AUX_DOCTOR_ADDRESS = "notdoctor_address";
-  private static final List<ThirtyMinuteBlock> attendingHoursForDay =
-      Arrays.asList(ThirtyMinuteBlock.BLOCK_02_00);
-  private static final AttendingHours AUX_DOCTOR_ATTENDING_HOURS =
-      new AttendingHours(
-          attendingHoursForDay,
-          attendingHoursForDay,
-          attendingHoursForDay,
-          attendingHoursForDay,
-          attendingHoursForDay,
-          attendingHoursForDay,
-          attendingHoursForDay);
+  private static final Set<AttendingHours> AUX_DOCTOR_ATTENDING_HOURS = new HashSet<>(
+          Arrays.asList(new AttendingHours(INSERTED_DOCTOR_ID, DayOfWeek.MONDAY, ThirtyMinuteBlock.BLOCK_02_00),
+                  new AttendingHours(INSERTED_DOCTOR_ID, DayOfWeek.TUESDAY, ThirtyMinuteBlock.BLOCK_02_00),
+                  new AttendingHours(INSERTED_DOCTOR_ID, DayOfWeek.WEDNESDAY, ThirtyMinuteBlock.BLOCK_02_00),
+                  new AttendingHours(INSERTED_DOCTOR_ID, DayOfWeek.THURSDAY, ThirtyMinuteBlock.BLOCK_02_00),
+                  new AttendingHours(INSERTED_DOCTOR_ID, DayOfWeek.FRIDAY, ThirtyMinuteBlock.BLOCK_02_00),
+                  new AttendingHours(INSERTED_DOCTOR_ID, DayOfWeek.SATURDAY, ThirtyMinuteBlock.BLOCK_02_00),
+                  new AttendingHours(INSERTED_DOCTOR_ID, DayOfWeek.SUNDAY, ThirtyMinuteBlock.BLOCK_02_00))
+  );
 
   private static final Location LOCATION_FOR_DOCTOR_7 =
-      new Location(3, INSERTED_DOCTOR_CITY, INSERTED_DOCTOR_ADDRESS);
+      new Location(INSERTED_DOCTOR_ID, INSERTED_DOCTOR_CITY, INSERTED_DOCTOR_ADDRESS);
   private static final Doctor DOCTOR_7 =
       new Doctor(
           INSERTED_DOCTOR_ID,
@@ -106,7 +103,10 @@ public class DoctorDaoImplTest {
 
   private JdbcTemplate jdbcTemplate;
 
-  @Autowired private DoctorDaoImpl doctorDao;
+  @PersistenceContext
+  private EntityManager em;
+
+  @Autowired private DoctorDaoJpa doctorDao;
 
   @Before
   public void setUp() {
@@ -118,15 +118,24 @@ public class DoctorDaoImplTest {
     // 1. Precondiciones
     // 2. Ejercitar la class under test
     Doctor doctor =
-        doctorDao.createDoctor(
-            AUX_DOCTOR_ID,
-            AUX_DOCTOR_SPECIALTY,
-            AUX_DOCTOR_CITY,
-            AUX_DOCTOR_ADDRESS,
-            AUX_DOCTOR_INSURANCES,
-            AUX_DOCTOR_ATTENDING_HOURS);
+        doctorDao.createDoctor(new Doctor(
+                        null,
+                        AUX_DOCTOR_EMAIL,
+                        AUX_DOCTOR_PASSWORD,
+                        AUX_DOCTOR_FIRST_NAME,
+                        AUX_DOCTOR_LAST_NAME,
+                        INSERTED_DOCTOR_IMAGE,
+                        AUX_DOCTOR_INSURANCES,
+                        AUX_DOCTOR_SPECIALTY,
+                        new Location(INSERTED_DOCTOR_ID, AUX_DOCTOR_CITY, AUX_DOCTOR_ADDRESS),
+                        AUX_DOCTOR_ATTENDING_HOURS,
+                        INSERTED_DOCTOR_RATING,
+                        INSERTED_DOCTOR_RATING_COUNT));
+
+    em.flush();
+
     // 3. Meaningful assertions
-    Assert.assertEquals(AUX_DOCTOR_ID, doctor.getId());
+    //Assert.assertEquals(AUX_DOCTOR_ID, doctor.getId());
     Assert.assertEquals(AUX_DOCTOR_EMAIL, doctor.getEmail());
     Assert.assertEquals(AUX_DOCTOR_PASSWORD, doctor.getPassword());
     Assert.assertEquals(AUX_DOCTOR_FIRST_NAME, doctor.getFirstName());
@@ -148,13 +157,19 @@ public class DoctorDaoImplTest {
     assertThrows(
         DoctorAlreadyExistsException.class,
         () ->
-            doctorDao.createDoctor(
-                INSERTED_DOCTOR_ID,
-                AUX_DOCTOR_SPECIALTY,
-                AUX_DOCTOR_CITY,
-                AUX_DOCTOR_ADDRESS,
-                AUX_DOCTOR_INSURANCES,
-                AUX_DOCTOR_ATTENDING_HOURS));
+                doctorDao.createDoctor(new Doctor(
+                        INSERTED_DOCTOR_ID,
+                        AUX_DOCTOR_EMAIL,
+                        AUX_DOCTOR_PASSWORD,
+                        AUX_DOCTOR_FIRST_NAME,
+                        AUX_DOCTOR_LAST_NAME,
+                        INSERTED_DOCTOR_IMAGE,
+                        AUX_DOCTOR_INSURANCES,
+                        AUX_DOCTOR_SPECIALTY,
+                        new Location(INSERTED_DOCTOR_ID, AUX_DOCTOR_CITY, AUX_DOCTOR_ADDRESS),
+                        AUX_DOCTOR_ATTENDING_HOURS,
+                        INSERTED_DOCTOR_RATING,
+                        INSERTED_DOCTOR_RATING_COUNT)));
     // 3. Meaningful assertions
 
   }

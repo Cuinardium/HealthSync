@@ -7,19 +7,13 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 public interface DoctorDao {
 
   // =============== Inserts ===============
 
-  Doctor createDoctor(
-      long userId,
-      Specialty specialty,
-      City city,
-      String address,
-      List<HealthInsurance> healthInsurances,
-      AttendingHours attendingHours)
-      throws DoctorAlreadyExistsException, IllegalStateException;
+  Doctor createDoctor(Doctor doctor) throws DoctorAlreadyExistsException, IllegalStateException;
 
   // =============== Updates ===============
 
@@ -29,7 +23,7 @@ public interface DoctorDao {
       City city,
       String address,
       List<HealthInsurance> healthInsurances,
-      AttendingHours attendingHours)
+      Set<AttendingHours> attendingHours)
       throws DoctorNotFoundException;
 
   // =============== Queries ===============

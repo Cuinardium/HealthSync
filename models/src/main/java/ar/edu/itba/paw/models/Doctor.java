@@ -1,18 +1,53 @@
 package ar.edu.itba.paw.models;
 
+import java.time.DayOfWeek;
+import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+import javax.persistence.*;
 
+@Entity
+@Table(name = "doctor")
+@PrimaryKeyJoinColumn(name = "doctor_id", referencedColumnName = "user_id")
 public class Doctor extends User {
+  @Enumerated(EnumType.ORDINAL)
+  @ElementCollection(targetClass = HealthInsurance.class)
+  @JoinTable(
+    name = "health_insurance_accepted_by_doctor",
+    joinColumns = @JoinColumn(name = "doctor_id")
+  )
+  @Column(name = "health_insurance_code", nullable = false)
+  private List<HealthInsurance> healthInsurances;
 
-  private final List<HealthInsurance> healthInsurances;
-  private final Specialty specialty;
-  private final Location location;
-  private final AttendingHours attendingHours;
-  private final Float rating;
-  private final Integer ratingCount;
+  @Enumerated(EnumType.ORDINAL)
+  @Column(name = "specialty_code", nullable = false)
+  private Specialty specialty;
+
+  @OneToOne(mappedBy = "doctor", fetch = FetchType.LAZY)
+  private Location location;
+
+  @OneToMany(
+          mappedBy = "doctor",
+          fetch = FetchType.LAZY,
+          cascade = CascadeType.ALL,
+          orphanRemoval = true
+  )
+  private Set<AttendingHours> attendingHours;
+
+  //  @Formula("(SELECT AVG(rating) FROM review WHERE doctor_id = doctor_id)")
+  //  private Float rating;
+  //
+  //  @Formula("(SELECT count(*) FROM review WHERE doctor_id = doctor_id)")
+  //  private Integer ratingCount;
+
+  protected Doctor() {
+    // Solo para hibernate
+  }
 
   public Doctor(
-      long id,
+      Long id,
       String email,
       String password,
       String firstName,
@@ -21,7 +56,7 @@ public class Doctor extends User {
       List<HealthInsurance> healthInsurances,
       Specialty specialty,
       Location location,
-      AttendingHours attendingHours,
+      Set<AttendingHours> attendingHours,
       Float rating,
       Integer ratingCount) {
     super(id, email, password, firstName, lastName, image);
@@ -29,8 +64,20 @@ public class Doctor extends User {
     this.specialty = specialty;
     this.location = location;
     this.attendingHours = attendingHours;
-    this.rating = rating;
-    this.ratingCount = ratingCount;
+    //    this.rating = rating;
+    //    this.ratingCount = ratingCount;
+  }
+
+  public List<ThirtyMinuteBlock> getAttendingBlocksForDay(DayOfWeek day) {
+    return attendingHours
+        .stream()
+        .filter(attendingDays -> attendingDays.getId().getDay().equals(day))
+        .map(AttendingHours::getHourBlock)
+        .collect(Collectors.toCollection(ArrayList::new));
+  }
+
+  public List<ThirtyMinuteBlock> getAttendingBlocksForDate(LocalDate date) {
+    return getAttendingBlocksForDay(date.getDayOfWeek());
   }
 
   // Getters
@@ -46,16 +93,40 @@ public class Doctor extends User {
     return location;
   }
 
-  public AttendingHours getAttendingHours() {
+  public Set<AttendingHours> getAttendingHours() {
     return attendingHours;
   }
 
-  public Float getRating() {
-    return rating;
+  //  public Float getRating() {
+  //    return rating;
+  //  }
+
+  //  public Integer getRatingCount() {
+  //    return ratingCount;
+  //  }
+
+  public void setHealthInsurances(List<HealthInsurance> healthInsurances) {
+    this.healthInsurances = healthInsurances;
   }
 
-  public Integer getRatingCount() {
-    return ratingCount;
+  public void setSpecialty(Specialty specialty) {
+    this.specialty = specialty;
+  }
+
+  public void setLocation(Location location) {
+    this.location = location;
+  }
+
+  public void setAttendingHours(Set<AttendingHours> attendingHours) {
+    this.attendingHours = attendingHours;
+  }
+
+  public void setRating(Float rating) {
+    //    this.rating = rating;
+  }
+
+  public void setRatingCount(Integer ratingCount) {
+    //    this.ratingCount = ratingCount;
   }
 
   @Override

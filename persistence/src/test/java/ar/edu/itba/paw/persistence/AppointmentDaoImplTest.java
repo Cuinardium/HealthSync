@@ -6,7 +6,6 @@ import static org.junit.Assert.assertThrows;
 import ar.edu.itba.paw.interfaces.persistence.exceptions.AppointmentNotFoundException;
 import ar.edu.itba.paw.models.Appointment;
 import ar.edu.itba.paw.models.AppointmentStatus;
-import ar.edu.itba.paw.models.AttendingHours;
 import ar.edu.itba.paw.models.City;
 import ar.edu.itba.paw.models.Doctor;
 import ar.edu.itba.paw.models.HealthInsurance;
@@ -17,11 +16,9 @@ import ar.edu.itba.paw.models.Patient;
 import ar.edu.itba.paw.models.Specialty;
 import ar.edu.itba.paw.models.ThirtyMinuteBlock;
 import ar.edu.itba.paw.persistence.config.TestConfig;
+
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import javax.sql.DataSource;
 import org.junit.Assert;
 import org.junit.Before;
@@ -70,22 +67,13 @@ public class AppointmentDaoImplTest {
       Specialty.PEDIATRIC_ALLERGY_AND_IMMUNOLOGY;
   private static final City INSERTED_DOCTOR_CITY = City.ADOLFO_GONZALES_CHAVES;
   private static final String INSERTED_DOCTOR_ADDRESS = "doctor_address";
-  private static final AttendingHours INSERTED_DOCTOR_ATTENDING_HOURS =
-      new AttendingHours(
-          Arrays.asList(ThirtyMinuteBlock.BLOCK_00_00),
-          Arrays.asList(ThirtyMinuteBlock.BLOCK_00_00),
-          Arrays.asList(ThirtyMinuteBlock.BLOCK_00_00),
-          Arrays.asList(ThirtyMinuteBlock.BLOCK_00_00),
-          Arrays.asList(ThirtyMinuteBlock.BLOCK_00_00),
-          new ArrayList<>(),
-          new ArrayList<>());
   private static final Image INSERTED_DOCTOR_IMAGE = null;
 
   private static final Float INSERTED_DOCTOR_RATING = null;
   private static final Integer INSERTED_DOCTOR_RATING_COUNT = 0;
 
   private static final Location LOCATION_FOR_DOCTOR_7 =
-      new Location(3, INSERTED_DOCTOR_CITY, INSERTED_DOCTOR_ADDRESS);
+      new Location(INSERTED_DOCTOR_CITY, INSERTED_DOCTOR_ADDRESS);
   private static final Doctor DOCTOR_7 =
       new Doctor(
           INSERTED_DOCTOR_ID,
@@ -97,7 +85,7 @@ public class AppointmentDaoImplTest {
           INSERTED_DOCTOR_INSURANCES,
           INSERTED_DOCTOR_SPECIALTY,
           LOCATION_FOR_DOCTOR_7,
-          INSERTED_DOCTOR_ATTENDING_HOURS,
+          new HashSet<>(),
           INSERTED_DOCTOR_RATING,
           INSERTED_DOCTOR_RATING_COUNT);
 

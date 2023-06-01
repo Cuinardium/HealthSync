@@ -15,7 +15,7 @@ public class Patient extends User {
   @Column(name = "health_insurance_code", nullable = false)
   private HealthInsurance healthInsurance;
 
-  /* package */ Patient() {
+  protected Patient() {
     // Solo para hibernate
   }
 
