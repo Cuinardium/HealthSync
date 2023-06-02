@@ -39,6 +39,8 @@ public interface AppointmentService {
   Page<Appointment> getFilteredAppointments(
       long userId, AppointmentStatus status, Integer page, Integer pageSize, boolean isPatient);
 
+  Page<Appointment> getTodayAppointments(long userId, AppointmentStatus status, Integer page, Integer pageSize, boolean isPatient);
+
   public List<ThirtyMinuteBlock> getAvailableHoursForDoctorOnDate(long doctorId, LocalDate date) throws DoctorNotFoundException;
 
   public List<List<ThirtyMinuteBlock>> getAvailableHoursForDoctorOnRange(

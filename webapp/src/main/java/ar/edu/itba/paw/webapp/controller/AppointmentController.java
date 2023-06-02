@@ -45,6 +45,11 @@ public class AppointmentController {
     long userId = PawAuthUserDetails.getCurrentUserId();
 
     // Get relevant appointments
+    List<Appointment> todayAppointments=
+            appointmentService
+                    .getTodayAppointments(userId, AppointmentStatus.CONFIRMED, null, null, isPatient)
+                    .getContent();
+
     List<Appointment> upcomingAppointments =
         appointmentService
             .getFilteredAppointments(userId, AppointmentStatus.CONFIRMED, null, null, isPatient)
@@ -61,7 +66,8 @@ public class AppointmentController {
             .getContent();
 
     // Add values to model
-    mav.addObject("selectedTab", selectedTab >= 1 && selectedTab <= 3 ? selectedTab : 1);
+    mav.addObject("selectedTab", selectedTab >= 1 && selectedTab <= 4 ? selectedTab : 1);
+    mav.addObject("todayAppointments", todayAppointments);
     mav.addObject("upcomingAppointments", upcomingAppointments);
     mav.addObject("cancelledAppointments", cancelledAppointments);
     mav.addObject("completedAppointments", completedAppointments);

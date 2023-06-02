@@ -51,18 +51,17 @@
 
 <div class="contentContainer">
     <ul id="nav" class="nav nav-tabs">
-        <c:forEach begin="1" end="3" var="i">
+        <c:forEach begin="1" end="4" var="i">
             <li class="nav-item">
 
                 <c:set var="messageID"
-                       value="${i == 1 ? 'appointments.upcoming' : (i == 2 ? 'appointments.cancelled' : 'appointments.history')}"/>
+                       value="${i == 1 ? 'appointments.today' : (i == 2 ? 'appointments.upcoming' : (i == 3 ? 'appointments.cancelled' : 'appointments.history'))}"/>
                 <spring:message code="${messageID}" var="tabTitle"/>
 
                 <c:set var="cssClass"
                        value="${i == selectedTab ? 'active bg-primary text-white' : ''}"/>
                 <c:set var="name"
-                       value="${i == 1 ? 'upcoming' : (i == 2 ? 'cancelled' : 'history')}"/>
-
+                       value="${i == 1 ? 'today' : (i == 2  ? 'upcoming' : (i == 3 ? 'cancelled' : 'history'))}"/>
                 <a class="nav-link tab ${cssClass}"
                    href="#${name}">${tabTitle}</a>
             </li>
@@ -70,18 +69,18 @@
     </ul>
 
     <div class="cardsContainer">
-        <c:forEach begin="1" end="3" var="i">
+        <c:forEach begin="1" end="4" var="i">
 
             <c:set var="messageID"
-                   value="${i == 1 ? 'appointments.upcoming' : (i == 2 ? 'appointments.cancelled' : 'appointments.history')}"/>
+                   value="${i == 1 ? 'appointments.today' : (i == 2 ? 'appointments.upcoming' : (i == 3 ? 'appointments.cancelled' : 'appointments.history'))}"/>
             <spring:message code="${messageID}" var="tabTitle"/>
 
             <c:set var="cssClass"
                    value="${i == selectedTab ? 'active' : ''}"/>
             <c:set var="name"
-                   value="${i == 1 ? 'upcoming' : (i == 2 ? 'cancelled' : 'history')}"/>
+                   value="${i == 1 ? 'today' : (i == 2  ? 'upcoming' : (i == 3 ? 'cancelled' : 'history'))}"/>
             <c:set var="appointments"
-                   value="${i == 1 ? upcomingAppointments : (i == 2 ? cancelledAppointments : completedAppointments)}"/>
+                   value="${i == 1 ? todayAppointments : (i==2 ? upcomingAppointments : (i == 2 ? cancelledAppointments : completedAppointments))}"/>
 
             <div id="${name}" class="tabContent ${cssClass}">
                 <c:forEach items="${appointments}" var="appointment">
@@ -126,7 +125,7 @@
                                 <a href="${detailsUrl}" class="btn btn-outline-primary detailed-link">
                                     ${seeDetails}
                                 </a>
-                                <c:if test="${i == 1}">
+                                <c:if test="${i == 1 || i == 2}">
                                     <c:url value="/my-appointments/${appointment.id}/cancel" var="cancelUrl"/>
 
                                     <button onclick="openModal('${cancelUrl}')"
