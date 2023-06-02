@@ -16,9 +16,10 @@ import ar.edu.itba.paw.models.Patient;
 import ar.edu.itba.paw.models.Specialty;
 import ar.edu.itba.paw.models.ThirtyMinuteBlock;
 import ar.edu.itba.paw.persistence.config.TestConfig;
-
 import java.time.LocalDate;
 import java.util.*;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import javax.sql.DataSource;
 import org.junit.Assert;
 import org.junit.Before;
@@ -118,7 +119,9 @@ public class AppointmentDaoImplTest {
 
   private JdbcTemplate jdbcTemplate;
 
-  @Autowired private AppointmentDaoImpl appointmentDao;
+  @PersistenceContext EntityManager em;
+
+  @Autowired private AppointmentDaoJpa appointmentDao;
 
   @Before
   public void setUp() {
@@ -132,6 +135,8 @@ public class AppointmentDaoImplTest {
     Appointment appointment =
         appointmentDao.createAppointment(PATIENT_5, DOCTOR_7, AUX_LOCAL_DATE, AUX_TIME, AUX_DESC);
     // 3. Meaninful assertions
+
+    em.flush();
 
     assertEquals(PATIENT_5, appointment.getPatient());
     assertEquals(DOCTOR_7, appointment.getDoctor());

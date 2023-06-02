@@ -20,9 +20,8 @@ import javax.sql.DataSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
-import org.springframework.stereotype.Repository;
 
-@Repository
+// @Repository
 public class AppointmentDaoImpl implements AppointmentDao {
 
   private final JdbcTemplate jdbcTemplate;
