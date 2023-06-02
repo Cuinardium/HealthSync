@@ -21,6 +21,9 @@
 <spring:message code="form.password_hint" var="password_hint"/>
 <spring:message code="form.cpassword" var="cpassword"/>
 <spring:message code="form.cpassword_hint" var="cpassword_hint"/>
+<spring:message code="form.passwordContain" var="passwordContain"/>
+<spring:message code="form.passwordSize" var="passwordSize"/>
+<spring:message code="form.passwordContent" var="passwordContent"/>
 <spring:message code="profile.saveChanges" var="saveChanges"/>
 <spring:message code="profile.oldPassword" var="oldPassword"/>
 <spring:message code="profile.oldPassword_hint" var="oldPassword_hint"/>
@@ -29,6 +32,7 @@
 <spring:message code="edit.modal.text" var="modalDesc"/>
 <spring:message code="profile.edit.modal.button" var="modalButton"/>
 <spring:message code="profile.changePassword" var="changePassword"/>
+
 
 <html>
 <head>
@@ -106,11 +110,13 @@
         </form:form>
 
         <div class="passwordInfo">
-            <strong>Password must contain:</strong>
-            <ul>
-                <li>At least 4 characters</li>
-                <li>Only letters and numbers</li>
-            </ul>
+            <div>
+                <strong>${passwordContain}</strong>
+                <ul>
+                    <li>${passwordSize}</li>
+                    <li>${passwordContent}</li>
+                </ul>
+            </div>
         </div>
     </div>
 
