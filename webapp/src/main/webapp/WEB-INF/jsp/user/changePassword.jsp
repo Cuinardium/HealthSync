@@ -8,6 +8,7 @@
 <!--Variables -->
 <c:url value="/css/main.css" var="mainCss"/>
 <c:url value="/css/forms.css" var="formsCss"/>
+<c:url value="/css/passwordForm.css" var="passwordFormCss"/>
 
 
 <c:url value="/change-password" var="changePasswordUrl"/>
@@ -27,6 +28,7 @@
 <spring:message code="edit.modal.title" var="modalTitle"/>
 <spring:message code="edit.modal.text" var="modalDesc"/>
 <spring:message code="profile.edit.modal.button" var="modalButton"/>
+<spring:message code="profile.changePassword" var="changePassword"/>
 
 <html>
 <head>
@@ -36,10 +38,11 @@
     <jsp:include page="../components/favicon.jsp"/>
     <link href="${mainCss}" rel="stylesheet"/>
     <link href="${formsCss}" rel="stylesheet"/>
+    <link href="${passwordFormCss}" rel="stylesheet"/>
 
     <script>
-        $(document).ready(function(){
-            if(${showModal}){
+        $(document).ready(function () {
+            if (${showModal}) {
                 $('#modal').modal('show');
             }
         })
@@ -66,36 +69,52 @@
 
     </div>
     <h1>${title}</h1>
-<form:form modelAttribute="changePasswordForm" class="card" action="${changePasswordUrl}" method="POST">
-    <div class="formRow">
-        <div class="formItem">
-            <form:label path="oldPassword">${oldPassword}</form:label>
-            <form:input class="form-control" type="password" path="oldPassword" placeholder="${oldPassword_hint}"/>
-            <form:errors path="oldPassword" cssClass="error" element="p"/>
-            <c:if test="${oldPasswordDoesNotMatch}">
-                <p class="error">
-                    ${oldPasswordDoesNotMatchError}
-                </p>
-            </c:if>
+
+    <div class="passwordFormContainer card">
+        <form:form modelAttribute="changePasswordForm" action="${changePasswordUrl}" method="POST">
+            <div class="passwordFormItem">
+
+                <form:label path="oldPassword">${oldPassword}</form:label>
+                <form:input class="form-control" type="password" path="oldPassword" placeholder="${oldPassword_hint}"/>
+                <form:errors path="oldPassword" cssClass="error" element="p"/>
+                <c:if test="${oldPasswordDoesNotMatch}">
+                    <p class="error">
+                            ${oldPasswordDoesNotMatchError}
+                    </p>
+                </c:if>
+
+            </div>
+            <div class="passwordFormItem">
+
+                <form:label path="password">${password}</form:label>
+                <form:input class="form-control" type="password" path="password" placeholder="${password_hint}"/>
+                <form:errors path="password" cssClass="error" element="p"/>
+
+            </div>
+            <div class="passwordFormItem">
+
+                <form:label path="confirmPassword">${cpassword}</form:label>
+                <form:input class="form-control" path="confirmPassword" type="password" placeholder="${cpassword_hint}"/>
+                <form:errors path="confirmPassword" cssClass="error" element="p"/>
+                <form:errors cssClass="error" element="p"/>
+
+            </div>
+            <div class="passwordFormItem">
+                <button type="submit" class="btn btn-primary">${changePassword}</button>
+            </div>
+
+        </form:form>
+
+        <div class="passwordInfo">
+            <strong>Password must contain:</strong>
+            <ul>
+                <li>At least 4 characters</li>
+                <li>Only letters and numbers</li>
+            </ul>
         </div>
     </div>
-    <div class="formRow">
-        <div class="formItem">
-            <form:label path="password">${password}</form:label>
-            <form:input class="form-control" type="password" path="password" placeholder="${password_hint}"/>
-            <form:errors path="password" cssClass="error" element="p"/>
-        </div>
-    </div>
-    <div class="formRow">
-        <div class="formItem">
-            <form:label path="confirmPassword">${cpassword}</form:label>
-            <form:input class="form-control" path="confirmPassword" type="password" placeholder="${cpassword_hint}"/>
-            <form:errors path="confirmPassword" cssClass="error" element="p"/>
-            <form:errors cssClass="error" element="p"/>
-        </div>
-    </div>
-    <button type="submit" class="btn btn-primary submitButton">${saveChanges}</button>
-</form:form>
+
+
     <div class="modal fade" id="modal" tabindex="-1" role="dialog" aria-labelledby="modalLabel"
          aria-hidden="true" data-bs-backdrop="static">
         <div class="modal-dialog" role="dialog">
