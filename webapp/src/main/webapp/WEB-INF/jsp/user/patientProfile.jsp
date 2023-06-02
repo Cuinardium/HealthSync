@@ -8,6 +8,7 @@
 <!--Variables -->
 <c:url value="/css/main.css" var="mainCss"/>
 <c:url value="/css/forms.css" var="formsCss"/>
+<c:url value="/css/profile.css" var="profileCss"/>
 
 <c:url value="/patient-edit" var="patientEditUrl"/>
 <c:url value="/change-password" var="changePasswordUrl"/>
@@ -35,52 +36,54 @@
     <jsp:include page="../components/favicon.jsp"/>
     <link href="${mainCss}" rel="stylesheet"/>
     <link href="${formsCss}" rel="stylesheet"/>
+    <link href="${profileCss}" rel="stylesheet"/>
 
 </head>
 <body>
 <jsp:include page="../components/header.jsp"/>
 
-<div class="formContainer generalPadding">
+<div class="generalPadding">
     <h1>${title}</h1>
-    <form:form modelAttribute="patientEditForm" class="card" enctype="multipart/form-data">
-        <div class="formCol">
-            <div class="formItem">
-                <c:url value="/img/${user.getProfilePictureId() == null ? \"userDefault.png\" : user.getProfilePictureId()}" var="userImg"/>
-                <img src="${userImg}" width="100" height="100" class="rounded-circle">
+    <div class="card">
+        <div class="profileContainer">
+            <div class="profileImageContainer">
+                <c:url value="/img/${patient.profilePictureId == null ? \"userDefault.png\" : patient.profilePictureId}" var="userImg"/>
+                <img src="${userImg}" width="200" height="200" class="rounded-circle">
+            </div>
+            <div class="profileData">
+                <div class="profileRow">
+                    <div class="profileItem">
+                        <label for="firstName">${name}</label>
+                        <input class="form-control" id="firstName" type="text" value="${patient.firstName}" disabled/>
+                    </div>
+                    <div class="profileItem">
+                        <label for="lastName">${lastname}</label>
+                        <input class="form-control" id="lastName" type="text" value="${patient.lastName}" disabled/>
+                    </div>
+                </div>
+                <div class="profileRow">
+                    <div class="profileItem">
+                        <label>${healthcare}</label>
+                        <div class="chip">
+                            <spring:message code="${patient.healthInsurance.messageID}"/>
+                        </div>
+                    </div>
+                    <div class="profileItem">
+                        <label for="email">${email}</label>
+                        <input class="form-control" id="email" type="text" value='${patient.email}' disabled/>
+                    </div>
+                </div>
             </div>
         </div>
-        <div class="formRow">
-            <div class="formItem">
-                <form:label path="name">${name}</form:label>
-                <form:input class="form-control" type="text" placeholder="${name_hint}" path="name" disabled="true"/>
-            </div>
-            <div class="formItem">
-                <form:label path="lastname">${lastname}</form:label>
-                <form:input class="form-control" path="lastname" type="text" placeholder="${lastname_hint}" disabled="true"/>
-            </div>
-        </div>
-        <div class="formRow">
-            <div class="formItem">
-                <form:label path="healthInsuranceCode">${healthcare}</form:label>
-                <form:select class="form-select" path="healthInsuranceCode" disabled="true">
-                    <c:forEach items="${healthInsurances}" var="healthInsurance" varStatus="status">
-                        <form:option value="${status.index}">
-                            <spring:message code="${healthInsurance.messageID}"/>
-                        </form:option>
-                    </c:forEach>
-                </form:select>
-            </div>
-            <div class="formItem">
-                <form:label path="email">${email}</form:label>
-                <form:input class="form-control" path="email" type="text" placeholder='${email_hint}' disabled="true"/>
-            </div>
-        </div>
-        <div class="formRow">
+
+
+
+        <div class="profileButtonContainer">
             <a type="button" href="${patientEditUrl}" class="btn btn-primary">${editProfile}</a>
             <a type="button" href="${changePasswordUrl}" class="btn btn-primary">${changePassword}</a>
         </div>
 
-    </form:form>
+    </div>
 </div>
 </body>
 </html>

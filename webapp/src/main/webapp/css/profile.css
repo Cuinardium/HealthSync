@@ -1,0 +1,54 @@
+.chip {
+    background: #0275d8;
+    color: white;
+    padding: 3px 10px 3px 10px;
+    border-radius: 15px;
+    width: fit-content;
+}
+
+.profileContainer {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+}
+
+.profileData {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+}
+
+.profileRow {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+}
+
+.profileItem {
+    display: flex;
+    flex-direction: column;
+    justify-content: start;
+    width: 50%;
+}
+
+.profileItem input {
+    width: 75%;
+}
+
+.profileImageContainer {
+    display: flex;
+    padding-top: 25px;
+    padding-left: 25px;
+    width: 30%;
+}
+
+.profileButtonContainer {
+    display: flex;
+    flex-direction: row;
+    justify-content: end;
+}
+
+.profileButtonContainer a {
+    margin-bottom: 10px;
+    margin-right: 10px;
+}
