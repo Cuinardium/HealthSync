@@ -28,11 +28,11 @@ public class Appointment {
   @Column(name = "appointment_id")
   private Long id;
 
-  @OneToOne(fetch = FetchType.LAZY)
+  @OneToOne(fetch = FetchType.EAGER)
   @JoinColumn(name = "patient_id")
   private Patient patient;
 
-  @OneToOne(fetch = FetchType.LAZY)
+  @OneToOne(fetch = FetchType.EAGER)
   @JoinColumn(name = "doctor_id")
   private Doctor doctor;
 

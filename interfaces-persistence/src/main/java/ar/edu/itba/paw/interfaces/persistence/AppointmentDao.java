@@ -1,5 +1,6 @@
 package ar.edu.itba.paw.interfaces.persistence;
 
+import ar.edu.itba.paw.interfaces.persistence.exceptions.AppointmentAlreadyExistsException;
 import ar.edu.itba.paw.interfaces.persistence.exceptions.AppointmentNotFoundException;
 import ar.edu.itba.paw.models.Appointment;
 import ar.edu.itba.paw.models.AppointmentStatus;
@@ -20,7 +21,8 @@ public interface AppointmentDao {
       Doctor doctor,
       LocalDate date,
       ThirtyMinuteBlock timeBlock,
-      String description);
+      String description)
+      throws AppointmentAlreadyExistsException;
 
   // =============== Updates ===============
 
@@ -39,13 +41,13 @@ public interface AppointmentDao {
   List<Appointment> getAppointments(long userId, boolean isPatient);
 
   Page<Appointment> getFilteredAppointments(
-      long userId,
+      Long userId,
       AppointmentStatus status,
       LocalDate from,
       LocalDate to,
       Integer page,
       Integer pageSize,
-      boolean isPatient);
+      Boolean isPatient);
 
   boolean hasPatientMetDoctor(long patientId, long doctorId);
 

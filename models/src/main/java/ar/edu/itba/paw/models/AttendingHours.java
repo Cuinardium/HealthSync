@@ -39,9 +39,10 @@ public class AttendingHours {
     this.id = new AttendingHoursId(doctorId, day, hourBlock);
   }
 
-  public static List<AttendingHours> createFromList(Long doctorId, DayOfWeek day, Collection<ThirtyMinuteBlock> blocks){
+  public static List<AttendingHours> createFromList(
+      Long doctorId, DayOfWeek day, Collection<ThirtyMinuteBlock> blocks) {
     List<AttendingHours> attendingHours = new ArrayList<>();
-    for(ThirtyMinuteBlock block : blocks){
+    for (ThirtyMinuteBlock block : blocks) {
       attendingHours.add(new AttendingHours(doctorId, day, block));
     }
     return attendingHours;
@@ -70,6 +71,11 @@ public class AttendingHours {
   }
 
   // Getter for lists of 30 minute blocks
+
+  @Override
+  public String toString() {
+    return "AttendingHours [id=" + id + "]";
+  }
 
   @Override
   public boolean equals(Object o) {
@@ -121,6 +127,17 @@ public class AttendingHours {
 
     public void setDay(DayOfWeek day) {
       this.day = day;
+    }
+
+    @Override
+    public String toString() {
+      return "AttendingHoursId [doctorId="
+          + doctorId
+          + ", day="
+          + day
+          + ", hourBlock="
+          + hourBlock
+          + "]";
     }
 
     public ThirtyMinuteBlock getHourBlock() {

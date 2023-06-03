@@ -3,9 +3,11 @@ package ar.edu.itba.paw.persistence;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThrows;
 
+import ar.edu.itba.paw.interfaces.persistence.exceptions.AppointmentAlreadyExistsException;
 import ar.edu.itba.paw.interfaces.persistence.exceptions.AppointmentNotFoundException;
 import ar.edu.itba.paw.models.Appointment;
 import ar.edu.itba.paw.models.AppointmentStatus;
+import ar.edu.itba.paw.models.AttendingHours;
 import ar.edu.itba.paw.models.City;
 import ar.edu.itba.paw.models.Doctor;
 import ar.edu.itba.paw.models.HealthInsurance;
@@ -16,6 +18,7 @@ import ar.edu.itba.paw.models.Patient;
 import ar.edu.itba.paw.models.Specialty;
 import ar.edu.itba.paw.models.ThirtyMinuteBlock;
 import ar.edu.itba.paw.persistence.config.TestConfig;
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.*;
 import javax.persistence.EntityManager;
@@ -72,9 +75,24 @@ public class AppointmentDaoImplTest {
 
   private static final Float INSERTED_DOCTOR_RATING = null;
   private static final Integer INSERTED_DOCTOR_RATING_COUNT = 0;
+  private static final Long INSERTED_DOCTOR_LOCATION_ID = 7L;
 
   private static final Location LOCATION_FOR_DOCTOR_7 =
-      new Location(INSERTED_DOCTOR_CITY, INSERTED_DOCTOR_ADDRESS);
+      new Location(INSERTED_DOCTOR_LOCATION_ID, INSERTED_DOCTOR_CITY, INSERTED_DOCTOR_ADDRESS);
+  private static final Set<AttendingHours> INSERTED_DOCTOR_ATTENDING_HOURS =
+      new HashSet<>(
+          Arrays.asList(
+              new AttendingHours(
+                  INSERTED_DOCTOR_ID, DayOfWeek.MONDAY, ThirtyMinuteBlock.BLOCK_00_00),
+              new AttendingHours(
+                  INSERTED_DOCTOR_ID, DayOfWeek.TUESDAY, ThirtyMinuteBlock.BLOCK_00_00),
+              new AttendingHours(
+                  INSERTED_DOCTOR_ID, DayOfWeek.WEDNESDAY, ThirtyMinuteBlock.BLOCK_00_00),
+              new AttendingHours(
+                  INSERTED_DOCTOR_ID, DayOfWeek.THURSDAY, ThirtyMinuteBlock.BLOCK_00_00),
+              new AttendingHours(
+                  INSERTED_DOCTOR_ID, DayOfWeek.FRIDAY, ThirtyMinuteBlock.BLOCK_00_00)));
+
   private static final Doctor DOCTOR_7 =
       new Doctor(
           INSERTED_DOCTOR_ID,
@@ -86,7 +104,7 @@ public class AppointmentDaoImplTest {
           INSERTED_DOCTOR_INSURANCES,
           INSERTED_DOCTOR_SPECIALTY,
           LOCATION_FOR_DOCTOR_7,
-          new HashSet<>(),
+          INSERTED_DOCTOR_ATTENDING_HOURS,
           INSERTED_DOCTOR_RATING,
           INSERTED_DOCTOR_RATING_COUNT);
 
@@ -129,7 +147,7 @@ public class AppointmentDaoImplTest {
   }
 
   @Test
-  public void testCreateAppointment() {
+  public void testCreateAppointment() throws AppointmentAlreadyExistsException {
     // 1. Precondiciones
     // 2. Ejercitar la class under test
     Appointment appointment =
@@ -147,17 +165,20 @@ public class AppointmentDaoImplTest {
     Assert.assertEquals(3, JdbcTestUtils.countRowsInTable(jdbcTemplate, "appointment"));
   }
 
-  // TODO: revisar
   @Test
   public void testCreateAppointmentAlreadyExists() {
     // 1. Precondiciones
     // 2. Ejercitar la class under test
-    Appointment appointment =
-        appointmentDao.createAppointment(
-            PATIENT_5, DOCTOR_7, AUX_LOCAL_DATE, INSERTED_TIME, AUX_DESC);
+    assertThrows(
+        AppointmentAlreadyExistsException.class,
+        () ->
+            appointmentDao.createAppointment(
+                PATIENT_5, DOCTOR_7, INSERTED_LOCAL_DATE, INSERTED_TIME, AUX_DESC));
     // 3. Meaninful assertions
 
-    Assert.assertEquals(3, JdbcTestUtils.countRowsInTable(jdbcTemplate, "appointment"));
+    em.flush();
+
+    Assert.assertEquals(2, JdbcTestUtils.countRowsInTable(jdbcTemplate, "appointment"));
   }
 
   @Test

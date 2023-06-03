@@ -131,13 +131,13 @@ public class AppointmentDaoImpl implements AppointmentDao {
 
   @Override
   public Page<Appointment> getFilteredAppointments(
-      long userId,
+      Long userId,
       AppointmentStatus status,
       LocalDate from,
       LocalDate to,
       Integer page,
       Integer pageSize,
-      boolean isPatient) {
+      Boolean isPatient) {
 
     // Get the appointments for the doctor
     String appointmentsQuery =

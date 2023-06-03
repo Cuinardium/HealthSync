@@ -49,6 +49,6 @@ public class Patient extends User {
     if (this == obj) return true;
     if (!(obj instanceof Patient)) return false;
     Patient other = (Patient) obj;
-    return super.equals(obj) && healthInsurance == other.healthInsurance;
+    return super.equals(obj) && (healthInsurance.equals(other.healthInsurance));
   }
 }

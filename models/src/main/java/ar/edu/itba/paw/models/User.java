@@ -12,7 +12,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-import java.util.Objects;
 
 @Entity
 @Table(name = "users") // Si la clase no tiene el mismo nombre que la DB table
@@ -126,9 +125,10 @@ public class User {
     if (!(obj instanceof User)) return false;
     User other = (User) obj;
     // el || es para rescatarme del nullptrexcep
-    return Objects.equals(id, other.id)
+    return (id == other.id || id.equals(other.id))
         && (image == other.image || image.equals(other.image))
         && email.equals(other.email)
+        && password.equals(other.password)
         && firstName.equals(other.firstName)
         && lastName.equals(other.lastName);
   }
