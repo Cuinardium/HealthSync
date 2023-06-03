@@ -168,7 +168,9 @@ public class AppointmentDaoJpa implements AppointmentDao {
 
     // JPA Query Language (JQL) / Hibernate Query Language (HQL)
     final TypedQuery<Appointment> query =
-        em.createQuery("from Appointment where id in :idList", Appointment.class);
+        em.createQuery(
+            "from Appointment where id in :idList order by date ASC, timeBlock ASC",
+            Appointment.class);
     query.setParameter("idList", idList);
 
     return new Page<>(query.getResultList(), page, query.getResultList().size(), pageSize);

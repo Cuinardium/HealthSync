@@ -1,6 +1,7 @@
 package ar.edu.itba.paw.services;
 
 import ar.edu.itba.paw.interfaces.persistence.AppointmentDao;
+import ar.edu.itba.paw.interfaces.persistence.exceptions.AppointmentAlreadyExistsException;
 import ar.edu.itba.paw.interfaces.services.AppointmentService;
 import ar.edu.itba.paw.interfaces.services.DoctorService;
 import ar.edu.itba.paw.interfaces.services.MailService;
@@ -66,8 +67,7 @@ public class AppointmentServiceImpl implements AppointmentService {
         patientService.getPatientById(patientId).orElseThrow(PatientNotFoundException::new);
 
     // Check if doctor can attend in date and time block
-    boolean attendsInDateBlock =
-        doctor.getAttendingBlocksForDate(date).contains(timeBlock);
+    boolean attendsInDateBlock = doctor.getAttendingBlocksForDate(date).contains(timeBlock);
 
     if (!attendsInDateBlock) {
       throw new DoctorNotAvailableException();
@@ -84,15 +84,19 @@ public class AppointmentServiceImpl implements AppointmentService {
       throw new DoctorNotAvailableException();
     }
 
-    // Create appointment
-    Appointment appointment =
-        appointmentDao.createAppointment(patient, doctor, date, timeBlock, description);
+    try {
+      // Create appointment
+      Appointment appointment =
+          appointmentDao.createAppointment(patient, doctor, date, timeBlock, description);
 
-    // TODO: locale should be determined by the user's language
-    mailService.sendAppointmentRequestMail(appointment, LocaleContextHolder.getLocale());
-    mailService.sendAppointmentReminderMail(appointment, LocaleContextHolder.getLocale());
+      // TODO: locale should be determined by the user's language
+      mailService.sendAppointmentRequestMail(appointment, LocaleContextHolder.getLocale());
+      mailService.sendAppointmentReminderMail(appointment, LocaleContextHolder.getLocale());
 
-    return appointment;
+      return appointment;
+    } catch (AppointmentAlreadyExistsException e) {
+      throw new DoctorNotAvailableException();
+    }
   }
 
   // =============== Updates ===============
@@ -170,8 +174,7 @@ public class AppointmentServiceImpl implements AppointmentService {
     Map<LocalDate, List<ThirtyMinuteBlock>> availableHours = new HashMap<>();
 
     for (LocalDate date = from; date.isBefore(to.plusDays(1)); date = date.plusDays(1)) {
-      List<ThirtyMinuteBlock> currentList =
-          new ArrayList<>(doctor.getAttendingBlocksForDate(date));
+      List<ThirtyMinuteBlock> currentList = new ArrayList<>(doctor.getAttendingBlocksForDate(date));
       availableHours.put(date, currentList);
     }
 
