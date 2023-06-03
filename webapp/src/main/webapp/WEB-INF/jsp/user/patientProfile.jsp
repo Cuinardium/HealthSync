@@ -15,13 +15,9 @@
 
 <spring:message code="profile.profile" var="title"/>
 <spring:message code="form.name" var="name"/>
-<spring:message code="form.name_hint" var="name_hint"/>
 <spring:message code="form.lastname" var="lastname"/>
-<spring:message code="form.lastname_hint" var="lastname_hint"/>
 <spring:message code="form.healthcare" var="healthcare"/>
-<spring:message code="form.healthcare_hint" var="healthcare_hint"/>
 <spring:message code="form.email" var="email"/>
-<spring:message code="form.email_hint" var="email_hint"/>
 <spring:message code="profile.saveChanges" var="saveChanges"/>
 <spring:message code="edit.modal.title" var="modalTitle"/>
 <spring:message code="edit.modal.text" var="modalDesc"/>

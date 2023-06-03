@@ -30,7 +30,6 @@ import org.springframework.web.servlet.ModelAndView;
 public class ProfileController {
   private final DoctorService doctorService;
   private final PatientService patientService;
-
   private final UserService userService;
 
   private static final Logger LOGGER = LoggerFactory.getLogger(ProfileController.class);
@@ -39,8 +38,7 @@ public class ProfileController {
   public ProfileController(
       final DoctorService doctorService,
       final PatientService patientService,
-      final UserService userService,
-      final ImageService imageService) {
+      final UserService userService) {
     this.doctorService = doctorService;
     this.patientService = patientService;
     this.userService = userService;
@@ -67,7 +65,10 @@ public class ProfileController {
                     .orElseThrow(UserNotFoundException::new);
 
     final ModelAndView mav = new ModelAndView("user/doctorProfile");
+
     mav.addObject("doctor", doctor);
+    mav.addObject("days", DayOfWeek.values());
+    mav.addObject("thirtyMinuteBlocks", ThirtyMinuteBlock.values());
 
     LOGGER.debug("Doctor profile page requested");
     return mav;
