@@ -15,6 +15,8 @@ public interface DoctorDao {
 
   Doctor createDoctor(Doctor doctor) throws DoctorAlreadyExistsException, IllegalStateException;
 
+  Review addReview(long doctorId, Review review) throws DoctorNotFoundException;
+
   // =============== Updates ===============
 
   Doctor updateDoctorInfo(
@@ -23,7 +25,8 @@ public interface DoctorDao {
       City city,
       String address,
       List<HealthInsurance> healthInsurances,
-      Set<AttendingHours> attendingHours)
+      Set<AttendingHours> attendingHours,
+      List<Review> reviews)
       throws DoctorNotFoundException;
 
   // =============== Queries ===============
@@ -50,4 +53,6 @@ public interface DoctorDao {
 
   // Get all city present in the database & qty of appearences
   Map<City, Integer> getUsedCities();
+
+  Page<Review> getReviewsForDoctor(long doctorId, Integer page, Integer pageSize);
 }

@@ -27,9 +27,9 @@ VALUES (3, 5, 7, '2023-05-17', 1, 0, 'Me duele la cabeza', NULL),
        (4, 5, 7, '2023-05-17', 2, 0, 'Hola', NULL);
 
 INSERT INTO review (review_id, patient_id, doctor_id, review_date, review_description, rating)
-VALUES (6, 5, 7, '2023-05-17', 'Muy buen doctor', 5),
-       (7, 5, 7, '2023-05-16', 'Buen doctor', 4),
-       (8, 5, 7, '2023-05-15', 'Regular doctor', 3),
-       (9, 5, 7, '2023-05-14', 'Malo doctor', 2),
-       (10, 5, 7, '2023-05-13', 'Muy malo doctor', 1);
+VALUES (7, 5, 7, '2023-05-17', 'Muy buen doctor', 5),
+       (8, 5, 7, '2023-05-16', 'Buen doctor', 4),
+       (9, 5, 7, '2023-05-15', 'Regular doctor', 3),
+       (10, 5, 7, '2023-05-14', 'Malo doctor', 2),
+       (11, 5, 7, '2023-05-13', 'Muy malo doctor', 1);
 

@@ -105,6 +105,7 @@ public class AppointmentDaoImplTest {
           INSERTED_DOCTOR_SPECIALTY,
           LOCATION_FOR_DOCTOR_7,
           INSERTED_DOCTOR_ATTENDING_HOURS,
+          new ArrayList<>(),
           INSERTED_DOCTOR_RATING,
           INSERTED_DOCTOR_RATING_COUNT);
 

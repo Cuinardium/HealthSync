@@ -5,7 +5,9 @@ import ar.edu.itba.paw.interfaces.services.AppointmentService;
 import ar.edu.itba.paw.interfaces.services.DoctorService;
 import ar.edu.itba.paw.interfaces.services.PatientService;
 import ar.edu.itba.paw.interfaces.services.ReviewService;
+import ar.edu.itba.paw.models.Doctor;
 import ar.edu.itba.paw.models.Page;
+import ar.edu.itba.paw.models.Patient;
 import ar.edu.itba.paw.models.Review;
 import java.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,13 +39,13 @@ public class ReviewServiceImpl implements ReviewService {
 
   @Transactional
   @Override
-  public Review createReview(long doctorId, long patientId, int rating, String description) {
+  public Review createReview(Doctor doctor, Patient patient, int rating, String description) {
 
-    if (!canReview(doctorId, patientId)) {
+    if (!canReview(doctor.getId(), patient.getId())) {
       throw new RuntimeException();
     }
 
-    return reviewDao.createReview(doctorId, patientId, rating, LocalDate.now(), description);
+    return reviewDao.createReview(new Review(null, doctor, patient, LocalDate.now(), description, (short) rating));
   }
 
   // =============== Queries ===============
@@ -61,9 +63,7 @@ public class ReviewServiceImpl implements ReviewService {
       return false;
     }
 
-    boolean canReview = appointmentService.hasPatientMetDoctor(patientId, doctorId);
-
-    return canReview;
+    return appointmentService.hasPatientMetDoctor(patientId, doctorId);
   }
 
   @Override
