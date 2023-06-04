@@ -13,7 +13,10 @@ import ar.edu.itba.paw.webapp.form.PatientEditForm;
 import java.io.IOException;
 import java.time.DayOfWeek;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map.Entry;
+import java.util.Set;
 import java.util.stream.Collectors;
 import javax.validation.Valid;
 import org.slf4j.Logger;
@@ -66,43 +69,15 @@ public class ProfileController {
             .collect(Collectors.toList());
 
     ThirtyMinuteBlock[] values = ThirtyMinuteBlock.values();
-    AttendingHours attendingHours =
-        new AttendingHours(
-            doctorEditForm
-                .getMondayAttendingHours()
-                .stream()
-                .map(i -> values[i])
-                .collect(Collectors.toList()),
-            doctorEditForm
-                .getTuesdayAttendingHours()
-                .stream()
-                .map(i -> values[i])
-                .collect(Collectors.toList()),
-            doctorEditForm
-                .getWednesdayAttendingHours()
-                .stream()
-                .map(i -> values[i])
-                .collect(Collectors.toList()),
-            doctorEditForm
-                .getThursdayAttendingHours()
-                .stream()
-                .map(i -> values[i])
-                .collect(Collectors.toList()),
-            doctorEditForm
-                .getFridayAttendingHours()
-                .stream()
-                .map(i -> values[i])
-                .collect(Collectors.toList()),
-            doctorEditForm
-                .getSaturdayAttendingHours()
-                .stream()
-                .map(i -> values[i])
-                .collect(Collectors.toList()),
-            doctorEditForm
-                .getSundayAttendingHours()
-                .stream()
-                .map(i -> values[i])
-                .collect(Collectors.toList()));
+
+    // TODO: make doctorEditForm return all attending hours
+    Set<AttendingHours> attendingHours = new HashSet<>();
+
+    for (Entry<DayOfWeek, List<Integer>> aux : doctorEditForm.getAttendingHours().entrySet()) {
+      for (Integer ordinal : aux.getValue()) {
+        attendingHours.add(new AttendingHours(1L, aux.getKey(), values[ordinal]));
+      }
+    }
 
     // Q: static fromMultiPartFile method
     try {
@@ -163,49 +138,8 @@ public class ProfileController {
     doctorEditForm.setSpecialtyCode(doctor.getSpecialty().ordinal());
 
     // Attending hours
-    AttendingHours attendingHours = doctor.getAttendingHours();
-    doctorEditForm.setMondayAttendingHours(
-        attendingHours
-            .getAttendingBlocksForDay(DayOfWeek.MONDAY)
-            .stream()
-            .map(ThirtyMinuteBlock::ordinal)
-            .collect(Collectors.toList()));
-    doctorEditForm.setTuesdayAttendingHours(
-        attendingHours
-            .getAttendingBlocksForDay(DayOfWeek.TUESDAY)
-            .stream()
-            .map(ThirtyMinuteBlock::ordinal)
-            .collect(Collectors.toList()));
-    doctorEditForm.setWednesdayAttendingHours(
-        attendingHours
-            .getAttendingBlocksForDay(DayOfWeek.WEDNESDAY)
-            .stream()
-            .map(ThirtyMinuteBlock::ordinal)
-            .collect(Collectors.toList()));
-    doctorEditForm.setThursdayAttendingHours(
-        attendingHours
-            .getAttendingBlocksForDay(DayOfWeek.THURSDAY)
-            .stream()
-            .map(ThirtyMinuteBlock::ordinal)
-            .collect(Collectors.toList()));
-    doctorEditForm.setFridayAttendingHours(
-        attendingHours
-            .getAttendingBlocksForDay(DayOfWeek.FRIDAY)
-            .stream()
-            .map(ThirtyMinuteBlock::ordinal)
-            .collect(Collectors.toList()));
-    doctorEditForm.setSaturdayAttendingHours(
-        attendingHours
-            .getAttendingBlocksForDay(DayOfWeek.SATURDAY)
-            .stream()
-            .map(ThirtyMinuteBlock::ordinal)
-            .collect(Collectors.toList()));
-    doctorEditForm.setSundayAttendingHours(
-        attendingHours
-            .getAttendingBlocksForDay(DayOfWeek.SUNDAY)
-            .stream()
-            .map(ThirtyMinuteBlock::ordinal)
-            .collect(Collectors.toList()));
+    Set<AttendingHours> attendingHours = doctor.getAttendingHours();
+    doctorEditForm.setAttendingHours(attendingHours);
 
     final ModelAndView mav = new ModelAndView("user/doctorEdit");
     mav.addObject("form", doctorEditForm);

@@ -15,6 +15,9 @@ public class AttendingHours {
   @MapsId("doctorId")
   private Doctor doctor;
 
+  // TODO: populate this
+  public static final Set<AttendingHours> DEFAULT_ATTENDING_HOURS = new HashSet<>();
+
   // Default attending hours, monday to friday, 8am to 6pm
   //  public static final AttendingHours DEFAULT_ATTENDING_HOURS =
   //      new AttendingHours(
@@ -60,6 +63,10 @@ public class AttendingHours {
 
   public AttendingHoursId getId() {
     return id;
+  }
+
+  public DayOfWeek getDay() {
+    return id.day;
   }
 
   public ThirtyMinuteBlock getHourBlock() {
