@@ -161,6 +161,7 @@ public class DoctorEditForm extends UserEditForm {
     this.sundayAttendingHours = sundayAttendingHours;
   }
 
+  // TODO: needs refactor, duplicate method in doctorRegisterForm
   public Map<DayOfWeek, List<Integer>> getAttendingHours() {
     Map<DayOfWeek, List<Integer>> attendingHours = new HashMap<>();
 
@@ -175,6 +176,7 @@ public class DoctorEditForm extends UserEditForm {
     return attendingHours;
   }
 
+  // TODO: needs refactor, duplicate method in doctorRegisterForm
   public void setAttendingHours(Set<AttendingHours> attendingHours) {
 
     setMondayAttendingHours(
