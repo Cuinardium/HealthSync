@@ -86,6 +86,11 @@ public class DoctorDaoImpl implements DoctorDao {
     return getDoctorById(id).orElseThrow(IllegalStateException::new);
   }
 
+  @Override
+  public Review addReview(long doctorId, Review review) throws DoctorNotFoundException {
+    return null;
+  }
+
   // ======================== Updates =========================================
 
   @Override
@@ -95,7 +100,8 @@ public class DoctorDaoImpl implements DoctorDao {
       City city,
       String address,
       List<HealthInsurance> healthInsurances,
-      Set<AttendingHours> attendingHours)
+      Set<AttendingHours> attendingHours,
+      List<Review> reviews)
       throws DoctorNotFoundException {
 
     // Check if doctor exists
@@ -419,6 +425,11 @@ public class DoctorDaoImpl implements DoctorDao {
         });
 
     return result;
+  }
+
+  @Override
+  public Page<Review> getReviewsForDoctor(long doctorId, Integer page, Integer pageSize) {
+    return null;
   }
 
   // ================================= Private ======================================

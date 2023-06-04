@@ -86,6 +86,7 @@ public class AppointmentDaoImplTest {
           INSERTED_DOCTOR_SPECIALTY,
           LOCATION_FOR_DOCTOR_7,
           new HashSet<>(),
+          new ArrayList<>(),
           INSERTED_DOCTOR_RATING,
           INSERTED_DOCTOR_RATING_COUNT);
 

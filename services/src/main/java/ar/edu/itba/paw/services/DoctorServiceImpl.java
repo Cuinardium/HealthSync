@@ -9,10 +9,7 @@ import ar.edu.itba.paw.interfaces.services.exceptions.EmailInUseException;
 import ar.edu.itba.paw.interfaces.services.exceptions.UserNotFoundException;
 import ar.edu.itba.paw.models.*;
 import java.time.LocalDate;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -50,7 +47,21 @@ public class DoctorServiceImpl implements DoctorService {
       // Create user
 //      User user = userService.createUser(email, password, firstName, lastName);
       // Create doctor
-      return doctorDao.createDoctor(new Doctor(null, email, password, firstName, lastName, new Image(null, null), healthInsurances, specialty, new Location(city, address) , attendingHours, 0f ,0 ));
+      return doctorDao.createDoctor(new Doctor(
+              null,
+              email,
+              password,
+              firstName,
+              lastName,
+              new Image(null, null),
+              healthInsurances, specialty,
+              new Location(city, address) ,
+              attendingHours,
+              new ArrayList<>(),
+              0f ,
+              0
+              )
+      );
     } catch (DoctorAlreadyExistsException e) {
       throw new IllegalStateException();
     }
@@ -70,13 +81,14 @@ public class DoctorServiceImpl implements DoctorService {
       String address,
       List<HealthInsurance> healthInsurances,
       Set<AttendingHours> attendingHours,
+      List<Review> reviews,
       Image image)
       throws UserNotFoundException {
 
     try {
       userService.updateUser(doctorId, email, firstName, lastName, image);
       return doctorDao.updateDoctorInfo(
-          doctorId, specialty, city, address, healthInsurances, attendingHours);
+          doctorId, specialty, city, address, healthInsurances, attendingHours, reviews);
     } catch (DoctorNotFoundException e) {
       throw new RuntimeException();
     }

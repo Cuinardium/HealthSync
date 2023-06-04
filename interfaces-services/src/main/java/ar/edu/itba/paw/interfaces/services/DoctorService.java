@@ -37,6 +37,7 @@ public interface DoctorService {
       String address,
       List<HealthInsurance> healthInsurances,
       Set<AttendingHours> attendingHours,
+      List<Review> reviews,
       Image image)
       throws UserNotFoundException;
 

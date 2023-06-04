@@ -1,10 +1,13 @@
 package ar.edu.itba.paw.models;
 
+import org.hibernate.annotations.Formula;
+
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.RecursiveAction;
 import java.util.stream.Collectors;
 import javax.persistence.*;
 
@@ -36,11 +39,19 @@ public class Doctor extends User {
   )
   private Set<AttendingHours> attendingHours;
 
-  //  @Formula("(SELECT AVG(rating) FROM review WHERE doctor_id = doctor_id)")
-  //  private Float rating;
-  //
-  //  @Formula("(SELECT count(*) FROM review WHERE doctor_id = doctor_id)")
-  //  private Integer ratingCount;
+    @OneToMany(
+            mappedBy = "doctor",
+            fetch = FetchType.LAZY,
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
+  List<Review> reviews;
+
+    @Formula("(SELECT AVG(r.rating) FROM Review r WHERE r.doctor_id = doctor_id)")
+    private Float rating;
+
+    @Formula("(SELECT count(*) FROM Review r WHERE r.doctor_id = doctor_id)")
+    private Integer ratingCount;
 
   protected Doctor() {
     // Solo para hibernate
@@ -57,6 +68,7 @@ public class Doctor extends User {
       Specialty specialty,
       Location location,
       Set<AttendingHours> attendingHours,
+      List<Review> reviews,
       Float rating,
       Integer ratingCount) {
     super(id, email, password, firstName, lastName, image);
@@ -64,8 +76,9 @@ public class Doctor extends User {
     this.specialty = specialty;
     this.location = location;
     this.attendingHours = attendingHours;
-    //    this.rating = rating;
-    //    this.ratingCount = ratingCount;
+    this.reviews = reviews;
+        this.rating = rating;
+        this.ratingCount = ratingCount;
   }
 
   public List<ThirtyMinuteBlock> getAttendingBlocksForDay(DayOfWeek day) {
@@ -97,13 +110,13 @@ public class Doctor extends User {
     return attendingHours;
   }
 
-  //  public Float getRating() {
-  //    return rating;
-  //  }
+    public Float getRating() {
+      return rating;
+    }
 
-  //  public Integer getRatingCount() {
-  //    return ratingCount;
-  //  }
+    public Integer getRatingCount() {
+      return ratingCount;
+    }
 
   public void setHealthInsurances(List<HealthInsurance> healthInsurances) {
     this.healthInsurances = healthInsurances;
@@ -118,15 +131,25 @@ public class Doctor extends User {
   }
 
   public void setAttendingHours(Set<AttendingHours> attendingHours) {
-    this.attendingHours = attendingHours;
+    this.attendingHours.clear();
+    this.attendingHours.addAll(attendingHours);
   }
 
   public void setRating(Float rating) {
-    //    this.rating = rating;
+        this.rating = rating;
   }
 
   public void setRatingCount(Integer ratingCount) {
-    //    this.ratingCount = ratingCount;
+        this.ratingCount = ratingCount;
+  }
+
+  public List<Review> getReviews() {
+    return reviews;
+  }
+
+  public void setReviews(List<Review> reviews) {
+    this.reviews.clear();
+    this.reviews.addAll(reviews);
   }
 
   @Override

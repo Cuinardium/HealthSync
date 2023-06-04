@@ -1,16 +1,7 @@
 package ar.edu.itba.paw.models;
 
 import java.time.LocalDate;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToOne;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 @Entity
 @Table(name = "review")
@@ -26,12 +17,11 @@ public class Review {
   @Column(name = "review_id")
   private Long id;
 
-  //  @OneToOne(fetch = FetchType.LAZY)
-  //  @JoinColumn(name = "doctor_id" /* TODO: this , nullable = false */)
-  @Column(name = "doctor_id")
-  private Long /* TODO: Doctor */ doctor;
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "doctor_id", nullable = false)
+  private Doctor doctor;
 
-  @OneToOne(fetch = FetchType.LAZY)
+  @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "patient_id", nullable = false)
   private Patient patient;
 
@@ -44,12 +34,12 @@ public class Review {
   @Column(name = "rating", nullable = false)
   private Short rating;
 
-  /* package */ Review() {
+  protected Review() {
     // Solo para hibernate
   }
 
   public Review(
-      Long id, Long doctor, Patient patient, LocalDate date, String description, Short rating) {
+      Long id, Doctor doctor, Patient patient, LocalDate date, String description, Short rating) {
     this.id = id;
     this.patient = patient;
     this.date = date;
@@ -83,11 +73,11 @@ public class Review {
     this.id = id;
   }
 
-  public Long getDoctor() {
+  public Doctor getDoctor() {
     return doctor;
   }
 
-  public void setDoctor(Long doctor) {
+  public void setDoctor(Doctor doctor) {
     this.doctor = doctor;
   }
 

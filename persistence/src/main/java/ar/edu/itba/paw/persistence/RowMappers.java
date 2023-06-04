@@ -66,6 +66,7 @@ public class RowMappers {
                     location,
 //                    attendingHours,
                         new HashSet<>(),
+                    new ArrayList<>(),
                     rs.getObject("rating") == null ? null : rs.getFloat("rating"),
                     rs.getInt("rating_count"));
 
@@ -174,6 +175,7 @@ public class RowMappers {
                     specialty,
                     location,
                     new HashSet<>(),
+                    new ArrayList<>(),
                     rating,
                     ratingCount);
 
