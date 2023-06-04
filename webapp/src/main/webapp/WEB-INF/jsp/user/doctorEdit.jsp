@@ -75,11 +75,9 @@
 
         <div class="profileContainer">
             <div class="profileImageContainer">
-                <div class="profileItem">
-                    <c:url value="/img/${user.getProfilePictureId() == null ? \"userDefault.png\" : user.getProfilePictureId()}"
-                           var="userImg"/>
-                    <img src="${userImg}" id="imgPreview" width="200" height="200" class="rounded-circle">
-                </div>
+                <c:url value="/img/${user.getProfilePictureId() == null ? \"userDefault.png\" : user.getProfilePictureId()}"
+                       var="userImg"/>
+                <img src="${userImg}" id="imgPreview" width="200" height="200" class="rounded-circle">
                 <div class="pfpEdit">
                     <form:label path="image">
                         <span class="fa-stack">
