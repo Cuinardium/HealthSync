@@ -1,0 +1,26 @@
+.pfpEdit {
+    position: relative;
+    left: 100px;
+    z-index: 1;
+    bottom: 200px;
+}
+.pfpEdit input {
+    display: none;
+}
+
+.pfpEdit label i {
+    cursor: pointer;
+}
+
+.fa-circle {
+    color: #0275d8;
+}
+
+.pfpEdit label span i:hover {
+    color: darkgray;
+}
+
+.fa-pen {
+    color: white;
+}
+
