@@ -4,6 +4,12 @@
     justify-content: center;
 }
 
+.scheduleSelector {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
 .checkBoxContainer {
     display: flex;
     flex-direction: row;
