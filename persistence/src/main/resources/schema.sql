@@ -20,21 +20,13 @@ CREATE TABLE IF NOT EXISTS patient (
 );
 
 /*
-    city_code: representa el codigo de la ciudad
-*/
-CREATE TABLE IF NOT EXISTS doctor_location (
-    doctor_id SERIAL PRIMARY KEY ,
-    address            VARCHAR(100) NOT NULL,
-    city_code          INTEGER NOT NULL,
-    FOREIGN KEY (doctor_id) REFERENCES doctor (doctor_id)
-);
-
-/*
  specialty_code: representa el codigo de la especialidad del doctor
 */
 CREATE TABLE IF NOT EXISTS doctor (
     doctor_id       INTEGER PRIMARY KEY,
     specialty_code  INTEGER NOT NULL,
+    city_code       INTEGER NOT NULL,
+    address         VARCHAR(100) NOT NULL,
     FOREIGN KEY (doctor_id) REFERENCES users (user_id)
 );
 
