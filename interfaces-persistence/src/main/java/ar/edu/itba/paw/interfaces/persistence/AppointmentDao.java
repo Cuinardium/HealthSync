@@ -30,7 +30,7 @@ public interface AppointmentDao {
       long appointmentId, AppointmentStatus status, String cancelDescription)
       throws AppointmentNotFoundException;
 
-  void completeAppointmentsInDate(LocalDate date);
+  void completeAppointmentsInDateBlock(LocalDate date, ThirtyMinuteBlock block);
 
   // =============== Queries ===============
 
@@ -51,5 +51,5 @@ public interface AppointmentDao {
 
   boolean hasPatientMetDoctor(long patientId, long doctorId);
 
-  List<Appointment> getAllConfirmedAppointmentsInDate(LocalDate date);
+  List<Appointment> getAllConfirmedAppointmentsInDateBlock(LocalDate date, ThirtyMinuteBlock block);
 }

@@ -69,11 +69,12 @@ public class AppointmentDaoJpa implements AppointmentDao {
   }
 
   @Override
-  public void completeAppointmentsInDate(LocalDate date) {
+  public void completeAppointmentsInDateBlock(LocalDate date, ThirtyMinuteBlock timeBlock) {
     // JPA Query Language (JQL) / Hibernate Query Language (HQL)
     final TypedQuery<Appointment> query =
-        em.createQuery("from Appointment as app where app.date = :date", Appointment.class);
+        em.createQuery("from Appointment as app where app.date = :date and app.timeBlock = :timeBlock", Appointment.class);
     query.setParameter("date", date);
+    query.setParameter("timeBlock", timeBlock);
 
     // get all appointments in date
     List<Appointment> appList = query.getResultList();
@@ -191,14 +192,15 @@ public class AppointmentDaoJpa implements AppointmentDao {
   }
 
   @Override
-  public List<Appointment> getAllConfirmedAppointmentsInDate(LocalDate date) {
+  public List<Appointment> getAllConfirmedAppointmentsInDateBlock(LocalDate date, ThirtyMinuteBlock timeBlock) {
     // JPA Query Language (JQL) / Hibernate Query Language (HQL)
     final TypedQuery<Appointment> query =
         em.createQuery(
-            "from Appointment as app where app.date = :date and app.status = :status",
+            "from Appointment as app where app.date = :date and app.status = :status and app.timeBlock = :timeBlock",
             Appointment.class);
     query.setParameter("date", date);
     query.setParameter("status", AppointmentStatus.CONFIRMED);
+    query.setParameter("timeBlock", timeBlock);
 
     return query.getResultList();
   }
