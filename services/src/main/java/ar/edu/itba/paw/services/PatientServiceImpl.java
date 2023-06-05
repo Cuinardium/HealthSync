@@ -12,6 +12,7 @@ import ar.edu.itba.paw.models.Image;
 import ar.edu.itba.paw.models.Patient;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,10 +22,14 @@ public class PatientServiceImpl implements PatientService {
 
   private final UserService userService;
 
+  private final PasswordEncoder passwordEncoder;
+
   @Autowired
-  public PatientServiceImpl(PatientDao patientDao, UserService userService) {
+  public PatientServiceImpl(
+      PatientDao patientDao, UserService userService, PasswordEncoder passwordEncoder) {
     this.patientDao = patientDao;
     this.userService = userService;
+    this.passwordEncoder = passwordEncoder;
   }
 
   // =============== Inserts ===============
@@ -46,7 +51,14 @@ public class PatientServiceImpl implements PatientService {
       // Create Patient
       Patient patient =
           patientDao.createPatient(
-              new Patient(null, email, password, firstName, lastName, null, healthInsurance));
+              new Patient(
+                  null,
+                  email,
+                  passwordEncoder.encode(password),
+                  firstName,
+                  lastName,
+                  null,
+                  healthInsurance));
       return patient;
     } catch (PatientAlreadyExistsException e) {
       throw new IllegalStateException();

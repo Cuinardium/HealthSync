@@ -18,6 +18,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 // Le permite a Mockito tomar control de JUnit y permite anotaciones que sino no estarian
 // disponibles
@@ -27,6 +28,7 @@ public class PatientServiceImplTest {
   private static final long ID = 0;
   private static final String EMAIL = "email";
   private static final String PASSWORD = "password";
+  private static final String PASSWORD_ENCODED = "password_encoded";
   private static final String FIRST_NAME = "first_name";
   private static final String LAST_NAME = "last_name";
   private static final HealthInsurance HEALTH_INSURANCE = HealthInsurance.NONE;
@@ -34,7 +36,7 @@ public class PatientServiceImplTest {
 
   private static final User USER = new User(ID, EMAIL, PASSWORD, FIRST_NAME, LAST_NAME, IMAGE);
   private static final Patient PATIENT =
-      new Patient(ID, EMAIL, PASSWORD, FIRST_NAME, LAST_NAME, IMAGE, HEALTH_INSURANCE);
+      new Patient(ID, EMAIL, PASSWORD_ENCODED, FIRST_NAME, LAST_NAME, IMAGE, HEALTH_INSURANCE);
   private static final String EMAIL_NEW = "new_email";
   private static final String FIRST_NAME_NEW = "new_fist_name";
   private static final String LAST_NAME_NEW = "new_last_name";
@@ -44,6 +46,7 @@ public class PatientServiceImplTest {
           ID, EMAIL_NEW, PASSWORD, FIRST_NAME_NEW, LAST_NAME_NEW, IMAGE, HEALTH_INSURANCE_NEW);
 
   @Mock private PatientDao patientDao;
+  @Mock private PasswordEncoder passwordEncoder;
   @Mock private UserService userService;
 
   @InjectMocks private PatientServiceImpl ps;
@@ -52,9 +55,11 @@ public class PatientServiceImplTest {
   public void testCreatePatient()
       throws IllegalStateException, PatientAlreadyExistsException, EmailInUseException {
     // 1. Precondiciones
+    Mockito.when(passwordEncoder.encode(Mockito.eq(PASSWORD))).thenReturn(PASSWORD_ENCODED);
     Mockito.when(
             patientDao.createPatient(
-                new Patient(null, EMAIL, PASSWORD, FIRST_NAME, LAST_NAME, null, HEALTH_INSURANCE)))
+                new Patient(
+                    null, EMAIL, PASSWORD_ENCODED, FIRST_NAME, LAST_NAME, null, HEALTH_INSURANCE)))
         .thenReturn(PATIENT);
     // 2. Ejercitar la class under test
     Patient patient = ps.createPatient(EMAIL, PASSWORD, FIRST_NAME, LAST_NAME, HEALTH_INSURANCE);
@@ -66,9 +71,11 @@ public class PatientServiceImplTest {
   public void testCreatePatientAlreadyExists()
       throws IllegalStateException, PatientAlreadyExistsException, EmailInUseException {
     // 1. Precondiciones
+    Mockito.when(passwordEncoder.encode(Mockito.eq(PASSWORD))).thenReturn(PASSWORD_ENCODED);
     Mockito.when(
             patientDao.createPatient(
-                new Patient(null, EMAIL, PASSWORD, FIRST_NAME, LAST_NAME, null, HEALTH_INSURANCE)))
+                new Patient(
+                    null, EMAIL, PASSWORD_ENCODED, FIRST_NAME, LAST_NAME, null, HEALTH_INSURANCE)))
         .thenThrow(PatientAlreadyExistsException.class);
     // 2. Ejercitar la class under test
     ps.createPatient(EMAIL, PASSWORD, FIRST_NAME, LAST_NAME, HEALTH_INSURANCE);
