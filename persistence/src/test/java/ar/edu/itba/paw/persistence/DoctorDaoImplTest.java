@@ -12,6 +12,7 @@ import java.time.LocalDate;
 import java.util.*;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.print.Doc;
 import javax.sql.DataSource;
 import org.junit.Assert;
 import org.junit.Before;
@@ -52,8 +53,8 @@ public class DoctorDaoImplTest {
 
   private static final Image INSERTED_DOCTOR_IMAGE = null;
 
-  private static final Float INSERTED_DOCTOR_RATING = null;
-  private static final Integer INSERTED_DOCTOR_RATING_COUNT = 0;
+  private static final Float INSERTED_DOCTOR_RATING = 3f;
+  private static final Integer INSERTED_DOCTOR_RATING_COUNT = 5;
 
   private static final Long AUX_DOCTOR_ID = 8L;
   private static final String AUX_DOCTOR_EMAIL = "notdoctor_1@email.com";
@@ -217,8 +218,7 @@ public class DoctorDaoImplTest {
             AUX_DOCTOR_CITY,
             AUX_DOCTOR_ADDRESS,
             AUX_DOCTOR_INSURANCES,
-            AUX_DOCTOR_ATTENDING_HOURS,
-            REVIEWS_FOR_DOCTOR);
+            AUX_DOCTOR_ATTENDING_HOURS);
     // 3. Meaningful assertions
     Assert.assertEquals(INSERTED_DOCTOR_ID, doctor.getId());
     Assert.assertEquals(INSERTED_DOCTOR_EMAIL, doctor.getEmail());
@@ -231,11 +231,23 @@ public class DoctorDaoImplTest {
     Assert.assertEquals(AUX_DOCTOR_ADDRESS, doctor.getLocation().getAddress());
     Assert.assertEquals(AUX_DOCTOR_INSURANCES, doctor.getHealthInsurances());
     Assert.assertEquals(AUX_DOCTOR_ATTENDING_HOURS, doctor.getAttendingHours());
+  }
+
+  @Test
+  public void testUpdateDoctorReviews() throws DoctorNotFoundException {
+    // 1.Precondiciones
+    // 2. Ejercitar la class under test
+    Doctor doctor =
+            doctorDao.updateReviews(
+                    INSERTED_DOCTOR_ID,
+                    REVIEWS_FOR_DOCTOR);
+
+    // 3. Meaningful assertions
     Assert.assertEquals(REVIEWS_FOR_DOCTOR, doctor.getReviews());
   }
 
   @Test
-  public void testUpdateDoctorInfoDoctorNotFound() throws DoctorNotFoundException {
+  public void testUpdateDoctorInfoDoctorNotFound() {
     // 1.Precondiciones
     // 2. Ejercitar la class under test
 
@@ -248,8 +260,7 @@ public class DoctorDaoImplTest {
                 AUX_DOCTOR_CITY,
                 AUX_DOCTOR_ADDRESS,
                 AUX_DOCTOR_INSURANCES,
-                AUX_DOCTOR_ATTENDING_HOURS,
-                    REVIEWS_FOR_DOCTOR));
+                AUX_DOCTOR_ATTENDING_HOURS));
   }
 
   @Test
@@ -340,13 +351,8 @@ public class DoctorDaoImplTest {
     // 1. Precondiciones
     Review review_aux = new Review(null, DOCTOR_7, PATIENT_5, DATE, DESCRIPTION, RATING);
     // 2. Ejercitar la class under test
-    Doctor doctor = doctorDao.updateDoctorInfo(
+    Doctor doctor = doctorDao.updateReviews(
         INSERTED_DOCTOR_ID,
-        AUX_DOCTOR_SPECIALTY,
-        AUX_DOCTOR_CITY,
-        AUX_DOCTOR_ADDRESS,
-        AUX_DOCTOR_INSURANCES,
-        AUX_DOCTOR_ATTENDING_HOURS,
         Collections.singletonList(review_aux));
 
     em.flush();

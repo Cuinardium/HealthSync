@@ -1,5 +1,6 @@
 package ar.edu.itba.paw.interfaces.services;
 
+import ar.edu.itba.paw.interfaces.services.exceptions.DoctorNotFoundException;
 import ar.edu.itba.paw.interfaces.services.exceptions.EmailInUseException;
 import ar.edu.itba.paw.interfaces.services.exceptions.UserNotFoundException;
 import ar.edu.itba.paw.models.*;
@@ -13,7 +14,7 @@ public interface DoctorService {
 
   // =============== Inserts ===============
 
-  public Doctor createDoctor(
+  Doctor createDoctor(
       String email,
       String password,
       String firstName,
@@ -25,9 +26,12 @@ public interface DoctorService {
       Set<AttendingHours> attendingHours)
       throws EmailInUseException, IllegalStateException;
 
+  Review addReview(long doctorId, Review review)
+          throws IllegalStateException;
+
   // =============== Updates ===============
 
-  public Doctor updateDoctor(
+  Doctor updateDoctor(
       long doctorId,
       String email,
       String firstName,
@@ -37,15 +41,17 @@ public interface DoctorService {
       String address,
       List<HealthInsurance> healthInsurances,
       Set<AttendingHours> attendingHours,
-      List<Review> reviews,
       Image image)
       throws UserNotFoundException;
 
+  Doctor updateReviews(long doctorId, List<Review> reviews)
+          throws UserNotFoundException;
+
   // =============== Queries ===============
 
-  public Optional<Doctor> getDoctorById(long id);
+  Optional<Doctor> getDoctorById(long id);
 
-  public Page<Doctor> getFilteredDoctors(
+  Page<Doctor> getFilteredDoctors(
       String name,
       LocalDate date,
       ThirtyMinuteBlock fromTime,
@@ -56,13 +62,15 @@ public interface DoctorService {
       Integer page,
       Integer pageSize);
 
-  public List<Doctor> getDoctors();
+  List<Doctor> getDoctors();
 
   // Get all Specialties and health insurances that are used by doctors
-  public Map<Specialty, Integer> getUsedSpecialties();
+  Map<Specialty, Integer> getUsedSpecialties();
 
-  public Map<HealthInsurance, Integer> getUsedHealthInsurances();
+  Map<HealthInsurance, Integer> getUsedHealthInsurances();
 
   // Gets all cities used by doctors & qty of appearences
-  public Map<City, Integer> getUsedCities();
+  Map<City, Integer> getUsedCities();
+
+  Page<Review> getReviewsForDoctor(long doctorId, Integer page, Integer pageSize);
 }

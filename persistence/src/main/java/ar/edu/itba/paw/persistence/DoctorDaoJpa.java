@@ -45,19 +45,26 @@ public class DoctorDaoJpa implements DoctorDao {
       City city,
       String address,
       List<HealthInsurance> healthInsurances,
-      Set<AttendingHours> attendingHours,
-      List<Review> reviews)
+      Set<AttendingHours> attendingHours)
       throws DoctorNotFoundException {
     Doctor doctor = getDoctorById(doctorId).orElseThrow(DoctorNotFoundException::new);
     doctor.setSpecialty(specialty);
     doctor.setLocation(new Location(doctorId, city, address));
     doctor.setHealthInsurances(healthInsurances);
-    doctor.setReviews(reviews);
     doctor.setAttendingHours(attendingHours);
     mapAttendingHours(doctor);
     em.persist(doctor);
     return doctor;
   }
+
+  @Override
+  public Doctor updateReviews(long doctorId, List<Review> reviews) throws DoctorNotFoundException {
+    Doctor doctor = getDoctorById(doctorId).orElseThrow(DoctorNotFoundException::new);
+    doctor.setReviews(reviews);
+    em.persist(doctor);
+    return doctor;
+  }
+
 
   @Override
   public Optional<Doctor> getDoctorById(long id) {

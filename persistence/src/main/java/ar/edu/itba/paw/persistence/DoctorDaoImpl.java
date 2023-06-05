@@ -100,8 +100,7 @@ public class DoctorDaoImpl implements DoctorDao {
       City city,
       String address,
       List<HealthInsurance> healthInsurances,
-      Set<AttendingHours> attendingHours,
-      List<Review> reviews)
+      Set<AttendingHours> attendingHours)
       throws DoctorNotFoundException {
 
     // Check if doctor exists
@@ -135,6 +134,11 @@ public class DoctorDaoImpl implements DoctorDao {
     updateAttendingHours(doctorId, attendingHours);
 
     return getDoctorById(doctorId).orElseThrow(IllegalStateException::new);
+  }
+
+  @Override
+  public Doctor updateReviews(long doctorId, List<Review> reviews) throws DoctorNotFoundException {
+    return null;
   }
 
   // ============================ Queries =============================================

@@ -25,9 +25,10 @@ public interface DoctorDao {
       City city,
       String address,
       List<HealthInsurance> healthInsurances,
-      Set<AttendingHours> attendingHours,
-      List<Review> reviews)
+      Set<AttendingHours> attendingHours)
       throws DoctorNotFoundException;
+
+  Doctor updateReviews(long doctorId, List<Review> reviews) throws DoctorNotFoundException;
 
   // =============== Queries ===============
 

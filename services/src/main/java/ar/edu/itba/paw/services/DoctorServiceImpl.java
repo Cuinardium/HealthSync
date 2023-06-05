@@ -5,15 +5,14 @@ import ar.edu.itba.paw.interfaces.persistence.exceptions.DoctorAlreadyExistsExce
 import ar.edu.itba.paw.interfaces.persistence.exceptions.DoctorNotFoundException;
 import ar.edu.itba.paw.interfaces.services.DoctorService;
 import ar.edu.itba.paw.interfaces.services.UserService;
-import ar.edu.itba.paw.interfaces.services.exceptions.EmailInUseException;
 import ar.edu.itba.paw.interfaces.services.exceptions.UserNotFoundException;
 import ar.edu.itba.paw.models.*;
-import java.time.LocalDate;
-import java.util.*;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDate;
+import java.util.*;
 
 @Service
 public class DoctorServiceImpl implements DoctorService {
@@ -67,6 +66,16 @@ public class DoctorServiceImpl implements DoctorService {
     }
   }
 
+  @Override
+  public Review addReview(long doctorId, Review review) throws IllegalStateException {
+    try{
+      return doctorDao.addReview(doctorId, review);
+    }
+    catch (DoctorNotFoundException e){
+      throw new IllegalStateException();
+    }
+  }
+
   // =============== Updates ===============
 
   @Transactional
@@ -81,14 +90,22 @@ public class DoctorServiceImpl implements DoctorService {
       String address,
       List<HealthInsurance> healthInsurances,
       Set<AttendingHours> attendingHours,
-      List<Review> reviews,
       Image image)
       throws UserNotFoundException {
 
     try {
       userService.updateUser(doctorId, email, firstName, lastName, image);
       return doctorDao.updateDoctorInfo(
-          doctorId, specialty, city, address, healthInsurances, attendingHours, reviews);
+          doctorId, specialty, city, address, healthInsurances, attendingHours);
+    } catch (DoctorNotFoundException e) {
+      throw new RuntimeException();
+    }
+  }
+
+  @Override
+  public Doctor updateReviews(long doctorId, List<Review> reviews) throws UserNotFoundException {
+    try {
+      return doctorDao.updateReviews(doctorId, reviews);
     } catch (DoctorNotFoundException e) {
       throw new RuntimeException();
     }
@@ -135,5 +152,10 @@ public class DoctorServiceImpl implements DoctorService {
   @Override
   public Map<City, Integer> getUsedCities() {
     return doctorDao.getUsedCities();
+  }
+
+  @Override
+  public Page<Review> getReviewsForDoctor(long doctorId, Integer page, Integer pageSize) {
+    return doctorDao.getReviewsForDoctor(doctorId, page, pageSize);
   }
 }

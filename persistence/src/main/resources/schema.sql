@@ -103,7 +103,7 @@ CREATE TABLE IF NOT EXISTS review (
     DROP TABLE IF EXISTS location_for_doctor;
     DROP TABLE IF EXISTS doctor_attending_hours;
     DROP TABLE IF EXISTS review;
-    DROP TABLE IF EXISTS doctor;
+    DROP TABLE IF EXISTS doctor CASCADE;
     DROP TABLE IF EXISTS doctor_location;
     DROP TABLE IF EXISTS patient;
     DROP TABLE IF EXISTS users;

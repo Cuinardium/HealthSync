@@ -73,8 +73,8 @@ public class AppointmentDaoImplTest {
   private static final String INSERTED_DOCTOR_ADDRESS = "doctor_address";
   private static final Image INSERTED_DOCTOR_IMAGE = null;
 
-  private static final Float INSERTED_DOCTOR_RATING = null;
-  private static final Integer INSERTED_DOCTOR_RATING_COUNT = 0;
+  private static final Float INSERTED_DOCTOR_RATING = 3f;
+  private static final Integer INSERTED_DOCTOR_RATING_COUNT = 5;
   private static final Long INSERTED_DOCTOR_LOCATION_ID = 7L;
 
   private static final Location LOCATION_FOR_DOCTOR_7 =

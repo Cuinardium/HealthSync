@@ -1,15 +1,16 @@
 package ar.edu.itba.paw.services;
 
-import ar.edu.itba.paw.interfaces.persistence.ReviewDao;
 import ar.edu.itba.paw.interfaces.services.AppointmentService;
 import ar.edu.itba.paw.interfaces.services.DoctorService;
 import ar.edu.itba.paw.interfaces.services.PatientService;
 import ar.edu.itba.paw.interfaces.services.ReviewService;
+
 import ar.edu.itba.paw.models.Doctor;
 import ar.edu.itba.paw.models.Page;
 import ar.edu.itba.paw.models.Patient;
 import ar.edu.itba.paw.models.Review;
 import java.time.LocalDate;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,19 +18,15 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class ReviewServiceImpl implements ReviewService {
 
-  private final ReviewDao reviewDao;
-
   private final DoctorService doctorService;
   private final PatientService patientService;
   private final AppointmentService appointmentService;
 
   @Autowired
   public ReviewServiceImpl(
-      ReviewDao reviewDao,
       DoctorService doctorService,
       PatientService patientService,
       AppointmentService appointmentService) {
-    this.reviewDao = reviewDao;
     this.doctorService = doctorService;
     this.patientService = patientService;
     this.appointmentService = appointmentService;
@@ -39,13 +36,16 @@ public class ReviewServiceImpl implements ReviewService {
 
   @Transactional
   @Override
-  public Review createReview(Doctor doctor, Patient patient, int rating, String description) {
+  public Review createReview(long doctorId, long patientId, int rating, String description){
 
-    if (!canReview(doctor.getId(), patient.getId())) {
+    if (!canReview(doctorId, patientId)) {
       throw new RuntimeException();
     }
 
-    return reviewDao.createReview(new Review(null, doctor, patient, LocalDate.now(), description, (short) rating));
+    Doctor doctor = doctorService.getDoctorById(doctorId).get();
+    Patient patient = patientService.getPatientById(patientId).get();
+
+    return doctorService.addReview(doctor.getId(), new Review(null, doctor, patient, LocalDate.now(), description, (short) rating));
   }
 
   // =============== Queries ===============
@@ -68,6 +68,6 @@ public class ReviewServiceImpl implements ReviewService {
 
   @Override
   public Page<Review> getReviewsForDoctor(long doctorId, Integer page, Integer pageSize) {
-    return reviewDao.getReviewsForDoctor(doctorId, page, pageSize);
+    return doctorService.getReviewsForDoctor(doctorId, page, pageSize);
   }
 }

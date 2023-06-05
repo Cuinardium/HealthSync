@@ -6,6 +6,7 @@ import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.RecursiveAction;
 import java.util.stream.Collectors;
@@ -168,14 +169,16 @@ public class Doctor extends User {
   }
 
   @Override
-  public boolean equals(Object obj) {
-    if (this == obj) return true;
-    if (!(obj instanceof Doctor)) return false;
-    Doctor other = (Doctor) obj;
-    return super.equals(other)
-        && healthInsurances.equals(other.healthInsurances)
-        && specialty.equals(other.specialty)
-        && location.equals(other.location)
-        && attendingHours.equals(other.attendingHours);
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (o == null || getClass() != o.getClass()) return false;
+    if (!super.equals(o)) return false;
+    Doctor doctor = (Doctor) o;
+    return Objects.equals(healthInsurances, doctor.healthInsurances) && specialty == doctor.specialty && Objects.equals(location, doctor.location) && Objects.equals(attendingHours, doctor.attendingHours) && Objects.equals(rating, doctor.rating) && Objects.equals(ratingCount, doctor.ratingCount);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(healthInsurances, specialty, location, attendingHours, reviews, rating, ratingCount);
   }
 }

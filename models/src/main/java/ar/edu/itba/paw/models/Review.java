@@ -1,6 +1,7 @@
 package ar.edu.itba.paw.models;
 
 import java.time.LocalDate;
+import java.util.Objects;
 import javax.persistence.*;
 
 @Entity
@@ -112,5 +113,18 @@ public class Review {
         + ", rating="
         + rating
         + ']';
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (o == null || getClass() != o.getClass()) return false;
+    Review review = (Review) o;
+    return Objects.equals(id, review.id) && Objects.equals(doctor, review.doctor) && Objects.equals(patient, review.patient) && Objects.equals(date, review.date) && Objects.equals(description, review.description) && Objects.equals(rating, review.rating);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(id, doctor, patient, date, description, rating);
   }
 }

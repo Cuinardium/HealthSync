@@ -122,9 +122,26 @@ public class DoctorServiceImplTest {
           SPECIALTY_NEW,
           LOCATION_NEW,
           ATTENDING_HOURS_NEW,
-          REVIEWS_FOR_DOCTOR,
+          new ArrayList<>(),
           RATING,
           RATING_COUNT);
+
+
+  private static final Doctor DOCTOR_UPDATED_REVIEWS =
+          new Doctor(
+                  ID,
+                  EMAIL,
+                  PASSWORD,
+                  FIRST_NAME,
+                  LAST_NAME,
+                  IMAGE,
+                  HEALTH_INSURANCES,
+                  SPECIALTY,
+                  LOCATION,
+                  ATTENDING_HOURS,
+                  REVIEWS_FOR_DOCTOR,
+                  RATING,
+                  RATING_COUNT);
 
   @Mock private DoctorDao doctorDao;
   @Mock private UserService userService;
@@ -210,8 +227,7 @@ public class DoctorServiceImplTest {
                 CITY_NEW,
                 ADDRESS_NEW,
                 HEALTH_INSURANCES_NEW,
-                ATTENDING_HOURS_NEW,
-                    REVIEWS_FOR_DOCTOR))
+                ATTENDING_HOURS_NEW))
         .thenReturn(DOCTOR_UPDATED);
     // 2. Ejercitar la class under test
     Doctor doctor =
@@ -225,10 +241,26 @@ public class DoctorServiceImplTest {
             ADDRESS_NEW,
             HEALTH_INSURANCES_NEW,
             ATTENDING_HOURS_NEW,
-            REVIEWS_FOR_DOCTOR,
             IMAGE);
     // 3. Meaningful assertions
     Assert.assertEquals(DOCTOR_UPDATED, doctor);
+  }
+
+  @Test
+  public void testUpdateReviews() throws DoctorNotFoundException, UserNotFoundException {
+    // 1. Precondiciones
+    Mockito.when(
+                    doctorDao.updateReviews(
+                            ID,
+                            REVIEWS_FOR_DOCTOR))
+            .thenReturn(DOCTOR_UPDATED_REVIEWS);
+    // 2. Ejercitar la class under test
+    Doctor doctor =
+            ds.updateReviews(
+                    ID,
+                    REVIEWS_FOR_DOCTOR);
+    // 3. Meaningful assertions
+    Assert.assertEquals(DOCTOR_UPDATED_REVIEWS, doctor);
   }
 
   // TODO: cng excep
@@ -242,8 +274,7 @@ public class DoctorServiceImplTest {
                 CITY_NEW,
                 ADDRESS_NEW,
                 HEALTH_INSURANCES_NEW,
-                ATTENDING_HOURS_NEW,
-                    REVIEWS_FOR_DOCTOR))
+                ATTENDING_HOURS_NEW))
         .thenThrow(DoctorNotFoundException.class);
     // 2. Ejercitar la class under test
     ds.updateDoctor(
@@ -256,7 +287,6 @@ public class DoctorServiceImplTest {
         ADDRESS_NEW,
         HEALTH_INSURANCES_NEW,
         ATTENDING_HOURS_NEW,
-        REVIEWS_FOR_DOCTOR,
         IMAGE);
     // 3. Meaningful assertions
   }
@@ -278,7 +308,6 @@ public class DoctorServiceImplTest {
         ADDRESS_NEW,
         HEALTH_INSURANCES_NEW,
         ATTENDING_HOURS_NEW,
-        REVIEWS_FOR_DOCTOR,
         IMAGE);
     // 3. Meaningful assertions
   }
