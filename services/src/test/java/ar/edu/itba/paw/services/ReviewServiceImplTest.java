@@ -7,21 +7,12 @@ import ar.edu.itba.paw.interfaces.services.PatientService;
 import ar.edu.itba.paw.interfaces.services.exceptions.DoctorNotFoundException;
 import ar.edu.itba.paw.interfaces.services.exceptions.PatientNotFoundException;
 import ar.edu.itba.paw.interfaces.services.exceptions.ReviewForbiddenException;
-import ar.edu.itba.paw.models.AttendingHours;
-import ar.edu.itba.paw.models.City;
-import ar.edu.itba.paw.models.Doctor;
-import ar.edu.itba.paw.models.HealthInsurance;
-import ar.edu.itba.paw.models.Location;
-import ar.edu.itba.paw.models.Page;
-import ar.edu.itba.paw.models.Patient;
-import ar.edu.itba.paw.models.Review;
-import ar.edu.itba.paw.models.Specialty;
-import ar.edu.itba.paw.models.ThirtyMinuteBlock;
+import ar.edu.itba.paw.models.*;
+import java.time.DayOfWeek;
 import java.time.LocalDate;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -41,25 +32,34 @@ public class ReviewServiceImplTest {
   private static final String DOCTOR_PASSWORD = "doctor_password";
   private static final String DOCTOR_FIRST_NAME = "doctor_first_name";
   private static final String DOCTOR_LAST_NAME = "doctor_last_name";
-  private static final Long DOCTOR_PFP_ID = null;
-
+  private static final Image IMAGE = new Image(null, null);
   private static final List<HealthInsurance> DOCTOR_HEALTH_INSURANCES =
       Arrays.asList(HealthInsurance.OSDE, HealthInsurance.OMINT);
   private static final Specialty SPECIALTY = Specialty.CARDIOLOGY;
   private static final City CITY = City.AYACUCHO;
   private static final String ADDRESS = "1234";
-  private static final Location LOCATION = new Location(1, CITY, ADDRESS);
+  private static final Location LOCATION = new Location(null, CITY, ADDRESS);
   private static final Collection<ThirtyMinuteBlock> ATTENDING_HOURS_FOR_DAY =
       ThirtyMinuteBlock.fromRange(ThirtyMinuteBlock.BLOCK_08_00, ThirtyMinuteBlock.BLOCK_16_00);
-  private static final AttendingHours ATTENDING_HOURS =
-      new AttendingHours(
-          ATTENDING_HOURS_FOR_DAY,
-          ATTENDING_HOURS_FOR_DAY,
-          ATTENDING_HOURS_FOR_DAY,
-          ATTENDING_HOURS_FOR_DAY,
-          ATTENDING_HOURS_FOR_DAY,
-          ATTENDING_HOURS_FOR_DAY,
-          ATTENDING_HOURS_FOR_DAY);
+  private static final Set<AttendingHours> ATTENDING_HOURS =
+      new HashSet<>(
+          Stream.of(
+                  AttendingHours.createFromList(
+                      DOCTOR_ID, DayOfWeek.MONDAY, ATTENDING_HOURS_FOR_DAY),
+                  AttendingHours.createFromList(
+                      DOCTOR_ID, DayOfWeek.TUESDAY, ATTENDING_HOURS_FOR_DAY),
+                  AttendingHours.createFromList(
+                      DOCTOR_ID, DayOfWeek.WEDNESDAY, ATTENDING_HOURS_FOR_DAY),
+                  AttendingHours.createFromList(
+                      DOCTOR_ID, DayOfWeek.THURSDAY, ATTENDING_HOURS_FOR_DAY),
+                  AttendingHours.createFromList(
+                      DOCTOR_ID, DayOfWeek.FRIDAY, ATTENDING_HOURS_FOR_DAY),
+                  AttendingHours.createFromList(
+                      DOCTOR_ID, DayOfWeek.SATURDAY, ATTENDING_HOURS_FOR_DAY),
+                  AttendingHours.createFromList(
+                      DOCTOR_ID, DayOfWeek.SUNDAY, ATTENDING_HOURS_FOR_DAY))
+              .flatMap(Collection::stream)
+              .collect(Collectors.toList()));
   private static final Float RATING = 3F;
   private static final Integer RATING_COUNT = 1;
 
@@ -70,11 +70,12 @@ public class ReviewServiceImplTest {
           DOCTOR_PASSWORD,
           DOCTOR_FIRST_NAME,
           DOCTOR_LAST_NAME,
-          DOCTOR_PFP_ID,
+          IMAGE,
           DOCTOR_HEALTH_INSURANCES,
           SPECIALTY,
           LOCATION,
           ATTENDING_HOURS,
+          new ArrayList<>(),
           RATING,
           RATING_COUNT);
 
@@ -85,7 +86,6 @@ public class ReviewServiceImplTest {
   private static final String PATIENT_PASSWORD = "patient_password";
   private static final String FIRST_NAME = "patient_first_name";
   private static final String PATIENT_LAST_NAME = "patient_last_name";
-  private static final Long PATIENT_PFP_ID = null;
 
   private static final HealthInsurance PATIENT_HEALTH_INSURANCE = HealthInsurance.NONE;
   private static final Patient PATIENT =
@@ -95,7 +95,7 @@ public class ReviewServiceImplTest {
           PATIENT_PASSWORD,
           FIRST_NAME,
           PATIENT_LAST_NAME,
-          PATIENT_PFP_ID,
+          IMAGE,
           PATIENT_HEALTH_INSURANCE);
 
   // ================== Review Constants ==================
@@ -106,9 +106,10 @@ public class ReviewServiceImplTest {
   private static final LocalDate REVIEW_DATE = LocalDate.now();
 
   private static final Review REVIEW =
-      new Review(REVIEW_ID, PATIENT, REVIEW_DATE, REVIEW_DESCRIPTION, REVIEW_RATING);
+      new Review(REVIEW_ID, DOCTOR, PATIENT, REVIEW_DATE, REVIEW_DESCRIPTION, REVIEW_RATING);
 
-  private static final Page<Review> REVIEWS = new Page<>(Arrays.asList(REVIEW), null, null, null);
+  private static final Page<Review> REVIEWS =
+      new Page<>(Collections.singletonList(REVIEW), null, null, null);
 
   @Mock private ReviewDao reviewDao;
 
@@ -123,25 +124,12 @@ public class ReviewServiceImplTest {
   // =================== createReview ===================
 
   @Test
-  public void testCreateReview()
-      throws DoctorNotFoundException, PatientNotFoundException, ReviewForbiddenException {
-    // Mock doctorService
-    Mockito.when(doctorService.getDoctorById(DOCTOR_ID)).thenReturn(Optional.of(DOCTOR));
-
-    // Mock patientService
-    Mockito.when(patientService.getPatientById(PATIENT_ID)).thenReturn(Optional.of(PATIENT));
-
-    // Mock appointmentService
-    Mockito.when(appointmentService.hasPatientMetDoctor(PATIENT_ID, DOCTOR_ID)).thenReturn(true);
-
+  public void testCreateReview() {
     // Mock reviewDao
-    Mockito.when(
-            reviewDao.createReview(
-                DOCTOR_ID, PATIENT_ID, REVIEW_RATING, REVIEW_DATE, REVIEW_DESCRIPTION))
-        .thenReturn(REVIEW);
+    Mockito.when(doctorService.addReview(DOCTOR_ID, REVIEW)).thenReturn(REVIEW);
 
     // Call method
-    Review review = rs.createReview(DOCTOR_ID, PATIENT_ID, REVIEW_RATING, REVIEW_DESCRIPTION);
+    Review review = doctorService.addReview(DOCTOR_ID, REVIEW);
 
     // Assert
     Assert.assertEquals(REVIEW, review);
@@ -189,27 +177,27 @@ public class ReviewServiceImplTest {
   // =================== getReviewsForDoctor ===================
 
   @Test
-  public void testGetReviewsForDoctor() throws DoctorNotFoundException {
+  public void testGetReviewsForDoctor() {
     // Mock doctorService
-    Mockito.when(doctorService.getDoctorById(DOCTOR_ID)).thenReturn(Optional.of(DOCTOR));
-
-    // Mock reviewDao
-    Mockito.when(reviewDao.getReviewsForDoctor(DOCTOR_ID, null, null)).thenReturn(REVIEWS);
+    Mockito.when(doctorService.getReviewsForDoctor(DOCTOR_ID, null, null)).thenReturn(REVIEWS);
 
     // Call method
-    List<Review> reviews = rs.getReviewsForDoctor(DOCTOR_ID, null, null).getContent();
+    List<Review> reviews = doctorService.getReviewsForDoctor(DOCTOR_ID, null, null).getContent();
 
     // Assert
     Assert.assertEquals(REVIEWS.getContent(), reviews);
   }
 
-  @Test(expected = DoctorNotFoundException.class)
-  public void testGetReviewsForUnexistingDoctor() throws DoctorNotFoundException {
+  @Test
+  public void testGetReviewsForUnexistingDoctor() {
     // Mock doctorService
-    Mockito.when(doctorService.getDoctorById(DOCTOR_ID)).thenReturn(Optional.empty());
+    Mockito.when(doctorService.getReviewsForDoctor(DOCTOR_ID, null, null))
+        .thenReturn(new Page<>(new ArrayList<>(), null, 0, null));
 
     // Call method
-    rs.getReviewsForDoctor(DOCTOR_ID, null, null);
+    Assert.assertEquals(
+        doctorService.getReviewsForDoctor(DOCTOR_ID, null, null),
+        new Page<>(new ArrayList<>(), null, 0, null));
   }
 
   // =================== canReview ===================
