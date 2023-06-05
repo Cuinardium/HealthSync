@@ -7,24 +7,28 @@ import ar.edu.itba.paw.interfaces.services.DoctorService;
 import ar.edu.itba.paw.interfaces.services.UserService;
 import ar.edu.itba.paw.interfaces.services.exceptions.UserNotFoundException;
 import ar.edu.itba.paw.models.*;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import java.time.LocalDate;
 import java.util.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class DoctorServiceImpl implements DoctorService {
   private final DoctorDao doctorDao;
+  private final PasswordEncoder passwordEncoder;
   private final UserService userService;
 
   @Autowired
-  public DoctorServiceImpl(DoctorDao doctorDao, UserService userService) {
+  public DoctorServiceImpl(
+      DoctorDao doctorDao, UserService userService, PasswordEncoder passwordEncoder) {
 
     this.doctorDao = doctorDao;
 
     this.userService = userService;
+
+    this.passwordEncoder = passwordEncoder;
   }
 
   // =============== Inserts ===============
@@ -44,23 +48,23 @@ public class DoctorServiceImpl implements DoctorService {
       throws IllegalStateException {
     try {
       // Create user
-//      User user = userService.createUser(email, password, firstName, lastName);
+      //      User user = userService.createUser(email, password, firstName, lastName);
       // Create doctor
-      return doctorDao.createDoctor(new Doctor(
+      return doctorDao.createDoctor(
+          new Doctor(
               null,
               email,
-              password,
+              passwordEncoder.encode(password),
               firstName,
               lastName,
-              new Image(null, null),
-              healthInsurances, specialty,
-              new Location(city, address) ,
+              null,
+              healthInsurances,
+              specialty,
+              new Location(null, city, address),
               attendingHours,
               new ArrayList<>(),
-              0f ,
-              0
-              )
-      );
+              0f,
+              0));
     } catch (DoctorAlreadyExistsException e) {
       throw new IllegalStateException();
     }
@@ -68,10 +72,9 @@ public class DoctorServiceImpl implements DoctorService {
 
   @Override
   public Review addReview(long doctorId, Review review) throws IllegalStateException {
-    try{
+    try {
       return doctorDao.addReview(doctorId, review);
-    }
-    catch (DoctorNotFoundException e){
+    } catch (DoctorNotFoundException e) {
       throw new IllegalStateException();
     }
   }

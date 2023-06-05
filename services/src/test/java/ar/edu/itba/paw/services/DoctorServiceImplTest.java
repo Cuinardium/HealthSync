@@ -7,11 +7,9 @@ import ar.edu.itba.paw.interfaces.services.UserService;
 import ar.edu.itba.paw.interfaces.services.exceptions.EmailInUseException;
 import ar.edu.itba.paw.interfaces.services.exceptions.UserNotFoundException;
 import ar.edu.itba.paw.models.*;
-
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.*;
-
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -19,6 +17,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 // Le permite a Mockito tomar control de JUnit y permite anotaciones que sino no estarian
 // disponibles
@@ -28,31 +27,33 @@ public class DoctorServiceImplTest {
   private static final long ID = 0;
   private static final String EMAIL = "email";
   private static final String PASSWORD = "password";
+  private static final String PASSWORD_ENCODED = "password_encoded";
   private static final String FIRST_NAME = "first_name";
   private static final String LAST_NAME = "last_name";
   private static final List<HealthInsurance> HEALTH_INSURANCES =
       Arrays.asList(HealthInsurance.OSDE, HealthInsurance.OMINT);
-  private static final Image IMAGE = new Image(null, null);
+  private static final Image IMAGE = null;
   private static final Specialty SPECIALTY = Specialty.CARDIOLOGY;
   private static final City CITY = City.AYACUCHO;
   private static final String ADDRESS = "1234";
   private static final Location LOCATION = new Location(1L, CITY, ADDRESS);
-  private static final Set<AttendingHours> ATTENDING_HOURS = new HashSet<>(
-          Arrays.asList(new AttendingHours(ID, DayOfWeek.MONDAY, ThirtyMinuteBlock.BLOCK_00_30),
-                  new AttendingHours(ID, DayOfWeek.TUESDAY, ThirtyMinuteBlock.BLOCK_00_30),
-                  new AttendingHours(ID, DayOfWeek.WEDNESDAY, ThirtyMinuteBlock.BLOCK_00_30),
-                  new AttendingHours(ID, DayOfWeek.THURSDAY, ThirtyMinuteBlock.BLOCK_00_30),
-                  new AttendingHours(ID, DayOfWeek.FRIDAY, ThirtyMinuteBlock.BLOCK_00_30),
-                  new AttendingHours(ID, DayOfWeek.SATURDAY, ThirtyMinuteBlock.BLOCK_00_30),
-                  new AttendingHours(ID, DayOfWeek.SUNDAY, ThirtyMinuteBlock.BLOCK_00_30))
-  );
+  private static final Set<AttendingHours> ATTENDING_HOURS =
+      new HashSet<>(
+          Arrays.asList(
+              new AttendingHours(ID, DayOfWeek.MONDAY, ThirtyMinuteBlock.BLOCK_00_30),
+              new AttendingHours(ID, DayOfWeek.TUESDAY, ThirtyMinuteBlock.BLOCK_00_30),
+              new AttendingHours(ID, DayOfWeek.WEDNESDAY, ThirtyMinuteBlock.BLOCK_00_30),
+              new AttendingHours(ID, DayOfWeek.THURSDAY, ThirtyMinuteBlock.BLOCK_00_30),
+              new AttendingHours(ID, DayOfWeek.FRIDAY, ThirtyMinuteBlock.BLOCK_00_30),
+              new AttendingHours(ID, DayOfWeek.SATURDAY, ThirtyMinuteBlock.BLOCK_00_30),
+              new AttendingHours(ID, DayOfWeek.SUNDAY, ThirtyMinuteBlock.BLOCK_00_30)));
   private static final Float RATING = 3F;
   private static final Integer RATING_COUNT = 1;
   private static final Doctor DOCTOR =
       new Doctor(
           ID,
           EMAIL,
-          PASSWORD,
+          PASSWORD_ENCODED,
           FIRST_NAME,
           LAST_NAME,
           IMAGE,
@@ -73,15 +74,16 @@ public class DoctorServiceImplTest {
   private static final City CITY_NEW = City.ARRECIFES;
   private static final String ADDRESS_NEW = "1234asdsa";
   private static final Location LOCATION_NEW = new Location(2L, CITY_NEW, ADDRESS_NEW);
-  private static final Set<AttendingHours> ATTENDING_HOURS_NEW = new HashSet<>(
-          Arrays.asList(new AttendingHours(ID, DayOfWeek.MONDAY, ThirtyMinuteBlock.BLOCK_00_30),
-                  new AttendingHours(ID, DayOfWeek.TUESDAY, ThirtyMinuteBlock.BLOCK_00_30),
-                  new AttendingHours(ID, DayOfWeek.WEDNESDAY, ThirtyMinuteBlock.BLOCK_00_30),
-                  new AttendingHours(ID, DayOfWeek.THURSDAY, ThirtyMinuteBlock.BLOCK_00_30),
-                  new AttendingHours(ID, DayOfWeek.FRIDAY, ThirtyMinuteBlock.BLOCK_00_30),
-                  new AttendingHours(ID, DayOfWeek.SATURDAY, ThirtyMinuteBlock.BLOCK_00_30),
-                  new AttendingHours(ID, DayOfWeek.SUNDAY, ThirtyMinuteBlock.BLOCK_00_30))
-  );
+  private static final Set<AttendingHours> ATTENDING_HOURS_NEW =
+      new HashSet<>(
+          Arrays.asList(
+              new AttendingHours(ID, DayOfWeek.MONDAY, ThirtyMinuteBlock.BLOCK_00_30),
+              new AttendingHours(ID, DayOfWeek.TUESDAY, ThirtyMinuteBlock.BLOCK_00_30),
+              new AttendingHours(ID, DayOfWeek.WEDNESDAY, ThirtyMinuteBlock.BLOCK_00_30),
+              new AttendingHours(ID, DayOfWeek.THURSDAY, ThirtyMinuteBlock.BLOCK_00_30),
+              new AttendingHours(ID, DayOfWeek.FRIDAY, ThirtyMinuteBlock.BLOCK_00_30),
+              new AttendingHours(ID, DayOfWeek.SATURDAY, ThirtyMinuteBlock.BLOCK_00_30),
+              new AttendingHours(ID, DayOfWeek.SUNDAY, ThirtyMinuteBlock.BLOCK_00_30)));
 
   private static final Long INSERTED_PATIENT_ID = 5L;
   private static final String INSERTED_PATIENT_EMAIL = "patient@email.com";
@@ -92,24 +94,33 @@ public class DoctorServiceImplTest {
   private static final HealthInsurance INSERTED_PATIENT_HEALTH_INSURANCE = HealthInsurance.OMINT;
 
   private static final Patient PATIENT_5 =
-          new Patient(
-                  INSERTED_PATIENT_ID,
-                  INSERTED_PATIENT_EMAIL,
-                  INSERTED_PATIENT_PASSWORD,
-                  INSERTED_PATIENT_FIRST_NAME,
-                  INSERTED_PATIENT_LAST_NAME,
-                  INSERTED_PATIENT_IMAGE,
-                  INSERTED_PATIENT_HEALTH_INSURANCE);
+      new Patient(
+          INSERTED_PATIENT_ID,
+          INSERTED_PATIENT_EMAIL,
+          INSERTED_PATIENT_PASSWORD,
+          INSERTED_PATIENT_FIRST_NAME,
+          INSERTED_PATIENT_LAST_NAME,
+          INSERTED_PATIENT_IMAGE,
+          INSERTED_PATIENT_HEALTH_INSURANCE);
 
-  private static final List<Review> REVIEWS_FOR_DOCTOR = new ArrayList<>(
+  private static final List<Review> REVIEWS_FOR_DOCTOR =
+      new ArrayList<>(
           Arrays.asList(
-                  new Review(6L, DOCTOR, PATIENT_5, LocalDate.of(2023, 5, 17), "Muy buen doctor", (short) 5),
-                  new Review(7L, DOCTOR, PATIENT_5, LocalDate.of(2023, 5, 16), "Buen doctor", (short) 4),
-                  new Review(8L, DOCTOR, PATIENT_5, LocalDate.of(2023, 5, 15), "Regular doctor", (short) 3),
-                  new Review(9L, DOCTOR, PATIENT_5, LocalDate.of(2023, 5, 14), "Malo doctor", (short) 2),
-                  new Review(10L, DOCTOR, PATIENT_5, LocalDate.of(2023, 5, 13), "Muy malo doctor", (short) 1)
-          )
-  );
+              new Review(
+                  6L, DOCTOR, PATIENT_5, LocalDate.of(2023, 5, 17), "Muy buen doctor", (short) 5),
+              new Review(
+                  7L, DOCTOR, PATIENT_5, LocalDate.of(2023, 5, 16), "Buen doctor", (short) 4),
+              new Review(
+                  8L, DOCTOR, PATIENT_5, LocalDate.of(2023, 5, 15), "Regular doctor", (short) 3),
+              new Review(
+                  9L, DOCTOR, PATIENT_5, LocalDate.of(2023, 5, 14), "Malo doctor", (short) 2),
+              new Review(
+                  10L,
+                  DOCTOR,
+                  PATIENT_5,
+                  LocalDate.of(2023, 5, 13),
+                  "Muy malo doctor",
+                  (short) 1)));
   private static final Doctor DOCTOR_UPDATED =
       new Doctor(
           ID,
@@ -126,24 +137,24 @@ public class DoctorServiceImplTest {
           RATING,
           RATING_COUNT);
 
-
   private static final Doctor DOCTOR_UPDATED_REVIEWS =
-          new Doctor(
-                  ID,
-                  EMAIL,
-                  PASSWORD,
-                  FIRST_NAME,
-                  LAST_NAME,
-                  IMAGE,
-                  HEALTH_INSURANCES,
-                  SPECIALTY,
-                  LOCATION,
-                  ATTENDING_HOURS,
-                  REVIEWS_FOR_DOCTOR,
-                  RATING,
-                  RATING_COUNT);
+      new Doctor(
+          ID,
+          EMAIL,
+          PASSWORD,
+          FIRST_NAME,
+          LAST_NAME,
+          IMAGE,
+          HEALTH_INSURANCES,
+          SPECIALTY,
+          LOCATION,
+          ATTENDING_HOURS,
+          REVIEWS_FOR_DOCTOR,
+          RATING,
+          RATING_COUNT);
 
   @Mock private DoctorDao doctorDao;
+  @Mock private PasswordEncoder passwordEncoder;
   @Mock private UserService userService;
 
   @InjectMocks private DoctorServiceImpl ds;
@@ -152,11 +163,26 @@ public class DoctorServiceImplTest {
   public void testCreateDoctor()
       throws IllegalStateException, DoctorAlreadyExistsException, EmailInUseException {
     // 1. Precondiciones
-//    Mockito.when(userService.createUser(EMAIL, PASSWORD, FIRST_NAME, LAST_NAME)).thenReturn(USER);
+    // Mockito.when(userService.createUser(EMAIL, PASSWORD, FIRST_NAME,
+    // LAST_NAME)).thenReturn(USER);
+    Mockito.when(passwordEncoder.encode(Mockito.eq(PASSWORD))).thenReturn(PASSWORD_ENCODED);
     Mockito.when(
-            doctorDao.createDoctor(new Doctor(
-                    null, EMAIL, PASSWORD, FIRST_NAME, LAST_NAME, IMAGE, HEALTH_INSURANCES, SPECIALTY, new Location(CITY, ADDRESS), ATTENDING_HOURS, new ArrayList<>(), 0f,0 )))
-            .thenReturn(DOCTOR);
+            doctorDao.createDoctor(
+                new Doctor(
+                    null,
+                    EMAIL,
+                    PASSWORD_ENCODED,
+                    FIRST_NAME,
+                    LAST_NAME,
+                    IMAGE,
+                    HEALTH_INSURANCES,
+                    SPECIALTY,
+                    new Location(CITY, ADDRESS),
+                    ATTENDING_HOURS,
+                    new ArrayList<>(),
+                    0f,
+                    0)))
+        .thenReturn(DOCTOR);
     // 2. Ejercitar la class under test
     Doctor doctor =
         ds.createDoctor(
@@ -177,9 +203,23 @@ public class DoctorServiceImplTest {
   public void testCreateDoctorAlreadyExists()
       throws IllegalStateException, DoctorAlreadyExistsException, EmailInUseException {
     // 1. Precondiciones
+    Mockito.when(passwordEncoder.encode(Mockito.eq(PASSWORD))).thenReturn(PASSWORD_ENCODED);
     Mockito.when(
-            doctorDao.createDoctor(new Doctor(
-                null, EMAIL, PASSWORD, FIRST_NAME, LAST_NAME, IMAGE, HEALTH_INSURANCES, SPECIALTY, new Location(CITY, ADDRESS), ATTENDING_HOURS, new ArrayList<>(), 0f,0 )))
+            doctorDao.createDoctor(
+                new Doctor(
+                    null,
+                    EMAIL,
+                    PASSWORD_ENCODED,
+                    FIRST_NAME,
+                    LAST_NAME,
+                    IMAGE,
+                    HEALTH_INSURANCES,
+                    SPECIALTY,
+                    new Location(CITY, ADDRESS),
+                    ATTENDING_HOURS,
+                    new ArrayList<>(),
+                    0f,
+                    0)))
         .thenThrow(DoctorAlreadyExistsException.class);
     // 2. Ejercitar la class under test
     ds.createDoctor(
@@ -199,10 +239,24 @@ public class DoctorServiceImplTest {
   public void testCreateDoctorUserAlreadyExists()
       throws IllegalStateException, DoctorAlreadyExistsException, EmailInUseException {
     // 1. Precondiciones
+    Mockito.when(passwordEncoder.encode(Mockito.eq(PASSWORD))).thenReturn(PASSWORD_ENCODED);
     Mockito.when(
-                    doctorDao.createDoctor(new Doctor(
-                            null, EMAIL, PASSWORD, FIRST_NAME, LAST_NAME, IMAGE, HEALTH_INSURANCES, SPECIALTY, new Location(CITY, ADDRESS), ATTENDING_HOURS, new ArrayList<>(), 0f,0 )))
-            .thenThrow(IllegalStateException.class);
+            doctorDao.createDoctor(
+                new Doctor(
+                    null,
+                    EMAIL,
+                    PASSWORD_ENCODED,
+                    FIRST_NAME,
+                    LAST_NAME,
+                    IMAGE,
+                    HEALTH_INSURANCES,
+                    SPECIALTY,
+                    new Location(CITY, ADDRESS),
+                    ATTENDING_HOURS,
+                    new ArrayList<>(),
+                    0f,
+                    0)))
+        .thenThrow(IllegalStateException.class);
     // 2. Ejercitar la class under test
     ds.createDoctor(
         EMAIL,
@@ -249,16 +303,10 @@ public class DoctorServiceImplTest {
   @Test
   public void testUpdateReviews() throws DoctorNotFoundException, UserNotFoundException {
     // 1. Precondiciones
-    Mockito.when(
-                    doctorDao.updateReviews(
-                            ID,
-                            REVIEWS_FOR_DOCTOR))
-            .thenReturn(DOCTOR_UPDATED_REVIEWS);
+    Mockito.when(doctorDao.updateReviews(ID, REVIEWS_FOR_DOCTOR))
+        .thenReturn(DOCTOR_UPDATED_REVIEWS);
     // 2. Ejercitar la class under test
-    Doctor doctor =
-            ds.updateReviews(
-                    ID,
-                    REVIEWS_FOR_DOCTOR);
+    Doctor doctor = ds.updateReviews(ID, REVIEWS_FOR_DOCTOR);
     // 3. Meaningful assertions
     Assert.assertEquals(DOCTOR_UPDATED_REVIEWS, doctor);
   }
