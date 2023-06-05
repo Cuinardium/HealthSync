@@ -95,6 +95,11 @@ public class User {
     this.lastName = lastName;
   }
 
+  public Long getProfilePictureId() {
+    if (image == null) return null;
+    return image.getImageId();
+  }
+
   public Image getImage() {
     return image;
   }
