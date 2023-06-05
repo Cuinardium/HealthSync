@@ -10,14 +10,11 @@ VALUES (5, 'patient@email.com', 'patient_password', 'patient_first_name', 'patie
 INSERT INTO patient (patient_id, health_insurance_code)
 VALUES (5, 1);
 
-INSERT INTO doctor (doctor_id, specialty_code)
-VALUES (7, 1);
+INSERT INTO doctor (doctor_id, specialty_code, city_code, address)
+VALUES (7, 1, 1, 'doctor_address');
 
 INSERT INTO doctor_attending_hours (doctor_id, day, hour_block)
 VALUES (7,0,0), (7,1,0), (7,2,0), (7,3,0), (7,4,0);
-
-INSERT INTO doctor_location(doctor_id, address, city_code)
-VALUES (7, 'doctor_address', 1);
 
 INSERT INTO health_insurance_accepted_by_doctor (doctor_id, health_insurance_code)
 VALUES (7, 1), (7, 2);
