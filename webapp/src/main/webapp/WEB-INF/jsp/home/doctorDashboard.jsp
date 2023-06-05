@@ -154,12 +154,13 @@
                 <c:forEach items="${doctors}" var="doctor">
                     <spring:message code="${doctor.specialty.messageID}" var="doctorSpecialty"/>
                     <spring:message code="${doctor.location.city.messageID}" var="doctorCity"/>
+                    <spring:message code="doctor.alt.doctorImg" arguments="${doctor.firstName}, ${doctor.lastName}" var="altDoctorImg"/>
                     <c:url value="/${doctor.id}/detailed-doctor" var="detailedUrl"/>
                     <div class="card">
                         <div class="imageContainer">
                             <c:url value="/img/${doctor.getProfilePictureId() == null ? \"doctorDefault.png\" : doctor.getProfilePictureId()}"
                                    var="doctorImg"/>
-                            <img src="${doctorImg}" class="card-img-top">
+                            <img src="${doctorImg}" class="card-img-top" alt="${altDoctorImg}">
                         </div>
                         <div class="infoContainer">
                                 <h5 class="card-title">${doctor.firstName} ${doctor.lastName}</h5>
