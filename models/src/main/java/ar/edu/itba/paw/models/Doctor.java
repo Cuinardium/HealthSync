@@ -15,7 +15,7 @@ import org.hibernate.annotations.Formula;
 @PrimaryKeyJoinColumn(name = "doctor_id", referencedColumnName = "user_id")
 public class Doctor extends User {
   @Enumerated(EnumType.ORDINAL)
-  @ElementCollection(targetClass = HealthInsurance.class)
+  @ElementCollection(fetch = FetchType.EAGER, targetClass = HealthInsurance.class)
   @JoinTable(
     name = "health_insurance_accepted_by_doctor",
     joinColumns = @JoinColumn(name = "doctor_id")
