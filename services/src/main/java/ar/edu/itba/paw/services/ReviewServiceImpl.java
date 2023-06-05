@@ -4,8 +4,10 @@ import ar.edu.itba.paw.interfaces.services.AppointmentService;
 import ar.edu.itba.paw.interfaces.services.DoctorService;
 import ar.edu.itba.paw.interfaces.services.PatientService;
 import ar.edu.itba.paw.interfaces.services.ReviewService;
-
 import ar.edu.itba.paw.models.Doctor;
+import ar.edu.itba.paw.interfaces.services.exceptions.DoctorNotFoundException;
+import ar.edu.itba.paw.interfaces.services.exceptions.PatientNotFoundException;
+import ar.edu.itba.paw.interfaces.services.exceptions.ReviewForbiddenException;
 import ar.edu.itba.paw.models.Page;
 import ar.edu.itba.paw.models.Patient;
 import ar.edu.itba.paw.models.Review;
@@ -36,10 +38,17 @@ public class ReviewServiceImpl implements ReviewService {
 
   @Transactional
   @Override
-  public Review createReview(long doctorId, long patientId, int rating, String description){
+  public Review createReview(long doctorId, long patientId, int rating, String description) throws DoctorNotFoundException, PatientNotFoundException, ReviewForbiddenException {
+    if (!doctorService.getDoctorById(doctorId).isPresent()) {
+      throw new DoctorNotFoundException();
+    }
 
-    if (!canReview(doctorId, patientId)) {
-      throw new RuntimeException();
+    if (!patientService.getPatientById(patientId).isPresent()) {
+      throw new PatientNotFoundException();
+    }
+
+    if (!appointmentService.hasPatientMetDoctor(patientId, doctorId)) {
+      throw new ReviewForbiddenException();
     }
 
     Doctor doctor = doctorService.getDoctorById(doctorId).get();

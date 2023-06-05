@@ -1,9 +1,9 @@
 package ar.edu.itba.paw.interfaces.services;
 
 import ar.edu.itba.paw.interfaces.services.exceptions.AppointmentNotFoundException;
+import ar.edu.itba.paw.interfaces.services.exceptions.CancelForbiddenException;
 import ar.edu.itba.paw.interfaces.services.exceptions.DoctorNotAvailableException;
 import ar.edu.itba.paw.interfaces.services.exceptions.DoctorNotFoundException;
-import ar.edu.itba.paw.interfaces.services.exceptions.ForbiddenCancelException;
 import ar.edu.itba.paw.interfaces.services.exceptions.PatientNotFoundException;
 import ar.edu.itba.paw.models.Appointment;
 import ar.edu.itba.paw.models.AppointmentStatus;
@@ -28,7 +28,7 @@ public interface AppointmentService {
   // =============== Updates ===============
 
   Appointment cancelAppointment(long appointmentId, String cancelDescription, long requesterId)
-      throws AppointmentNotFoundException, ForbiddenCancelException;
+      throws AppointmentNotFoundException, CancelForbiddenException;
 
   // =============== Queries ===============
 

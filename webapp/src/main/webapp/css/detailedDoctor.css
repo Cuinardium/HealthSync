@@ -1,12 +1,28 @@
-.card{
+.detailedDoctorCardRow{
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
 }
 
+.card hr {
+    width: 50%;
+    align-self: center;
+    justify-self: center;
+}
+
+.detailedDoctorCardBottomRow{
+    display: flex;
+    flex-direction: row;
+    margin-bottom: 10px;
+}
+
+.detailedDoctorCardBottomRow .infoContainer {
+    margin-left: 25px;
+}
+
 .imageContainer{
-    width: 35rem;
-    height: 35rem;
+    width: 20rem;
+    height: 20rem;
     object-fit: cover;
 }
 
@@ -43,6 +59,19 @@
 .chipsContainer{
     display: flex;
     align-items: center;
+}
+
+.detailedDoctorTitle {
+    display: flex;
+    flex-direction: row;
+    justify-content: start;
+    align-items: center;
+    font-size: larger;
+    padding-top: 10px;
+}
+
+.detailedDoctorTitle i {
+    margin-left: 5px;
 }
 
 .ftco-section {
@@ -301,14 +330,12 @@
 
 .availabilityTitle{
     margin-bottom: 1.5rem;
-    font-weight: normal;
 }
 
 .titleCalendarContainer{
     display: flex;
     flex-direction: column;
-    margin-top: 1rem;
-    padding: 2rem;
+    margin-top: 3rem;
     width: 100%;
 }
 

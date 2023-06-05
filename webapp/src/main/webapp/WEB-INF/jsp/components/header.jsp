@@ -10,9 +10,8 @@
 <c:url value="/my-appointments" var="myAppointmentsUrl"/>
 <c:url value="/doctor-register" var="doctorRegisterUrl"/>
 <c:url value="/patient-register" var="patientRegisterUrl"/>
-<c:url value="/doctor-edit" var="doctorEditUrl"/>
-<c:url value="/patient-edit" var="patientEditUrl"/>
-<c:url value="/change-password" var="changePasswordUrl"/>
+<c:url value="/doctor-profile" var="doctorProfileUrl"/>
+<c:url value="/patient-profile" var="patientProfileUrl"/>
 <c:url value="/login" var="loginUrl"/>
 <c:url value="/logout" var="logoutUrl"/>
 
@@ -25,8 +24,7 @@
 <spring:message code="login.title" var="login"/>
 <spring:message code="header.iAmDoctor" var="iAmDoctor"/>
 <spring:message code="header.iAmPatient" var="iAmPatient"/>
-<spring:message code="header.editProfile" var="editProfile"/>
-<spring:message code="header.changePassword" var="changePassword"/>
+<spring:message code="header.profile" var="profile"/>
 <spring:message code="header.logout" var="logout"/>
 
 <html>
@@ -73,14 +71,13 @@
                                 <ul class="dropdown-menu">
                                     <c:choose>
                                         <c:when test="${isDoctor}">
-                                            <li><a class="dropdown-item" href="${doctorEditUrl}">${editProfile}</a></li>
+                                            <li><a class="dropdown-item" href="${doctorProfileUrl}">${profile}</a></li>
                                         </c:when>
                                         <c:otherwise>
-                                            <li><a class="dropdown-item" href="${patientEditUrl}">${editProfile}</a>
+                                            <li><a class="dropdown-item" href="${patientProfileUrl}">${profile}</a>
                                             </li>
                                         </c:otherwise>
                                     </c:choose>
-                                    <li><a class="dropdown-item" href="${changePasswordUrl}">${changePassword}</a></li>
                                     <li><a class="dropdown-item" href="${logoutUrl}">${logout}</a></li>
                                 </ul>
                             </li>

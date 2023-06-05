@@ -1,6 +1,7 @@
 package ar.edu.itba.paw.models;
 
 import java.util.List;
+import java.util.Objects;
 
 public class Page<T> {
 
@@ -31,5 +32,18 @@ public class Page<T> {
     }
 
     return (int) Math.ceil((double) totalContentCount / pageSize);
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (o == null || getClass() != o.getClass()) return false;
+    Page<?> page = (Page<?>) o;
+    return Objects.equals(content, page.content) && Objects.equals(currentPage, page.currentPage) && Objects.equals(totalContentCount, page.totalContentCount) && Objects.equals(pageSize, page.pageSize);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(content, currentPage, totalContentCount, pageSize);
   }
 }

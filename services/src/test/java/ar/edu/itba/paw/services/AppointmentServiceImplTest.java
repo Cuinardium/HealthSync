@@ -8,7 +8,7 @@ import ar.edu.itba.paw.interfaces.services.PatientService;
 import ar.edu.itba.paw.interfaces.services.exceptions.AppointmentNotFoundException;
 import ar.edu.itba.paw.interfaces.services.exceptions.DoctorNotAvailableException;
 import ar.edu.itba.paw.interfaces.services.exceptions.DoctorNotFoundException;
-import ar.edu.itba.paw.interfaces.services.exceptions.ForbiddenCancelException;
+import ar.edu.itba.paw.interfaces.services.exceptions.CancelForbiddenException;
 import ar.edu.itba.paw.interfaces.services.exceptions.PatientNotFoundException;
 import ar.edu.itba.paw.models.Appointment;
 import ar.edu.itba.paw.models.AppointmentStatus;
@@ -317,7 +317,7 @@ public class AppointmentServiceImplTest {
 
   @Test
   public void testCancelAppointmentByDoctor()
-      throws AppointmentNotFoundException, ForbiddenCancelException,
+      throws AppointmentNotFoundException, CancelForbiddenException,
           ar.edu.itba.paw.interfaces.persistence.exceptions.AppointmentNotFoundException {
     // 1. Precondiciones
 
@@ -346,7 +346,7 @@ public class AppointmentServiceImplTest {
 
   @Test
   public void testCancelAppointmentByPatient()
-      throws AppointmentNotFoundException, ForbiddenCancelException,
+      throws AppointmentNotFoundException, CancelForbiddenException,
           ar.edu.itba.paw.interfaces.persistence.exceptions.AppointmentNotFoundException {
     // 1. Precondiciones
 
@@ -376,7 +376,7 @@ public class AppointmentServiceImplTest {
 
   @Test(expected = AppointmentNotFoundException.class)
   public void testCancelAppointmentDoesNotExist()
-      throws AppointmentNotFoundException, ForbiddenCancelException,
+      throws AppointmentNotFoundException, CancelForbiddenException,
           ar.edu.itba.paw.interfaces.persistence.exceptions.AppointmentNotFoundException {
     // 1. Precondiciones
 
@@ -387,9 +387,9 @@ public class AppointmentServiceImplTest {
     as.cancelAppointment(APPOINTMENT_ID, CANCELLED_APPOINTMENT_DESCRIPTION, DOCTOR_ID);
   }
 
-  @Test(expected = ForbiddenCancelException.class)
+  @Test(expected = CancelForbiddenException.class)
   public void testCancelAppointmentForbidden()
-      throws AppointmentNotFoundException, ForbiddenCancelException,
+      throws AppointmentNotFoundException, CancelForbiddenException,
           ar.edu.itba.paw.interfaces.persistence.exceptions.AppointmentNotFoundException {
     // 1. Precondiciones
 

@@ -7,9 +7,9 @@ import ar.edu.itba.paw.interfaces.services.DoctorService;
 import ar.edu.itba.paw.interfaces.services.MailService;
 import ar.edu.itba.paw.interfaces.services.PatientService;
 import ar.edu.itba.paw.interfaces.services.exceptions.AppointmentNotFoundException;
+import ar.edu.itba.paw.interfaces.services.exceptions.CancelForbiddenException;
 import ar.edu.itba.paw.interfaces.services.exceptions.DoctorNotAvailableException;
 import ar.edu.itba.paw.interfaces.services.exceptions.DoctorNotFoundException;
-import ar.edu.itba.paw.interfaces.services.exceptions.ForbiddenCancelException;
 import ar.edu.itba.paw.interfaces.services.exceptions.PatientNotFoundException;
 import ar.edu.itba.paw.models.Appointment;
 import ar.edu.itba.paw.models.AppointmentStatus;
@@ -18,7 +18,10 @@ import ar.edu.itba.paw.models.Page;
 import ar.edu.itba.paw.models.Patient;
 import ar.edu.itba.paw.models.ThirtyMinuteBlock;
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.*;
+import java.util.stream.Collectors;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -100,7 +103,7 @@ public class AppointmentServiceImpl implements AppointmentService {
   @Override
   public Appointment cancelAppointment(
       long appointmentId, String cancelDescription, long requesterId)
-      throws AppointmentNotFoundException, ForbiddenCancelException {
+      throws AppointmentNotFoundException, CancelForbiddenException {
 
     // Get appointment
     Appointment appointment =
@@ -108,7 +111,7 @@ public class AppointmentServiceImpl implements AppointmentService {
 
     // If requester is nor the patient nor the doctor, he can't update the appointment
     if (requesterId != appointment.getPatientId() && requesterId != appointment.getDoctorId()) {
-      throw new ForbiddenCancelException();
+      throw new CancelForbiddenException();
     }
 
     Appointment updatedAppointment;
@@ -189,7 +192,10 @@ public class AppointmentServiceImpl implements AppointmentService {
       }
     }
 
-    return new ArrayList<>(availableHours.values());
+    return availableHours.entrySet().stream()
+        .sorted(Map.Entry.comparingByKey())
+        .map(Map.Entry::getValue)
+        .collect(Collectors.toList());
   }
 
   @Override
@@ -206,17 +212,20 @@ public class AppointmentServiceImpl implements AppointmentService {
 
   // ======================================== TASKS ========================================
 
-  // Run at midnight every day
-  @Scheduled(cron = "0 0 0 * * ?")
+  // Run every 30 minutes
+  @Scheduled(cron = "0 0/30 * * * ?")
   @Override
   public void sendAppointmentReminders() {
 
     // Get tomorrow's date
     LocalDate tomorrow = LocalDate.now().plusDays(1);
 
+    // Get actual thirty minute block
+    ThirtyMinuteBlock timeBlock = ThirtyMinuteBlock.fromTime(LocalTime.now());
+
     // Get all appointments for tomorrow
     List<Appointment> tomorrowAppointments =
-        appointmentDao.getAllConfirmedAppointmentsInDate(tomorrow);
+        appointmentDao.getAllConfirmedAppointmentsInDateBlock(tomorrow, timeBlock);
 
     // For each appointment, send reminder to patient
     for (Appointment appointment : tomorrowAppointments) {
@@ -224,20 +233,23 @@ public class AppointmentServiceImpl implements AppointmentService {
     }
   }
 
-  // Run at midnight every day
-  @Scheduled(cron = "0 0 0 * * ?")
+  // Run every 30 minutes
+  @Scheduled(cron = "0 0/30 * * * ?")
   @Override
   public void updateCompletedAppointmentsStatus() {
 
     // Get yesterday's date
     LocalDate yesterday = LocalDate.now().minusDays(1);
 
+    // Get actual thirty minute block
+    ThirtyMinuteBlock timeBlock = ThirtyMinuteBlock.fromTime(LocalTime.now());
+
     // Complete all appointments for yesterday
-    appointmentDao.completeAppointmentsInDate(yesterday);
+    appointmentDao.completeAppointmentsInDateBlock(yesterday, timeBlock);
 
     // Get all appointments for yesterday
     List<Appointment> yesterdayAppointments =
-        appointmentDao.getAllConfirmedAppointmentsInDate(yesterday);
+        appointmentDao.getAllConfirmedAppointmentsInDateBlock(yesterday, timeBlock);
 
     // Send email to patient
     for (Appointment appointment : yesterdayAppointments) {

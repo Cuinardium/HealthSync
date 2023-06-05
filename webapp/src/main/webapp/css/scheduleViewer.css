@@ -4,19 +4,6 @@
     justify-content: center;
 }
 
-.scheduleSelector {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
-
-.checkBoxContainer {
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    align-items: center;
-}
-
 .daySchedule {
     display: flex;
     flex-direction: column;
@@ -36,7 +23,6 @@
 .timeBlock {
     margin:2px;
     padding:4px;
-    cursor: pointer;
     user-select: none;
 }
 
@@ -63,10 +49,4 @@
 
 .hidden {
     display: none;
-}
-
-#clear-button {
-    display: flex;
-    align-items: center;
-    height: min-content;
 }

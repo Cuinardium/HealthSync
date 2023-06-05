@@ -39,9 +39,9 @@
             </div>
         </c:forEach>
 
-        <div id="healthInsuranceDropdown" class="dropdown">
+        <div id="healthInsuranceDropdown" class="dropdown ${currentHealthInsuranceCodes.size() == healthInsurances.size() ? "hidden" : ""}">
             <span id="healthInsuranceDropdownLabel" class="${currentHealthInsuranceCodes.isEmpty() ? "" : "hidden"}">${add}</span>
-            <button class="btn btn-outline-primary ${currentHealthInsuranceCodes.size() == healthInsurances.size() ? "hidden" : ""}" type="button" data-bs-toggle="dropdown">
+            <button class="btn btn-outline-primary" type="button" data-bs-toggle="dropdown">
                 <i class="fa fa-plus"></i>
             </button>
             <ul id="healthInsuranceDropdownMenu" class="dropdown-menu">

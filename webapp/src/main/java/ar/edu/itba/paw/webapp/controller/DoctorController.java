@@ -5,6 +5,7 @@ import ar.edu.itba.paw.interfaces.services.DoctorService;
 import ar.edu.itba.paw.interfaces.services.ReviewService;
 import ar.edu.itba.paw.interfaces.services.exceptions.DoctorNotAvailableException;
 import ar.edu.itba.paw.interfaces.services.exceptions.DoctorNotFoundException;
+import ar.edu.itba.paw.interfaces.services.exceptions.ReviewForbiddenException;
 import ar.edu.itba.paw.interfaces.services.exceptions.PatientNotFoundException;
 import ar.edu.itba.paw.models.Appointment;
 import ar.edu.itba.paw.models.Doctor;
@@ -13,7 +14,6 @@ import ar.edu.itba.paw.models.Review;
 import ar.edu.itba.paw.models.ThirtyMinuteBlock;
 import ar.edu.itba.paw.webapp.auth.PawAuthUserDetails;
 import ar.edu.itba.paw.webapp.auth.UserRoles;
-import ar.edu.itba.paw.webapp.exceptions.ReviewForbiddenException;
 import ar.edu.itba.paw.webapp.exceptions.UserNotFoundException;
 import ar.edu.itba.paw.webapp.form.AppointmentForm;
 import ar.edu.itba.paw.webapp.form.ReviewForm;
@@ -132,7 +132,7 @@ public class DoctorController {
       @ModelAttribute("reviewForm") final ReviewForm reviewForm) {
 
     if (!reviewService.canReview(doctorId, PawAuthUserDetails.getCurrentUserId())) {
-      throw new ReviewForbiddenException();
+      throw new ar.edu.itba.paw.webapp.exceptions.ReviewForbiddenException();
     }
 
     final ModelAndView mav = new ModelAndView("doctor/review");
@@ -153,18 +153,41 @@ public class DoctorController {
       return review(doctorId, reviewForm);
     }
 
-    if (!reviewService.canReview(doctorId, PawAuthUserDetails.getCurrentUserId())) {
-      throw new ReviewForbiddenException();
+
+    Review review;
+
+    try {
+      review =
+          reviewService.createReview(
+              doctorId,
+              PawAuthUserDetails.getCurrentUserId(),
+              reviewForm.getRating(),
+              reviewForm.getDescription());
+
+      LOGGER.info("Created review {}", review);
+    } catch (DoctorNotFoundException e) {
+      LOGGER.error(
+          "Failed to create review for doctor {} because doctor was not found",
+          doctorId,
+          new DoctorNotFoundException());
+
+      throw new RuntimeException(e);
+    } catch (PatientNotFoundException e) {
+      LOGGER.error(
+          "Failed to create review for doctor {} because patient was not found",
+          doctorId,
+          new PatientNotFoundException());
+
+      throw new RuntimeException(e);
+    } catch (ReviewForbiddenException e) {
+      LOGGER.error(
+          "Failed to create review for doctor {} because patient {} cannot review doctor",
+          doctorId,
+          PawAuthUserDetails.getCurrentUserId(),
+          new ReviewForbiddenException());
+
+      throw new RuntimeException(e);
     }
-
-    Review review =
-        reviewService.createReview(
-            doctorId,
-            PawAuthUserDetails.getCurrentUserId(),
-            reviewForm.getRating(),
-            reviewForm.getDescription());
-
-    LOGGER.info("Created {}", review);
 
     final ModelAndView mav = new ModelAndView("doctor/review");
 
@@ -218,11 +241,25 @@ public class DoctorController {
           doctorId,
           new DoctorNotFoundException());
 
-      throw new UserNotFoundException();
+      throw new RuntimeException();
     }
 
     // Get reviews
-    Page<Review> reviews = reviewService.getReviewsForDoctor(doctorId, page - 1, PAGE_SIZE);
+    Page<Review> reviews;
+
+    try {
+      reviews = reviewService.getReviewsForDoctor(doctorId, page - 1, PAGE_SIZE);
+      
+      LOGGER.debug("Reviews for doctor {} are: {}", doctorId, reviews.getContent());
+    } catch (DoctorNotFoundException e) {
+      LOGGER.error(
+          "Failed to get reviews for doctor {} because doctor was not found",
+          doctorId,
+          new DoctorNotFoundException());
+
+      throw new RuntimeException();
+    }
+
     boolean canReview = reviewService.canReview(doctorId, PawAuthUserDetails.getCurrentUserId());
 
     mav.addObject("form", appointmentForm);

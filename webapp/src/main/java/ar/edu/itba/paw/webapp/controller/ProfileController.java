@@ -33,7 +33,6 @@ import org.springframework.web.servlet.ModelAndView;
 public class ProfileController {
   private final DoctorService doctorService;
   private final PatientService patientService;
-
   private final UserService userService;
 
   private static final Logger LOGGER = LoggerFactory.getLogger(ProfileController.class);
@@ -42,11 +41,40 @@ public class ProfileController {
   public ProfileController(
       final DoctorService doctorService,
       final PatientService patientService,
-      final UserService userService,
-      final ImageService imageService) {
+      final UserService userService) {
     this.doctorService = doctorService;
     this.patientService = patientService;
     this.userService = userService;
+  }
+
+  @RequestMapping(value = "/patient-profile", method = RequestMethod.GET)
+  public ModelAndView patientProfile() {
+    Patient patient =
+            patientService
+                    .getPatientById(PawAuthUserDetails.getCurrentUserId())
+                    .orElseThrow(UserNotFoundException::new);
+
+    final ModelAndView mav = new ModelAndView("user/patientProfile");
+    mav.addObject("patient", patient);
+
+    LOGGER.debug("Patient profile page requested");
+    return mav;
+  }
+  @RequestMapping(value = "/doctor-profile", method = RequestMethod.GET)
+  public ModelAndView doctorProfile() {
+    Doctor doctor =
+            doctorService
+                    .getDoctorById(PawAuthUserDetails.getCurrentUserId())
+                    .orElseThrow(UserNotFoundException::new);
+
+    final ModelAndView mav = new ModelAndView("user/doctorProfile");
+
+    mav.addObject("doctor", doctor);
+    mav.addObject("days", DayOfWeek.values());
+    mav.addObject("thirtyMinuteBlocks", ThirtyMinuteBlock.values());
+
+    LOGGER.debug("Doctor profile page requested");
+    return mav;
   }
 
   @RequestMapping(value = "/doctor-edit", method = RequestMethod.POST)
