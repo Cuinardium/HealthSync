@@ -71,10 +71,11 @@
             <c:forEach items="${featuredSpecialties}" var="specialty" varStatus="status">
                 <c:url value="/img/specialty-${specialty.ordinal()}.jpg" var="img"/>
                 <spring:message code="${specialty.messageID}" var="specialtyName"/>
+                <spring:message code="home.alt.specialistImg" arguments="${specialtyName.toLowerCase()}" var="altSpecialistImg"/>
                 <div class="carousel-item ${status.first ? 'active' : ''}">
                     <div class="card">
                         <div class="card-img">
-                            <img src="${img}" class="img-fluid" alt="${specialtyName.toLowerCase()} specialist">
+                            <img src="${img}" class="img-fluid" alt="${altSpecialistImg}">
                         </div>
                         <div class="card-img-overlay">${specialtyName.toLowerCase()}</div>
                         <a href="${doctorDashboardFilteredUrl}${specialty.ordinal()}" class="stretched-link"></a>
