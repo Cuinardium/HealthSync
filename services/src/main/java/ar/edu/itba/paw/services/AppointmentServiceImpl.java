@@ -18,12 +18,7 @@ import ar.edu.itba.paw.models.Page;
 import ar.edu.itba.paw.models.Patient;
 import ar.edu.itba.paw.models.ThirtyMinuteBlock;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -175,6 +170,7 @@ public class AppointmentServiceImpl implements AppointmentService {
 
     for (LocalDate date = from; date.isBefore(to.plusDays(1)); date = date.plusDays(1)) {
       List<ThirtyMinuteBlock> currentList = new ArrayList<>(doctor.getAttendingBlocksForDate(date));
+      currentList.sort(Comparator.naturalOrder());
       availableHours.put(date, currentList);
     }
 

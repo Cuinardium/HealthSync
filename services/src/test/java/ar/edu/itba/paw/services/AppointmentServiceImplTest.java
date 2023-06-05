@@ -91,6 +91,7 @@ public class AppointmentServiceImplTest {
           SPECIALTY,
           LOCATION,
           ATTENDING_HOURS,
+          new ArrayList<>(),
           RATING,
           RATING_COUNT);
 
@@ -430,9 +431,7 @@ public class AppointmentServiceImplTest {
     expectedAvailableHours.add(availableHoursForDay);
 
     expectedAvailableHours.add(new ArrayList<>(ATTENDING_HOURS_FOR_DAY));
-
-    // TODO: REVISAR POR EL ORDEN
-    // Assert.assertEquals(expectedAvailableHours, availableHours);
+    Assert.assertEquals(expectedAvailableHours, availableHours);
   }
 
   @Test(expected = DoctorNotFoundException.class)
