@@ -166,7 +166,7 @@
                             <div class="card-body">
                                 <h5 class="card-title">${doctor.firstName} ${doctor.lastName}</h5>
                                 <div class="chipsContainer">
-                                    <div class="card-text">${specialties}</div>
+                                    <div class="card-text">${specialties}:</div>
                                     <div class="chip" data-mdb-close="true">
                                         <a class="stretched-link"
                                            href="${specialtyFilter}${doctor.specialty.ordinal()}">${doctorSpecialty}</a>
@@ -174,7 +174,7 @@
                                 </div>
                                 <div class="card-text">${address} ${doctor.location.address}, ${doctorCity}</div>
                                 <div class="chipsContainer">
-                                    <div class="card-text">${insurances}</div>
+                                    <div class="card-text">${insurances}:</div>
                                     <c:forEach items="${doctor.healthInsurances}" var="healthInsurance">
                                         <spring:message code="${healthInsurance.messageID}"
                                                         var="doctorHealthInsurance"/>
