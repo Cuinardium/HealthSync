@@ -3,6 +3,7 @@
     flex-direction: row;
     flex-wrap: nowrap;
     height: 92%;
+    margin-left: 10px;
 }
 
 .h2, h2 {
@@ -22,7 +23,7 @@
 .sidebarContainer {
     display: flex;
     flex-direction: column;
-    background: lightgray;
+    background: #f1f1f1;
     width: 22.3%;
     padding: 1rem;
 }
@@ -37,7 +38,6 @@
     display: flex;
     flex-direction: column;
     justify-content: center;
-    overflow-y: scroll;
 }
 
 .chip {
@@ -88,7 +88,13 @@ a.stretched-link:hover {
 
 .buttonsContainer {
     display: flex;
-    align-items: center;
+    flex-direction: row;
+    justify-content: end;
+    align-items: start;
+}
+
+.buttonsContainer a {
+    margin-right: 5px;
 }
 
 .noDoctorsMsg {
@@ -119,10 +125,6 @@ a.stretched-link:hover {
     display: none;
 }
 
-h4, .h4 {
-    margin-top: 1rem;
-}
-
 .fromToContainer {
     display: flex;
     flex-direction: row;
@@ -130,6 +132,7 @@ h4, .h4 {
 }
 
 .hourPicker {
+    margin-top: 5px;
     display: flex;
     flex-direction: column;
     width: 45%;

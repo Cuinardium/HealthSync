@@ -59,7 +59,7 @@
 <!-- Content -->
 <form:form id="filter-form" modelAttribute="doctorFilterForm" method="get" action="${doctorDashboardUrl}">
     <div class="dashboardContainer">
-        <div class="sidebarContainer">
+        <div class="sidebarContainer card">
             <div class="filtersContainer">
                 <div class="titleFilterContainer">
                     <h2>${filtersTitle}</h2>
@@ -96,8 +96,7 @@
                 </form:select>
 
                 <hr>
-                <h2>${byAvailability}</h2>
-                <hr>
+                <h4>${byAvailability}</h4>
 
                 <form:input id="date" type="date" cssClass="form-control" placeholder="${date}" path="date"
                             onchange="this.form.submit()"/>
@@ -105,7 +104,7 @@
                 <c:if test="${!empty dateFilter}">
                     <div class="fromToContainer">
                         <div class="hourPicker">
-                            <h4>${fromTitle}</h4>
+                            <h5>${fromTitle}</h5>
                             <form:select id="from-select" cssClass="form-select" path="from"
                                          onchange="this.form.submit()">
                                 <form:option value="-1" disabled="true" hidden="true"/>
@@ -120,7 +119,7 @@
                         </div>
 
                         <div class="hourPicker">
-                            <h4>${toTitle}</h4>
+                            <h5>${toTitle}</h5>
                             <form:select id="to-select" cssClass="form-select" path="to" onchange="this.form.submit()">
                                 <form:option value="-1" disabled="true" hidden="true"/>
                                 <c:forEach items="${possibleAttendingHours}" var="attHour">
@@ -204,10 +203,9 @@
                                     </c:otherwise>
                                 </c:choose>
                             </div>
-                        </div>
-                        <c:if test="${canBook}">
-                            <div class="buttonsContainer">
-                                <div class="card-body">
+
+                            <c:if test="${canBook}">
+                                <div class="buttonsContainer">
                                     <a class="btn btn-primary"
                                        onclick="checkInsurance(
                                                '${detailedUrl}',
@@ -218,26 +216,28 @@
                                             ${book}
                                     </a>
                                 </div>
-                            </div>
-                            <div class="modal fade" id="modal" tabindex="-1" role="dialog" aria-labelledby="modalLabel"
-                                 aria-hidden="true">
-                                <div class="modal-dialog" role="dialog">
-                                    <div class="modal-content">
-                                        <div class="modal-header">
-                                            <h5 class="modal-title" id="modalLabel">${modalTitle}</h5>
-                                        </div>
-                                        <div class="modal-body">
-                                                ${modalDesc}
-                                        </div>
-                                        <div class="modal-footer">
-                                            <button type="button" class="btn btn-danger"
-                                                    onclick="closeModal()">${modalDeny}</button>
-                                            <a type="button" id="modal-href" class="btn btn-primary">${modalConfirm}</a>
+                                <div class="modal fade" id="modal" tabindex="-1" role="dialog"
+                                     aria-labelledby="modalLabel"
+                                     aria-hidden="true">
+                                    <div class="modal-dialog" role="dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="modalLabel">${modalTitle}</h5>
+                                            </div>
+                                            <div class="modal-body">
+                                                    ${modalDesc}
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-danger"
+                                                        onclick="closeModal()">${modalDeny}</button>
+                                                <a type="button" id="modal-href"
+                                                   class="btn btn-primary">${modalConfirm}</a>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                        </c:if>
+                            </c:if>
+                        </div>
                     </div>
 
                 </c:forEach>
