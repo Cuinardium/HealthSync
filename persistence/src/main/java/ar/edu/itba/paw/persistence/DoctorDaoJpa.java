@@ -66,7 +66,6 @@ public class DoctorDaoJpa implements DoctorDao {
     return doctor;
   }
 
-
   @Override
   public Optional<Doctor> getDoctorById(long id) {
     return Optional.ofNullable(em.find(Doctor.class, id));
@@ -148,7 +147,7 @@ public class DoctorDaoJpa implements DoctorDao {
 
     if (page != null && page >= 0 && pageSize != null && pageSize > 0) {
       nativeQuery.setMaxResults(pageSize);
-      nativeQuery.setFirstResult((page - 1) * pageSize);
+      nativeQuery.setFirstResult(page * pageSize);
     }
 
     final List<Long> idList =
@@ -159,8 +158,7 @@ public class DoctorDaoJpa implements DoctorDao {
                 .map(o -> ((Number) o).longValue())
                 .collect(Collectors.toList());
 
-    if(idList.isEmpty())
-      return new Page<>(new ArrayList<>(), page, 0, pageSize);
+    if (idList.isEmpty()) return new Page<>(new ArrayList<>(), page, 0, pageSize);
 
     final TypedQuery<Doctor> query =
         em.createQuery("from Doctor where id in :idList", Doctor.class);
@@ -234,7 +232,8 @@ public class DoctorDaoJpa implements DoctorDao {
 
   @Override
   public Page<Review> getReviewsForDoctor(long doctorId, Integer page, Integer pageSize) {
-    Query nativeQuery = em.createNativeQuery("SELECT review_id FROM review WHERE doctor_id = " + doctorId);
+    Query nativeQuery =
+        em.createNativeQuery("SELECT review_id FROM review WHERE doctor_id = " + doctorId);
 
     if (page != null && page >= 0 && pageSize != null && pageSize > 0) {
       nativeQuery.setMaxResults(pageSize);
@@ -242,18 +241,17 @@ public class DoctorDaoJpa implements DoctorDao {
     }
 
     final List<Long> idList =
-            (List<Long>)
-                    nativeQuery
-                            .getResultList()
-                            .stream()
-                            .map(o -> ((Number) o).longValue())
-                            .collect(Collectors.toList());
+        (List<Long>)
+            nativeQuery
+                .getResultList()
+                .stream()
+                .map(o -> ((Number) o).longValue())
+                .collect(Collectors.toList());
 
-    if(idList.isEmpty())
-      return new Page<>(new ArrayList<>(), page, 0, pageSize);
+    if (idList.isEmpty()) return new Page<>(new ArrayList<>(), page, 0, pageSize);
 
     final TypedQuery<Review> query =
-            em.createQuery("from Review where id in :idList", Review.class);
+        em.createQuery("from Review where id in :idList", Review.class);
     query.setParameter("idList", idList);
 
     return new Page<>(query.getResultList(), page, query.getResultList().size(), pageSize);
