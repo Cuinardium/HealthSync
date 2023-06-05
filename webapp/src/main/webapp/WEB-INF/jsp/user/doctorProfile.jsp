@@ -33,6 +33,9 @@
 <spring:message code="profile.edit" var="editProfile"/>
 <spring:message code="profile.changePassword" var="changePassword"/>
 
+<!-- ALT img text -->
+<spring:message code="loggedUser.alt.userImg" var="altUserImg"/>
+
 <html>
 <head>
     <title>${title}</title>
@@ -55,7 +58,7 @@
         <div class="profileContainer">
             <div class="profileImageContainer">
                 <c:url value="/img/${doctor.profilePictureId == null ? \"doctorDefault.png\" : doctor.profilePictureId}" var="userImg"/>
-                <img src="${userImg}" width="200" height="200" class="rounded-circle">
+                <img src="${userImg}" alt="${altUserImg}" width="200" height="200" class="rounded-circle">
             </div>
 
             <div class="profileData">

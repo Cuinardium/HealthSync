@@ -28,7 +28,7 @@
 <spring:message code="header.logout" var="logout"/>
 
 <!-- ALT img text -->
-<spring:message code="header.alt.userImg" var="altUserImg"/>
+<spring:message code="loggedUser.alt.userImg" var="altUserImg"/>
 
 <html>
 <head>
