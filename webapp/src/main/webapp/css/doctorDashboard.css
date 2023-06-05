@@ -31,6 +31,7 @@
 .discoveryContainer {
     flex: 1;
     overflow-y: scroll;
+    padding: 1rem 3rem;
 }
 
 .cardsContainer {
@@ -83,18 +84,19 @@ a.stretched-link:hover {
 }
 
 .infoContainer {
+    display: flex;
+    flex-direction: column;
     flex: 1;
+    padding: 10px;
 }
 
 .buttonsContainer {
     display: flex;
     flex-direction: row;
     justify-content: end;
-    align-items: start;
-}
-
-.buttonsContainer a {
-    margin-right: 5px;
+    align-items: end;
+    justify-self: end;
+    margin-top: auto;
 }
 
 .noDoctorsMsg {
@@ -107,6 +109,7 @@ a.stretched-link:hover {
     flex-direction: row;
     justify-content: start;
     align-items: center;
+    margin-top: 1%;
 }
 
 .ratingCount {
