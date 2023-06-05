@@ -2,12 +2,10 @@ package ar.edu.itba.paw.persistence;
 
 import ar.edu.itba.paw.models.Appointment;
 import ar.edu.itba.paw.models.AppointmentStatus;
-import ar.edu.itba.paw.models.AttendingHours;
 import ar.edu.itba.paw.models.City;
 import ar.edu.itba.paw.models.Doctor;
 import ar.edu.itba.paw.models.HealthInsurance;
 import ar.edu.itba.paw.models.Image;
-import ar.edu.itba.paw.models.Location;
 import ar.edu.itba.paw.models.Patient;
 import ar.edu.itba.paw.models.Review;
 import ar.edu.itba.paw.models.Specialty;
@@ -38,8 +36,6 @@ public class RowMappers {
             Specialty specialty = specialties[rs.getInt("specialty_code")];
 
             City city = cities[rs.getInt("city_code")];
-            Location location =
-                new Location(rs.getLong("doctor_location_id"), city, rs.getString("address"));
 
 //            AttendingHours attendingHours =
 //                new AttendingHours(
@@ -51,26 +47,26 @@ public class RowMappers {
 //                    ThirtyMinuteBlock.fromBits(rs.getLong("saturday")),
 //                    ThirtyMinuteBlock.fromBits(rs.getLong("sunday")));
 
-            doctor =
-                new Doctor(
-                    rs.getLong("doctor_id"),
-                    rs.getString("email"),
-                    rs.getString("password"),
-                    rs.getString("first_name"),
-                    rs.getString("last_name"),
-                    rs.getObject("profile_picture_id") == null
-                        ? null
-                        : new Image(rs.getLong("profile_picture_id"), null),
-                    new ArrayList<>(),
-                    specialty,
-                    location,
-//                    attendingHours,
-                        new HashSet<>(),
-                    new ArrayList<>(),
-                    rs.getObject("rating") == null ? null : rs.getFloat("rating"),
-                    rs.getInt("rating_count"));
-
-            doctors.put(doctorId, doctor);
+//            doctor =
+//                new Doctor(
+//                    rs.getLong("doctor_id"),
+//                    rs.getString("email"),
+//                    rs.getString("password"),
+//                    rs.getString("first_name"),
+//                    rs.getString("last_name"),
+//                    rs.getObject("profile_picture_id") == null
+//                        ? null
+//                        : new Image(rs.getLong("profile_picture_id"), null),
+//                    new ArrayList<>(),
+//                    specialty,
+//                    location,
+////                    attendingHours,
+//                        new HashSet<>(),
+//                    new ArrayList<>(),
+//                    rs.getObject("rating") == null ? null : rs.getFloat("rating"),
+//                    rs.getInt("rating_count"));
+//
+//            doctors.put(doctorId, doctor);
           }
 
           doctor.getHealthInsurances().add(healthInsurances[rs.getInt("health_insurance_code")]);
@@ -157,40 +153,39 @@ public class RowMappers {
             City city = cities[rs.getInt("city_code")];
             String address = rs.getString("address");
             long locationId = rs.getLong("doctor_location_id");
-            Location location = new Location(locationId, city, address);
 
             Float rating = rs.getObject("rating") == null ? null : rs.getFloat("rating");
 
             Integer ratingCount = rs.getInt("rating_count");
 
-            Doctor doctor =
-                new Doctor(
-                    doctorId,
-                    doctorEmail,
-                    doctorPassword,
-                    doctorFirstName,
-                    doctorLastName,
-                    doctorImage,
-                    new ArrayList<>(),
-                    specialty,
-                    location,
-                    new HashSet<>(),
-                    new ArrayList<>(),
-                    rating,
-                    ratingCount);
+//            Doctor doctor =
+//                new Doctor(
+//                    doctorId,
+//                    doctorEmail,
+//                    doctorPassword,
+//                    doctorFirstName,
+//                    doctorLastName,
+//                    doctorImage,
+//                    new ArrayList<>(),
+//                    specialty,
+//                    location,
+//                    new HashSet<>(),
+//                    new ArrayList<>(),
+//                    rating,
+//                    ratingCount);
 
-            Appointment appointment =
-                new Appointment(
-                    appointmentId,
-                    patient,
-                    doctor,
-                    date,
-                    timeBlock,
-                    status,
-                    description,
-                    cancelDesc);
+//            Appointment appointment =
+//                new Appointment(
+//                    appointmentId,
+//                    patient,
+//                    doctor,
+//                    date,
+//                    timeBlock,
+//                    status,
+//                    description,
+//                    cancelDesc);
 
-            appointments.put(appointmentId, appointment);
+//            appointments.put(appointmentId, appointment);
           }
 
           appointments

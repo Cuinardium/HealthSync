@@ -49,7 +49,8 @@ public class DoctorDaoJpa implements DoctorDao {
       throws DoctorNotFoundException {
     Doctor doctor = getDoctorById(doctorId).orElseThrow(DoctorNotFoundException::new);
     doctor.setSpecialty(specialty);
-    doctor.setLocation(new Location(doctorId, city, address));
+    doctor.setCity(city);
+    doctor.setAddress(address);
     doctor.setHealthInsurances(healthInsurances);
     doctor.setAttendingHours(attendingHours);
     mapAttendingHours(doctor);
@@ -214,17 +215,16 @@ public class DoctorDaoJpa implements DoctorDao {
 
   @Override
   public Map<City, Integer> getUsedCities() {
-    List<Location> lList =
+    List<City> lList =
         em.createQuery("from Doctor", Doctor.class)
             .getResultList()
             .stream()
-            .map(Doctor::getLocation)
+            .map(Doctor::getCity)
             .collect(Collectors.toCollection(ArrayList::new));
 
     Map<City, Integer> map = new HashMap<>();
 
-    for (Location l : lList) {
-      City c = l.getCity();
+    for (City c : lList) {
       map.putIfAbsent(c, 0);
       map.put(c, map.get(c) + 1);
     }

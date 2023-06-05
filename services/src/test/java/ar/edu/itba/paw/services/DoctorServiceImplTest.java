@@ -4,7 +4,6 @@ import ar.edu.itba.paw.interfaces.persistence.DoctorDao;
 import ar.edu.itba.paw.interfaces.persistence.exceptions.DoctorAlreadyExistsException;
 import ar.edu.itba.paw.interfaces.persistence.exceptions.DoctorNotFoundException;
 import ar.edu.itba.paw.interfaces.services.UserService;
-import ar.edu.itba.paw.interfaces.services.exceptions.EmailInUseException;
 import ar.edu.itba.paw.interfaces.services.exceptions.UserNotFoundException;
 import ar.edu.itba.paw.models.*;
 import java.time.DayOfWeek;
@@ -36,7 +35,6 @@ public class DoctorServiceImplTest {
   private static final Specialty SPECIALTY = Specialty.CARDIOLOGY;
   private static final City CITY = City.AYACUCHO;
   private static final String ADDRESS = "1234";
-  private static final Location LOCATION = new Location(1L, CITY, ADDRESS);
   private static final Set<AttendingHours> ATTENDING_HOURS =
       new HashSet<>(
           Arrays.asList(
@@ -59,7 +57,8 @@ public class DoctorServiceImplTest {
           IMAGE,
           HEALTH_INSURANCES,
           SPECIALTY,
-          LOCATION,
+          CITY,
+          ADDRESS,
           ATTENDING_HOURS,
           new ArrayList<>(),
           RATING,
@@ -73,7 +72,6 @@ public class DoctorServiceImplTest {
   private static final Specialty SPECIALTY_NEW = Specialty.ALLERGY_AND_IMMUNOLOGY;
   private static final City CITY_NEW = City.ARRECIFES;
   private static final String ADDRESS_NEW = "1234asdsa";
-  private static final Location LOCATION_NEW = new Location(2L, CITY_NEW, ADDRESS_NEW);
   private static final Set<AttendingHours> ATTENDING_HOURS_NEW =
       new HashSet<>(
           Arrays.asList(
@@ -131,7 +129,8 @@ public class DoctorServiceImplTest {
           IMAGE,
           HEALTH_INSURANCES_NEW,
           SPECIALTY_NEW,
-          LOCATION_NEW,
+          CITY_NEW,
+          ADDRESS_NEW,
           ATTENDING_HOURS_NEW,
           new ArrayList<>(),
           RATING,
@@ -147,7 +146,8 @@ public class DoctorServiceImplTest {
           IMAGE,
           HEALTH_INSURANCES,
           SPECIALTY,
-          LOCATION,
+          CITY,
+          ADDRESS,
           ATTENDING_HOURS,
           REVIEWS_FOR_DOCTOR,
           RATING,
@@ -161,7 +161,7 @@ public class DoctorServiceImplTest {
 
   @Test
   public void testCreateDoctor()
-      throws IllegalStateException, DoctorAlreadyExistsException, EmailInUseException {
+      throws IllegalStateException, DoctorAlreadyExistsException {
     // 1. Precondiciones
     // Mockito.when(userService.createUser(EMAIL, PASSWORD, FIRST_NAME,
     // LAST_NAME)).thenReturn(USER);
@@ -177,7 +177,8 @@ public class DoctorServiceImplTest {
                     IMAGE,
                     HEALTH_INSURANCES,
                     SPECIALTY,
-                    new Location(CITY, ADDRESS),
+                    CITY,
+                    ADDRESS,
                     ATTENDING_HOURS,
                     new ArrayList<>(),
                     0f,
@@ -201,7 +202,7 @@ public class DoctorServiceImplTest {
 
   @Test(expected = IllegalStateException.class)
   public void testCreateDoctorAlreadyExists()
-      throws IllegalStateException, DoctorAlreadyExistsException, EmailInUseException {
+      throws IllegalStateException, DoctorAlreadyExistsException {
     // 1. Precondiciones
     Mockito.when(passwordEncoder.encode(Mockito.eq(PASSWORD))).thenReturn(PASSWORD_ENCODED);
     Mockito.when(
@@ -215,7 +216,8 @@ public class DoctorServiceImplTest {
                     IMAGE,
                     HEALTH_INSURANCES,
                     SPECIALTY,
-                    new Location(CITY, ADDRESS),
+                    CITY,
+                    ADDRESS,
                     ATTENDING_HOURS,
                     new ArrayList<>(),
                     0f,
@@ -237,7 +239,7 @@ public class DoctorServiceImplTest {
 
   @Test(expected = IllegalStateException.class)
   public void testCreateDoctorUserAlreadyExists()
-      throws IllegalStateException, DoctorAlreadyExistsException, EmailInUseException {
+      throws IllegalStateException, DoctorAlreadyExistsException {
     // 1. Precondiciones
     Mockito.when(passwordEncoder.encode(Mockito.eq(PASSWORD))).thenReturn(PASSWORD_ENCODED);
     Mockito.when(
@@ -251,7 +253,8 @@ public class DoctorServiceImplTest {
                     IMAGE,
                     HEALTH_INSURANCES,
                     SPECIALTY,
-                    new Location(CITY, ADDRESS),
+                    CITY,
+                    ADDRESS,
                     ATTENDING_HOURS,
                     new ArrayList<>(),
                     0f,
@@ -341,7 +344,7 @@ public class DoctorServiceImplTest {
 
   @Test(expected = UserNotFoundException.class)
   public void testUpdateDoctorUserDoesNotExist()
-      throws DoctorNotFoundException, UserNotFoundException {
+      throws UserNotFoundException {
     // 1. Precondiciones
     Mockito.when(userService.updateUser(ID, EMAIL_NEW, FIRST_NAME_NEW, LAST_NAME_NEW, IMAGE))
         .thenThrow(UserNotFoundException.class);

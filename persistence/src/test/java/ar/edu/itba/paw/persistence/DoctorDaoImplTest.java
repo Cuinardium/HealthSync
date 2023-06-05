@@ -12,7 +12,6 @@ import java.time.LocalDate;
 import java.util.*;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.print.Doc;
 import javax.sql.DataSource;
 import org.junit.Assert;
 import org.junit.Before;
@@ -76,8 +75,6 @@ public class DoctorDaoImplTest {
                   new AttendingHours(INSERTED_DOCTOR_ID, DayOfWeek.SUNDAY, ThirtyMinuteBlock.BLOCK_02_00))
   );
 
-  private static final Location LOCATION_FOR_DOCTOR_7 =
-      new Location(INSERTED_DOCTOR_ID, INSERTED_DOCTOR_CITY, INSERTED_DOCTOR_ADDRESS);
   private static final Doctor DOCTOR_7 =
       new Doctor(
           INSERTED_DOCTOR_ID,
@@ -88,7 +85,8 @@ public class DoctorDaoImplTest {
           INSERTED_DOCTOR_IMAGE,
           INSERTED_DOCTOR_INSURANCES,
           INSERTED_DOCTOR_SPECIALTY,
-          LOCATION_FOR_DOCTOR_7,
+          INSERTED_DOCTOR_CITY,
+          INSERTED_DOCTOR_ADDRESS,
           INSERTED_DOCTOR_ATTENDING_HOURS,
           new ArrayList<>(),
           INSERTED_DOCTOR_RATING,
@@ -158,7 +156,8 @@ public class DoctorDaoImplTest {
                         INSERTED_DOCTOR_IMAGE,
                         AUX_DOCTOR_INSURANCES,
                         AUX_DOCTOR_SPECIALTY,
-                        new Location(INSERTED_DOCTOR_ID, AUX_DOCTOR_CITY, AUX_DOCTOR_ADDRESS),
+                        AUX_DOCTOR_CITY,
+                        AUX_DOCTOR_ADDRESS,
                         AUX_DOCTOR_ATTENDING_HOURS,
                         new ArrayList<>(),
                         INSERTED_DOCTOR_RATING,
@@ -174,8 +173,8 @@ public class DoctorDaoImplTest {
     Assert.assertEquals(AUX_DOCTOR_LAST_NAME, doctor.getLastName());
     Assert.assertEquals(INSERTED_DOCTOR_IMAGE, doctor.getImage());
     Assert.assertEquals(AUX_DOCTOR_INSURANCES, doctor.getHealthInsurances());
-    Assert.assertEquals(AUX_DOCTOR_ADDRESS, doctor.getLocation().getAddress());
-    Assert.assertEquals(AUX_DOCTOR_CITY, doctor.getLocation().getCity());
+    Assert.assertEquals(AUX_DOCTOR_ADDRESS, doctor.getAddress());
+    Assert.assertEquals(AUX_DOCTOR_CITY, doctor.getCity());
     Assert.assertEquals(AUX_DOCTOR_SPECIALTY, doctor.getSpecialty());
     Assert.assertEquals(AUX_DOCTOR_ATTENDING_HOURS, doctor.getAttendingHours());
 
@@ -198,7 +197,8 @@ public class DoctorDaoImplTest {
                         INSERTED_DOCTOR_IMAGE,
                         AUX_DOCTOR_INSURANCES,
                         AUX_DOCTOR_SPECIALTY,
-                        new Location(INSERTED_DOCTOR_ID, AUX_DOCTOR_CITY, AUX_DOCTOR_ADDRESS),
+                        AUX_DOCTOR_CITY,
+                        AUX_DOCTOR_ADDRESS,
                         AUX_DOCTOR_ATTENDING_HOURS,
                         new ArrayList<>(),
                         INSERTED_DOCTOR_RATING,
@@ -227,8 +227,8 @@ public class DoctorDaoImplTest {
     Assert.assertEquals(INSERTED_DOCTOR_LAST_NAME, doctor.getLastName());
     Assert.assertEquals(INSERTED_DOCTOR_IMAGE, doctor.getImage());
     Assert.assertEquals(AUX_DOCTOR_SPECIALTY, doctor.getSpecialty());
-    Assert.assertEquals(AUX_DOCTOR_CITY, doctor.getLocation().getCity());
-    Assert.assertEquals(AUX_DOCTOR_ADDRESS, doctor.getLocation().getAddress());
+    Assert.assertEquals(AUX_DOCTOR_CITY, doctor.getCity());
+    Assert.assertEquals(AUX_DOCTOR_ADDRESS, doctor.getAddress());
     Assert.assertEquals(AUX_DOCTOR_INSURANCES, doctor.getHealthInsurances());
     Assert.assertEquals(AUX_DOCTOR_ATTENDING_HOURS, doctor.getAttendingHours());
   }
@@ -266,11 +266,22 @@ public class DoctorDaoImplTest {
   @Test
   public void testGetDoctorById() {
     // 1.Precondiciones
+    Doctor expectedDoctor = DOCTOR_7;
+    List<Review> reviewsForDoctor = new ArrayList<>(
+            Arrays.asList(
+                    new Review(7L, expectedDoctor, PATIENT_5, LocalDate.of(2023, 5, 17), "Muy buen doctor", (short) 5),
+                    new Review(8L, expectedDoctor, PATIENT_5, LocalDate.of(2023, 5, 16), "Buen doctor", (short) 4),
+                    new Review(9L, expectedDoctor, PATIENT_5, LocalDate.of(2023, 5, 15), "Regular doctor", (short) 3),
+                    new Review(10L, expectedDoctor, PATIENT_5, LocalDate.of(2023, 5, 14), "Malo doctor", (short) 2),
+                    new Review(11L, expectedDoctor, PATIENT_5, LocalDate.of(2023, 5, 13), "Muy malo doctor", (short) 1)
+            )
+    );
+    expectedDoctor.setReviews(reviewsForDoctor);
     // 2. Ejercitar la class under test
     Optional<Doctor> maybeDoctor = doctorDao.getDoctorById(INSERTED_DOCTOR_ID);
     // 3. Meaningful assertions
     Assert.assertTrue(maybeDoctor.isPresent());
-    Assert.assertEquals(DOCTOR_7, maybeDoctor.get());
+    Assert.assertEquals(expectedDoctor, maybeDoctor.get());
   }
 
   @Test
@@ -285,6 +296,17 @@ public class DoctorDaoImplTest {
   @Test
   public void testGetFilteredDoctors() {
     // 1.Precondiciones
+    Doctor expectedDoctor = DOCTOR_7;
+    List<Review> reviewsForDoctor = new ArrayList<>(
+            Arrays.asList(
+                    new Review(7L, expectedDoctor, PATIENT_5, LocalDate.of(2023, 5, 17), "Muy buen doctor", (short) 5),
+                    new Review(8L, expectedDoctor, PATIENT_5, LocalDate.of(2023, 5, 16), "Buen doctor", (short) 4),
+                    new Review(9L, expectedDoctor, PATIENT_5, LocalDate.of(2023, 5, 15), "Regular doctor", (short) 3),
+                    new Review(10L, expectedDoctor, PATIENT_5, LocalDate.of(2023, 5, 14), "Malo doctor", (short) 2),
+                    new Review(11L, expectedDoctor, PATIENT_5, LocalDate.of(2023, 5, 13), "Muy malo doctor", (short) 1)
+            )
+    );
+    expectedDoctor.setReviews(reviewsForDoctor);
     // 2. Ejercitar la class under test
     Page<Doctor> doctors =
         doctorDao.getFilteredDoctors(null, null, null, null, null, null, null, null, null);
@@ -292,7 +314,7 @@ public class DoctorDaoImplTest {
     Assert.assertNull(doctors.getTotalPages());
     Assert.assertNull(doctors.getCurrentPage());
     Assert.assertEquals(1, doctors.getContent().size());
-    Assert.assertEquals(DOCTOR_7, doctors.getContent().get(0));
+    Assert.assertEquals(expectedDoctor, doctors.getContent().get(0));
   }
 
   @Test
@@ -309,8 +331,8 @@ public class DoctorDaoImplTest {
     Assert.assertEquals(INSERTED_DOCTOR_LAST_NAME, doctors.get(0).getLastName());
     Assert.assertEquals(INSERTED_DOCTOR_IMAGE, doctors.get(0).getImage());
     Assert.assertEquals(INSERTED_DOCTOR_INSURANCES, doctors.get(0).getHealthInsurances());
-    Assert.assertEquals(INSERTED_DOCTOR_ADDRESS, doctors.get(0).getLocation().getAddress());
-    Assert.assertEquals(INSERTED_DOCTOR_CITY, doctors.get(0).getLocation().getCity());
+    Assert.assertEquals(INSERTED_DOCTOR_ADDRESS, doctors.get(0).getAddress());
+    Assert.assertEquals(INSERTED_DOCTOR_CITY, doctors.get(0).getCity());
     Assert.assertEquals(INSERTED_DOCTOR_SPECIALTY, doctors.get(0).getSpecialty());
     Assert.assertEquals(INSERTED_DOCTOR_ATTENDING_HOURS, doctors.get(0).getAttendingHours());
   }

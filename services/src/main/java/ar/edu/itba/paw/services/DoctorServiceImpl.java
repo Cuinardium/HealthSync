@@ -60,7 +60,8 @@ public class DoctorServiceImpl implements DoctorService {
               null,
               healthInsurances,
               specialty,
-              new Location(null, city, address),
+              city,
+              address,
               attendingHours,
               new ArrayList<>(),
               0f,
@@ -106,7 +107,7 @@ public class DoctorServiceImpl implements DoctorService {
   }
 
   @Override
-  public Doctor updateReviews(long doctorId, List<Review> reviews) throws UserNotFoundException {
+  public Doctor updateReviews(long doctorId, List<Review> reviews){
     try {
       return doctorDao.updateReviews(doctorId, reviews);
     } catch (DoctorNotFoundException e) {

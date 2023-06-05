@@ -22,7 +22,7 @@ public class Review {
   @JoinColumn(name = "doctor_id", nullable = false)
   private Doctor doctor;
 
-  @ManyToOne(fetch = FetchType.LAZY)
+  @ManyToOne(fetch = FetchType.EAGER)
   @JoinColumn(name = "patient_id", nullable = false)
   private Patient patient;
 
@@ -120,7 +120,7 @@ public class Review {
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;
     Review review = (Review) o;
-    return Objects.equals(id, review.id) && Objects.equals(doctor, review.doctor) && Objects.equals(patient, review.patient) && Objects.equals(date, review.date) && Objects.equals(description, review.description) && Objects.equals(rating, review.rating);
+    return Objects.equals(id, review.id) && Objects.equals(doctor.getId(), review.doctor.getId()) && Objects.equals(patient, review.patient) && Objects.equals(date, review.date) && Objects.equals(description, review.description) && Objects.equals(rating, review.rating);
   }
 
   @Override

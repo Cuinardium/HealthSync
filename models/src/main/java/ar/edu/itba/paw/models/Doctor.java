@@ -1,16 +1,14 @@
 package ar.edu.itba.paw.models;
 
-import org.hibernate.annotations.Formula;
-
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
-import java.util.concurrent.RecursiveAction;
 import java.util.stream.Collectors;
 import javax.persistence.*;
+import org.hibernate.annotations.Formula;
 
 @Entity
 @Table(name = "doctor")
@@ -29,30 +27,34 @@ public class Doctor extends User {
   @Column(name = "specialty_code", nullable = false)
   private Specialty specialty;
 
-  @OneToOne(mappedBy = "doctor", fetch = FetchType.LAZY)
-  private Location location;
+  @Enumerated(EnumType.ORDINAL)
+  @Column(name = "city_code", nullable = false)
+  private City city;
+
+  @Column(name = "address", nullable = false)
+  private String address;
 
   @OneToMany(
-          mappedBy = "doctor",
-          fetch = FetchType.LAZY,
-          cascade = CascadeType.ALL,
-          orphanRemoval = true
+    mappedBy = "doctor",
+    fetch = FetchType.LAZY,
+    cascade = CascadeType.ALL,
+    orphanRemoval = true
   )
   private Set<AttendingHours> attendingHours;
 
-    @OneToMany(
-            mappedBy = "doctor",
-            fetch = FetchType.LAZY,
-            cascade = CascadeType.ALL,
-            orphanRemoval = true
-    )
+  @OneToMany(
+    mappedBy = "doctor",
+    fetch = FetchType.LAZY,
+    cascade = CascadeType.ALL,
+    orphanRemoval = true
+  )
   List<Review> reviews;
 
-    @Formula("(SELECT AVG(r.rating) FROM Review r WHERE r.doctor_id = doctor_id)")
-    private Float rating;
+  @Formula("(SELECT AVG(r.rating) FROM Review r WHERE r.doctor_id = doctor_id)")
+  private Float rating;
 
-    @Formula("(SELECT count(*) FROM Review r WHERE r.doctor_id = doctor_id)")
-    private Integer ratingCount;
+  @Formula("(SELECT count(*) FROM Review r WHERE r.doctor_id = doctor_id)")
+  private Integer ratingCount;
 
   protected Doctor() {
     // Solo para hibernate
@@ -67,7 +69,8 @@ public class Doctor extends User {
       Image image,
       List<HealthInsurance> healthInsurances,
       Specialty specialty,
-      Location location,
+      City city,
+      String address,
       Set<AttendingHours> attendingHours,
       List<Review> reviews,
       Float rating,
@@ -75,11 +78,12 @@ public class Doctor extends User {
     super(id, email, password, firstName, lastName, image);
     this.healthInsurances = healthInsurances;
     this.specialty = specialty;
-    this.location = location;
+    this.city = city;
+    this.address = address;
     this.attendingHours = attendingHours;
     this.reviews = reviews;
-        this.rating = rating;
-        this.ratingCount = ratingCount;
+    this.rating = rating;
+    this.ratingCount = ratingCount;
   }
 
   public List<ThirtyMinuteBlock> getAttendingBlocksForDay(DayOfWeek day) {
@@ -103,21 +107,17 @@ public class Doctor extends User {
     return specialty;
   }
 
-  public Location getLocation() {
-    return location;
-  }
-
   public Set<AttendingHours> getAttendingHours() {
     return attendingHours;
   }
 
-    public Float getRating() {
-      return rating;
-    }
+  public Float getRating() {
+    return rating;
+  }
 
-    public Integer getRatingCount() {
-      return ratingCount;
-    }
+  public Integer getRatingCount() {
+    return ratingCount;
+  }
 
   public void setHealthInsurances(List<HealthInsurance> healthInsurances) {
     this.healthInsurances = healthInsurances;
@@ -127,21 +127,17 @@ public class Doctor extends User {
     this.specialty = specialty;
   }
 
-  public void setLocation(Location location) {
-    this.location = location;
-  }
-
   public void setAttendingHours(Set<AttendingHours> attendingHours) {
     this.attendingHours.clear();
     this.attendingHours.addAll(attendingHours);
   }
 
   public void setRating(Float rating) {
-        this.rating = rating;
+    this.rating = rating;
   }
 
   public void setRatingCount(Integer ratingCount) {
-        this.ratingCount = ratingCount;
+    this.ratingCount = ratingCount;
   }
 
   public List<Review> getReviews() {
@@ -153,19 +149,43 @@ public class Doctor extends User {
     this.reviews.addAll(reviews);
   }
 
+  public City getCity() {
+    return city;
+  }
+
+  public void setCity(City city) {
+    this.city = city;
+  }
+
+  public String getAddress() {
+    return address;
+  }
+
+  public void setAddress(String address) {
+    this.address = address;
+  }
+
   @Override
   public String toString() {
-    return "Doctor [healthInsurances="
+    return "Doctor["
+        + "healthInsurances="
         + healthInsurances
         + ", specialty="
         + specialty
-        + ", location="
-        + location
+        + ", city="
+        + city
+        + ", address='"
+        + address
+        + '\''
         + ", attendingHours="
         + attendingHours
-        + " "
-        + super.toString()
-        + "]";
+        + ", reviews="
+        + reviews
+        + ", rating="
+        + rating
+        + ", ratingCount="
+        + ratingCount
+        + ']';
   }
 
   @Override
@@ -174,11 +194,19 @@ public class Doctor extends User {
     if (o == null || getClass() != o.getClass()) return false;
     if (!super.equals(o)) return false;
     Doctor doctor = (Doctor) o;
-    return Objects.equals(healthInsurances, doctor.healthInsurances) && specialty == doctor.specialty && Objects.equals(location, doctor.location) && Objects.equals(attendingHours, doctor.attendingHours) && Objects.equals(rating, doctor.rating) && Objects.equals(ratingCount, doctor.ratingCount);
+    return Objects.equals(healthInsurances, doctor.healthInsurances)
+        && specialty == doctor.specialty
+        && city == doctor.city
+        && Objects.equals(address, doctor.address)
+        && Objects.equals(attendingHours, doctor.attendingHours)
+        && Objects.equals(reviews, doctor.reviews)
+        && Objects.equals(rating, doctor.rating)
+        && Objects.equals(ratingCount, doctor.ratingCount);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(healthInsurances, specialty, location, attendingHours, reviews, rating, ratingCount);
+    return Objects.hash(
+        healthInsurances, specialty, city, address, attendingHours, reviews, rating, ratingCount);
   }
 }

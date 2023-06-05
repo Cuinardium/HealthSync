@@ -98,12 +98,12 @@
             <div class="profileRow">
                 <div class="profileItem">
                     <label for="city">${city}</label>
-                    <spring:message code="${doctor.location.city.messageID}" var="doctorCity"/>
+                    <spring:message code="${doctor.city.messageID}" var="doctorCity"/>
                     <input class="form-control" id="city" value="${doctorCity}" disabled/>
                 </div>
                 <div class="profileItem">
                     <label for="address">${address}</label>
-                    <input class="form-control" id="address" type="text" value="${doctor.location.address}" disabled/>
+                    <input class="form-control" id="address" type="text" value="${doctor.address}" disabled/>
                 </div>
             </div>
 

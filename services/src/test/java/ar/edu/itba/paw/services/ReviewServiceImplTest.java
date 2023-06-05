@@ -1,6 +1,5 @@
 package ar.edu.itba.paw.services;
 
-import ar.edu.itba.paw.interfaces.persistence.ReviewDao;
 import ar.edu.itba.paw.interfaces.services.AppointmentService;
 import ar.edu.itba.paw.interfaces.services.DoctorService;
 import ar.edu.itba.paw.interfaces.services.PatientService;
@@ -38,7 +37,6 @@ public class ReviewServiceImplTest {
   private static final Specialty SPECIALTY = Specialty.CARDIOLOGY;
   private static final City CITY = City.AYACUCHO;
   private static final String ADDRESS = "1234";
-  private static final Location LOCATION = new Location(null, CITY, ADDRESS);
   private static final Collection<ThirtyMinuteBlock> ATTENDING_HOURS_FOR_DAY =
       ThirtyMinuteBlock.fromRange(ThirtyMinuteBlock.BLOCK_08_00, ThirtyMinuteBlock.BLOCK_16_00);
   private static final Set<AttendingHours> ATTENDING_HOURS =
@@ -73,7 +71,8 @@ public class ReviewServiceImplTest {
           IMAGE,
           DOCTOR_HEALTH_INSURANCES,
           SPECIALTY,
-          LOCATION,
+          CITY,
+          ADDRESS,
           ATTENDING_HOURS,
           new ArrayList<>(),
           RATING,
@@ -110,8 +109,6 @@ public class ReviewServiceImplTest {
 
   private static final Page<Review> REVIEWS =
       new Page<>(Collections.singletonList(REVIEW), null, null, null);
-
-  @Mock private ReviewDao reviewDao;
 
   @Mock private DoctorService doctorService;
 

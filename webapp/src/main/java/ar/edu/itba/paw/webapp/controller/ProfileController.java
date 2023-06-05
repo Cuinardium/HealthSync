@@ -161,8 +161,8 @@ public class ProfileController {
             .stream()
             .map(HealthInsurance::ordinal)
             .collect(Collectors.toList()));
-    doctorEditForm.setAddress(doctor.getLocation().getAddress());
-    doctorEditForm.setCityCode(doctor.getLocation().getCity().ordinal());
+    doctorEditForm.setAddress(doctor.getAddress());
+    doctorEditForm.setCityCode(doctor.getCity().ordinal());
     doctorEditForm.setSpecialtyCode(doctor.getSpecialty().ordinal());
 
     // Attending hours

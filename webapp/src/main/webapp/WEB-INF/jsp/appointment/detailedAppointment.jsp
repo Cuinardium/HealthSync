@@ -14,7 +14,7 @@
     <c:param name="selected_tab" value="${selectedTab}"/>
 </c:url>
 
-<spring:message code="${appointment.doctor.location.city.messageID}" var="city"/>
+<spring:message code="${appointment.doctor.city.messageID}" var="city"/>
 <spring:message code="${appointment.patient.healthInsurance.messageID}" var="healthInsurance"/>
 <spring:message code="${appointment.status.messageID}" var="status"/>
 

@@ -17,7 +17,6 @@ import ar.edu.itba.paw.models.City;
 import ar.edu.itba.paw.models.Doctor;
 import ar.edu.itba.paw.models.HealthInsurance;
 import ar.edu.itba.paw.models.Image;
-import ar.edu.itba.paw.models.Location;
 import ar.edu.itba.paw.models.Page;
 import ar.edu.itba.paw.models.Patient;
 import ar.edu.itba.paw.models.Specialty;
@@ -53,7 +52,6 @@ public class AppointmentServiceImplTest {
   private static final Specialty SPECIALTY = Specialty.CARDIOLOGY;
   private static final City CITY = City.AYACUCHO;
   private static final String ADDRESS = "1234";
-  private static final Location LOCATION = new Location(1L, CITY, ADDRESS);
   private static final Collection<ThirtyMinuteBlock> ATTENDING_HOURS_FOR_DAY =
       ThirtyMinuteBlock.fromRange(ThirtyMinuteBlock.BLOCK_08_00, ThirtyMinuteBlock.BLOCK_16_00);
 
@@ -89,7 +87,8 @@ public class AppointmentServiceImplTest {
           DOCTOR_IMAGE,
           DOCTOR_HEALTH_INSURANCES,
           SPECIALTY,
-          LOCATION,
+          CITY,
+          ADDRESS,
           ATTENDING_HOURS,
           new ArrayList<>(),
           RATING,
@@ -276,6 +275,7 @@ public class AppointmentServiceImplTest {
         PATIENT_ID, DOCTOR_ID, APPOINTMENT_DATE, APPOINTMENT_TIME, APPOINTMENT_DESCRIPTION);
   }
 
+  @Test
   public void testCreateAppointmentAlreadyTakenByCancelledAppointment()
       throws DoctorNotFoundException, PatientNotFoundException, DoctorNotAvailableException,
           AppointmentAlreadyExistsException {
@@ -376,8 +376,7 @@ public class AppointmentServiceImplTest {
 
   @Test(expected = AppointmentNotFoundException.class)
   public void testCancelAppointmentDoesNotExist()
-      throws AppointmentNotFoundException, CancelForbiddenException,
-          ar.edu.itba.paw.interfaces.persistence.exceptions.AppointmentNotFoundException {
+      throws AppointmentNotFoundException, CancelForbiddenException{
     // 1. Precondiciones
 
     // Mock appointmentDao
@@ -389,8 +388,7 @@ public class AppointmentServiceImplTest {
 
   @Test(expected = CancelForbiddenException.class)
   public void testCancelAppointmentForbidden()
-      throws AppointmentNotFoundException, CancelForbiddenException,
-          ar.edu.itba.paw.interfaces.persistence.exceptions.AppointmentNotFoundException {
+      throws AppointmentNotFoundException, CancelForbiddenException{
     // 1. Precondiciones
 
     // Mock appointmentDao

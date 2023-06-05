@@ -5,18 +5,7 @@ import static org.junit.Assert.assertThrows;
 
 import ar.edu.itba.paw.interfaces.persistence.exceptions.AppointmentAlreadyExistsException;
 import ar.edu.itba.paw.interfaces.persistence.exceptions.AppointmentNotFoundException;
-import ar.edu.itba.paw.models.Appointment;
-import ar.edu.itba.paw.models.AppointmentStatus;
-import ar.edu.itba.paw.models.AttendingHours;
-import ar.edu.itba.paw.models.City;
-import ar.edu.itba.paw.models.Doctor;
-import ar.edu.itba.paw.models.HealthInsurance;
-import ar.edu.itba.paw.models.Image;
-import ar.edu.itba.paw.models.Location;
-import ar.edu.itba.paw.models.Page;
-import ar.edu.itba.paw.models.Patient;
-import ar.edu.itba.paw.models.Specialty;
-import ar.edu.itba.paw.models.ThirtyMinuteBlock;
+import ar.edu.itba.paw.models.*;
 import ar.edu.itba.paw.persistence.config.TestConfig;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
@@ -72,13 +61,8 @@ public class AppointmentDaoImplTest {
   private static final City INSERTED_DOCTOR_CITY = City.ADOLFO_GONZALES_CHAVES;
   private static final String INSERTED_DOCTOR_ADDRESS = "doctor_address";
   private static final Image INSERTED_DOCTOR_IMAGE = null;
-
   private static final Float INSERTED_DOCTOR_RATING = 3f;
   private static final Integer INSERTED_DOCTOR_RATING_COUNT = 5;
-  private static final Long INSERTED_DOCTOR_LOCATION_ID = 7L;
-
-  private static final Location LOCATION_FOR_DOCTOR_7 =
-      new Location(INSERTED_DOCTOR_LOCATION_ID, INSERTED_DOCTOR_CITY, INSERTED_DOCTOR_ADDRESS);
   private static final Set<AttendingHours> INSERTED_DOCTOR_ATTENDING_HOURS =
       new HashSet<>(
           Arrays.asList(
@@ -103,7 +87,8 @@ public class AppointmentDaoImplTest {
           INSERTED_DOCTOR_IMAGE,
           INSERTED_DOCTOR_INSURANCES,
           INSERTED_DOCTOR_SPECIALTY,
-          LOCATION_FOR_DOCTOR_7,
+          INSERTED_DOCTOR_CITY,
+          INSERTED_DOCTOR_ADDRESS,
           INSERTED_DOCTOR_ATTENDING_HOURS,
           new ArrayList<>(),
           INSERTED_DOCTOR_RATING,
@@ -115,7 +100,6 @@ public class AppointmentDaoImplTest {
   private static final AppointmentStatus INSERTED_STATUS = AppointmentStatus.CONFIRMED;
   private static final String INSERTED_DESC = "Me duele la cabeza";
   private static final String INSERTED_CANCEL_DESC = null;
-
   private static final LocalDate AUX_LOCAL_DATE = LocalDate.of(2023, 5, 18);
   private static final ThirtyMinuteBlock AUX_TIME = ThirtyMinuteBlock.BLOCK_06_00;
   private static final String AUX_DESC = "Revision medica";
@@ -185,13 +169,25 @@ public class AppointmentDaoImplTest {
   @Test
   public void testUpdateAppointment() throws AppointmentNotFoundException {
     // 1. Precondiciones
+    Doctor expectedDoctor = DOCTOR_7;
+    List<Review> reviewsForDoctor = new ArrayList<>(
+            Arrays.asList(
+                    new Review(7L, expectedDoctor, PATIENT_5, LocalDate.of(2023, 5, 17), "Muy buen doctor", (short) 5),
+                    new Review(8L, expectedDoctor, PATIENT_5, LocalDate.of(2023, 5, 16), "Buen doctor", (short) 4),
+                    new Review(9L, expectedDoctor, PATIENT_5, LocalDate.of(2023, 5, 15), "Regular doctor", (short) 3),
+                    new Review(10L, expectedDoctor, PATIENT_5, LocalDate.of(2023, 5, 14), "Malo doctor", (short) 2),
+                    new Review(11L, expectedDoctor, PATIENT_5, LocalDate.of(2023, 5, 13), "Muy malo doctor", (short) 1)
+            )
+    );
+    expectedDoctor.setReviews(reviewsForDoctor);
+
     // 2. Ejercitar la class under test
     Appointment appointment =
         appointmentDao.updateAppointment(INSERTED_APP_ID, AUX_STATUS, AUX_CANCEL_DESC);
     // 3. Meaninful assertions
     assertEquals(INSERTED_APP_ID, appointment.getId());
     assertEquals(PATIENT_5, appointment.getPatient());
-    assertEquals(DOCTOR_7, appointment.getDoctor());
+    assertEquals(expectedDoctor, appointment.getDoctor());
     assertEquals(INSERTED_LOCAL_DATE, appointment.getDate());
     assertEquals(INSERTED_TIME, appointment.getTimeBlock());
     assertEquals(INSERTED_DESC, appointment.getDescription());

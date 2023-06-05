@@ -75,8 +75,8 @@ public class DoctorDaoImpl implements DoctorDao {
     } catch (DuplicateKeyException e) {
       throw new DoctorAlreadyExistsException();
     }
-    Location loc = doctor.getLocation();
-    addLocation(id, loc.getCity().ordinal(), loc.getAddress());
+//    Location loc = doctor.getLocation();
+//    addLocation(id, loc.getCity().ordinal(), loc.getAddress());
 
     // Add health insurances
     for (HealthInsurance healthInsurance : doctor.getHealthInsurances()) {
