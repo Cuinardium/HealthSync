@@ -28,7 +28,7 @@
 <spring:message code="header.logout" var="logout"/>
 
 <!-- ALT img text -->
-<spring:message code="loggedUser.alt.userImg" var="altUserImg"/>
+<spring:message code="user.alt.loggedUserImg" var="altLoggedUserImg"/>
 
 <html>
 <head>
@@ -67,8 +67,8 @@
                             <li class="nav-item dropdown">
                                 <a class="nav-link dropdown-toggle" href="" role="button" data-bs-toggle="dropdown"
                                    aria-haspopup="true" aria-expanded="false">
-                                    <c:url value="/img/${user.getProfilePictureId() == null ? (isDoctor ?\"doctorDefault.png\":\"userDefault.png\") : user.getProfilePictureId()}" var="userImg"/>
-                                    <img src="${userImg}" alt="${altUserImg}" width="40" height="40"
+                                    <c:url value="/img/${user.getProfilePictureId() == null ? (isDoctor ?\"doctorDefault.png\":\"userDefault.png\") : user.getProfilePictureId()}" var="loggedUserImg"/>
+                                    <img src="${loggedUserImg}" alt="${altLoggedUserImg}" width="40" height="40"
                                          class="rounded-circle">
                                 </a>
                                 <ul class="dropdown-menu">

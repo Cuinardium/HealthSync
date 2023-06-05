@@ -30,7 +30,7 @@
 <spring:message code="profile.edit.modal.button" var="modalButton"/>
 
 <!-- ALT img text -->
-<spring:message code="loggedUser.alt.userImg" var="altUserImg"/>
+<spring:message code="user.alt.loggedUserImg" var="altLoggedUserImg"/>
 
 <html>
 <head>
@@ -66,8 +66,8 @@
         <div class="profileContainer">
             <div class="profileImageContainer">
                 <div class="profileItem">
-                    <c:url value="/img/${user.getProfilePictureId() == null ? \"userDefault.png\" : user.getProfilePictureId()}" var="userImg"/>
-                    <img src="${userImg}" alt="${altUserImg}" id="imgPreview" width="200" height="200" class="rounded-circle">
+                    <c:url value="/img/${user.getProfilePictureId() == null ? \"userDefault.png\" : user.getProfilePictureId()}" var="loggedUserImg"/>
+                    <img src="${loggedUserImg}" alt="${altLoggedUserImg}" id="imgPreview" width="200" height="200" class="rounded-circle">
                 </div>
                 <div class="pfpEdit">
                     <form:label path="image">
