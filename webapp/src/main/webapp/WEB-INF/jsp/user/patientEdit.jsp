@@ -66,7 +66,7 @@
         <div class="profileContainer">
             <div class="profileImageContainer">
                 <div class="profileItem">
-                    <c:url value="/img/${user.getProfilePictureId() == null ? \"userDefault.png\" : user.getProfilePictureId()}" var="loggedUserImg"/>
+                    <c:url value="/img/${user.getProfilePictureId() == null ? \"patientDefault.png\" : user.getProfilePictureId()}" var="loggedUserImg"/>
                     <img src="${loggedUserImg}" alt="${altLoggedUserImg}" id="imgPreview" width="200" height="200" class="rounded-circle">
                 </div>
                 <div class="pfpEdit">
