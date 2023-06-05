@@ -37,11 +37,12 @@
 
 .card-title{
     font-size: xx-large;
+    margin: 1%;
 }
 
 .card-text{
     font-size: large;
-    margin: 1%;
+    margin-left: 1%;
 }
 
 .chip {
@@ -67,7 +68,7 @@
     justify-content: start;
     align-items: center;
     font-size: larger;
-    padding-top: 10px;
+    margin-top: 15px;
 }
 
 .detailedDoctorTitle i {
