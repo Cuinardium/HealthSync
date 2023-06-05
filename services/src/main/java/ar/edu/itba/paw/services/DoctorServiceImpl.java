@@ -71,6 +71,7 @@ public class DoctorServiceImpl implements DoctorService {
     }
   }
 
+  @Transactional
   @Override
   public Review addReview(long doctorId, Review review) throws IllegalStateException {
     try {
@@ -106,6 +107,7 @@ public class DoctorServiceImpl implements DoctorService {
     }
   }
 
+  @Transactional
   @Override
   public Doctor updateReviews(long doctorId, List<Review> reviews){
     try {

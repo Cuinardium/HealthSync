@@ -177,10 +177,6 @@ public class Doctor extends User {
         + ", address='"
         + address
         + '\''
-        + ", attendingHours="
-        + attendingHours
-        + ", reviews="
-        + reviews
         + ", rating="
         + rating
         + ", ratingCount="

@@ -12,6 +12,7 @@ import ar.edu.itba.paw.models.ThirtyMinuteBlock;
 import ar.edu.itba.paw.persistence.utils.QueryBuilder;
 import java.sql.Date;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -156,7 +157,7 @@ public class AppointmentDaoJpa implements AppointmentDao {
 
     if (page != null && page >= 0 && pageSize != null && pageSize > 0) {
       nativeQuery.setMaxResults(pageSize);
-      nativeQuery.setFirstResult((page - 1) * pageSize);
+      nativeQuery.setFirstResult(page * pageSize);
     }
 
     final List<Long> idList =
@@ -167,6 +168,8 @@ public class AppointmentDaoJpa implements AppointmentDao {
                 .map(o -> ((Number) o).longValue())
                 .collect(Collectors.toList());
 
+    if (idList.isEmpty()) return new Page<>(new ArrayList<>(), page, 0, pageSize);
+
     // JPA Query Language (JQL) / Hibernate Query Language (HQL)
     final TypedQuery<Appointment> query =
         em.createQuery(
@@ -174,7 +177,9 @@ public class AppointmentDaoJpa implements AppointmentDao {
             Appointment.class);
     query.setParameter("idList", idList);
 
-    return new Page<>(query.getResultList(), page, query.getResultList().size(), pageSize);
+    List<Appointment> content = query.getResultList();
+
+    return new Page<>(content, page, content.size(), pageSize);
   }
 
   @Override

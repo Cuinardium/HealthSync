@@ -13,6 +13,8 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
+import javax.print.Doc;
+
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -129,16 +131,16 @@ public class DoctorDaoJpa implements DoctorDao {
 
       QueryBuilder attendingHoursQuery =
           new QueryBuilder()
-              .select("attending_hours.doctor_id")
-              .from("attending_hours")
-              .where("attending_hours.doctor_id = doctor.doctor_id")
-              .where("attending_hours.day = " + date.getDayOfWeek().ordinal())
+              .select("doctor_attending_hours.doctor_id")
+              .from("doctor_attending_hours")
+              .where("doctor_attending_hours.doctor_id = doctor.doctor_id")
+              .where("doctor_attending_hours.day = " + date.getDayOfWeek().ordinal())
               .where(
-                  "attending_hours.hour_block BETWEEN "
+                  "doctor_attending_hours.hour_block BETWEEN "
                       + fromTime.ordinal()
                       + " AND "
                       + toTime.ordinal())
-              .where("attending_hours.hour_block NOT IN (" + appointmentQuery.build() + ")");
+              .where("doctor_attending_hours.hour_block NOT IN (" + appointmentQuery.build() + ")");
 
       nativeQueryBuilder.where("doctor.doctor_id IN (" + attendingHoursQuery.build() + ")");
     }
@@ -164,7 +166,9 @@ public class DoctorDaoJpa implements DoctorDao {
         em.createQuery("from Doctor where id in :idList", Doctor.class);
     query.setParameter("idList", idList);
 
-    return new Page<>(query.getResultList(), page, query.getResultList().size(), pageSize);
+    List<Doctor> content = query.getResultList();
+
+    return new Page<>(content, page, content.size(), pageSize);
   }
 
   @Override
@@ -237,7 +241,7 @@ public class DoctorDaoJpa implements DoctorDao {
 
     if (page != null && page >= 0 && pageSize != null && pageSize > 0) {
       nativeQuery.setMaxResults(pageSize);
-      nativeQuery.setFirstResult((page - 1) * pageSize);
+      nativeQuery.setFirstResult(page * pageSize);
     }
 
     final List<Long> idList =
@@ -254,7 +258,9 @@ public class DoctorDaoJpa implements DoctorDao {
         em.createQuery("from Review where id in :idList", Review.class);
     query.setParameter("idList", idList);
 
-    return new Page<>(query.getResultList(), page, query.getResultList().size(), pageSize);
+    List<Review> content = query.getResultList();
+
+    return new Page<>(content, page, content.size(), pageSize);
   }
 
   private void mapAttendingHours(Doctor doctor) {
