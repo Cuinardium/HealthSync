@@ -71,10 +71,18 @@ public class Image {
   }
 
   @Override
+  public int hashCode() {
+    final int prime = 31;
+    int result = 1;
+    result = prime * result + ((imageId == null) ? 0 : imageId.hashCode());
+    return result;
+  }
+
+  @Override
   public boolean equals(Object obj) {
     if (this == obj) return true;
     if (!(obj instanceof Image)) return false;
     Image other = (Image) obj;
-    return Objects.equals(imageId, other.imageId) && Arrays.equals(bytes, other.bytes);
+    return Objects.equals(imageId, other.imageId);
   }
 }

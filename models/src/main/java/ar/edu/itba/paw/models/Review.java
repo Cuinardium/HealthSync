@@ -116,15 +116,18 @@ public class Review {
   }
 
   @Override
-  public boolean equals(Object o) {
-    if (this == o) return true;
-    if (o == null || getClass() != o.getClass()) return false;
-    Review review = (Review) o;
-    return Objects.equals(id, review.id) && Objects.equals(doctor.getId(), review.doctor.getId()) && Objects.equals(patient, review.patient) && Objects.equals(date, review.date) && Objects.equals(description, review.description) && Objects.equals(rating, review.rating);
+  public int hashCode() {
+    final int prime = 31;
+    int result = 1;
+    result = prime * result + ((id == null) ? 0 : id.hashCode());
+    return result;
   }
 
   @Override
-  public int hashCode() {
-    return Objects.hash(id, doctor, patient, date, description, rating);
+  public boolean equals(Object obj) {
+    if (this == obj) return true;
+    if (!(obj instanceof Review)) return false;
+    Review other = (Review) obj;
+    return Objects.equals(id, other.id);
   }
 }
