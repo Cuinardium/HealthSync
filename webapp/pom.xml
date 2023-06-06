@@ -16,6 +16,9 @@
     <!-- FIXME change it to the project's website -->
     <url>http://www.example.com</url>
 
+    <properties>
+        <jetty-maven-plugin.version>9.4.8.v20180619</jetty-maven-plugin.version>
+    </properties>
 
     <dependencies>
 
@@ -194,7 +197,7 @@
                 <plugin>
                     <groupId>org.eclipse.jetty</groupId>
                     <artifactId>jetty-maven-plugin</artifactId>
-                    <version>9.4.8.v20180619</version>
+                    <version>${jetty-maven-plugin.version}</version>
                     <configuration>
                         <!-- to deploy webapp on localhost/paw-2023a-02 -->
                         <webApp>

@@ -36,6 +36,9 @@
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
 
+        <commons-fileupload.version>1.4</commons-fileupload.version>
+        <junit.version>4.13.2</junit.version>
+
     </properties>
 
 
@@ -45,7 +48,7 @@
             <dependency>
                 <groupId>commons-fileupload</groupId>
                 <artifactId>commons-fileupload</artifactId>
-                <version>1.4</version>
+                <version>${commons-fileupload.version}</version>
             </dependency>
 
             <!-- Spring dependencies -->
@@ -149,7 +152,7 @@
             <dependency>
                 <groupId>junit</groupId>
                 <artifactId>junit</artifactId>
-                <version>4.13.2</version>
+                <version>${junit.version}</version>
                 <scope>test</scope>
             </dependency>
             <dependency>
