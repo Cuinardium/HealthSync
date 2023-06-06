@@ -2,13 +2,7 @@ package ar.edu.itba.paw.models;
 
 import java.util.Arrays;
 import java.util.Objects;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 @Entity
 @Table(name = "profile_picture")
@@ -29,6 +23,9 @@ public class Image {
 
   @Column(name = "profile_picture", nullable = false)
   private byte[] bytes;
+
+  @OneToOne(mappedBy = "image")
+  private User user;
 
   protected Image() {
     // Solo para hibernate
@@ -58,6 +55,14 @@ public class Image {
 
   public void setBytes(byte[] bytes) {
     this.bytes = bytes;
+  }
+
+  public User getUser() {
+    return user;
+  }
+
+  public void setUser(User user) {
+    this.user = user;
   }
 
   @Override

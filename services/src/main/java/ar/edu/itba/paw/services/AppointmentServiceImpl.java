@@ -137,24 +137,27 @@ public class AppointmentServiceImpl implements AppointmentService {
 
   // =============== Queries ===============
 
+  @Transactional
   @Override
   public List<Appointment> getAppointments(long userId, boolean isPatient) {
     return appointmentDao.getAppointments(userId, isPatient);
   }
 
-  // ============================= QUERIES =============================
 
+  @Transactional
   @Override
   public Optional<Appointment> getAppointmentById(long appointmentId) {
     return appointmentDao.getAppointmentById(appointmentId);
   }
 
+  @Transactional
   @Override
   public List<ThirtyMinuteBlock> getAvailableHoursForDoctorOnDate(long doctorId, LocalDate date)
       throws DoctorNotFoundException {
     return getAvailableHoursForDoctorOnRange(doctorId, date, date).get(0);
   }
 
+  @Transactional
   @Override
   public List<List<ThirtyMinuteBlock>> getAvailableHoursForDoctorOnRange(
       long doctorId, LocalDate from, LocalDate to) throws DoctorNotFoundException {
@@ -199,6 +202,7 @@ public class AppointmentServiceImpl implements AppointmentService {
         .collect(Collectors.toList());
   }
 
+  @Transactional
   @Override
   public Page<Appointment> getFilteredAppointments(
       long userId, AppointmentStatus status, Integer page, Integer pageSize, boolean isPatient) {
@@ -206,6 +210,7 @@ public class AppointmentServiceImpl implements AppointmentService {
         userId, status, null, null, page, pageSize, isPatient);
   }
 
+  @Transactional
   @Override
   public boolean hasPatientMetDoctor(long patientId, long doctorId) {
     return appointmentDao.hasPatientMetDoctor(patientId, doctorId);

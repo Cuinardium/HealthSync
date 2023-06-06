@@ -41,7 +41,7 @@ public class User {
   private String lastName;
 
   @OneToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "profile_picture_id")
+  @JoinColumn(name="profile_picture_id", referencedColumnName = "profile_picture_id")
   private Image image;
 
   protected User() {

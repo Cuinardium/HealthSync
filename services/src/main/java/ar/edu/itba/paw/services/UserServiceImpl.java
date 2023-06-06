@@ -90,11 +90,13 @@ public class UserServiceImpl implements UserService {
 
   // =============== Queries ===============
 
+  @Transactional
   @Override
   public Optional<User> getUserById(long id) {
     return userDao.getUserById(id);
   }
 
+  @Transactional
   @Override
   public Optional<User> getUserByEmail(String email) {
     return userDao.getUserByEmail(email);

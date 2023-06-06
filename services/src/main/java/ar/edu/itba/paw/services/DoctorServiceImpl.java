@@ -119,11 +119,13 @@ public class DoctorServiceImpl implements DoctorService {
 
   // =============== Queries ===============
 
+  @Transactional
   @Override
   public Optional<Doctor> getDoctorById(long id) {
     return doctorDao.getDoctorById(id);
   }
 
+  @Transactional
   @Override
   public Page<Doctor> getFilteredDoctors(
       String name,
@@ -139,27 +141,32 @@ public class DoctorServiceImpl implements DoctorService {
         name, date, fromTime, toTime, specialty, city, healthInsurance, page, pageSize);
   }
 
+  @Transactional
   @Override
   public List<Doctor> getDoctors() {
     return doctorDao.getDoctors();
   }
 
   // Get all Specialties and health insurances that are used by doctors
+  @Transactional
   @Override
   public Map<HealthInsurance, Integer> getUsedHealthInsurances() {
     return doctorDao.getUsedHealthInsurances();
   }
 
+  @Transactional
   @Override
   public Map<Specialty, Integer> getUsedSpecialties() {
     return doctorDao.getUsedSpecialties();
   }
 
+  @Transactional
   @Override
   public Map<City, Integer> getUsedCities() {
     return doctorDao.getUsedCities();
   }
 
+  @Transactional
   @Override
   public Page<Review> getReviewsForDoctor(long doctorId, Integer page, Integer pageSize) {
     return doctorDao.getReviewsForDoctor(doctorId, page, pageSize);

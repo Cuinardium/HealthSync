@@ -75,6 +75,7 @@ public class ReviewServiceImpl implements ReviewService {
     return appointmentService.hasPatientMetDoctor(patientId, doctorId);
   }
 
+  @Transactional
   @Override
   public Page<Review> getReviewsForDoctor(long doctorId, Integer page, Integer pageSize) {
     return doctorService.getReviewsForDoctor(doctorId, page, pageSize);

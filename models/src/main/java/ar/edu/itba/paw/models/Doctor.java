@@ -15,7 +15,7 @@ import org.hibernate.annotations.Formula;
 @PrimaryKeyJoinColumn(name = "doctor_id", referencedColumnName = "user_id")
 public class Doctor extends User {
   @Enumerated(EnumType.ORDINAL)
-  @ElementCollection(fetch = FetchType.EAGER, targetClass = HealthInsurance.class)
+  @ElementCollection(fetch = FetchType.LAZY, targetClass = HealthInsurance.class)
   @JoinTable(
     name = "health_insurance_accepted_by_doctor",
     joinColumns = @JoinColumn(name = "doctor_id")
@@ -36,7 +36,7 @@ public class Doctor extends User {
 
   @OneToMany(
     mappedBy = "doctor",
-    fetch = FetchType.EAGER,
+    fetch = FetchType.LAZY,
     cascade = CascadeType.ALL,
     orphanRemoval = true
   )
