@@ -21,7 +21,7 @@ public class Doctor extends User {
     joinColumns = @JoinColumn(name = "doctor_id")
   )
   @Column(name = "health_insurance_code", nullable = false)
-  private List<HealthInsurance> healthInsurances;
+  private Set<HealthInsurance> healthInsurances;
 
   @Enumerated(EnumType.ORDINAL)
   @Column(name = "specialty_code", nullable = false)
@@ -67,7 +67,7 @@ public class Doctor extends User {
       String firstName,
       String lastName,
       Image image,
-      List<HealthInsurance> healthInsurances,
+      Set<HealthInsurance> healthInsurances,
       Specialty specialty,
       City city,
       String address,
@@ -99,7 +99,7 @@ public class Doctor extends User {
   }
 
   // Getters
-  public List<HealthInsurance> getHealthInsurances() {
+  public Set<HealthInsurance> getHealthInsurances() {
     return healthInsurances;
   }
 
@@ -119,7 +119,7 @@ public class Doctor extends User {
     return ratingCount;
   }
 
-  public void setHealthInsurances(List<HealthInsurance> healthInsurances) {
+  public void setHealthInsurances(Set<HealthInsurance> healthInsurances) {
     this.healthInsurances = healthInsurances;
   }
 

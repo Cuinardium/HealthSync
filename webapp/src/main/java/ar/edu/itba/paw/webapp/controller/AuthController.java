@@ -136,12 +136,12 @@ public class AuthController {
     Specialty specialty = Specialty.values()[doctorRegisterForm.getSpecialtyCode()];
     City city = City.values()[doctorRegisterForm.getCityCode()];
 
-    List<HealthInsurance> healthInsurances =
+    Set<HealthInsurance> healthInsurances =
         doctorRegisterForm
             .getHealthInsuranceCodes()
             .stream()
             .map(code -> HealthInsurance.values()[code])
-            .collect(Collectors.toList());
+            .collect(Collectors.toSet());
 
     ThirtyMinuteBlock[] values = ThirtyMinuteBlock.values();
     Set<AttendingHours> attendingHours = new HashSet<>();

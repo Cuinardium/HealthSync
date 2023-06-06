@@ -22,7 +22,7 @@ public interface DoctorService {
       Specialty specialty,
       City city,
       String address,
-      List<HealthInsurance> healthInsurances,
+      Set<HealthInsurance> healthInsurances,
       Set<AttendingHours> attendingHours)
       throws EmailInUseException, IllegalStateException;
 
@@ -39,7 +39,7 @@ public interface DoctorService {
       Specialty specialty,
       City city,
       String address,
-      List<HealthInsurance> healthInsurances,
+      Set<HealthInsurance> healthInsurances,
       Set<AttendingHours> attendingHours,
       Image image)
       throws UserNotFoundException;

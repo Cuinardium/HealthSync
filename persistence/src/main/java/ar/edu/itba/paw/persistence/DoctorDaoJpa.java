@@ -46,7 +46,7 @@ public class DoctorDaoJpa implements DoctorDao {
       Specialty specialty,
       City city,
       String address,
-      List<HealthInsurance> healthInsurances,
+      Set<HealthInsurance> healthInsurances,
       Set<AttendingHours> attendingHours)
       throws DoctorNotFoundException {
     Doctor doctor = getDoctorById(doctorId).orElseThrow(DoctorNotFoundException::new);
@@ -178,7 +178,7 @@ public class DoctorDaoJpa implements DoctorDao {
 
   @Override
   public Map<HealthInsurance, Integer> getUsedHealthInsurances() {
-    List<List<HealthInsurance>> hList =
+    List<Set<HealthInsurance>> hList =
         em.createQuery("from Doctor", Doctor.class)
             .getResultList()
             .stream()
@@ -187,8 +187,8 @@ public class DoctorDaoJpa implements DoctorDao {
 
     Map<HealthInsurance, Integer> map = new HashMap<>();
 
-    for (List<HealthInsurance> list : hList) {
-      for (HealthInsurance h : list) {
+    for (Set<HealthInsurance> set : hList) {
+      for (HealthInsurance h : set) {
         map.putIfAbsent(h, 0);
         map.put(h, map.get(h) + 1);
       }

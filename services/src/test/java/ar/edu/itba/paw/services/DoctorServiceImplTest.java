@@ -29,8 +29,8 @@ public class DoctorServiceImplTest {
   private static final String PASSWORD_ENCODED = "password_encoded";
   private static final String FIRST_NAME = "first_name";
   private static final String LAST_NAME = "last_name";
-  private static final List<HealthInsurance> HEALTH_INSURANCES =
-      Arrays.asList(HealthInsurance.OSDE, HealthInsurance.OMINT);
+  private static final Set<HealthInsurance> HEALTH_INSURANCES =
+      new HashSet<>(Arrays.asList(HealthInsurance.OSDE, HealthInsurance.OMINT));
   private static final Image IMAGE = null;
   private static final Specialty SPECIALTY = Specialty.CARDIOLOGY;
   private static final City CITY = City.AYACUCHO;
@@ -67,8 +67,8 @@ public class DoctorServiceImplTest {
   private static final String EMAIL_NEW = "new_email";
   private static final String FIRST_NAME_NEW = "new_fist_name";
   private static final String LAST_NAME_NEW = "new_last_name";
-  private static final List<HealthInsurance> HEALTH_INSURANCES_NEW =
-      Arrays.asList(HealthInsurance.NONE, HealthInsurance.SWISS_MEDICAL);
+  private static final Set<HealthInsurance> HEALTH_INSURANCES_NEW =
+      new HashSet<>(Arrays.asList(HealthInsurance.NONE, HealthInsurance.SWISS_MEDICAL));
   private static final Specialty SPECIALTY_NEW = Specialty.ALLERGY_AND_IMMUNOLOGY;
   private static final City CITY_NEW = City.ARRECIFES;
   private static final String ADDRESS_NEW = "1234asdsa";
@@ -163,8 +163,6 @@ public class DoctorServiceImplTest {
   public void testCreateDoctor()
       throws IllegalStateException, DoctorAlreadyExistsException {
     // 1. Precondiciones
-    // Mockito.when(userService.createUser(EMAIL, PASSWORD, FIRST_NAME,
-    // LAST_NAME)).thenReturn(USER);
     Mockito.when(passwordEncoder.encode(Mockito.eq(PASSWORD))).thenReturn(PASSWORD_ENCODED);
     Mockito.when(
             doctorDao.createDoctor(
@@ -304,7 +302,7 @@ public class DoctorServiceImplTest {
   }
 
   @Test
-  public void testUpdateReviews() throws DoctorNotFoundException, UserNotFoundException {
+  public void testUpdateReviews() throws DoctorNotFoundException {
     // 1. Precondiciones
     Mockito.when(doctorDao.updateReviews(ID, REVIEWS_FOR_DOCTOR))
         .thenReturn(DOCTOR_UPDATED_REVIEWS);

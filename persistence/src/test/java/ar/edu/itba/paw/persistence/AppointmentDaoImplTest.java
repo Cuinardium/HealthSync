@@ -54,8 +54,8 @@ public class AppointmentDaoImplTest {
   private static final String INSERTED_DOCTOR_PASSWORD = "doctor_password";
   private static final String INSERTED_DOCTOR_FIRST_NAME = "doctor_first_name";
   private static final String INSERTED_DOCTOR_LAST_NAME = "doctor_last_name";
-  private static final List<HealthInsurance> INSERTED_DOCTOR_INSURANCES =
-      Arrays.asList(HealthInsurance.OMINT, HealthInsurance.OSDE);
+  private static final Set<HealthInsurance> INSERTED_DOCTOR_INSURANCES =
+      new HashSet<>(Arrays.asList(HealthInsurance.OMINT, HealthInsurance.OSDE));
   private static final Specialty INSERTED_DOCTOR_SPECIALTY =
       Specialty.PEDIATRIC_ALLERGY_AND_IMMUNOLOGY;
   private static final City INSERTED_DOCTOR_CITY = City.ADOLFO_GONZALES_CHAVES;

@@ -47,8 +47,8 @@ public class AppointmentServiceImplTest {
   private static final String DOCTOR_LAST_NAME = "doctor_last_name";
   private static final Image DOCTOR_IMAGE = new Image(null, null);
 
-  private static final List<HealthInsurance> DOCTOR_HEALTH_INSURANCES =
-      Arrays.asList(HealthInsurance.OSDE, HealthInsurance.OMINT);
+  private static final Set<HealthInsurance> DOCTOR_HEALTH_INSURANCES =
+      new HashSet<>(Arrays.asList(HealthInsurance.OSDE, HealthInsurance.OMINT));
   private static final Specialty SPECIALTY = Specialty.CARDIOLOGY;
   private static final City CITY = City.AYACUCHO;
   private static final String ADDRESS = "1234";

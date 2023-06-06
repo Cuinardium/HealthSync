@@ -1,8 +1,6 @@
 package ar.edu.itba.paw.models;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 public enum HealthInsurance {
 
@@ -27,13 +25,13 @@ public enum HealthInsurance {
     return HealthInsurance.values()[healthInsuranceCode];
   }
 
-  public static List<HealthInsurance> getHealthInsurances(List<Integer> healthInsurancesCodes) {
+  public static Set<HealthInsurance> getHealthInsurances(List<Integer> healthInsurancesCodes) {
 
     if (healthInsurancesCodes == null) {
-      return Collections.emptyList();
+      return Collections.emptySet();
     }
 
-    List<HealthInsurance> healthInsurances = new ArrayList<>();
+    Set<HealthInsurance> healthInsurances = new HashSet<>();
     HealthInsurance[] healthInsurancesArray = HealthInsurance.values();
 
     for (Integer healthInsuranceCode : healthInsurancesCodes) {

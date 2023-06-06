@@ -89,12 +89,12 @@ public class ProfileController {
     Specialty specialty = Specialty.values()[doctorEditForm.getSpecialtyCode()];
     City city = City.values()[doctorEditForm.getCityCode()];
 
-    List<HealthInsurance> healthInsurances =
+    Set<HealthInsurance> healthInsurances =
         doctorEditForm
             .getHealthInsuranceCodes()
             .stream()
             .map(code -> HealthInsurance.values()[code])
-            .collect(Collectors.toList());
+            .collect(Collectors.toSet());
 
     ThirtyMinuteBlock[] values = ThirtyMinuteBlock.values();
 

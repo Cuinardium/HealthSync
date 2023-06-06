@@ -99,7 +99,7 @@ public class DoctorDaoImpl implements DoctorDao {
       Specialty specialty,
       City city,
       String address,
-      List<HealthInsurance> healthInsurances,
+      Set<HealthInsurance> healthInsurances,
       Set<AttendingHours> attendingHours)
       throws DoctorNotFoundException {
 
