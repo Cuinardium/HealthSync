@@ -17,7 +17,7 @@ public interface AppointmentService {
 
   // =============== Inserts ===============
 
-  Appointment createAppointment(
+  public Appointment createAppointment(
       Long patientId,
       Long doctorId,
       LocalDate date,
@@ -27,16 +27,17 @@ public interface AppointmentService {
 
   // =============== Updates ===============
 
-  Appointment cancelAppointment(long appointmentId, String cancelDescription, long requesterId)
+  public Appointment cancelAppointment(
+      long appointmentId, String cancelDescription, long requesterId)
       throws AppointmentNotFoundException, CancelForbiddenException;
 
   // =============== Queries ===============
 
-  Optional<Appointment> getAppointmentById(long appointmentId);
+  public Optional<Appointment> getAppointmentById(long appointmentId);
 
-  List<Appointment> getAppointments(long userId, boolean isPatient);
+  public List<Appointment> getAppointments(long userId, boolean isPatient);
 
-  Page<Appointment> getFilteredAppointments(
+  public Page<Appointment> getFilteredAppointments(
       long userId, AppointmentStatus status, Integer page, Integer pageSize, boolean isPatient);
 
   public List<ThirtyMinuteBlock> getAvailableHoursForDoctorOnDate(long doctorId, LocalDate date)
@@ -48,7 +49,7 @@ public interface AppointmentService {
   public boolean hasPatientMetDoctor(long patientId, long doctorId);
 
   // ================ Tasks ================
-  void sendAppointmentReminders();
+  public void sendAppointmentReminders();
 
-  void updateCompletedAppointmentsStatus();
+  public void updateCompletedAppointmentsStatus();
 }

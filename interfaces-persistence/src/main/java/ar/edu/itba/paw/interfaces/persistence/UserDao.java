@@ -10,19 +10,20 @@ public interface UserDao {
 
   // =============== Inserts ===============
 
-  User createUser(String email, String password, String firstName, String lastName)
+  public User createUser(String email, String password, String firstName, String lastName)
       throws EmailAlreadyExistsException;
 
   // =============== Updates ===============
 
-  User updateUserInfo(long userId, String email, String firstName, String lastName, Image image)
+  public User updateUserInfo(
+      long userId, String email, String firstName, String lastName, Image image)
       throws UserNotFoundException;
 
-  String updateUserPassword(long userId, String password) throws UserNotFoundException;
+  public String updateUserPassword(long userId, String password) throws UserNotFoundException;
 
   // =============== Queries ===============
 
-  Optional<User> getUserById(long id);
+  public Optional<User> getUserById(long id);
 
-  Optional<User> getUserByEmail(String email);
+  public Optional<User> getUserByEmail(String email);
 }

@@ -48,7 +48,7 @@ public class Doctor extends User {
     cascade = CascadeType.ALL,
     orphanRemoval = true
   )
-  List<Review> reviews;
+  private List<Review> reviews;
 
   @Formula("(SELECT AVG(r.rating) FROM Review r WHERE r.doctor_id = doctor_id)")
   private Float rating;

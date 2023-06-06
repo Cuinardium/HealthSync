@@ -13,13 +13,14 @@ public interface DoctorDao {
 
   // =============== Inserts ===============
 
-  Doctor createDoctor(Doctor doctor) throws DoctorAlreadyExistsException, IllegalStateException;
+  public Doctor createDoctor(Doctor doctor)
+      throws DoctorAlreadyExistsException, IllegalStateException;
 
-  Review addReview(long doctorId, Review review) throws DoctorNotFoundException;
+  public Review addReview(long doctorId, Review review) throws DoctorNotFoundException;
 
   // =============== Updates ===============
 
-  Doctor updateDoctorInfo(
+  public Doctor updateDoctorInfo(
       long doctorId,
       Specialty specialty,
       City city,
@@ -28,13 +29,13 @@ public interface DoctorDao {
       Set<AttendingHours> attendingHours)
       throws DoctorNotFoundException;
 
-  Doctor updateReviews(long doctorId, List<Review> reviews) throws DoctorNotFoundException;
+  public Doctor updateReviews(long doctorId, List<Review> reviews) throws DoctorNotFoundException;
 
   // =============== Queries ===============
 
-  Optional<Doctor> getDoctorById(long id);
+  public Optional<Doctor> getDoctorById(long id);
 
-  Page<Doctor> getFilteredDoctors(
+  public Page<Doctor> getFilteredDoctors(
       String name,
       LocalDate date,
       ThirtyMinuteBlock fromTime,
@@ -45,15 +46,15 @@ public interface DoctorDao {
       Integer page,
       Integer pageSize);
 
-  List<Doctor> getDoctors();
+  public List<Doctor> getDoctors();
 
   // Get used specialties and health insurances
-  Map<HealthInsurance, Integer> getUsedHealthInsurances();
+  public Map<HealthInsurance, Integer> getUsedHealthInsurances();
 
-  Map<Specialty, Integer> getUsedSpecialties();
+  public Map<Specialty, Integer> getUsedSpecialties();
 
   // Get all city present in the database & qty of appearences
-  Map<City, Integer> getUsedCities();
+  public Map<City, Integer> getUsedCities();
 
-  Page<Review> getReviewsForDoctor(long doctorId, Integer page, Integer pageSize);
+  public Page<Review> getReviewsForDoctor(long doctorId, Integer page, Integer pageSize);
 }

@@ -4,18 +4,19 @@ import ar.edu.itba.paw.interfaces.services.exceptions.DoctorNotFoundException;
 import ar.edu.itba.paw.interfaces.services.exceptions.PatientNotFoundException;
 import ar.edu.itba.paw.interfaces.services.exceptions.ReviewForbiddenException;
 import ar.edu.itba.paw.models.Page;
-import ar.edu.itba.paw.models.Patient;
 import ar.edu.itba.paw.models.Review;
 
 public interface ReviewService {
 
   // =============== Inserts ===============
 
-  public Review createReview(long doctorId, long patientId, int rating, String description) throws DoctorNotFoundException, PatientNotFoundException, ReviewForbiddenException;
-  
+  public Review createReview(long doctorId, long patientId, int rating, String description)
+      throws DoctorNotFoundException, PatientNotFoundException, ReviewForbiddenException;
+
   // =============== Queries ===============
-  
-  Page<Review> getReviewsForDoctor(long doctorId, Integer page, Integer pageSize) throws DoctorNotFoundException;
+
+  public Page<Review> getReviewsForDoctor(long doctorId, Integer page, Integer pageSize)
+      throws DoctorNotFoundException;
 
   public boolean canReview(long doctorId, long patientId);
 }

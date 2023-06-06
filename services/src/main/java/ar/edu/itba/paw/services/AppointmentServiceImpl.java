@@ -21,7 +21,6 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.*;
 import java.util.stream.Collectors;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -30,11 +29,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class AppointmentServiceImpl implements AppointmentService {
-  MailService mailService;
-  DoctorService doctorService;
-  PatientService patientService;
+  private final MailService mailService;
+  private final DoctorService doctorService;
+  private final PatientService patientService;
 
-  AppointmentDao appointmentDao;
+  private final AppointmentDao appointmentDao;
 
   @Autowired
   public AppointmentServiceImpl(
@@ -192,7 +191,9 @@ public class AppointmentServiceImpl implements AppointmentService {
       }
     }
 
-    return availableHours.entrySet().stream()
+    return availableHours
+        .entrySet()
+        .stream()
         .sorted(Map.Entry.comparingByKey())
         .map(Map.Entry::getValue)
         .collect(Collectors.toList());

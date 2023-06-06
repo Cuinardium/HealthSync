@@ -11,5 +11,5 @@ public interface ReviewDao {
 
   // =============== Queries ===============
 
-  Page<Review> getReviewsForDoctor(long doctorId, Integer page, Integer pageSize);
+  public Page<Review> getReviewsForDoctor(long doctorId, Integer page, Integer pageSize);
 }
