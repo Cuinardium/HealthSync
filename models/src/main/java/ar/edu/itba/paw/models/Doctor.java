@@ -36,7 +36,7 @@ public class Doctor extends User {
 
   @OneToMany(
     mappedBy = "doctor",
-    fetch = FetchType.LAZY,
+    fetch = FetchType.EAGER,
     cascade = CascadeType.ALL,
     orphanRemoval = true
   )
