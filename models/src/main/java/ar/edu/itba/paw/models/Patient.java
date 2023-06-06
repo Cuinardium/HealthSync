@@ -43,12 +43,4 @@ public class Patient extends User {
   public String toString() {
     return "Patient [healthInsurance=" + healthInsurance + " " + super.toString() + "]";
   }
-
-  @Override
-  public boolean equals(Object obj) {
-    if (this == obj) return true;
-    if (!(obj instanceof Patient)) return false;
-    Patient other = (Patient) obj;
-    return super.equals(obj) && (healthInsurance.equals(other.healthInsurance));
-  }
 }

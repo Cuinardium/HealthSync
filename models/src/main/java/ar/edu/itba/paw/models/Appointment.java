@@ -1,6 +1,7 @@
 package ar.edu.itba.paw.models;
 
 import java.time.LocalDate;
+import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -117,43 +118,6 @@ public class Appointment {
     return cancelDesc;
   }
 
-  @Override
-  public String toString() {
-    return "Appointment [id="
-        + id
-        + ", date="
-        + date
-        + ", timeBlock="
-        + timeBlock
-        + ", status="
-        + status
-        + ", description="
-        + description
-        + ", cancelDesc="
-        + cancelDesc
-        + " "
-        + patient
-        + " "
-        + doctor
-        + "]";
-  }
-
-  @Override
-  public boolean equals(Object obj) {
-    if (this == obj) return true;
-    if (!(obj instanceof Appointment)) return false;
-    // el || es para rescatarme de la nullptrexcep
-    Appointment other = (Appointment) obj;
-    return id == other.id
-        && date.equals(other.date)
-        && timeBlock.equals(other.timeBlock)
-        && status.equals(other.status)
-        && description.equals(other.description)
-        && (cancelDesc == other.cancelDesc || cancelDesc.equals(other.cancelDesc))
-        && patient.equals(patient)
-        && doctor.equals(doctor);
-  }
-
   public void setId(Long id) {
     this.id = id;
   }
@@ -184,5 +148,42 @@ public class Appointment {
 
   public void setCancelDesc(String cancelDesc) {
     this.cancelDesc = cancelDesc;
+  }
+
+  @Override
+  public String toString() {
+    return "Appointment [id="
+        + id
+        + ", date="
+        + date
+        + ", timeBlock="
+        + timeBlock
+        + ", status="
+        + status
+        + ", description="
+        + description
+        + ", cancelDesc="
+        + cancelDesc
+        + " "
+        + patient
+        + " "
+        + doctor
+        + "]";
+  }
+
+  @Override
+  public int hashCode() {
+    final int prime = 31;
+    int result = 1;
+    result = prime * result + ((id == null) ? 0 : id.hashCode());
+    return result;
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj) return true;
+    if (!(obj instanceof Appointment)) return false;
+    Appointment other = (Appointment) obj;
+    return Objects.equals(this.id, other.id);
   }
 }

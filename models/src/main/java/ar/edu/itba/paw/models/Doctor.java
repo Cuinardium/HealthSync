@@ -4,7 +4,6 @@ import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 import javax.persistence.*;
@@ -182,27 +181,5 @@ public class Doctor extends User {
         + ", ratingCount="
         + ratingCount
         + ']';
-  }
-
-  @Override
-  public boolean equals(Object o) {
-    if (this == o) return true;
-    if (o == null || getClass() != o.getClass()) return false;
-    if (!super.equals(o)) return false;
-    Doctor doctor = (Doctor) o;
-    return Objects.equals(healthInsurances, doctor.healthInsurances)
-        && specialty == doctor.specialty
-        && city == doctor.city
-        && Objects.equals(address, doctor.address)
-        && Objects.equals(attendingHours, doctor.attendingHours)
-        && Objects.equals(reviews, doctor.reviews)
-        && Objects.equals(rating, doctor.rating)
-        && Objects.equals(ratingCount, doctor.ratingCount);
-  }
-
-  @Override
-  public int hashCode() {
-    return Objects.hash(
-        healthInsurances, specialty, city, address, attendingHours, reviews, rating, ratingCount);
   }
 }

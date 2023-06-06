@@ -85,16 +85,19 @@ public class AttendingHours {
   }
 
   @Override
-  public boolean equals(Object o) {
-    if (this == o) return true;
-    if (o == null || getClass() != o.getClass()) return false;
-    AttendingHours that = (AttendingHours) o;
-    return Objects.equals(id, that.id);
+  public int hashCode() {
+    final int prime = 31;
+    int result = 1;
+    result = prime * result + ((id == null) ? 0 : id.hashCode());
+    return result;
   }
 
   @Override
-  public int hashCode() {
-    return Objects.hash(id);
+  public boolean equals(Object obj) {
+    if (this == obj) return true;
+    if (!(obj instanceof AttendingHours)) return false;
+    AttendingHours other = (AttendingHours) obj;
+    return Objects.equals(this.id, other.id);
   }
 
   @Embeddable
@@ -156,16 +159,23 @@ public class AttendingHours {
     }
 
     @Override
-    public boolean equals(Object o) {
-      if (this == o) return true;
-      if (o == null || getClass() != o.getClass()) return false;
-      AttendingHoursId that = (AttendingHoursId) o;
-      return day == that.day && hourBlock == that.hourBlock;
+    public int hashCode() {
+      final int prime = 31;
+      int result = 1;
+      result = prime * result + ((doctorId == null) ? 0 : doctorId.hashCode());
+      result = prime * result + ((day == null) ? 0 : day.hashCode());
+      result = prime * result + ((hourBlock == null) ? 0 : hourBlock.hashCode());
+      return result;
     }
 
     @Override
-    public int hashCode() {
-      return Objects.hash(day, hourBlock);
+    public boolean equals(Object obj) {
+      if (this == obj) return true;
+      if (!(obj instanceof AttendingHoursId)) return false;
+      AttendingHoursId other = (AttendingHoursId) obj;
+      return Objects.equals(this.doctorId, other.doctorId)
+          && Objects.equals(this.day, other.day)
+          && Objects.equals(this.hourBlock, other.hourBlock);
     }
   }
 }

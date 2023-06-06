@@ -35,11 +35,14 @@ public class Page<T> {
   }
 
   @Override
-  public boolean equals(Object o) {
-    if (this == o) return true;
-    if (o == null || getClass() != o.getClass()) return false;
-    Page<?> page = (Page<?>) o;
-    return Objects.equals(content, page.content) && Objects.equals(currentPage, page.currentPage) && Objects.equals(totalContentCount, page.totalContentCount) && Objects.equals(pageSize, page.pageSize);
+  public boolean equals(Object obj) {
+    if (this == obj) return true;
+    if (!(obj instanceof Page<?>)) return false;
+    Page<?> page = (Page<?>) obj;
+    return Objects.equals(content, page.content)
+        && Objects.equals(currentPage, page.currentPage)
+        && Objects.equals(totalContentCount, page.totalContentCount)
+        && Objects.equals(pageSize, page.pageSize);
   }
 
   @Override
