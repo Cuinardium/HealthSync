@@ -1,5 +1,6 @@
 package ar.edu.itba.paw.models;
 
+import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -12,7 +13,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-import java.util.Objects;
 
 @Entity
 @Table(name = "users") // Si la clase no tiene el mismo nombre que la DB table
@@ -94,11 +94,6 @@ public class User {
 
   public void setLastName(String lastName) {
     this.lastName = lastName;
-  }
-
-  public Long getProfilePictureId() {
-    if (image == null) return null;
-    return image.getImageId();
   }
 
   public Image getImage() {

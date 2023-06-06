@@ -75,7 +75,7 @@
 
         <div class="profileContainer">
             <div class="profileImageContainer">
-                <c:url value="/img/${user.getProfilePictureId() == null ? \"userDefault.png\" : user.getProfilePictureId()}"
+                <c:url value="/img/${user.getImage() == null ? \"userDefault.png\" : user.getImage().getImageId()}"
                        var="userImg"/>
                 <img src="${userImg}" id="imgPreview" width="200" height="200" class="rounded-circle">
                 <div class="pfpEdit">

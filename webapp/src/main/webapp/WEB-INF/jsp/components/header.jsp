@@ -64,7 +64,7 @@
                             <li class="nav-item dropdown">
                                 <a class="nav-link dropdown-toggle" href="" role="button" data-bs-toggle="dropdown"
                                    aria-haspopup="true" aria-expanded="false">
-                                    <c:url value="/img/${user.getProfilePictureId() == null ? (isDoctor ?\"doctorDefault.png\":\"userDefault.png\") : user.getProfilePictureId()}" var="userImg"/>
+                                    <c:url value="/img/${user.getImage() == null ? (isDoctor ?\"doctorDefault.png\":\"userDefault.png\") : user.getImage().getImageId()}" var="userImg"/>
                                     <img src="${userImg}" width="40" height="40"
                                          class="rounded-circle">
                                 </a>

@@ -157,7 +157,7 @@
                     <c:url value="/${doctor.id}/detailed-doctor" var="detailedUrl"/>
                     <div class="card">
                         <div class="imageContainer">
-                            <c:url value="/img/${doctor.getProfilePictureId() == null ? \"doctorDefault.png\" : doctor.getProfilePictureId()}"
+                            <c:url value="/img/${doctor.getImage() == null ? \"doctorDefault.png\" : doctor.getImage().getImageId()}"
                                    var="doctorImg"/>
                             <img src="${doctorImg}" class="card-img-top">
                         </div>
