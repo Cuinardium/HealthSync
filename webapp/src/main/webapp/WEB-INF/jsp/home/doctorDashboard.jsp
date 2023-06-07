@@ -138,7 +138,7 @@
             </div>
         </div>
 
-        <div class="discoveryContainer generalPadding">
+        <div class="discoveryContainer">
             <c:set var="cityMap" value="${cityMap}" scope="request"/>
             <c:set var="specialtyMap" value="${specialtyMap}" scope="request"/>
             <c:set var="healthInsuranceMap" value="${healthInsuranceMap}" scope="request"/>
@@ -154,15 +154,15 @@
                 <c:forEach items="${doctors}" var="doctor">
                     <spring:message code="${doctor.specialty.messageID}" var="doctorSpecialty"/>
                     <spring:message code="${doctor.city.messageID}" var="doctorCity"/>
+                    <spring:message code="doctor.alt.doctorImg" arguments="${doctor.firstName}, ${doctor.lastName}" var="altDoctorImg"/>
                     <c:url value="/${doctor.id}/detailed-doctor" var="detailedUrl"/>
                     <div class="card">
                         <div class="imageContainer">
                             <c:url value="/img/${doctor.getImage() == null ? \"doctorDefault.png\" : doctor.getImage().getImageId()}"
                                    var="doctorImg"/>
-                            <img src="${doctorImg}" class="card-img-top">
+                            <img src="${doctorImg}" class="card-img-top" alt="${altDoctorImg}">
                         </div>
                         <div class="infoContainer">
-                            <div class="card-body">
                                 <h5 class="card-title">${doctor.firstName} ${doctor.lastName}</h5>
                                 <div class="chipsContainer">
                                     <div class="card-text">${specialties}:</div>
@@ -202,41 +202,40 @@
                                         </div>
                                     </c:otherwise>
                                 </c:choose>
-                            </div>
 
-                            <c:if test="${canBook}">
-                                <div class="buttonsContainer">
-                                    <a class="btn btn-primary"
-                                       onclick="checkInsurance(
-                                               '${detailedUrl}',
-                                               [<c:forEach items="${doctor.healthInsurances}" var="healthInsurance"
-                                                           varStatus="status">
-                                           ${healthInsurance.ordinal()}${status.last ? "" : ", "}
-                                       </c:forEach>])">
-                                            ${book}
-                                    </a>
-                                </div>
-                                <div class="modal fade" id="modal" tabindex="-1" role="dialog"
-                                     aria-labelledby="modalLabel"
-                                     aria-hidden="true">
-                                    <div class="modal-dialog" role="dialog">
-                                        <div class="modal-content">
-                                            <div class="modal-header">
-                                                <h5 class="modal-title" id="modalLabel">${modalTitle}</h5>
-                                            </div>
-                                            <div class="modal-body">
-                                                    ${modalDesc}
-                                            </div>
-                                            <div class="modal-footer">
-                                                <button type="button" class="btn btn-danger"
-                                                        onclick="closeModal()">${modalDeny}</button>
-                                                <a type="button" id="modal-href"
-                                                   class="btn btn-primary">${modalConfirm}</a>
+                                <c:if test="${canBook}">
+                                    <div class="buttonsContainer">
+                                        <a class="btn btn-primary"
+                                           onclick="checkInsurance(
+                                                   '${detailedUrl}',
+                                                   [<c:forEach items="${doctor.healthInsurances}" var="healthInsurance"
+                                                               varStatus="status">
+                                               ${healthInsurance.ordinal()}${status.last ? "" : ", "}
+                                           </c:forEach>])">
+                                                ${book}
+                                        </a>
+                                    </div>
+                                    <div class="modal fade" id="modal" tabindex="-1" role="dialog"
+                                         aria-labelledby="modalLabel"
+                                         aria-hidden="true">
+                                        <div class="modal-dialog" role="dialog">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title" id="modalLabel">${modalTitle}</h5>
+                                                </div>
+                                                <div class="modal-body">
+                                                        ${modalDesc}
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-danger"
+                                                            onclick="closeModal()">${modalDeny}</button>
+                                                    <a type="button" id="modal-href"
+                                                       class="btn btn-primary">${modalConfirm}</a>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
-                                </div>
-                            </c:if>
+                                </c:if>
                         </div>
                     </div>
 

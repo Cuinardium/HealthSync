@@ -26,11 +26,13 @@
     background: #f1f1f1;
     width: 22.3%;
     padding: 1rem;
+    margin: 1rem;
 }
 
 .discoveryContainer {
     flex: 1;
     overflow-y: scroll;
+    padding: 1rem 3rem;
 }
 
 .cardsContainer {
@@ -46,7 +48,6 @@
     padding: 0 15px;
     margin: 1%;
     font-size: medium;
-    height: 2rem;
     border-radius: 25px;
     background-color: #f1f1f1;
     transform: rotate(0);
@@ -69,7 +70,7 @@ a.stretched-link:hover {
     background: #223E6A;
 }
 
-.card {
+.cardsContainer .card {
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
@@ -83,18 +84,20 @@ a.stretched-link:hover {
 }
 
 .infoContainer {
+    display: flex;
+    flex-direction: column;
     flex: 1;
+    padding: 10px;
+    height: 15rem;
 }
 
 .buttonsContainer {
     display: flex;
     flex-direction: row;
     justify-content: end;
-    align-items: start;
-}
-
-.buttonsContainer a {
-    margin-right: 5px;
+    align-items: end;
+    justify-self: end;
+    margin-top: auto;
 }
 
 .noDoctorsMsg {
@@ -107,6 +110,7 @@ a.stretched-link:hover {
     flex-direction: row;
     justify-content: start;
     align-items: center;
+    margin-top: 1%;
 }
 
 .ratingCount {

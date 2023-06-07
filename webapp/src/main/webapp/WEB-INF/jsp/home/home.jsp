@@ -30,6 +30,12 @@
 <spring:message code="home.description3" var="description3"/>
 <spring:message code="home.categories" var="categories"/>
 
+<!-- Alt img text -->
+<spring:message code="home.alt.homeDoctorImg" var="altHomeDoctorImg"/>
+<spring:message code="home.alt.circle1" var="altCircle1"/>
+<spring:message code="home.alt.circle2" var="altCircle2"/>
+<spring:message code="home.alt.circle3" var="altCircle3"/>
+
 <html>
 <head>
     <title>${title}</title>
@@ -51,7 +57,7 @@
         </div>
     </div>
     <div class="profile">
-        <img class="profile-img" src="${homeDoctorImg}" alt="..."/>
+        <img class="profile-img" src="${homeDoctorImg}" alt="${altHomeDoctorImg}"/>
     </div>
 </div>
 
@@ -63,14 +69,15 @@
         </a>
         <div class="carousel-inner" role="listbox">
             <c:forEach items="${featuredSpecialties}" var="specialty" varStatus="status">
-                <c:url value="/img/specialty-${specialty.ordinal()}.jpg" var="img"/>
-                <spring:message code="${specialty.messageID}" var="name"/>
+                <c:url value="/img/specialty-${specialty.ordinal()}.jpg" var="specialistImg"/>
+                <spring:message code="${specialty.messageID}" var="specialtyName"/>
+                <spring:message code="home.alt.specialistImg" arguments="${specialtyName.toLowerCase()}" var="altSpecialistImg"/>
                 <div class="carousel-item ${status.first ? 'active' : ''}">
                     <div class="card">
                         <div class="card-img">
-                            <img src="${img}" class="img-fluid">
+                            <img src="${specialistImg}" class="img-fluid" alt="${altSpecialistImg}">
                         </div>
-                        <div class="card-img-overlay">${name.toLowerCase()}</div>
+                        <div class="card-img-overlay">${specialtyName.toLowerCase()}</div>
                         <a href="${doctorDashboardFilteredUrl}${specialty.ordinal()}" class="stretched-link"></a>
                     </div>
                 </div>
@@ -84,17 +91,17 @@
 
 <section class="about generalPadding border-top">
     <div class="aboutCircleContainer">
-        <img class="circles" src="${circle1}" alt="..."/>
+        <img class="circles" src="${circle1}" alt="${altCircle1}"/>
         <h3>${circleText1}</h3>
         <p>${description1}</p>
     </div>
     <div class="aboutCircleContainer">
-        <img class="circles" src="${circle2}" alt="..."/>
+        <img class="circles" src="${circle2}" alt="${altCircle2}"/>
         <h3>${circleText2}</h3>
         <p>${description2}</p>
     </div>
     <div class="aboutCircleContainer">
-        <img class="circles" src="${circle3}" alt="..."/>
+        <img class="circles" src="${circle3}" alt="${altCircle3}"/>
         <h3>${circleText3}</h3>
         <p>${description3}</p>
     </div>

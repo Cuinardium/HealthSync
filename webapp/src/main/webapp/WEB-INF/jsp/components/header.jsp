@@ -27,6 +27,9 @@
 <spring:message code="header.profile" var="profile"/>
 <spring:message code="header.logout" var="logout"/>
 
+<!-- ALT img text -->
+<spring:message code="user.alt.loggedUserImg" var="altLoggedUserImg"/>
+
 <html>
 <head>
     <link href="${mainCss}" rel="stylesheet"/>
@@ -36,7 +39,7 @@
 <header class="horizontalPadding border-bottom">
     <div class="head">
         <a class="title navbar-brand" href="${homeUrl}">
-            <img src="${logo}" alt="logo" class="logo">
+            <img src="${logo}" alt="HealthSync logo" class="logo">
             <div class="health title">Health</div>
             <div class="sync title">Sync</div>
         </a>
@@ -64,8 +67,8 @@
                             <li class="nav-item dropdown">
                                 <a class="nav-link dropdown-toggle" href="" role="button" data-bs-toggle="dropdown"
                                    aria-haspopup="true" aria-expanded="false">
-                                    <c:url value="/img/${user.getImage() == null ? (isDoctor ?\"doctorDefault.png\":\"userDefault.png\") : user.getImage().getImageId()}" var="userImg"/>
-                                    <img src="${userImg}" width="40" height="40"
+                                    <c:url value="/img/${user.image == null ? (isDoctor ?\"doctorDefault.png\":\"patientDefault.png\") : user.image.imageId}" var="loggedUserImg"/>
+                                    <img src="${loggedUserImg}" alt="${altLoggedUserImg}" width="40" height="40"
                                          class="rounded-circle">
                                 </a>
                                 <ul class="dropdown-menu">
