@@ -43,7 +43,7 @@
     <div class="card">
         <div class="profileContainer">
             <div class="profileImageContainer">
-                <c:url value="/img/${patient.profilePictureId == null ? \"userDefault.png\" : patient.profilePictureId}" var="userImg"/>
+                <c:url value="/img/${patient.image == null ? \"userDefault.png\" : patient.image.imageId}" var="userImg"/>
                 <img src="${userImg}" width="200" height="200" class="rounded-circle">
             </div>
             <div class="profileData">
