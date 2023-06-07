@@ -28,7 +28,7 @@ public interface PatientService {
       String lastName,
       HealthInsurance healthInsurance,
       Image image)
-      throws UserNotFoundException;
+      throws EmailInUseException, UserNotFoundException;
 
   // =============== Queries ===============
 

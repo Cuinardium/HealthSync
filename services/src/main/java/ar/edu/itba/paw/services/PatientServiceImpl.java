@@ -1,6 +1,7 @@
 package ar.edu.itba.paw.services;
 
 import ar.edu.itba.paw.interfaces.persistence.PatientDao;
+import ar.edu.itba.paw.interfaces.persistence.exceptions.EmailAlreadyExistsException;
 import ar.edu.itba.paw.interfaces.persistence.exceptions.PatientAlreadyExistsException;
 import ar.edu.itba.paw.interfaces.persistence.exceptions.PatientNotFoundException;
 import ar.edu.itba.paw.interfaces.services.PatientService;
@@ -62,6 +63,8 @@ public class PatientServiceImpl implements PatientService {
       return patient;
     } catch (PatientAlreadyExistsException e) {
       throw new IllegalStateException();
+    } catch (EmailAlreadyExistsException e) {
+      throw new EmailInUseException();
     }
   }
 
@@ -76,13 +79,15 @@ public class PatientServiceImpl implements PatientService {
       String lastName,
       HealthInsurance healthInsurance,
       Image image)
-      throws UserNotFoundException {
+      throws UserNotFoundException, EmailInUseException {
 
     try {
       userService.updateUser(patientId, email, firstName, lastName, image);
       return patientDao.updatePatientInfo(patientId, healthInsurance);
     } catch (PatientNotFoundException e) {
       throw new RuntimeException();
+    } catch (EmailAlreadyExistsException e) {
+      throw new EmailInUseException();
     }
   }
 

@@ -2,6 +2,7 @@ package ar.edu.itba.paw.persistence;
 
 import static org.junit.Assert.assertThrows;
 
+import ar.edu.itba.paw.interfaces.persistence.exceptions.EmailAlreadyExistsException;
 import ar.edu.itba.paw.interfaces.persistence.exceptions.PatientAlreadyExistsException;
 import ar.edu.itba.paw.interfaces.persistence.exceptions.PatientNotFoundException;
 import ar.edu.itba.paw.models.HealthInsurance;
@@ -58,7 +59,7 @@ public class PatientDaoImplTest {
   private static final Patient AUX_PATIENT =
       new Patient(
           AUX_PATIENT_ID,
-          AUX_PATIENT_EMAIL,
+          INSERTED_PATIENT_EMAIL,
           AUX_PATIENT_PASSWORD,
           AUX_PATIENT_FIRST_NAME,
           AUX_PATIENT_LAST_NAME,
@@ -80,7 +81,8 @@ public class PatientDaoImplTest {
 
   // TODO: ADDRESS COLLITION ON EMAIL
   @Test
-  public void testCreatePatient() throws PatientAlreadyExistsException {
+  public void testCreatePatient()
+      throws PatientAlreadyExistsException, EmailAlreadyExistsException {
     // 1. Precondiciones
     // 2. Ejercitar la class under test
     Patient patient =
@@ -118,7 +120,15 @@ public class PatientDaoImplTest {
   }
 
   @Test
-  public void testUpdatePatientInfo() throws PatientNotFoundException {
+  public void testCreatePatientEmailAlreadyExists() {
+    // 1. Precondiciones
+    // 2. Ejercitar la class under test
+    assertThrows(EmailAlreadyExistsException.class, () -> patientDao.createPatient(AUX_PATIENT));
+    // 3. Meaningful assertions
+  }
+
+  @Test
+  public void testUpdatePatientInfo() throws PatientNotFoundException, EmailAlreadyExistsException {
     // 1. Precondiciones
     // 2. Ejercitar la class under test
     Patient patient =

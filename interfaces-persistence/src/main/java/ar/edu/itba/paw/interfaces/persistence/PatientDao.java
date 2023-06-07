@@ -1,5 +1,6 @@
 package ar.edu.itba.paw.interfaces.persistence;
 
+import ar.edu.itba.paw.interfaces.persistence.exceptions.EmailAlreadyExistsException;
 import ar.edu.itba.paw.interfaces.persistence.exceptions.PatientAlreadyExistsException;
 import ar.edu.itba.paw.interfaces.persistence.exceptions.PatientNotFoundException;
 import ar.edu.itba.paw.models.HealthInsurance;
@@ -11,12 +12,12 @@ public interface PatientDao {
   // =============== Inserts ===============
 
   public Patient createPatient(Patient patient)
-      throws PatientAlreadyExistsException, IllegalStateException;
+      throws PatientAlreadyExistsException, EmailAlreadyExistsException;
 
   // =============== Updates ===============
 
   public Patient updatePatientInfo(long patientId, HealthInsurance healthInsurance)
-      throws PatientNotFoundException;
+      throws PatientNotFoundException, EmailAlreadyExistsException;
 
   // =============== Queries ===============
 

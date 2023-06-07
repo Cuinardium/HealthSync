@@ -1,9 +1,9 @@
 package ar.edu.itba.paw.webapp.controller;
 
 import ar.edu.itba.paw.interfaces.services.DoctorService;
-import ar.edu.itba.paw.interfaces.services.ImageService;
 import ar.edu.itba.paw.interfaces.services.PatientService;
 import ar.edu.itba.paw.interfaces.services.UserService;
+import ar.edu.itba.paw.interfaces.services.exceptions.EmailInUseException;
 import ar.edu.itba.paw.models.*;
 import ar.edu.itba.paw.webapp.auth.PawAuthUserDetails;
 import ar.edu.itba.paw.webapp.exceptions.UserNotFoundException;
@@ -50,9 +50,9 @@ public class ProfileController {
   @RequestMapping(value = "/patient-profile", method = RequestMethod.GET)
   public ModelAndView patientProfile() {
     Patient patient =
-            patientService
-                    .getPatientById(PawAuthUserDetails.getCurrentUserId())
-                    .orElseThrow(UserNotFoundException::new);
+        patientService
+            .getPatientById(PawAuthUserDetails.getCurrentUserId())
+            .orElseThrow(UserNotFoundException::new);
 
     final ModelAndView mav = new ModelAndView("user/patientProfile");
     mav.addObject("patient", patient);
@@ -60,12 +60,13 @@ public class ProfileController {
     LOGGER.debug("Patient profile page requested");
     return mav;
   }
+
   @RequestMapping(value = "/doctor-profile", method = RequestMethod.GET)
   public ModelAndView doctorProfile() {
     Doctor doctor =
-            doctorService
-                    .getDoctorById(PawAuthUserDetails.getCurrentUserId())
-                    .orElseThrow(UserNotFoundException::new);
+        doctorService
+            .getDoctorById(PawAuthUserDetails.getCurrentUserId())
+            .orElseThrow(UserNotFoundException::new);
 
     final ModelAndView mav = new ModelAndView("user/doctorProfile");
 
@@ -187,7 +188,7 @@ public class ProfileController {
       final BindingResult errors) {
     if (errors.hasErrors()) {
       LOGGER.warn("Failed to edit patient due to form errors");
-      return patientEdit(patientEditForm);
+      return patientEdit(patientEditForm, false);
     }
 
     // Q: static fromMultiPartFile method
@@ -214,6 +215,8 @@ public class ProfileController {
     } catch (ar.edu.itba.paw.interfaces.services.exceptions.UserNotFoundException e) {
       LOGGER.error("Failed to update patient because patient does not exist");
       throw new UserNotFoundException();
+    } catch (EmailInUseException e) {
+      return patientEdit(patientEditForm, true);
     }
 
     final ModelAndView mav = new ModelAndView("user/patientEdit");
@@ -225,8 +228,8 @@ public class ProfileController {
 
   @RequestMapping(value = "/patient-edit", method = RequestMethod.GET)
   public ModelAndView patientEdit(
-      @ModelAttribute("patientEditForm") final PatientEditForm patientEditForm) {
-
+      @ModelAttribute("patientEditForm") final PatientEditForm patientEditForm,
+      Boolean emailAlreadyInUse) {
     Patient patient =
         patientService
             .getPatientById(PawAuthUserDetails.getCurrentUserId())
@@ -238,6 +241,7 @@ public class ProfileController {
     patientEditForm.setHealthInsuranceCode(patient.getHealthInsurance().ordinal());
 
     final ModelAndView mav = new ModelAndView("user/patientEdit");
+    mav.addObject("emailAlreadyInUse", emailAlreadyInUse);
     mav.addObject("form", patientEditForm);
     mav.addObject("showModal", false);
     mav.addObject("healthInsurances", Arrays.asList(HealthInsurance.values()));
