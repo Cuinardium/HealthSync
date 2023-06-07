@@ -1,3 +1,7 @@
+body {
+    overflow: hidden;
+}
+
 .dashboardContainer {
     display: flex;
     flex-direction: row;
@@ -110,7 +114,6 @@ a.stretched-link:hover {
     flex-direction: row;
     justify-content: start;
     align-items: center;
-    margin-top: 1%;
 }
 
 .ratingCount {
