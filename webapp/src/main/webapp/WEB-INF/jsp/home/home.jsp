@@ -69,7 +69,7 @@
         </a>
         <div class="carousel-inner" role="listbox">
             <c:forEach items="${featuredSpecialties}" var="specialty" varStatus="status">
-                <c:url value="/img/specialty-${specialty.ordinal()}.jpg" var="specialistImg"/>
+                <c:url value="/img/carousel/${specialty.name().toLowerCase()}.jpg" var="specialistImg"/>
                 <spring:message code="${specialty.messageID}" var="specialtyName"/>
                 <spring:message code="home.alt.specialistImg" arguments="${specialtyName.toLowerCase()}" var="altSpecialistImg"/>
                 <div class="carousel-item ${status.first ? 'active' : ''}">
