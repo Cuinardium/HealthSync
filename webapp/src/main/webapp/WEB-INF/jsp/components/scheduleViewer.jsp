@@ -4,7 +4,7 @@
 
 <jsp:useBean id="timeEnumValues" scope="request" type="ar.edu.itba.paw.models.ThirtyMinuteBlock[]"/>
 <jsp:useBean id="dayEnumValues" scope="request" type="java.time.DayOfWeek[]"/>
-<jsp:useBean id="selectedAttendingHours" scope="request" type="ar.edu.itba.paw.models.AttendingHours"/>
+<jsp:useBean id="selectedAttendingHours" scope="request" type="java.util.Set<ar.edu.itba.paw.models.AttendingHours>"/>
 
 <spring:message code="day.monday" var="monday"/>
 <spring:message code="day.tuesday" var="tuesday"/>
@@ -29,24 +29,12 @@
 <body>
 
 <c:set value="${16}" var="minAttendingHour"/>
-<c:forEach items="${dayEnumValues}" var="day" varStatus="status">
-    <c:if test="${selectedAttendingHours.getAttendingBlocksForDay(day).size() > 0}">
-        <c:set value="${minAttendingHour <= selectedAttendingHours.getAttendingBlocksForDay(day).get(0).ordinal() ?
-                                        minAttendingHour
-                                      : selectedAttendingHours.getAttendingBlocksForDay(day).get(0).ordinal()}"
-               var="minAttendingHour"/>
-    </c:if>
+<c:set value="${35}" var="maxAttendingHour"/>
+<c:forEach items="${selectedAttendingHours}" var="attendingHour">
+    <c:set value="${minAttendingHour <= attendingHour.hourBlock.ordinal() ? minAttendingHour : attendingHour.hourBlock.ordinal()}" var="minAttendingHour"/>
+    <c:set value="${maxAttendingHour >= attendingHour.hourBlock.ordinal() ? maxAttendingHour : attendingHour.hourBlock.ordinal()}" var="maxAttendingHour"/>
 </c:forEach>
 
-<c:set value="${35}" var="maxAttendingHour"/>
-<c:forEach items="${dayEnumValues}" var="day" varStatus="status">
-    <c:if test="${selectedAttendingHours.getAttendingBlocksForDay(day).size() > 0}">
-        <c:set value="${maxAttendingHour >= selectedAttendingHours.getAttendingBlocksForDay(day).get(selectedAttendingHours.getAttendingBlocksForDay(day).size() - 1).ordinal() ?
-                                        maxAttendingHour
-                                      : selectedAttendingHours.getAttendingBlocksForDay(day).get(selectedAttendingHours.getAttendingBlocksForDay(day).size() - 1).ordinal()}"
-               var="maxAttendingHour"/>
-    </c:if>
-</c:forEach>
 
 <div class="scheduleContainer">
     <div class="timeLabelContainer">
@@ -61,8 +49,15 @@
     <div class="daySchedule">
         <div class="scheduleTitle">${monday}</div>
         <c:forEach items="${timeEnumValues}" var="block" varStatus="status">
+            <c:set value="${false}" var="doctorAttends"/>
+            <c:forEach items="${selectedAttendingHours}" var="attendingHour">
+                <c:if test="${attendingHour.day == dayEnumValues[0] && attendingHour.hourBlock == block}">
+                    <c:set value="${true}" var="doctorAttends"/>
+                </c:if>
+            </c:forEach>
+                
             <div data-index="${status.index}"
-                 class="timeBlock ${selectedAttendingHours.getAttendingBlocksForDay(dayEnumValues[0]).contains(block) ? "selected" : "unselected" } ${status.index < minAttendingHour || status.index > maxAttendingHour ? "hidden" : ""}">
+                 class="timeBlock ${doctorAttends ? "selected" : "unselected" } ${status.index < minAttendingHour || status.index > maxAttendingHour ? "hidden" : ""}">
                 &nbsp;
             </div>
         </c:forEach>
@@ -70,8 +65,15 @@
     <div class="daySchedule">
         <div class="scheduleTitle">${tuesday}</div>
         <c:forEach items="${timeEnumValues}" var="block" varStatus="status">
+            <c:set value="${false}" var="doctorAttends"/>
+            <c:forEach items="${selectedAttendingHours}" var="attendingHour">
+                <c:if test="${attendingHour.day == dayEnumValues[1] && attendingHour.hourBlock == block}">
+                    <c:set value="${true}" var="doctorAttends"/>
+                </c:if>
+            </c:forEach>
+
             <div data-index="${status.index}"
-                 class="timeBlock ${selectedAttendingHours.getAttendingBlocksForDay(dayEnumValues[1]).contains(block) ? "selected" : "unselected" } ${status.index < minAttendingHour || status.index > maxAttendingHour ? "hidden" : ""}">
+                 class="timeBlock ${doctorAttends ? "selected" : "unselected" } ${status.index < minAttendingHour || status.index > maxAttendingHour ? "hidden" : ""}">
                 &nbsp;
             </div>
         </c:forEach>
@@ -79,8 +81,15 @@
     <div class="daySchedule">
         <div class="scheduleTitle">${wednesday}</div>
         <c:forEach items="${timeEnumValues}" var="block" varStatus="status">
+            <c:set value="${false}" var="doctorAttends"/>
+            <c:forEach items="${selectedAttendingHours}" var="attendingHour">
+                <c:if test="${attendingHour.day == dayEnumValues[2] && attendingHour.hourBlock == block}">
+                    <c:set value="${true}" var="doctorAttends"/>
+                </c:if>
+            </c:forEach>
+
             <div data-index="${status.index}"
-                 class="timeBlock ${selectedAttendingHours.getAttendingBlocksForDay(dayEnumValues[2]).contains(block) ? "selected" : "unselected" } ${status.index < minAttendingHour || status.index > maxAttendingHour ? "hidden" : ""}">
+                 class="timeBlock ${doctorAttends ? "selected" : "unselected" } ${status.index < minAttendingHour || status.index > maxAttendingHour ? "hidden" : ""}">
                 &nbsp;
             </div>
         </c:forEach>
@@ -88,8 +97,15 @@
     <div class="daySchedule">
         <div class="scheduleTitle">${thursday}</div>
         <c:forEach items="${timeEnumValues}" var="block" varStatus="status">
+            <c:set value="${false}" var="doctorAttends"/>
+            <c:forEach items="${selectedAttendingHours}" var="attendingHour">
+                <c:if test="${attendingHour.day == dayEnumValues[3] && attendingHour.hourBlock == block}">
+                    <c:set value="${true}" var="doctorAttends"/>
+                </c:if>
+            </c:forEach>
+
             <div data-index="${status.index}"
-                 class="timeBlock ${selectedAttendingHours.getAttendingBlocksForDay(dayEnumValues[3]).contains(block) ? "selected" : "unselected" } ${status.index < minAttendingHour || status.index > maxAttendingHour ? "hidden" : ""}">
+                 class="timeBlock ${doctorAttends ? "selected" : "unselected" } ${status.index < minAttendingHour || status.index > maxAttendingHour ? "hidden" : ""}">
                 &nbsp;
             </div>
         </c:forEach>
@@ -97,18 +113,39 @@
     <div class="daySchedule">
         <div class="scheduleTitle">${friday}</div>
         <c:forEach items="${timeEnumValues}" var="block" varStatus="status">
+            <c:set value="${false}" var="doctorAttends"/>
+            <c:forEach items="${selectedAttendingHours}" var="attendingHour">
+                <c:if test="${attendingHour.day == dayEnumValues[4] && attendingHour.hourBlock == block}">
+                    <c:set value="${true}" var="doctorAttends"/>
+                </c:if>
+            </c:forEach>
+
             <div data-index="${status.index}"
-                 class="timeBlock ${selectedAttendingHours.getAttendingBlocksForDay(dayEnumValues[4]).contains(block) ? "selected" : "unselected" } ${status.index < minAttendingHour || status.index > maxAttendingHour ? "hidden" : ""}">
+                 class="timeBlock ${doctorAttends ? "selected" : "unselected" } ${status.index < minAttendingHour || status.index > maxAttendingHour ? "hidden" : ""}">
                 &nbsp;
             </div>
         </c:forEach>
     </div>
-    <c:set value="${selectedAttendingHours.getAttendingBlocksForDay(dayEnumValues[5]).isEmpty() && selectedAttendingHours.getAttendingBlocksForDay(dayEnumValues[6]).isEmpty()}" var="weekendEmpty"/>
+
+    <c:set value="${true}" var="weekendEmpty"/>
+    <c:forEach items="${selectedAttendingHours}" var="attendingHour">
+        <c:if test="${attendingHour.day == dayEnumValues[5] || attendingHour.day == dayEnumValues[6]}">
+            <c:set value="${false}" var="weekendEmpty"/>
+        </c:if>
+    </c:forEach>
+
     <div class="daySchedule ${weekendEmpty ? 'hidden' : ''}">
         <div class="scheduleTitle">${saturday}</div>
         <c:forEach items="${timeEnumValues}" var="block" varStatus="status">
+            <c:set value="${false}" var="doctorAttends"/>
+            <c:forEach items="${selectedAttendingHours}" var="attendingHour">
+                <c:if test="${attendingHour.day == dayEnumValues[5] && attendingHour.hourBlock == block}">
+                    <c:set value="${true}" var="doctorAttends"/>
+                </c:if>
+            </c:forEach>
+
             <div data-index="${status.index}"
-                 class="timeBlock ${selectedAttendingHours.getAttendingBlocksForDay(dayEnumValues[5]).contains(block) ? "selected" : "unselected" } ${status.index < minAttendingHour || status.index > maxAttendingHour ? "hidden" : ""}">
+                 class="timeBlock ${doctorAttends ? "selected" : "unselected" } ${status.index < minAttendingHour || status.index > maxAttendingHour ? "hidden" : ""}">
                 &nbsp;
             </div>
         </c:forEach>
@@ -116,8 +153,15 @@
     <div class="daySchedule ${weekendEmpty ? 'hidden' : ''}">
         <div class="scheduleTitle">${sunday}</div>
         <c:forEach items="${timeEnumValues}" var="block" varStatus="status">
+            <c:set value="${false}" var="doctorAttends"/>
+            <c:forEach items="${selectedAttendingHours}" var="attendingHour">
+                <c:if test="${attendingHour.day == dayEnumValues[6] && attendingHour.hourBlock == block}">
+                    <c:set value="${true}" var="doctorAttends"/>
+                </c:if>
+            </c:forEach>
+
             <div data-index="${status.index}"
-                 class="timeBlock ${selectedAttendingHours.getAttendingBlocksForDay(dayEnumValues[6]).contains(block) ? "selected" : "unselected" } ${status.index < minAttendingHour || status.index > maxAttendingHour ? "hidden" : ""}">
+                 class="timeBlock ${doctorAttends ? "selected" : "unselected" } ${status.index < minAttendingHour || status.index > maxAttendingHour ? "hidden" : ""}">
                 &nbsp;
             </div>
         </c:forEach>
