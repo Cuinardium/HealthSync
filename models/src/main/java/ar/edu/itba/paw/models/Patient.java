@@ -31,6 +31,17 @@ public class Patient extends User {
     this.healthInsurance = healthInsurance;
   }
 
+  public Patient(Builder builder) {
+    super(
+        builder.id,
+        builder.email,
+        builder.password,
+        builder.firstName,
+        builder.lastName,
+        builder.image);
+    this.healthInsurance = builder.healthInsurance;
+  }
+
   public HealthInsurance getHealthInsurance() {
     return healthInsurance;
   }
@@ -42,5 +53,42 @@ public class Patient extends User {
   @Override
   public String toString() {
     return "Patient [healthInsurance=" + healthInsurance + " " + super.toString() + "]";
+  }
+
+  public static class Builder {
+    // required
+    private String email, password, firstName, lastName;
+    private HealthInsurance healthInsurance;
+
+    // default
+    private Long id = null;
+    private Image image = null;
+
+    public Builder(
+        String email,
+        String password,
+        String firstName,
+        String lastName,
+        HealthInsurance healthInsurance) {
+      this.email = email;
+      this.password = password;
+      this.firstName = firstName;
+      this.lastName = lastName;
+      this.healthInsurance = healthInsurance;
+    }
+
+    Builder id(long id) {
+      this.id = id;
+      return this;
+    }
+
+    Builder image(Image image) {
+      this.image = image;
+      return this;
+    }
+
+    public Patient build() {
+      return new Patient(this);
+    }
   }
 }
