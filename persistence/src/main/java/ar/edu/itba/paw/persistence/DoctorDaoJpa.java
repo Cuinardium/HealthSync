@@ -1,6 +1,7 @@
 package ar.edu.itba.paw.persistence;
 
 import ar.edu.itba.paw.interfaces.persistence.DoctorDao;
+import ar.edu.itba.paw.interfaces.persistence.UserDao;
 import ar.edu.itba.paw.interfaces.persistence.exceptions.DoctorAlreadyExistsException;
 import ar.edu.itba.paw.interfaces.persistence.exceptions.DoctorNotFoundException;
 import ar.edu.itba.paw.interfaces.persistence.exceptions.EmailAlreadyExistsException;
@@ -15,12 +16,20 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 @Repository
 public class DoctorDaoJpa implements DoctorDao {
 
   @PersistenceContext private EntityManager em;
+
+  private final UserDao userDao;
+
+  @Autowired
+  public DoctorDaoJpa(final UserDao userDao) {
+    this.userDao = userDao;
+  }
 
   @Override
   public Doctor createDoctor(Doctor doctor)
@@ -29,6 +38,11 @@ public class DoctorDaoJpa implements DoctorDao {
     if (doctor.getId() != null && getDoctorById(doctor.getId()).isPresent()) {
       throw new DoctorAlreadyExistsException();
     }
+
+    if (userDao.getUserByEmail(doctor.getEmail()).isPresent()) {
+      throw new EmailAlreadyExistsException();
+    }
+
     mapAttendingHours(doctor);
     em.persist(doctor);
     return doctor;

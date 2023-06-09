@@ -32,6 +32,11 @@ public class UserDaoJpa implements UserDao {
       long userId, String email, String firstName, String lastName, Image image)
       throws UserNotFoundException, EmailAlreadyExistsException {
     User user = getUserById(userId).orElseThrow(UserNotFoundException::new);
+
+    if (getUserByEmail(email).isPresent() && !user.getEmail().equals(email)) {
+      throw new EmailAlreadyExistsException();
+    }
+
     user.setEmail(email);
     user.setFirstName(firstName);
     user.setLastName(lastName);

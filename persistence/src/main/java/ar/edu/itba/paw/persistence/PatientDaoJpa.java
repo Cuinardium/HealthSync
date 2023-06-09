@@ -10,12 +10,19 @@ import ar.edu.itba.paw.models.Patient;
 import java.util.Optional;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 @Repository
 public class PatientDaoJpa implements PatientDao {
 
   @PersistenceContext private EntityManager em;
+  private final UserDao userDao;
+
+  @Autowired
+  public PatientDaoJpa(UserDao userDao) {
+    this.userDao = userDao;
+  }
 
   @Override
   public Patient createPatient(Patient patient)
@@ -25,12 +32,12 @@ public class PatientDaoJpa implements PatientDao {
       throw new PatientAlreadyExistsException();
     }
 
-    try {
-      em.persist(patient);
-      return patient;
-    } catch (PersistenceException e) {
+    if (userDao.getUserByEmail(patient.getEmail()).isPresent()) {
       throw new EmailAlreadyExistsException();
     }
+
+    em.persist(patient);
+    return patient;
   }
 
   @Override
