@@ -1,40 +1,104 @@
 package ar.edu.itba.paw.models;
 
+import java.time.DayOfWeek;
+import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+import javax.persistence.*;
+import org.hibernate.annotations.Formula;
 
+@Entity
+@Table(name = "doctor")
+@PrimaryKeyJoinColumn(name = "doctor_id", referencedColumnName = "user_id")
 public class Doctor extends User {
+  @Enumerated(EnumType.ORDINAL)
+  @ElementCollection(fetch = FetchType.LAZY, targetClass = HealthInsurance.class)
+  @JoinTable(
+    name = "health_insurance_accepted_by_doctor",
+    joinColumns = @JoinColumn(name = "doctor_id")
+  )
+  @Column(name = "health_insurance_code", nullable = false)
+  private Set<HealthInsurance> healthInsurances;
 
-  private final List<HealthInsurance> healthInsurances;
-  private final Specialty specialty;
-  private final Location location;
-  private final AttendingHours attendingHours;
-  private final Float rating;
-  private final Integer ratingCount;
+  @Enumerated(EnumType.ORDINAL)
+  @Column(name = "specialty_code", nullable = false)
+  private Specialty specialty;
+
+  @Enumerated(EnumType.ORDINAL)
+  @Column(name = "city_code", nullable = false)
+  private City city;
+
+  @Column(name = "address", nullable = false)
+  private String address;
+
+  @OneToMany(
+    mappedBy = "doctor",
+    fetch = FetchType.LAZY,
+    cascade = CascadeType.ALL,
+    orphanRemoval = true
+  )
+  private Set<AttendingHours> attendingHours;
+
+  @OneToMany(
+    mappedBy = "doctor",
+    fetch = FetchType.LAZY,
+    cascade = CascadeType.ALL,
+    orphanRemoval = true
+  )
+  private List<Review> reviews;
+
+  @Formula("(SELECT AVG(r.rating) FROM Review r WHERE r.doctor_id = doctor_id)")
+  private Float rating;
+
+  @Formula("(SELECT count(*) FROM Review r WHERE r.doctor_id = doctor_id)")
+  private Integer ratingCount;
+
+  protected Doctor() {
+    // Solo para hibernate
+  }
 
   public Doctor(
-      long id,
+      Long id,
       String email,
       String password,
       String firstName,
       String lastName,
-      Long pfpId,
-      List<HealthInsurance> healthInsurances,
+      Image image,
+      Set<HealthInsurance> healthInsurances,
       Specialty specialty,
-      Location location,
-      AttendingHours attendingHours,
+      City city,
+      String address,
+      Set<AttendingHours> attendingHours,
+      List<Review> reviews,
       Float rating,
       Integer ratingCount) {
-    super(id, email, password, firstName, lastName, pfpId);
+    super(id, email, password, firstName, lastName, image);
     this.healthInsurances = healthInsurances;
     this.specialty = specialty;
-    this.location = location;
+    this.city = city;
+    this.address = address;
     this.attendingHours = attendingHours;
+    this.reviews = reviews;
     this.rating = rating;
     this.ratingCount = ratingCount;
   }
 
+  public List<ThirtyMinuteBlock> getAttendingBlocksForDay(DayOfWeek day) {
+    return attendingHours
+        .stream()
+        .filter(attendingDays -> attendingDays.getId().getDay().equals(day))
+        .map(AttendingHours::getHourBlock)
+        .collect(Collectors.toCollection(ArrayList::new));
+  }
+
+  public List<ThirtyMinuteBlock> getAttendingBlocksForDate(LocalDate date) {
+    return getAttendingBlocksForDay(date.getDayOfWeek());
+  }
+
   // Getters
-  public List<HealthInsurance> getHealthInsurances() {
+  public Set<HealthInsurance> getHealthInsurances() {
     return healthInsurances;
   }
 
@@ -42,11 +106,7 @@ public class Doctor extends User {
     return specialty;
   }
 
-  public Location getLocation() {
-    return location;
-  }
-
-  public AttendingHours getAttendingHours() {
+  public Set<AttendingHours> getAttendingHours() {
     return attendingHours;
   }
 
@@ -58,30 +118,68 @@ public class Doctor extends User {
     return ratingCount;
   }
 
-  @Override
-  public String toString() {
-    return "Doctor [healthInsurances="
-        + healthInsurances
-        + ", specialty="
-        + specialty
-        + ", location="
-        + location
-        + ", attendingHours="
-        + attendingHours
-        + " "
-        + super.toString()
-        + "]";
+  public void setHealthInsurances(Set<HealthInsurance> healthInsurances) {
+    this.healthInsurances = healthInsurances;
+  }
+
+  public void setSpecialty(Specialty specialty) {
+    this.specialty = specialty;
+  }
+
+  public void setAttendingHours(Set<AttendingHours> attendingHours) {
+    this.attendingHours.clear();
+    this.attendingHours.addAll(attendingHours);
+  }
+
+  public void setRating(Float rating) {
+    this.rating = rating;
+  }
+
+  public void setRatingCount(Integer ratingCount) {
+    this.ratingCount = ratingCount;
+  }
+
+  public List<Review> getReviews() {
+    return reviews;
+  }
+
+  public void setReviews(List<Review> reviews) {
+    this.reviews.clear();
+    this.reviews.addAll(reviews);
+  }
+
+  public City getCity() {
+    return city;
+  }
+
+  public void setCity(City city) {
+    this.city = city;
+  }
+
+  public String getAddress() {
+    return address;
+  }
+
+  public void setAddress(String address) {
+    this.address = address;
   }
 
   @Override
-  public boolean equals(Object obj) {
-    if (this == obj) return true;
-    if (!(obj instanceof Doctor)) return false;
-    Doctor other = (Doctor) obj;
-    return super.equals(other)
-        && healthInsurances.equals(other.healthInsurances)
-        && specialty.equals(other.specialty)
-        && location.equals(other.location)
-        && attendingHours.equals(other.attendingHours);
+  public String toString() {
+    return "Doctor["
+        + "healthInsurances="
+        + healthInsurances
+        + ", specialty="
+        + specialty
+        + ", city="
+        + city
+        + ", address='"
+        + address
+        + '\''
+        + ", rating="
+        + rating
+        + ", ratingCount="
+        + ratingCount
+        + ']';
   }
 }

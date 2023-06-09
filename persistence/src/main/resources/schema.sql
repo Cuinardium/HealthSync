@@ -15,41 +15,8 @@ CREATE TABLE IF NOT EXISTS users (
 
 CREATE TABLE IF NOT EXISTS patient (
     patient_id INTEGER PRIMARY KEY,
-    FOREIGN KEY (patient_id) REFERENCES users (user_id)
-);
-
-/*
-    health_insurance_code: representa el codigo de la obra social
-*/
-CREATE TABLE IF NOT EXISTS health_insurance_for_patient (
-    patient_id            INTEGER NOT NULL,
     health_insurance_code INTEGER NOT NULL,
-    PRIMARY KEY (patient_id, health_insurance_code),
-    FOREIGN KEY (patient_id) REFERENCES patient (patient_id)
-);
-
-/*
-    city_code: representa el codigo de la ciudad
-*/
-CREATE TABLE IF NOT EXISTS doctor_location (
-    doctor_location_id SERIAL PRIMARY KEY ,
-    address            VARCHAR(100) NOT NULL,
-    city_code          INTEGER NOT NULL
-);
-
-/*
-    monday, tuesday, wednesday, thursday, friday, saturday, sunday:
-        Contienen 48 flags que representan si el medico atiende en ese bloque de 30 minutos
-*/
-CREATE TABLE IF NOT EXISTS doctor_attending_hours (
-    attending_hours_id SERIAL PRIMARY KEY,
-    monday             BIGINT NOT NULL,
-    tuesday            BIGINT NOT NULL,
-    wednesday          BIGINT NOT NULL,
-    thursday           BIGINT NOT NULL,
-    friday             BIGINT NOT NULL,
-    saturday           BIGINT NOT NULL,
-    sunday             BIGINT NOT NULL
+    FOREIGN KEY (patient_id) REFERENCES users (user_id)
 );
 
 /*
@@ -58,18 +25,27 @@ CREATE TABLE IF NOT EXISTS doctor_attending_hours (
 CREATE TABLE IF NOT EXISTS doctor (
     doctor_id       INTEGER PRIMARY KEY,
     specialty_code  INTEGER NOT NULL,
-    attending_hours_id INTEGER NOT NULL,
-    FOREIGN KEY (doctor_id) REFERENCES users (user_id),
-    FOREIGN KEY (attending_hours_id) REFERENCES doctor_attending_hours (attending_hours_id)
+    city_code       INTEGER NOT NULL,
+    address         VARCHAR(100) NOT NULL,
+    FOREIGN KEY (doctor_id) REFERENCES users (user_id)
 );
 
-CREATE TABLE IF NOT EXISTS location_for_doctor
-(
-    doctor_location_id INTEGER PRIMARY KEY,
-    doctor_id          INTEGER NOT NULL,
-    FOREIGN KEY (doctor_location_id) REFERENCES doctor_location (doctor_location_id),
+CREATE TABLE IF NOT EXISTS doctor_attending_hours (
+    doctor_id INTEGER NOT NULL,
+    day SMALLINT NOT NULL,
+    hour_block SMALLINT NOT NULL,
+    PRIMARY KEY (doctor_id, day, hour_block),
     FOREIGN KEY (doctor_id) REFERENCES doctor (doctor_id)
 );
+
+
+-- CREATE TABLE IF NOT EXISTS location_for_doctor
+-- (
+--     doctor_location_id INTEGER PRIMARY KEY,
+--     doctor_id          INTEGER NOT NULL,
+--     FOREIGN KEY (doctor_location_id) REFERENCES doctor_location (doctor_location_id),
+--     FOREIGN KEY (doctor_id) REFERENCES doctor (doctor_id)
+-- );
 
 /*
     health_insurance_code: representa el codigo de la obra social
@@ -117,10 +93,10 @@ CREATE TABLE IF NOT EXISTS review (
     DROP TABLE IF EXISTS appointment;
     DROP TABLE IF EXISTS health_insurance_accepted_by_doctor;
     DROP TABLE IF EXISTS location_for_doctor;
-    DROP TABLE IF EXISTS doctor;
     DROP TABLE IF EXISTS doctor_attending_hours;
+    DROP TABLE IF EXISTS review;
+    DROP TABLE IF EXISTS doctor CASCADE;
     DROP TABLE IF EXISTS doctor_location;
-    DROP TABLE IF EXISTS health_insurance_for_patient;
     DROP TABLE IF EXISTS patient;
     DROP TABLE IF EXISTS users;
     DROP TABLE IF EXISTS profile_picture;

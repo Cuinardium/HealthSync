@@ -10,7 +10,10 @@ import ar.edu.itba.paw.webapp.form.PatientRegisterForm;
 import java.time.DayOfWeek;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map.Entry;
+import java.util.Set;
 import java.util.stream.Collectors;
 import javax.validation.Valid;
 import org.slf4j.Logger;
@@ -133,35 +136,21 @@ public class AuthController {
     Specialty specialty = Specialty.values()[doctorRegisterForm.getSpecialtyCode()];
     City city = City.values()[doctorRegisterForm.getCityCode()];
 
-    List<HealthInsurance> healthInsurances =
-        doctorRegisterForm.getHealthInsuranceCodes().stream()
+    Set<HealthInsurance> healthInsurances =
+        doctorRegisterForm
+            .getHealthInsuranceCodes()
+            .stream()
             .map(code -> HealthInsurance.values()[code])
-            .collect(Collectors.toList());
+            .collect(Collectors.toSet());
 
     ThirtyMinuteBlock[] values = ThirtyMinuteBlock.values();
-    AttendingHours attendingHours =
-        new AttendingHours(
-            doctorRegisterForm.getMondayAttendingHours().stream()
-                .map(i -> values[i])
-                .collect(Collectors.toList()),
-            doctorRegisterForm.getTuesdayAttendingHours().stream()
-                .map(i -> values[i])
-                .collect(Collectors.toList()),
-            doctorRegisterForm.getWednesdayAttendingHours().stream()
-                .map(i -> values[i])
-                .collect(Collectors.toList()),
-            doctorRegisterForm.getThursdayAttendingHours().stream()
-                .map(i -> values[i])
-                .collect(Collectors.toList()),
-            doctorRegisterForm.getFridayAttendingHours().stream()
-                .map(i -> values[i])
-                .collect(Collectors.toList()),
-            doctorRegisterForm.getSaturdayAttendingHours().stream()
-                .map(i -> values[i])
-                .collect(Collectors.toList()),
-            doctorRegisterForm.getSundayAttendingHours().stream()
-                .map(i -> values[i])
-                .collect(Collectors.toList()));
+    Set<AttendingHours> attendingHours = new HashSet<>();
+
+    for (Entry<DayOfWeek, List<Integer>> aux : doctorRegisterForm.getAttendingHours().entrySet()) {
+      for (Integer ordinal : aux.getValue()) {
+        attendingHours.add(new AttendingHours(1L, aux.getKey(), values[ordinal]));
+      }
+    }
 
     try {
       final Doctor doctor =
@@ -199,35 +188,9 @@ public class AuthController {
       @ModelAttribute("doctorRegisterForm") final DoctorRegisterForm doctorRegisterForm,
       Boolean emailAlreadyInUse) {
     // Attending hours
-    AttendingHours attendingHours = AttendingHours.DEFAULT_ATTENDING_HOURS;
-    doctorRegisterForm.setMondayAttendingHours(
-        attendingHours.getAttendingBlocksForDay(DayOfWeek.MONDAY).stream()
-            .map(ThirtyMinuteBlock::ordinal)
-            .collect(Collectors.toList()));
-    doctorRegisterForm.setTuesdayAttendingHours(
-        attendingHours.getAttendingBlocksForDay(DayOfWeek.TUESDAY).stream()
-            .map(ThirtyMinuteBlock::ordinal)
-            .collect(Collectors.toList()));
-    doctorRegisterForm.setWednesdayAttendingHours(
-        attendingHours.getAttendingBlocksForDay(DayOfWeek.WEDNESDAY).stream()
-            .map(ThirtyMinuteBlock::ordinal)
-            .collect(Collectors.toList()));
-    doctorRegisterForm.setThursdayAttendingHours(
-        attendingHours.getAttendingBlocksForDay(DayOfWeek.THURSDAY).stream()
-            .map(ThirtyMinuteBlock::ordinal)
-            .collect(Collectors.toList()));
-    doctorRegisterForm.setFridayAttendingHours(
-        attendingHours.getAttendingBlocksForDay(DayOfWeek.FRIDAY).stream()
-            .map(ThirtyMinuteBlock::ordinal)
-            .collect(Collectors.toList()));
-    doctorRegisterForm.setSaturdayAttendingHours(
-        attendingHours.getAttendingBlocksForDay(DayOfWeek.SATURDAY).stream()
-            .map(ThirtyMinuteBlock::ordinal)
-            .collect(Collectors.toList()));
-    doctorRegisterForm.setSundayAttendingHours(
-        attendingHours.getAttendingBlocksForDay(DayOfWeek.SUNDAY).stream()
-            .map(ThirtyMinuteBlock::ordinal)
-            .collect(Collectors.toList()));
+    Set<AttendingHours> attendingHours = AttendingHours.DEFAULT_ATTENDING_HOURS;
+
+    doctorRegisterForm.setAttendingHours(attendingHours);
 
     final ModelAndView mav = new ModelAndView("auth/doctorRegister");
     mav.addObject("emailAlreadyInUse", emailAlreadyInUse);

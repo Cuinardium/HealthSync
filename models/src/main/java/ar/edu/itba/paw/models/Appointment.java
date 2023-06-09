@@ -1,23 +1,66 @@
 package ar.edu.itba.paw.models;
 
 import java.time.LocalDate;
+import java.util.Objects;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
 
+@Entity
+@Table(name = "appointment")
 public class Appointment {
 
-  private final long id;
-  private final Patient patient;
-  private final Doctor doctor;
+  @Id
+  @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "appointment_appointment_id_seq")
+  @SequenceGenerator(
+    sequenceName = "appointment_appointment_id_seq",
+    name = "appointment_appointment_id_seq",
+    allocationSize = 1
+  )
+  @Column(name = "appointment_id")
+  private Long id;
 
-  private final LocalDate date;
-  private final ThirtyMinuteBlock timeBlock;
+  @OneToOne(fetch = FetchType.EAGER)
+  @JoinColumn(name = "patient_id")
+  private Patient patient;
 
-  private final AppointmentStatus status;
-  private final String description;
+  @OneToOne(fetch = FetchType.EAGER)
+  @JoinColumn(name = "doctor_id")
+  private Doctor doctor;
 
-  private final String cancelDesc;
+  @Column(name = "appointment_date", nullable = false)
+  private LocalDate date;
+
+  @Enumerated(EnumType.ORDINAL)
+  @Column(name = "appointment_time", nullable = false)
+  private ThirtyMinuteBlock timeBlock;
+
+  @Enumerated(EnumType.ORDINAL)
+  @Column(name = "status_code", nullable = false)
+  private AppointmentStatus status;
+
+  @Column(name = "appointment_description", length = 1000)
+  private String description;
+
+  // TODO: default?
+  @Column(name = "cancel_description", length = 1000)
+  private String cancelDesc;
+
+  /* package */ Appointment() {
+    // Solo para hibernate
+  }
 
   public Appointment(
-      long id,
+      Long id,
       Patient patient,
       Doctor doctor,
       LocalDate date,
@@ -35,7 +78,7 @@ public class Appointment {
     this.cancelDesc = cancelDesc;
   }
 
-  public long getId() {
+  public Long getId() {
     return id;
   }
 
@@ -75,6 +118,38 @@ public class Appointment {
     return cancelDesc;
   }
 
+  public void setId(Long id) {
+    this.id = id;
+  }
+
+  public void setPatient(Patient patient) {
+    this.patient = patient;
+  }
+
+  public void setDoctor(Doctor doctor) {
+    this.doctor = doctor;
+  }
+
+  public void setDate(LocalDate date) {
+    this.date = date;
+  }
+
+  public void setTimeBlock(ThirtyMinuteBlock timeBlock) {
+    this.timeBlock = timeBlock;
+  }
+
+  public void setStatus(AppointmentStatus status) {
+    this.status = status;
+  }
+
+  public void setDescription(String description) {
+    this.description = description;
+  }
+
+  public void setCancelDesc(String cancelDesc) {
+    this.cancelDesc = cancelDesc;
+  }
+
   @Override
   public String toString() {
     return "Appointment [id="
@@ -97,18 +172,18 @@ public class Appointment {
   }
 
   @Override
+  public int hashCode() {
+    final int prime = 31;
+    int result = 1;
+    result = prime * result + ((id == null) ? 0 : id.hashCode());
+    return result;
+  }
+
+  @Override
   public boolean equals(Object obj) {
     if (this == obj) return true;
     if (!(obj instanceof Appointment)) return false;
-    // el || es para rescatarme de la nullptrexcep
     Appointment other = (Appointment) obj;
-    return id == other.id
-        && date.equals(other.date)
-        && timeBlock.equals(other.timeBlock)
-        && status.equals(other.status)
-        && description.equals(other.description)
-        && (cancelDesc == other.cancelDesc || cancelDesc.equals(other.cancelDesc))
-        && patient.equals(patient)
-        && doctor.equals(doctor);
+    return Objects.equals(this.id, other.id);
   }
 }

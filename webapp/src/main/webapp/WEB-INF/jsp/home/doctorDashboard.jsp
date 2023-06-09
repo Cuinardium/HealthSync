@@ -153,12 +153,12 @@
             <div class="cardsContainer">
                 <c:forEach items="${doctors}" var="doctor">
                     <spring:message code="${doctor.specialty.messageID}" var="doctorSpecialty"/>
-                    <spring:message code="${doctor.location.city.messageID}" var="doctorCity"/>
+                    <spring:message code="${doctor.city.messageID}" var="doctorCity"/>
                     <spring:message code="doctor.alt.doctorImg" arguments="${doctor.firstName}, ${doctor.lastName}" var="altDoctorImg"/>
                     <c:url value="/${doctor.id}/detailed-doctor" var="detailedUrl"/>
                     <div class="card">
                         <div class="imageContainer">
-                            <c:url value="/img/${doctor.getProfilePictureId() == null ? \"doctorDefault.png\" : doctor.getProfilePictureId()}"
+                            <c:url value="/img/${doctor.getImage() == null ? \"doctorDefault.png\" : doctor.getImage().getImageId()}"
                                    var="doctorImg"/>
                             <img src="${doctorImg}" class="card-img-top" alt="${altDoctorImg}">
                         </div>
@@ -171,7 +171,7 @@
                                            href="${specialtyFilter}${doctor.specialty.ordinal()}">${doctorSpecialty}</a>
                                     </div>
                                 </div>
-                                <div class="card-text">${address} ${doctor.location.address}, ${doctorCity}</div>
+                                <div class="card-text">${address} ${doctor.address}, ${doctorCity}</div>
                                 <div class="chipsContainer">
                                     <div class="card-text">${insurances}:</div>
                                     <c:forEach items="${doctor.healthInsurances}" var="healthInsurance">

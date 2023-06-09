@@ -2,7 +2,7 @@ package ar.edu.itba.paw.services;
 
 import ar.edu.itba.paw.interfaces.persistence.PatientDao;
 import ar.edu.itba.paw.interfaces.persistence.exceptions.PatientAlreadyExistsException;
-import ar.edu.itba.paw.interfaces.persistence.exceptions.PatientNotFoundException;
+import ar.edu.itba.paw.interfaces.services.exceptions.PatientNotFoundException;
 import ar.edu.itba.paw.interfaces.services.PatientService;
 import ar.edu.itba.paw.interfaces.services.UserService;
 import ar.edu.itba.paw.interfaces.services.exceptions.EmailInUseException;
@@ -10,9 +10,9 @@ import ar.edu.itba.paw.interfaces.services.exceptions.UserNotFoundException;
 import ar.edu.itba.paw.models.HealthInsurance;
 import ar.edu.itba.paw.models.Image;
 import ar.edu.itba.paw.models.Patient;
-import ar.edu.itba.paw.models.User;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,10 +22,14 @@ public class PatientServiceImpl implements PatientService {
 
   private final UserService userService;
 
+  private final PasswordEncoder passwordEncoder;
+
   @Autowired
-  public PatientServiceImpl(PatientDao patientDao, UserService userService) {
+  public PatientServiceImpl(
+      PatientDao patientDao, UserService userService, PasswordEncoder passwordEncoder) {
     this.patientDao = patientDao;
     this.userService = userService;
+    this.passwordEncoder = passwordEncoder;
   }
 
   // =============== Inserts ===============
@@ -40,14 +44,24 @@ public class PatientServiceImpl implements PatientService {
       HealthInsurance healthInsurance)
       throws EmailInUseException {
 
+    if (userService.getUserByEmail(email).isPresent()) {
+      throw new EmailInUseException();
+    }
+
     try {
-      // Create User
-      User user = userService.createUser(email, password, firstName, lastName);
-      // Create Patient
-      Patient patient = patientDao.createPatient(user.getId(), healthInsurance);
+      Patient patient =
+          patientDao.createPatient(
+              new Patient(
+                  null,
+                  email,
+                  passwordEncoder.encode(password),
+                  firstName,
+                  lastName,
+                  null,
+                  healthInsurance));
       return patient;
     } catch (PatientAlreadyExistsException e) {
-      throw new IllegalStateException();
+      throw new IllegalStateException("Patient should not exist when id is null");
     }
   }
 
@@ -62,18 +76,19 @@ public class PatientServiceImpl implements PatientService {
       String lastName,
       HealthInsurance healthInsurance,
       Image image)
-      throws UserNotFoundException {
+      throws PatientNotFoundException, EmailInUseException {
 
     try {
       userService.updateUser(patientId, email, firstName, lastName, image);
       return patientDao.updatePatientInfo(patientId, healthInsurance);
-    } catch (PatientNotFoundException e) {
-      throw new RuntimeException();
+    } catch (UserNotFoundException | ar.edu.itba.paw.interfaces.persistence.exceptions.PatientNotFoundException e) {
+      throw new PatientNotFoundException();
     }
   }
 
   // =============== Queries ===============
 
+  @Transactional
   @Override
   public Optional<Patient> getPatientById(long id) {
     return patientDao.getPatientById(id);

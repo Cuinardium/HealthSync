@@ -28,6 +28,7 @@
 <spring:message code="edit.modal.title" var="modalTitle"/>
 <spring:message code="edit.modal.text" var="modalDesc"/>
 <spring:message code="profile.edit.modal.button" var="modalButton"/>
+<spring:message code="profile.edit.emailInUse.error" var="emailAlreadyInUseError"/>
 
 <!-- ALT img text -->
 <spring:message code="user.alt.loggedUserImg" var="altLoggedUserImg"/>
@@ -63,10 +64,17 @@
     </div>
     <h1>${title}</h1>
     <form:form modelAttribute="patientEditForm" class="card" action="${patientEditUrl}" method="POST" enctype="multipart/form-data">
+        <c:if test="${emailAlreadyInUse}">
+          <div class="formRow">
+            <p class="error">
+              ${emailAlreadyInUseError}
+            </p>
+          </div>
+        </c:if>
         <div class="profileContainer">
             <div class="profileImageContainer">
                 <div class="profileItem">
-                    <c:url value="/img/${user.getProfilePictureId() == null ? \"patientDefault.png\" : user.getProfilePictureId()}" var="loggedUserImg"/>
+                    <c:url value="/img/${user.image == null ? \"patientDefault.png\" : user.image.imageId}" var="loggedUserImg"/>
                     <img src="${loggedUserImg}" alt="${altLoggedUserImg}" id="imgPreview" width="200" height="200" class="rounded-circle">
                 </div>
                 <div class="pfpEdit">

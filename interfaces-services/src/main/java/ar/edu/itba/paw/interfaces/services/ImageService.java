@@ -7,13 +7,13 @@ public interface ImageService {
 
   // =============== Inserts ===============
 
-  long uploadImage(Image image);
+  public Image uploadImage(Image image);
 
   // =============== Updates ===============
 
-  void updateImage(Long pfpId, Image image);
+  public Image updateImage(Image image);
 
   // =============== Queries ===============
 
-  Optional<Image> getImage(long id);
+  public Optional<Image> getImage(long id);
 }

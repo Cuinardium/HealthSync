@@ -1,9 +1,11 @@
 package ar.edu.itba.paw.webapp.controller;
 
 import ar.edu.itba.paw.interfaces.services.DoctorService;
-import ar.edu.itba.paw.interfaces.services.ImageService;
 import ar.edu.itba.paw.interfaces.services.PatientService;
 import ar.edu.itba.paw.interfaces.services.UserService;
+import ar.edu.itba.paw.interfaces.services.exceptions.DoctorNotFoundException;
+import ar.edu.itba.paw.interfaces.services.exceptions.EmailInUseException;
+import ar.edu.itba.paw.interfaces.services.exceptions.PatientNotFoundException;
 import ar.edu.itba.paw.models.*;
 import ar.edu.itba.paw.webapp.auth.PawAuthUserDetails;
 import ar.edu.itba.paw.webapp.exceptions.UserNotFoundException;
@@ -13,7 +15,10 @@ import ar.edu.itba.paw.webapp.form.PatientEditForm;
 import java.io.IOException;
 import java.time.DayOfWeek;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map.Entry;
+import java.util.Set;
 import java.util.stream.Collectors;
 import javax.validation.Valid;
 import org.slf4j.Logger;
@@ -47,9 +52,9 @@ public class ProfileController {
   @RequestMapping(value = "/patient-profile", method = RequestMethod.GET)
   public ModelAndView patientProfile() {
     Patient patient =
-            patientService
-                    .getPatientById(PawAuthUserDetails.getCurrentUserId())
-                    .orElseThrow(UserNotFoundException::new);
+        patientService
+            .getPatientById(PawAuthUserDetails.getCurrentUserId())
+            .orElseThrow(UserNotFoundException::new);
 
     final ModelAndView mav = new ModelAndView("user/patientProfile");
     mav.addObject("patient", patient);
@@ -57,12 +62,13 @@ public class ProfileController {
     LOGGER.debug("Patient profile page requested");
     return mav;
   }
+
   @RequestMapping(value = "/doctor-profile", method = RequestMethod.GET)
   public ModelAndView doctorProfile() {
     Doctor doctor =
-            doctorService
-                    .getDoctorById(PawAuthUserDetails.getCurrentUserId())
-                    .orElseThrow(UserNotFoundException::new);
+        doctorService
+            .getDoctorById(PawAuthUserDetails.getCurrentUserId())
+            .orElseThrow(UserNotFoundException::new);
 
     final ModelAndView mav = new ModelAndView("user/doctorProfile");
 
@@ -86,51 +92,23 @@ public class ProfileController {
     Specialty specialty = Specialty.values()[doctorEditForm.getSpecialtyCode()];
     City city = City.values()[doctorEditForm.getCityCode()];
 
-    List<HealthInsurance> healthInsurances =
+    Set<HealthInsurance> healthInsurances =
         doctorEditForm
             .getHealthInsuranceCodes()
             .stream()
             .map(code -> HealthInsurance.values()[code])
-            .collect(Collectors.toList());
+            .collect(Collectors.toSet());
 
     ThirtyMinuteBlock[] values = ThirtyMinuteBlock.values();
-    AttendingHours attendingHours =
-        new AttendingHours(
-            doctorEditForm
-                .getMondayAttendingHours()
-                .stream()
-                .map(i -> values[i])
-                .collect(Collectors.toList()),
-            doctorEditForm
-                .getTuesdayAttendingHours()
-                .stream()
-                .map(i -> values[i])
-                .collect(Collectors.toList()),
-            doctorEditForm
-                .getWednesdayAttendingHours()
-                .stream()
-                .map(i -> values[i])
-                .collect(Collectors.toList()),
-            doctorEditForm
-                .getThursdayAttendingHours()
-                .stream()
-                .map(i -> values[i])
-                .collect(Collectors.toList()),
-            doctorEditForm
-                .getFridayAttendingHours()
-                .stream()
-                .map(i -> values[i])
-                .collect(Collectors.toList()),
-            doctorEditForm
-                .getSaturdayAttendingHours()
-                .stream()
-                .map(i -> values[i])
-                .collect(Collectors.toList()),
-            doctorEditForm
-                .getSundayAttendingHours()
-                .stream()
-                .map(i -> values[i])
-                .collect(Collectors.toList()));
+
+    // TODO: make doctorEditForm return all attending hours
+    Set<AttendingHours> attendingHours = new HashSet<>();
+
+    for (Entry<DayOfWeek, List<Integer>> aux : doctorEditForm.getAttendingHours().entrySet()) {
+      for (Integer ordinal : aux.getValue()) {
+        attendingHours.add(new AttendingHours(1L, aux.getKey(), values[ordinal]));
+      }
+    }
 
     // Q: static fromMultiPartFile method
     try {
@@ -153,7 +131,7 @@ public class ProfileController {
       LOGGER.info("Updated {}", doctor);
     } catch (IOException e) {
       // TODO: handle
-    } catch (ar.edu.itba.paw.interfaces.services.exceptions.UserNotFoundException e) {
+    } catch (DoctorNotFoundException | EmailInUseException e) {
       LOGGER.error("Failed to update doctor because doctor does not exist");
       throw new UserNotFoundException();
     }
@@ -186,54 +164,13 @@ public class ProfileController {
             .stream()
             .map(HealthInsurance::ordinal)
             .collect(Collectors.toList()));
-    doctorEditForm.setAddress(doctor.getLocation().getAddress());
-    doctorEditForm.setCityCode(doctor.getLocation().getCity().ordinal());
+    doctorEditForm.setAddress(doctor.getAddress());
+    doctorEditForm.setCityCode(doctor.getCity().ordinal());
     doctorEditForm.setSpecialtyCode(doctor.getSpecialty().ordinal());
 
     // Attending hours
-    AttendingHours attendingHours = doctor.getAttendingHours();
-    doctorEditForm.setMondayAttendingHours(
-        attendingHours
-            .getAttendingBlocksForDay(DayOfWeek.MONDAY)
-            .stream()
-            .map(ThirtyMinuteBlock::ordinal)
-            .collect(Collectors.toList()));
-    doctorEditForm.setTuesdayAttendingHours(
-        attendingHours
-            .getAttendingBlocksForDay(DayOfWeek.TUESDAY)
-            .stream()
-            .map(ThirtyMinuteBlock::ordinal)
-            .collect(Collectors.toList()));
-    doctorEditForm.setWednesdayAttendingHours(
-        attendingHours
-            .getAttendingBlocksForDay(DayOfWeek.WEDNESDAY)
-            .stream()
-            .map(ThirtyMinuteBlock::ordinal)
-            .collect(Collectors.toList()));
-    doctorEditForm.setThursdayAttendingHours(
-        attendingHours
-            .getAttendingBlocksForDay(DayOfWeek.THURSDAY)
-            .stream()
-            .map(ThirtyMinuteBlock::ordinal)
-            .collect(Collectors.toList()));
-    doctorEditForm.setFridayAttendingHours(
-        attendingHours
-            .getAttendingBlocksForDay(DayOfWeek.FRIDAY)
-            .stream()
-            .map(ThirtyMinuteBlock::ordinal)
-            .collect(Collectors.toList()));
-    doctorEditForm.setSaturdayAttendingHours(
-        attendingHours
-            .getAttendingBlocksForDay(DayOfWeek.SATURDAY)
-            .stream()
-            .map(ThirtyMinuteBlock::ordinal)
-            .collect(Collectors.toList()));
-    doctorEditForm.setSundayAttendingHours(
-        attendingHours
-            .getAttendingBlocksForDay(DayOfWeek.SUNDAY)
-            .stream()
-            .map(ThirtyMinuteBlock::ordinal)
-            .collect(Collectors.toList()));
+    Set<AttendingHours> attendingHours = doctor.getAttendingHours();
+    doctorEditForm.setAttendingHours(attendingHours);
 
     final ModelAndView mav = new ModelAndView("user/doctorEdit");
     mav.addObject("form", doctorEditForm);
@@ -253,7 +190,7 @@ public class ProfileController {
       final BindingResult errors) {
     if (errors.hasErrors()) {
       LOGGER.warn("Failed to edit patient due to form errors");
-      return patientEdit(patientEditForm);
+      return patientEdit(patientEditForm, false);
     }
 
     // Q: static fromMultiPartFile method
@@ -277,9 +214,11 @@ public class ProfileController {
       LOGGER.info("Updated {}", patient);
     } catch (IOException e) {
       // TODO: handle this
-    } catch (ar.edu.itba.paw.interfaces.services.exceptions.UserNotFoundException e) {
+    } catch (PatientNotFoundException e) {
       LOGGER.error("Failed to update patient because patient does not exist");
       throw new UserNotFoundException();
+    } catch (EmailInUseException e) {
+      return patientEdit(patientEditForm, true);
     }
 
     final ModelAndView mav = new ModelAndView("user/patientEdit");
@@ -291,8 +230,8 @@ public class ProfileController {
 
   @RequestMapping(value = "/patient-edit", method = RequestMethod.GET)
   public ModelAndView patientEdit(
-      @ModelAttribute("patientEditForm") final PatientEditForm patientEditForm) {
-
+      @ModelAttribute("patientEditForm") final PatientEditForm patientEditForm,
+      Boolean emailAlreadyInUse) {
     Patient patient =
         patientService
             .getPatientById(PawAuthUserDetails.getCurrentUserId())
@@ -304,6 +243,7 @@ public class ProfileController {
     patientEditForm.setHealthInsuranceCode(patient.getHealthInsurance().ordinal());
 
     final ModelAndView mav = new ModelAndView("user/patientEdit");
+    mav.addObject("emailAlreadyInUse", emailAlreadyInUse);
     mav.addObject("form", patientEditForm);
     mav.addObject("showModal", false);
     mav.addObject("healthInsurances", Arrays.asList(HealthInsurance.values()));
@@ -332,12 +272,8 @@ public class ProfileController {
         return changePassword(changePasswordForm, true);
       }
       LOGGER.info("Updated password");
-    } catch (IllegalStateException exception) {
-      // No deberia pasar
-      // TODO: log?
-      throw exception;
-    } catch (ar.edu.itba.paw.interfaces.services.exceptions.UserNotFoundException e) {
-      LOGGER.error("Change password failed due to user nott existing found");
+    }  catch (ar.edu.itba.paw.interfaces.services.exceptions.UserNotFoundException e) {
+      LOGGER.error("Change password failed due to user not existing found");
       // TODO: q hago en este caso?
       throw new UserNotFoundException();
     }

@@ -47,33 +47,49 @@ public class UserServiceImpl implements UserService {
   @Transactional
   @Override
   public User updateUser(long userId, String email, String firstName, String lastName, Image image)
-      throws UserNotFoundException {
+      throws UserNotFoundException, EmailInUseException {
 
     try {
-      Long pfpId =
-          userDao.getUserById(userId).orElseThrow(IllegalStateException::new).getProfilePictureId();
+      Image old_image =
+          userDao
+              .getUserById(userId)
+              .orElseThrow(
+                  () ->
+                      new IllegalStateException(
+                          "User could not be updated because it does not exist"))
+              .getImage();
       if (image != null) {
         // Si la pfp es null -> insertamos imagen
         // si la pfp no es null -> la actualizamos para pisar la vieja
-        if (pfpId == null) {
-          pfpId = imageService.uploadImage(image);
+        if (image.getImageId() == null) {
+          image = imageService.uploadImage(image);
         } else {
-          imageService.updateImage(pfpId, image);
+
+          image.setImageId(old_image.getImageId());
+          image = imageService.updateImage(image);
         }
       }
-      return userDao.updateUserInfo(userId, email, firstName, lastName, pfpId);
+      return userDao.updateUserInfo(userId, email, firstName, lastName, image);
     } catch (ar.edu.itba.paw.interfaces.persistence.exceptions.UserNotFoundException e) {
       throw new UserNotFoundException();
+    } catch (EmailAlreadyExistsException e) {
+      throw new EmailInUseException();
     }
   }
 
   @Transactional
   @Override
   public boolean updatePassword(long userId, String oldPassword, String password)
-      throws IllegalStateException, UserNotFoundException {
+      throws UserNotFoundException {
     if (!passwordEncoder.matches(
         oldPassword,
-        userDao.getUserById(userId).orElseThrow(IllegalStateException::new).getPassword())) {
+        userDao
+            .getUserById(userId)
+            .orElseThrow(
+                () ->
+                    new IllegalStateException(
+                        "User could not be updated because it does not exist"))
+            .getPassword())) {
       // En clase vimos que era mejor retornar true o false, para verificar si se actualizo la pass
       return false;
     }
@@ -88,11 +104,13 @@ public class UserServiceImpl implements UserService {
 
   // =============== Queries ===============
 
+  @Transactional
   @Override
   public Optional<User> getUserById(long id) {
     return userDao.getUserById(id);
   }
 
+  @Transactional
   @Override
   public Optional<User> getUserByEmail(String email) {
     return userDao.getUserByEmail(email);

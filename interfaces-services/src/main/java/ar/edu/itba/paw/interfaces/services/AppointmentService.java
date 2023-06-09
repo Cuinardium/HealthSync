@@ -1,9 +1,9 @@
 package ar.edu.itba.paw.interfaces.services;
 
 import ar.edu.itba.paw.interfaces.services.exceptions.AppointmentNotFoundException;
+import ar.edu.itba.paw.interfaces.services.exceptions.CancelForbiddenException;
 import ar.edu.itba.paw.interfaces.services.exceptions.DoctorNotAvailableException;
 import ar.edu.itba.paw.interfaces.services.exceptions.DoctorNotFoundException;
-import ar.edu.itba.paw.interfaces.services.exceptions.CancelForbiddenException;
 import ar.edu.itba.paw.interfaces.services.exceptions.PatientNotFoundException;
 import ar.edu.itba.paw.models.Appointment;
 import ar.edu.itba.paw.models.AppointmentStatus;
@@ -17,7 +17,7 @@ public interface AppointmentService {
 
   // =============== Inserts ===============
 
-  Appointment createAppointment(
+  public Appointment createAppointment(
       Long patientId,
       Long doctorId,
       LocalDate date,
@@ -27,19 +27,21 @@ public interface AppointmentService {
 
   // =============== Updates ===============
 
-  Appointment cancelAppointment(
-          long appointmentId, String cancelDescription, long requesterId) throws AppointmentNotFoundException, CancelForbiddenException;
+  public Appointment cancelAppointment(
+      long appointmentId, String cancelDescription, long requesterId)
+      throws AppointmentNotFoundException, CancelForbiddenException;
 
   // =============== Queries ===============
 
-  Optional<Appointment> getAppointmentById(long appointmentId);
+  public Optional<Appointment> getAppointmentById(long appointmentId);
 
-  List<Appointment> getAppointments(long userId, boolean isPatient);
+  public List<Appointment> getAppointments(long userId, boolean isPatient);
 
-  Page<Appointment> getFilteredAppointments(
+  public Page<Appointment> getFilteredAppointments(
       long userId, AppointmentStatus status, Integer page, Integer pageSize, boolean isPatient);
 
-  public List<ThirtyMinuteBlock> getAvailableHoursForDoctorOnDate(long doctorId, LocalDate date) throws DoctorNotFoundException;
+  public List<ThirtyMinuteBlock> getAvailableHoursForDoctorOnDate(long doctorId, LocalDate date)
+      throws DoctorNotFoundException;
 
   public List<List<ThirtyMinuteBlock>> getAvailableHoursForDoctorOnRange(
       long doctorId, LocalDate from, LocalDate to) throws DoctorNotFoundException;
@@ -47,7 +49,7 @@ public interface AppointmentService {
   public boolean hasPatientMetDoctor(long patientId, long doctorId);
 
   // ================ Tasks ================
-  void sendAppointmentReminders();
+  public void sendAppointmentReminders();
 
-  void updateCompletedAppointmentsStatus();
+  public void updateCompletedAppointmentsStatus();
 }

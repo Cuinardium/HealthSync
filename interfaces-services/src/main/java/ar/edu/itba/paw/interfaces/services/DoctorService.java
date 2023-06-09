@@ -1,12 +1,13 @@
 package ar.edu.itba.paw.interfaces.services;
 
+import ar.edu.itba.paw.interfaces.services.exceptions.DoctorNotFoundException;
 import ar.edu.itba.paw.interfaces.services.exceptions.EmailInUseException;
-import ar.edu.itba.paw.interfaces.services.exceptions.UserNotFoundException;
 import ar.edu.itba.paw.models.*;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 public interface DoctorService {
 
@@ -20,9 +21,11 @@ public interface DoctorService {
       Specialty specialty,
       City city,
       String address,
-      List<HealthInsurance> healthInsurances,
-      AttendingHours attendingHours)
-      throws EmailInUseException, IllegalStateException;
+      Set<HealthInsurance> healthInsurances,
+      Set<AttendingHours> attendingHours)
+      throws EmailInUseException;
+
+  public Review addReview(long doctorId, Review review) throws DoctorNotFoundException;
 
   // =============== Updates ===============
 
@@ -34,10 +37,12 @@ public interface DoctorService {
       Specialty specialty,
       City city,
       String address,
-      List<HealthInsurance> healthInsurances,
-      AttendingHours attendingHours,
+      Set<HealthInsurance> healthInsurances,
+      Set<AttendingHours> attendingHours,
       Image image)
-      throws UserNotFoundException;
+      throws DoctorNotFoundException, EmailInUseException;
+
+  public Doctor updateReviews(long doctorId, List<Review> reviews) throws DoctorNotFoundException;
 
   // =============== Queries ===============
 
@@ -63,4 +68,6 @@ public interface DoctorService {
 
   // Gets all cities used by doctors & qty of appearences
   public Map<City, Integer> getUsedCities();
+
+  public Page<Review> getReviewsForDoctor(long doctorId, Integer page, Integer pageSize);
 }

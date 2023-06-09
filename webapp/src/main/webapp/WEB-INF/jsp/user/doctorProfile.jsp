@@ -57,7 +57,7 @@
     <div class="card">
         <div class="profileContainer">
             <div class="profileImageContainer">
-                <c:url value="/img/${doctor.profilePictureId == null ? \"doctorDefault.png\" : doctor.profilePictureId}" var="loggedUserImg"/>
+                <c:url value="/img/${doctor.image.imageId == null ? \"doctorDefault.png\" : doctor.image.imageId}" var="loggedUserImg"/>
                 <img src="${loggedUserImg}" alt="${altLoggedUserImg}" width="200" height="200" class="rounded-circle">
             </div>
 
@@ -101,12 +101,12 @@
             <div class="profileRow">
                 <div class="profileItem">
                     <label for="city">${city}</label>
-                    <spring:message code="${doctor.location.city.messageID}" var="doctorCity"/>
+                    <spring:message code="${doctor.city.messageID}" var="doctorCity"/>
                     <input class="form-control" id="city" value="${doctorCity}" disabled/>
                 </div>
                 <div class="profileItem">
                     <label for="address">${address}</label>
-                    <input class="form-control" id="address" type="text" value="${doctor.location.address}" disabled/>
+                    <input class="form-control" id="address" type="text" value="${doctor.address}" disabled/>
                 </div>
             </div>
 

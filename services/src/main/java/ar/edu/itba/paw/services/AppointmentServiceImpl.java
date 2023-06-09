@@ -1,6 +1,7 @@
 package ar.edu.itba.paw.services;
 
 import ar.edu.itba.paw.interfaces.persistence.AppointmentDao;
+import ar.edu.itba.paw.interfaces.persistence.exceptions.AppointmentAlreadyExistsException;
 import ar.edu.itba.paw.interfaces.services.AppointmentService;
 import ar.edu.itba.paw.interfaces.services.DoctorService;
 import ar.edu.itba.paw.interfaces.services.MailService;
@@ -18,12 +19,7 @@ import ar.edu.itba.paw.models.Patient;
 import ar.edu.itba.paw.models.ThirtyMinuteBlock;
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.i18n.LocaleContextHolder;
@@ -33,11 +29,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class AppointmentServiceImpl implements AppointmentService {
-  MailService mailService;
-  DoctorService doctorService;
-  PatientService patientService;
+  private final MailService mailService;
+  private final DoctorService doctorService;
+  private final PatientService patientService;
 
-  AppointmentDao appointmentDao;
+  private final AppointmentDao appointmentDao;
 
   @Autowired
   public AppointmentServiceImpl(
@@ -68,8 +64,7 @@ public class AppointmentServiceImpl implements AppointmentService {
         patientService.getPatientById(patientId).orElseThrow(PatientNotFoundException::new);
 
     // Check if doctor can attend in date and time block
-    boolean attendsInDateBlock =
-        doctor.getAttendingHours().getAttendingBlocksForDate(date).contains(timeBlock);
+    boolean attendsInDateBlock = doctor.getAttendingBlocksForDate(date).contains(timeBlock);
 
     if (!attendsInDateBlock) {
       throw new DoctorNotAvailableException();
@@ -86,15 +81,19 @@ public class AppointmentServiceImpl implements AppointmentService {
       throw new DoctorNotAvailableException();
     }
 
-    // Create appointment
-    Appointment appointment =
-        appointmentDao.createAppointment(patient, doctor, date, timeBlock, description);
+    try {
+      // Create appointment
+      Appointment appointment =
+          appointmentDao.createAppointment(patient, doctor, date, timeBlock, description);
 
-    // TODO: locale should be determined by the user's language
-    mailService.sendAppointmentRequestMail(appointment, LocaleContextHolder.getLocale());
-    mailService.sendAppointmentReminderMail(appointment, LocaleContextHolder.getLocale());
+      // TODO: locale should be determined by the user's language
+      mailService.sendAppointmentRequestMail(appointment, LocaleContextHolder.getLocale());
+      mailService.sendAppointmentReminderMail(appointment, LocaleContextHolder.getLocale());
 
-    return appointment;
+      return appointment;
+    } catch (AppointmentAlreadyExistsException e) {
+      throw new DoctorNotAvailableException();
+    }
   }
 
   // =============== Updates ===============
@@ -121,7 +120,7 @@ public class AppointmentServiceImpl implements AppointmentService {
           appointmentDao.updateAppointment(
               appointmentId, AppointmentStatus.CANCELLED, cancelDescription);
     } catch (ar.edu.itba.paw.interfaces.persistence.exceptions.AppointmentNotFoundException e) {
-      throw new IllegalStateException();
+      throw new IllegalStateException("Appointment could not be updated due to it not existing");
     }
 
     // TODO: locale should be determined by the user's language
@@ -138,24 +137,26 @@ public class AppointmentServiceImpl implements AppointmentService {
 
   // =============== Queries ===============
 
+  @Transactional
   @Override
   public List<Appointment> getAppointments(long userId, boolean isPatient) {
     return appointmentDao.getAppointments(userId, isPatient);
   }
 
-  // ============================= QUERIES =============================
-
+  @Transactional
   @Override
   public Optional<Appointment> getAppointmentById(long appointmentId) {
     return appointmentDao.getAppointmentById(appointmentId);
   }
 
+  @Transactional
   @Override
   public List<ThirtyMinuteBlock> getAvailableHoursForDoctorOnDate(long doctorId, LocalDate date)
       throws DoctorNotFoundException {
     return getAvailableHoursForDoctorOnRange(doctorId, date, date).get(0);
   }
 
+  @Transactional
   @Override
   public List<List<ThirtyMinuteBlock>> getAvailableHoursForDoctorOnRange(
       long doctorId, LocalDate from, LocalDate to) throws DoctorNotFoundException {
@@ -172,8 +173,8 @@ public class AppointmentServiceImpl implements AppointmentService {
     Map<LocalDate, List<ThirtyMinuteBlock>> availableHours = new HashMap<>();
 
     for (LocalDate date = from; date.isBefore(to.plusDays(1)); date = date.plusDays(1)) {
-      List<ThirtyMinuteBlock> currentList =
-          new ArrayList<>(doctor.getAttendingHours().getAttendingBlocksForDate(date));
+      List<ThirtyMinuteBlock> currentList = new ArrayList<>(doctor.getAttendingBlocksForDate(date));
+      currentList.sort(Comparator.naturalOrder());
       availableHours.put(date, currentList);
     }
 
@@ -184,23 +185,24 @@ public class AppointmentServiceImpl implements AppointmentService {
         List<ThirtyMinuteBlock> availableHoursOnAppointmentDate =
             availableHours.get(appointment.getDate());
 
+        // TODO: is this really necesary?
         if (availableHoursOnAppointmentDate == null) {
-          throw new IllegalStateException();
+          throw new IllegalStateException("Available hours should be populated");
         }
 
         availableHoursOnAppointmentDate.remove(appointment.getTimeBlock());
       }
     }
 
-    List<List<ThirtyMinuteBlock>> sortedAvailableHours =
-        availableHours.entrySet().stream()
-            .sorted(Map.Entry.comparingByKey())
-            .map(Map.Entry::getValue)
-            .collect(Collectors.toList());
-
-    return sortedAvailableHours;
+    return availableHours
+        .entrySet()
+        .stream()
+        .sorted(Map.Entry.comparingByKey())
+        .map(Map.Entry::getValue)
+        .collect(Collectors.toList());
   }
 
+  @Transactional
   @Override
   public Page<Appointment> getFilteredAppointments(
       long userId, AppointmentStatus status, Integer page, Integer pageSize, boolean isPatient) {
@@ -208,6 +210,7 @@ public class AppointmentServiceImpl implements AppointmentService {
         userId, status, null, null, page, pageSize, isPatient);
   }
 
+  @Transactional
   @Override
   public boolean hasPatientMetDoctor(long patientId, long doctorId) {
     return appointmentDao.hasPatientMetDoctor(patientId, doctorId);

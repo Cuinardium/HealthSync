@@ -8,13 +8,13 @@ public interface ImageDao {
 
   // =============== Inserts ===============
 
-  Image createImage(Image image);
+  public Image createImage(Image image);
 
   // =============== Updates ===============
 
-  Image updateImage(Long imageId, Image image) throws ImageNotFoundException;
+  public Image updateImage(Image image) throws ImageNotFoundException;
 
   // =============== Queries ===============
 
-  Optional<Image> getImage(long id);
+  public Optional<Image> getImage(long id);
 }

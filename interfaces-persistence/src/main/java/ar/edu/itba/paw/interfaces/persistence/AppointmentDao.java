@@ -1,5 +1,6 @@
 package ar.edu.itba.paw.interfaces.persistence;
 
+import ar.edu.itba.paw.interfaces.persistence.exceptions.AppointmentAlreadyExistsException;
 import ar.edu.itba.paw.interfaces.persistence.exceptions.AppointmentNotFoundException;
 import ar.edu.itba.paw.models.Appointment;
 import ar.edu.itba.paw.models.AppointmentStatus;
@@ -15,39 +16,42 @@ public interface AppointmentDao {
 
   // =============== Inserts ===============
 
-  Appointment createAppointment(
+  public Appointment createAppointment(
       Patient patient,
       Doctor doctor,
       LocalDate date,
       ThirtyMinuteBlock timeBlock,
-      String description);
+      String description)
+      throws AppointmentAlreadyExistsException;
 
   // =============== Updates ===============
 
-  Appointment updateAppointment(
+  public Appointment updateAppointment(
       long appointmentId, AppointmentStatus status, String cancelDescription)
       throws AppointmentNotFoundException;
 
-  void completeAppointmentsInDateBlock(LocalDate date, ThirtyMinuteBlock block);
+  public void completeAppointmentsInDateBlock(LocalDate date, ThirtyMinuteBlock block);
 
   // =============== Queries ===============
 
-  Optional<Appointment> getAppointmentById(long appointmentId);
+  public Optional<Appointment> getAppointmentById(long appointmentId);
 
-  Optional<Appointment> getAppointment(long doctorId, LocalDate date, ThirtyMinuteBlock timeBlock);
+  public Optional<Appointment> getAppointment(
+      long doctorId, LocalDate date, ThirtyMinuteBlock timeBlock);
 
-  List<Appointment> getAppointments(long userId, boolean isPatient);
+  public List<Appointment> getAppointments(long userId, boolean isPatient);
 
-  Page<Appointment> getFilteredAppointments(
-      long userId,
+  public Page<Appointment> getFilteredAppointments(
+      Long userId,
       AppointmentStatus status,
       LocalDate from,
       LocalDate to,
       Integer page,
       Integer pageSize,
-      boolean isPatient);
+      Boolean isPatient);
 
-  boolean hasPatientMetDoctor(long patientId, long doctorId);
+  public boolean hasPatientMetDoctor(long patientId, long doctorId);
 
-  List<Appointment> getAllConfirmedAppointmentsInDateBlock(LocalDate date, ThirtyMinuteBlock block);
+  public List<Appointment> getAllConfirmedAppointmentsInDateBlock(
+      LocalDate date, ThirtyMinuteBlock block);
 }

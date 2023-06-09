@@ -1,6 +1,7 @@
 package ar.edu.itba.paw.services;
 
 import ar.edu.itba.paw.interfaces.persistence.AppointmentDao;
+import ar.edu.itba.paw.interfaces.persistence.exceptions.AppointmentAlreadyExistsException;
 import ar.edu.itba.paw.interfaces.services.DoctorService;
 import ar.edu.itba.paw.interfaces.services.MailService;
 import ar.edu.itba.paw.interfaces.services.PatientService;
@@ -15,18 +16,16 @@ import ar.edu.itba.paw.models.AttendingHours;
 import ar.edu.itba.paw.models.City;
 import ar.edu.itba.paw.models.Doctor;
 import ar.edu.itba.paw.models.HealthInsurance;
-import ar.edu.itba.paw.models.Location;
+import ar.edu.itba.paw.models.Image;
 import ar.edu.itba.paw.models.Page;
 import ar.edu.itba.paw.models.Patient;
 import ar.edu.itba.paw.models.Specialty;
 import ar.edu.itba.paw.models.ThirtyMinuteBlock;
+import java.time.DayOfWeek;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-import java.util.Locale;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -46,25 +45,35 @@ public class AppointmentServiceImplTest {
   private static final String DOCTOR_PASSWORD = "doctor_password";
   private static final String DOCTOR_FIRST_NAME = "doctor_first_name";
   private static final String DOCTOR_LAST_NAME = "doctor_last_name";
-  private static final Long DOCTOR_PFP_ID = null;
+  private static final Image DOCTOR_IMAGE = new Image(null, null);
 
-  private static final List<HealthInsurance> DOCTOR_HEALTH_INSURANCES =
-      Arrays.asList(HealthInsurance.OSDE, HealthInsurance.OMINT);
+  private static final Set<HealthInsurance> DOCTOR_HEALTH_INSURANCES =
+      new HashSet<>(Arrays.asList(HealthInsurance.OSDE, HealthInsurance.OMINT));
   private static final Specialty SPECIALTY = Specialty.CARDIOLOGY;
   private static final City CITY = City.AYACUCHO;
   private static final String ADDRESS = "1234";
-  private static final Location LOCATION = new Location(1, CITY, ADDRESS);
   private static final Collection<ThirtyMinuteBlock> ATTENDING_HOURS_FOR_DAY =
       ThirtyMinuteBlock.fromRange(ThirtyMinuteBlock.BLOCK_08_00, ThirtyMinuteBlock.BLOCK_16_00);
-  private static final AttendingHours ATTENDING_HOURS =
-      new AttendingHours(
-          ATTENDING_HOURS_FOR_DAY,
-          ATTENDING_HOURS_FOR_DAY,
-          ATTENDING_HOURS_FOR_DAY,
-          ATTENDING_HOURS_FOR_DAY,
-          ATTENDING_HOURS_FOR_DAY,
-          ATTENDING_HOURS_FOR_DAY,
-          ATTENDING_HOURS_FOR_DAY);
+
+  private static final Set<AttendingHours> ATTENDING_HOURS =
+      new HashSet<>(
+          Stream.of(
+                  AttendingHours.createFromList(
+                      DOCTOR_ID, DayOfWeek.MONDAY, ATTENDING_HOURS_FOR_DAY),
+                  AttendingHours.createFromList(
+                      DOCTOR_ID, DayOfWeek.TUESDAY, ATTENDING_HOURS_FOR_DAY),
+                  AttendingHours.createFromList(
+                      DOCTOR_ID, DayOfWeek.WEDNESDAY, ATTENDING_HOURS_FOR_DAY),
+                  AttendingHours.createFromList(
+                      DOCTOR_ID, DayOfWeek.THURSDAY, ATTENDING_HOURS_FOR_DAY),
+                  AttendingHours.createFromList(
+                      DOCTOR_ID, DayOfWeek.FRIDAY, ATTENDING_HOURS_FOR_DAY),
+                  AttendingHours.createFromList(
+                      DOCTOR_ID, DayOfWeek.SATURDAY, ATTENDING_HOURS_FOR_DAY),
+                  AttendingHours.createFromList(
+                      DOCTOR_ID, DayOfWeek.SUNDAY, ATTENDING_HOURS_FOR_DAY))
+              .flatMap(Collection::stream)
+              .collect(Collectors.toList()));
   private static final Float RATING = 3F;
   private static final Integer RATING_COUNT = 1;
 
@@ -75,11 +84,13 @@ public class AppointmentServiceImplTest {
           DOCTOR_PASSWORD,
           DOCTOR_FIRST_NAME,
           DOCTOR_LAST_NAME,
-          DOCTOR_PFP_ID,
+          DOCTOR_IMAGE,
           DOCTOR_HEALTH_INSURANCES,
           SPECIALTY,
-          LOCATION,
+          CITY,
+          ADDRESS,
           ATTENDING_HOURS,
+          new ArrayList<>(),
           RATING,
           RATING_COUNT);
 
@@ -90,7 +101,7 @@ public class AppointmentServiceImplTest {
   private static final String PATIENT_PASSWORD = "patient_password";
   private static final String FIRST_NAME = "patient_first_name";
   private static final String PATIENT_LAST_NAME = "patient_last_name";
-  private static final Long PATIENT_PFP_ID = null;
+  private static final Image PATIENT_IMAGE = new Image(null, null);
 
   private static final HealthInsurance PATIENT_HEALTH_INSURANCE = HealthInsurance.NONE;
   private static final Patient PATIENT =
@@ -100,7 +111,7 @@ public class AppointmentServiceImplTest {
           PATIENT_PASSWORD,
           FIRST_NAME,
           PATIENT_LAST_NAME,
-          PATIENT_PFP_ID,
+          PATIENT_IMAGE,
           PATIENT_HEALTH_INSURANCE);
 
   // ================== Appointment Constants ==================
@@ -136,7 +147,8 @@ public class AppointmentServiceImplTest {
           APPOINTMENT_DESCRIPTION,
           CANCELLED_APPOINTMENT_DESCRIPTION);
 
-  private static final List<Appointment> APPOINTMENTS = Arrays.asList(CREATED_APPOINTMENT);
+  private static final List<Appointment> APPOINTMENTS =
+      Collections.singletonList(CREATED_APPOINTMENT);
 
   private static final long FORBIDDEN_USER_ID = 2;
 
@@ -159,7 +171,8 @@ public class AppointmentServiceImplTest {
 
   @Test
   public void testCreateAppointment()
-      throws DoctorNotFoundException, PatientNotFoundException, DoctorNotAvailableException {
+      throws DoctorNotFoundException, PatientNotFoundException, DoctorNotAvailableException,
+          AppointmentAlreadyExistsException {
     // 1. Precondiciones
     // Mock doctorService
     Mockito.when(doctorService.getDoctorById(DOCTOR_ID)).thenReturn(Optional.of(DOCTOR));
@@ -262,8 +275,10 @@ public class AppointmentServiceImplTest {
         PATIENT_ID, DOCTOR_ID, APPOINTMENT_DATE, APPOINTMENT_TIME, APPOINTMENT_DESCRIPTION);
   }
 
+  @Test
   public void testCreateAppointmentAlreadyTakenByCancelledAppointment()
-      throws DoctorNotFoundException, PatientNotFoundException, DoctorNotAvailableException {
+      throws DoctorNotFoundException, PatientNotFoundException, DoctorNotAvailableException,
+          AppointmentAlreadyExistsException {
     // 1. Precondiciones
 
     // Mock doctorService
@@ -361,13 +376,11 @@ public class AppointmentServiceImplTest {
 
   @Test(expected = AppointmentNotFoundException.class)
   public void testCancelAppointmentDoesNotExist()
-      throws AppointmentNotFoundException, CancelForbiddenException,
-          ar.edu.itba.paw.interfaces.persistence.exceptions.AppointmentNotFoundException {
+      throws AppointmentNotFoundException, CancelForbiddenException{
     // 1. Precondiciones
 
     // Mock appointmentDao
-    Mockito.when(appointmentDao.getAppointmentById(APPOINTMENT_ID))
-        .thenReturn(Optional.empty());
+    Mockito.when(appointmentDao.getAppointmentById(APPOINTMENT_ID)).thenReturn(Optional.empty());
 
     // 2. Ejercitar la class under test
     as.cancelAppointment(APPOINTMENT_ID, CANCELLED_APPOINTMENT_DESCRIPTION, DOCTOR_ID);
@@ -375,8 +388,7 @@ public class AppointmentServiceImplTest {
 
   @Test(expected = CancelForbiddenException.class)
   public void testCancelAppointmentForbidden()
-      throws AppointmentNotFoundException, CancelForbiddenException,
-          ar.edu.itba.paw.interfaces.persistence.exceptions.AppointmentNotFoundException {
+      throws AppointmentNotFoundException, CancelForbiddenException{
     // 1. Precondiciones
 
     // Mock appointmentDao
@@ -397,7 +409,9 @@ public class AppointmentServiceImplTest {
     Mockito.when(doctorService.getDoctorById(DOCTOR_ID)).thenReturn(Optional.of(DOCTOR));
 
     // Mock appointmentDao
-    Mockito.when(appointmentDao.getFilteredAppointments(DOCTOR_ID, null, RANGE_FROM, RANGE_TO, null, null, false))
+    Mockito.when(
+            appointmentDao.getFilteredAppointments(
+                DOCTOR_ID, null, RANGE_FROM, RANGE_TO, null, null, false))
         .thenReturn(new Page<>(APPOINTMENTS, null, null, null));
 
     // 2. Ejercitar la class under test
@@ -405,7 +419,7 @@ public class AppointmentServiceImplTest {
         as.getAvailableHoursForDoctorOnRange(DOCTOR_ID, RANGE_FROM, RANGE_TO);
 
     // 3. Meaningful assertions
-    
+
     List<List<ThirtyMinuteBlock>> expectedAvailableHours = new ArrayList<>();
 
     expectedAvailableHours.add(new ArrayList<>(ATTENDING_HOURS_FOR_DAY));
@@ -415,7 +429,6 @@ public class AppointmentServiceImplTest {
     expectedAvailableHours.add(availableHoursForDay);
 
     expectedAvailableHours.add(new ArrayList<>(ATTENDING_HOURS_FOR_DAY));
-
     Assert.assertEquals(expectedAvailableHours, availableHours);
   }
 

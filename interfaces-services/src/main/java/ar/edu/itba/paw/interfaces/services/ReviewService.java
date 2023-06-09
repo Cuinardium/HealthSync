@@ -10,11 +10,13 @@ public interface ReviewService {
 
   // =============== Inserts ===============
 
-  public Review createReview(long doctorId, long patientId, int rating, String description) throws DoctorNotFoundException, PatientNotFoundException, ReviewForbiddenException;
-  
+  public Review createReview(long doctorId, long patientId, int rating, String description)
+      throws DoctorNotFoundException, PatientNotFoundException, ReviewForbiddenException;
+
   // =============== Queries ===============
-  
-  Page<Review> getReviewsForDoctor(long doctorId, Integer page, Integer pageSize) throws DoctorNotFoundException;
+
+  public Page<Review> getReviewsForDoctor(long doctorId, Integer page, Integer pageSize)
+      throws DoctorNotFoundException;
 
   public boolean canReview(long doctorId, long patientId);
 }

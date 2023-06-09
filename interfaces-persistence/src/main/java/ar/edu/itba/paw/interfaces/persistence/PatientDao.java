@@ -10,8 +10,7 @@ public interface PatientDao {
 
   // =============== Inserts ===============
 
-  public Patient createPatient(long patientId, HealthInsurance healthInsurance)
-      throws PatientAlreadyExistsException, IllegalStateException;
+  public Patient createPatient(Patient patient) throws PatientAlreadyExistsException;
 
   // =============== Updates ===============
 
