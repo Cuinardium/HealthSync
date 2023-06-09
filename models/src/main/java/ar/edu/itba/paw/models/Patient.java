@@ -77,12 +77,12 @@ public class Patient extends User {
       this.healthInsurance = healthInsurance;
     }
 
-    Builder id(long id) {
+    public Builder id(long id) {
       this.id = id;
       return this;
     }
 
-    Builder image(Image image) {
+    public Builder image(Image image) {
       this.image = image;
       return this;
     }
