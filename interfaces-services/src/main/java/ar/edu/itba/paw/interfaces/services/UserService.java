@@ -19,7 +19,7 @@ public interface UserService {
       throws UserNotFoundException, EmailInUseException;
 
   public boolean updatePassword(long userId, String oldPassword, String password)
-      throws IllegalStateException, UserNotFoundException;
+      throws UserNotFoundException;
 
   // =============== Queries ===============
 

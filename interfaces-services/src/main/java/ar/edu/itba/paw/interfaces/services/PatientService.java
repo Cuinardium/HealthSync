@@ -17,7 +17,7 @@ public interface PatientService {
       String firstName,
       String lastName,
       HealthInsurance healthInsurance)
-      throws EmailInUseException, IllegalStateException;
+      throws EmailInUseException;
 
   // =============== Updates ===============
 

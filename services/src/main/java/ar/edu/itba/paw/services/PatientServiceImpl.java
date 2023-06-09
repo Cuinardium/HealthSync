@@ -62,7 +62,7 @@ public class PatientServiceImpl implements PatientService {
                   healthInsurance));
       return patient;
     } catch (PatientAlreadyExistsException e) {
-      throw new IllegalStateException();
+      throw new IllegalStateException("Patient should not exist when id is null");
     } catch (EmailAlreadyExistsException e) {
       throw new EmailInUseException();
     }

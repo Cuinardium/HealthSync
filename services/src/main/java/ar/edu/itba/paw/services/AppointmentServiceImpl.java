@@ -120,7 +120,7 @@ public class AppointmentServiceImpl implements AppointmentService {
           appointmentDao.updateAppointment(
               appointmentId, AppointmentStatus.CANCELLED, cancelDescription);
     } catch (ar.edu.itba.paw.interfaces.persistence.exceptions.AppointmentNotFoundException e) {
-      throw new IllegalStateException();
+      throw new IllegalStateException("Appointment could not be updated due to it not existing");
     }
 
     // TODO: locale should be determined by the user's language
@@ -142,7 +142,6 @@ public class AppointmentServiceImpl implements AppointmentService {
   public List<Appointment> getAppointments(long userId, boolean isPatient) {
     return appointmentDao.getAppointments(userId, isPatient);
   }
-
 
   @Transactional
   @Override
@@ -186,8 +185,9 @@ public class AppointmentServiceImpl implements AppointmentService {
         List<ThirtyMinuteBlock> availableHoursOnAppointmentDate =
             availableHours.get(appointment.getDate());
 
+        // TODO: is this really necesary?
         if (availableHoursOnAppointmentDate == null) {
-          throw new IllegalStateException();
+          throw new IllegalStateException("Available hours should be populated");
         }
 
         availableHoursOnAppointmentDate.remove(appointment.getTimeBlock());

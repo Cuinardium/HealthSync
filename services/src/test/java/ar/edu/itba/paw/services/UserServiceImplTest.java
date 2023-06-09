@@ -136,7 +136,8 @@ public class UserServiceImplTest {
   @Test
   public void testUpdateUser()
       throws UserNotFoundException,
-          ar.edu.itba.paw.interfaces.services.exceptions.UserNotFoundException, EmailAlreadyExistsException, EmailInUseException {
+          ar.edu.itba.paw.interfaces.services.exceptions.UserNotFoundException,
+          EmailAlreadyExistsException, EmailInUseException {
     // 1. Precondiciones
     User USER = new User(ID, EMAIL, PASSWORD, FIRST_NAME, LAST_NAME, IMAGE);
     User USER_UPDATED =
@@ -157,9 +158,11 @@ public class UserServiceImplTest {
     Assert.assertEquals(USER_UPDATED, user);
   }
 
+  // TODO: make a more specific exception
   @Test(expected = IllegalStateException.class)
   public void testUpdateUserDoesNotExist()
-      throws ar.edu.itba.paw.interfaces.services.exceptions.UserNotFoundException, EmailInUseException {
+      throws ar.edu.itba.paw.interfaces.services.exceptions.UserNotFoundException,
+          EmailInUseException {
     // 1. Precondiciones
     Mockito.when(userDao.getUserById(ID)).thenReturn(Optional.empty());
     // 2. Ejercitar la class under test
@@ -169,7 +172,7 @@ public class UserServiceImplTest {
 
   @Test
   public void testUpdatePassword()
-      throws UserNotFoundException, IllegalStateException,
+      throws UserNotFoundException,
           ar.edu.itba.paw.interfaces.services.exceptions.UserNotFoundException {
     // 1. Precondiciones
     User USER = new User(ID, EMAIL, PASSWORD_ENCODED, FIRST_NAME, LAST_NAME, IMAGE);
@@ -188,8 +191,7 @@ public class UserServiceImplTest {
 
   @Test
   public void testUpdatePasswordOldPasswordDoesNotMatch()
-      throws IllegalStateException,
-          ar.edu.itba.paw.interfaces.services.exceptions.UserNotFoundException {
+      throws ar.edu.itba.paw.interfaces.services.exceptions.UserNotFoundException {
     // 1. Precondiciones
     User USER = new User(ID, EMAIL, PASSWORD_ENCODED, FIRST_NAME, LAST_NAME, IMAGE);
     Mockito.when(userDao.getUserById(Mockito.eq(ID))).thenReturn(Optional.of(USER));
@@ -203,7 +205,7 @@ public class UserServiceImplTest {
 
   @Test(expected = ar.edu.itba.paw.interfaces.services.exceptions.UserNotFoundException.class)
   public void testUpdatePasswordUserDoesNotExist()
-      throws UserNotFoundException, IllegalStateException,
+      throws UserNotFoundException,
           ar.edu.itba.paw.interfaces.services.exceptions.UserNotFoundException {
     // 1. Precondiciones
     User USER = new User(ID, EMAIL, PASSWORD_ENCODED, FIRST_NAME, LAST_NAME, IMAGE);

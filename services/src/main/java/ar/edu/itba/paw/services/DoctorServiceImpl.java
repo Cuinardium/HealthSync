@@ -67,7 +67,7 @@ public class DoctorServiceImpl implements DoctorService {
               0f,
               0));
     } catch (DoctorAlreadyExistsException e) {
-      throw new IllegalStateException();
+      throw new IllegalStateException("Doctor should not exist when id is null");
     } catch (EmailAlreadyExistsException e) {
       throw new EmailInUseException();
     }

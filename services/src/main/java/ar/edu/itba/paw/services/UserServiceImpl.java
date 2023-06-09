@@ -51,7 +51,13 @@ public class UserServiceImpl implements UserService {
 
     try {
       Image old_image =
-          userDao.getUserById(userId).orElseThrow(IllegalStateException::new).getImage();
+          userDao
+              .getUserById(userId)
+              .orElseThrow(
+                  () ->
+                      new IllegalStateException(
+                          "User could not be updated because it does not exist"))
+              .getImage();
       if (image != null) {
         // Si la pfp es null -> insertamos imagen
         // si la pfp no es null -> la actualizamos para pisar la vieja
@@ -74,10 +80,16 @@ public class UserServiceImpl implements UserService {
   @Transactional
   @Override
   public boolean updatePassword(long userId, String oldPassword, String password)
-      throws IllegalStateException, UserNotFoundException {
+      throws UserNotFoundException {
     if (!passwordEncoder.matches(
         oldPassword,
-        userDao.getUserById(userId).orElseThrow(IllegalStateException::new).getPassword())) {
+        userDao
+            .getUserById(userId)
+            .orElseThrow(
+                () ->
+                    new IllegalStateException(
+                        "User could not be updated because it does not exist"))
+            .getPassword())) {
       // En clase vimos que era mejor retornar true o false, para verificar si se actualizo la pass
       return false;
     }

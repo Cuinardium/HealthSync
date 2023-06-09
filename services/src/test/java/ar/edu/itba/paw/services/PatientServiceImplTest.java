@@ -68,6 +68,7 @@ public class PatientServiceImplTest {
     Assert.assertEquals(PATIENT, patient);
   }
 
+  // TODO: make a more specific exception
   @Test(expected = IllegalStateException.class)
   public void testCreatePatientAlreadyExists()
       throws EmailAlreadyExistsException, PatientAlreadyExistsException, EmailInUseException {
@@ -85,8 +86,7 @@ public class PatientServiceImplTest {
 
   @Test(expected = EmailInUseException.class)
   public void testCreatePatientUserAlreadyExists()
-      throws IllegalStateException, PatientAlreadyExistsException, EmailInUseException,
-          EmailAlreadyExistsException {
+      throws PatientAlreadyExistsException, EmailInUseException, EmailAlreadyExistsException {
     // 1. Precondiciones
     Mockito.when(
             patientDao.createPatient(
