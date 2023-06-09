@@ -73,7 +73,9 @@ public class AppointmentDaoJpa implements AppointmentDao {
   public void completeAppointmentsInDateBlock(LocalDate date, ThirtyMinuteBlock timeBlock) {
     // JPA Query Language (JQL) / Hibernate Query Language (HQL)
     final TypedQuery<Appointment> query =
-        em.createQuery("from Appointment as app where app.date = :date and app.timeBlock = :timeBlock", Appointment.class);
+        em.createQuery(
+            "from Appointment as app where app.date = :date and app.timeBlock = :timeBlock",
+            Appointment.class);
     query.setParameter("date", date);
     query.setParameter("timeBlock", timeBlock);
 
@@ -153,13 +155,17 @@ public class AppointmentDaoJpa implements AppointmentDao {
       nativeQueryBuilder.where("appointment_date <= '" + Date.valueOf(to) + "'");
     }
 
-    Query nativeQuery = em.createNativeQuery(nativeQueryBuilder.build());
+    String builtQuery = nativeQueryBuilder.build();
+
+    Query nativeQuery = em.createNativeQuery(builtQuery);
+    Query qtyAppointmentsQuery = em.createQuery(builtQuery);
 
     if (page != null && page >= 0 && pageSize != null && pageSize > 0) {
       nativeQuery.setMaxResults(pageSize);
       nativeQuery.setFirstResult(page * pageSize);
     }
 
+    @SuppressWarnings("unchecked")
     final List<Long> idList =
         (List<Long>)
             nativeQuery
@@ -178,8 +184,9 @@ public class AppointmentDaoJpa implements AppointmentDao {
     query.setParameter("idList", idList);
 
     List<Appointment> content = query.getResultList();
+    int qtyAppointments = qtyAppointmentsQuery.getResultList().size();
 
-    return new Page<>(content, page, content.size(), pageSize);
+    return new Page<>(content, page, qtyAppointments, pageSize);
   }
 
   @Override
@@ -197,7 +204,8 @@ public class AppointmentDaoJpa implements AppointmentDao {
   }
 
   @Override
-  public List<Appointment> getAllConfirmedAppointmentsInDateBlock(LocalDate date, ThirtyMinuteBlock timeBlock) {
+  public List<Appointment> getAllConfirmedAppointmentsInDateBlock(
+      LocalDate date, ThirtyMinuteBlock timeBlock) {
     // JPA Query Language (JQL) / Hibernate Query Language (HQL)
     final TypedQuery<Appointment> query =
         em.createQuery(

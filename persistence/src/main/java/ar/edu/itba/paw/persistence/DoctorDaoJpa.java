@@ -146,13 +146,17 @@ public class DoctorDaoJpa implements DoctorDao {
       nativeQueryBuilder.where("doctor.doctor_id IN (" + attendingHoursQuery.build() + ")");
     }
 
-    Query nativeQuery = em.createNativeQuery(nativeQueryBuilder.build());
+    String builtQuery = nativeQueryBuilder.build();
+
+    Query nativeQuery = em.createNativeQuery(builtQuery);
+    Query qtyDoctorsQuery = em.createNativeQuery(builtQuery);
 
     if (page != null && page >= 0 && pageSize != null && pageSize > 0) {
       nativeQuery.setMaxResults(pageSize);
       nativeQuery.setFirstResult(page * pageSize);
     }
 
+    @SuppressWarnings("unchecked")
     final List<Long> idList =
         (List<Long>)
             nativeQuery.getResultList().stream()
@@ -166,8 +170,9 @@ public class DoctorDaoJpa implements DoctorDao {
     query.setParameter("idList", idList);
 
     List<Doctor> content = query.getResultList();
+    int qtyDoctors = qtyDoctorsQuery.getResultList().size();
 
-    return new Page<>(content, page, content.size(), pageSize);
+    return new Page<>(content, page, qtyDoctors, pageSize);
   }
 
   @Override

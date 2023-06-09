@@ -44,7 +44,7 @@ public class DoctorController {
 
   private final ReviewService reviewService;
 
-  private static final int PAGE_SIZE = 10;
+  private static final int PAGE_SIZE = 3;
 
   @Autowired
   public DoctorController(
