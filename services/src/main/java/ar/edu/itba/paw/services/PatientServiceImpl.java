@@ -1,7 +1,6 @@
 package ar.edu.itba.paw.services;
 
 import ar.edu.itba.paw.interfaces.persistence.PatientDao;
-import ar.edu.itba.paw.interfaces.persistence.exceptions.EmailAlreadyExistsException;
 import ar.edu.itba.paw.interfaces.persistence.exceptions.PatientAlreadyExistsException;
 import ar.edu.itba.paw.interfaces.persistence.exceptions.PatientNotFoundException;
 import ar.edu.itba.paw.interfaces.services.PatientService;
@@ -45,11 +44,11 @@ public class PatientServiceImpl implements PatientService {
       HealthInsurance healthInsurance)
       throws EmailInUseException {
 
+    if (userService.getUserByEmail(email).isPresent()) {
+      throw new EmailInUseException();
+    }
+
     try {
-      // TODO: revisar xq comente create user y era lo que tiraba el email in use excep
-      // Create user
-      // userService.createUser(email, password, firstName, lastName);
-      // Create Patient
       Patient patient =
           patientDao.createPatient(
               new Patient(
@@ -63,8 +62,6 @@ public class PatientServiceImpl implements PatientService {
       return patient;
     } catch (PatientAlreadyExistsException e) {
       throw new IllegalStateException("Patient should not exist when id is null");
-    } catch (EmailAlreadyExistsException e) {
-      throw new EmailInUseException();
     }
   }
 

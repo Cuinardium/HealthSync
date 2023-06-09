@@ -1,10 +1,8 @@
 package ar.edu.itba.paw.persistence;
 
 import ar.edu.itba.paw.interfaces.persistence.DoctorDao;
-import ar.edu.itba.paw.interfaces.persistence.UserDao;
 import ar.edu.itba.paw.interfaces.persistence.exceptions.DoctorAlreadyExistsException;
 import ar.edu.itba.paw.interfaces.persistence.exceptions.DoctorNotFoundException;
-import ar.edu.itba.paw.interfaces.persistence.exceptions.EmailAlreadyExistsException;
 import ar.edu.itba.paw.models.*;
 import ar.edu.itba.paw.persistence.utils.QueryBuilder;
 import java.sql.Date;
@@ -15,8 +13,6 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
-
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -24,23 +20,12 @@ public class DoctorDaoJpa implements DoctorDao {
 
   @PersistenceContext private EntityManager em;
 
-  private final UserDao userDao;
-
-  @Autowired
-  public DoctorDaoJpa(final UserDao userDao) {
-    this.userDao = userDao;
-  }
-
   @Override
   public Doctor createDoctor(Doctor doctor)
-      throws DoctorAlreadyExistsException, EmailAlreadyExistsException {
+      throws DoctorAlreadyExistsException {
 
     if (doctor.getId() != null && getDoctorById(doctor.getId()).isPresent()) {
       throw new DoctorAlreadyExistsException();
-    }
-
-    if (userDao.getUserByEmail(doctor.getEmail()).isPresent()) {
-      throw new EmailAlreadyExistsException();
     }
 
     mapAttendingHours(doctor);
@@ -170,9 +155,7 @@ public class DoctorDaoJpa implements DoctorDao {
 
     final List<Long> idList =
         (List<Long>)
-            nativeQuery
-                .getResultList()
-                .stream()
+            nativeQuery.getResultList().stream()
                 .map(o -> ((Number) o).longValue())
                 .collect(Collectors.toList());
 
@@ -195,9 +178,7 @@ public class DoctorDaoJpa implements DoctorDao {
   @Override
   public Map<HealthInsurance, Integer> getUsedHealthInsurances() {
     List<Set<HealthInsurance>> hList =
-        em.createQuery("from Doctor", Doctor.class)
-            .getResultList()
-            .stream()
+        em.createQuery("from Doctor", Doctor.class).getResultList().stream()
             .map(Doctor::getHealthInsurances)
             .collect(Collectors.toCollection(ArrayList::new));
 
@@ -215,9 +196,7 @@ public class DoctorDaoJpa implements DoctorDao {
   @Override
   public Map<Specialty, Integer> getUsedSpecialties() {
     List<Specialty> sList =
-        em.createQuery("from Doctor", Doctor.class)
-            .getResultList()
-            .stream()
+        em.createQuery("from Doctor", Doctor.class).getResultList().stream()
             .map(Doctor::getSpecialty)
             .collect(Collectors.toCollection(ArrayList::new));
 
@@ -234,9 +213,7 @@ public class DoctorDaoJpa implements DoctorDao {
   @Override
   public Map<City, Integer> getUsedCities() {
     List<City> lList =
-        em.createQuery("from Doctor", Doctor.class)
-            .getResultList()
-            .stream()
+        em.createQuery("from Doctor", Doctor.class).getResultList().stream()
             .map(Doctor::getCity)
             .collect(Collectors.toCollection(ArrayList::new));
 
@@ -262,9 +239,7 @@ public class DoctorDaoJpa implements DoctorDao {
 
     final List<Long> idList =
         (List<Long>)
-            nativeQuery
-                .getResultList()
-                .stream()
+            nativeQuery.getResultList().stream()
                 .map(o -> ((Number) o).longValue())
                 .collect(Collectors.toList());
 

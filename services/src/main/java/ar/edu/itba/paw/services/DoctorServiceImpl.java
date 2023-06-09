@@ -2,7 +2,6 @@ package ar.edu.itba.paw.services;
 
 import ar.edu.itba.paw.interfaces.persistence.DoctorDao;
 import ar.edu.itba.paw.interfaces.persistence.exceptions.DoctorAlreadyExistsException;
-import ar.edu.itba.paw.interfaces.persistence.exceptions.EmailAlreadyExistsException;
 import ar.edu.itba.paw.interfaces.services.DoctorService;
 import ar.edu.itba.paw.interfaces.services.UserService;
 import ar.edu.itba.paw.interfaces.services.exceptions.DoctorNotFoundException;
@@ -49,6 +48,10 @@ public class DoctorServiceImpl implements DoctorService {
       Set<AttendingHours> attendingHours)
       throws EmailInUseException {
 
+    if (userService.getUserByEmail(email).isPresent()) {
+      throw new EmailInUseException();
+    }
+
     try {
       return doctorDao.createDoctor(
           new Doctor(
@@ -68,8 +71,6 @@ public class DoctorServiceImpl implements DoctorService {
               0));
     } catch (DoctorAlreadyExistsException e) {
       throw new IllegalStateException("Doctor should not exist when id is null");
-    } catch (EmailAlreadyExistsException e) {
-      throw new EmailInUseException();
     }
   }
 

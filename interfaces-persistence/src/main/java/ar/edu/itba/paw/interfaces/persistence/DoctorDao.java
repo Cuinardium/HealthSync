@@ -2,7 +2,6 @@ package ar.edu.itba.paw.interfaces.persistence;
 
 import ar.edu.itba.paw.interfaces.persistence.exceptions.DoctorAlreadyExistsException;
 import ar.edu.itba.paw.interfaces.persistence.exceptions.DoctorNotFoundException;
-import ar.edu.itba.paw.interfaces.persistence.exceptions.EmailAlreadyExistsException;
 import ar.edu.itba.paw.models.*;
 import java.time.LocalDate;
 import java.util.List;
@@ -15,7 +14,7 @@ public interface DoctorDao {
   // =============== Inserts ===============
 
   public Doctor createDoctor(Doctor doctor)
-      throws DoctorAlreadyExistsException, EmailAlreadyExistsException;
+      throws DoctorAlreadyExistsException;
 
   public Review addReview(long doctorId, Review review) throws DoctorNotFoundException;
 

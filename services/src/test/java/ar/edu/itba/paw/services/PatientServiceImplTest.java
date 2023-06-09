@@ -57,11 +57,14 @@ public class PatientServiceImplTest {
       throws EmailAlreadyExistsException, PatientAlreadyExistsException, EmailInUseException {
     // 1. Precondiciones
     Mockito.when(passwordEncoder.encode(Mockito.eq(PASSWORD))).thenReturn(PASSWORD_ENCODED);
+    Mockito.when(userService.getUserByEmail(Mockito.eq(EMAIL))).thenReturn(Optional.empty());
+
     Mockito.when(
             patientDao.createPatient(
                 new Patient(
                     null, EMAIL, PASSWORD_ENCODED, FIRST_NAME, LAST_NAME, null, HEALTH_INSURANCE)))
         .thenReturn(PATIENT);
+
     // 2. Ejercitar la class under test
     Patient patient = ps.createPatient(EMAIL, PASSWORD, FIRST_NAME, LAST_NAME, HEALTH_INSURANCE);
     // 3. Meaningful assertions
@@ -74,24 +77,25 @@ public class PatientServiceImplTest {
       throws EmailAlreadyExistsException, PatientAlreadyExistsException, EmailInUseException {
     // 1. Precondiciones
     Mockito.when(passwordEncoder.encode(Mockito.eq(PASSWORD))).thenReturn(PASSWORD_ENCODED);
+    Mockito.when(userService.getUserByEmail(Mockito.eq(EMAIL))).thenReturn(Optional.empty());
+
     Mockito.when(
             patientDao.createPatient(
                 new Patient(
                     null, EMAIL, PASSWORD_ENCODED, FIRST_NAME, LAST_NAME, null, HEALTH_INSURANCE)))
         .thenThrow(PatientAlreadyExistsException.class);
+
     // 2. Ejercitar la class under test
     ps.createPatient(EMAIL, PASSWORD, FIRST_NAME, LAST_NAME, HEALTH_INSURANCE);
     // 3. Meaningful assertions
   }
 
   @Test(expected = EmailInUseException.class)
-  public void testCreatePatientUserAlreadyExists()
-      throws PatientAlreadyExistsException, EmailInUseException, EmailAlreadyExistsException {
+  public void testCreatePatientEmailAlreadyExists()
+      throws PatientAlreadyExistsException, EmailInUseException {
     // 1. Precondiciones
-    Mockito.when(
-            patientDao.createPatient(
-                new Patient(null, EMAIL, PASSWORD, FIRST_NAME, LAST_NAME, null, HEALTH_INSURANCE)))
-        .thenThrow(EmailAlreadyExistsException.class);
+    Mockito.when(userService.getUserByEmail(Mockito.eq(EMAIL))).thenReturn(Optional.of(USER));
+
     // 2. Ejercitar la class under test
     ps.createPatient(EMAIL, PASSWORD, FIRST_NAME, LAST_NAME, HEALTH_INSURANCE);
     // 3. Meaningful assertions
