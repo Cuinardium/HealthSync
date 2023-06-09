@@ -2,10 +2,10 @@ package ar.edu.itba.paw.services;
 
 import ar.edu.itba.paw.interfaces.persistence.PatientDao;
 import ar.edu.itba.paw.interfaces.persistence.exceptions.PatientAlreadyExistsException;
-import ar.edu.itba.paw.interfaces.services.exceptions.PatientNotFoundException;
 import ar.edu.itba.paw.interfaces.services.PatientService;
 import ar.edu.itba.paw.interfaces.services.UserService;
 import ar.edu.itba.paw.interfaces.services.exceptions.EmailInUseException;
+import ar.edu.itba.paw.interfaces.services.exceptions.PatientNotFoundException;
 import ar.edu.itba.paw.interfaces.services.exceptions.UserNotFoundException;
 import ar.edu.itba.paw.models.HealthInsurance;
 import ar.edu.itba.paw.models.Image;
@@ -51,14 +51,9 @@ public class PatientServiceImpl implements PatientService {
     try {
       Patient patient =
           patientDao.createPatient(
-              new Patient(
-                  null,
-                  email,
-                  passwordEncoder.encode(password),
-                  firstName,
-                  lastName,
-                  null,
-                  healthInsurance));
+              new Patient.Builder(
+                      email, passwordEncoder.encode(password), firstName, lastName, healthInsurance)
+                  .build());
       return patient;
     } catch (PatientAlreadyExistsException e) {
       throw new IllegalStateException("Patient should not exist when id is null");
@@ -81,7 +76,8 @@ public class PatientServiceImpl implements PatientService {
     try {
       userService.updateUser(patientId, email, firstName, lastName, image);
       return patientDao.updatePatientInfo(patientId, healthInsurance);
-    } catch (UserNotFoundException | ar.edu.itba.paw.interfaces.persistence.exceptions.PatientNotFoundException e) {
+    } catch (UserNotFoundException
+        | ar.edu.itba.paw.interfaces.persistence.exceptions.PatientNotFoundException e) {
       throw new PatientNotFoundException();
     }
   }

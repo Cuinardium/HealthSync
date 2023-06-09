@@ -45,8 +45,7 @@ public class AppointmentDaoJpa implements AppointmentDao {
     // TODO: check that appointment is in future
 
     final Appointment app =
-        new Appointment(
-            null, patient, doctor, date, timeBlock, AppointmentStatus.CONFIRMED, description, null);
+        new Appointment.Builder(patient, doctor, date, timeBlock, description).build();
 
     em.persist(app);
 
@@ -73,7 +72,9 @@ public class AppointmentDaoJpa implements AppointmentDao {
   public void completeAppointmentsInDateBlock(LocalDate date, ThirtyMinuteBlock timeBlock) {
     // JPA Query Language (JQL) / Hibernate Query Language (HQL)
     final TypedQuery<Appointment> query =
-        em.createQuery("from Appointment as app where app.date = :date and app.timeBlock = :timeBlock", Appointment.class);
+        em.createQuery(
+            "from Appointment as app where app.date = :date and app.timeBlock = :timeBlock",
+            Appointment.class);
     query.setParameter("date", date);
     query.setParameter("timeBlock", timeBlock);
 
@@ -197,7 +198,8 @@ public class AppointmentDaoJpa implements AppointmentDao {
   }
 
   @Override
-  public List<Appointment> getAllConfirmedAppointmentsInDateBlock(LocalDate date, ThirtyMinuteBlock timeBlock) {
+  public List<Appointment> getAllConfirmedAppointmentsInDateBlock(
+      LocalDate date, ThirtyMinuteBlock timeBlock) {
     // JPA Query Language (JQL) / Hibernate Query Language (HQL)
     final TypedQuery<Appointment> query =
         em.createQuery(

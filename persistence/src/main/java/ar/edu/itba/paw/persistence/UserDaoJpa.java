@@ -19,7 +19,7 @@ public class UserDaoJpa implements UserDao {
   @Override
   public User createUser(String email, String password, String firstName, String lastName)
       throws EmailAlreadyExistsException {
-    final User user = new User(null, email, password, firstName, lastName, null);
+    final User user = new User.Builder(email, password, firstName, lastName).build();
     if (getUserByEmail(email).isPresent()) {
       throw new EmailAlreadyExistsException();
     }

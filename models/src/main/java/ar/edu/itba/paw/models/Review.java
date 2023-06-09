@@ -150,7 +150,7 @@ public class Review {
     private Long id = null;
 
     public Builder(
-        Patient patient, LocalDate date, String description, Short rating, Doctor doctor) {
+        Doctor doctor, Patient patient, LocalDate date, String description, Short rating) {
       this.patient = patient;
       this.date = date;
       this.description = description;

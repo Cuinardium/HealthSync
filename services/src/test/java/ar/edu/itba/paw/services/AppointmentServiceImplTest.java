@@ -6,9 +6,9 @@ import ar.edu.itba.paw.interfaces.services.DoctorService;
 import ar.edu.itba.paw.interfaces.services.MailService;
 import ar.edu.itba.paw.interfaces.services.PatientService;
 import ar.edu.itba.paw.interfaces.services.exceptions.AppointmentNotFoundException;
+import ar.edu.itba.paw.interfaces.services.exceptions.CancelForbiddenException;
 import ar.edu.itba.paw.interfaces.services.exceptions.DoctorNotAvailableException;
 import ar.edu.itba.paw.interfaces.services.exceptions.DoctorNotFoundException;
-import ar.edu.itba.paw.interfaces.services.exceptions.CancelForbiddenException;
 import ar.edu.itba.paw.interfaces.services.exceptions.PatientNotFoundException;
 import ar.edu.itba.paw.models.Appointment;
 import ar.edu.itba.paw.models.AppointmentStatus;
@@ -45,7 +45,7 @@ public class AppointmentServiceImplTest {
   private static final String DOCTOR_PASSWORD = "doctor_password";
   private static final String DOCTOR_FIRST_NAME = "doctor_first_name";
   private static final String DOCTOR_LAST_NAME = "doctor_last_name";
-  private static final Image DOCTOR_IMAGE = new Image(null, null);
+  private static final Image DOCTOR_IMAGE = new Image.Builder(null).build();
 
   private static final Set<HealthInsurance> DOCTOR_HEALTH_INSURANCES =
       new HashSet<>(Arrays.asList(HealthInsurance.OSDE, HealthInsurance.OMINT));
@@ -101,7 +101,7 @@ public class AppointmentServiceImplTest {
   private static final String PATIENT_PASSWORD = "patient_password";
   private static final String FIRST_NAME = "patient_first_name";
   private static final String PATIENT_LAST_NAME = "patient_last_name";
-  private static final Image PATIENT_IMAGE = new Image(null, null);
+  private static final Image PATIENT_IMAGE = new Image.Builder(null).build();
 
   private static final HealthInsurance PATIENT_HEALTH_INSURANCE = HealthInsurance.NONE;
   private static final Patient PATIENT =
@@ -376,7 +376,7 @@ public class AppointmentServiceImplTest {
 
   @Test(expected = AppointmentNotFoundException.class)
   public void testCancelAppointmentDoesNotExist()
-      throws AppointmentNotFoundException, CancelForbiddenException{
+      throws AppointmentNotFoundException, CancelForbiddenException {
     // 1. Precondiciones
 
     // Mock appointmentDao
@@ -388,7 +388,7 @@ public class AppointmentServiceImplTest {
 
   @Test(expected = CancelForbiddenException.class)
   public void testCancelAppointmentForbidden()
-      throws AppointmentNotFoundException, CancelForbiddenException{
+      throws AppointmentNotFoundException, CancelForbiddenException {
     // 1. Precondiciones
 
     // Mock appointmentDao
