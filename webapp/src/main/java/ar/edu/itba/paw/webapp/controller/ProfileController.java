@@ -106,7 +106,7 @@ public class ProfileController {
 
     for (Entry<DayOfWeek, List<Integer>> aux : doctorEditForm.getAttendingHours().entrySet()) {
       for (Integer ordinal : aux.getValue()) {
-        attendingHours.add(new AttendingHours(1L, aux.getKey(), values[ordinal]));
+        attendingHours.add(new AttendingHours(PawAuthUserDetails.getCurrentUserId(), aux.getKey(), values[ordinal]));
       }
     }
 

@@ -62,7 +62,7 @@ public class DoctorDaoImplTest {
   private static final String AUX_DOCTOR_FIRST_NAME = "notdoctor_first_name";
   private static final String AUX_DOCTOR_LAST_NAME = "notdoctor_last_name";
   private static final Set<HealthInsurance> AUX_DOCTOR_INSURANCES =
-      new HashSet<>(Arrays.asList(HealthInsurance.NONE, HealthInsurance.SWISS_MEDICAL));
+      new HashSet<>(Arrays.asList(HealthInsurance.NONE, HealthInsurance.SWISS_MEDICAL, HealthInsurance.OSDE));
   private static final Specialty AUX_DOCTOR_SPECIALTY = Specialty.NEPHROLOGY;
   private static final City AUX_DOCTOR_CITY = City.CASEROS;
   private static final String AUX_DOCTOR_ADDRESS = "notdoctor_address";

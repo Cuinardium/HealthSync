@@ -127,7 +127,8 @@ public class Doctor extends User {
   }
 
   public void setAttendingHours(Set<AttendingHours> attendingHours) {
-    this.attendingHours = attendingHours;
+    this.attendingHours.retainAll(attendingHours);
+    this.attendingHours.addAll(attendingHours);
   }
 
   public void setRating(Float rating) {

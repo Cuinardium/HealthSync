@@ -148,7 +148,7 @@ public class AuthController {
 
     for (Entry<DayOfWeek, List<Integer>> aux : doctorRegisterForm.getAttendingHours().entrySet()) {
       for (Integer ordinal : aux.getValue()) {
-        attendingHours.add(new AttendingHours(1L, aux.getKey(), values[ordinal]));
+        attendingHours.add(new AttendingHours(null, aux.getKey(), values[ordinal]));
       }
     }
 
