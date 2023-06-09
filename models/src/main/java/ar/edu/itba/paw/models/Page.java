@@ -31,7 +31,7 @@ public class Page<T> {
       return null;
     }
 
-    return (int) Math.ceil((double) totalContentCount / pageSize);
+    return content.size() == 0 ? 1 : (int) Math.ceil((double) totalContentCount / pageSize);
   }
 
   @Override

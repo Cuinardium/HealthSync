@@ -145,7 +145,7 @@ public class HomeController {
 
     // Pagination
     mav.addObject("currentPage", doctors.getCurrentPage() + 1);
-    mav.addObject("totalPages", doctors.getContent().size() == 0 ? 1 : doctors.getTotalPages());
+    mav.addObject("totalPages", doctors.getTotalPages());
 
     // Only patients can book appointments
     boolean notLogged = PawAuthUserDetails.getRole().equals(UserRoles.ROLE_NULL);

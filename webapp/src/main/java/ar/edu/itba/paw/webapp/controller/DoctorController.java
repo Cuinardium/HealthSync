@@ -267,7 +267,7 @@ public class DoctorController {
     mav.addObject("reviews", reviews.getContent());
     mav.addObject("canReview", canReview);
     mav.addObject("currentPage", reviews.getCurrentPage() + 1);
-    mav.addObject("totalPages", reviews.getContent().size() == 0 ? 1 : reviews.getTotalPages());
+    mav.addObject("totalPages", reviews.getTotalPages());
     mav.addObject("showModal", showModal);
     mav.addObject("errorModal", errorModal);
 
