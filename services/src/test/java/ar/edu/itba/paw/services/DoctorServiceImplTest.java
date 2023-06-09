@@ -161,6 +161,8 @@ public class DoctorServiceImplTest {
 
   @InjectMocks private DoctorServiceImpl ds;
 
+  // ====================== Create doctor ======================
+
   @Test
   public void testCreateDoctor()
       throws DoctorAlreadyExistsException, EmailAlreadyExistsException, EmailInUseException {
@@ -184,6 +186,7 @@ public class DoctorServiceImplTest {
                     0f,
                     0)))
         .thenReturn(DOCTOR);
+
     // 2. Ejercitar la class under test
     Doctor doctor =
         ds.createDoctor(
@@ -196,11 +199,11 @@ public class DoctorServiceImplTest {
             ADDRESS,
             HEALTH_INSURANCES,
             ATTENDING_HOURS);
+
     // 3. Meaningful assertions
     Assert.assertEquals(DOCTOR, doctor);
   }
 
-  // TODO: Make a more specific exception
   @Test(expected = IllegalStateException.class)
   public void testCreateDoctorAlreadyExists()
       throws DoctorAlreadyExistsException, EmailAlreadyExistsException, EmailInUseException {
@@ -224,6 +227,7 @@ public class DoctorServiceImplTest {
                     0f,
                     0)))
         .thenThrow(DoctorAlreadyExistsException.class);
+
     // 2. Ejercitar la class under test
     ds.createDoctor(
         EMAIL,
@@ -235,13 +239,12 @@ public class DoctorServiceImplTest {
         ADDRESS,
         HEALTH_INSURANCES,
         ATTENDING_HOURS);
-    // 3. Meaningful assertions
   }
 
-  // TODO: make a more specific exception
   @Test(expected = IllegalStateException.class)
   public void testCreateDoctorUserAlreadyExists()
       throws DoctorAlreadyExistsException, EmailAlreadyExistsException, EmailInUseException {
+
     // 1. Precondiciones
     Mockito.when(passwordEncoder.encode(Mockito.eq(PASSWORD))).thenReturn(PASSWORD_ENCODED);
     Mockito.when(
@@ -262,6 +265,7 @@ public class DoctorServiceImplTest {
                     0f,
                     0)))
         .thenThrow(IllegalStateException.class);
+
     // 2. Ejercitar la class under test
     ds.createDoctor(
         EMAIL,
@@ -273,8 +277,30 @@ public class DoctorServiceImplTest {
         ADDRESS,
         HEALTH_INSURANCES,
         ATTENDING_HOURS);
-    // 3. Meaningful assertions
   }
+
+  @Test(expected = EmailInUseException.class)
+  public void testCreateDoctorEmailInUse()
+      throws DoctorAlreadyExistsException, EmailAlreadyExistsException, EmailInUseException {
+
+    // 1. Precondiciones
+    Mockito.when(userService.getUserByEmail(EMAIL))
+        .thenReturn(Optional.of(Mockito.mock(User.class)));
+
+    // 2. Ejercitar la class under test
+    ds.createDoctor(
+        EMAIL,
+        PASSWORD,
+        FIRST_NAME,
+        LAST_NAME,
+        SPECIALTY,
+        CITY,
+        ADDRESS,
+        HEALTH_INSURANCES,
+        ATTENDING_HOURS);
+  }
+
+  // ======================== Update doctor ========================
 
   @Test
   public void testUpdateDoctor()
@@ -290,6 +316,7 @@ public class DoctorServiceImplTest {
                 HEALTH_INSURANCES_NEW,
                 ATTENDING_HOURS_NEW))
         .thenReturn(DOCTOR_UPDATED);
+
     // 2. Ejercitar la class under test
     Doctor doctor =
         ds.updateDoctor(
@@ -303,6 +330,7 @@ public class DoctorServiceImplTest {
             HEALTH_INSURANCES_NEW,
             ATTENDING_HOURS_NEW,
             IMAGE);
+
     // 3. Meaningful assertions
     Assert.assertEquals(DOCTOR_UPDATED, doctor);
   }
@@ -314,8 +342,10 @@ public class DoctorServiceImplTest {
     // 1. Precondiciones
     Mockito.when(doctorDao.updateReviews(ID, REVIEWS_FOR_DOCTOR))
         .thenReturn(DOCTOR_UPDATED_REVIEWS);
+
     // 2. Ejercitar la class under test
     Doctor doctor = ds.updateReviews(ID, REVIEWS_FOR_DOCTOR);
+
     // 3. Meaningful assertions
     Assert.assertEquals(DOCTOR_UPDATED_REVIEWS, doctor);
   }
@@ -324,6 +354,7 @@ public class DoctorServiceImplTest {
   public void testUpdateDoctorDoesNotExist()
       throws DoctorNotFoundException, EmailInUseException,
           ar.edu.itba.paw.interfaces.services.exceptions.DoctorNotFoundException {
+
     // 1. Precondiciones
     Mockito.when(
             doctorDao.updateDoctorInfo(
@@ -334,6 +365,7 @@ public class DoctorServiceImplTest {
                 HEALTH_INSURANCES_NEW,
                 ATTENDING_HOURS_NEW))
         .thenThrow(DoctorNotFoundException.class);
+
     // 2. Ejercitar la class under test
     ds.updateDoctor(
         ID,
@@ -346,7 +378,6 @@ public class DoctorServiceImplTest {
         HEALTH_INSURANCES_NEW,
         ATTENDING_HOURS_NEW,
         IMAGE);
-    // 3. Meaningful assertions
   }
 
   @Test(expected = ar.edu.itba.paw.interfaces.services.exceptions.DoctorNotFoundException.class)
@@ -357,6 +388,7 @@ public class DoctorServiceImplTest {
     // 1. Precondiciones
     Mockito.when(userService.updateUser(ID, EMAIL_NEW, FIRST_NAME_NEW, LAST_NAME_NEW, IMAGE))
         .thenThrow(UserNotFoundException.class);
+
     // 2. Ejercitar la class under test
     ds.updateDoctor(
         ID,
@@ -369,8 +401,33 @@ public class DoctorServiceImplTest {
         HEALTH_INSURANCES_NEW,
         ATTENDING_HOURS_NEW,
         IMAGE);
-    // 3. Meaningful assertions
   }
+
+  @Test(expected = EmailInUseException.class)
+  public void testUpdateDoctorEmailInUse()
+      throws EmailInUseException,
+          ar.edu.itba.paw.interfaces.services.exceptions.DoctorNotFoundException,
+          UserNotFoundException {
+
+    // 1. Precondiciones
+    Mockito.when(userService.updateUser(ID, EMAIL_NEW, FIRST_NAME_NEW, LAST_NAME_NEW, IMAGE))
+        .thenThrow(EmailInUseException.class);
+
+    // 2. Ejercitar la class under test
+    ds.updateDoctor(
+        ID,
+        EMAIL_NEW,
+        FIRST_NAME_NEW,
+        LAST_NAME_NEW,
+        SPECIALTY_NEW,
+        CITY_NEW,
+        ADDRESS_NEW,
+        HEALTH_INSURANCES_NEW,
+        ATTENDING_HOURS_NEW,
+        IMAGE);
+  }
+
+  // ======================== Get doctor by id ========================
 
   @Test
   public void testGetDoctorById() {

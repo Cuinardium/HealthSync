@@ -1,7 +1,6 @@
 package ar.edu.itba.paw.services;
 
 import ar.edu.itba.paw.interfaces.persistence.PatientDao;
-import ar.edu.itba.paw.interfaces.persistence.exceptions.EmailAlreadyExistsException;
 import ar.edu.itba.paw.interfaces.persistence.exceptions.PatientAlreadyExistsException;
 import ar.edu.itba.paw.interfaces.persistence.exceptions.PatientNotFoundException;
 import ar.edu.itba.paw.interfaces.services.UserService;
@@ -52,9 +51,10 @@ public class PatientServiceImplTest {
 
   @InjectMocks private PatientServiceImpl ps;
 
+  // =========================== Create patient ===========================
+
   @Test
-  public void testCreatePatient()
-      throws EmailAlreadyExistsException, PatientAlreadyExistsException, EmailInUseException {
+  public void testCreatePatient() throws PatientAlreadyExistsException, EmailInUseException {
     // 1. Precondiciones
     Mockito.when(passwordEncoder.encode(Mockito.eq(PASSWORD))).thenReturn(PASSWORD_ENCODED);
     Mockito.when(userService.getUserByEmail(Mockito.eq(EMAIL))).thenReturn(Optional.empty());
@@ -74,7 +74,7 @@ public class PatientServiceImplTest {
   // TODO: make a more specific exception
   @Test(expected = IllegalStateException.class)
   public void testCreatePatientAlreadyExists()
-      throws EmailAlreadyExistsException, PatientAlreadyExistsException, EmailInUseException {
+      throws PatientAlreadyExistsException, EmailInUseException {
     // 1. Precondiciones
     Mockito.when(passwordEncoder.encode(Mockito.eq(PASSWORD))).thenReturn(PASSWORD_ENCODED);
     Mockito.when(userService.getUserByEmail(Mockito.eq(EMAIL))).thenReturn(Optional.empty());
@@ -101,10 +101,12 @@ public class PatientServiceImplTest {
     // 3. Meaningful assertions
   }
 
+  // =========================== Update patient ===========================
+
   @Test
   public void testUpdatePatient()
-      throws PatientNotFoundException, UserNotFoundException, EmailAlreadyExistsException,
-          EmailInUseException {
+      throws PatientNotFoundException, UserNotFoundException, EmailInUseException,
+          ar.edu.itba.paw.interfaces.services.exceptions.PatientNotFoundException {
     // 1. Precondiciones
     Mockito.when(patientDao.updatePatientInfo(ID, HEALTH_INSURANCE_NEW))
         .thenReturn(PATIENT_UPDATED);
@@ -115,11 +117,23 @@ public class PatientServiceImplTest {
     Assert.assertEquals(PATIENT_UPDATED, patient);
   }
 
-  // TODO: cng excep
-  @Test(expected = RuntimeException.class)
+  @Test(expected = EmailInUseException.class)
+  public void testUpdatePatientDuplicateEmail()
+      throws PatientNotFoundException, UserNotFoundException, EmailInUseException,
+          ar.edu.itba.paw.interfaces.services.exceptions.PatientNotFoundException {
+
+    // 1. Precondiciones
+    Mockito.when(userService.updateUser(ID, EMAIL_NEW, FIRST_NAME_NEW, LAST_NAME_NEW, IMAGE))
+        .thenThrow(EmailInUseException.class);
+
+    // 2. Ejercitar la class under test
+    ps.updatePatient(ID, EMAIL_NEW, FIRST_NAME_NEW, LAST_NAME_NEW, HEALTH_INSURANCE_NEW, IMAGE);
+  }
+
+  @Test(expected = ar.edu.itba.paw.interfaces.services.exceptions.PatientNotFoundException.class)
   public void testUpdatePatientDoesNotExist()
-      throws PatientNotFoundException, UserNotFoundException, EmailAlreadyExistsException,
-          EmailInUseException {
+      throws PatientNotFoundException, UserNotFoundException, EmailInUseException,
+          ar.edu.itba.paw.interfaces.services.exceptions.PatientNotFoundException {
     // 1. Precondiciones
     Mockito.when(patientDao.updatePatientInfo(ID, HEALTH_INSURANCE_NEW))
         .thenThrow(PatientNotFoundException.class);
@@ -127,6 +141,20 @@ public class PatientServiceImplTest {
     ps.updatePatient(ID, EMAIL_NEW, FIRST_NAME_NEW, LAST_NAME_NEW, HEALTH_INSURANCE_NEW, IMAGE);
     // 3. Meaningful assertions
   }
+
+  @Test(expected = ar.edu.itba.paw.interfaces.services.exceptions.PatientNotFoundException.class)
+  public void testUpdateUserDoesNotExist()
+      throws PatientNotFoundException, UserNotFoundException, EmailInUseException,
+          ar.edu.itba.paw.interfaces.services.exceptions.PatientNotFoundException {
+    // 1. Precondiciones
+    Mockito.when(userService.updateUser(ID, EMAIL_NEW, FIRST_NAME_NEW, LAST_NAME_NEW, IMAGE))
+        .thenThrow(UserNotFoundException.class);
+
+    // 2. Ejercitar la class under test
+    ps.updatePatient(ID, EMAIL_NEW, FIRST_NAME_NEW, LAST_NAME_NEW, HEALTH_INSURANCE_NEW, IMAGE);
+  }
+
+  // =========================== Get patient by id ===========================
 
   @Test
   public void testGetPatientById() {

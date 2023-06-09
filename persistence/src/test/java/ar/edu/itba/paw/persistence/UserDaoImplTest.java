@@ -35,6 +35,8 @@ public class UserDaoImplTest {
   private static final String INSERTED_USER_LAST_NAME = "patient_last_name";
   private static final Image INSERTED_USER_IMAGE = null;
 
+  private static final String ALREADY_INSERTED_MAIL = "notpatient@email.com";
+
   private static final Long AUX_ID = 100L;
   private static final String AUX_EMAIL = "notuser@email.com";
   private static final String AUX_PASSWORD = "notuser_password";
@@ -165,6 +167,23 @@ public class UserDaoImplTest {
     assertThrows(
         UserNotFoundException.class,
         () -> userDao.updateUserInfo(AUX_ID, AUX_EMAIL, AUX_FIRST_NAME, AUX_LAST_NAME, AUX_IMAGE));
+    // 3. Meaningful assertions
+  }
+
+  @Test
+  public void testUpdateUserInfoAlreadyExists() {
+
+    // 1. Precondiciones
+    // 2. Ejercitar la class under test
+    assertThrows(
+        EmailAlreadyExistsException.class,
+        () ->
+            userDao.updateUserInfo(
+                INSERTED_USER_ID,
+                ALREADY_INSERTED_MAIL,
+                INSERTED_USER_FIRST_NAME,
+                INSERTED_USER_LAST_NAME,
+                INSERTED_USER_IMAGE));
     // 3. Meaningful assertions
   }
 

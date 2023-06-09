@@ -2,7 +2,6 @@ package ar.edu.itba.paw.persistence;
 
 import static org.junit.Assert.assertThrows;
 
-import ar.edu.itba.paw.interfaces.persistence.exceptions.EmailAlreadyExistsException;
 import ar.edu.itba.paw.interfaces.persistence.exceptions.PatientAlreadyExistsException;
 import ar.edu.itba.paw.interfaces.persistence.exceptions.PatientNotFoundException;
 import ar.edu.itba.paw.models.HealthInsurance;
@@ -82,7 +81,7 @@ public class PatientDaoImplTest {
   // TODO: ADDRESS COLLITION ON EMAIL
   @Test
   public void testCreatePatient()
-      throws PatientAlreadyExistsException, EmailAlreadyExistsException {
+      throws PatientAlreadyExistsException {
     // 1. Precondiciones
     // 2. Ejercitar la class under test
     Patient patient =
@@ -120,19 +119,12 @@ public class PatientDaoImplTest {
   }
 
   @Test
-  public void testCreatePatientEmailAlreadyExists() {
-    // 1. Precondiciones
-    // 2. Ejercitar la class under test
-    assertThrows(EmailAlreadyExistsException.class, () -> patientDao.createPatient(AUX_PATIENT));
-    // 3. Meaningful assertions
-  }
-
-  @Test
   public void testUpdatePatientInfo() throws PatientNotFoundException {
     // 1. Precondiciones
     // 2. Ejercitar la class under test
     Patient patient =
         patientDao.updatePatientInfo(INSERTED_PATIENT_ID, AUX_PATIENT_HEALTH_INSURANCE);
+
     // 3. Meaningful assertions
 
     Assert.assertEquals(INSERTED_PATIENT_ID, patient.getId());
