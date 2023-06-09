@@ -50,13 +50,7 @@ public class UserServiceImpl implements UserService {
       throws UserNotFoundException, EmailInUseException {
 
     Image old_image =
-        userDao
-            .getUserById(userId)
-            .orElseThrow(
-                () ->
-                    new IllegalStateException(
-                        "User could not be updated because it does not exist"))
-            .getImage();
+        userDao.getUserById(userId).orElseThrow(UserNotFoundException::new).getImage();
 
     try {
 
@@ -76,7 +70,8 @@ public class UserServiceImpl implements UserService {
           userId, email, firstName, lastName, image == null ? old_image : image);
 
     } catch (ar.edu.itba.paw.interfaces.persistence.exceptions.UserNotFoundException e) {
-      throw new UserNotFoundException();
+      throw new IllegalStateException("User could not be updated because it does not exist");
+
     } catch (EmailAlreadyExistsException e) {
       throw new EmailInUseException();
     }
@@ -86,24 +81,22 @@ public class UserServiceImpl implements UserService {
   @Override
   public boolean updatePassword(long userId, String oldPassword, String password)
       throws UserNotFoundException {
-    if (!passwordEncoder.matches(
-        oldPassword,
-        userDao
-            .getUserById(userId)
-            .orElseThrow(
-                () ->
-                    new IllegalStateException(
-                        "User could not be updated because it does not exist"))
-            .getPassword())) {
+
+    String userPassword =
+        userDao.getUserById(userId).orElseThrow(UserNotFoundException::new).getPassword();
+
+    if (!passwordEncoder.matches(oldPassword, userPassword)) {
       // En clase vimos que era mejor retornar true o false, para verificar si se actualizo la pass
       return false;
     }
+
     try {
       // TODO: return true <-> hay afected rows?
       userDao.updateUserPassword(userId, passwordEncoder.encode(password));
       return true;
+
     } catch (ar.edu.itba.paw.interfaces.persistence.exceptions.UserNotFoundException e) {
-      throw new UserNotFoundException();
+      throw new IllegalStateException("User could not be updated because it does not exist");
     }
   }
 
