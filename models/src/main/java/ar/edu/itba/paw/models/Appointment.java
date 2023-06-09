@@ -224,6 +224,21 @@ public class Appointment {
       this.description = description;
     }
 
+    public Builder id(long id) {
+      this.id = id;
+      return this;
+    }
+
+    public Builder cancelDescription(String cancelDescription) {
+      this.cancelDescription = cancelDescription;
+      return this;
+    }
+
+    public Builder status(AppointmentStatus status) {
+      this.status = status;
+      return this;
+    }
+
     public Appointment build() {
       return new Appointment(this);
     }
