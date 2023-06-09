@@ -49,15 +49,17 @@ public class UserServiceImpl implements UserService {
   public User updateUser(long userId, String email, String firstName, String lastName, Image image)
       throws UserNotFoundException, EmailInUseException {
 
+    Image old_image =
+        userDao
+            .getUserById(userId)
+            .orElseThrow(
+                () ->
+                    new IllegalStateException(
+                        "User could not be updated because it does not exist"))
+            .getImage();
+
     try {
-      Image old_image =
-          userDao
-              .getUserById(userId)
-              .orElseThrow(
-                  () ->
-                      new IllegalStateException(
-                          "User could not be updated because it does not exist"))
-              .getImage();
+
       if (image != null) {
         // Si la pfp es null -> insertamos imagen
         // si la pfp no es null -> la actualizamos para pisar la vieja
@@ -69,7 +71,10 @@ public class UserServiceImpl implements UserService {
           image = imageService.updateImage(image);
         }
       }
-      return userDao.updateUserInfo(userId, email, firstName, lastName, image);
+
+      return userDao.updateUserInfo(
+          userId, email, firstName, lastName, image == null ? old_image : image);
+
     } catch (ar.edu.itba.paw.interfaces.persistence.exceptions.UserNotFoundException e) {
       throw new UserNotFoundException();
     } catch (EmailAlreadyExistsException e) {
