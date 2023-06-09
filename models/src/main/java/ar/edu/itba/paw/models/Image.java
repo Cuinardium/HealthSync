@@ -91,7 +91,7 @@ public class Image {
     return Objects.equals(imageId, other.imageId);
   }
 
-  public class Builder {
+  public static class Builder {
 
     private byte[] bytes;
 
