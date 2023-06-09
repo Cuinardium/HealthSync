@@ -31,7 +31,7 @@ public class ReviewServiceImplTest {
   private static final String DOCTOR_PASSWORD = "doctor_password";
   private static final String DOCTOR_FIRST_NAME = "doctor_first_name";
   private static final String DOCTOR_LAST_NAME = "doctor_last_name";
-  private static final Image IMAGE = new Image(null, null);
+  private static final Image IMAGE = new Image.Builder(null).build();
   private static final Set<HealthInsurance> DOCTOR_HEALTH_INSURANCES =
       new HashSet<>(Arrays.asList(HealthInsurance.OSDE, HealthInsurance.OMINT));
   private static final Specialty SPECIALTY = Specialty.CARDIOLOGY;

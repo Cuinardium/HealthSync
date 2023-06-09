@@ -4,15 +4,14 @@ import ar.edu.itba.paw.interfaces.services.AppointmentService;
 import ar.edu.itba.paw.interfaces.services.DoctorService;
 import ar.edu.itba.paw.interfaces.services.PatientService;
 import ar.edu.itba.paw.interfaces.services.ReviewService;
-import ar.edu.itba.paw.models.Doctor;
 import ar.edu.itba.paw.interfaces.services.exceptions.DoctorNotFoundException;
 import ar.edu.itba.paw.interfaces.services.exceptions.PatientNotFoundException;
 import ar.edu.itba.paw.interfaces.services.exceptions.ReviewForbiddenException;
+import ar.edu.itba.paw.models.Doctor;
 import ar.edu.itba.paw.models.Page;
 import ar.edu.itba.paw.models.Patient;
 import ar.edu.itba.paw.models.Review;
 import java.time.LocalDate;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -38,7 +37,8 @@ public class ReviewServiceImpl implements ReviewService {
 
   @Transactional
   @Override
-  public Review createReview(long doctorId, long patientId, int rating, String description) throws DoctorNotFoundException, PatientNotFoundException, ReviewForbiddenException {
+  public Review createReview(long doctorId, long patientId, int rating, String description)
+      throws DoctorNotFoundException, PatientNotFoundException, ReviewForbiddenException {
     if (!doctorService.getDoctorById(doctorId).isPresent()) {
       throw new DoctorNotFoundException();
     }
@@ -54,7 +54,9 @@ public class ReviewServiceImpl implements ReviewService {
     Doctor doctor = doctorService.getDoctorById(doctorId).get();
     Patient patient = patientService.getPatientById(patientId).get();
 
-    return doctorService.addReview(doctor.getId(), new Review(null, doctor, patient, LocalDate.now(), description, (short) rating));
+    return doctorService.addReview(
+        doctor.getId(),
+        new Review.Builder(doctor, patient, LocalDate.now(), description, (short) rating).build());
   }
 
   // =============== Queries ===============

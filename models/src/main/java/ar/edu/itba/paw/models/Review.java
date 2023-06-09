@@ -49,6 +49,15 @@ public class Review {
     this.doctor = doctor;
   }
 
+  public Review(Builder builder) {
+    this.id = builder.id;
+    this.patient = builder.patient;
+    this.date = builder.date;
+    this.description = builder.description;
+    this.rating = builder.rating;
+    this.doctor = builder.doctor;
+  }
+
   // Getters
   public Long getId() {
     return id;
@@ -129,5 +138,33 @@ public class Review {
     if (!(obj instanceof Review)) return false;
     Review other = (Review) obj;
     return Objects.equals(id, other.id);
+  }
+
+  public static class Builder {
+    private Doctor doctor;
+    private Short rating;
+    private String description;
+    private LocalDate date;
+    private Patient patient;
+    // default
+    private Long id = null;
+
+    public Builder(
+        Doctor doctor, Patient patient, LocalDate date, String description, Short rating) {
+      this.patient = patient;
+      this.date = date;
+      this.description = description;
+      this.rating = rating;
+      this.doctor = doctor;
+    }
+
+    public Builder id(long id) {
+      this.id = id;
+      return this;
+    }
+
+    public Review build() {
+      return new Review(this);
+    }
   }
 }

@@ -85,6 +85,24 @@ public class Doctor extends User {
     this.ratingCount = ratingCount;
   }
 
+  public Doctor(Builder builder) {
+    super(
+        builder.id,
+        builder.email,
+        builder.password,
+        builder.firstName,
+        builder.lastName,
+        builder.image);
+    this.healthInsurances = builder.healthInsurances;
+    this.specialty = builder.specialty;
+    this.city = builder.city;
+    this.address = builder.address;
+    this.attendingHours = builder.attendingHours;
+    this.reviews = builder.reviews;
+    this.rating = builder.rating;
+    this.ratingCount = builder.ratingCount;
+  }
+
   public List<ThirtyMinuteBlock> getAttendingBlocksForDay(DayOfWeek day) {
     return attendingHours
         .stream()
@@ -181,5 +199,74 @@ public class Doctor extends User {
         + ", ratingCount="
         + ratingCount
         + ']';
+  }
+
+  public class Builder {
+    // required
+    private String email, password, firstName, lastName;
+    private Set<HealthInsurance> healthInsurances;
+    private Specialty specialty;
+    private City city;
+    private String address;
+    private Set<AttendingHours> attendingHours;
+
+    // default
+    private Long id = null;
+    private Image image = null;
+
+    // TODO: set defaults
+    private List<Review> reviews;
+    private Float rating;
+    private Integer ratingCount;
+
+    public Builder(
+        String email,
+        String password,
+        String firstName,
+        String lastName,
+        Set<HealthInsurance> healthInsurances,
+        Specialty specialty,
+        City city,
+        String address,
+        Set<AttendingHours> attendingHours) {
+      this.email = email;
+      this.password = password;
+      this.firstName = firstName;
+      this.lastName = lastName;
+      this.healthInsurances = healthInsurances;
+      this.specialty = specialty;
+      this.city = city;
+      this.address = address;
+      this.attendingHours = attendingHours;
+    }
+
+    public Builder id(long id) {
+      this.id = id;
+      return this;
+    }
+
+    public Builder image(Image image) {
+      this.image = image;
+      return this;
+    }
+
+    public Builder reviews(List<Review> reviews) {
+      this.reviews = reviews;
+      return this;
+    }
+
+    public Builder rating(float rating) {
+      this.rating = rating;
+      return this;
+    }
+
+    public Builder ratingCount(int ratingCount) {
+      this.ratingCount = ratingCount;
+      return this;
+    }
+
+    public Doctor build() {
+      return new Doctor(this);
+    }
   }
 }

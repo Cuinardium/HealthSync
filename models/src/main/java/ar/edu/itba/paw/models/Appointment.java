@@ -78,6 +78,17 @@ public class Appointment {
     this.cancelDesc = cancelDesc;
   }
 
+  public Appointment(Builder builder) {
+    this.id = builder.id;
+    this.patient = builder.patient;
+    this.doctor = builder.doctor;
+    this.date = builder.date;
+    this.timeBlock = builder.timeBlock;
+    this.status = builder.status;
+    this.description = builder.description;
+    this.cancelDesc = builder.cancelDescription;
+  }
+
   public Long getId() {
     return id;
   }
@@ -185,5 +196,51 @@ public class Appointment {
     if (!(obj instanceof Appointment)) return false;
     Appointment other = (Appointment) obj;
     return Objects.equals(this.id, other.id);
+  }
+
+  public static class Builder {
+    // required
+    private Patient patient;
+    private Doctor doctor;
+    private LocalDate date;
+    private ThirtyMinuteBlock timeBlock;
+    private String description;
+
+    // default
+    private Long id = null;
+    private String cancelDescription = null;
+    private AppointmentStatus status = AppointmentStatus.CONFIRMED;
+
+    public Builder(
+        Patient patient,
+        Doctor doctor,
+        LocalDate date,
+        ThirtyMinuteBlock timeBlock,
+        String description) {
+      this.patient = patient;
+      this.doctor = doctor;
+      this.date = date;
+      this.timeBlock = timeBlock;
+      this.description = description;
+    }
+
+    public Builder id(long id) {
+      this.id = id;
+      return this;
+    }
+
+    public Builder cancelDescription(String cancelDescription) {
+      this.cancelDescription = cancelDescription;
+      return this;
+    }
+
+    public Builder status(AppointmentStatus status) {
+      this.status = status;
+      return this;
+    }
+
+    public Appointment build() {
+      return new Appointment(this);
+    }
   }
 }

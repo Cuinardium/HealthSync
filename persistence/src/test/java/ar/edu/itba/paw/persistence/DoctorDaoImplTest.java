@@ -7,7 +7,6 @@ import ar.edu.itba.paw.interfaces.persistence.exceptions.DoctorNotFoundException
 import ar.edu.itba.paw.interfaces.persistence.exceptions.EmailAlreadyExistsException;
 import ar.edu.itba.paw.models.*;
 import ar.edu.itba.paw.persistence.config.TestConfig;
-
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.*;
@@ -43,13 +42,19 @@ public class DoctorDaoImplTest {
       Specialty.PEDIATRIC_ALLERGY_AND_IMMUNOLOGY;
   private static final City INSERTED_DOCTOR_CITY = City.ADOLFO_GONZALES_CHAVES;
   private static final String INSERTED_DOCTOR_ADDRESS = "doctor_address";
-  private static final Set<AttendingHours> INSERTED_DOCTOR_ATTENDING_HOURS = new HashSet<>(
-        Arrays.asList(new AttendingHours(INSERTED_DOCTOR_ID, DayOfWeek.MONDAY, ThirtyMinuteBlock.BLOCK_00_00),
-                new AttendingHours(INSERTED_DOCTOR_ID, DayOfWeek.TUESDAY, ThirtyMinuteBlock.BLOCK_00_00),
-                new AttendingHours(INSERTED_DOCTOR_ID, DayOfWeek.WEDNESDAY, ThirtyMinuteBlock.BLOCK_00_00),
-                new AttendingHours(INSERTED_DOCTOR_ID, DayOfWeek.THURSDAY, ThirtyMinuteBlock.BLOCK_00_00),
-                new AttendingHours(INSERTED_DOCTOR_ID, DayOfWeek.FRIDAY, ThirtyMinuteBlock.BLOCK_00_00))
-  );
+  private static final Set<AttendingHours> INSERTED_DOCTOR_ATTENDING_HOURS =
+      new HashSet<>(
+          Arrays.asList(
+              new AttendingHours(
+                  INSERTED_DOCTOR_ID, DayOfWeek.MONDAY, ThirtyMinuteBlock.BLOCK_00_00),
+              new AttendingHours(
+                  INSERTED_DOCTOR_ID, DayOfWeek.TUESDAY, ThirtyMinuteBlock.BLOCK_00_00),
+              new AttendingHours(
+                  INSERTED_DOCTOR_ID, DayOfWeek.WEDNESDAY, ThirtyMinuteBlock.BLOCK_00_00),
+              new AttendingHours(
+                  INSERTED_DOCTOR_ID, DayOfWeek.THURSDAY, ThirtyMinuteBlock.BLOCK_00_00),
+              new AttendingHours(
+                  INSERTED_DOCTOR_ID, DayOfWeek.FRIDAY, ThirtyMinuteBlock.BLOCK_00_00)));
 
   private static final Image INSERTED_DOCTOR_IMAGE = null;
 
@@ -62,19 +67,29 @@ public class DoctorDaoImplTest {
   private static final String AUX_DOCTOR_FIRST_NAME = "notdoctor_first_name";
   private static final String AUX_DOCTOR_LAST_NAME = "notdoctor_last_name";
   private static final Set<HealthInsurance> AUX_DOCTOR_INSURANCES =
-      new HashSet<>(Arrays.asList(HealthInsurance.NONE, HealthInsurance.SWISS_MEDICAL, HealthInsurance.OSDE));
+      new HashSet<>(
+          Arrays.asList(HealthInsurance.NONE, HealthInsurance.SWISS_MEDICAL, HealthInsurance.OSDE));
   private static final Specialty AUX_DOCTOR_SPECIALTY = Specialty.NEPHROLOGY;
   private static final City AUX_DOCTOR_CITY = City.CASEROS;
   private static final String AUX_DOCTOR_ADDRESS = "notdoctor_address";
-  private static final Set<AttendingHours> AUX_DOCTOR_ATTENDING_HOURS = new HashSet<>(
-          Arrays.asList(new AttendingHours(INSERTED_DOCTOR_ID, DayOfWeek.MONDAY, ThirtyMinuteBlock.BLOCK_00_00),
-                  new AttendingHours(INSERTED_DOCTOR_ID, DayOfWeek.TUESDAY, ThirtyMinuteBlock.BLOCK_02_00),
-                  new AttendingHours(INSERTED_DOCTOR_ID, DayOfWeek.WEDNESDAY, ThirtyMinuteBlock.BLOCK_02_00),
-                  new AttendingHours(INSERTED_DOCTOR_ID, DayOfWeek.THURSDAY, ThirtyMinuteBlock.BLOCK_02_00),
-                  new AttendingHours(INSERTED_DOCTOR_ID, DayOfWeek.FRIDAY, ThirtyMinuteBlock.BLOCK_02_00),
-                  new AttendingHours(INSERTED_DOCTOR_ID, DayOfWeek.SATURDAY, ThirtyMinuteBlock.BLOCK_02_00),
-                  new AttendingHours(INSERTED_DOCTOR_ID, DayOfWeek.SUNDAY, ThirtyMinuteBlock.BLOCK_02_00))
-  );
+
+  private static final Set<AttendingHours> AUX_DOCTOR_ATTENDING_HOURS =
+      new HashSet<>(
+          Arrays.asList(
+              new AttendingHours(
+                  INSERTED_DOCTOR_ID, DayOfWeek.MONDAY, ThirtyMinuteBlock.BLOCK_00_00),
+              new AttendingHours(
+                  INSERTED_DOCTOR_ID, DayOfWeek.TUESDAY, ThirtyMinuteBlock.BLOCK_02_00),
+              new AttendingHours(
+                  INSERTED_DOCTOR_ID, DayOfWeek.WEDNESDAY, ThirtyMinuteBlock.BLOCK_02_00),
+              new AttendingHours(
+                  INSERTED_DOCTOR_ID, DayOfWeek.THURSDAY, ThirtyMinuteBlock.BLOCK_02_00),
+              new AttendingHours(
+                  INSERTED_DOCTOR_ID, DayOfWeek.FRIDAY, ThirtyMinuteBlock.BLOCK_02_00),
+              new AttendingHours(
+                  INSERTED_DOCTOR_ID, DayOfWeek.SATURDAY, ThirtyMinuteBlock.BLOCK_02_00),
+              new AttendingHours(
+                  INSERTED_DOCTOR_ID, DayOfWeek.SUNDAY, ThirtyMinuteBlock.BLOCK_02_00)));
 
   private static final Doctor DOCTOR_7 =
       new Doctor(
@@ -102,28 +117,37 @@ public class DoctorDaoImplTest {
   private static final HealthInsurance INSERTED_PATIENT_HEALTH_INSURANCE = HealthInsurance.OMINT;
 
   private static final Patient PATIENT_5 =
-          new Patient(
-                  INSERTED_PATIENT_ID,
-                  INSERTED_PATIENT_EMAIL,
-                  INSERTED_PATIENT_PASSWORD,
-                  INSERTED_PATIENT_FIRST_NAME,
-                  INSERTED_PATIENT_LAST_NAME,
-                  INSERTED_PATIENT_IMAGE,
-                  INSERTED_PATIENT_HEALTH_INSURANCE);
+      new Patient(
+          INSERTED_PATIENT_ID,
+          INSERTED_PATIENT_EMAIL,
+          INSERTED_PATIENT_PASSWORD,
+          INSERTED_PATIENT_FIRST_NAME,
+          INSERTED_PATIENT_LAST_NAME,
+          INSERTED_PATIENT_IMAGE,
+          INSERTED_PATIENT_HEALTH_INSURANCE);
 
   private static final Short RATING = 5;
   private static final String DESCRIPTION = "This is a review description";
   private static final LocalDate DATE = LocalDate.now();
 
-  private static final List<Review> REVIEWS_FOR_DOCTOR = new ArrayList<>(
+  private static final List<Review> REVIEWS_FOR_DOCTOR =
+      new ArrayList<>(
           Arrays.asList(
-                  new Review(null, DOCTOR_7, PATIENT_5, LocalDate.of(2023, 5, 17), "Muy buen doctor", (short) 5),
-                  new Review(null, DOCTOR_7, PATIENT_5, LocalDate.of(2023, 5, 16), "Buen doctor", (short) 4),
-                  new Review(null, DOCTOR_7, PATIENT_5, LocalDate.of(2023, 5, 15), "Regular doctor", (short) 3),
-                  new Review(null, DOCTOR_7, PATIENT_5, LocalDate.of(2023, 5, 14), "Malo doctor", (short) 2),
-                  new Review(null, DOCTOR_7, PATIENT_5, LocalDate.of(2023, 5, 13), "Muy malo doctor", (short) 1)
-          )
-  );
+              new Review.Builder(
+                      DOCTOR_7, PATIENT_5, LocalDate.of(2023, 5, 17), "Muy buen doctor", (short) 5)
+                  .build(),
+              new Review.Builder(
+                      DOCTOR_7, PATIENT_5, LocalDate.of(2023, 5, 16), "Buen doctor", (short) 4)
+                  .build(),
+              new Review.Builder(
+                      DOCTOR_7, PATIENT_5, LocalDate.of(2023, 5, 15), "Regular doctor", (short) 3)
+                  .build(),
+              new Review.Builder(
+                      DOCTOR_7, PATIENT_5, LocalDate.of(2023, 5, 14), "Malo doctor", (short) 2)
+                  .build(),
+              new Review.Builder(
+                      DOCTOR_7, PATIENT_5, LocalDate.of(2023, 5, 13), "Muy malo doctor", (short) 1)
+                  .build()));
 
   private static final long NON_EXISTING_DOCTOR_ID = 100;
 
@@ -133,8 +157,7 @@ public class DoctorDaoImplTest {
 
   private JdbcTemplate jdbcTemplate;
 
-  @PersistenceContext
-  private EntityManager em;
+  @PersistenceContext private EntityManager em;
 
   @Autowired private DoctorDaoJpa doctorDao;
 
@@ -148,26 +171,27 @@ public class DoctorDaoImplTest {
     // 1. Precondiciones
     // 2. Ejercitar la class under test
     Doctor doctor =
-        doctorDao.createDoctor(new Doctor(
-                        null,
-                        AUX_DOCTOR_EMAIL,
-                        AUX_DOCTOR_PASSWORD,
-                        AUX_DOCTOR_FIRST_NAME,
-                        AUX_DOCTOR_LAST_NAME,
-                        INSERTED_DOCTOR_IMAGE,
-                        AUX_DOCTOR_INSURANCES,
-                        AUX_DOCTOR_SPECIALTY,
-                        AUX_DOCTOR_CITY,
-                        AUX_DOCTOR_ADDRESS,
-                        AUX_DOCTOR_ATTENDING_HOURS,
-                        new ArrayList<>(),
-                        INSERTED_DOCTOR_RATING,
-                        INSERTED_DOCTOR_RATING_COUNT));
+        doctorDao.createDoctor(
+            new Doctor(
+                null,
+                AUX_DOCTOR_EMAIL,
+                AUX_DOCTOR_PASSWORD,
+                AUX_DOCTOR_FIRST_NAME,
+                AUX_DOCTOR_LAST_NAME,
+                INSERTED_DOCTOR_IMAGE,
+                AUX_DOCTOR_INSURANCES,
+                AUX_DOCTOR_SPECIALTY,
+                AUX_DOCTOR_CITY,
+                AUX_DOCTOR_ADDRESS,
+                AUX_DOCTOR_ATTENDING_HOURS,
+                new ArrayList<>(),
+                INSERTED_DOCTOR_RATING,
+                INSERTED_DOCTOR_RATING_COUNT));
 
     em.flush();
 
     // 3. Meaningful assertions
-    //Assert.assertEquals(AUX_DOCTOR_ID, doctor.getId());
+    // Assert.assertEquals(AUX_DOCTOR_ID, doctor.getId());
     Assert.assertEquals(AUX_DOCTOR_EMAIL, doctor.getEmail());
     Assert.assertEquals(AUX_DOCTOR_PASSWORD, doctor.getPassword());
     Assert.assertEquals(AUX_DOCTOR_FIRST_NAME, doctor.getFirstName());
@@ -189,21 +213,22 @@ public class DoctorDaoImplTest {
     assertThrows(
         DoctorAlreadyExistsException.class,
         () ->
-                doctorDao.createDoctor(new Doctor(
-                        INSERTED_DOCTOR_ID,
-                        AUX_DOCTOR_EMAIL,
-                        AUX_DOCTOR_PASSWORD,
-                        AUX_DOCTOR_FIRST_NAME,
-                        AUX_DOCTOR_LAST_NAME,
-                        INSERTED_DOCTOR_IMAGE,
-                        AUX_DOCTOR_INSURANCES,
-                        AUX_DOCTOR_SPECIALTY,
-                        AUX_DOCTOR_CITY,
-                        AUX_DOCTOR_ADDRESS,
-                        AUX_DOCTOR_ATTENDING_HOURS,
-                        new ArrayList<>(),
-                        INSERTED_DOCTOR_RATING,
-                        INSERTED_DOCTOR_RATING_COUNT)));
+            doctorDao.createDoctor(
+                new Doctor(
+                    INSERTED_DOCTOR_ID,
+                    AUX_DOCTOR_EMAIL,
+                    AUX_DOCTOR_PASSWORD,
+                    AUX_DOCTOR_FIRST_NAME,
+                    AUX_DOCTOR_LAST_NAME,
+                    INSERTED_DOCTOR_IMAGE,
+                    AUX_DOCTOR_INSURANCES,
+                    AUX_DOCTOR_SPECIALTY,
+                    AUX_DOCTOR_CITY,
+                    AUX_DOCTOR_ADDRESS,
+                    AUX_DOCTOR_ATTENDING_HOURS,
+                    new ArrayList<>(),
+                    INSERTED_DOCTOR_RATING,
+                    INSERTED_DOCTOR_RATING_COUNT)));
     // 3. Meaningful assertions
 
   }
@@ -238,10 +263,7 @@ public class DoctorDaoImplTest {
   public void testUpdateDoctorReviews() throws DoctorNotFoundException {
     // 1.Precondiciones
     // 2. Ejercitar la class under test
-    Doctor doctor =
-            doctorDao.updateReviews(
-                    INSERTED_DOCTOR_ID,
-                    REVIEWS_FOR_DOCTOR);
+    Doctor doctor = doctorDao.updateReviews(INSERTED_DOCTOR_ID, REVIEWS_FOR_DOCTOR);
 
     // 3. Meaningful assertions
     Assert.assertEquals(REVIEWS_FOR_DOCTOR, doctor.getReviews());
@@ -268,15 +290,44 @@ public class DoctorDaoImplTest {
   public void testGetDoctorById() {
     // 1.Precondiciones
     Doctor expectedDoctor = DOCTOR_7;
-    List<Review> reviewsForDoctor = new ArrayList<>(
+    List<Review> reviewsForDoctor =
+        new ArrayList<>(
             Arrays.asList(
-                    new Review(7L, expectedDoctor, PATIENT_5, LocalDate.of(2023, 5, 17), "Muy buen doctor", (short) 5),
-                    new Review(8L, expectedDoctor, PATIENT_5, LocalDate.of(2023, 5, 16), "Buen doctor", (short) 4),
-                    new Review(9L, expectedDoctor, PATIENT_5, LocalDate.of(2023, 5, 15), "Regular doctor", (short) 3),
-                    new Review(10L, expectedDoctor, PATIENT_5, LocalDate.of(2023, 5, 14), "Malo doctor", (short) 2),
-                    new Review(11L, expectedDoctor, PATIENT_5, LocalDate.of(2023, 5, 13), "Muy malo doctor", (short) 1)
-            )
-    );
+                new Review(
+                    7L,
+                    expectedDoctor,
+                    PATIENT_5,
+                    LocalDate.of(2023, 5, 17),
+                    "Muy buen doctor",
+                    (short) 5),
+                new Review(
+                    8L,
+                    expectedDoctor,
+                    PATIENT_5,
+                    LocalDate.of(2023, 5, 16),
+                    "Buen doctor",
+                    (short) 4),
+                new Review(
+                    9L,
+                    expectedDoctor,
+                    PATIENT_5,
+                    LocalDate.of(2023, 5, 15),
+                    "Regular doctor",
+                    (short) 3),
+                new Review(
+                    10L,
+                    expectedDoctor,
+                    PATIENT_5,
+                    LocalDate.of(2023, 5, 14),
+                    "Malo doctor",
+                    (short) 2),
+                new Review(
+                    11L,
+                    expectedDoctor,
+                    PATIENT_5,
+                    LocalDate.of(2023, 5, 13),
+                    "Muy malo doctor",
+                    (short) 1)));
     expectedDoctor.setReviews(reviewsForDoctor);
     // 2. Ejercitar la class under test
     Optional<Doctor> maybeDoctor = doctorDao.getDoctorById(INSERTED_DOCTOR_ID);
@@ -298,15 +349,44 @@ public class DoctorDaoImplTest {
   public void testGetFilteredDoctors() {
     // 1.Precondiciones
     Doctor expectedDoctor = DOCTOR_7;
-    List<Review> reviewsForDoctor = new ArrayList<>(
+    List<Review> reviewsForDoctor =
+        new ArrayList<>(
             Arrays.asList(
-                    new Review(7L, expectedDoctor, PATIENT_5, LocalDate.of(2023, 5, 17), "Muy buen doctor", (short) 5),
-                    new Review(8L, expectedDoctor, PATIENT_5, LocalDate.of(2023, 5, 16), "Buen doctor", (short) 4),
-                    new Review(9L, expectedDoctor, PATIENT_5, LocalDate.of(2023, 5, 15), "Regular doctor", (short) 3),
-                    new Review(10L, expectedDoctor, PATIENT_5, LocalDate.of(2023, 5, 14), "Malo doctor", (short) 2),
-                    new Review(11L, expectedDoctor, PATIENT_5, LocalDate.of(2023, 5, 13), "Muy malo doctor", (short) 1)
-            )
-    );
+                new Review(
+                    7L,
+                    expectedDoctor,
+                    PATIENT_5,
+                    LocalDate.of(2023, 5, 17),
+                    "Muy buen doctor",
+                    (short) 5),
+                new Review(
+                    8L,
+                    expectedDoctor,
+                    PATIENT_5,
+                    LocalDate.of(2023, 5, 16),
+                    "Buen doctor",
+                    (short) 4),
+                new Review(
+                    9L,
+                    expectedDoctor,
+                    PATIENT_5,
+                    LocalDate.of(2023, 5, 15),
+                    "Regular doctor",
+                    (short) 3),
+                new Review(
+                    10L,
+                    expectedDoctor,
+                    PATIENT_5,
+                    LocalDate.of(2023, 5, 14),
+                    "Malo doctor",
+                    (short) 2),
+                new Review(
+                    11L,
+                    expectedDoctor,
+                    PATIENT_5,
+                    LocalDate.of(2023, 5, 13),
+                    "Muy malo doctor",
+                    (short) 1)));
     expectedDoctor.setReviews(reviewsForDoctor);
     // 2. Ejercitar la class under test
     Page<Doctor> doctors =
@@ -370,13 +450,12 @@ public class DoctorDaoImplTest {
   }
 
   @Test
-  public void testCreateReview() throws DoctorNotFoundException{
+  public void testCreateReview() throws DoctorNotFoundException {
     // 1. Precondiciones
-    Review review_aux = new Review(null, DOCTOR_7, PATIENT_5, DATE, DESCRIPTION, RATING);
+    Review review_aux = new Review.Builder(DOCTOR_7, PATIENT_5, DATE, DESCRIPTION, RATING).build();
     // 2. Ejercitar la class under test
-    Doctor doctor = doctorDao.updateReviews(
-        INSERTED_DOCTOR_ID,
-        Collections.singletonList(review_aux));
+    Doctor doctor =
+        doctorDao.updateReviews(INSERTED_DOCTOR_ID, Collections.singletonList(review_aux));
 
     em.flush();
 

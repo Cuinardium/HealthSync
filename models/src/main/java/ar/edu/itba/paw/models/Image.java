@@ -35,6 +35,11 @@ public class Image {
     this.bytes = bytes;
   }
 
+  public Image(Builder builder) {
+    this.imageId = builder.id;
+    this.bytes = builder.bytes;
+  }
+
   public Image(Long imageId, byte[] bytes) {
     this.imageId = imageId;
     this.bytes = bytes;
@@ -84,5 +89,25 @@ public class Image {
     if (!(obj instanceof Image)) return false;
     Image other = (Image) obj;
     return Objects.equals(imageId, other.imageId);
+  }
+
+  public static class Builder {
+
+    private byte[] bytes;
+
+    private Long id = null;
+
+    public Builder(byte[] bytes) {
+      this.bytes = bytes;
+    }
+
+    public Builder id(long id) {
+      this.id = id;
+      return this;
+    }
+
+    public Image build() {
+      return new Image(this);
+    }
   }
 }

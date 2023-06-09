@@ -45,8 +45,7 @@ public class AppointmentDaoJpa implements AppointmentDao {
     // TODO: check that appointment is in future
 
     final Appointment app =
-        new Appointment(
-            null, patient, doctor, date, timeBlock, AppointmentStatus.CONFIRMED, description, null);
+        new Appointment.Builder(patient, doctor, date, timeBlock, description).build();
 
     em.persist(app);
 

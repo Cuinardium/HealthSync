@@ -41,7 +41,7 @@ public class User {
   private String lastName;
 
   @OneToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name="profile_picture_id", referencedColumnName = "profile_picture_id")
+  @JoinColumn(name = "profile_picture_id", referencedColumnName = "profile_picture_id")
   private Image image;
 
   protected User() {
@@ -59,6 +59,15 @@ public class User {
   }
 
   // Getters and setters
+
+  public User(Builder builder) {
+    this.id = builder.id;
+    this.email = builder.email;
+    this.password = builder.password;
+    this.firstName = builder.firstName;
+    this.lastName = builder.lastName;
+    this.image = builder.image;
+  }
 
   public String getEmail() {
     return email;
@@ -134,5 +143,34 @@ public class User {
     if (!(obj instanceof User)) return false;
     User other = (User) obj;
     return Objects.equals(this.id, other.id);
+  }
+
+  public static class Builder {
+    // required
+    private String email, password, firstName, lastName;
+    // defaults
+    private Long id = null;
+    private Image image = null;
+
+    public Builder(String email, String password, String firstName, String lastName) {
+      this.email = email;
+      this.password = password;
+      this.firstName = firstName;
+      this.lastName = lastName;
+    }
+
+    public Builder id(long id) {
+      this.id = id;
+      return this;
+    }
+
+    public Builder image(Image image) {
+      this.image = image;
+      return this;
+    }
+
+    public User build() {
+      return new User(this);
+    }
   }
 }
