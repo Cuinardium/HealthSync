@@ -47,7 +47,7 @@ public class UserServiceImpl implements UserService {
   @Transactional
   @Override
   public User updateUser(long userId, String email, String firstName, String lastName, Image image)
-      throws UserNotFoundException {
+      throws UserNotFoundException, EmailInUseException {
 
     try {
       Image old_image =
@@ -66,6 +66,8 @@ public class UserServiceImpl implements UserService {
       return userDao.updateUserInfo(userId, email, firstName, lastName, image);
     } catch (ar.edu.itba.paw.interfaces.persistence.exceptions.UserNotFoundException e) {
       throw new UserNotFoundException();
+    } catch (EmailAlreadyExistsException e) {
+      throw new EmailInUseException();
     }
   }
 

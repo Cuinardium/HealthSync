@@ -17,7 +17,7 @@ public interface PatientDao {
   // =============== Updates ===============
 
   public Patient updatePatientInfo(long patientId, HealthInsurance healthInsurance)
-      throws PatientNotFoundException, EmailAlreadyExistsException;
+      throws PatientNotFoundException;
 
   // =============== Queries ===============
 

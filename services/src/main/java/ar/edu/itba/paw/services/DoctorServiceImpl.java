@@ -2,9 +2,11 @@ package ar.edu.itba.paw.services;
 
 import ar.edu.itba.paw.interfaces.persistence.DoctorDao;
 import ar.edu.itba.paw.interfaces.persistence.exceptions.DoctorAlreadyExistsException;
-import ar.edu.itba.paw.interfaces.persistence.exceptions.DoctorNotFoundException;
+import ar.edu.itba.paw.interfaces.persistence.exceptions.EmailAlreadyExistsException;
 import ar.edu.itba.paw.interfaces.services.DoctorService;
 import ar.edu.itba.paw.interfaces.services.UserService;
+import ar.edu.itba.paw.interfaces.services.exceptions.DoctorNotFoundException;
+import ar.edu.itba.paw.interfaces.services.exceptions.EmailInUseException;
 import ar.edu.itba.paw.interfaces.services.exceptions.UserNotFoundException;
 import ar.edu.itba.paw.models.*;
 import java.time.LocalDate;
@@ -45,11 +47,9 @@ public class DoctorServiceImpl implements DoctorService {
       String address,
       Set<HealthInsurance> healthInsurances,
       Set<AttendingHours> attendingHours)
-      throws IllegalStateException {
+      throws EmailInUseException {
+
     try {
-      // Create user
-      //      User user = userService.createUser(email, password, firstName, lastName);
-      // Create doctor
       return doctorDao.createDoctor(
           new Doctor(
               null,
@@ -68,16 +68,18 @@ public class DoctorServiceImpl implements DoctorService {
               0));
     } catch (DoctorAlreadyExistsException e) {
       throw new IllegalStateException();
+    } catch (EmailAlreadyExistsException e) {
+      throw new EmailInUseException();
     }
   }
 
   @Transactional
   @Override
-  public Review addReview(long doctorId, Review review) throws IllegalStateException {
+  public Review addReview(long doctorId, Review review) throws DoctorNotFoundException {
     try {
       return doctorDao.addReview(doctorId, review);
-    } catch (DoctorNotFoundException e) {
-      throw new IllegalStateException();
+    } catch (ar.edu.itba.paw.interfaces.persistence.exceptions.DoctorNotFoundException e) {
+      throw new DoctorNotFoundException();
     }
   }
 
@@ -96,24 +98,24 @@ public class DoctorServiceImpl implements DoctorService {
       Set<HealthInsurance> healthInsurances,
       Set<AttendingHours> attendingHours,
       Image image)
-      throws UserNotFoundException {
-
+      throws DoctorNotFoundException, EmailInUseException {
     try {
       userService.updateUser(doctorId, email, firstName, lastName, image);
       return doctorDao.updateDoctorInfo(
           doctorId, specialty, city, address, healthInsurances, attendingHours);
-    } catch (DoctorNotFoundException e) {
-      throw new RuntimeException();
+    } catch (ar.edu.itba.paw.interfaces.persistence.exceptions.DoctorNotFoundException
+        | UserNotFoundException e) {
+      throw new DoctorNotFoundException();
     }
   }
 
   @Transactional
   @Override
-  public Doctor updateReviews(long doctorId, List<Review> reviews){
+  public Doctor updateReviews(long doctorId, List<Review> reviews) throws DoctorNotFoundException {
     try {
       return doctorDao.updateReviews(doctorId, reviews);
-    } catch (DoctorNotFoundException e) {
-      throw new RuntimeException();
+    } catch (ar.edu.itba.paw.interfaces.persistence.exceptions.DoctorNotFoundException e) {
+      throw new DoctorNotFoundException();
     }
   }
 

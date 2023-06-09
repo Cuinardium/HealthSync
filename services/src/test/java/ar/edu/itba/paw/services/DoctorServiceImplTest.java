@@ -3,7 +3,9 @@ package ar.edu.itba.paw.services;
 import ar.edu.itba.paw.interfaces.persistence.DoctorDao;
 import ar.edu.itba.paw.interfaces.persistence.exceptions.DoctorAlreadyExistsException;
 import ar.edu.itba.paw.interfaces.persistence.exceptions.DoctorNotFoundException;
+import ar.edu.itba.paw.interfaces.persistence.exceptions.EmailAlreadyExistsException;
 import ar.edu.itba.paw.interfaces.services.UserService;
+import ar.edu.itba.paw.interfaces.services.exceptions.EmailInUseException;
 import ar.edu.itba.paw.interfaces.services.exceptions.UserNotFoundException;
 import ar.edu.itba.paw.models.*;
 import java.time.DayOfWeek;
@@ -160,8 +162,8 @@ public class DoctorServiceImplTest {
   @InjectMocks private DoctorServiceImpl ds;
 
   @Test
-  public void testCreateDoctor()
-      throws IllegalStateException, DoctorAlreadyExistsException {
+  public void testCreateDoctor() throws DoctorAlreadyExistsException, EmailAlreadyExistsException, EmailInUseException
+      {
     // 1. Precondiciones
     Mockito.when(passwordEncoder.encode(Mockito.eq(PASSWORD))).thenReturn(PASSWORD_ENCODED);
     Mockito.when(
@@ -199,8 +201,8 @@ public class DoctorServiceImplTest {
   }
 
   @Test(expected = IllegalStateException.class)
-  public void testCreateDoctorAlreadyExists()
-      throws IllegalStateException, DoctorAlreadyExistsException {
+  public void testCreateDoctorAlreadyExists() throws DoctorAlreadyExistsException, EmailAlreadyExistsException, EmailInUseException
+      {
     // 1. Precondiciones
     Mockito.when(passwordEncoder.encode(Mockito.eq(PASSWORD))).thenReturn(PASSWORD_ENCODED);
     Mockito.when(
@@ -236,8 +238,8 @@ public class DoctorServiceImplTest {
   }
 
   @Test(expected = IllegalStateException.class)
-  public void testCreateDoctorUserAlreadyExists()
-      throws IllegalStateException, DoctorAlreadyExistsException {
+  public void testCreateDoctorUserAlreadyExists() throws DoctorAlreadyExistsException, EmailAlreadyExistsException, EmailInUseException
+      {
     // 1. Precondiciones
     Mockito.when(passwordEncoder.encode(Mockito.eq(PASSWORD))).thenReturn(PASSWORD_ENCODED);
     Mockito.when(
@@ -273,7 +275,7 @@ public class DoctorServiceImplTest {
   }
 
   @Test
-  public void testUpdateDoctor() throws DoctorNotFoundException, UserNotFoundException {
+  public void testUpdateDoctor() throws DoctorNotFoundException, EmailInUseException, ar.edu.itba.paw.interfaces.services.exceptions.DoctorNotFoundException {
     // 1. Precondiciones
     Mockito.when(
             doctorDao.updateDoctorInfo(
@@ -302,7 +304,7 @@ public class DoctorServiceImplTest {
   }
 
   @Test
-  public void testUpdateReviews() throws DoctorNotFoundException {
+  public void testUpdateReviews() throws DoctorNotFoundException, ar.edu.itba.paw.interfaces.services.exceptions.DoctorNotFoundException {
     // 1. Precondiciones
     Mockito.when(doctorDao.updateReviews(ID, REVIEWS_FOR_DOCTOR))
         .thenReturn(DOCTOR_UPDATED_REVIEWS);
@@ -312,9 +314,8 @@ public class DoctorServiceImplTest {
     Assert.assertEquals(DOCTOR_UPDATED_REVIEWS, doctor);
   }
 
-  // TODO: cng excep
-  @Test(expected = RuntimeException.class)
-  public void testUpdateDoctorDoesNotExist() throws DoctorNotFoundException, UserNotFoundException {
+  @Test(expected = ar.edu.itba.paw.interfaces.services.exceptions.DoctorNotFoundException.class)
+  public void testUpdateDoctorDoesNotExist() throws DoctorNotFoundException, EmailInUseException, ar.edu.itba.paw.interfaces.services.exceptions.DoctorNotFoundException {
     // 1. Precondiciones
     Mockito.when(
             doctorDao.updateDoctorInfo(
@@ -340,9 +341,9 @@ public class DoctorServiceImplTest {
     // 3. Meaningful assertions
   }
 
-  @Test(expected = UserNotFoundException.class)
+  @Test(expected = ar.edu.itba.paw.interfaces.services.exceptions.DoctorNotFoundException.class)
   public void testUpdateDoctorUserDoesNotExist()
-      throws UserNotFoundException {
+      throws EmailInUseException, ar.edu.itba.paw.interfaces.services.exceptions.DoctorNotFoundException, UserNotFoundException {
     // 1. Precondiciones
     Mockito.when(userService.updateUser(ID, EMAIL_NEW, FIRST_NAME_NEW, LAST_NAME_NEW, IMAGE))
         .thenThrow(UserNotFoundException.class);

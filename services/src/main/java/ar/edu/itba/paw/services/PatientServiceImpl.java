@@ -86,8 +86,6 @@ public class PatientServiceImpl implements PatientService {
       return patientDao.updatePatientInfo(patientId, healthInsurance);
     } catch (PatientNotFoundException e) {
       throw new RuntimeException();
-    } catch (EmailAlreadyExistsException e) {
-      throw new EmailInUseException();
     }
   }
 

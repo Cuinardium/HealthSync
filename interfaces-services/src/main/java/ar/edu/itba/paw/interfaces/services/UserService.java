@@ -16,7 +16,7 @@ public interface UserService {
   // =============== Updates ===============
 
   public User updateUser(long userId, String email, String firstName, String lastName, Image image)
-      throws UserNotFoundException;
+      throws UserNotFoundException, EmailInUseException;
 
   public boolean updatePassword(long userId, String oldPassword, String password)
       throws IllegalStateException, UserNotFoundException;

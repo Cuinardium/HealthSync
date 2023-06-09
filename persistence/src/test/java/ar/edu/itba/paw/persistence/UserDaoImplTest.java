@@ -141,7 +141,7 @@ public class UserDaoImplTest {
   }
 
   @Test
-  public void testUpdateUserInfo() throws UserNotFoundException {
+  public void testUpdateUserInfo() throws UserNotFoundException, EmailAlreadyExistsException {
     // 1. Precondiciones
     // 2. Ejercitar la class under test
     User user =

@@ -1,7 +1,7 @@
 package ar.edu.itba.paw.interfaces.services;
 
+import ar.edu.itba.paw.interfaces.services.exceptions.DoctorNotFoundException;
 import ar.edu.itba.paw.interfaces.services.exceptions.EmailInUseException;
-import ar.edu.itba.paw.interfaces.services.exceptions.UserNotFoundException;
 import ar.edu.itba.paw.models.*;
 import java.time.LocalDate;
 import java.util.List;
@@ -23,9 +23,9 @@ public interface DoctorService {
       String address,
       Set<HealthInsurance> healthInsurances,
       Set<AttendingHours> attendingHours)
-      throws EmailInUseException, IllegalStateException;
+      throws EmailInUseException;
 
-  public Review addReview(long doctorId, Review review) throws IllegalStateException;
+  public Review addReview(long doctorId, Review review) throws DoctorNotFoundException;
 
   // =============== Updates ===============
 
@@ -40,9 +40,9 @@ public interface DoctorService {
       Set<HealthInsurance> healthInsurances,
       Set<AttendingHours> attendingHours,
       Image image)
-      throws UserNotFoundException;
+      throws DoctorNotFoundException, EmailInUseException;
 
-  public Doctor updateReviews(long doctorId, List<Review> reviews) throws UserNotFoundException;
+  public Doctor updateReviews(long doctorId, List<Review> reviews) throws DoctorNotFoundException;
 
   // =============== Queries ===============
 

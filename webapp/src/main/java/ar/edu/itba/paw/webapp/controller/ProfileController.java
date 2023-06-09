@@ -3,6 +3,7 @@ package ar.edu.itba.paw.webapp.controller;
 import ar.edu.itba.paw.interfaces.services.DoctorService;
 import ar.edu.itba.paw.interfaces.services.PatientService;
 import ar.edu.itba.paw.interfaces.services.UserService;
+import ar.edu.itba.paw.interfaces.services.exceptions.DoctorNotFoundException;
 import ar.edu.itba.paw.interfaces.services.exceptions.EmailInUseException;
 import ar.edu.itba.paw.models.*;
 import ar.edu.itba.paw.webapp.auth.PawAuthUserDetails;
@@ -129,7 +130,7 @@ public class ProfileController {
       LOGGER.info("Updated {}", doctor);
     } catch (IOException e) {
       // TODO: handle
-    } catch (ar.edu.itba.paw.interfaces.services.exceptions.UserNotFoundException e) {
+    } catch (DoctorNotFoundException | EmailInUseException e) {
       LOGGER.error("Failed to update doctor because doctor does not exist");
       throw new UserNotFoundException();
     }
@@ -270,12 +271,8 @@ public class ProfileController {
         return changePassword(changePasswordForm, true);
       }
       LOGGER.info("Updated password");
-    } catch (IllegalStateException exception) {
-      // No deberia pasar
-      // TODO: log?
-      throw exception;
-    } catch (ar.edu.itba.paw.interfaces.services.exceptions.UserNotFoundException e) {
-      LOGGER.error("Change password failed due to user nott existing found");
+    }  catch (ar.edu.itba.paw.interfaces.services.exceptions.UserNotFoundException e) {
+      LOGGER.error("Change password failed due to user not existing found");
       // TODO: q hago en este caso?
       throw new UserNotFoundException();
     }

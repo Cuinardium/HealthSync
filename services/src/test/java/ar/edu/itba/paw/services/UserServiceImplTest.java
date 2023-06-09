@@ -136,7 +136,7 @@ public class UserServiceImplTest {
   @Test
   public void testUpdateUser()
       throws UserNotFoundException,
-          ar.edu.itba.paw.interfaces.services.exceptions.UserNotFoundException {
+          ar.edu.itba.paw.interfaces.services.exceptions.UserNotFoundException, EmailAlreadyExistsException, EmailInUseException {
     // 1. Precondiciones
     User USER = new User(ID, EMAIL, PASSWORD, FIRST_NAME, LAST_NAME, IMAGE);
     User USER_UPDATED =
@@ -159,7 +159,7 @@ public class UserServiceImplTest {
 
   @Test(expected = IllegalStateException.class)
   public void testUpdateUserDoesNotExist()
-      throws ar.edu.itba.paw.interfaces.services.exceptions.UserNotFoundException {
+      throws ar.edu.itba.paw.interfaces.services.exceptions.UserNotFoundException, EmailInUseException {
     // 1. Precondiciones
     Mockito.when(userDao.getUserById(ID)).thenReturn(Optional.empty());
     // 2. Ejercitar la class under test

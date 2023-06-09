@@ -128,7 +128,7 @@ public class PatientDaoImplTest {
   }
 
   @Test
-  public void testUpdatePatientInfo() throws PatientNotFoundException, EmailAlreadyExistsException {
+  public void testUpdatePatientInfo() throws PatientNotFoundException {
     // 1. Precondiciones
     // 2. Ejercitar la class under test
     Patient patient =

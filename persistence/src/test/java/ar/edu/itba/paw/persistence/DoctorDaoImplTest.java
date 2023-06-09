@@ -4,6 +4,7 @@ import static org.junit.Assert.assertThrows;
 
 import ar.edu.itba.paw.interfaces.persistence.exceptions.DoctorAlreadyExistsException;
 import ar.edu.itba.paw.interfaces.persistence.exceptions.DoctorNotFoundException;
+import ar.edu.itba.paw.interfaces.persistence.exceptions.EmailAlreadyExistsException;
 import ar.edu.itba.paw.models.*;
 import ar.edu.itba.paw.persistence.config.TestConfig;
 
@@ -143,7 +144,7 @@ public class DoctorDaoImplTest {
   }
 
   @Test
-  public void testCreateDoctor() throws DoctorAlreadyExistsException {
+  public void testCreateDoctor() throws DoctorAlreadyExistsException, EmailAlreadyExistsException {
     // 1. Precondiciones
     // 2. Ejercitar la class under test
     Doctor doctor =

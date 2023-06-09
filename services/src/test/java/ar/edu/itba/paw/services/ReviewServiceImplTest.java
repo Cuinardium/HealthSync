@@ -121,7 +121,7 @@ public class ReviewServiceImplTest {
   // =================== createReview ===================
 
   @Test
-  public void testCreateReview() {
+  public void testCreateReview() throws DoctorNotFoundException {
     // Mock reviewDao
     Mockito.when(doctorService.addReview(DOCTOR_ID, REVIEW)).thenReturn(REVIEW);
 

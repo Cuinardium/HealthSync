@@ -3,6 +3,7 @@ package ar.edu.itba.paw.persistence;
 import ar.edu.itba.paw.interfaces.persistence.DoctorDao;
 import ar.edu.itba.paw.interfaces.persistence.exceptions.DoctorAlreadyExistsException;
 import ar.edu.itba.paw.interfaces.persistence.exceptions.DoctorNotFoundException;
+import ar.edu.itba.paw.interfaces.persistence.exceptions.EmailAlreadyExistsException;
 import ar.edu.itba.paw.models.*;
 import ar.edu.itba.paw.persistence.utils.QueryBuilder;
 import java.sql.Date;
@@ -13,17 +14,18 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
-import javax.print.Doc;
 
 import org.springframework.stereotype.Repository;
 
 @Repository
 public class DoctorDaoJpa implements DoctorDao {
+
   @PersistenceContext private EntityManager em;
 
   @Override
   public Doctor createDoctor(Doctor doctor)
-      throws DoctorAlreadyExistsException, IllegalStateException {
+      throws DoctorAlreadyExistsException, EmailAlreadyExistsException {
+
     if (doctor.getId() != null && getDoctorById(doctor.getId()).isPresent()) {
       throw new DoctorAlreadyExistsException();
     }
