@@ -1,7 +1,7 @@
 package ar.edu.itba.paw.interfaces.services;
 
 import ar.edu.itba.paw.interfaces.services.exceptions.EmailInUseException;
-import ar.edu.itba.paw.interfaces.services.exceptions.UserNotFoundException;
+import ar.edu.itba.paw.interfaces.services.exceptions.PatientNotFoundException;
 import ar.edu.itba.paw.models.HealthInsurance;
 import ar.edu.itba.paw.models.Image;
 import ar.edu.itba.paw.models.Patient;
@@ -28,7 +28,7 @@ public interface PatientService {
       String lastName,
       HealthInsurance healthInsurance,
       Image image)
-      throws EmailInUseException, UserNotFoundException;
+      throws EmailInUseException, PatientNotFoundException;
 
   // =============== Queries ===============
 

@@ -5,6 +5,7 @@ import ar.edu.itba.paw.interfaces.services.PatientService;
 import ar.edu.itba.paw.interfaces.services.UserService;
 import ar.edu.itba.paw.interfaces.services.exceptions.DoctorNotFoundException;
 import ar.edu.itba.paw.interfaces.services.exceptions.EmailInUseException;
+import ar.edu.itba.paw.interfaces.services.exceptions.PatientNotFoundException;
 import ar.edu.itba.paw.models.*;
 import ar.edu.itba.paw.webapp.auth.PawAuthUserDetails;
 import ar.edu.itba.paw.webapp.exceptions.UserNotFoundException;
@@ -213,7 +214,7 @@ public class ProfileController {
       LOGGER.info("Updated {}", patient);
     } catch (IOException e) {
       // TODO: handle this
-    } catch (ar.edu.itba.paw.interfaces.services.exceptions.UserNotFoundException e) {
+    } catch (PatientNotFoundException e) {
       LOGGER.error("Failed to update patient because patient does not exist");
       throw new UserNotFoundException();
     } catch (EmailInUseException e) {
