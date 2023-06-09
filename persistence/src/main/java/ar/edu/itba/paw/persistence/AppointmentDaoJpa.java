@@ -157,7 +157,7 @@ public class AppointmentDaoJpa implements AppointmentDao {
     String builtQuery = nativeQueryBuilder.build();
 
     Query nativeQuery = em.createNativeQuery(builtQuery);
-    Query qtyAppointmentsQuery = em.createQuery(builtQuery);
+    Query qtyAppointmentsQuery = em.createNativeQuery(builtQuery);
 
     if (page != null && page >= 0 && pageSize != null && pageSize > 0) {
       nativeQuery.setMaxResults(pageSize);
