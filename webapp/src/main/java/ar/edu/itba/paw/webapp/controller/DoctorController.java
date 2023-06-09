@@ -5,8 +5,8 @@ import ar.edu.itba.paw.interfaces.services.DoctorService;
 import ar.edu.itba.paw.interfaces.services.ReviewService;
 import ar.edu.itba.paw.interfaces.services.exceptions.DoctorNotAvailableException;
 import ar.edu.itba.paw.interfaces.services.exceptions.DoctorNotFoundException;
-import ar.edu.itba.paw.interfaces.services.exceptions.ReviewForbiddenException;
 import ar.edu.itba.paw.interfaces.services.exceptions.PatientNotFoundException;
+import ar.edu.itba.paw.interfaces.services.exceptions.ReviewForbiddenException;
 import ar.edu.itba.paw.models.Appointment;
 import ar.edu.itba.paw.models.Doctor;
 import ar.edu.itba.paw.models.Page;
@@ -44,7 +44,7 @@ public class DoctorController {
 
   private final ReviewService reviewService;
 
-  private static final int PAGE_SIZE = 3;
+  private static final int PAGE_SIZE = 10;
 
   @Autowired
   public DoctorController(
@@ -153,7 +153,6 @@ public class DoctorController {
       return review(doctorId, reviewForm);
     }
 
-
     Review review;
 
     try {
@@ -249,7 +248,7 @@ public class DoctorController {
 
     try {
       reviews = reviewService.getReviewsForDoctor(doctorId, page - 1, PAGE_SIZE);
-      
+
       LOGGER.debug("Reviews for doctor {} are: {}", doctorId, reviews.getContent());
     } catch (DoctorNotFoundException e) {
       LOGGER.error(

@@ -24,7 +24,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 @Controller
 public class HomeController {
-  private static final int DEFAULT_PAGE_SIZE = 3;
+  private static final int DEFAULT_PAGE_SIZE = 10;
   private final DoctorService doctorService;
   private final PatientService patientService;
 
