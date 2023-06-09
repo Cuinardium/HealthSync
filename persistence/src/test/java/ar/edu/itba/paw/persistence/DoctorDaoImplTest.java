@@ -67,7 +67,7 @@ public class DoctorDaoImplTest {
   private static final City AUX_DOCTOR_CITY = City.CASEROS;
   private static final String AUX_DOCTOR_ADDRESS = "notdoctor_address";
   private static final Set<AttendingHours> AUX_DOCTOR_ATTENDING_HOURS = new HashSet<>(
-          Arrays.asList(new AttendingHours(INSERTED_DOCTOR_ID, DayOfWeek.MONDAY, ThirtyMinuteBlock.BLOCK_02_00),
+          Arrays.asList(new AttendingHours(INSERTED_DOCTOR_ID, DayOfWeek.MONDAY, ThirtyMinuteBlock.BLOCK_00_00),
                   new AttendingHours(INSERTED_DOCTOR_ID, DayOfWeek.TUESDAY, ThirtyMinuteBlock.BLOCK_02_00),
                   new AttendingHours(INSERTED_DOCTOR_ID, DayOfWeek.WEDNESDAY, ThirtyMinuteBlock.BLOCK_02_00),
                   new AttendingHours(INSERTED_DOCTOR_ID, DayOfWeek.THURSDAY, ThirtyMinuteBlock.BLOCK_02_00),
