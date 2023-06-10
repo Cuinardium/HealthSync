@@ -90,7 +90,6 @@ public class AppointmentDaoImplTest {
           INSERTED_DOCTOR_CITY,
           INSERTED_DOCTOR_ADDRESS,
           INSERTED_DOCTOR_ATTENDING_HOURS,
-          new ArrayList<>(),
           INSERTED_DOCTOR_RATING,
           INSERTED_DOCTOR_RATING_COUNT);
 
@@ -170,17 +169,7 @@ public class AppointmentDaoImplTest {
   public void testUpdateAppointment() throws AppointmentNotFoundException {
     // 1. Precondiciones
     Doctor expectedDoctor = DOCTOR_7;
-    List<Review> reviewsForDoctor = new ArrayList<>(
-            Arrays.asList(
-                    new Review(7L, expectedDoctor, PATIENT_5, LocalDate.of(2023, 5, 17), "Muy buen doctor", (short) 5),
-                    new Review(8L, expectedDoctor, PATIENT_5, LocalDate.of(2023, 5, 16), "Buen doctor", (short) 4),
-                    new Review(9L, expectedDoctor, PATIENT_5, LocalDate.of(2023, 5, 15), "Regular doctor", (short) 3),
-                    new Review(10L, expectedDoctor, PATIENT_5, LocalDate.of(2023, 5, 14), "Malo doctor", (short) 2),
-                    new Review(11L, expectedDoctor, PATIENT_5, LocalDate.of(2023, 5, 13), "Muy malo doctor", (short) 1)
-            )
-    );
-    expectedDoctor.setReviews(reviewsForDoctor);
-
+    
     // 2. Ejercitar la class under test
     Appointment appointment =
         appointmentDao.updateAppointment(INSERTED_APP_ID, AUX_STATUS, AUX_CANCEL_DESC);
