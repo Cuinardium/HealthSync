@@ -45,8 +45,8 @@
     <link href="${profileEditCss}" rel="stylesheet"/>
 
     <script>
-        $(document).ready(function(){
-            if(${showModal}){
+        $(document).ready(function () {
+            if (${showModal}) {
                 $('#modal').modal('show');
             }
         })
@@ -63,20 +63,21 @@
         </a>
     </div>
     <h1>${title}</h1>
-    <form:form modelAttribute="patientEditForm" class="card" action="${patientEditUrl}" method="POST" enctype="multipart/form-data">
+    <form:form modelAttribute="patientEditForm" class="card" action="${patientEditUrl}" method="POST"
+               enctype="multipart/form-data">
         <c:if test="${emailAlreadyInUse}">
-          <div class="formRow">
-            <p class="error">
-              ${emailAlreadyInUseError}
-            </p>
-          </div>
+            <div class="formRow">
+                <p class="error">
+                        ${emailAlreadyInUseError}
+                </p>
+            </div>
         </c:if>
         <div class="profileContainer">
             <div class="profileImageContainer">
-                <div class="profileItem">
-                    <c:url value="/img/${user.image == null ? \"patientDefault.png\" : user.image.imageId}" var="loggedUserImg"/>
-                    <img src="${loggedUserImg}" alt="${altLoggedUserImg}" id="imgPreview" width="200" height="200" class="rounded-circle">
-                </div>
+                <c:url value="/img/${user.image == null ? \"patientDefault.png\" : user.image.imageId}"
+                       var="loggedUserImg"/>
+                <img src="${loggedUserImg}" alt="${altLoggedUserImg}" id="imgPreview" width="200" height="200"
+                     class="rounded-circle">
                 <div class="pfpEdit">
                     <form:label path="image">
                         <span class="fa-stack">
@@ -86,9 +87,8 @@
                     </form:label>
                     <form:input type="file" placeholder="${image_hint}" path="image"/>
                 </div>
-                <form:errors path="image" cssClass="error" element="p"/>
             </div>
-
+            <form:errors path="image" cssClass="error" element="p"/>
             <div class="profileData">
                 <div class="profileRow">
                     <div class="profileItem">
@@ -98,7 +98,8 @@
                     </div>
                     <div class="profileItem">
                         <form:label path="lastname">${lastname}</form:label>
-                        <form:input id="imgUpload" class="form-control" path="lastname" type="text" placeholder="${lastname_hint}"/>
+                        <form:input id="imgUpload" class="form-control" path="lastname" type="text"
+                                    placeholder="${lastname_hint}"/>
                         <form:errors path="lastname" cssClass="error" element="p"/>
                     </div>
                 </div>

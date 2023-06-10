@@ -16,13 +16,12 @@
 .profileContainer {
     display: flex;
     flex-direction: row;
+    margin-top: 30px;
     justify-content: space-around;
 }
 
 .profileData {
-    display: flex;
-    flex-direction: column;
-    flex-grow: 1;
+    flex: 1;
 }
 
 .doctorData {
@@ -53,8 +52,8 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding-top: 25px;
     padding-left: 25px;
+    margin-right: 25px;
     width: 30%;
 }
 
