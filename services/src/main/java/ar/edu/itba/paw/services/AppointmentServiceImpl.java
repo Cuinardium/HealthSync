@@ -212,6 +212,13 @@ public class AppointmentServiceImpl implements AppointmentService {
 
   @Transactional
   @Override
+  public Page<Appointment> getTodayAppointments(long userId, AppointmentStatus status, Integer page, Integer pageSize, boolean isPatient){
+    return appointmentDao.getFilteredAppointments(
+            userId, status, LocalDate.now(), LocalDate.ofYearDay(LocalDate.now().getYear(),LocalDate.now().getDayOfYear()), page, pageSize, isPatient);
+  }
+
+
+  @Override
   public boolean hasPatientMetDoctor(long patientId, long doctorId) {
     return appointmentDao.hasPatientMetDoctor(patientId, doctorId);
   }
