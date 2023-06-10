@@ -11,24 +11,18 @@
     justify-self: center;
 }
 
-.detailedDoctorCardInfo{
-    display: flex;
-    flex-direction: column;
-}
-
-.detailedDoctorCardBottomRow .infoContainer {
-    margin-left: 25px;
-}
-
 .imageContainer{
     width: 20rem;
     height: 20rem;
-    margin-right: 15px;
     object-fit: cover;
 }
 
 .infoContainer{
     flex: 1;
+}
+
+.locationContactContainer, .infoContainer{
+    margin: 15px;
 }
 
 .buttonsContainer{
@@ -47,15 +41,15 @@
 }
 
 .chip {
-    display: flex;
-    align-items: center;
-    padding: 0 15px;
+    padding: 5px 15px;
     margin: 1%;
     font-size: medium;
-    height: 2rem;
     border-radius: 25px;
+    width: auto;
+    height: auto;
     background-color: #f1f1f1;
     transform: rotate(0);
+    text-align: center;
 }
 
 .chipsContainer{
@@ -122,6 +116,7 @@
     clear: both; }
 
 .appointment-button {
+    display: flex;
     justify-content: center;
     width: 20%;
     margin: 20px;
@@ -135,14 +130,10 @@
         margin: 0;} }
 
 .appointment-time{
-    display: flex;
-    justify-content: center;
     padding: 0.5rem;
-    font-size: 1rem;
 }
 
 .noAppointments{
-    justify-content: center;
     margin: 20px 20px 20px 12px;
     border-left: 10px solid var(--bs-red);
     height: min-content;
