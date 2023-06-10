@@ -25,8 +25,6 @@ public interface DoctorService {
       Set<AttendingHours> attendingHours)
       throws EmailInUseException;
 
-  public Review addReview(long doctorId, Review review) throws DoctorNotFoundException;
-
   // =============== Updates ===============
 
   public Doctor updateDoctor(
@@ -41,8 +39,6 @@ public interface DoctorService {
       Set<AttendingHours> attendingHours,
       Image image)
       throws DoctorNotFoundException, EmailInUseException;
-
-  public Doctor updateReviews(long doctorId, List<Review> reviews) throws DoctorNotFoundException;
 
   // =============== Queries ===============
 
@@ -68,6 +64,4 @@ public interface DoctorService {
 
   // Gets all cities used by doctors & qty of appearences
   public Map<City, Integer> getUsedCities();
-
-  public Page<Review> getReviewsForDoctor(long doctorId, Integer page, Integer pageSize);
 }

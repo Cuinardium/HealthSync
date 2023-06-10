@@ -52,35 +52,23 @@ public class DoctorServiceImpl implements DoctorService {
       throw new EmailInUseException();
     }
 
+    Doctor doctor =
+        new Doctor.Builder(
+                email,
+                passwordEncoder.encode(password),
+                firstName,
+                lastName,
+                healthInsurances,
+                specialty,
+                city,
+                address,
+                attendingHours)
+            .build();
+
     try {
-      return doctorDao.createDoctor(
-          new Doctor(
-              null,
-              email,
-              passwordEncoder.encode(password),
-              firstName,
-              lastName,
-              null,
-              healthInsurances,
-              specialty,
-              city,
-              address,
-              attendingHours,
-              new ArrayList<>(),
-              0f,
-              0));
+      return doctorDao.createDoctor(doctor);
     } catch (DoctorAlreadyExistsException e) {
       throw new IllegalStateException("Doctor should not exist when id is null");
-    }
-  }
-
-  @Transactional
-  @Override
-  public Review addReview(long doctorId, Review review) throws DoctorNotFoundException {
-    try {
-      return doctorDao.addReview(doctorId, review);
-    } catch (ar.edu.itba.paw.interfaces.persistence.exceptions.DoctorNotFoundException e) {
-      throw new DoctorNotFoundException();
     }
   }
 
@@ -106,16 +94,6 @@ public class DoctorServiceImpl implements DoctorService {
           doctorId, specialty, city, address, healthInsurances, attendingHours);
     } catch (ar.edu.itba.paw.interfaces.persistence.exceptions.DoctorNotFoundException
         | UserNotFoundException e) {
-      throw new DoctorNotFoundException();
-    }
-  }
-
-  @Transactional
-  @Override
-  public Doctor updateReviews(long doctorId, List<Review> reviews) throws DoctorNotFoundException {
-    try {
-      return doctorDao.updateReviews(doctorId, reviews);
-    } catch (ar.edu.itba.paw.interfaces.persistence.exceptions.DoctorNotFoundException e) {
       throw new DoctorNotFoundException();
     }
   }
@@ -167,11 +145,5 @@ public class DoctorServiceImpl implements DoctorService {
   @Override
   public Map<City, Integer> getUsedCities() {
     return doctorDao.getUsedCities();
-  }
-
-  @Transactional
-  @Override
-  public Page<Review> getReviewsForDoctor(long doctorId, Integer page, Integer pageSize) {
-    return doctorDao.getReviewsForDoctor(doctorId, page, pageSize);
   }
 }

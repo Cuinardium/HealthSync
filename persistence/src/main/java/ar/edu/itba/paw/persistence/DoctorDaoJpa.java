@@ -34,14 +34,6 @@ public class DoctorDaoJpa implements DoctorDao {
   }
 
   @Override
-  public Review addReview(long doctorId, Review review) throws DoctorNotFoundException {
-    Doctor doctor = getDoctorById(doctorId).orElseThrow(DoctorNotFoundException::new);
-    doctor.getReviews().add(review);
-    em.persist(doctor);
-    return review;
-  }
-
-  @Override
   public Doctor updateDoctorInfo(
       long doctorId,
       Specialty specialty,
@@ -57,14 +49,6 @@ public class DoctorDaoJpa implements DoctorDao {
     doctor.setHealthInsurances(healthInsurances);
     doctor.setAttendingHours(attendingHours);
     mapAttendingHours(doctor);
-    em.persist(doctor);
-    return doctor;
-  }
-
-  @Override
-  public Doctor updateReviews(long doctorId, List<Review> reviews) throws DoctorNotFoundException {
-    Doctor doctor = getDoctorById(doctorId).orElseThrow(DoctorNotFoundException::new);
-    doctor.setReviews(reviews);
     em.persist(doctor);
     return doctor;
   }
@@ -230,33 +214,6 @@ public class DoctorDaoJpa implements DoctorDao {
     }
 
     return map;
-  }
-
-  @Override
-  public Page<Review> getReviewsForDoctor(long doctorId, Integer page, Integer pageSize) {
-    Query nativeQuery =
-        em.createNativeQuery("SELECT review_id FROM review WHERE doctor_id = " + doctorId);
-
-    if (page != null && page >= 0 && pageSize != null && pageSize > 0) {
-      nativeQuery.setMaxResults(pageSize);
-      nativeQuery.setFirstResult(page * pageSize);
-    }
-
-    final List<Long> idList =
-        (List<Long>)
-            nativeQuery.getResultList().stream()
-                .map(o -> ((Number) o).longValue())
-                .collect(Collectors.toList());
-
-    if (idList.isEmpty()) return new Page<>(new ArrayList<>(), page, 0, pageSize);
-
-    final TypedQuery<Review> query =
-        em.createQuery("from Review where id in :idList", Review.class);
-    query.setParameter("idList", idList);
-
-    List<Review> content = query.getResultList();
-
-    return new Page<>(content, page, content.size(), pageSize);
   }
 
   private void mapAttendingHours(Doctor doctor) {
