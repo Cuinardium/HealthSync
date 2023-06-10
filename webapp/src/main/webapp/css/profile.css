@@ -41,7 +41,7 @@
 .profileItem {
     display: flex;
     flex-direction: column;
-    justify-content: start;
+    justify-content: center;
     width: 50%;
 }
 
