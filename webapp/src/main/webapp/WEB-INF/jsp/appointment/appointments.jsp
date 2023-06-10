@@ -80,7 +80,7 @@
             <c:set var="name"
                    value="${i == 1 ? 'today' : (i == 2  ? 'upcoming' : (i == 3 ? 'cancelled' : 'history'))}"/>
             <c:set var="appointments"
-                   value="${i == 1 ? todayAppointments : (i==2 ? upcomingAppointments : (i == 2 ? cancelledAppointments : completedAppointments))}"/>
+                   value="${i == 1 ? todayAppointments : (i==2 ? upcomingAppointments : (i == 3 ? cancelledAppointments : completedAppointments))}"/>
 
             <div id="${name}" class="tabContent ${cssClass}">
                 <c:forEach items="${appointments}" var="appointment">
