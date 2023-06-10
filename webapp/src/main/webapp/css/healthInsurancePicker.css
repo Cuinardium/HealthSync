@@ -14,9 +14,10 @@
 .chip {
     background: #0275d8;
     color: white;
-    padding: 3px 5px 3px 10px;
-    border-radius: 15px;
-    margin-right: 5px;
+    padding: 5px 15px;
+    margin: 1%;
+    border-radius: 25px;
+    width: fit-content;
 }
 
 .chipClose {

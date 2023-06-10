@@ -37,7 +37,6 @@
     <link href="${mainCss}" rel="stylesheet"/>
     <link href="${formsCss}" rel="stylesheet"/>
     <link href="${profileCss}" rel="stylesheet"/>
-
 </head>
 <body>
 <jsp:include page="../components/header.jsp"/>
