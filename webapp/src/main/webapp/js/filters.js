@@ -16,7 +16,7 @@ function clearFilters() {
         toSelect.selectedIndex = -1;
     }
 
-    document.getElementById('min-rating').value = '0';
+    document.getElementById('min-rating').value = '-1';
 }
 
 function updateStar(event) {
