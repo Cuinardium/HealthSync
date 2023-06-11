@@ -8,6 +8,7 @@ import ar.edu.itba.paw.interfaces.persistence.exceptions.EmailAlreadyExistsExcep
 import ar.edu.itba.paw.models.*;
 import ar.edu.itba.paw.persistence.config.TestConfig;
 import java.time.DayOfWeek;
+import java.time.LocalDate;
 import java.util.*;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -181,7 +182,6 @@ public class DoctorDaoImplTest {
                     INSERTED_DOCTOR_RATING,
                     INSERTED_DOCTOR_RATING_COUNT)));
     // 3. Meaningful assertions
-
   }
 
   @Test
@@ -210,7 +210,6 @@ public class DoctorDaoImplTest {
     Assert.assertEquals(AUX_DOCTOR_ATTENDING_HOURS, doctor.getAttendingHours());
   }
 
-
   @Test
   public void testUpdateDoctorInfoDoctorNotFound() {
     // 1.Precondiciones
@@ -232,7 +231,7 @@ public class DoctorDaoImplTest {
   public void testGetDoctorById() {
     // 1.Precondiciones
     Doctor expectedDoctor = DOCTOR_7;
-    
+
     // 2. Ejercitar la class under test
     Optional<Doctor> maybeDoctor = doctorDao.getDoctorById(INSERTED_DOCTOR_ID);
     // 3. Meaningful assertions
@@ -250,13 +249,42 @@ public class DoctorDaoImplTest {
   }
 
   @Test
+  public void testGetFilteredDoctorsNoFilters() {
+    // 1.Precondiciones
+    Doctor expectedDoctor = DOCTOR_7;
+
+    // 2. Ejercitar la class under test
+    Page<Doctor> doctors =
+        doctorDao.getFilteredDoctors(null, null, null, null, null, null, null, null, null, null);
+
+    // 3. Meaningful assertions
+    Assert.assertNull(doctors.getTotalPages());
+    Assert.assertNull(doctors.getCurrentPage());
+    Assert.assertEquals(1, doctors.getContent().size());
+    Assert.assertEquals(expectedDoctor, doctors.getContent().get(0));
+  }
+
+  @Test
   public void testGetFilteredDoctors() {
     // 1.Precondiciones
     Doctor expectedDoctor = DOCTOR_7;
-    
+
+    LocalDate friday = LocalDate.of(2023, 6, 9);
+
     // 2. Ejercitar la class under test
     Page<Doctor> doctors =
-        doctorDao.getFilteredDoctors(null, null, null, null, null, null, null, null, null);
+        doctorDao.getFilteredDoctors(
+            null,
+            friday,
+            ThirtyMinuteBlock.BLOCK_00_00,
+            ThirtyMinuteBlock.BLOCK_00_00,
+            INSERTED_DOCTOR_SPECIALTY,
+            INSERTED_DOCTOR_CITY,
+            HealthInsurance.OSDE,
+            INSERTED_DOCTOR_RATING.intValue(),
+            null,
+            null);
+
     // 3. Meaningful assertions
     Assert.assertNull(doctors.getTotalPages());
     Assert.assertNull(doctors.getCurrentPage());
