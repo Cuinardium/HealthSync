@@ -17,6 +17,7 @@
 <spring:message code="form.name" var="name"/>
 <spring:message code="form.lastname" var="lastname"/>
 <spring:message code="form.healthcare" var="healthcare"/>
+<spring:message code="form.locale" var="locale"/>
 <spring:message code="form.email" var="email"/>
 <spring:message code="profile.saveChanges" var="saveChanges"/>
 <spring:message code="edit.modal.title" var="modalTitle"/>
@@ -71,6 +72,17 @@
                     <div class="profileItem">
                         <label for="email">${email}</label>
                         <input class="form-control" id="email" type="text" value='${patient.email}' disabled/>
+                    </div>
+                </div>
+                <div class="profileRow">
+                    <div class="profileItem">
+                        <label>${locale}</label>
+                        <div class="chip">
+                            ${patient.locale}
+                        </div>
+                    </div>
+                    <!-- for alignment purposes -->
+                    <div class="profileItem">
                     </div>
                 </div>
             </div>

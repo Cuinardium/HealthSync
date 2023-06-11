@@ -171,6 +171,7 @@ public class ProfileController {
     doctorEditForm.setAddress(doctor.getAddress());
     doctorEditForm.setCityCode(doctor.getCity().ordinal());
     doctorEditForm.setSpecialtyCode(doctor.getSpecialty().ordinal());
+    doctorEditForm.setLocale(doctor.getLocale());
 
     // Attending hours
     Set<AttendingHours> attendingHours = doctor.getAttendingHours();
@@ -248,6 +249,7 @@ public class ProfileController {
     patientEditForm.setName(patient.getFirstName());
     patientEditForm.setLastname(patient.getLastName());
     patientEditForm.setHealthInsuranceCode(patient.getHealthInsurance().ordinal());
+    patientEditForm.setLocale(patient.getLocale());
 
     final ModelAndView mav = new ModelAndView("user/patientEdit");
     mav.addObject("emailAlreadyInUse", emailAlreadyInUse);

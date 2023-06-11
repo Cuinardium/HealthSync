@@ -16,6 +16,7 @@
 
 <spring:message code="profile.profile" var="title"/>
 <spring:message code="profile.personalInfo" var="personalInfo"/>
+<spring:message code="form.locale" var="locale"/>
 <spring:message code="form.name" var="name"/>
 <spring:message code="form.lastname" var="lastname"/>
 <spring:message code="form.city" var="city"/>
@@ -81,9 +82,17 @@
                     </div>
                 </div>
 
-                <div class="profileItem">
-                    <label for="email">${email}</label>
-                    <input class="form-control" id="email" type="text" value="${doctor.email}" disabled/>
+                <div class="profileRow">
+                    <div class="profileItem">
+                        <label for="email">${email}</label>
+                        <input class="form-control" id="email" type="text" value="${doctor.email}" disabled/>
+                    </div>
+                    <div class="profileItem">
+                        <label>${locale}</label>
+                        <div class="chip">
+                            ${doctor.locale}
+                        </div>
+                    </div>
                 </div>
 
 
