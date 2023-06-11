@@ -208,6 +208,7 @@ public class DoctorDaoImplTest {
     Assert.assertEquals(AUX_DOCTOR_CITY, doctor.getCity());
     Assert.assertEquals(AUX_DOCTOR_SPECIALTY, doctor.getSpecialty());
     Assert.assertEquals(AUX_DOCTOR_ATTENDING_HOURS, doctor.getAttendingHours());
+    Assert.assertEquals(AUX_LOCALE, doctor.getLocale());
 
     Assert.assertEquals(2, JdbcTestUtils.countRowsInTable(jdbcTemplate, "doctor"));
   }
@@ -264,6 +265,7 @@ public class DoctorDaoImplTest {
     Assert.assertEquals(AUX_DOCTOR_ADDRESS, doctor.getAddress());
     Assert.assertEquals(AUX_DOCTOR_INSURANCES, doctor.getHealthInsurances());
     Assert.assertEquals(AUX_DOCTOR_ATTENDING_HOURS, doctor.getAttendingHours());
+    Assert.assertEquals(INSERTED_LOCALE, doctor.getLocale());
   }
 
   @Test
@@ -423,6 +425,7 @@ public class DoctorDaoImplTest {
     Assert.assertEquals(INSERTED_DOCTOR_CITY, doctors.get(0).getCity());
     Assert.assertEquals(INSERTED_DOCTOR_SPECIALTY, doctors.get(0).getSpecialty());
     Assert.assertEquals(INSERTED_DOCTOR_ATTENDING_HOURS, doctors.get(0).getAttendingHours());
+    Assert.assertEquals(INSERTED_LOCALE, doctors.get(0).getLocale());
   }
 
   @Test

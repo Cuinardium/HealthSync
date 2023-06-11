@@ -57,9 +57,6 @@ public class UserServiceImplTest {
     Mockito.when(userDao.createUser(EMAIL, PASSWORD_ENCODED, FIRST_NAME, LAST_NAME, LOCALE))
         .thenReturn(new User(ID, EMAIL, PASSWORD_ENCODED, FIRST_NAME, LAST_NAME, IMAGE, LOCALE));
 
-    // TODO: mock this?
-    // userDao.addHealthInsuranceToUser(user.getId(), insurance.getId());
-
     // 2. Ejercitar la class under test
     User newUser = us.createUser(EMAIL, PASSWORD, FIRST_NAME, LAST_NAME, LOCALE);
 
@@ -161,7 +158,8 @@ public class UserServiceImplTest {
                 Mockito.eq(EMAIL_NEW),
                 Mockito.eq(FIRST_NAME_NEW),
                 Mockito.eq(LAST_NAME_NEW),
-                Mockito.eq(IMAGE_NEW)))
+                Mockito.eq(IMAGE_NEW),
+                Mockito.eq(LOCALE_NEW)))
         .thenReturn(USER_UPDATED);
     // 2. Ejercitar la class under test
     User user = us.updateUser(ID, EMAIL_NEW, FIRST_NAME_NEW, LAST_NAME_NEW, IMAGE_NEW, LOCALE_NEW);
@@ -187,7 +185,8 @@ public class UserServiceImplTest {
                 Mockito.eq(EMAIL),
                 Mockito.eq(FIRST_NAME_NEW),
                 Mockito.eq(LAST_NAME_NEW),
-                Mockito.eq(IMAGE_NEW)))
+                Mockito.eq(IMAGE_NEW),
+                Mockito.eq(LOCALE_NEW)))
         .thenReturn(USER_UPDATED);
 
     // 2. Ejercitar la class under test
@@ -223,7 +222,8 @@ public class UserServiceImplTest {
                 Mockito.eq(EMAIL_NEW),
                 Mockito.eq(FIRST_NAME_NEW),
                 Mockito.eq(LAST_NAME_NEW),
-                Mockito.eq(IMAGE_NEW)))
+                Mockito.eq(IMAGE_NEW),
+                Mockito.eq(LOCALE_NEW)))
         .thenThrow(EmailAlreadyExistsException.class);
 
     // 2. Ejercitar la class under test

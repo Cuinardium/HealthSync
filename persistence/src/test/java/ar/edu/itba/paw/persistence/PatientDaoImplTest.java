@@ -111,6 +111,7 @@ public class PatientDaoImplTest {
     Assert.assertEquals(AUX_PATIENT_LAST_NAME, patient.getLastName());
     Assert.assertEquals(AUX_PATIENT_IMAGE, patient.getImage());
     Assert.assertEquals(AUX_PATIENT_HEALTH_INSURANCE, patient.getHealthInsurance());
+    Assert.assertEquals(AUX_PATIENT_LOCALE, patient.getLocale());
 
     Assert.assertEquals(2, JdbcTestUtils.countRowsInTable(jdbcTemplate, "patient"));
   }
@@ -139,6 +140,7 @@ public class PatientDaoImplTest {
     Assert.assertEquals(INSERTED_PATIENT_LAST_NAME, patient.getLastName());
     Assert.assertEquals(INSERTED_PATIENT_IMAGE, patient.getImage());
     Assert.assertEquals(AUX_PATIENT_HEALTH_INSURANCE, patient.getHealthInsurance());
+    Assert.assertEquals(INSERTED_PATIENT_LOCALE, patient.getLocale());
   }
 
   @Test

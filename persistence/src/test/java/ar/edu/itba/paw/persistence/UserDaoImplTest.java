@@ -73,6 +73,7 @@ public class UserDaoImplTest {
     Assert.assertEquals(INSERTED_USER_FIRST_NAME, maybeUser.get().getFirstName());
     Assert.assertEquals(INSERTED_USER_LAST_NAME, maybeUser.get().getLastName());
     Assert.assertEquals(INSERTED_USER_IMAGE, maybeUser.get().getImage());
+    Assert.assertEquals(INSERTED_LOCALE, maybeUser.get().getLocale());
   }
 
   @Test
@@ -98,6 +99,7 @@ public class UserDaoImplTest {
     Assert.assertEquals(INSERTED_USER_FIRST_NAME, maybeUser.get().getFirstName());
     Assert.assertEquals(INSERTED_USER_LAST_NAME, maybeUser.get().getLastName());
     Assert.assertEquals(INSERTED_USER_IMAGE, maybeUser.get().getImage());
+    Assert.assertEquals(INSERTED_LOCALE, maybeUser.get().getLocale());
   }
 
   @Test
@@ -126,6 +128,7 @@ public class UserDaoImplTest {
     Assert.assertEquals(AUX_FIRST_NAME, user.getFirstName());
     Assert.assertEquals(AUX_LAST_NAME, user.getLastName());
     Assert.assertEquals(INSERTED_USER_IMAGE, user.getImage());
+    Assert.assertEquals(INSERTED_LOCALE, user.getLocale());
 
     Assert.assertEquals(3, JdbcTestUtils.countRowsInTable(jdbcTemplate, "users"));
   }
@@ -153,7 +156,7 @@ public class UserDaoImplTest {
     // 2. Ejercitar la class under test
     User user =
         userDao.updateUserInfo(
-            INSERTED_USER_ID, AUX_EMAIL, AUX_FIRST_NAME, AUX_LAST_NAME, AUX_IMAGE);
+            INSERTED_USER_ID, AUX_EMAIL, AUX_FIRST_NAME, AUX_LAST_NAME, AUX_IMAGE, AUX_LOCALE);
 
     // 3. Meaningful assertions
     Assert.assertNotNull(user);
@@ -163,6 +166,7 @@ public class UserDaoImplTest {
     Assert.assertEquals(AUX_FIRST_NAME, user.getFirstName());
     Assert.assertEquals(AUX_LAST_NAME, user.getLastName());
     Assert.assertEquals(AUX_IMAGE, user.getImage());
+    Assert.assertEquals(AUX_LOCALE, user.getLocale());
   }
 
   @Test
@@ -171,7 +175,9 @@ public class UserDaoImplTest {
     // 2. Ejercitar la class under test
     assertThrows(
         UserNotFoundException.class,
-        () -> userDao.updateUserInfo(AUX_ID, AUX_EMAIL, AUX_FIRST_NAME, AUX_LAST_NAME, AUX_IMAGE));
+        () ->
+            userDao.updateUserInfo(
+                AUX_ID, AUX_EMAIL, AUX_FIRST_NAME, AUX_LAST_NAME, AUX_IMAGE, AUX_LOCALE));
     // 3. Meaningful assertions
   }
 
@@ -188,7 +194,8 @@ public class UserDaoImplTest {
                 ALREADY_INSERTED_MAIL,
                 INSERTED_USER_FIRST_NAME,
                 INSERTED_USER_LAST_NAME,
-                INSERTED_USER_IMAGE));
+                INSERTED_USER_IMAGE,
+                INSERTED_LOCALE));
     // 3. Meaningful assertions
   }
 

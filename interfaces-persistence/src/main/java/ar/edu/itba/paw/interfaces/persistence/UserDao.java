@@ -18,7 +18,7 @@ public interface UserDao {
   // =============== Updates ===============
 
   public User updateUserInfo(
-      long userId, String email, String firstName, String lastName, Image image)
+      long userId, String email, String firstName, String lastName, Image image, Locale locale)
       throws UserNotFoundException, EmailAlreadyExistsException;
 
   public String updateUserPassword(long userId, String password) throws UserNotFoundException;

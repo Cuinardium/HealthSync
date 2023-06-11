@@ -71,7 +71,7 @@ public class UserServiceImpl implements UserService {
       }
 
       return userDao.updateUserInfo(
-          userId, email, firstName, lastName, image == null ? old_image : image);
+          userId, email, firstName, lastName, image == null ? old_image : image, locale);
 
     } catch (ar.edu.itba.paw.interfaces.persistence.exceptions.UserNotFoundException e) {
       throw new IllegalStateException("User could not be updated because it does not exist");

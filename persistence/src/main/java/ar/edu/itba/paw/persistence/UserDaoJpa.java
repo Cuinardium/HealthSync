@@ -31,7 +31,7 @@ public class UserDaoJpa implements UserDao {
 
   @Override
   public User updateUserInfo(
-      long userId, String email, String firstName, String lastName, Image image)
+      long userId, String email, String firstName, String lastName, Image image, Locale locale)
       throws UserNotFoundException, EmailAlreadyExistsException {
     User user = getUserById(userId).orElseThrow(UserNotFoundException::new);
 
@@ -43,6 +43,7 @@ public class UserDaoJpa implements UserDao {
     user.setFirstName(firstName);
     user.setLastName(lastName);
     user.setImage(image);
+    user.setLocale(locale);
     em.persist(user);
     return user;
   }
