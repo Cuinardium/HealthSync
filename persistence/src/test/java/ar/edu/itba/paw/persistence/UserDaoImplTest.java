@@ -45,7 +45,7 @@ public class UserDaoImplTest {
   private static final String AUX_LAST_NAME = "notuser_last_name";
   private static final Image AUX_IMAGE = new Image(2L, null);
   private static final Locale AUX_LOCALE = new Locale("en");
-  private static final Locale INSERTED_LOCALE = new Locale("es");
+  private static final Locale INSERTED_LOCALE = new Locale("en");
 
   @Autowired private DataSource ds;
 

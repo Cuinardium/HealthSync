@@ -94,7 +94,7 @@ public class DoctorServiceImplTest {
   private static final String INSERTED_PATIENT_LAST_NAME = "patient_last_name";
   private static final Image INSERTED_PATIENT_IMAGE = null;
   private static final HealthInsurance INSERTED_PATIENT_HEALTH_INSURANCE = HealthInsurance.OMINT;
-  private static final Locale INSERTED_PATIENT_LOCALE = new Locale("es");
+  private static final Locale INSERTED_PATIENT_LOCALE = new Locale("en");
 
   private static final Patient PATIENT_5 =
       new Patient(

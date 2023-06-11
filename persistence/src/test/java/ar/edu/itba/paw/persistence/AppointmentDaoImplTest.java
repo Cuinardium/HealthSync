@@ -38,7 +38,7 @@ public class AppointmentDaoImplTest {
   private static final String INSERTED_PATIENT_LAST_NAME = "patient_last_name";
   private static final Image INSERTED_PATIENT_IMAGE = null;
   private static final HealthInsurance INSERTED_PATIENT_HEALTH_INSURANCE = HealthInsurance.OMINT;
-  private static final Locale INSERTED_PATIENT_LOCALE = new Locale("es");
+  private static final Locale INSERTED_PATIENT_LOCALE = new Locale("en");
 
   private static final Patient PATIENT_5 =
       new Patient(
@@ -78,7 +78,7 @@ public class AppointmentDaoImplTest {
                   INSERTED_DOCTOR_ID, DayOfWeek.THURSDAY, ThirtyMinuteBlock.BLOCK_00_00),
               new AttendingHours(
                   INSERTED_DOCTOR_ID, DayOfWeek.FRIDAY, ThirtyMinuteBlock.BLOCK_00_00)));
-  private static final Locale INSERTED_DOCTOR_LOCALE = new Locale("es");
+  private static final Locale INSERTED_DOCTOR_LOCALE = new Locale("en");
 
   private static final Doctor DOCTOR_7 =
       new Doctor(
