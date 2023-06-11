@@ -52,7 +52,7 @@ public interface DoctorService {
       Specialty specialty,
       City city,
       HealthInsurance healthInsurance,
-      Integer rating,
+      Integer minRating,
       Integer page,
       Integer pageSize);
 

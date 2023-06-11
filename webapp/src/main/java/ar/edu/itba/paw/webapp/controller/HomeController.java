@@ -58,7 +58,6 @@ public class HomeController {
   @RequestMapping(value = "/doctor-dashboard", method = RequestMethod.GET)
   public ModelAndView doctorDashboard(
       @ModelAttribute("doctorFilterForm") DoctorFilterForm doctorFilterForm,
-      @RequestParam(value = "rating", required = false) Integer rating,
       @RequestParam(value = "page", required = false, defaultValue = "1") String page) {
 
     // Parse page here to catch NumberFormatException
@@ -85,6 +84,7 @@ public class HomeController {
     LocalDate date = doctorFilterForm.getDate();
     int fromOrdinal = doctorFilterForm.getFrom();
     int toOrdinal = doctorFilterForm.getTo();
+    int minRating = doctorFilterForm.getMinRating();
 
     ThirtyMinuteBlock fromTime = ThirtyMinuteBlock.values()[fromOrdinal];
     ThirtyMinuteBlock toTime = ThirtyMinuteBlock.values()[toOrdinal];
@@ -113,7 +113,7 @@ public class HomeController {
             specialty,
             city,
             healthInsurance,
-            rating,
+            minRating,
             parsedPage - 1,
             DEFAULT_PAGE_SIZE);
 

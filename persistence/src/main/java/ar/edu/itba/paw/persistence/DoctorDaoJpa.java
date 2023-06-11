@@ -66,7 +66,7 @@ public class DoctorDaoJpa implements DoctorDao {
       Specialty specialty,
       City city,
       HealthInsurance healthInsurance,
-      Integer rating,
+      Integer minRating,
       Integer page,
       Integer pageSize) {
 
@@ -136,14 +136,13 @@ public class DoctorDaoJpa implements DoctorDao {
       nativeQueryBuilder.where("doctor.doctor_id IN (" + attendingHoursQuery.build() + ")");
     }
 
-    if (rating != null && rating >= 0 && rating <= 5) {
+    if (minRating != null && minRating >= 0 && minRating <= 5) {
       String ratingQuery =
           new QueryBuilder()
               .select("doctor_id")
               .from("review")
               .groupBy("doctor_id")
-              .having("AVG(rating) >= " + rating)
-              .having("AVG(rating) < " + (rating + 1))
+              .having("AVG(rating) >= " + minRating)
               .having("COUNT(rating) > 0")
               .build();
 
