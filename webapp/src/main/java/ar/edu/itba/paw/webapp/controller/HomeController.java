@@ -58,6 +58,7 @@ public class HomeController {
   @RequestMapping(value = "/doctor-dashboard", method = RequestMethod.GET)
   public ModelAndView doctorDashboard(
       @ModelAttribute("doctorFilterForm") DoctorFilterForm doctorFilterForm,
+      @RequestParam(value = "rating", required = false) Integer rating,
       @RequestParam(value = "page", required = false, defaultValue = "1") String page) {
 
     // Parse page here to catch NumberFormatException
@@ -112,6 +113,7 @@ public class HomeController {
             specialty,
             city,
             healthInsurance,
+            rating,
             parsedPage - 1,
             DEFAULT_PAGE_SIZE);
 

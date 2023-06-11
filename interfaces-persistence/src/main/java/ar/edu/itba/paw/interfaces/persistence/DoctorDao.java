@@ -39,6 +39,7 @@ public interface DoctorDao {
       Specialty specialty,
       City city,
       HealthInsurance healthInsurance,
+      Integer rating,
       Integer page,
       Integer pageSize);
 

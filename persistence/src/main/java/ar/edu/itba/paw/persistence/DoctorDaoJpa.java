@@ -21,8 +21,7 @@ public class DoctorDaoJpa implements DoctorDao {
   @PersistenceContext private EntityManager em;
 
   @Override
-  public Doctor createDoctor(Doctor doctor)
-      throws DoctorAlreadyExistsException {
+  public Doctor createDoctor(Doctor doctor) throws DoctorAlreadyExistsException {
 
     if (doctor.getId() != null && getDoctorById(doctor.getId()).isPresent()) {
       throw new DoctorAlreadyExistsException();
@@ -67,6 +66,7 @@ public class DoctorDaoJpa implements DoctorDao {
       Specialty specialty,
       City city,
       HealthInsurance healthInsurance,
+      Integer rating,
       Integer page,
       Integer pageSize) {
 
@@ -80,8 +80,14 @@ public class DoctorDaoJpa implements DoctorDao {
 
     // Add the filters to the query, if it is the first filter, don't add AND
     if (name != null && !name.isEmpty()) {
-      nativeQueryBuilder.where(
-          "CONCAT(first_name, ' ', last_name) ILIKE CONCAT('" + name + "', '%')");
+      String nameQuery =
+          new QueryBuilder()
+              .select("user_id as doctor_id")
+              .from("users")
+              .where("CONCAT(first_name, ' ', last_name) LIKE CONCAT('" + name + "', '%')")
+              .build();
+
+      nativeQueryBuilder.where("doctor.doctor_id IN (" + nameQuery + ")");
     }
 
     if (specialtyCode >= 0) {
@@ -130,6 +136,20 @@ public class DoctorDaoJpa implements DoctorDao {
       nativeQueryBuilder.where("doctor.doctor_id IN (" + attendingHoursQuery.build() + ")");
     }
 
+    if (rating != null && rating >= 0 && rating <= 5) {
+      String ratingQuery =
+          new QueryBuilder()
+              .select("doctor_id")
+              .from("review")
+              .groupBy("doctor_id")
+              .having("AVG(rating) >= " + rating)
+              .having("AVG(rating) < " + (rating + 1))
+              .having("COUNT(rating) > 0")
+              .build();
+
+      nativeQueryBuilder.where("doctor.doctor_id IN (" + ratingQuery + ")");
+    }
+
     String builtQuery = nativeQueryBuilder.build();
 
     Query nativeQuery = em.createNativeQuery(builtQuery);
@@ -147,7 +167,9 @@ public class DoctorDaoJpa implements DoctorDao {
                 .map(o -> ((Number) o).longValue())
                 .collect(Collectors.toList());
 
-    if (idList.isEmpty()) return new Page<>(new ArrayList<>(), page, 0, pageSize);
+    if (idList.isEmpty()) {
+      return new Page<>(new ArrayList<>(), page, 0, pageSize);
+    }
 
     final TypedQuery<Doctor> query =
         em.createQuery("from Doctor where id in :idList", Doctor.class);

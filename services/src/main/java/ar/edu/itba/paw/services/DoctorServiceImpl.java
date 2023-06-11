@@ -116,10 +116,11 @@ public class DoctorServiceImpl implements DoctorService {
       Specialty specialty,
       City city,
       HealthInsurance healthInsurance,
+      Integer rating,
       Integer page,
       Integer pageSize) {
     return doctorDao.getFilteredDoctors(
-        name, date, fromTime, toTime, specialty, city, healthInsurance, page, pageSize);
+        name, date, fromTime, toTime, specialty, city, healthInsurance, rating, page, pageSize);
   }
 
   @Transactional
