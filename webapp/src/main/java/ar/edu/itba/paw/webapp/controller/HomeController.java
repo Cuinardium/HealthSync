@@ -142,6 +142,7 @@ public class HomeController {
     mav.addObject("dateFilter", date);
     mav.addObject("fromBlock", fromTime);
     mav.addObject("toBlock", toTime);
+    mav.addObject("minRating", minRating);
     mav.addObject("possibleAttendingHours", ThirtyMinuteBlock.values());
     mav.addObject("healthInsuranceMap", usedHealthInsurances);
 

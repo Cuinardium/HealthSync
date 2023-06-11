@@ -144,3 +144,7 @@ a.stretched-link:hover {
     flex-direction: column;
     width: 45%;
 }
+
+#rating-selector {
+    margin-top: 10px;
+}
