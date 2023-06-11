@@ -14,7 +14,6 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -41,7 +40,6 @@ public class HomeController {
   public ModelAndView landingPage() {
     ModelAndView mav = new ModelAndView("/home/home");
 
-    System.out.println(LocaleContextHolder.getLocale());
     List<Specialty> featuredSpecialties = new ArrayList<>();
     featuredSpecialties.add(Specialty.CARDIOLOGY);
     featuredSpecialties.add(Specialty.DERMATOLOGY);
