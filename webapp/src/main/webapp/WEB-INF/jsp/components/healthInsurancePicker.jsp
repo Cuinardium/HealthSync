@@ -21,8 +21,8 @@
     <script src="${healthInsurancePickerJs}"></script>
 </head>
 <body>
+<form:label path="healthInsuranceCodes">${healthcare}</form:label>
 <div class="healthInsurancePickerContainer">
-    <form:label path="healthInsuranceCodes">${healthcare}</form:label>
     <form:select id="healthInsuranceSelect" multiple="true" class="hidden" path="healthInsuranceCodes">
         <c:forEach items="${healthInsurances}" var="healthInsurance" varStatus="status">
             <form:option value="${status.index}"/>

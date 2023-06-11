@@ -1,22 +1,26 @@
 
 .healthInsurancePickerContainer {
     display: flex;
-    flex-direction: column;
-    align-items: start;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
 }
 
 .chipsContainer {
     display: flex;
     flex-direction: row;
     align-items: center;
+    flex-wrap: wrap;
+    justify-content: center;
 }
 
 .chip {
     background: #0275d8;
     color: white;
-    padding: 3px 5px 3px 10px;
-    border-radius: 15px;
-    margin-right: 5px;
+    padding: 5px 15px;
+    margin: 5px;
+    border-radius: 25px;
+    width: fit-content;
 }
 
 .chipClose {
