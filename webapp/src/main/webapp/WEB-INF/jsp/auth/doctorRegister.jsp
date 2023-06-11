@@ -99,8 +99,6 @@
                 <form:input class="form-control" path="address" type="text" placeholder="${address_hint}"/>
                 <form:errors path="address" cssClass="error" element="p"/>
             </div>
-        </div>
-        <div class="formRow">
             <!-- dropdown menu -->
             <div class="formItem">
                 <form:label path="specialtyCode">${specialization}</form:label>
@@ -114,12 +112,6 @@
                 </form:select>
                 <form:errors path="specialtyCode" cssClass="error" element="p"/>
             </div>
-
-            <!-- Health Insurance Picker -->
-            <c:set var="healthInsurances" value="${healthInsurances}" scope="request"/>
-            <c:set var="currentHealthInsuranceCodes" value="${currentHealthInsurances}" scope="request"/>
-            <jsp:include page="../components/healthInsurancePicker.jsp"/>
-
         </div>
         <div class="formRow">
             <div class="formItem">
@@ -127,15 +119,11 @@
                 <form:input class="form-control" path="email" type="text" placeholder="${email_hint}"/>
                 <form:errors path="email" cssClass="error" element="p"/>
             </div>
-        </div>
-        <div class="formRow">
             <div class="formItem">
                 <form:label path="password">${password}</form:label>
                 <form:input class="form-control" path="password" type="password" placeholder="${password_hint}"/>
                 <form:errors path="password" cssClass="error" element="p"/>
             </div>
-        </div>
-        <div class="formRow">
             <div class="formItem">
                 <form:label path="confirmPassword">${cpassword}</form:label>
                 <form:input class="form-control" path="confirmPassword" type="password"
@@ -144,12 +132,19 @@
                 <form:errors/>
             </div>
         </div>
+        <div class="formRow">
+            <!-- Health Insurance Picker -->
+            <c:set var="healthInsurances" value="${healthInsurances}" scope="request"/>
+            <c:set var="currentHealthInsuranceCodes" value="${currentHealthInsurances}" scope="request"/>
+            <div class="formItem">
+                <jsp:include page="../components/healthInsurancePicker.jsp"/>
+            </div>
+        </div>
             <!-- Doctor schedule selector -->
             <c:set var="timeEnumValues" value="${timeEnumValues}" scope="request"/>
             <jsp:include page="../components/scheduleSelector.jsp"/>
-        <div class="formRow">
-            <button type="submit" class="btn btn-primary">${submit}</button>
-        </div>
+
+        <button type="submit" class="btn btn-primary submitButton">${submit}</button>
 
     </form:form>
     <div class="modal fade" id="modal" tabindex="-1" role="dialog" aria-labelledby="modalLabel"
