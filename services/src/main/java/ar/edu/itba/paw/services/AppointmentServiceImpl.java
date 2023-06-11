@@ -211,13 +211,7 @@ public class AppointmentServiceImpl implements AppointmentService {
   public Page<Appointment> getTodayAppointments(
       long userId, AppointmentStatus status, Integer page, Integer pageSize, boolean isPatient) {
     return appointmentDao.getFilteredAppointments(
-        userId,
-        status,
-        LocalDate.now(),
-        LocalDate.ofYearDay(LocalDate.now().getYear(), LocalDate.now().getDayOfYear()),
-        page,
-        pageSize,
-        isPatient);
+        userId, status, LocalDate.now(), LocalDate.now().plusDays(1), page, pageSize, isPatient);
   }
 
   @Override
