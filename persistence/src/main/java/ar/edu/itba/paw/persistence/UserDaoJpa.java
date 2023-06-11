@@ -5,6 +5,7 @@ import ar.edu.itba.paw.interfaces.persistence.exceptions.EmailAlreadyExistsExcep
 import ar.edu.itba.paw.interfaces.persistence.exceptions.UserNotFoundException;
 import ar.edu.itba.paw.models.Image;
 import ar.edu.itba.paw.models.User;
+import java.util.Locale;
 import java.util.Optional;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -17,9 +18,10 @@ public class UserDaoJpa implements UserDao {
   @PersistenceContext private EntityManager em;
 
   @Override
-  public User createUser(String email, String password, String firstName, String lastName)
+  public User createUser(
+      String email, String password, String firstName, String lastName, Locale locale)
       throws EmailAlreadyExistsException {
-    final User user = new User.Builder(email, password, firstName, lastName).build();
+    final User user = new User.Builder(email, password, firstName, lastName, locale).build();
     if (getUserByEmail(email).isPresent()) {
       throw new EmailAlreadyExistsException();
     }
@@ -29,7 +31,7 @@ public class UserDaoJpa implements UserDao {
 
   @Override
   public User updateUserInfo(
-      long userId, String email, String firstName, String lastName, Image image)
+      long userId, String email, String firstName, String lastName, Image image, Locale locale)
       throws UserNotFoundException, EmailAlreadyExistsException {
     User user = getUserById(userId).orElseThrow(UserNotFoundException::new);
 
@@ -41,6 +43,7 @@ public class UserDaoJpa implements UserDao {
     user.setFirstName(firstName);
     user.setLastName(lastName);
     user.setImage(image);
+    user.setLocale(locale);
     em.persist(user);
     return user;
   }

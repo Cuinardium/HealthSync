@@ -10,6 +10,7 @@ import ar.edu.itba.paw.interfaces.services.exceptions.UserNotFoundException;
 import ar.edu.itba.paw.models.HealthInsurance;
 import ar.edu.itba.paw.models.Image;
 import ar.edu.itba.paw.models.Patient;
+import java.util.Locale;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -41,7 +42,8 @@ public class PatientServiceImpl implements PatientService {
       String password,
       String firstName,
       String lastName,
-      HealthInsurance healthInsurance)
+      HealthInsurance healthInsurance,
+      Locale locale)
       throws EmailInUseException {
 
     if (userService.getUserByEmail(email).isPresent()) {
@@ -52,7 +54,12 @@ public class PatientServiceImpl implements PatientService {
       Patient patient =
           patientDao.createPatient(
               new Patient.Builder(
-                      email, passwordEncoder.encode(password), firstName, lastName, healthInsurance)
+                      email,
+                      passwordEncoder.encode(password),
+                      firstName,
+                      lastName,
+                      healthInsurance,
+                      locale)
                   .build());
       return patient;
     } catch (PatientAlreadyExistsException e) {
@@ -70,11 +77,12 @@ public class PatientServiceImpl implements PatientService {
       String firstName,
       String lastName,
       HealthInsurance healthInsurance,
-      Image image)
+      Image image,
+      Locale locale)
       throws PatientNotFoundException, EmailInUseException {
 
     try {
-      userService.updateUser(patientId, email, firstName, lastName, image);
+      userService.updateUser(patientId, email, firstName, lastName, image, locale);
       return patientDao.updatePatientInfo(patientId, healthInsurance);
     } catch (UserNotFoundException
         | ar.edu.itba.paw.interfaces.persistence.exceptions.PatientNotFoundException e) {

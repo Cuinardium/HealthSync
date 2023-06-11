@@ -33,6 +33,7 @@ public class ReviewServiceImplTest {
   private static final String DOCTOR_FIRST_NAME = "doctor_first_name";
   private static final String DOCTOR_LAST_NAME = "doctor_last_name";
   private static final Image IMAGE = new Image.Builder(null).build();
+  private static final Locale LOCALE = new Locale("en");
   private static final Set<HealthInsurance> DOCTOR_HEALTH_INSURANCES =
       new HashSet<>(Arrays.asList(HealthInsurance.OSDE, HealthInsurance.OMINT));
   private static final Specialty SPECIALTY = Specialty.CARDIOLOGY;
@@ -76,7 +77,8 @@ public class ReviewServiceImplTest {
           ADDRESS,
           ATTENDING_HOURS,
           RATING,
-          RATING_COUNT);
+          RATING_COUNT,
+          LOCALE);
 
   // ================== Patient Constants ==================
 
@@ -95,7 +97,8 @@ public class ReviewServiceImplTest {
           FIRST_NAME,
           PATIENT_LAST_NAME,
           IMAGE,
-          PATIENT_HEALTH_INSURANCE);
+          PATIENT_HEALTH_INSURANCE,
+          LOCALE);
 
   // ================== Review Constants ==================
 
@@ -122,7 +125,8 @@ public class ReviewServiceImplTest {
   // =================== createReview ===================
 
   @Test
-  public void testCreateReview() throws DoctorNotFoundException, PatientNotFoundException, ReviewForbiddenException {
+  public void testCreateReview()
+      throws DoctorNotFoundException, PatientNotFoundException, ReviewForbiddenException {
 
     // Mock doctorService
     Mockito.when(doctorService.getDoctorById(DOCTOR_ID)).thenReturn(Optional.of(DOCTOR));

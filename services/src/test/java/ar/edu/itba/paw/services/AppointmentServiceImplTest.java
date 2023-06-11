@@ -76,6 +76,7 @@ public class AppointmentServiceImplTest {
               .collect(Collectors.toList()));
   private static final Float RATING = 3F;
   private static final Integer RATING_COUNT = 1;
+  private static final Locale DOCTOR_LOCALE = new Locale("en");
 
   private static final Doctor DOCTOR =
       new Doctor(
@@ -91,7 +92,8 @@ public class AppointmentServiceImplTest {
           ADDRESS,
           ATTENDING_HOURS,
           RATING,
-          RATING_COUNT);
+          RATING_COUNT,
+          DOCTOR_LOCALE);
 
   // ================== Patient Constants ==================
 
@@ -103,6 +105,7 @@ public class AppointmentServiceImplTest {
   private static final Image PATIENT_IMAGE = new Image.Builder(null).build();
 
   private static final HealthInsurance PATIENT_HEALTH_INSURANCE = HealthInsurance.NONE;
+  private static final Locale PATIENT_LOCALE = new Locale("en");
   private static final Patient PATIENT =
       new Patient(
           PATIENT_ID,
@@ -111,7 +114,8 @@ public class AppointmentServiceImplTest {
           FIRST_NAME,
           PATIENT_LAST_NAME,
           PATIENT_IMAGE,
-          PATIENT_HEALTH_INSURANCE);
+          PATIENT_HEALTH_INSURANCE,
+          PATIENT_LOCALE);
 
   // ================== Appointment Constants ==================
 
@@ -191,10 +195,10 @@ public class AppointmentServiceImplTest {
     // Mock mailService
     Mockito.doNothing()
         .when(mailService)
-        .sendAppointmentRequestMail(Mockito.any(Appointment.class), Mockito.any(Locale.class));
+        .sendAppointmentRequestMail(Mockito.any(Appointment.class));
     Mockito.doNothing()
         .when(mailService)
-        .sendAppointmentReminderMail(Mockito.any(Appointment.class), Mockito.any(Locale.class));
+        .sendAppointmentReminderMail(Mockito.any(Appointment.class));
 
     // 2. Ejercitar la class under test
     Appointment appointment =
@@ -298,10 +302,10 @@ public class AppointmentServiceImplTest {
     // Mock mailService
     Mockito.doNothing()
         .when(mailService)
-        .sendAppointmentRequestMail(Mockito.any(Appointment.class), Mockito.any(Locale.class));
+        .sendAppointmentRequestMail(Mockito.any(Appointment.class));
     Mockito.doNothing()
         .when(mailService)
-        .sendAppointmentReminderMail(Mockito.any(Appointment.class), Mockito.any(Locale.class));
+        .sendAppointmentReminderMail(Mockito.any(Appointment.class));
 
     // 2. Ejercitar la class under test
     Appointment appointment =
@@ -332,8 +336,7 @@ public class AppointmentServiceImplTest {
     // Mock mailService
     Mockito.doNothing()
         .when(mailService)
-        .sendAppointmentCancelledByDoctorMail(
-            Mockito.any(Appointment.class), Mockito.any(Locale.class));
+        .sendAppointmentCancelledByDoctorMail(Mockito.any(Appointment.class));
 
     // 2. Ejercitar la class under test
     Appointment appointment =
@@ -361,8 +364,7 @@ public class AppointmentServiceImplTest {
     // Mock mailService
     Mockito.doNothing()
         .when(mailService)
-        .sendAppointmentCancelledByPatientMail(
-            Mockito.any(Appointment.class), Mockito.any(Locale.class));
+        .sendAppointmentCancelledByPatientMail(Mockito.any(Appointment.class));
 
     // 2. Ejercitar la class under test
 

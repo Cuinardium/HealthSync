@@ -5,6 +5,7 @@ import ar.edu.itba.paw.interfaces.services.exceptions.EmailInUseException;
 import ar.edu.itba.paw.models.*;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -22,7 +23,8 @@ public interface DoctorService {
       City city,
       String address,
       Set<HealthInsurance> healthInsurances,
-      Set<AttendingHours> attendingHours)
+      Set<AttendingHours> attendingHours,
+      Locale locale)
       throws EmailInUseException;
 
   // =============== Updates ===============
@@ -37,7 +39,8 @@ public interface DoctorService {
       String address,
       Set<HealthInsurance> healthInsurances,
       Set<AttendingHours> attendingHours,
-      Image image)
+      Image image,
+      Locale locale)
       throws DoctorNotFoundException, EmailInUseException;
 
   // =============== Queries ===============

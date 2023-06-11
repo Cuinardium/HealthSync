@@ -1,5 +1,6 @@
 package ar.edu.itba.paw.models;
 
+import java.util.Locale;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -26,8 +27,9 @@ public class Patient extends User {
       String firstName,
       String lastName,
       Image image,
-      HealthInsurance healthInsurance) {
-    super(id, email, password, firstName, lastName, image);
+      HealthInsurance healthInsurance,
+      Locale locale) {
+    super(id, email, password, firstName, lastName, image, locale);
     this.healthInsurance = healthInsurance;
   }
 
@@ -38,7 +40,8 @@ public class Patient extends User {
         builder.password,
         builder.firstName,
         builder.lastName,
-        builder.image);
+        builder.image,
+        builder.locale);
     this.healthInsurance = builder.healthInsurance;
   }
 
@@ -59,6 +62,7 @@ public class Patient extends User {
     // required
     private String email, password, firstName, lastName;
     private HealthInsurance healthInsurance;
+    public Locale locale;
 
     // default
     private Long id = null;
@@ -69,12 +73,14 @@ public class Patient extends User {
         String password,
         String firstName,
         String lastName,
-        HealthInsurance healthInsurance) {
+        HealthInsurance healthInsurance,
+        Locale locale) {
       this.email = email;
       this.password = password;
       this.firstName = firstName;
       this.lastName = lastName;
       this.healthInsurance = healthInsurance;
+      this.locale = locale;
     }
 
     public Builder id(long id) {

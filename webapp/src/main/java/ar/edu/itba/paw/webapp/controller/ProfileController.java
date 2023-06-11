@@ -17,6 +17,7 @@ import java.time.DayOfWeek;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -106,7 +107,9 @@ public class ProfileController {
 
     for (Entry<DayOfWeek, List<Integer>> aux : doctorEditForm.getAttendingHours().entrySet()) {
       for (Integer ordinal : aux.getValue()) {
-        attendingHours.add(new AttendingHours(PawAuthUserDetails.getCurrentUserId(), aux.getKey(), values[ordinal]));
+        attendingHours.add(
+            new AttendingHours(
+                PawAuthUserDetails.getCurrentUserId(), aux.getKey(), values[ordinal]));
       }
     }
 
@@ -127,7 +130,8 @@ public class ProfileController {
               doctorEditForm.getAddress(),
               healthInsurances,
               attendingHours,
-              image);
+              image,
+              doctorEditForm.getLocale());
       LOGGER.info("Updated {}", doctor);
     } catch (IOException e) {
       // TODO: handle
@@ -167,6 +171,7 @@ public class ProfileController {
     doctorEditForm.setAddress(doctor.getAddress());
     doctorEditForm.setCityCode(doctor.getCity().ordinal());
     doctorEditForm.setSpecialtyCode(doctor.getSpecialty().ordinal());
+    doctorEditForm.setLocale(doctor.getLocale());
 
     // Attending hours
     Set<AttendingHours> attendingHours = doctor.getAttendingHours();
@@ -203,6 +208,8 @@ public class ProfileController {
       HealthInsurance healthInsurance =
           HealthInsurance.values()[patientEditForm.getHealthInsuranceCode()];
 
+      Locale locale = patientEditForm.getLocale();
+
       Patient patient =
           patientService.updatePatient(
               PawAuthUserDetails.getCurrentUserId(),
@@ -210,7 +217,8 @@ public class ProfileController {
               patientEditForm.getName(),
               patientEditForm.getLastname(),
               healthInsurance,
-              image);
+              image,
+              locale);
       LOGGER.info("Updated {}", patient);
     } catch (IOException e) {
       // TODO: handle this
@@ -241,6 +249,7 @@ public class ProfileController {
     patientEditForm.setName(patient.getFirstName());
     patientEditForm.setLastname(patient.getLastName());
     patientEditForm.setHealthInsuranceCode(patient.getHealthInsurance().ordinal());
+    patientEditForm.setLocale(patient.getLocale());
 
     final ModelAndView mav = new ModelAndView("user/patientEdit");
     mav.addObject("emailAlreadyInUse", emailAlreadyInUse);
@@ -272,7 +281,7 @@ public class ProfileController {
         return changePassword(changePasswordForm, true);
       }
       LOGGER.info("Updated password");
-    }  catch (ar.edu.itba.paw.interfaces.services.exceptions.UserNotFoundException e) {
+    } catch (ar.edu.itba.paw.interfaces.services.exceptions.UserNotFoundException e) {
       LOGGER.error("Change password failed due to user not existing found");
       // TODO: q hago en este caso?
       throw new UserNotFoundException();

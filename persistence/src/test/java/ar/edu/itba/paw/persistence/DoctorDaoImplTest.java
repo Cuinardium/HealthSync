@@ -57,6 +57,7 @@ public class DoctorDaoImplTest {
                   INSERTED_DOCTOR_ID, DayOfWeek.FRIDAY, ThirtyMinuteBlock.BLOCK_00_00)));
 
   private static final Image INSERTED_DOCTOR_IMAGE = null;
+  private static final Locale INSERTED_LOCALE = new Locale("en");
 
   private static final Float INSERTED_DOCTOR_RATING = 3f;
   private static final Integer INSERTED_DOCTOR_RATING_COUNT = 5;
@@ -91,6 +92,8 @@ public class DoctorDaoImplTest {
               new AttendingHours(
                   INSERTED_DOCTOR_ID, DayOfWeek.SUNDAY, ThirtyMinuteBlock.BLOCK_02_00)));
 
+  private static final Locale AUX_LOCALE = new Locale("en");
+
   private static final Doctor DOCTOR_7 =
       new Doctor(
           INSERTED_DOCTOR_ID,
@@ -105,7 +108,8 @@ public class DoctorDaoImplTest {
           INSERTED_DOCTOR_ADDRESS,
           INSERTED_DOCTOR_ATTENDING_HOURS,
           INSERTED_DOCTOR_RATING,
-          INSERTED_DOCTOR_RATING_COUNT);
+          INSERTED_DOCTOR_RATING_COUNT,
+          INSERTED_LOCALE);
 
   @Autowired private DataSource ds;
 
@@ -139,7 +143,8 @@ public class DoctorDaoImplTest {
                 AUX_DOCTOR_ADDRESS,
                 AUX_DOCTOR_ATTENDING_HOURS,
                 INSERTED_DOCTOR_RATING,
-                INSERTED_DOCTOR_RATING_COUNT));
+                INSERTED_DOCTOR_RATING_COUNT,
+                INSERTED_LOCALE));
 
     em.flush();
 
@@ -155,6 +160,7 @@ public class DoctorDaoImplTest {
     Assert.assertEquals(AUX_DOCTOR_CITY, doctor.getCity());
     Assert.assertEquals(AUX_DOCTOR_SPECIALTY, doctor.getSpecialty());
     Assert.assertEquals(AUX_DOCTOR_ATTENDING_HOURS, doctor.getAttendingHours());
+    Assert.assertEquals(AUX_LOCALE, doctor.getLocale());
 
     Assert.assertEquals(2, JdbcTestUtils.countRowsInTable(jdbcTemplate, "doctor"));
   }
@@ -180,7 +186,8 @@ public class DoctorDaoImplTest {
                     AUX_DOCTOR_ADDRESS,
                     AUX_DOCTOR_ATTENDING_HOURS,
                     INSERTED_DOCTOR_RATING,
-                    INSERTED_DOCTOR_RATING_COUNT)));
+                    INSERTED_DOCTOR_RATING_COUNT,
+                    INSERTED_LOCALE)));
     // 3. Meaningful assertions
   }
 
@@ -208,6 +215,7 @@ public class DoctorDaoImplTest {
     Assert.assertEquals(AUX_DOCTOR_ADDRESS, doctor.getAddress());
     Assert.assertEquals(AUX_DOCTOR_INSURANCES, doctor.getHealthInsurances());
     Assert.assertEquals(AUX_DOCTOR_ATTENDING_HOURS, doctor.getAttendingHours());
+    Assert.assertEquals(INSERTED_LOCALE, doctor.getLocale());
   }
 
   @Test
@@ -310,6 +318,7 @@ public class DoctorDaoImplTest {
     Assert.assertEquals(INSERTED_DOCTOR_CITY, doctors.get(0).getCity());
     Assert.assertEquals(INSERTED_DOCTOR_SPECIALTY, doctors.get(0).getSpecialty());
     Assert.assertEquals(INSERTED_DOCTOR_ATTENDING_HOURS, doctors.get(0).getAttendingHours());
+    Assert.assertEquals(INSERTED_LOCALE, doctors.get(0).getLocale());
   }
 
   @Test

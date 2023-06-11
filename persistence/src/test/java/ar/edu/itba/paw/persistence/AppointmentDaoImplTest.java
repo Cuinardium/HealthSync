@@ -38,6 +38,7 @@ public class AppointmentDaoImplTest {
   private static final String INSERTED_PATIENT_LAST_NAME = "patient_last_name";
   private static final Image INSERTED_PATIENT_IMAGE = null;
   private static final HealthInsurance INSERTED_PATIENT_HEALTH_INSURANCE = HealthInsurance.OMINT;
+  private static final Locale INSERTED_PATIENT_LOCALE = new Locale("en");
 
   private static final Patient PATIENT_5 =
       new Patient(
@@ -47,7 +48,8 @@ public class AppointmentDaoImplTest {
           INSERTED_PATIENT_FIRST_NAME,
           INSERTED_PATIENT_LAST_NAME,
           INSERTED_PATIENT_IMAGE,
-          INSERTED_PATIENT_HEALTH_INSURANCE);
+          INSERTED_PATIENT_HEALTH_INSURANCE,
+          INSERTED_PATIENT_LOCALE);
 
   private static final Long INSERTED_DOCTOR_ID = 7L;
   private static final String INSERTED_DOCTOR_EMAIL = "doctor@email.com";
@@ -76,6 +78,7 @@ public class AppointmentDaoImplTest {
                   INSERTED_DOCTOR_ID, DayOfWeek.THURSDAY, ThirtyMinuteBlock.BLOCK_00_00),
               new AttendingHours(
                   INSERTED_DOCTOR_ID, DayOfWeek.FRIDAY, ThirtyMinuteBlock.BLOCK_00_00)));
+  private static final Locale INSERTED_DOCTOR_LOCALE = new Locale("en");
 
   private static final Doctor DOCTOR_7 =
       new Doctor(
@@ -91,7 +94,8 @@ public class AppointmentDaoImplTest {
           INSERTED_DOCTOR_ADDRESS,
           INSERTED_DOCTOR_ATTENDING_HOURS,
           INSERTED_DOCTOR_RATING,
-          INSERTED_DOCTOR_RATING_COUNT);
+          INSERTED_DOCTOR_RATING_COUNT,
+          INSERTED_DOCTOR_LOCALE);
 
   private static final ThirtyMinuteBlock INSERTED_TIME = ThirtyMinuteBlock.BLOCK_00_30;
   private static final Long INSERTED_APP_ID = 3L;
@@ -169,7 +173,7 @@ public class AppointmentDaoImplTest {
   public void testUpdateAppointment() throws AppointmentNotFoundException {
     // 1. Precondiciones
     Doctor expectedDoctor = DOCTOR_7;
-    
+
     // 2. Ejercitar la class under test
     Appointment appointment =
         appointmentDao.updateAppointment(INSERTED_APP_ID, AUX_STATUS, AUX_CANCEL_DESC);

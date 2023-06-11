@@ -33,6 +33,7 @@ public class DoctorServiceImplTest {
   private static final Set<HealthInsurance> HEALTH_INSURANCES =
       new HashSet<>(Arrays.asList(HealthInsurance.OSDE, HealthInsurance.OMINT));
   private static final Image IMAGE = null;
+  private static final Locale LOCALE = new Locale("en");
   private static final Specialty SPECIALTY = Specialty.CARDIOLOGY;
   private static final City CITY = City.AYACUCHO;
   private static final String ADDRESS = "1234";
@@ -62,7 +63,8 @@ public class DoctorServiceImplTest {
           ADDRESS,
           ATTENDING_HOURS,
           RATING,
-          RATING_COUNT);
+          RATING_COUNT,
+          LOCALE);
 
   private static final String EMAIL_NEW = "new_email";
   private static final String FIRST_NAME_NEW = "new_fist_name";
@@ -83,6 +85,8 @@ public class DoctorServiceImplTest {
               new AttendingHours(ID, DayOfWeek.SATURDAY, ThirtyMinuteBlock.BLOCK_00_30),
               new AttendingHours(ID, DayOfWeek.SUNDAY, ThirtyMinuteBlock.BLOCK_00_30)));
 
+  private static final Locale LOCALE_NEW = new Locale("es");
+
   private static final Doctor DOCTOR_UPDATED =
       new Doctor(
           ID,
@@ -97,7 +101,8 @@ public class DoctorServiceImplTest {
           ADDRESS_NEW,
           ATTENDING_HOURS_NEW,
           RATING,
-          RATING_COUNT);
+          RATING_COUNT,
+          LOCALE);
 
   @Mock private DoctorDao doctorDao;
   @Mock private PasswordEncoder passwordEncoder;
@@ -127,7 +132,8 @@ public class DoctorServiceImplTest {
                     ADDRESS,
                     ATTENDING_HOURS,
                     0f,
-                    0)))
+                    0,
+                    LOCALE)))
         .thenReturn(DOCTOR);
 
     // 2. Ejercitar la class under test
@@ -141,7 +147,8 @@ public class DoctorServiceImplTest {
             CITY,
             ADDRESS,
             HEALTH_INSURANCES,
-            ATTENDING_HOURS);
+            ATTENDING_HOURS,
+            LOCALE);
 
     // 3. Meaningful assertions
     Assert.assertEquals(DOCTOR, doctor);
@@ -167,7 +174,8 @@ public class DoctorServiceImplTest {
                     ADDRESS,
                     ATTENDING_HOURS,
                     0f,
-                    0)))
+                    0,
+                    LOCALE)))
         .thenThrow(DoctorAlreadyExistsException.class);
 
     // 2. Ejercitar la class under test
@@ -180,7 +188,8 @@ public class DoctorServiceImplTest {
         CITY,
         ADDRESS,
         HEALTH_INSURANCES,
-        ATTENDING_HOURS);
+        ATTENDING_HOURS,
+        LOCALE);
   }
 
   @Test(expected = IllegalStateException.class)
@@ -204,7 +213,8 @@ public class DoctorServiceImplTest {
                     ADDRESS,
                     ATTENDING_HOURS,
                     0f,
-                    0)))
+                    0,
+                    LOCALE)))
         .thenThrow(IllegalStateException.class);
 
     // 2. Ejercitar la class under test
@@ -217,7 +227,8 @@ public class DoctorServiceImplTest {
         CITY,
         ADDRESS,
         HEALTH_INSURANCES,
-        ATTENDING_HOURS);
+        ATTENDING_HOURS,
+        LOCALE);
   }
 
   @Test(expected = EmailInUseException.class)
@@ -238,7 +249,8 @@ public class DoctorServiceImplTest {
         CITY,
         ADDRESS,
         HEALTH_INSURANCES,
-        ATTENDING_HOURS);
+        ATTENDING_HOURS,
+        LOCALE);
   }
 
   // ======================== Update doctor ========================
@@ -270,7 +282,8 @@ public class DoctorServiceImplTest {
             ADDRESS_NEW,
             HEALTH_INSURANCES_NEW,
             ATTENDING_HOURS_NEW,
-            IMAGE);
+            IMAGE,
+            LOCALE_NEW);
 
     // 3. Meaningful assertions
     Assert.assertEquals(DOCTOR_UPDATED, doctor);
@@ -303,7 +316,8 @@ public class DoctorServiceImplTest {
         ADDRESS_NEW,
         HEALTH_INSURANCES_NEW,
         ATTENDING_HOURS_NEW,
-        IMAGE);
+        IMAGE,
+        LOCALE_NEW);
   }
 
   @Test(expected = ar.edu.itba.paw.interfaces.services.exceptions.DoctorNotFoundException.class)
@@ -312,7 +326,8 @@ public class DoctorServiceImplTest {
           ar.edu.itba.paw.interfaces.services.exceptions.DoctorNotFoundException,
           UserNotFoundException {
     // 1. Precondiciones
-    Mockito.when(userService.updateUser(ID, EMAIL_NEW, FIRST_NAME_NEW, LAST_NAME_NEW, IMAGE))
+    Mockito.when(
+            userService.updateUser(ID, EMAIL_NEW, FIRST_NAME_NEW, LAST_NAME_NEW, IMAGE, LOCALE_NEW))
         .thenThrow(UserNotFoundException.class);
 
     // 2. Ejercitar la class under test
@@ -326,7 +341,8 @@ public class DoctorServiceImplTest {
         ADDRESS_NEW,
         HEALTH_INSURANCES_NEW,
         ATTENDING_HOURS_NEW,
-        IMAGE);
+        IMAGE,
+        LOCALE_NEW);
   }
 
   @Test(expected = EmailInUseException.class)
@@ -336,7 +352,8 @@ public class DoctorServiceImplTest {
           UserNotFoundException {
 
     // 1. Precondiciones
-    Mockito.when(userService.updateUser(ID, EMAIL_NEW, FIRST_NAME_NEW, LAST_NAME_NEW, IMAGE))
+    Mockito.when(
+            userService.updateUser(ID, EMAIL_NEW, FIRST_NAME_NEW, LAST_NAME_NEW, IMAGE, LOCALE_NEW))
         .thenThrow(EmailInUseException.class);
 
     // 2. Ejercitar la class under test
@@ -350,7 +367,8 @@ public class DoctorServiceImplTest {
         ADDRESS_NEW,
         HEALTH_INSURANCES_NEW,
         ATTENDING_HOURS_NEW,
-        IMAGE);
+        IMAGE,
+        LOCALE_NEW);
   }
 
   // ======================== Get doctor by id ========================

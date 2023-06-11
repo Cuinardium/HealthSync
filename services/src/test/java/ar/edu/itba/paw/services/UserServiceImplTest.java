@@ -7,6 +7,7 @@ import ar.edu.itba.paw.interfaces.services.ImageService;
 import ar.edu.itba.paw.interfaces.services.exceptions.EmailInUseException;
 import ar.edu.itba.paw.models.Image;
 import ar.edu.itba.paw.models.User;
+import java.util.Locale;
 import java.util.Optional;
 import org.junit.Assert;
 import org.junit.Test;
@@ -27,6 +28,7 @@ public class UserServiceImplTest {
   private static final String FIRST_NAME = "firstname";
   private static final String LAST_NAME = "lastname";
   private static final Image IMAGE = new Image(1L, new byte[0]);
+  private static final Locale LOCALE = new Locale("en");
   private static final String PASSWORD = "password";
   private static final String PASSWORD_ENCODED = "password_encoded";
   private static final String NOT_PASSWORD = "not_password";
@@ -37,6 +39,7 @@ public class UserServiceImplTest {
   private static final String FIRST_NAME_NEW = "firstname_new";
   private static final String LAST_NAME_NEW = "lastname_new";
   private static final Image IMAGE_NEW = new Image(1L, new byte[] {1, 4});
+  private static final Locale LOCALE_NEW = new Locale("es");
 
   @Mock private UserDao userDao;
   @Mock private PasswordEncoder passwordEncoder;
@@ -51,16 +54,11 @@ public class UserServiceImplTest {
     // 1. Precondiciones
     // UserDao mock = Mockito.mock(UserDao.class);
     Mockito.when(passwordEncoder.encode(Mockito.eq(PASSWORD))).thenReturn(PASSWORD_ENCODED);
-    Mockito.when(
-            userDao.createUser(
-                Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyString()))
-        .thenReturn(new User(ID, EMAIL, PASSWORD_ENCODED, FIRST_NAME, LAST_NAME, IMAGE));
-
-    // TODO: mock this?
-    // userDao.addHealthInsuranceToUser(user.getId(), insurance.getId());
+    Mockito.when(userDao.createUser(EMAIL, PASSWORD_ENCODED, FIRST_NAME, LAST_NAME, LOCALE))
+        .thenReturn(new User(ID, EMAIL, PASSWORD_ENCODED, FIRST_NAME, LAST_NAME, IMAGE, LOCALE));
 
     // 2. Ejercitar la class under test
-    User newUser = us.createUser(EMAIL, PASSWORD, FIRST_NAME, LAST_NAME);
+    User newUser = us.createUser(EMAIL, PASSWORD, FIRST_NAME, LAST_NAME, LOCALE);
 
     // 3. Meaningful assertions
     Assert.assertNotNull(newUser);
@@ -80,11 +78,12 @@ public class UserServiceImplTest {
                 Mockito.eq(EMAIL),
                 Mockito.eq(PASSWORD_ENCODED),
                 Mockito.eq(FIRST_NAME),
-                Mockito.eq(LAST_NAME)))
+                Mockito.eq(LAST_NAME),
+                Mockito.eq(LOCALE)))
         .thenThrow(EmailAlreadyExistsException.class);
 
     // 2. Ejercitar la class under test
-    us.createUser(EMAIL, PASSWORD, FIRST_NAME, LAST_NAME);
+    us.createUser(EMAIL, PASSWORD, FIRST_NAME, LAST_NAME, LOCALE);
   }
 
   // ============================== Get user by id ==============================
@@ -94,7 +93,8 @@ public class UserServiceImplTest {
     // 1. Precondiciones
     // UserDao mock = Mockito.mock(UserDao.class);
     Mockito.when(userDao.getUserById(Mockito.eq(ID)))
-        .thenReturn(Optional.of(new User(ID, EMAIL, PASSWORD, FIRST_NAME, LAST_NAME, IMAGE)));
+        .thenReturn(
+            Optional.of(new User(ID, EMAIL, PASSWORD, FIRST_NAME, LAST_NAME, IMAGE, LOCALE)));
     // .thenThrow(SQLException.class);
 
     // 2. Ejercitar la class under test
@@ -120,7 +120,7 @@ public class UserServiceImplTest {
   @Test
   public void testGetUserByEmail() {
     // 1. Precondiciones
-    User expectedUser = new User(ID, EMAIL, PASSWORD, FIRST_NAME, LAST_NAME, IMAGE);
+    User expectedUser = new User(ID, EMAIL, PASSWORD, FIRST_NAME, LAST_NAME, IMAGE, LOCALE);
     Mockito.when(userDao.getUserByEmail(Mockito.eq(EMAIL))).thenReturn(Optional.of(expectedUser));
     // 2. Ejercitar la class under test
     Optional<User> user = us.getUserByEmail(EMAIL);
@@ -147,9 +147,9 @@ public class UserServiceImplTest {
           ar.edu.itba.paw.interfaces.services.exceptions.UserNotFoundException,
           EmailAlreadyExistsException, EmailInUseException {
     // 1. Precondiciones
-    User USER = new User(ID, EMAIL, PASSWORD, FIRST_NAME, LAST_NAME, IMAGE);
+    User USER = new User(ID, EMAIL, PASSWORD, FIRST_NAME, LAST_NAME, IMAGE, LOCALE);
     User USER_UPDATED =
-        new User(ID, EMAIL_NEW, PASSWORD_NEW, FIRST_NAME_NEW, LAST_NAME_NEW, IMAGE_NEW);
+        new User(ID, EMAIL_NEW, PASSWORD_NEW, FIRST_NAME_NEW, LAST_NAME_NEW, IMAGE_NEW, LOCALE_NEW);
     Mockito.when(userDao.getUserById(Mockito.eq(ID))).thenReturn(Optional.of(USER));
     Mockito.when(imageService.updateImage(IMAGE_NEW)).thenReturn(IMAGE_NEW);
     Mockito.when(
@@ -158,20 +158,23 @@ public class UserServiceImplTest {
                 Mockito.eq(EMAIL_NEW),
                 Mockito.eq(FIRST_NAME_NEW),
                 Mockito.eq(LAST_NAME_NEW),
-                Mockito.eq(IMAGE_NEW)))
+                Mockito.eq(IMAGE_NEW),
+                Mockito.eq(LOCALE_NEW)))
         .thenReturn(USER_UPDATED);
     // 2. Ejercitar la class under test
-    User user = us.updateUser(ID, EMAIL_NEW, FIRST_NAME_NEW, LAST_NAME_NEW, IMAGE_NEW);
+    User user = us.updateUser(ID, EMAIL_NEW, FIRST_NAME_NEW, LAST_NAME_NEW, IMAGE_NEW, LOCALE_NEW);
     // 3. Meaningful assertions
     Assert.assertEquals(USER_UPDATED, user);
   }
 
   @Test
-  public void testUpdateUserWithoutUpdatingEmail() throws ar.edu.itba.paw.interfaces.services.exceptions.UserNotFoundException, EmailInUseException, UserNotFoundException, EmailAlreadyExistsException {
+  public void testUpdateUserWithoutUpdatingEmail()
+      throws ar.edu.itba.paw.interfaces.services.exceptions.UserNotFoundException,
+          EmailInUseException, UserNotFoundException, EmailAlreadyExistsException {
     // 1. Precondiciones
-    User USER = new User(ID, EMAIL, PASSWORD, FIRST_NAME, LAST_NAME, IMAGE);
+    User USER = new User(ID, EMAIL, PASSWORD, FIRST_NAME, LAST_NAME, IMAGE, LOCALE);
     User USER_UPDATED =
-        new User(ID, EMAIL, PASSWORD_NEW, FIRST_NAME_NEW, LAST_NAME_NEW, IMAGE_NEW);
+        new User(ID, EMAIL, PASSWORD_NEW, FIRST_NAME_NEW, LAST_NAME_NEW, IMAGE_NEW, LOCALE_NEW);
 
     Mockito.when(imageService.updateImage(IMAGE_NEW)).thenReturn(IMAGE_NEW);
 
@@ -182,11 +185,12 @@ public class UserServiceImplTest {
                 Mockito.eq(EMAIL),
                 Mockito.eq(FIRST_NAME_NEW),
                 Mockito.eq(LAST_NAME_NEW),
-                Mockito.eq(IMAGE_NEW)))
+                Mockito.eq(IMAGE_NEW),
+                Mockito.eq(LOCALE_NEW)))
         .thenReturn(USER_UPDATED);
 
     // 2. Ejercitar la class under test
-    User user = us.updateUser(ID, EMAIL, FIRST_NAME_NEW, LAST_NAME_NEW, IMAGE_NEW);
+    User user = us.updateUser(ID, EMAIL, FIRST_NAME_NEW, LAST_NAME_NEW, IMAGE_NEW, LOCALE_NEW);
 
     // 3. Meaningful assertions
     Assert.assertEquals(USER_UPDATED, user);
@@ -201,7 +205,7 @@ public class UserServiceImplTest {
     Mockito.when(userDao.getUserById(ID)).thenReturn(Optional.empty());
 
     // 2. Ejercitar la class under test
-    us.updateUser(ID, EMAIL_NEW, FIRST_NAME_NEW, LAST_NAME_NEW, IMAGE_NEW);
+    us.updateUser(ID, EMAIL_NEW, FIRST_NAME_NEW, LAST_NAME_NEW, IMAGE_NEW, LOCALE_NEW);
   }
 
   @Test(expected = EmailInUseException.class)
@@ -210,7 +214,7 @@ public class UserServiceImplTest {
           ar.edu.itba.paw.interfaces.services.exceptions.UserNotFoundException {
 
     // 1. Precondiciones
-    User USER = new User(ID, EMAIL, PASSWORD, FIRST_NAME, LAST_NAME, IMAGE);
+    User USER = new User(ID, EMAIL, PASSWORD, FIRST_NAME, LAST_NAME, IMAGE, LOCALE);
     Mockito.when(userDao.getUserById(Mockito.eq(ID))).thenReturn(Optional.of(USER));
     Mockito.when(
             userDao.updateUserInfo(
@@ -218,11 +222,12 @@ public class UserServiceImplTest {
                 Mockito.eq(EMAIL_NEW),
                 Mockito.eq(FIRST_NAME_NEW),
                 Mockito.eq(LAST_NAME_NEW),
-                Mockito.eq(IMAGE_NEW)))
+                Mockito.eq(IMAGE_NEW),
+                Mockito.eq(LOCALE_NEW)))
         .thenThrow(EmailAlreadyExistsException.class);
 
     // 2. Ejercitar la class under test
-    us.updateUser(ID, EMAIL_NEW, FIRST_NAME_NEW, LAST_NAME_NEW, IMAGE_NEW);
+    us.updateUser(ID, EMAIL_NEW, FIRST_NAME_NEW, LAST_NAME_NEW, IMAGE_NEW, LOCALE_NEW);
   }
 
   // ============================== Update password ==============================
@@ -233,14 +238,13 @@ public class UserServiceImplTest {
           ar.edu.itba.paw.interfaces.services.exceptions.UserNotFoundException {
 
     // 1. Precondiciones
-    User USER = new User(ID, EMAIL, PASSWORD_ENCODED, FIRST_NAME, LAST_NAME, IMAGE);
-    User USER_UPDATED = new User(ID, EMAIL, PASSWORD, FIRST_NAME, LAST_NAME, IMAGE_NEW);
-
+    User USER = new User(ID, EMAIL, PASSWORD_ENCODED, FIRST_NAME, LAST_NAME, IMAGE, LOCALE);
+    User USER_UPDATED = new User(ID, EMAIL, PASSWORD, FIRST_NAME, LAST_NAME, IMAGE_NEW, LOCALE_NEW);
+    Mockito.when(userDao.getUserById(Mockito.eq(ID))).thenReturn(Optional.of(USER));
     Mockito.when(passwordEncoder.matches(Mockito.eq(PASSWORD), Mockito.eq(PASSWORD_ENCODED)))
         .thenReturn(true);
     Mockito.when(passwordEncoder.encode(Mockito.eq(PASSWORD_NEW))).thenReturn(PASSWORD_NEW_ENCODED);
 
-    Mockito.when(userDao.getUserById(Mockito.eq(ID))).thenReturn(Optional.of(USER));
     Mockito.when(userDao.updateUserPassword(Mockito.eq(ID), Mockito.eq(PASSWORD_NEW_ENCODED)))
         .thenReturn(USER_UPDATED.getPassword());
 
@@ -256,12 +260,10 @@ public class UserServiceImplTest {
       throws ar.edu.itba.paw.interfaces.services.exceptions.UserNotFoundException {
 
     // 1. Precondiciones
-    User USER = new User(ID, EMAIL, PASSWORD_ENCODED, FIRST_NAME, LAST_NAME, IMAGE);
-
+    User USER = new User(ID, EMAIL, PASSWORD_ENCODED, FIRST_NAME, LAST_NAME, IMAGE, LOCALE);
+    Mockito.when(userDao.getUserById(Mockito.eq(ID))).thenReturn(Optional.of(USER));
     Mockito.when(passwordEncoder.matches(Mockito.eq(NOT_PASSWORD), Mockito.eq(PASSWORD_ENCODED)))
         .thenReturn(false);
-
-    Mockito.when(userDao.getUserById(Mockito.eq(ID))).thenReturn(Optional.of(USER));
 
     // 2. Ejercitar la class under test
     boolean passwordUpdated = us.updatePassword(ID, NOT_PASSWORD, PASSWORD_NEW);
@@ -276,9 +278,7 @@ public class UserServiceImplTest {
           ar.edu.itba.paw.interfaces.services.exceptions.UserNotFoundException {
 
     // 1. Precondiciones
-    Mockito.when(userDao.getUserById(Mockito.eq(ID)))
-        .thenReturn(Optional.empty());
-
+    Mockito.when(userDao.getUserById(Mockito.eq(ID))).thenReturn(Optional.empty());
     // 2. Ejercitar la class under test
     us.updatePassword(ID, PASSWORD, PASSWORD_NEW);
   }

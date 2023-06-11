@@ -45,7 +45,8 @@ public class DoctorServiceImpl implements DoctorService {
       City city,
       String address,
       Set<HealthInsurance> healthInsurances,
-      Set<AttendingHours> attendingHours)
+      Set<AttendingHours> attendingHours,
+      Locale locale)
       throws EmailInUseException {
 
     if (userService.getUserByEmail(email).isPresent()) {
@@ -62,7 +63,8 @@ public class DoctorServiceImpl implements DoctorService {
                 specialty,
                 city,
                 address,
-                attendingHours)
+                attendingHours,
+                locale)
             .build();
 
     try {
@@ -86,10 +88,11 @@ public class DoctorServiceImpl implements DoctorService {
       String address,
       Set<HealthInsurance> healthInsurances,
       Set<AttendingHours> attendingHours,
-      Image image)
+      Image image,
+      Locale locale)
       throws DoctorNotFoundException, EmailInUseException {
     try {
-      userService.updateUser(doctorId, email, firstName, lastName, image);
+      userService.updateUser(doctorId, email, firstName, lastName, image, locale);
       return doctorDao.updateDoctorInfo(
           doctorId, specialty, city, address, healthInsurances, attendingHours);
     } catch (ar.edu.itba.paw.interfaces.persistence.exceptions.DoctorNotFoundException

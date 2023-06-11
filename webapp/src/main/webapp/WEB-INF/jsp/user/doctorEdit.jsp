@@ -18,6 +18,7 @@
 
 <spring:message code="profile.edit" var="title"/>
 <spring:message code="profile.personalInfo" var="personalInfo"/>
+<spring:message code="form.locale" var="locale"/>
 <spring:message code="form.name" var="name"/>
 <spring:message code="form.name_hint" var="name_hint"/>
 <spring:message code="form.lastname" var="lastname"/>
@@ -114,10 +115,20 @@
                     </div>
                 </div>
 
-                <div class="profileItem">
-                    <form:label path="email">${email}</form:label>
-                    <form:input class="form-control" path="email" type="text" placeholder="${email_hint}"/>
-                    <form:errors path="email" cssClass="error" element="p"/>
+                <div class="profileRow">
+                    <div class="profileItem">
+                        <form:label path="email">${email}</form:label>
+                        <form:input class="form-control" path="email" type="text" placeholder="${email_hint}"/>
+                        <form:errors path="email" cssClass="error" element="p"/>
+                    </div>
+                    <div class="profileItem">
+                        <form:label path="locale">${locale}</form:label>
+                        <form:select class="form-select" path="locale">
+                            <!-- TODO: make it not hard coded? -->
+                            <form:option value="es"> es </form:option>
+                            <form:option value="en"> en </form:option>
+                        </form:select>
+                    </div>
                 </div>
             </div>
         </div>

@@ -80,7 +80,9 @@ public class MailServiceImpl implements MailService {
 
   @Override
   @Async
-  public void sendAppointmentRequestMail(Appointment appointment, Locale locale) {
+  public void sendAppointmentRequestMail(Appointment appointment) {
+
+    Locale locale = appointment.getDoctor().getLocale();
 
     Map<String, Object> templateModel = new HashMap<>();
 
@@ -118,7 +120,9 @@ public class MailServiceImpl implements MailService {
 
   @Override
   @Async
-  public void sendAppointmentCancelledByPatientMail(Appointment appointment, Locale locale) {
+  public void sendAppointmentCancelledByPatientMail(Appointment appointment) {
+
+    Locale locale = appointment.getDoctor().getLocale();
 
     Map<String, Object> templateModel = new HashMap<>();
 
@@ -158,7 +162,9 @@ public class MailServiceImpl implements MailService {
 
   @Override
   @Async
-  public void sendAppointmentReminderMail(Appointment appointment, Locale locale) {
+  public void sendAppointmentReminderMail(Appointment appointment) {
+
+    Locale locale = appointment.getPatient().getLocale();
 
     Map<String, Object> templateModel = new HashMap<>();
 
@@ -175,8 +181,7 @@ public class MailServiceImpl implements MailService {
         appointment.getDoctor().getFirstName() + " " + appointment.getDoctor().getLastName();
     String doctorAddress = appointment.getDoctor().getAddress();
     String doctorCity =
-        messageSource.getMessage(
-            appointment.getDoctor().getCity().getMessageID(), null, locale);
+        messageSource.getMessage(appointment.getDoctor().getCity().getMessageID(), null, locale);
 
     // Load model
     templateModel.put("baseUrl", env.getProperty("webapp.baseUrl"));
@@ -198,7 +203,10 @@ public class MailServiceImpl implements MailService {
 
   @Override
   @Async
-  public void sendAppointmentCancelledByDoctorMail(Appointment appointment, Locale locale) {
+  public void sendAppointmentCancelledByDoctorMail(Appointment appointment) {
+
+    Locale locale = appointment.getPatient().getLocale();
+
     Map<String, Object> templateModel = new HashMap<>();
 
     String dateTime =
@@ -230,7 +238,9 @@ public class MailServiceImpl implements MailService {
 
   @Override
   @Async
-  public void sendAppointmentCompletedMail(Appointment appointment, Locale locale) {
+  public void sendAppointmentCompletedMail(Appointment appointment) {
+
+    Locale locale = appointment.getPatient().getLocale();
 
     Map<String, Object> templateModel = new HashMap<>();
 
