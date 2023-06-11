@@ -36,7 +36,7 @@ public class UserDaoImplTest {
   private static final String INSERTED_USER_LAST_NAME = "patient_last_name";
   private static final Image INSERTED_USER_IMAGE = null;
 
-  private static final String ALREADY_INSERTED_MAIL = "notpatient@email.com";
+  private static final String ALREADY_INSERTED_MAIL = "doctor@email.com";
 
   private static final Long AUX_ID = 100L;
   private static final String AUX_EMAIL = "notuser@email.com";
@@ -127,7 +127,7 @@ public class UserDaoImplTest {
     Assert.assertEquals(AUX_LAST_NAME, user.getLastName());
     Assert.assertEquals(INSERTED_USER_IMAGE, user.getImage());
 
-    Assert.assertEquals(5, JdbcTestUtils.countRowsInTable(jdbcTemplate, "users"));
+    Assert.assertEquals(3, JdbcTestUtils.countRowsInTable(jdbcTemplate, "users"));
   }
 
   @Test
