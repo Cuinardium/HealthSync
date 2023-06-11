@@ -21,7 +21,7 @@ public class UserDaoJpa implements UserDao {
   public User createUser(
       String email, String password, String firstName, String lastName, Locale locale)
       throws EmailAlreadyExistsException {
-    final User user = new User.Builder(email, password, firstName, lastName).locale(locale).build();
+    final User user = new User.Builder(email, password, firstName, lastName, locale).build();
     if (getUserByEmail(email).isPresent()) {
       throw new EmailAlreadyExistsException();
     }

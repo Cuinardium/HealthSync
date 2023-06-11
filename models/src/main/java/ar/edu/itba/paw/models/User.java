@@ -160,21 +160,18 @@ public class User {
   public static class Builder {
     // required
     private String email, password, firstName, lastName;
+    private Locale locale;
     // defaults
     private Long id = null;
     private Image image = null;
-    private Locale locale = new Locale("es");
 
-    public Builder(String email, String password, String firstName, String lastName) {
+    public Builder(
+        String email, String password, String firstName, String lastName, Locale locale) {
       this.email = email;
       this.password = password;
       this.firstName = firstName;
       this.lastName = lastName;
-    }
-
-    public Builder locale(Locale locale) {
       this.locale = locale;
-      return this;
     }
 
     public Builder id(long id) {

@@ -55,22 +55,18 @@ public class DoctorServiceImpl implements DoctorService {
 
     try {
       return doctorDao.createDoctor(
-          new Doctor(
-              null,
-              email,
-              passwordEncoder.encode(password),
-              firstName,
-              lastName,
-              null,
-              healthInsurances,
-              specialty,
-              city,
-              address,
-              attendingHours,
-              new ArrayList<>(),
-              0f,
-              0,
-              locale));
+          new Doctor.Builder(
+                  email,
+                  passwordEncoder.encode(password),
+                  firstName,
+                  lastName,
+                  healthInsurances,
+                  specialty,
+                  city,
+                  address,
+                  attendingHours,
+                  locale)
+              .build());
     } catch (DoctorAlreadyExistsException e) {
       throw new IllegalStateException("Doctor should not exist when id is null");
     }

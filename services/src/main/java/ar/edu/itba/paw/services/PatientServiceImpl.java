@@ -54,8 +54,12 @@ public class PatientServiceImpl implements PatientService {
       Patient patient =
           patientDao.createPatient(
               new Patient.Builder(
-                      email, passwordEncoder.encode(password), firstName, lastName, healthInsurance)
-                  .locale(locale)
+                      email,
+                      passwordEncoder.encode(password),
+                      firstName,
+                      lastName,
+                      healthInsurance,
+                      locale)
                   .build());
       return patient;
     } catch (PatientAlreadyExistsException e) {

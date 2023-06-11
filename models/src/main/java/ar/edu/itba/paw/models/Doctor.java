@@ -212,11 +212,11 @@ public class Doctor extends User {
     private City city;
     private String address;
     private Set<AttendingHours> attendingHours;
+    public Locale locale;
 
     // default
     private Long id = null;
     private Image image = null;
-    public Locale locale = new Locale("es");
 
     // TODO: set defaults
     private List<Review> reviews;
@@ -232,7 +232,8 @@ public class Doctor extends User {
         Specialty specialty,
         City city,
         String address,
-        Set<AttendingHours> attendingHours) {
+        Set<AttendingHours> attendingHours,
+        Locale locale) {
       this.email = email;
       this.password = password;
       this.firstName = firstName;
@@ -242,6 +243,7 @@ public class Doctor extends User {
       this.city = city;
       this.address = address;
       this.attendingHours = attendingHours;
+      this.locale = locale;
     }
 
     public Builder id(long id) {
@@ -266,11 +268,6 @@ public class Doctor extends User {
 
     public Builder ratingCount(int ratingCount) {
       this.ratingCount = ratingCount;
-      return this;
-    }
-
-    public Builder locale(Locale locale) {
-      this.locale = locale;
       return this;
     }
 

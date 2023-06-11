@@ -62,23 +62,25 @@ public class Patient extends User {
     // required
     private String email, password, firstName, lastName;
     private HealthInsurance healthInsurance;
+    public Locale locale;
 
     // default
     private Long id = null;
     private Image image = null;
-    public Locale locale = new Locale("en");
 
     public Builder(
         String email,
         String password,
         String firstName,
         String lastName,
-        HealthInsurance healthInsurance) {
+        HealthInsurance healthInsurance,
+        Locale locale) {
       this.email = email;
       this.password = password;
       this.firstName = firstName;
       this.lastName = lastName;
       this.healthInsurance = healthInsurance;
+      this.locale = locale;
     }
 
     public Builder id(long id) {
@@ -93,11 +95,6 @@ public class Patient extends User {
 
     public Patient build() {
       return new Patient(this);
-    }
-
-    public Builder locale(Locale locale) {
-      this.locale = locale;
-      return this;
     }
   }
 }
