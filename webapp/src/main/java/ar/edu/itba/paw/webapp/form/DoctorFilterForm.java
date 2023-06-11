@@ -17,6 +17,8 @@ public class DoctorFilterForm {
 
   private int healthInsuranceCode = -1;
 
+  private int minRating = -1;
+
   @DateTimeFormat(pattern = "yyyy-MM-dd")
   private LocalDate date;
 
@@ -88,5 +90,13 @@ public class DoctorFilterForm {
 
   public void setTo(int to) {
     this.to = to;
+  }
+
+  public int getMinRating() {
+    return minRating;
+  }
+
+  public void setMinRating(int minRating) {
+    this.minRating = minRating;
   }
 }

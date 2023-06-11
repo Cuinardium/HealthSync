@@ -41,14 +41,6 @@ public class Doctor extends User {
   )
   private Set<AttendingHours> attendingHours;
 
-  @OneToMany(
-    mappedBy = "doctor",
-    fetch = FetchType.LAZY,
-    cascade = CascadeType.ALL,
-    orphanRemoval = true
-  )
-  private List<Review> reviews;
-
   @Formula("(SELECT AVG(r.rating) FROM Review r WHERE r.doctor_id = doctor_id)")
   private Float rating;
 
@@ -71,7 +63,6 @@ public class Doctor extends User {
       City city,
       String address,
       Set<AttendingHours> attendingHours,
-      List<Review> reviews,
       Float rating,
       Integer ratingCount) {
     super(id, email, password, firstName, lastName, image);
@@ -80,7 +71,6 @@ public class Doctor extends User {
     this.city = city;
     this.address = address;
     this.attendingHours = attendingHours;
-    this.reviews = reviews;
     this.rating = rating;
     this.ratingCount = ratingCount;
   }
@@ -98,7 +88,6 @@ public class Doctor extends User {
     this.city = builder.city;
     this.address = builder.address;
     this.attendingHours = builder.attendingHours;
-    this.reviews = builder.reviews;
     this.rating = builder.rating;
     this.ratingCount = builder.ratingCount;
   }
@@ -157,15 +146,6 @@ public class Doctor extends User {
     this.ratingCount = ratingCount;
   }
 
-  public List<Review> getReviews() {
-    return reviews;
-  }
-
-  public void setReviews(List<Review> reviews) {
-    this.reviews.clear();
-    this.reviews.addAll(reviews);
-  }
-
   public City getCity() {
     return city;
   }
@@ -201,7 +181,7 @@ public class Doctor extends User {
         + ']';
   }
 
-  public class Builder {
+  public static class Builder {
     // required
     private String email, password, firstName, lastName;
     private Set<HealthInsurance> healthInsurances;
@@ -215,7 +195,6 @@ public class Doctor extends User {
     private Image image = null;
 
     // TODO: set defaults
-    private List<Review> reviews;
     private Float rating;
     private Integer ratingCount;
 
@@ -247,11 +226,6 @@ public class Doctor extends User {
 
     public Builder image(Image image) {
       this.image = image;
-      return this;
-    }
-
-    public Builder reviews(List<Review> reviews) {
-      this.reviews = reviews;
       return this;
     }
 

@@ -104,54 +104,8 @@ public class DoctorDaoImplTest {
           INSERTED_DOCTOR_CITY,
           INSERTED_DOCTOR_ADDRESS,
           INSERTED_DOCTOR_ATTENDING_HOURS,
-          new ArrayList<>(),
           INSERTED_DOCTOR_RATING,
           INSERTED_DOCTOR_RATING_COUNT);
-
-  private static final Long INSERTED_PATIENT_ID = 5L;
-  private static final String INSERTED_PATIENT_EMAIL = "patient@email.com";
-  private static final String INSERTED_PATIENT_PASSWORD = "patient_password";
-  private static final String INSERTED_PATIENT_FIRST_NAME = "patient_first_name";
-  private static final String INSERTED_PATIENT_LAST_NAME = "patient_last_name";
-  private static final Image INSERTED_PATIENT_IMAGE = null;
-  private static final HealthInsurance INSERTED_PATIENT_HEALTH_INSURANCE = HealthInsurance.OMINT;
-
-  private static final Patient PATIENT_5 =
-      new Patient(
-          INSERTED_PATIENT_ID,
-          INSERTED_PATIENT_EMAIL,
-          INSERTED_PATIENT_PASSWORD,
-          INSERTED_PATIENT_FIRST_NAME,
-          INSERTED_PATIENT_LAST_NAME,
-          INSERTED_PATIENT_IMAGE,
-          INSERTED_PATIENT_HEALTH_INSURANCE);
-
-  private static final Short RATING = 5;
-  private static final String DESCRIPTION = "This is a review description";
-  private static final LocalDate DATE = LocalDate.now();
-
-  private static final List<Review> REVIEWS_FOR_DOCTOR =
-      new ArrayList<>(
-          Arrays.asList(
-              new Review.Builder(
-                      DOCTOR_7, PATIENT_5, LocalDate.of(2023, 5, 17), "Muy buen doctor", (short) 5)
-                  .build(),
-              new Review.Builder(
-                      DOCTOR_7, PATIENT_5, LocalDate.of(2023, 5, 16), "Buen doctor", (short) 4)
-                  .build(),
-              new Review.Builder(
-                      DOCTOR_7, PATIENT_5, LocalDate.of(2023, 5, 15), "Regular doctor", (short) 3)
-                  .build(),
-              new Review.Builder(
-                      DOCTOR_7, PATIENT_5, LocalDate.of(2023, 5, 14), "Malo doctor", (short) 2)
-                  .build(),
-              new Review.Builder(
-                      DOCTOR_7, PATIENT_5, LocalDate.of(2023, 5, 13), "Muy malo doctor", (short) 1)
-                  .build()));
-
-  private static final long NON_EXISTING_DOCTOR_ID = 100;
-
-  private static final int INSERTED_REVIEWS = 5;
 
   @Autowired private DataSource ds;
 
@@ -184,7 +138,6 @@ public class DoctorDaoImplTest {
                 AUX_DOCTOR_CITY,
                 AUX_DOCTOR_ADDRESS,
                 AUX_DOCTOR_ATTENDING_HOURS,
-                new ArrayList<>(),
                 INSERTED_DOCTOR_RATING,
                 INSERTED_DOCTOR_RATING_COUNT));
 
@@ -226,11 +179,9 @@ public class DoctorDaoImplTest {
                     AUX_DOCTOR_CITY,
                     AUX_DOCTOR_ADDRESS,
                     AUX_DOCTOR_ATTENDING_HOURS,
-                    new ArrayList<>(),
                     INSERTED_DOCTOR_RATING,
                     INSERTED_DOCTOR_RATING_COUNT)));
     // 3. Meaningful assertions
-
   }
 
   @Test
@@ -260,16 +211,6 @@ public class DoctorDaoImplTest {
   }
 
   @Test
-  public void testUpdateDoctorReviews() throws DoctorNotFoundException {
-    // 1.Precondiciones
-    // 2. Ejercitar la class under test
-    Doctor doctor = doctorDao.updateReviews(INSERTED_DOCTOR_ID, REVIEWS_FOR_DOCTOR);
-
-    // 3. Meaningful assertions
-    Assert.assertEquals(REVIEWS_FOR_DOCTOR, doctor.getReviews());
-  }
-
-  @Test
   public void testUpdateDoctorInfoDoctorNotFound() {
     // 1.Precondiciones
     // 2. Ejercitar la class under test
@@ -290,45 +231,7 @@ public class DoctorDaoImplTest {
   public void testGetDoctorById() {
     // 1.Precondiciones
     Doctor expectedDoctor = DOCTOR_7;
-    List<Review> reviewsForDoctor =
-        new ArrayList<>(
-            Arrays.asList(
-                new Review(
-                    7L,
-                    expectedDoctor,
-                    PATIENT_5,
-                    LocalDate.of(2023, 5, 17),
-                    "Muy buen doctor",
-                    (short) 5),
-                new Review(
-                    8L,
-                    expectedDoctor,
-                    PATIENT_5,
-                    LocalDate.of(2023, 5, 16),
-                    "Buen doctor",
-                    (short) 4),
-                new Review(
-                    9L,
-                    expectedDoctor,
-                    PATIENT_5,
-                    LocalDate.of(2023, 5, 15),
-                    "Regular doctor",
-                    (short) 3),
-                new Review(
-                    10L,
-                    expectedDoctor,
-                    PATIENT_5,
-                    LocalDate.of(2023, 5, 14),
-                    "Malo doctor",
-                    (short) 2),
-                new Review(
-                    11L,
-                    expectedDoctor,
-                    PATIENT_5,
-                    LocalDate.of(2023, 5, 13),
-                    "Muy malo doctor",
-                    (short) 1)));
-    expectedDoctor.setReviews(reviewsForDoctor);
+
     // 2. Ejercitar la class under test
     Optional<Doctor> maybeDoctor = doctorDao.getDoctorById(INSERTED_DOCTOR_ID);
     // 3. Meaningful assertions
@@ -346,51 +249,42 @@ public class DoctorDaoImplTest {
   }
 
   @Test
+  public void testGetFilteredDoctorsNoFilters() {
+    // 1.Precondiciones
+    Doctor expectedDoctor = DOCTOR_7;
+
+    // 2. Ejercitar la class under test
+    Page<Doctor> doctors =
+        doctorDao.getFilteredDoctors(null, null, null, null, null, null, null, null, null, null);
+
+    // 3. Meaningful assertions
+    Assert.assertNull(doctors.getTotalPages());
+    Assert.assertNull(doctors.getCurrentPage());
+    Assert.assertEquals(1, doctors.getContent().size());
+    Assert.assertEquals(expectedDoctor, doctors.getContent().get(0));
+  }
+
+  @Test
   public void testGetFilteredDoctors() {
     // 1.Precondiciones
     Doctor expectedDoctor = DOCTOR_7;
-    List<Review> reviewsForDoctor =
-        new ArrayList<>(
-            Arrays.asList(
-                new Review(
-                    7L,
-                    expectedDoctor,
-                    PATIENT_5,
-                    LocalDate.of(2023, 5, 17),
-                    "Muy buen doctor",
-                    (short) 5),
-                new Review(
-                    8L,
-                    expectedDoctor,
-                    PATIENT_5,
-                    LocalDate.of(2023, 5, 16),
-                    "Buen doctor",
-                    (short) 4),
-                new Review(
-                    9L,
-                    expectedDoctor,
-                    PATIENT_5,
-                    LocalDate.of(2023, 5, 15),
-                    "Regular doctor",
-                    (short) 3),
-                new Review(
-                    10L,
-                    expectedDoctor,
-                    PATIENT_5,
-                    LocalDate.of(2023, 5, 14),
-                    "Malo doctor",
-                    (short) 2),
-                new Review(
-                    11L,
-                    expectedDoctor,
-                    PATIENT_5,
-                    LocalDate.of(2023, 5, 13),
-                    "Muy malo doctor",
-                    (short) 1)));
-    expectedDoctor.setReviews(reviewsForDoctor);
+
+    LocalDate friday = LocalDate.of(2023, 6, 9);
+
     // 2. Ejercitar la class under test
     Page<Doctor> doctors =
-        doctorDao.getFilteredDoctors(null, null, null, null, null, null, null, null, null);
+        doctorDao.getFilteredDoctors(
+            null,
+            friday,
+            ThirtyMinuteBlock.BLOCK_00_00,
+            ThirtyMinuteBlock.BLOCK_00_00,
+            INSERTED_DOCTOR_SPECIALTY,
+            INSERTED_DOCTOR_CITY,
+            HealthInsurance.OSDE,
+            INSERTED_DOCTOR_RATING.intValue(),
+            null,
+            null);
+
     // 3. Meaningful assertions
     Assert.assertNull(doctors.getTotalPages());
     Assert.assertNull(doctors.getCurrentPage());
@@ -447,51 +341,5 @@ public class DoctorDaoImplTest {
     // 3. Meaningful assertions
     Assert.assertEquals(1, cities.size());
     Assert.assertEquals((Integer) 1, cities.get(City.ADOLFO_GONZALES_CHAVES));
-  }
-
-  @Test
-  public void testCreateReview() throws DoctorNotFoundException {
-    // 1. Precondiciones
-    Review review_aux = new Review.Builder(DOCTOR_7, PATIENT_5, DATE, DESCRIPTION, RATING).build();
-    // 2. Ejercitar la class under test
-    Doctor doctor =
-        doctorDao.updateReviews(INSERTED_DOCTOR_ID, Collections.singletonList(review_aux));
-
-    em.flush();
-
-    Optional<Review> review = doctor.getReviews().stream().findFirst();
-
-    // 3. Meaningful assertions
-    Assert.assertTrue(review.isPresent());
-    Assert.assertEquals(INSERTED_PATIENT_ID, review.get().getPatient().getId());
-    Assert.assertEquals(RATING, review.get().getRating());
-    Assert.assertEquals(DATE, review.get().getDate());
-    Assert.assertEquals(DESCRIPTION, review.get().getDescription());
-
-    // TODO: assert the expected columns
-  }
-
-  @Test
-  public void testGetReviewsForDoctor() {
-    // 1. Precondiciones
-    // 2. Ejercitar la class under test
-    Page<Review> reviews = doctorDao.getReviewsForDoctor(INSERTED_DOCTOR_ID, null, null);
-
-    // 3. Meaningful assertions
-    Assert.assertEquals(INSERTED_REVIEWS, reviews.getContent().size());
-    Assert.assertNull(reviews.getTotalPages());
-    Assert.assertNull(reviews.getCurrentPage());
-  }
-
-  @Test
-  public void testGetReviewsForNonExistingDoctor() {
-    // 1. Precondiciones
-    // 2. Ejercitar la class under test
-    Page<Review> reviews = doctorDao.getReviewsForDoctor(NON_EXISTING_DOCTOR_ID, null, null);
-
-    // 3. Meaningful assertions
-    Assert.assertEquals(0, reviews.getContent().size());
-    Assert.assertNull(reviews.getTotalPages());
-    Assert.assertNull(reviews.getCurrentPage());
   }
 }

@@ -38,6 +38,7 @@
 <spring:message code="form.date" var="date"/>
 <spring:message code="doctor.noReviews" var="noReviews"/>
 <spring:message code="filters.byAvailability" var="byAvailability"/>
+<spring:message code="review.rating" var="ratingTitle"/>
 
 <html>
 <head>
@@ -94,6 +95,18 @@
                         </form:option>
                     </c:forEach>
                 </form:select>
+
+                <h5>${ratingTitle}</h5>
+
+                <form:input id="min-rating" type="text" path="minRating" onchange="this.form.submit()" hidden="true"/>
+                <div id="rating-selector" class="starContainer">
+                    <c:forEach begin="1" end="5" step="1" var="i">
+                        <div class="star ${minRating >= i ? "selected" : "unselected"}" data-index="${i}">
+                            <i class="fa fa-lg fa-star"></i>
+                        </div>
+                    </c:forEach>
+                </div>
+
 
                 <hr>
                 <h4>${byAvailability}</h4>
@@ -154,7 +167,8 @@
                 <c:forEach items="${doctors}" var="doctor">
                     <spring:message code="${doctor.specialty.messageID}" var="doctorSpecialty"/>
                     <spring:message code="${doctor.city.messageID}" var="doctorCity"/>
-                    <spring:message code="doctor.alt.doctorImg" arguments="${doctor.firstName}, ${doctor.lastName}" var="altDoctorImg"/>
+                    <spring:message code="doctor.alt.doctorImg" arguments="${doctor.firstName}, ${doctor.lastName}"
+                                    var="altDoctorImg"/>
                     <c:url value="/${doctor.id}/detailed-doctor" var="detailedUrl"/>
                     <div class="card">
                         <div class="imageContainer">
@@ -163,79 +177,79 @@
                             <img src="${doctorImg}" class="card-img-top" alt="${altDoctorImg}">
                         </div>
                         <div class="infoContainer">
-                                <h5 class="card-title">${doctor.firstName} ${doctor.lastName}</h5>
-                                <div class="chipsContainer">
-                                    <div class="card-text">${specialties}:</div>
+                            <h5 class="card-title">${doctor.firstName} ${doctor.lastName}</h5>
+                            <div class="chipsContainer">
+                                <div class="card-text">${specialties}:</div>
+                                <div class="chip" data-mdb-close="true">
+                                    <a class="stretched-link"
+                                       href="${specialtyFilter}${doctor.specialty.ordinal()}">${doctorSpecialty}</a>
+                                </div>
+                            </div>
+                            <div class="card-text">${address} ${doctor.address}, ${doctorCity}</div>
+                            <div class="chipsContainer">
+                                <div class="card-text">${insurances}:</div>
+                                <c:forEach items="${doctor.healthInsurances}" var="healthInsurance">
+                                    <spring:message code="${healthInsurance.messageID}"
+                                                    var="doctorHealthInsurance"/>
                                     <div class="chip" data-mdb-close="true">
                                         <a class="stretched-link"
-                                           href="${specialtyFilter}${doctor.specialty.ordinal()}">${doctorSpecialty}</a>
+                                           href="${healthInsuranceFilter}${healthInsurance.ordinal()}">${doctorHealthInsurance}</a>
                                     </div>
-                                </div>
-                                <div class="card-text">${address} ${doctor.address}, ${doctorCity}</div>
-                                <div class="chipsContainer">
-                                    <div class="card-text">${insurances}:</div>
-                                    <c:forEach items="${doctor.healthInsurances}" var="healthInsurance">
-                                        <spring:message code="${healthInsurance.messageID}"
-                                                        var="doctorHealthInsurance"/>
-                                        <div class="chip" data-mdb-close="true">
-                                            <a class="stretched-link"
-                                               href="${healthInsuranceFilter}${healthInsurance.ordinal()}">${doctorHealthInsurance}</a>
-                                        </div>
-                                    </c:forEach>
-                                </div>
-                                <c:choose>
-                                    <c:when test="${doctor.rating != null}">
-                                        <div class="starContainer card-text">
-                                            <c:forEach begin="1" end="5" step="1" var="i">
-                                                <div class="star ${doctor.rating >= i ? "selected" : "unselected"}">
-                                                    <i class="fa fa-lg fa-star"></i>
-                                                </div>
-                                            </c:forEach>
-                                            <div class="ratingCount">
-                                                (${doctor.ratingCount})
+                                </c:forEach>
+                            </div>
+                            <c:choose>
+                                <c:when test="${doctor.rating != null}">
+                                    <div class="starContainer card-text">
+                                        <c:forEach begin="1" end="5" step="1" var="i">
+                                            <div class="star ${doctor.rating >= i ? "selected" : "unselected"}">
+                                                <i class="fa fa-lg fa-star"></i>
                                             </div>
+                                        </c:forEach>
+                                        <div class="ratingCount">
+                                            (${doctor.ratingCount})
                                         </div>
-                                    </c:when>
-                                    <c:otherwise>
-                                        <div class="card-text">
-                                                ${noReviews}
-                                        </div>
-                                    </c:otherwise>
-                                </c:choose>
+                                    </div>
+                                </c:when>
+                                <c:otherwise>
+                                    <div class="card-text">
+                                            ${noReviews}
+                                    </div>
+                                </c:otherwise>
+                            </c:choose>
 
-                                <c:if test="${canBook}">
-                                    <div class="buttonsContainer">
-                                        <a class="btn btn-primary"
-                                           onclick="checkInsurance(
-                                                   '${detailedUrl}',
-                                                   [<c:forEach items="${doctor.healthInsurances}" var="healthInsurance"
-                                                               varStatus="status">
-                                               ${healthInsurance.ordinal()}${status.last ? "" : ", "}
-                                           </c:forEach>])">
-                                                ${book}
-                                        </a>
-                                    </div>
-                                    <div class="modal fade" id="modal" tabindex="-1" role="dialog"
-                                         aria-labelledby="modalLabel"
-                                         aria-hidden="true">
-                                        <div class="modal-dialog" role="dialog">
-                                            <div class="modal-content">
-                                                <div class="modal-header">
-                                                    <h5 class="modal-title" id="modalLabel">${modalTitle}</h5>
-                                                </div>
-                                                <div class="modal-body">
-                                                        ${modalDesc}
-                                                </div>
-                                                <div class="modal-footer">
-                                                    <button type="button" class="btn btn-danger"
-                                                            onclick="closeModal()">${modalDeny}</button>
-                                                    <a type="button" id="modal-href"
-                                                       class="btn btn-primary">${modalConfirm}</a>
-                                                </div>
+                            <c:if test="${canBook}">
+                                <div class="buttonsContainer">
+                                    <a class="btn btn-primary"
+                                       onclick="checkInsurance(
+                                               '${detailedUrl}',
+                                               [<c:forEach items="${doctor.healthInsurances}" var="healthInsurance"
+                                                           varStatus="status">
+                                           ${healthInsurance.ordinal()}${status.last ? "" : ", "}
+                                       </c:forEach>])">
+                                            ${book}
+                                    </a>
+                                </div>
+                                <div class="modal fade" id="modal" tabindex="-1" role="dialog"
+                                     aria-labelledby="modalLabel"
+                                     aria-hidden="true">
+                                    <div class="modal-dialog" role="dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="modalLabel">${modalTitle}</h5>
+                                            </div>
+                                            <div class="modal-body">
+                                                    ${modalDesc}
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-danger"
+                                                        onclick="closeModal()">${modalDeny}</button>
+                                                <a type="button" id="modal-href"
+                                                   class="btn btn-primary">${modalConfirm}</a>
                                             </div>
                                         </div>
                                     </div>
-                                </c:if>
+                                </div>
+                            </c:if>
                         </div>
                     </div>
 

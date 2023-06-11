@@ -9,7 +9,6 @@ import ar.edu.itba.paw.interfaces.services.exceptions.EmailInUseException;
 import ar.edu.itba.paw.interfaces.services.exceptions.UserNotFoundException;
 import ar.edu.itba.paw.models.*;
 import java.time.DayOfWeek;
-import java.time.LocalDate;
 import java.util.*;
 import org.junit.Assert;
 import org.junit.Test;
@@ -62,7 +61,6 @@ public class DoctorServiceImplTest {
           CITY,
           ADDRESS,
           ATTENDING_HOURS,
-          new ArrayList<>(),
           RATING,
           RATING_COUNT);
 
@@ -85,42 +83,6 @@ public class DoctorServiceImplTest {
               new AttendingHours(ID, DayOfWeek.SATURDAY, ThirtyMinuteBlock.BLOCK_00_30),
               new AttendingHours(ID, DayOfWeek.SUNDAY, ThirtyMinuteBlock.BLOCK_00_30)));
 
-  private static final Long INSERTED_PATIENT_ID = 5L;
-  private static final String INSERTED_PATIENT_EMAIL = "patient@email.com";
-  private static final String INSERTED_PATIENT_PASSWORD = "patient_password";
-  private static final String INSERTED_PATIENT_FIRST_NAME = "patient_first_name";
-  private static final String INSERTED_PATIENT_LAST_NAME = "patient_last_name";
-  private static final Image INSERTED_PATIENT_IMAGE = null;
-  private static final HealthInsurance INSERTED_PATIENT_HEALTH_INSURANCE = HealthInsurance.OMINT;
-
-  private static final Patient PATIENT_5 =
-      new Patient(
-          INSERTED_PATIENT_ID,
-          INSERTED_PATIENT_EMAIL,
-          INSERTED_PATIENT_PASSWORD,
-          INSERTED_PATIENT_FIRST_NAME,
-          INSERTED_PATIENT_LAST_NAME,
-          INSERTED_PATIENT_IMAGE,
-          INSERTED_PATIENT_HEALTH_INSURANCE);
-
-  private static final List<Review> REVIEWS_FOR_DOCTOR =
-      new ArrayList<>(
-          Arrays.asList(
-              new Review(
-                  6L, DOCTOR, PATIENT_5, LocalDate.of(2023, 5, 17), "Muy buen doctor", (short) 5),
-              new Review(
-                  7L, DOCTOR, PATIENT_5, LocalDate.of(2023, 5, 16), "Buen doctor", (short) 4),
-              new Review(
-                  8L, DOCTOR, PATIENT_5, LocalDate.of(2023, 5, 15), "Regular doctor", (short) 3),
-              new Review(
-                  9L, DOCTOR, PATIENT_5, LocalDate.of(2023, 5, 14), "Malo doctor", (short) 2),
-              new Review(
-                  10L,
-                  DOCTOR,
-                  PATIENT_5,
-                  LocalDate.of(2023, 5, 13),
-                  "Muy malo doctor",
-                  (short) 1)));
   private static final Doctor DOCTOR_UPDATED =
       new Doctor(
           ID,
@@ -134,24 +96,6 @@ public class DoctorServiceImplTest {
           CITY_NEW,
           ADDRESS_NEW,
           ATTENDING_HOURS_NEW,
-          new ArrayList<>(),
-          RATING,
-          RATING_COUNT);
-
-  private static final Doctor DOCTOR_UPDATED_REVIEWS =
-      new Doctor(
-          ID,
-          EMAIL,
-          PASSWORD,
-          FIRST_NAME,
-          LAST_NAME,
-          IMAGE,
-          HEALTH_INSURANCES,
-          SPECIALTY,
-          CITY,
-          ADDRESS,
-          ATTENDING_HOURS,
-          REVIEWS_FOR_DOCTOR,
           RATING,
           RATING_COUNT);
 
@@ -182,7 +126,6 @@ public class DoctorServiceImplTest {
                     CITY,
                     ADDRESS,
                     ATTENDING_HOURS,
-                    new ArrayList<>(),
                     0f,
                     0)))
         .thenReturn(DOCTOR);
@@ -223,7 +166,6 @@ public class DoctorServiceImplTest {
                     CITY,
                     ADDRESS,
                     ATTENDING_HOURS,
-                    new ArrayList<>(),
                     0f,
                     0)))
         .thenThrow(DoctorAlreadyExistsException.class);
@@ -261,7 +203,6 @@ public class DoctorServiceImplTest {
                     CITY,
                     ADDRESS,
                     ATTENDING_HOURS,
-                    new ArrayList<>(),
                     0f,
                     0)))
         .thenThrow(IllegalStateException.class);
@@ -333,21 +274,6 @@ public class DoctorServiceImplTest {
 
     // 3. Meaningful assertions
     Assert.assertEquals(DOCTOR_UPDATED, doctor);
-  }
-
-  @Test
-  public void testUpdateReviews()
-      throws DoctorNotFoundException,
-          ar.edu.itba.paw.interfaces.services.exceptions.DoctorNotFoundException {
-    // 1. Precondiciones
-    Mockito.when(doctorDao.updateReviews(ID, REVIEWS_FOR_DOCTOR))
-        .thenReturn(DOCTOR_UPDATED_REVIEWS);
-
-    // 2. Ejercitar la class under test
-    Doctor doctor = ds.updateReviews(ID, REVIEWS_FOR_DOCTOR);
-
-    // 3. Meaningful assertions
-    Assert.assertEquals(DOCTOR_UPDATED_REVIEWS, doctor);
   }
 
   @Test(expected = ar.edu.itba.paw.interfaces.services.exceptions.DoctorNotFoundException.class)
@@ -449,19 +375,4 @@ public class DoctorServiceImplTest {
     // 3. Meaningful assertions
     Assert.assertFalse(doctor.isPresent());
   }
-
-  @Test
-  public void testCreateReview() {}
-
-  @Test
-  public void testCreateReviewCanNotReview() {}
-
-  @Test
-  public void testGetReviewsForDoctor() {}
-
-  @Test
-  public void testCanReviewTrue() {}
-
-  @Test
-  public void testCanReviewFalse() {}
 }

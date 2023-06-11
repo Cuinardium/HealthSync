@@ -1,5 +1,6 @@
 package ar.edu.itba.paw.services;
 
+import ar.edu.itba.paw.interfaces.persistence.ReviewDao;
 import ar.edu.itba.paw.interfaces.services.AppointmentService;
 import ar.edu.itba.paw.interfaces.services.DoctorService;
 import ar.edu.itba.paw.interfaces.services.PatientService;
@@ -23,14 +24,18 @@ public class ReviewServiceImpl implements ReviewService {
   private final PatientService patientService;
   private final AppointmentService appointmentService;
 
+  private final ReviewDao reviewDao;
+
   @Autowired
   public ReviewServiceImpl(
       DoctorService doctorService,
       PatientService patientService,
-      AppointmentService appointmentService) {
+      AppointmentService appointmentService,
+      ReviewDao reviewDao) {
     this.doctorService = doctorService;
     this.patientService = patientService;
     this.appointmentService = appointmentService;
+    this.reviewDao = reviewDao;
   }
 
   // =============== Inserts ===============
@@ -54,9 +59,10 @@ public class ReviewServiceImpl implements ReviewService {
     Doctor doctor = doctorService.getDoctorById(doctorId).get();
     Patient patient = patientService.getPatientById(patientId).get();
 
-    return doctorService.addReview(
-        doctor.getId(),
-        new Review.Builder(doctor, patient, LocalDate.now(), description, (short) rating).build());
+    Review review =
+        new Review.Builder(doctor, patient, LocalDate.now(), description, (short) rating).build();
+
+    return reviewDao.createReview(review);
   }
 
   // =============== Queries ===============
@@ -80,6 +86,6 @@ public class ReviewServiceImpl implements ReviewService {
   @Transactional
   @Override
   public Page<Review> getReviewsForDoctor(long doctorId, Integer page, Integer pageSize) {
-    return doctorService.getReviewsForDoctor(doctorId, page, pageSize);
+    return reviewDao.getReviewsForDoctor(doctorId, page, pageSize);
   }
 }

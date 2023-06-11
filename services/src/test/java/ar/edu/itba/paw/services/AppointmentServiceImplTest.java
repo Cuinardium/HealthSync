@@ -90,7 +90,6 @@ public class AppointmentServiceImplTest {
           CITY,
           ADDRESS,
           ATTENDING_HOURS,
-          new ArrayList<>(),
           RATING,
           RATING_COUNT);
 

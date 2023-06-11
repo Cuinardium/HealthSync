@@ -17,6 +17,7 @@ public class QueryBuilder {
 
   private final List<String> whereConditions;
   private final List<String> groupByColumns;
+  private final List<String> havingConditions;
 
   private final List<String> orderByColumns;
   private final List<Boolean> orderByDirections;
@@ -35,6 +36,7 @@ public class QueryBuilder {
     this.leftJoinConditions = new ArrayList<>();
     this.whereConditions = new ArrayList<>();
     this.groupByColumns = new ArrayList<>();
+    this.havingConditions = new ArrayList<>();
     this.orderByColumns = new ArrayList<>();
 
     // True = ASC, False = DESC
@@ -95,6 +97,11 @@ public class QueryBuilder {
     return this;
   }
 
+  public QueryBuilder having(String condition) {
+    this.havingConditions.add(condition);
+    return this;
+  }
+
   public QueryBuilder orderByAsc(String column) {
     this.orderByColumns.add(column);
     this.orderByDirections.add(Boolean.TRUE);
@@ -148,6 +155,10 @@ public class QueryBuilder {
     }
     if (!groupByColumns.isEmpty()) {
       query.append(" GROUP BY ").append(String.join(",", groupByColumns));
+    }
+
+    if (!havingConditions.isEmpty()) {
+      query.append(" HAVING ").append(String.join(" AND ", havingConditions));
     }
 
     if (!orderByColumns.isEmpty()) {

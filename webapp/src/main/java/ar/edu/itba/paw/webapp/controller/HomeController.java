@@ -84,6 +84,7 @@ public class HomeController {
     LocalDate date = doctorFilterForm.getDate();
     int fromOrdinal = doctorFilterForm.getFrom();
     int toOrdinal = doctorFilterForm.getTo();
+    int minRating = doctorFilterForm.getMinRating();
 
     ThirtyMinuteBlock fromTime = ThirtyMinuteBlock.values()[fromOrdinal];
     ThirtyMinuteBlock toTime = ThirtyMinuteBlock.values()[toOrdinal];
@@ -112,6 +113,7 @@ public class HomeController {
             specialty,
             city,
             healthInsurance,
+            minRating,
             parsedPage - 1,
             DEFAULT_PAGE_SIZE);
 
@@ -140,6 +142,7 @@ public class HomeController {
     mav.addObject("dateFilter", date);
     mav.addObject("fromBlock", fromTime);
     mav.addObject("toBlock", toTime);
+    mav.addObject("minRating", minRating);
     mav.addObject("possibleAttendingHours", ThirtyMinuteBlock.values());
     mav.addObject("healthInsuranceMap", usedHealthInsurances);
 

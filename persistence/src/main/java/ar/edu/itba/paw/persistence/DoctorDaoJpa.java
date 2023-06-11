@@ -21,8 +21,7 @@ public class DoctorDaoJpa implements DoctorDao {
   @PersistenceContext private EntityManager em;
 
   @Override
-  public Doctor createDoctor(Doctor doctor)
-      throws DoctorAlreadyExistsException {
+  public Doctor createDoctor(Doctor doctor) throws DoctorAlreadyExistsException {
 
     if (doctor.getId() != null && getDoctorById(doctor.getId()).isPresent()) {
       throw new DoctorAlreadyExistsException();
@@ -31,14 +30,6 @@ public class DoctorDaoJpa implements DoctorDao {
     mapAttendingHours(doctor);
     em.persist(doctor);
     return doctor;
-  }
-
-  @Override
-  public Review addReview(long doctorId, Review review) throws DoctorNotFoundException {
-    Doctor doctor = getDoctorById(doctorId).orElseThrow(DoctorNotFoundException::new);
-    doctor.getReviews().add(review);
-    em.persist(doctor);
-    return review;
   }
 
   @Override
@@ -62,14 +53,6 @@ public class DoctorDaoJpa implements DoctorDao {
   }
 
   @Override
-  public Doctor updateReviews(long doctorId, List<Review> reviews) throws DoctorNotFoundException {
-    Doctor doctor = getDoctorById(doctorId).orElseThrow(DoctorNotFoundException::new);
-    doctor.setReviews(reviews);
-    em.persist(doctor);
-    return doctor;
-  }
-
-  @Override
   public Optional<Doctor> getDoctorById(long id) {
     return Optional.ofNullable(em.find(Doctor.class, id));
   }
@@ -83,6 +66,7 @@ public class DoctorDaoJpa implements DoctorDao {
       Specialty specialty,
       City city,
       HealthInsurance healthInsurance,
+      Integer minRating,
       Integer page,
       Integer pageSize) {
 
@@ -96,8 +80,14 @@ public class DoctorDaoJpa implements DoctorDao {
 
     // Add the filters to the query, if it is the first filter, don't add AND
     if (name != null && !name.isEmpty()) {
-      nativeQueryBuilder.where(
-          "CONCAT(first_name, ' ', last_name) ILIKE CONCAT('" + name + "', '%')");
+      String nameQuery =
+          new QueryBuilder()
+              .select("user_id as doctor_id")
+              .from("users")
+              .where("CONCAT(first_name, ' ', last_name) LIKE CONCAT('" + name + "', '%')")
+              .build();
+
+      nativeQueryBuilder.where("doctor.doctor_id IN (" + nameQuery + ")");
     }
 
     if (specialtyCode >= 0) {
@@ -146,6 +136,19 @@ public class DoctorDaoJpa implements DoctorDao {
       nativeQueryBuilder.where("doctor.doctor_id IN (" + attendingHoursQuery.build() + ")");
     }
 
+    if (minRating != null && minRating >= 0 && minRating <= 5) {
+      String ratingQuery =
+          new QueryBuilder()
+              .select("doctor_id")
+              .from("review")
+              .groupBy("doctor_id")
+              .having("AVG(rating) >= " + minRating)
+              .having("COUNT(rating) > 0")
+              .build();
+
+      nativeQueryBuilder.where("doctor.doctor_id IN (" + ratingQuery + ")");
+    }
+
     String builtQuery = nativeQueryBuilder.build();
 
     Query nativeQuery = em.createNativeQuery(builtQuery);
@@ -163,7 +166,9 @@ public class DoctorDaoJpa implements DoctorDao {
                 .map(o -> ((Number) o).longValue())
                 .collect(Collectors.toList());
 
-    if (idList.isEmpty()) return new Page<>(new ArrayList<>(), page, 0, pageSize);
+    if (idList.isEmpty()) {
+      return new Page<>(new ArrayList<>(), page, 0, pageSize);
+    }
 
     final TypedQuery<Doctor> query =
         em.createQuery("from Doctor where id in :idList", Doctor.class);
@@ -230,33 +235,6 @@ public class DoctorDaoJpa implements DoctorDao {
     }
 
     return map;
-  }
-
-  @Override
-  public Page<Review> getReviewsForDoctor(long doctorId, Integer page, Integer pageSize) {
-    Query nativeQuery =
-        em.createNativeQuery("SELECT review_id FROM review WHERE doctor_id = " + doctorId);
-
-    if (page != null && page >= 0 && pageSize != null && pageSize > 0) {
-      nativeQuery.setMaxResults(pageSize);
-      nativeQuery.setFirstResult(page * pageSize);
-    }
-
-    final List<Long> idList =
-        (List<Long>)
-            nativeQuery.getResultList().stream()
-                .map(o -> ((Number) o).longValue())
-                .collect(Collectors.toList());
-
-    if (idList.isEmpty()) return new Page<>(new ArrayList<>(), page, 0, pageSize);
-
-    final TypedQuery<Review> query =
-        em.createQuery("from Review where id in :idList", Review.class);
-    query.setParameter("idList", idList);
-
-    List<Review> content = query.getResultList();
-
-    return new Page<>(content, page, content.size(), pageSize);
   }
 
   private void mapAttendingHours(Doctor doctor) {

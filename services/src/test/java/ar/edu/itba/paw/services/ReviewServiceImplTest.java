@@ -1,5 +1,6 @@
 package ar.edu.itba.paw.services;
 
+import ar.edu.itba.paw.interfaces.persistence.ReviewDao;
 import ar.edu.itba.paw.interfaces.services.AppointmentService;
 import ar.edu.itba.paw.interfaces.services.DoctorService;
 import ar.edu.itba.paw.interfaces.services.PatientService;
@@ -74,7 +75,6 @@ public class ReviewServiceImplTest {
           CITY,
           ADDRESS,
           ATTENDING_HOURS,
-          new ArrayList<>(),
           RATING,
           RATING_COUNT);
 
@@ -99,13 +99,12 @@ public class ReviewServiceImplTest {
 
   // ================== Review Constants ==================
 
-  private static final long REVIEW_ID = 0;
   private static final short REVIEW_RATING = 3;
   private static final String REVIEW_DESCRIPTION = "review_description";
   private static final LocalDate REVIEW_DATE = LocalDate.now();
 
   private static final Review REVIEW =
-      new Review(REVIEW_ID, DOCTOR, PATIENT, REVIEW_DATE, REVIEW_DESCRIPTION, REVIEW_RATING);
+      new Review.Builder(DOCTOR, PATIENT, REVIEW_DATE, REVIEW_DESCRIPTION, REVIEW_RATING).build();
 
   private static final Page<Review> REVIEWS =
       new Page<>(Collections.singletonList(REVIEW), null, null, null);
@@ -116,17 +115,29 @@ public class ReviewServiceImplTest {
 
   @Mock private AppointmentService appointmentService;
 
+  @Mock private ReviewDao reviewDao;
+
   @InjectMocks private ReviewServiceImpl rs;
 
   // =================== createReview ===================
 
   @Test
-  public void testCreateReview() throws DoctorNotFoundException {
+  public void testCreateReview() throws DoctorNotFoundException, PatientNotFoundException, ReviewForbiddenException {
+
+    // Mock doctorService
+    Mockito.when(doctorService.getDoctorById(DOCTOR_ID)).thenReturn(Optional.of(DOCTOR));
+
+    // Mock patientService
+    Mockito.when(patientService.getPatientById(PATIENT_ID)).thenReturn(Optional.of(PATIENT));
+
+    // Mock appointmentService
+    Mockito.when(appointmentService.hasPatientMetDoctor(PATIENT_ID, DOCTOR_ID)).thenReturn(true);
+
     // Mock reviewDao
-    Mockito.when(doctorService.addReview(DOCTOR_ID, REVIEW)).thenReturn(REVIEW);
+    Mockito.when(reviewDao.createReview(REVIEW)).thenReturn(REVIEW);
 
     // Call method
-    Review review = doctorService.addReview(DOCTOR_ID, REVIEW);
+    Review review = rs.createReview(DOCTOR_ID, PATIENT_ID, REVIEW_RATING, REVIEW_DESCRIPTION);
 
     // Assert
     Assert.assertEquals(REVIEW, review);
@@ -176,10 +187,10 @@ public class ReviewServiceImplTest {
   @Test
   public void testGetReviewsForDoctor() {
     // Mock doctorService
-    Mockito.when(doctorService.getReviewsForDoctor(DOCTOR_ID, null, null)).thenReturn(REVIEWS);
+    Mockito.when(reviewDao.getReviewsForDoctor(DOCTOR_ID, null, null)).thenReturn(REVIEWS);
 
     // Call method
-    List<Review> reviews = doctorService.getReviewsForDoctor(DOCTOR_ID, null, null).getContent();
+    List<Review> reviews = rs.getReviewsForDoctor(DOCTOR_ID, null, null).getContent();
 
     // Assert
     Assert.assertEquals(REVIEWS.getContent(), reviews);
@@ -188,12 +199,12 @@ public class ReviewServiceImplTest {
   @Test
   public void testGetReviewsForUnexistingDoctor() {
     // Mock doctorService
-    Mockito.when(doctorService.getReviewsForDoctor(DOCTOR_ID, null, null))
+    Mockito.when(reviewDao.getReviewsForDoctor(DOCTOR_ID, null, null))
         .thenReturn(new Page<>(new ArrayList<>(), null, 0, null));
 
     // Call method
     Assert.assertEquals(
-        doctorService.getReviewsForDoctor(DOCTOR_ID, null, null),
+        rs.getReviewsForDoctor(DOCTOR_ID, null, null),
         new Page<>(new ArrayList<>(), null, 0, null));
   }
 
