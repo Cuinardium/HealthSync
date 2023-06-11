@@ -196,10 +196,10 @@ public class AppointmentServiceImplTest {
     // Mock mailService
     Mockito.doNothing()
         .when(mailService)
-        .sendAppointmentRequestMail(Mockito.any(Appointment.class), Mockito.any(Locale.class));
+        .sendAppointmentRequestMail(Mockito.any(Appointment.class));
     Mockito.doNothing()
         .when(mailService)
-        .sendAppointmentReminderMail(Mockito.any(Appointment.class), Mockito.any(Locale.class));
+        .sendAppointmentReminderMail(Mockito.any(Appointment.class));
 
     // 2. Ejercitar la class under test
     Appointment appointment =
@@ -303,10 +303,10 @@ public class AppointmentServiceImplTest {
     // Mock mailService
     Mockito.doNothing()
         .when(mailService)
-        .sendAppointmentRequestMail(Mockito.any(Appointment.class), Mockito.any(Locale.class));
+        .sendAppointmentRequestMail(Mockito.any(Appointment.class));
     Mockito.doNothing()
         .when(mailService)
-        .sendAppointmentReminderMail(Mockito.any(Appointment.class), Mockito.any(Locale.class));
+        .sendAppointmentReminderMail(Mockito.any(Appointment.class));
 
     // 2. Ejercitar la class under test
     Appointment appointment =
@@ -337,8 +337,7 @@ public class AppointmentServiceImplTest {
     // Mock mailService
     Mockito.doNothing()
         .when(mailService)
-        .sendAppointmentCancelledByDoctorMail(
-            Mockito.any(Appointment.class), Mockito.any(Locale.class));
+        .sendAppointmentCancelledByDoctorMail(Mockito.any(Appointment.class));
 
     // 2. Ejercitar la class under test
     Appointment appointment =
@@ -366,8 +365,7 @@ public class AppointmentServiceImplTest {
     // Mock mailService
     Mockito.doNothing()
         .when(mailService)
-        .sendAppointmentCancelledByPatientMail(
-            Mockito.any(Appointment.class), Mockito.any(Locale.class));
+        .sendAppointmentCancelledByPatientMail(Mockito.any(Appointment.class));
 
     // 2. Ejercitar la class under test
 

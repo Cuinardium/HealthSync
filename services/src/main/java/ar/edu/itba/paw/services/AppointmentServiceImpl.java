@@ -22,7 +22,6 @@ import java.time.LocalTime;
 import java.util.*;
 import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -87,8 +86,8 @@ public class AppointmentServiceImpl implements AppointmentService {
           appointmentDao.createAppointment(patient, doctor, date, timeBlock, description);
 
       // TODO: locale should be determined by the user's language
-      mailService.sendAppointmentRequestMail(appointment, LocaleContextHolder.getLocale());
-      mailService.sendAppointmentReminderMail(appointment, LocaleContextHolder.getLocale());
+      mailService.sendAppointmentRequestMail(appointment);
+      mailService.sendAppointmentReminderMail(appointment);
 
       return appointment;
     } catch (AppointmentAlreadyExistsException e) {
@@ -123,13 +122,10 @@ public class AppointmentServiceImpl implements AppointmentService {
       throw new IllegalStateException("Appointment could not be updated due to it not existing");
     }
 
-    // TODO: locale should be determined by the user's language
-    Locale locale = LocaleContextHolder.getLocale();
-
     if (requesterId == appointment.getPatientId()) {
-      mailService.sendAppointmentCancelledByPatientMail(updatedAppointment, locale);
+      mailService.sendAppointmentCancelledByPatientMail(updatedAppointment);
     } else {
-      mailService.sendAppointmentCancelledByDoctorMail(updatedAppointment, locale);
+      mailService.sendAppointmentCancelledByDoctorMail(updatedAppointment);
     }
 
     return updatedAppointment;
@@ -212,11 +208,17 @@ public class AppointmentServiceImpl implements AppointmentService {
 
   @Transactional
   @Override
-  public Page<Appointment> getTodayAppointments(long userId, AppointmentStatus status, Integer page, Integer pageSize, boolean isPatient){
+  public Page<Appointment> getTodayAppointments(
+      long userId, AppointmentStatus status, Integer page, Integer pageSize, boolean isPatient) {
     return appointmentDao.getFilteredAppointments(
-            userId, status, LocalDate.now(), LocalDate.ofYearDay(LocalDate.now().getYear(),LocalDate.now().getDayOfYear()), page, pageSize, isPatient);
+        userId,
+        status,
+        LocalDate.now(),
+        LocalDate.ofYearDay(LocalDate.now().getYear(), LocalDate.now().getDayOfYear()),
+        page,
+        pageSize,
+        isPatient);
   }
-
 
   @Override
   public boolean hasPatientMetDoctor(long patientId, long doctorId) {
@@ -242,7 +244,7 @@ public class AppointmentServiceImpl implements AppointmentService {
 
     // For each appointment, send reminder to patient
     for (Appointment appointment : tomorrowAppointments) {
-      mailService.sendAppointmentReminderMail(appointment, LocaleContextHolder.getLocale());
+      mailService.sendAppointmentReminderMail(appointment);
     }
   }
 
@@ -266,7 +268,7 @@ public class AppointmentServiceImpl implements AppointmentService {
 
     // Send email to patient
     for (Appointment appointment : yesterdayAppointments) {
-      mailService.sendAppointmentCompletedMail(appointment, LocaleContextHolder.getLocale());
+      mailService.sendAppointmentCompletedMail(appointment);
     }
   }
 }
