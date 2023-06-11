@@ -1,5 +1,6 @@
 package ar.edu.itba.paw.models;
 
+import java.util.Locale;
 import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -44,18 +45,28 @@ public class User {
   @JoinColumn(name = "profile_picture_id", referencedColumnName = "profile_picture_id")
   private Image image;
 
+  @Column(name = "locale", length = 10, nullable = false)
+  private Locale locale;
+
   protected User() {
     // Solo para hibernate
   }
 
   public User(
-      Long id, String email, String password, String firstName, String lastName, Image image) {
+      Long id,
+      String email,
+      String password,
+      String firstName,
+      String lastName,
+      Image image,
+      Locale locale) {
     this.id = id;
     this.email = email;
     this.password = password;
     this.firstName = firstName;
     this.lastName = lastName;
     this.image = image;
+    this.locale = locale;
   }
 
   // Getters and setters
@@ -67,6 +78,7 @@ public class User {
     this.firstName = builder.firstName;
     this.lastName = builder.lastName;
     this.image = builder.image;
+    this.locale = builder.locale;
   }
 
   public String getEmail() {
@@ -151,12 +163,18 @@ public class User {
     // defaults
     private Long id = null;
     private Image image = null;
+    private Locale locale = new Locale("es");
 
     public Builder(String email, String password, String firstName, String lastName) {
       this.email = email;
       this.password = password;
       this.firstName = firstName;
       this.lastName = lastName;
+    }
+
+    public Builder locale(Locale locale) {
+      this.locale = locale;
+      return this;
     }
 
     public Builder id(long id) {
@@ -172,5 +190,17 @@ public class User {
     public User build() {
       return new User(this);
     }
+  }
+
+  public void setId(Long id) {
+    this.id = id;
+  }
+
+  public Locale getLocale() {
+    return locale;
+  }
+
+  public void setLocale(Locale locale) {
+    this.locale = locale;
   }
 }

@@ -4,18 +4,21 @@ import ar.edu.itba.paw.interfaces.services.exceptions.EmailInUseException;
 import ar.edu.itba.paw.interfaces.services.exceptions.UserNotFoundException;
 import ar.edu.itba.paw.models.Image;
 import ar.edu.itba.paw.models.User;
+import java.util.Locale;
 import java.util.Optional;
 
 public interface UserService {
 
   // =============== Inserts ===============
 
-  public User createUser(String email, String password, String firstName, String lastName)
+  public User createUser(
+      String email, String password, String firstName, String lastName, Locale locale)
       throws EmailInUseException;
 
   // =============== Updates ===============
 
-  public User updateUser(long userId, String email, String firstName, String lastName, Image image)
+  public User updateUser(
+      long userId, String email, String firstName, String lastName, Image image, Locale locale)
       throws UserNotFoundException, EmailInUseException;
 
   public boolean updatePassword(long userId, String oldPassword, String password)

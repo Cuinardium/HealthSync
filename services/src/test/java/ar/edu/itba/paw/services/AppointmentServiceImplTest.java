@@ -76,6 +76,7 @@ public class AppointmentServiceImplTest {
               .collect(Collectors.toList()));
   private static final Float RATING = 3F;
   private static final Integer RATING_COUNT = 1;
+  private static final Locale DOCTOR_LOCALE = new Locale("es");
 
   private static final Doctor DOCTOR =
       new Doctor(
@@ -92,7 +93,8 @@ public class AppointmentServiceImplTest {
           ATTENDING_HOURS,
           new ArrayList<>(),
           RATING,
-          RATING_COUNT);
+          RATING_COUNT,
+          DOCTOR_LOCALE);
 
   // ================== Patient Constants ==================
 
@@ -104,6 +106,7 @@ public class AppointmentServiceImplTest {
   private static final Image PATIENT_IMAGE = new Image.Builder(null).build();
 
   private static final HealthInsurance PATIENT_HEALTH_INSURANCE = HealthInsurance.NONE;
+  private static final Locale PATIENT_LOCALE = new Locale("es");
   private static final Patient PATIENT =
       new Patient(
           PATIENT_ID,
@@ -112,7 +115,8 @@ public class AppointmentServiceImplTest {
           FIRST_NAME,
           PATIENT_LAST_NAME,
           PATIENT_IMAGE,
-          PATIENT_HEALTH_INSURANCE);
+          PATIENT_HEALTH_INSURANCE,
+          PATIENT_LOCALE);
 
   // ================== Appointment Constants ==================
 

@@ -4,13 +4,15 @@ import ar.edu.itba.paw.interfaces.persistence.exceptions.EmailAlreadyExistsExcep
 import ar.edu.itba.paw.interfaces.persistence.exceptions.UserNotFoundException;
 import ar.edu.itba.paw.models.Image;
 import ar.edu.itba.paw.models.User;
+import java.util.Locale;
 import java.util.Optional;
 
 public interface UserDao {
 
   // =============== Inserts ===============
 
-  public User createUser(String email, String password, String firstName, String lastName)
+  public User createUser(
+      String email, String password, String firstName, String lastName, Locale locale)
       throws EmailAlreadyExistsException;
 
   // =============== Updates ===============

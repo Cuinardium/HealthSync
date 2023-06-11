@@ -10,6 +10,7 @@ import ar.edu.itba.paw.models.HealthInsurance;
 import ar.edu.itba.paw.models.Image;
 import ar.edu.itba.paw.models.Patient;
 import ar.edu.itba.paw.models.User;
+import java.util.Locale;
 import java.util.Optional;
 import org.junit.Assert;
 import org.junit.Test;
@@ -33,17 +34,28 @@ public class PatientServiceImplTest {
   private static final String LAST_NAME = "last_name";
   private static final HealthInsurance HEALTH_INSURANCE = HealthInsurance.NONE;
   private static final Image IMAGE = null;
+  private static final Locale LOCALE = new Locale("en");
 
-  private static final User USER = new User(ID, EMAIL, PASSWORD, FIRST_NAME, LAST_NAME, IMAGE);
+  private static final User USER =
+      new User(ID, EMAIL, PASSWORD, FIRST_NAME, LAST_NAME, IMAGE, LOCALE);
   private static final Patient PATIENT =
-      new Patient(ID, EMAIL, PASSWORD_ENCODED, FIRST_NAME, LAST_NAME, IMAGE, HEALTH_INSURANCE);
+      new Patient(
+          ID, EMAIL, PASSWORD_ENCODED, FIRST_NAME, LAST_NAME, IMAGE, HEALTH_INSURANCE, LOCALE);
   private static final String EMAIL_NEW = "new_email";
   private static final String FIRST_NAME_NEW = "new_fist_name";
   private static final String LAST_NAME_NEW = "new_last_name";
   private static final HealthInsurance HEALTH_INSURANCE_NEW = HealthInsurance.OMINT;
   private static final Patient PATIENT_UPDATED =
       new Patient(
-          ID, EMAIL_NEW, PASSWORD, FIRST_NAME_NEW, LAST_NAME_NEW, IMAGE, HEALTH_INSURANCE_NEW);
+          ID,
+          EMAIL_NEW,
+          PASSWORD,
+          FIRST_NAME_NEW,
+          LAST_NAME_NEW,
+          IMAGE,
+          HEALTH_INSURANCE_NEW,
+          LOCALE);
+  private static final Locale LOCALE_NEW = new Locale("es");
 
   @Mock private PatientDao patientDao;
   @Mock private PasswordEncoder passwordEncoder;
@@ -62,11 +74,19 @@ public class PatientServiceImplTest {
     Mockito.when(
             patientDao.createPatient(
                 new Patient(
-                    null, EMAIL, PASSWORD_ENCODED, FIRST_NAME, LAST_NAME, null, HEALTH_INSURANCE)))
+                    null,
+                    EMAIL,
+                    PASSWORD_ENCODED,
+                    FIRST_NAME,
+                    LAST_NAME,
+                    null,
+                    HEALTH_INSURANCE,
+                    LOCALE)))
         .thenReturn(PATIENT);
 
     // 2. Ejercitar la class under test
-    Patient patient = ps.createPatient(EMAIL, PASSWORD, FIRST_NAME, LAST_NAME, HEALTH_INSURANCE);
+    Patient patient =
+        ps.createPatient(EMAIL, PASSWORD, FIRST_NAME, LAST_NAME, HEALTH_INSURANCE, LOCALE);
     // 3. Meaningful assertions
     Assert.assertEquals(PATIENT, patient);
   }
@@ -82,11 +102,18 @@ public class PatientServiceImplTest {
     Mockito.when(
             patientDao.createPatient(
                 new Patient(
-                    null, EMAIL, PASSWORD_ENCODED, FIRST_NAME, LAST_NAME, null, HEALTH_INSURANCE)))
+                    null,
+                    EMAIL,
+                    PASSWORD_ENCODED,
+                    FIRST_NAME,
+                    LAST_NAME,
+                    null,
+                    HEALTH_INSURANCE,
+                    LOCALE)))
         .thenThrow(PatientAlreadyExistsException.class);
 
     // 2. Ejercitar la class under test
-    ps.createPatient(EMAIL, PASSWORD, FIRST_NAME, LAST_NAME, HEALTH_INSURANCE);
+    ps.createPatient(EMAIL, PASSWORD, FIRST_NAME, LAST_NAME, HEALTH_INSURANCE, LOCALE);
     // 3. Meaningful assertions
   }
 
@@ -97,7 +124,7 @@ public class PatientServiceImplTest {
     Mockito.when(userService.getUserByEmail(Mockito.eq(EMAIL))).thenReturn(Optional.of(USER));
 
     // 2. Ejercitar la class under test
-    ps.createPatient(EMAIL, PASSWORD, FIRST_NAME, LAST_NAME, HEALTH_INSURANCE);
+    ps.createPatient(EMAIL, PASSWORD, FIRST_NAME, LAST_NAME, HEALTH_INSURANCE, LOCALE);
     // 3. Meaningful assertions
   }
 
@@ -112,7 +139,8 @@ public class PatientServiceImplTest {
         .thenReturn(PATIENT_UPDATED);
     // 2. Ejercitar la class under test
     Patient patient =
-        ps.updatePatient(ID, EMAIL_NEW, FIRST_NAME_NEW, LAST_NAME_NEW, HEALTH_INSURANCE_NEW, IMAGE);
+        ps.updatePatient(
+            ID, EMAIL_NEW, FIRST_NAME_NEW, LAST_NAME_NEW, HEALTH_INSURANCE_NEW, IMAGE, LOCALE_NEW);
     // 3. Meaningful assertions
     Assert.assertEquals(PATIENT_UPDATED, patient);
   }
@@ -123,11 +151,13 @@ public class PatientServiceImplTest {
           ar.edu.itba.paw.interfaces.services.exceptions.PatientNotFoundException {
 
     // 1. Precondiciones
-    Mockito.when(userService.updateUser(ID, EMAIL_NEW, FIRST_NAME_NEW, LAST_NAME_NEW, IMAGE))
+    Mockito.when(
+            userService.updateUser(ID, EMAIL_NEW, FIRST_NAME_NEW, LAST_NAME_NEW, IMAGE, LOCALE_NEW))
         .thenThrow(EmailInUseException.class);
 
     // 2. Ejercitar la class under test
-    ps.updatePatient(ID, EMAIL_NEW, FIRST_NAME_NEW, LAST_NAME_NEW, HEALTH_INSURANCE_NEW, IMAGE);
+    ps.updatePatient(
+        ID, EMAIL_NEW, FIRST_NAME_NEW, LAST_NAME_NEW, HEALTH_INSURANCE_NEW, IMAGE, LOCALE_NEW);
   }
 
   @Test(expected = ar.edu.itba.paw.interfaces.services.exceptions.PatientNotFoundException.class)
@@ -138,7 +168,8 @@ public class PatientServiceImplTest {
     Mockito.when(patientDao.updatePatientInfo(ID, HEALTH_INSURANCE_NEW))
         .thenThrow(PatientNotFoundException.class);
     // 2. Ejercitar la class under test
-    ps.updatePatient(ID, EMAIL_NEW, FIRST_NAME_NEW, LAST_NAME_NEW, HEALTH_INSURANCE_NEW, IMAGE);
+    ps.updatePatient(
+        ID, EMAIL_NEW, FIRST_NAME_NEW, LAST_NAME_NEW, HEALTH_INSURANCE_NEW, IMAGE, LOCALE_NEW);
     // 3. Meaningful assertions
   }
 
@@ -147,11 +178,13 @@ public class PatientServiceImplTest {
       throws PatientNotFoundException, UserNotFoundException, EmailInUseException,
           ar.edu.itba.paw.interfaces.services.exceptions.PatientNotFoundException {
     // 1. Precondiciones
-    Mockito.when(userService.updateUser(ID, EMAIL_NEW, FIRST_NAME_NEW, LAST_NAME_NEW, IMAGE))
+    Mockito.when(
+            userService.updateUser(ID, EMAIL_NEW, FIRST_NAME_NEW, LAST_NAME_NEW, IMAGE, LOCALE_NEW))
         .thenThrow(UserNotFoundException.class);
 
     // 2. Ejercitar la class under test
-    ps.updatePatient(ID, EMAIL_NEW, FIRST_NAME_NEW, LAST_NAME_NEW, HEALTH_INSURANCE_NEW, IMAGE);
+    ps.updatePatient(
+        ID, EMAIL_NEW, FIRST_NAME_NEW, LAST_NAME_NEW, HEALTH_INSURANCE_NEW, IMAGE, LOCALE_NEW);
   }
 
   // =========================== Get patient by id ===========================

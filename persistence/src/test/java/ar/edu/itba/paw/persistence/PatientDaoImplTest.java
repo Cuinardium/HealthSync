@@ -8,6 +8,7 @@ import ar.edu.itba.paw.models.HealthInsurance;
 import ar.edu.itba.paw.models.Image;
 import ar.edu.itba.paw.models.Patient;
 import ar.edu.itba.paw.persistence.config.TestConfig;
+import java.util.Locale;
 import java.util.Optional;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -35,6 +36,7 @@ public class PatientDaoImplTest {
   private static final String INSERTED_PATIENT_FIRST_NAME = "patient_first_name";
   private static final String INSERTED_PATIENT_LAST_NAME = "patient_last_name";
   private static final Image INSERTED_PATIENT_IMAGE = null;
+  private static final Locale INSERTED_PATIENT_LOCALE = new Locale("en");
   private static final HealthInsurance INSERTED_PATIENT_HEALTH_INSURANCE = HealthInsurance.OMINT;
 
   private static final Long AUX_PATIENT_ID = 2L;
@@ -44,6 +46,7 @@ public class PatientDaoImplTest {
   private static final String AUX_PATIENT_LAST_NAME = "notpatient_last_name";
   private static final Image AUX_PATIENT_IMAGE = new Image(2L, null);
   private static final HealthInsurance AUX_PATIENT_HEALTH_INSURANCE = HealthInsurance.OSDE;
+  private static final Locale AUX_PATIENT_LOCALE = new Locale("es");
 
   private static final Patient PATIENT_5 =
       new Patient(
@@ -53,7 +56,8 @@ public class PatientDaoImplTest {
           INSERTED_PATIENT_FIRST_NAME,
           INSERTED_PATIENT_LAST_NAME,
           INSERTED_PATIENT_IMAGE,
-          INSERTED_PATIENT_HEALTH_INSURANCE);
+          INSERTED_PATIENT_HEALTH_INSURANCE,
+          INSERTED_PATIENT_LOCALE);
 
   private static final Patient AUX_PATIENT =
       new Patient(
@@ -63,7 +67,8 @@ public class PatientDaoImplTest {
           AUX_PATIENT_FIRST_NAME,
           AUX_PATIENT_LAST_NAME,
           AUX_PATIENT_IMAGE,
-          AUX_PATIENT_HEALTH_INSURANCE);
+          AUX_PATIENT_HEALTH_INSURANCE,
+          AUX_PATIENT_LOCALE);
 
   @Autowired private DataSource ds;
 
@@ -80,8 +85,7 @@ public class PatientDaoImplTest {
 
   // TODO: ADDRESS COLLITION ON EMAIL
   @Test
-  public void testCreatePatient()
-      throws PatientAlreadyExistsException {
+  public void testCreatePatient() throws PatientAlreadyExistsException {
     // 1. Precondiciones
     // 2. Ejercitar la class under test
     Patient patient =
@@ -93,7 +97,8 @@ public class PatientDaoImplTest {
                 AUX_PATIENT_FIRST_NAME,
                 AUX_PATIENT_LAST_NAME,
                 AUX_PATIENT_IMAGE,
-                AUX_PATIENT_HEALTH_INSURANCE));
+                AUX_PATIENT_HEALTH_INSURANCE,
+                AUX_PATIENT_LOCALE));
     // 3. Meaningful assertions
 
     em.flush();

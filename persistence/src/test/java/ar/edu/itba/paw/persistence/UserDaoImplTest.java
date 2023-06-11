@@ -7,6 +7,7 @@ import ar.edu.itba.paw.interfaces.persistence.exceptions.UserNotFoundException;
 import ar.edu.itba.paw.models.Image;
 import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.persistence.config.TestConfig;
+import java.util.Locale;
 import java.util.Optional;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -43,6 +44,8 @@ public class UserDaoImplTest {
   private static final String AUX_FIRST_NAME = "notuser_first_name";
   private static final String AUX_LAST_NAME = "notuser_last_name";
   private static final Image AUX_IMAGE = new Image(2L, null);
+  private static final Locale AUX_LOCALE = new Locale("en");
+  private static final Locale INSERTED_LOCALE = new Locale("es");
 
   @Autowired private DataSource ds;
 
@@ -111,7 +114,8 @@ public class UserDaoImplTest {
   public void testCreateUser() throws EmailAlreadyExistsException {
     // 1. Precondiciones
     // 2. Ejercitar la class under test
-    User user = userDao.createUser(AUX_EMAIL, AUX_PASSWORD, AUX_FIRST_NAME, AUX_LAST_NAME);
+    User user =
+        userDao.createUser(AUX_EMAIL, AUX_PASSWORD, AUX_FIRST_NAME, AUX_LAST_NAME, AUX_LOCALE);
 
     em.flush();
 
@@ -137,7 +141,8 @@ public class UserDaoImplTest {
                 INSERTED_USER_EMAIL,
                 INSERTED_USER_PASSWORD,
                 INSERTED_USER_FIRST_NAME,
-                INSERTED_USER_LAST_NAME));
+                INSERTED_USER_LAST_NAME,
+                INSERTED_LOCALE));
 
     // 3. Meaningful assertions
   }

@@ -45,7 +45,8 @@ public class DoctorServiceImpl implements DoctorService {
       City city,
       String address,
       Set<HealthInsurance> healthInsurances,
-      Set<AttendingHours> attendingHours)
+      Set<AttendingHours> attendingHours,
+      Locale locale)
       throws EmailInUseException {
 
     if (userService.getUserByEmail(email).isPresent()) {
@@ -68,7 +69,8 @@ public class DoctorServiceImpl implements DoctorService {
               attendingHours,
               new ArrayList<>(),
               0f,
-              0));
+              0,
+              locale));
     } catch (DoctorAlreadyExistsException e) {
       throw new IllegalStateException("Doctor should not exist when id is null");
     }
@@ -98,10 +100,11 @@ public class DoctorServiceImpl implements DoctorService {
       String address,
       Set<HealthInsurance> healthInsurances,
       Set<AttendingHours> attendingHours,
-      Image image)
+      Image image,
+      Locale locale)
       throws DoctorNotFoundException, EmailInUseException {
     try {
-      userService.updateUser(doctorId, email, firstName, lastName, image);
+      userService.updateUser(doctorId, email, firstName, lastName, image, locale);
       return doctorDao.updateDoctorInfo(
           doctorId, specialty, city, address, healthInsurances, attendingHours);
     } catch (ar.edu.itba.paw.interfaces.persistence.exceptions.DoctorNotFoundException

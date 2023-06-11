@@ -57,6 +57,7 @@ public class DoctorDaoImplTest {
                   INSERTED_DOCTOR_ID, DayOfWeek.FRIDAY, ThirtyMinuteBlock.BLOCK_00_00)));
 
   private static final Image INSERTED_DOCTOR_IMAGE = null;
+  private static final Locale INSERTED_LOCALE = new Locale("en");
 
   private static final Float INSERTED_DOCTOR_RATING = 3f;
   private static final Integer INSERTED_DOCTOR_RATING_COUNT = 5;
@@ -91,6 +92,8 @@ public class DoctorDaoImplTest {
               new AttendingHours(
                   INSERTED_DOCTOR_ID, DayOfWeek.SUNDAY, ThirtyMinuteBlock.BLOCK_02_00)));
 
+  private static final Locale AUX_LOCALE = new Locale("en");
+
   private static final Doctor DOCTOR_7 =
       new Doctor(
           INSERTED_DOCTOR_ID,
@@ -106,7 +109,8 @@ public class DoctorDaoImplTest {
           INSERTED_DOCTOR_ATTENDING_HOURS,
           new ArrayList<>(),
           INSERTED_DOCTOR_RATING,
-          INSERTED_DOCTOR_RATING_COUNT);
+          INSERTED_DOCTOR_RATING_COUNT,
+          INSERTED_LOCALE);
 
   private static final Long INSERTED_PATIENT_ID = 5L;
   private static final String INSERTED_PATIENT_EMAIL = "patient@email.com";
@@ -124,7 +128,8 @@ public class DoctorDaoImplTest {
           INSERTED_PATIENT_FIRST_NAME,
           INSERTED_PATIENT_LAST_NAME,
           INSERTED_PATIENT_IMAGE,
-          INSERTED_PATIENT_HEALTH_INSURANCE);
+          INSERTED_PATIENT_HEALTH_INSURANCE,
+          INSERTED_LOCALE);
 
   private static final Short RATING = 5;
   private static final String DESCRIPTION = "This is a review description";
@@ -186,7 +191,8 @@ public class DoctorDaoImplTest {
                 AUX_DOCTOR_ATTENDING_HOURS,
                 new ArrayList<>(),
                 INSERTED_DOCTOR_RATING,
-                INSERTED_DOCTOR_RATING_COUNT));
+                INSERTED_DOCTOR_RATING_COUNT,
+                INSERTED_LOCALE));
 
     em.flush();
 
@@ -228,7 +234,8 @@ public class DoctorDaoImplTest {
                     AUX_DOCTOR_ATTENDING_HOURS,
                     new ArrayList<>(),
                     INSERTED_DOCTOR_RATING,
-                    INSERTED_DOCTOR_RATING_COUNT)));
+                    INSERTED_DOCTOR_RATING_COUNT,
+                    INSERTED_LOCALE)));
     // 3. Meaningful assertions
 
   }

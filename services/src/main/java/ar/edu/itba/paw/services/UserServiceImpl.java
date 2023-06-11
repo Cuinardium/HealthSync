@@ -8,6 +8,7 @@ import ar.edu.itba.paw.interfaces.services.exceptions.EmailInUseException;
 import ar.edu.itba.paw.interfaces.services.exceptions.UserNotFoundException;
 import ar.edu.itba.paw.models.Image;
 import ar.edu.itba.paw.models.User;
+import java.util.Locale;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -33,10 +34,12 @@ public class UserServiceImpl implements UserService {
 
   @Transactional
   @Override
-  public User createUser(String email, String password, String firstName, String lastName)
+  public User createUser(
+      String email, String password, String firstName, String lastName, Locale locale)
       throws EmailInUseException {
     try {
-      return userDao.createUser(email, passwordEncoder.encode(password), firstName, lastName);
+      return userDao.createUser(
+          email, passwordEncoder.encode(password), firstName, lastName, locale);
     } catch (EmailAlreadyExistsException e) {
       throw new EmailInUseException();
     }
@@ -46,7 +49,8 @@ public class UserServiceImpl implements UserService {
 
   @Transactional
   @Override
-  public User updateUser(long userId, String email, String firstName, String lastName, Image image)
+  public User updateUser(
+      long userId, String email, String firstName, String lastName, Image image, Locale locale)
       throws UserNotFoundException, EmailInUseException {
 
     Image old_image =

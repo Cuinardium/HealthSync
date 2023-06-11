@@ -19,6 +19,7 @@ import javax.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -94,7 +95,8 @@ public class AuthController {
               patientRegisterForm.getPassword(),
               patientRegisterForm.getName(),
               patientRegisterForm.getLastname(),
-              healthInsurance);
+              healthInsurance,
+              LocaleContextHolder.getLocale());
 
       LOGGER.info("Registered {}", patient);
       authUser(patient.getEmail(), patientRegisterForm.getPassword());
@@ -163,7 +165,8 @@ public class AuthController {
               city,
               doctorRegisterForm.getAddress(),
               healthInsurances,
-              attendingHours);
+              attendingHours,
+              LocaleContextHolder.getLocale());
       LOGGER.info("Registered {}", doctor);
       authUser(doctor.getEmail(), doctorRegisterForm.getPassword());
 

@@ -4,6 +4,7 @@ import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 import java.util.stream.Collectors;
 import javax.persistence.*;
@@ -73,8 +74,9 @@ public class Doctor extends User {
       Set<AttendingHours> attendingHours,
       List<Review> reviews,
       Float rating,
-      Integer ratingCount) {
-    super(id, email, password, firstName, lastName, image);
+      Integer ratingCount,
+      Locale locale) {
+    super(id, email, password, firstName, lastName, image, locale);
     this.healthInsurances = healthInsurances;
     this.specialty = specialty;
     this.city = city;
@@ -92,7 +94,8 @@ public class Doctor extends User {
         builder.password,
         builder.firstName,
         builder.lastName,
-        builder.image);
+        builder.image,
+        builder.locale);
     this.healthInsurances = builder.healthInsurances;
     this.specialty = builder.specialty;
     this.city = builder.city;
@@ -201,7 +204,7 @@ public class Doctor extends User {
         + ']';
   }
 
-  public class Builder {
+  public static class Builder {
     // required
     private String email, password, firstName, lastName;
     private Set<HealthInsurance> healthInsurances;
@@ -213,6 +216,7 @@ public class Doctor extends User {
     // default
     private Long id = null;
     private Image image = null;
+    public Locale locale = new Locale("es");
 
     // TODO: set defaults
     private List<Review> reviews;
@@ -262,6 +266,11 @@ public class Doctor extends User {
 
     public Builder ratingCount(int ratingCount) {
       this.ratingCount = ratingCount;
+      return this;
+    }
+
+    public Builder locale(Locale locale) {
+      this.locale = locale;
       return this;
     }
 
