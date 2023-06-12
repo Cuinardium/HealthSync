@@ -5,6 +5,7 @@ import static org.junit.Assert.assertThrows;
 import ar.edu.itba.paw.interfaces.persistence.exceptions.DoctorAlreadyExistsException;
 import ar.edu.itba.paw.interfaces.persistence.exceptions.DoctorNotFoundException;
 import ar.edu.itba.paw.interfaces.persistence.exceptions.EmailAlreadyExistsException;
+import ar.edu.itba.paw.interfaces.persistence.exceptions.VacationNotFoundException;
 import ar.edu.itba.paw.models.*;
 import ar.edu.itba.paw.persistence.config.TestConfig;
 import java.time.DayOfWeek;
@@ -55,6 +56,33 @@ public class DoctorDaoImplTest {
                   INSERTED_DOCTOR_ID, DayOfWeek.THURSDAY, ThirtyMinuteBlock.BLOCK_00_00),
               new AttendingHours(
                   INSERTED_DOCTOR_ID, DayOfWeek.FRIDAY, ThirtyMinuteBlock.BLOCK_00_00)));
+
+  private static final Vacation VACATION_NEW =
+      new Vacation(
+          INSERTED_DOCTOR_ID,
+          LocalDate.of(2020, 3, 1),
+          ThirtyMinuteBlock.BLOCK_00_00,
+          LocalDate.of(2020, 3, 10),
+          ThirtyMinuteBlock.BLOCK_00_00);
+
+  private static final Vacation VACATION_TO_REMOVE =
+      new Vacation(
+          INSERTED_DOCTOR_ID,
+          LocalDate.of(2020, 1, 1),
+          ThirtyMinuteBlock.BLOCK_00_00,
+          LocalDate.of(2020, 1, 10),
+          ThirtyMinuteBlock.BLOCK_00_00);
+
+  private static final Set<Vacation> INSERTED_DOCTOR_VACATIONS =
+      new HashSet<>(
+          Arrays.asList(
+              VACATION_TO_REMOVE,
+              new Vacation(
+                  INSERTED_DOCTOR_ID,
+                  LocalDate.of(2020, 2, 1),
+                  ThirtyMinuteBlock.BLOCK_00_00,
+                  LocalDate.of(2020, 2, 10),
+                  ThirtyMinuteBlock.BLOCK_00_00)));
 
   private static final Image INSERTED_DOCTOR_IMAGE = null;
   private static final Locale INSERTED_LOCALE = new Locale("en");
@@ -107,6 +135,7 @@ public class DoctorDaoImplTest {
           INSERTED_DOCTOR_CITY,
           INSERTED_DOCTOR_ADDRESS,
           INSERTED_DOCTOR_ATTENDING_HOURS,
+          INSERTED_DOCTOR_VACATIONS,
           INSERTED_DOCTOR_RATING,
           INSERTED_DOCTOR_RATING_COUNT,
           INSERTED_LOCALE);
@@ -123,6 +152,8 @@ public class DoctorDaoImplTest {
   public void setUp() {
     jdbcTemplate = new JdbcTemplate(ds);
   }
+
+  // ============================== createDoctor ==============================
 
   @Test
   public void testCreateDoctor() throws DoctorAlreadyExistsException, EmailAlreadyExistsException {
@@ -142,6 +173,7 @@ public class DoctorDaoImplTest {
                 AUX_DOCTOR_CITY,
                 AUX_DOCTOR_ADDRESS,
                 AUX_DOCTOR_ATTENDING_HOURS,
+                Collections.emptySet(),
                 INSERTED_DOCTOR_RATING,
                 INSERTED_DOCTOR_RATING_COUNT,
                 INSERTED_LOCALE));
@@ -185,11 +217,13 @@ public class DoctorDaoImplTest {
                     AUX_DOCTOR_CITY,
                     AUX_DOCTOR_ADDRESS,
                     AUX_DOCTOR_ATTENDING_HOURS,
+                    Collections.emptySet(),
                     INSERTED_DOCTOR_RATING,
                     INSERTED_DOCTOR_RATING_COUNT,
                     INSERTED_LOCALE)));
-    // 3. Meaningful assertions
   }
+
+  // ============================== updateDoctorInfo ==============================
 
   @Test
   public void testUpdateDoctorInfo() throws DoctorNotFoundException {
@@ -235,6 +269,64 @@ public class DoctorDaoImplTest {
                 AUX_DOCTOR_ATTENDING_HOURS));
   }
 
+  // ============================== addVacation ================================
+
+  @Test
+  public void testAddVacation() throws DoctorNotFoundException {
+    // 1.Precondiciones
+    Set<Vacation> expectedVacations = new HashSet<>(DOCTOR_7.getVacations());
+    expectedVacations.add(VACATION_NEW);
+
+    // 2. Ejercitar la class under test
+    Doctor doctor = doctorDao.addVacation(INSERTED_DOCTOR_ID, VACATION_NEW);
+
+    // 3. Meaningful assertions
+    Assert.assertEquals(expectedVacations, doctor.getVacations());
+  }
+
+  @Test
+  public void testAddVacationDoctorNotFound() {
+    // 1.Precondiciones
+    // 2. Ejercitar la class under test
+    assertThrows(
+        DoctorNotFoundException.class, () -> doctorDao.addVacation(AUX_DOCTOR_ID, VACATION_NEW));
+  }
+
+  // ============================== removeVacation ================================
+
+  @Test
+  public void testRemoveVacation() throws DoctorNotFoundException, VacationNotFoundException {
+    // 1.Precondiciones
+    Set<Vacation> expectedVacations = new HashSet<>(DOCTOR_7.getVacations());
+    expectedVacations.remove(VACATION_TO_REMOVE);
+
+    // 2. Ejercitar la class under test
+    Doctor doctor = doctorDao.removeVacation(INSERTED_DOCTOR_ID, VACATION_TO_REMOVE);
+
+    // 3. Meaningful assertions
+    Assert.assertEquals(expectedVacations, doctor.getVacations());
+  }
+
+  @Test
+  public void testRemoveVacationDoctorNotFound() {
+    // 1.Precondiciones
+    // 2. Ejercitar la class under test
+    assertThrows(
+        DoctorNotFoundException.class,
+        () -> doctorDao.removeVacation(AUX_DOCTOR_ID, VACATION_TO_REMOVE));
+  }
+
+  @Test
+  public void testRemoveVacationVacationNotFound() {
+    // 1.Precondiciones
+    // 2. Ejercitar la class under test
+    assertThrows(
+        VacationNotFoundException.class,
+        () -> doctorDao.removeVacation(INSERTED_DOCTOR_ID, VACATION_NEW));
+  }
+
+  // ============================== getDoctorById ==============================
+
   @Test
   public void testGetDoctorById() {
     // 1.Precondiciones
@@ -255,6 +347,8 @@ public class DoctorDaoImplTest {
     // 3. Meaningful assertions
     Assert.assertFalse(maybeDoctor.isPresent());
   }
+
+  // ============================== getFilteredDoctors ==============================
 
   @Test
   public void testGetFilteredDoctorsNoFilters() {
@@ -300,6 +394,8 @@ public class DoctorDaoImplTest {
     Assert.assertEquals(expectedDoctor, doctors.getContent().get(0));
   }
 
+  // ============================== getDoctors ==============================
+
   @Test
   public void testGetDoctors() {
     // 1.Precondiciones
@@ -321,6 +417,8 @@ public class DoctorDaoImplTest {
     Assert.assertEquals(INSERTED_LOCALE, doctors.get(0).getLocale());
   }
 
+  // ============================== getUsedHealthInsurances ==============================
+
   @Test
   public void testGetUsedHealthInsurances() {
     // 1.Precondiciones
@@ -332,6 +430,8 @@ public class DoctorDaoImplTest {
     Assert.assertEquals((Integer) 1, healthInsurances.get(HealthInsurance.OMINT));
   }
 
+  // ============================== getUsedSpecialties ==============================
+
   @Test
   public void testGetUsedSpecialties() {
     // 1.Precondiciones
@@ -341,6 +441,8 @@ public class DoctorDaoImplTest {
     Assert.assertEquals(1, specialties.size());
     Assert.assertEquals((Integer) 1, specialties.get(Specialty.PEDIATRIC_ALLERGY_AND_IMMUNOLOGY));
   }
+
+  // ============================== getUsedCities ==============================
 
   @Test
   public void testGetUsedCities() {
