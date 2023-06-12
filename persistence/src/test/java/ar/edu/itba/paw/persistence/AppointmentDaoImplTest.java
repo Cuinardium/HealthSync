@@ -78,6 +78,23 @@ public class AppointmentDaoImplTest {
                   INSERTED_DOCTOR_ID, DayOfWeek.THURSDAY, ThirtyMinuteBlock.BLOCK_00_00),
               new AttendingHours(
                   INSERTED_DOCTOR_ID, DayOfWeek.FRIDAY, ThirtyMinuteBlock.BLOCK_00_00)));
+
+  private static final Set<Vacation> INSERTED_DOCTOR_VACATIONS =
+      new HashSet<>(
+          Arrays.asList(
+              new Vacation(
+                  INSERTED_DOCTOR_ID,
+                  LocalDate.of(2020, 1, 1),
+                  ThirtyMinuteBlock.BLOCK_00_00,
+                  LocalDate.of(2020, 1, 10),
+                  ThirtyMinuteBlock.BLOCK_00_00),
+              new Vacation(
+                  INSERTED_DOCTOR_ID,
+                  LocalDate.of(2020, 2, 1),
+                  ThirtyMinuteBlock.BLOCK_00_00,
+                  LocalDate.of(2020, 2, 10),
+                  ThirtyMinuteBlock.BLOCK_00_00)));
+
   private static final Locale INSERTED_DOCTOR_LOCALE = new Locale("en");
 
   private static final Doctor DOCTOR_7 =
@@ -93,6 +110,7 @@ public class AppointmentDaoImplTest {
           INSERTED_DOCTOR_CITY,
           INSERTED_DOCTOR_ADDRESS,
           INSERTED_DOCTOR_ATTENDING_HOURS,
+          INSERTED_DOCTOR_VACATIONS,
           INSERTED_DOCTOR_RATING,
           INSERTED_DOCTOR_RATING_COUNT,
           INSERTED_DOCTOR_LOCALE);

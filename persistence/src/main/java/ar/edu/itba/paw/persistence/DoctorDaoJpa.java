@@ -3,6 +3,8 @@ package ar.edu.itba.paw.persistence;
 import ar.edu.itba.paw.interfaces.persistence.DoctorDao;
 import ar.edu.itba.paw.interfaces.persistence.exceptions.DoctorAlreadyExistsException;
 import ar.edu.itba.paw.interfaces.persistence.exceptions.DoctorNotFoundException;
+import ar.edu.itba.paw.interfaces.persistence.exceptions.VacationCollisionException;
+import ar.edu.itba.paw.interfaces.persistence.exceptions.VacationNotFoundException;
 import ar.edu.itba.paw.models.*;
 import ar.edu.itba.paw.persistence.utils.QueryBuilder;
 import java.sql.Date;
@@ -20,6 +22,8 @@ public class DoctorDaoJpa implements DoctorDao {
 
   @PersistenceContext private EntityManager em;
 
+  // =============== Inserts ===============
+
   @Override
   public Doctor createDoctor(Doctor doctor) throws DoctorAlreadyExistsException {
 
@@ -31,6 +35,8 @@ public class DoctorDaoJpa implements DoctorDao {
     em.persist(doctor);
     return doctor;
   }
+
+  // ================= Updates ==============
 
   @Override
   public Doctor updateDoctorInfo(
@@ -51,6 +57,65 @@ public class DoctorDaoJpa implements DoctorDao {
     em.persist(doctor);
     return doctor;
   }
+
+  @Override
+  public Doctor addVacation(long doctorId, Vacation vacation) throws DoctorNotFoundException, VacationCollisionException {
+    Doctor doctor = getDoctorById(doctorId).orElseThrow(DoctorNotFoundException::new);
+
+    // Check vacation does not collide with other vacations
+    Set<Vacation> vacations = doctor.getVacations();
+
+    for (Vacation doctorVacation : vacations) {
+      boolean vacationFromAfterDoctorVacationFrom =
+          vacation.getFromDate().isAfter(doctorVacation.getFromDate())
+              || (vacation.getFromDate().equals(doctorVacation.getFromDate())
+                  && vacation.getFromTime().ordinal() >= doctorVacation.getFromTime().ordinal());
+      boolean vacationFromBeforeDoctorVacationTo =
+          vacation.getFromDate().isBefore(doctorVacation.getToDate())
+              || (vacation.getFromDate().equals(doctorVacation.getToDate())
+                  && vacation.getFromTime().ordinal() <= doctorVacation.getToTime().ordinal());
+      boolean vacationToAfterDoctorVacationFrom =
+          vacation.getToDate().isAfter(doctorVacation.getFromDate())
+              || (vacation.getToDate().equals(doctorVacation.getFromDate())
+                  && vacation.getToTime().ordinal() >= doctorVacation.getFromTime().ordinal());
+      boolean vacationToBeforeDoctorVacationTo =
+          vacation.getToDate().isBefore(doctorVacation.getToDate())
+              || (vacation.getToDate().equals(doctorVacation.getToDate())
+                  && vacation.getToTime().ordinal() <= doctorVacation.getToTime().ordinal());
+
+      boolean vacationCollidesWithDoctorVacation =
+          (vacationFromAfterDoctorVacationFrom && vacationFromBeforeDoctorVacationTo)
+              || (vacationToAfterDoctorVacationFrom && vacationToBeforeDoctorVacationTo)
+              || (vacationFromBeforeDoctorVacationTo && vacationToAfterDoctorVacationFrom)
+              || (vacationFromAfterDoctorVacationFrom && vacationToBeforeDoctorVacationTo);
+
+      if (vacationCollidesWithDoctorVacation) {
+        throw new VacationCollisionException();
+      }
+    }
+
+    vacation.setDoctor(doctor);
+
+    doctor.addVacation(vacation);
+    em.persist(doctor);
+    return doctor;
+  }
+
+  @Override
+  public Doctor removeVacation(long doctorId, Vacation vacation)
+      throws DoctorNotFoundException, VacationNotFoundException {
+    Doctor doctor = getDoctorById(doctorId).orElseThrow(DoctorNotFoundException::new);
+
+    if (!doctor.getVacations().contains(vacation)) {
+      throw new VacationNotFoundException();
+    }
+
+    doctor.removeVacation(vacation);
+    em.persist(doctor);
+    return doctor;
+  }
+
+  // =============== Queries ===============
 
   @Override
   public Optional<Doctor> getDoctorById(long id) {
@@ -109,18 +174,44 @@ public class DoctorDaoJpa implements DoctorDao {
       nativeQueryBuilder.where("doctor.doctor_id IN (" + healthInsuranceQuery + ")");
     }
 
-    if (date != null) {
+    if (date != null && fromTime != null && toTime != null) {
       // Query de horarios disponibles (attending hours) y luego hago el horario que me pide NOT IN
       // appintments en el rang y fecha
 
-      QueryBuilder appointmentQuery =
+      String dateSQLString = "'" + Date.valueOf(date) + "'";
+
+      String appointmentQuery =
           new QueryBuilder()
               .select("appointment.appointment_time")
               .from("appointment")
               .where("appointment.doctor_id = doctor.doctor_id")
-              .where("appointment.appointment_date = '" + Date.valueOf(date) + "'");
+              .where("appointment.appointment_date = " + dateSQLString)
+              .build();
 
-      QueryBuilder attendingHoursQuery =
+      String vacationQuery =
+          new QueryBuilder()
+              .select("doctor_id")
+              .from("doctor_vacation")
+              .where(
+                  "(("
+                      + dateSQLString
+                      + " > doctor_vacation.from_date"
+                      + " AND "
+                      + dateSQLString
+                      + " < doctor_vacation.to_date)"
+                      + " OR ("
+                      + dateSQLString
+                      + " = doctor_vacation.from_date AND "
+                      + fromTime.ordinal()
+                      + " >= doctor_vacation.from_time)"
+                      + " OR ("
+                      + dateSQLString
+                      + " = doctor_vacation.to_date AND "
+                      + toTime.ordinal()
+                      + " <= doctor_vacation.to_time))")
+              .build();
+
+      String attendingHoursQuery =
           new QueryBuilder()
               .select("doctor_attending_hours.doctor_id")
               .from("doctor_attending_hours")
@@ -131,9 +222,11 @@ public class DoctorDaoJpa implements DoctorDao {
                       + fromTime.ordinal()
                       + " AND "
                       + toTime.ordinal())
-              .where("doctor_attending_hours.hour_block NOT IN (" + appointmentQuery.build() + ")");
+              .where("doctor_attending_hours.hour_block NOT IN (" + appointmentQuery + ")")
+              .build();
 
-      nativeQueryBuilder.where("doctor.doctor_id IN (" + attendingHoursQuery.build() + ")");
+      nativeQueryBuilder.where("doctor.doctor_id IN (" + attendingHoursQuery + ")");
+      nativeQueryBuilder.where("doctor.doctor_id NOT IN (" + vacationQuery + ")");
     }
 
     if (minRating != null && minRating >= 0 && minRating <= 5) {

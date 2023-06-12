@@ -2,6 +2,8 @@ package ar.edu.itba.paw.interfaces.services;
 
 import ar.edu.itba.paw.interfaces.services.exceptions.DoctorNotFoundException;
 import ar.edu.itba.paw.interfaces.services.exceptions.EmailInUseException;
+import ar.edu.itba.paw.interfaces.services.exceptions.VacationInvalidException;
+import ar.edu.itba.paw.interfaces.services.exceptions.VacationNotFoundException;
 import ar.edu.itba.paw.models.*;
 import java.time.LocalDate;
 import java.util.List;
@@ -42,6 +44,11 @@ public interface DoctorService {
       Image image,
       Locale locale)
       throws DoctorNotFoundException, EmailInUseException;
+
+  public Doctor addVacation(long doctorId, Vacation vacation) throws DoctorNotFoundException, VacationInvalidException;
+
+  public Doctor removeVacation(long doctorId, Vacation vacation)
+      throws DoctorNotFoundException, VacationNotFoundException;
 
   // =============== Queries ===============
 

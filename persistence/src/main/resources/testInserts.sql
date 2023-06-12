@@ -14,6 +14,10 @@ VALUES (7, 1, 1, 'doctor_address');
 INSERT INTO doctor_attending_hours (doctor_id, day, hour_block)
 VALUES (7,0,0), (7,1,0), (7,2,0), (7,3,0), (7,4,0);
 
+INSERT INTO doctor_vacation (doctor_id, from_date, from_time, to_date, to_time)
+VALUES (7, '2020-01-01', 0, '2020-01-10', 0),
+       (7, '2020-02-01', 0, '2020-02-10', 0);
+
 INSERT INTO health_insurance_accepted_by_doctor (doctor_id, health_insurance_code)
 VALUES (7, 1), (7, 2);
 

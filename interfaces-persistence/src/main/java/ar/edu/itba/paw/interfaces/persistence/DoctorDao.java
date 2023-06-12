@@ -2,6 +2,8 @@ package ar.edu.itba.paw.interfaces.persistence;
 
 import ar.edu.itba.paw.interfaces.persistence.exceptions.DoctorAlreadyExistsException;
 import ar.edu.itba.paw.interfaces.persistence.exceptions.DoctorNotFoundException;
+import ar.edu.itba.paw.interfaces.persistence.exceptions.VacationCollisionException;
+import ar.edu.itba.paw.interfaces.persistence.exceptions.VacationNotFoundException;
 import ar.edu.itba.paw.models.*;
 import java.time.LocalDate;
 import java.util.List;
@@ -25,6 +27,11 @@ public interface DoctorDao {
       Set<HealthInsurance> healthInsurances,
       Set<AttendingHours> attendingHours)
       throws DoctorNotFoundException;
+
+  public Doctor addVacation(long doctorId, Vacation vacation) throws DoctorNotFoundException, VacationCollisionException;
+
+  public Doctor removeVacation(long doctorId, Vacation vacation)
+      throws DoctorNotFoundException, VacationNotFoundException;
 
   // =============== Queries ===============
 

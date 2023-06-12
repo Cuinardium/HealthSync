@@ -18,6 +18,7 @@ import ar.edu.itba.paw.models.Doctor;
 import ar.edu.itba.paw.models.Page;
 import ar.edu.itba.paw.models.Patient;
 import ar.edu.itba.paw.models.ThirtyMinuteBlock;
+import ar.edu.itba.paw.models.Vacation;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.*;
@@ -63,21 +64,7 @@ public class AppointmentServiceImpl implements AppointmentService {
     Patient patient =
         patientService.getPatientById(patientId).orElseThrow(PatientNotFoundException::new);
 
-    // Check if doctor can attend in date and time block
-    boolean attendsInDateBlock = doctor.getAttendingBlocksForDate(date).contains(timeBlock);
-
-    if (!attendsInDateBlock) {
-      throw new DoctorNotAvailableException();
-    }
-
-    Optional<Appointment> possibleAppointment =
-        appointmentDao.getAppointment(doctorId, date, timeBlock);
-
-    boolean isBooked =
-        possibleAppointment.isPresent()
-            && possibleAppointment.get().getStatus() == AppointmentStatus.CONFIRMED;
-
-    if (isBooked) {
+    if (!getAvailableHoursForDoctorOnDate(doctorId, date).contains(timeBlock)) {
       throw new DoctorNotAvailableException();
     }
 
@@ -185,6 +172,7 @@ public class AppointmentServiceImpl implements AppointmentService {
       long doctorId, LocalDate from, LocalDate to) throws DoctorNotFoundException {
 
     Doctor doctor = doctorService.getDoctorById(doctorId).orElseThrow(DoctorNotFoundException::new);
+    Set<Vacation> vacations = doctor.getVacations();
 
     // Get doctor appointments for range
     List<Appointment> appointments =
@@ -208,18 +196,42 @@ public class AppointmentServiceImpl implements AppointmentService {
         List<ThirtyMinuteBlock> availableHoursOnAppointmentDate =
             availableHours.get(appointment.getDate());
 
-        // TODO: is this really necesary?
-        if (availableHoursOnAppointmentDate == null) {
-          throw new IllegalStateException("Available hours should be populated");
+        if (availableHoursOnAppointmentDate != null) {
+          availableHoursOnAppointmentDate.remove(appointment.getTimeBlock());
         }
-
-        availableHoursOnAppointmentDate.remove(appointment.getTimeBlock());
       }
     }
 
-    return availableHours
-        .entrySet()
-        .stream()
+    // Remove vacation days from available hours
+    for (Vacation vacation : vacations) {
+
+      LocalDate fromDate = vacation.getFromDate();
+      LocalDate toDate = vacation.getToDate();
+
+      for (LocalDate date = fromDate; date.isBefore(toDate.plusDays(1)); date = date.plusDays(1)) {
+
+        List<ThirtyMinuteBlock> availableHoursOnVacationDate = availableHours.get(date);
+        if (availableHoursOnVacationDate == null) {
+          continue;
+        }
+
+        if (date.equals(fromDate)) {
+          Collection<ThirtyMinuteBlock> unavailableHours =
+              ThirtyMinuteBlock.fromRange(vacation.getFromTime(), ThirtyMinuteBlock.BLOCK_23_30);
+          availableHoursOnVacationDate.removeAll(unavailableHours);
+
+        } else if (date.equals(toDate)) {
+          Collection<ThirtyMinuteBlock> unavailableHours =
+              ThirtyMinuteBlock.fromRange(ThirtyMinuteBlock.BLOCK_00_00, vacation.getToTime());
+          availableHoursOnVacationDate.removeAll(unavailableHours);
+
+        } else {
+          availableHoursOnVacationDate.clear();
+        }
+      }
+    }
+
+    return availableHours.entrySet().stream()
         .sorted(Map.Entry.comparingByKey())
         .map(Map.Entry::getValue)
         .collect(Collectors.toList());

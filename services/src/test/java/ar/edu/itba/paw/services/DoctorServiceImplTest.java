@@ -4,11 +4,16 @@ import ar.edu.itba.paw.interfaces.persistence.DoctorDao;
 import ar.edu.itba.paw.interfaces.persistence.exceptions.DoctorAlreadyExistsException;
 import ar.edu.itba.paw.interfaces.persistence.exceptions.DoctorNotFoundException;
 import ar.edu.itba.paw.interfaces.persistence.exceptions.EmailAlreadyExistsException;
+import ar.edu.itba.paw.interfaces.persistence.exceptions.VacationCollisionException;
+import ar.edu.itba.paw.interfaces.persistence.exceptions.VacationNotFoundException;
 import ar.edu.itba.paw.interfaces.services.UserService;
 import ar.edu.itba.paw.interfaces.services.exceptions.EmailInUseException;
 import ar.edu.itba.paw.interfaces.services.exceptions.UserNotFoundException;
+import ar.edu.itba.paw.interfaces.services.exceptions.VacationInvalidException;
 import ar.edu.itba.paw.models.*;
 import java.time.DayOfWeek;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.*;
 import org.junit.Assert;
 import org.junit.Test;
@@ -47,6 +52,15 @@ public class DoctorServiceImplTest {
               new AttendingHours(ID, DayOfWeek.FRIDAY, ThirtyMinuteBlock.BLOCK_00_30),
               new AttendingHours(ID, DayOfWeek.SATURDAY, ThirtyMinuteBlock.BLOCK_00_30),
               new AttendingHours(ID, DayOfWeek.SUNDAY, ThirtyMinuteBlock.BLOCK_00_30)));
+
+  private static final Vacation VACATION =
+      new Vacation(
+          ID,
+          LocalDate.of(2020, 1, 1),
+          ThirtyMinuteBlock.BLOCK_00_00,
+          LocalDate.of(2020, 1, 10),
+          ThirtyMinuteBlock.BLOCK_00_00);
+
   private static final Float RATING = 3F;
   private static final Integer RATING_COUNT = 1;
   private static final Doctor DOCTOR =
@@ -62,6 +76,25 @@ public class DoctorServiceImplTest {
           CITY,
           ADDRESS,
           ATTENDING_HOURS,
+          Collections.emptySet(),
+          RATING,
+          RATING_COUNT,
+          LOCALE);
+
+  private static final Doctor DOCTOR_WITH_VACATIONS =
+      new Doctor(
+          ID,
+          EMAIL,
+          PASSWORD_ENCODED,
+          FIRST_NAME,
+          LAST_NAME,
+          IMAGE,
+          HEALTH_INSURANCES,
+          SPECIALTY,
+          CITY,
+          ADDRESS,
+          ATTENDING_HOURS,
+          new HashSet<>(Arrays.asList(VACATION)),
           RATING,
           RATING_COUNT,
           LOCALE);
@@ -87,6 +120,14 @@ public class DoctorServiceImplTest {
 
   private static final Locale LOCALE_NEW = new Locale("es");
 
+  private static final Vacation VACATION_NEW =
+      new Vacation(
+          ID,
+          LocalDate.now().plusDays(1),
+          ThirtyMinuteBlock.BLOCK_00_00,
+          LocalDate.now().plusDays(10),
+          ThirtyMinuteBlock.BLOCK_00_00);
+
   private static final Doctor DOCTOR_UPDATED =
       new Doctor(
           ID,
@@ -100,6 +141,7 @@ public class DoctorServiceImplTest {
           CITY_NEW,
           ADDRESS_NEW,
           ATTENDING_HOURS_NEW,
+          Collections.emptySet(),
           RATING,
           RATING_COUNT,
           LOCALE);
@@ -131,8 +173,9 @@ public class DoctorServiceImplTest {
                     CITY,
                     ADDRESS,
                     ATTENDING_HOURS,
-                    0f,
-                    0,
+                    Collections.emptySet(),
+                    null,
+                    null,
                     LOCALE)))
         .thenReturn(DOCTOR);
 
@@ -173,8 +216,9 @@ public class DoctorServiceImplTest {
                     CITY,
                     ADDRESS,
                     ATTENDING_HOURS,
-                    0f,
-                    0,
+                    Collections.emptySet(),
+                    null,
+                    null,
                     LOCALE)))
         .thenThrow(DoctorAlreadyExistsException.class);
 
@@ -212,8 +256,9 @@ public class DoctorServiceImplTest {
                     CITY,
                     ADDRESS,
                     ATTENDING_HOURS,
-                    0f,
-                    0,
+                    Collections.emptySet(),
+                    null,
+                    null,
                     LOCALE)))
         .thenThrow(IllegalStateException.class);
 
@@ -369,6 +414,127 @@ public class DoctorServiceImplTest {
         ATTENDING_HOURS_NEW,
         IMAGE,
         LOCALE_NEW);
+  }
+
+  // ======================== Add Vacation ========================
+
+  @Test
+  public void testAddVacation()
+      throws DoctorNotFoundException,
+          ar.edu.itba.paw.interfaces.services.exceptions.DoctorNotFoundException,
+          VacationInvalidException, VacationCollisionException {
+    // 1. Precondiciones
+    Mockito.when(doctorDao.addVacation(ID, VACATION_NEW)).thenReturn(DOCTOR_WITH_VACATIONS);
+
+    // 2. Ejercitar la class under test
+    Doctor doctor = ds.addVacation(ID, VACATION_NEW);
+
+    // 3. Meaningful assertions
+    Assert.assertEquals(DOCTOR_WITH_VACATIONS, doctor);
+  }
+
+  @Test(expected = ar.edu.itba.paw.interfaces.services.exceptions.DoctorNotFoundException.class)
+  public void testAddVacationDoesNotExist()
+      throws DoctorNotFoundException,
+          ar.edu.itba.paw.interfaces.services.exceptions.DoctorNotFoundException,
+          VacationInvalidException, VacationCollisionException {
+    // 1. Precondiciones
+    Mockito.when(doctorDao.addVacation(ID, VACATION_NEW)).thenThrow(DoctorNotFoundException.class);
+
+    // 2. Ejercitar la class under test
+    ds.addVacation(ID, VACATION_NEW);
+  }
+
+  @Test(expected = VacationInvalidException.class)
+  public void testAddVacationFromAfterTo()
+      throws DoctorNotFoundException,
+          ar.edu.itba.paw.interfaces.services.exceptions.DoctorNotFoundException,
+          VacationInvalidException {
+    // 1. Precondiciones
+    Vacation invalidVacation =
+        new Vacation(
+            ID,
+            LocalDate.now(),
+            ThirtyMinuteBlock.BLOCK_00_00,
+            LocalDate.now().minusDays(1),
+            ThirtyMinuteBlock.BLOCK_00_00);
+
+    // 2. Ejercitar la class under test
+    ds.addVacation(ID, invalidVacation);
+  }
+
+  @Test(expected = VacationInvalidException.class)
+  public void testAddVacationBeforeNow()
+      throws ar.edu.itba.paw.interfaces.services.exceptions.DoctorNotFoundException,
+          VacationInvalidException {
+    // 1. Precondiciones
+    Vacation invalidVacation =
+        new Vacation(
+            ID,
+            LocalDate.now(),
+            ThirtyMinuteBlock.fromTime(LocalTime.now().minusHours(1)),
+            LocalDate.now().plusDays(1),
+            ThirtyMinuteBlock.BLOCK_00_00);
+
+    // 2. Ejercitar la class under test
+    ds.addVacation(ID, invalidVacation);
+  }
+
+  @Test(expected = VacationInvalidException.class)
+  public void testAddVacationCollsion()
+      throws ar.edu.itba.paw.interfaces.services.exceptions.DoctorNotFoundException,
+          VacationInvalidException, DoctorNotFoundException, VacationCollisionException {
+    // 1. Precondiciones
+    Mockito.when(doctorDao.addVacation(ID, VACATION_NEW)).thenThrow(VacationCollisionException.class);
+
+    // 2. Ejercitar la class under test
+    ds.addVacation(ID, VACATION_NEW);
+  }
+
+  // ======================== Remove Vacation ========================
+
+  @Test
+  public void testRemoveVacation()
+      throws DoctorNotFoundException,
+          ar.edu.itba.paw.interfaces.services.exceptions.DoctorNotFoundException,
+          VacationNotFoundException,
+          ar.edu.itba.paw.interfaces.services.exceptions.VacationNotFoundException {
+    // 1. Precondiciones
+    Mockito.when(doctorDao.removeVacation(ID, VACATION_NEW)).thenReturn(DOCTOR);
+
+    // 2. Ejercitar la class under test
+    Doctor doctor = ds.removeVacation(ID, VACATION_NEW);
+
+    // 3. Meaningful assertions
+    Assert.assertEquals(DOCTOR, doctor);
+  }
+
+  @Test(expected = ar.edu.itba.paw.interfaces.services.exceptions.DoctorNotFoundException.class)
+  public void testRemoveVacationDoctorDoesNotExist()
+      throws DoctorNotFoundException,
+          ar.edu.itba.paw.interfaces.services.exceptions.DoctorNotFoundException,
+          VacationNotFoundException,
+          ar.edu.itba.paw.interfaces.services.exceptions.VacationNotFoundException {
+    // 1. Precondiciones
+    Mockito.when(doctorDao.removeVacation(ID, VACATION_NEW))
+        .thenThrow(DoctorNotFoundException.class);
+
+    // 2. Ejercitar la class under test
+    ds.removeVacation(ID, VACATION_NEW);
+  }
+
+  @Test(expected = ar.edu.itba.paw.interfaces.services.exceptions.VacationNotFoundException.class)
+  public void testRemoveVacationVacationDoesNotExist()
+      throws DoctorNotFoundException,
+          ar.edu.itba.paw.interfaces.services.exceptions.DoctorNotFoundException,
+          VacationNotFoundException,
+          ar.edu.itba.paw.interfaces.services.exceptions.VacationNotFoundException {
+    // 1. Precondiciones
+    Mockito.when(doctorDao.removeVacation(ID, VACATION_NEW))
+        .thenThrow(VacationNotFoundException.class);
+
+    // 2. Ejercitar la class under test
+    ds.removeVacation(ID, VACATION_NEW);
   }
 
   // ======================== Get doctor by id ========================

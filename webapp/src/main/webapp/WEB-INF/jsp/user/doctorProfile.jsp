@@ -13,6 +13,7 @@
 
 <c:url value="/doctor-edit" var="doctorEditUrl"/>
 <c:url value="/change-password" var="changePasswordUrl"/>
+<c:url value="/add-vacation" var="addVacationUrl"/>
 
 <spring:message code="profile.profile" var="title"/>
 <spring:message code="profile.personalInfo" var="personalInfo"/>
@@ -34,6 +35,17 @@
 <spring:message code="profile.edit" var="editProfile"/>
 <spring:message code="profile.changePassword" var="changePassword"/>
 
+<spring:message code="profile.vacation.successTitle" var="vacationSuccessTitle"/>
+<spring:message code="profile.vacation.successDescription" var="vacationSuccessDescription"/>
+<spring:message code="profile.vacation.title" var="vacationTitle"/>
+<spring:message code="profile.vacation.date" var="vacationDate"/>
+<spring:message code="profile.vacation.time" var="vacationTime"/>
+<spring:message code="profile.vacation.from" var="vacationFrom"/>
+<spring:message code="profile.vacation.to" var="vacationTo"/>
+<spring:message code="profile.vacation.button" var="vacationButton"/>
+<spring:message code="profile.vacation.cancel" var="vacationCancel"/>
+<spring:message code="profile.vacation.invalidVacation" var="invalidVacationMessage"/>
+
 <!-- ALT img text -->
 <spring:message code="user.alt.loggedUserImg" var="altLoggedUserImg"/>
 
@@ -46,6 +58,29 @@
     <link href="${mainCss}" rel="stylesheet"/>
     <link href="${formsCss}" rel="stylesheet"/>
     <link href="${profileCss}" rel="stylesheet"/>
+
+    <script>
+        $(document).ready(function () {
+            if (${successModal}) {
+                $('#successModal').modal('show');
+            }
+            if(${showVacationModal}) {
+                $('#vacationModal').modal('show');
+            }
+        })
+
+        function closeSuccessModal() {
+            $('#successModal').modal('hide');
+        }
+
+        function openVacationModal() {
+            $('#vacationModal').modal('show');
+        }
+
+        function closeVacationModal() {
+            $('#vacationModal').modal('hide');
+        }
+    </script>
 
 </head>
 
@@ -155,6 +190,85 @@
         <div class="profileButtonContainer">
             <a type="button" href="${doctorEditUrl}" class="btn btn-primary">${editProfile}</a>
             <a type="button" href="${changePasswordUrl}" class="btn btn-primary">${changePassword}</a>
+            <button class="btn btn-primary" onclick="openVacationModal()">${vacationTitle}</button>
+        </div>
+    </div>
+    <div class="modal fade" id="vacationModal" role="dialog" aria-labelledby="modalLabel"
+         aria-hidden="true">
+        <form:form modelAttribute="doctorVacationForm" action="${addVacationUrl}" method="post">
+        <div class="modal-dialog" role="dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">${vacationTitle}</h5>
+                </div>
+                <div class="modal-body">
+                        <label>${vacationFrom}</label>
+                        <div class="profileRow">
+                            <div class="profileItem">
+                                <form:label path="fromDate">${vacationDate}</form:label>
+                                <form:input path="fromDate" type="date" placeholder="${vacationDate}"/>
+                                <form:errors path="fromDate"/>
+                            </div>
+                            <div class="profileItem">
+                                <form:label path="fromTime">${vacationTime}</form:label>
+                                <form:select path="fromTime" cssClass="form-select">
+                                    <c:forEach items="${timeEnumValues}" var="timeBlock">
+                                        <form:option value="${timeBlock.blockBeginning}">
+                                            ${timeBlock.blockBeginning}
+                                        </form:option>
+                                    </c:forEach>
+                                </form:select>
+                            </div>
+                        </div>
+                        <label>${vacationTo}</label>
+                        <div class="profileRow">
+                            <div class="profileItem">
+                                <form:label path="toDate">${vacationDate}</form:label>
+                                <form:input path="toDate" type="date"/>
+                                <form:errors path="toDate"/>
+                            </div>
+                            <div class="profileItem">
+                                <form:label path="toTime">${vacationTime}</form:label>
+                                <form:select path="toTime" cssClass="form-select">
+                                    <c:forEach items="${timeEnumValues}" var="timeBlock">
+                                        <form:option value="${timeBlock.blockBeginning}">
+                                            ${timeBlock.blockBeginning}
+                                        </form:option>
+                                    </c:forEach>
+                                </form:select>
+                            </div>
+                        </div>
+
+                    <c:if test="${invalidVacation}">
+                        <div class="profileItem">
+                            <label class="error">${invalidVacationMessage}</label>
+                        </div>
+                    </c:if>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" onclick="closeVacationModal()"
+                            class="btn btn-danger">${vacationCancel}</button>
+                    <button type="submit" class="btn btn-primary">${vacationButton}</button>
+                </div>
+                </form:form>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="successModal" role="dialog" aria-labelledby="modalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog" role="dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">${vacationSuccessTitle}</h5>
+                </div>
+                <div class="modal-body">
+                    ${vacationSuccessDescription}
+                </div>
+                <div class="modal-footer">
+                    <button type="button" onclick="closeSuccessModal()"
+                            class="btn btn-primary">${modalButton}</button>
+                </div>
+            </div>
         </div>
     </div>
 </div>

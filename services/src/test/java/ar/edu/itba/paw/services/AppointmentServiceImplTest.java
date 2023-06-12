@@ -22,6 +22,7 @@ import ar.edu.itba.paw.models.Page;
 import ar.edu.itba.paw.models.Patient;
 import ar.edu.itba.paw.models.Specialty;
 import ar.edu.itba.paw.models.ThirtyMinuteBlock;
+import ar.edu.itba.paw.models.Vacation;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.*;
@@ -75,9 +76,18 @@ public class AppointmentServiceImplTest {
                       DOCTOR_ID, DayOfWeek.SUNDAY, ATTENDING_HOURS_FOR_DAY))
               .flatMap(Collection::stream)
               .collect(Collectors.toList()));
+
   private static final Float RATING = 3F;
   private static final Integer RATING_COUNT = 1;
   private static final Locale DOCTOR_LOCALE = new Locale("en");
+
+  private static final Vacation DOCTOR_VACATION =
+      new Vacation(
+          DOCTOR_ID,
+          LocalDate.now().plusDays(1),
+          ThirtyMinuteBlock.BLOCK_10_00,
+          LocalDate.now().plusDays(3),
+          ThirtyMinuteBlock.BLOCK_10_00);
 
   private static final Doctor DOCTOR =
       new Doctor(
@@ -92,6 +102,7 @@ public class AppointmentServiceImplTest {
           CITY,
           ADDRESS,
           ATTENDING_HOURS,
+          new HashSet<>(Arrays.asList(DOCTOR_VACATION)),
           RATING,
           RATING_COUNT,
           DOCTOR_LOCALE);
@@ -171,7 +182,7 @@ public class AppointmentServiceImplTest {
   private static final long FORBIDDEN_USER_ID = 2;
 
   private static final LocalDate RANGE_FROM = APPOINTMENT_DATE.minusDays(1);
-  private static final LocalDate RANGE_TO = APPOINTMENT_DATE.plusDays(1);
+  private static final LocalDate RANGE_TO = APPOINTMENT_DATE.plusDays(3);
 
   // ================== Mocks ==================
 
@@ -204,8 +215,10 @@ public class AppointmentServiceImplTest {
                 PATIENT, DOCTOR, APPOINTMENT_DATE, APPOINTMENT_TIME, APPOINTMENT_DESCRIPTION))
         .thenReturn(CREATED_APPOINTMENT);
 
-    Mockito.when(appointmentDao.getAppointment(DOCTOR_ID, APPOINTMENT_DATE, APPOINTMENT_TIME))
-        .thenReturn(Optional.empty());
+    Mockito.when(
+            appointmentDao.getFilteredAppointments(
+                DOCTOR_ID, null, APPOINTMENT_DATE, APPOINTMENT_DATE, null, null, false))
+        .thenReturn(new Page<>(Collections.emptyList(), null, null, null));
 
     // Mock mailService
     Mockito.doNothing()
@@ -264,6 +277,11 @@ public class AppointmentServiceImplTest {
     // Mock patientService
     Mockito.when(patientService.getPatientById(PATIENT_ID)).thenReturn(Optional.of(PATIENT));
 
+    Mockito.when(
+            appointmentDao.getFilteredAppointments(
+                DOCTOR_ID, null, APPOINTMENT_DATE, APPOINTMENT_DATE, null, null, false))
+        .thenReturn(new Page<>(Collections.emptyList(), null, null, null));
+
     // 2. Ejercitar la class under test
     as.createAppointment(
         PATIENT_ID,
@@ -285,8 +303,12 @@ public class AppointmentServiceImplTest {
     Mockito.when(patientService.getPatientById(PATIENT_ID)).thenReturn(Optional.of(PATIENT));
 
     // Mock appointmentDao
-    Mockito.when(appointmentDao.getAppointment(DOCTOR_ID, APPOINTMENT_DATE, APPOINTMENT_TIME))
-        .thenReturn(Optional.of(CREATED_APPOINTMENT));
+    Mockito.when(
+            appointmentDao.getFilteredAppointments(
+                DOCTOR_ID, null, APPOINTMENT_DATE, APPOINTMENT_DATE, null, null, false))
+        .thenReturn(
+            new Page<>(
+                new ArrayList<>(Collections.singletonList(CREATED_APPOINTMENT)), null, null, null));
 
     // 2. Ejercitar la class under test
     as.createAppointment(
@@ -306,8 +328,15 @@ public class AppointmentServiceImplTest {
     Mockito.when(patientService.getPatientById(PATIENT_ID)).thenReturn(Optional.of(PATIENT));
 
     // Mock appointmentDao
-    Mockito.when(appointmentDao.getAppointment(DOCTOR_ID, APPOINTMENT_DATE, APPOINTMENT_TIME))
-        .thenReturn(Optional.of(CANCELLED_APPOINTMENT));
+    Mockito.when(
+            appointmentDao.getFilteredAppointments(
+                DOCTOR_ID, null, APPOINTMENT_DATE, APPOINTMENT_DATE, null, null, false))
+        .thenReturn(
+            new Page<>(
+                new ArrayList<>(Collections.singletonList(CANCELLED_APPOINTMENT)),
+                null,
+                null,
+                null));
 
     Mockito.when(
             appointmentDao.createAppointment(
@@ -474,6 +503,33 @@ public class AppointmentServiceImplTest {
   @Test
   public void testGetAvailableHoursOnRange() throws DoctorNotFoundException {
     // 1. Precondiciones
+    List<List<ThirtyMinuteBlock>> expectedAvailableHours = new ArrayList<>();
+
+    // No appointments nor vacations in first day
+    expectedAvailableHours.add(new ArrayList<>(ATTENDING_HOURS_FOR_DAY));
+
+    // Appointments in second day
+    List<ThirtyMinuteBlock> availableHoursForSecondDay = new ArrayList<>(ATTENDING_HOURS_FOR_DAY);
+    availableHoursForSecondDay.remove(APPOINTMENT_TIME);
+
+    expectedAvailableHours.add(availableHoursForSecondDay);
+
+    // Vacations in third day from 10:00 
+    List<ThirtyMinuteBlock> availableHoursForThirdDay = new ArrayList<>(ATTENDING_HOURS_FOR_DAY);
+    availableHoursForThirdDay.removeAll(
+        ThirtyMinuteBlock.fromRange(ThirtyMinuteBlock.BLOCK_10_00, ThirtyMinuteBlock.BLOCK_23_30));
+
+    expectedAvailableHours.add(availableHoursForThirdDay);
+
+    // Vacations all day in fourth day
+    expectedAvailableHours.add(Collections.emptyList());
+
+    // Vacations in fifth day until 10:00
+    List<ThirtyMinuteBlock> availableHoursForFifthDay = new ArrayList<>(ATTENDING_HOURS_FOR_DAY);
+    availableHoursForFifthDay.removeAll(
+        ThirtyMinuteBlock.fromRange(ThirtyMinuteBlock.BLOCK_00_00, ThirtyMinuteBlock.BLOCK_10_00));
+
+    expectedAvailableHours.add(availableHoursForFifthDay);
 
     // Mock doctorService
     Mockito.when(doctorService.getDoctorById(DOCTOR_ID)).thenReturn(Optional.of(DOCTOR));
@@ -490,15 +546,6 @@ public class AppointmentServiceImplTest {
 
     // 3. Meaningful assertions
 
-    List<List<ThirtyMinuteBlock>> expectedAvailableHours = new ArrayList<>();
-
-    expectedAvailableHours.add(new ArrayList<>(ATTENDING_HOURS_FOR_DAY));
-
-    List<ThirtyMinuteBlock> availableHoursForDay = new ArrayList<>(ATTENDING_HOURS_FOR_DAY);
-    availableHoursForDay.remove(APPOINTMENT_TIME);
-    expectedAvailableHours.add(availableHoursForDay);
-
-    expectedAvailableHours.add(new ArrayList<>(ATTENDING_HOURS_FOR_DAY));
     Assert.assertEquals(expectedAvailableHours, availableHours);
   }
 

@@ -38,6 +38,7 @@
 <spring:message code="edit.modal.title" var="modalTitle"/>
 <spring:message code="edit.modal.text" var="modalDesc"/>
 <spring:message code="profile.edit.modal.button" var="modalButton"/>
+<spring:message code="profile.edit.emailInUse.error" var="emailAlreadyInUseError"/>
 
 <!-- ALT img text -->
 <spring:message code="user.alt.loggedUserImg" var="altLoggedUserImg"/>
@@ -119,6 +120,13 @@
                         <form:label path="email">${email}</form:label>
                         <form:input class="form-control" path="email" type="text" placeholder="${email_hint}"/>
                         <form:errors path="email" cssClass="error" element="p"/>
+                        <c:if test="${emailAlreadyInUse}">
+                            <div class="formRow">
+                                <p class="error">
+                                        ${emailAlreadyInUseError}
+                                </p>
+                            </div>
+                        </c:if>
                     </div>
                     <div class="profileItem">
                         <form:label path="locale">${locale}</form:label>
