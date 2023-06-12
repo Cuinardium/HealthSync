@@ -359,6 +359,6 @@ public class DoctorDaoImplTest {
     List<Specialty> specialties = doctorDao.getPopularSpecialties();
     // 3. Meaningful assertions
     Assert.assertEquals(1, specialties.size());
-    assertEquals(Specialty.PEDIATRIC_ALLERGY_AND_IMMUNOLOGY, specialties.get(0));
+    Assert.assertEquals(Specialty.PEDIATRIC_ALLERGY_AND_IMMUNOLOGY, specialties.get(0));
   }
 }
