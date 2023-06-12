@@ -4,12 +4,10 @@ import ar.edu.itba.paw.interfaces.persistence.DoctorDao;
 import ar.edu.itba.paw.interfaces.persistence.exceptions.DoctorAlreadyExistsException;
 import ar.edu.itba.paw.interfaces.services.DoctorService;
 import ar.edu.itba.paw.interfaces.services.UserService;
-import ar.edu.itba.paw.interfaces.services.exceptions.DoctorNotFoundException;
-import ar.edu.itba.paw.interfaces.services.exceptions.EmailInUseException;
-import ar.edu.itba.paw.interfaces.services.exceptions.UserNotFoundException;
-import ar.edu.itba.paw.interfaces.services.exceptions.VacationNotFoundException;
+import ar.edu.itba.paw.interfaces.services.exceptions.*;
 import ar.edu.itba.paw.models.*;
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -103,10 +101,24 @@ public class DoctorServiceImpl implements DoctorService {
   }
 
   @Override
-  public Doctor addVacation(
-      long doctorId,
-      Vacation vacation)
-      throws DoctorNotFoundException {
+  public Doctor addVacation(long doctorId, Vacation vacation)
+      throws DoctorNotFoundException, VacationInvalidException {
+
+    boolean fromIsAfterTo =
+        vacation.getFromDate().isAfter(vacation.getToDate())
+            || (vacation.getFromDate().isEqual(vacation.getToDate())
+                && vacation.getFromTime().ordinal() > vacation.getToTime().ordinal());
+
+    boolean fromIsBeforeNow =
+        vacation.getFromDate().isBefore(LocalDate.now())
+            || (vacation.getFromDate().isEqual(LocalDate.now())
+                && vacation.getFromTime().ordinal()
+                    < ThirtyMinuteBlock.fromTime(LocalTime.now()).ordinal());
+
+    if (fromIsAfterTo || fromIsBeforeNow) {
+      throw new VacationInvalidException();
+    }
+
     try {
       return doctorDao.addVacation(doctorId, vacation);
     } catch (ar.edu.itba.paw.interfaces.persistence.exceptions.DoctorNotFoundException e) {
@@ -115,9 +127,7 @@ public class DoctorServiceImpl implements DoctorService {
   }
 
   @Override
-  public Doctor removeVacation(
-      long doctorId,
-      Vacation vacation)
+  public Doctor removeVacation(long doctorId, Vacation vacation)
       throws DoctorNotFoundException, VacationNotFoundException {
     try {
       return doctorDao.removeVacation(doctorId, vacation);
