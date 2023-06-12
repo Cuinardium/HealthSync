@@ -394,6 +394,31 @@ public class DoctorDaoImplTest {
     Assert.assertEquals(expectedDoctor, doctors.getContent().get(0));
   }
 
+  @Test 
+  public void testGetFilteredDoctorsOnVacation() {
+    // 1.Precondiciones
+    LocalDate mondayOnVacation = LocalDate.of(2020, 1, 11);
+
+    // 2. Ejercitar la class under test
+    Page<Doctor> doctors =
+        doctorDao.getFilteredDoctors(
+            null,
+            mondayOnVacation,
+            ThirtyMinuteBlock.BLOCK_00_00,
+            ThirtyMinuteBlock.BLOCK_00_00,
+            INSERTED_DOCTOR_SPECIALTY,
+            INSERTED_DOCTOR_CITY,
+            HealthInsurance.OSDE,
+            INSERTED_DOCTOR_RATING.intValue(),
+            null,
+            null);
+
+    // 3. Meaningful assertions
+    Assert.assertNull(doctors.getTotalPages());
+    Assert.assertNull(doctors.getCurrentPage());
+    Assert.assertEquals(0, doctors.getContent().size());
+  }
+
   // ============================== getDoctors ==============================
 
   @Test

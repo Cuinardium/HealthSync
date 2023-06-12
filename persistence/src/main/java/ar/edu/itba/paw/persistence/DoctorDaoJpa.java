@@ -69,7 +69,8 @@ public class DoctorDaoJpa implements DoctorDao {
   }
 
   @Override
-  public Doctor removeVacation(long doctorId, Vacation vacation) throws DoctorNotFoundException, VacationNotFoundException {
+  public Doctor removeVacation(long doctorId, Vacation vacation)
+      throws DoctorNotFoundException, VacationNotFoundException {
     Doctor doctor = getDoctorById(doctorId).orElseThrow(DoctorNotFoundException::new);
 
     if (!doctor.getVacations().contains(vacation)) {
@@ -140,18 +141,44 @@ public class DoctorDaoJpa implements DoctorDao {
       nativeQueryBuilder.where("doctor.doctor_id IN (" + healthInsuranceQuery + ")");
     }
 
-    if (date != null) {
+    if (date != null && fromTime != null && toTime != null) {
       // Query de horarios disponibles (attending hours) y luego hago el horario que me pide NOT IN
       // appintments en el rang y fecha
 
-      QueryBuilder appointmentQuery =
+      String dateSQLString = "'" + Date.valueOf(date).toString() + "'";
+
+      String appointmentQuery =
           new QueryBuilder()
               .select("appointment.appointment_time")
               .from("appointment")
               .where("appointment.doctor_id = doctor.doctor_id")
-              .where("appointment.appointment_date = '" + Date.valueOf(date) + "'");
+              .where("appointment.appointment_date = " + dateSQLString)
+              .build();
 
-      QueryBuilder attendingHoursQuery =
+      String vacationQuery =
+          new QueryBuilder()
+              .select("doctor_id")
+              .from("doctor_vacation")
+              .where(
+                  "(("
+                      + dateSQLString
+                      + " > doctor_vacation.from_date"
+                      + " AND "
+                      + dateSQLString
+                      + " < doctor_vacation.to_date)"
+                      + " OR ("
+                      + dateSQLString
+                      + " = doctor_vacation.from_date AND "
+                      + fromTime.ordinal()
+                      + " >= doctor_vacation.from_time)"
+                      + " OR ("
+                      + dateSQLString
+                      + " = doctor_vacation.to_date AND "
+                      + toTime.ordinal()
+                      + " <= doctor_vacation.to_time))")
+              .build();
+
+      String attendingHoursQuery =
           new QueryBuilder()
               .select("doctor_attending_hours.doctor_id")
               .from("doctor_attending_hours")
@@ -162,9 +189,11 @@ public class DoctorDaoJpa implements DoctorDao {
                       + fromTime.ordinal()
                       + " AND "
                       + toTime.ordinal())
-              .where("doctor_attending_hours.hour_block NOT IN (" + appointmentQuery.build() + ")");
+              .where("doctor_attending_hours.hour_block NOT IN (" + appointmentQuery + ")")
+              .build();
 
-      nativeQueryBuilder.where("doctor.doctor_id IN (" + attendingHoursQuery.build() + ")");
+      nativeQueryBuilder.where("doctor.doctor_id IN (" + attendingHoursQuery + ")");
+      nativeQueryBuilder.where("doctor.doctor_id NOT IN (" + vacationQuery + ")");
     }
 
     if (minRating != null && minRating >= 0 && minRating <= 5) {
