@@ -200,8 +200,7 @@ public class DoctorDaoJpa implements DoctorDao {
 
     for (Set<HealthInsurance> set : hList) {
       for (HealthInsurance h : set) {
-        map.putIfAbsent(h, 0);
-        map.put(h, map.get(h) + 1);
+        map.put(h, map.getOrDefault(h, 0) + 1);
       }
     }
     return map;
@@ -210,17 +209,12 @@ public class DoctorDaoJpa implements DoctorDao {
   @Override
   public Map<Specialty, Integer> getUsedSpecialties() {
     List<Specialty> sList =
-        em.createQuery("from Doctor", Doctor.class)
-            .getResultList()
-            .stream()
-            .map(Doctor::getSpecialty)
-            .collect(Collectors.toCollection(ArrayList::new));
+        em.createQuery("select specialty from Doctor", Specialty.class).getResultList();
 
     Map<Specialty, Integer> map = new HashMap<>();
 
     for (Specialty s : sList) {
-      map.putIfAbsent(s, 0);
-      map.put(s, map.get(s) + 1);
+      map.put(s, map.getOrDefault(s, 0) + 1);
     }
 
     return map;
@@ -228,18 +222,12 @@ public class DoctorDaoJpa implements DoctorDao {
 
   @Override
   public Map<City, Integer> getUsedCities() {
-    List<City> lList =
-        em.createQuery("from Doctor", Doctor.class)
-            .getResultList()
-            .stream()
-            .map(Doctor::getCity)
-            .collect(Collectors.toCollection(ArrayList::new));
+    List<City> lList = em.createQuery("select city from Doctor", City.class).getResultList();
 
     Map<City, Integer> map = new HashMap<>();
 
     for (City c : lList) {
-      map.putIfAbsent(c, 0);
-      map.put(c, map.get(c) + 1);
+      map.put(c, map.getOrDefault(c, 0) + 1);
     }
 
     return map;
