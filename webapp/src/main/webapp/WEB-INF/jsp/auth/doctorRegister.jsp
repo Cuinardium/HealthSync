@@ -9,6 +9,7 @@
 <!--Variables -->
 <c:url value="/css/main.css" var="mainCss"/>
 <c:url value="/css/forms.css" var="formsCss"/>
+<c:url value="/css/profile.css" var="profileCss"/>
 
 <c:url value="/doctor-register" var="doctorRegisterUrl"/>
 <c:url value="/" var="successfulUrl"/>
@@ -35,6 +36,10 @@
 <spring:message code="register.modal.text" var="modalDesc"/>
 <spring:message code="register.modal.button" var="modalButton"/>
 <spring:message code="register.emailInUse.error" var="emailAlreadyInUseError"/>
+<spring:message code="profile.personalInfo" var="personalInfo"/>
+<spring:message code="profile.location" var="location"/>
+<spring:message code="profile.workInfo" var="workInfo"/>
+<spring:message code="profile.schedule" var="schedule"/>
 
 <html>
 <head>
@@ -44,10 +49,11 @@
     <jsp:include page="../components/favicon.jsp"/>
     <link href="${mainCss}" rel="stylesheet"/>
     <link href="${formsCss}" rel="stylesheet"/>
+    <link href="${profileCss}" rel="stylesheet"/>
 
     <script>
-        $(document).ready(function(){
-            if(${showModal}){
+        $(document).ready(function () {
+            if (${showModal}) {
                 $('#modal').modal('show');
             }
         })
@@ -63,12 +69,16 @@
     <form:form modelAttribute="doctorRegisterForm" id="regForm" class="card" action="${doctorRegisterUrl}"
                method="POST">
         <c:if test="${emailAlreadyInUse}">
-          <div class="formRow">
-            <p class="error">
-              ${emailAlreadyInUseError}
-            </p>
-          </div>
+            <div class="formRow">
+                <p class="error">
+                        ${emailAlreadyInUseError}
+                </p>
+            </div>
         </c:if>
+        <div class="profileTitle titleMarginTop">
+            <strong>${personalInfo}</strong>
+            <i class="fa-solid fa-user"></i>
+        </div>
         <div class="formRow">
             <div class="formItem">
                 <form:label path="name">${name}</form:label>
@@ -80,6 +90,29 @@
                 <form:input class="form-control" path="lastname" type="text" placeholder="${lastname_hint}"/>
                 <form:errors path="lastname" cssClass="error" element="p"/>
             </div>
+            <div class="formItem">
+                <form:label path="email">${email}</form:label>
+                <form:input class="form-control" path="email" type="text" placeholder="${email_hint}"/>
+                <form:errors path="email" cssClass="error" element="p"/>
+            </div>
+        </div>
+        <div class="formRow">
+            <div class="formItem">
+                <form:label path="password">${password}</form:label>
+                <form:input class="form-control" path="password" type="password" placeholder="${password_hint}"/>
+                <form:errors path="password" cssClass="error" element="p"/>
+            </div>
+            <div class="formItem">
+                <form:label path="confirmPassword">${cpassword}</form:label>
+                <form:input class="form-control" path="confirmPassword" type="password"
+                            placeholder="${cpassword_hint}"/>
+                <form:errors path="confirmPassword" cssClass="error" element="p"/>
+                <form:errors/>
+            </div>
+        </div>
+        <div class="profileTitle titleMarginTop">
+            <strong>${location}</strong>
+            <i class="fa-solid fa-location-dot"></i>
         </div>
         <div class="formRow">
             <div class="formItem">
@@ -99,6 +132,12 @@
                 <form:input class="form-control" path="address" type="text" placeholder="${address_hint}"/>
                 <form:errors path="address" cssClass="error" element="p"/>
             </div>
+        </div>
+        <div class="profileTitle titleMarginTop">
+            <strong>${workInfo}</strong>
+            <i class="fa-solid fa-user-doctor"></i>
+        </div>
+        <div class="formRow">
             <!-- dropdown menu -->
             <div class="formItem">
                 <form:label path="specialtyCode">${specialization}</form:label>
@@ -112,27 +151,6 @@
                 </form:select>
                 <form:errors path="specialtyCode" cssClass="error" element="p"/>
             </div>
-        </div>
-        <div class="formRow">
-            <div class="formItem">
-                <form:label path="email">${email}</form:label>
-                <form:input class="form-control" path="email" type="text" placeholder="${email_hint}"/>
-                <form:errors path="email" cssClass="error" element="p"/>
-            </div>
-            <div class="formItem">
-                <form:label path="password">${password}</form:label>
-                <form:input class="form-control" path="password" type="password" placeholder="${password_hint}"/>
-                <form:errors path="password" cssClass="error" element="p"/>
-            </div>
-            <div class="formItem">
-                <form:label path="confirmPassword">${cpassword}</form:label>
-                <form:input class="form-control" path="confirmPassword" type="password"
-                            placeholder="${cpassword_hint}"/>
-                <form:errors path="confirmPassword" cssClass="error" element="p"/>
-                <form:errors/>
-            </div>
-        </div>
-        <div class="formRow">
             <!-- Health Insurance Picker -->
             <c:set var="healthInsurances" value="${healthInsurances}" scope="request"/>
             <c:set var="currentHealthInsuranceCodes" value="${currentHealthInsurances}" scope="request"/>
@@ -140,9 +158,14 @@
                 <jsp:include page="../components/healthInsurancePicker.jsp"/>
             </div>
         </div>
-            <!-- Doctor schedule selector -->
-            <c:set var="timeEnumValues" value="${timeEnumValues}" scope="request"/>
-            <jsp:include page="../components/scheduleSelector.jsp"/>
+
+        <div class="profileTitle titleMarginTop">
+            <strong>${schedule}</strong>
+            <i class="fa-solid fa-calendar"></i>
+        </div>
+        <!-- Doctor schedule selector -->
+        <c:set var="timeEnumValues" value="${timeEnumValues}" scope="request"/>
+        <jsp:include page="../components/scheduleSelector.jsp"/>
 
         <button type="submit" class="btn btn-primary submitButton">${submit}</button>
 
