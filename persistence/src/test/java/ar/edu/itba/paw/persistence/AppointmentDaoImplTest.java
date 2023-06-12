@@ -122,6 +122,7 @@ public class AppointmentDaoImplTest {
           INSERTED_DESC,
           INSERTED_CANCEL_DESC,
           INSERTED_INDICATIONS);
+  private static final String AUX_INDICATIONS = "Toma ibuprofeno cada 6 horas";
 
   @Autowired private DataSource ds;
 
@@ -188,6 +189,7 @@ public class AppointmentDaoImplTest {
     assertEquals(INSERTED_DESC, appointment.getDescription());
     assertEquals(AUX_STATUS, appointment.getStatus());
     assertEquals(AUX_CANCEL_DESC, appointment.getCancelDesc());
+    assertEquals(INSERTED_INDICATIONS, appointment.getIndications());
   }
 
   @Test
@@ -197,6 +199,34 @@ public class AppointmentDaoImplTest {
     assertThrows(
         AppointmentNotFoundException.class,
         () -> appointmentDao.updateAppointment(AUX_APP_ID, AUX_STATUS, AUX_CANCEL_DESC));
+    // 3. Meaninful assertions
+  }
+
+  @Test
+  public void testUpdateAppointmentIndications() throws AppointmentNotFoundException {
+    // 1. Precondiciones
+    // 2. Ejercitar la class under test
+    Appointment appointment =
+        appointmentDao.setAppointmentIndications(INSERTED_APP_ID, AUX_INDICATIONS);
+    // 3. Meaninful assertions
+    assertEquals(INSERTED_APP_ID, appointment.getId());
+    assertEquals(PATIENT_5, appointment.getPatient());
+    assertEquals(DOCTOR_7, appointment.getDoctor());
+    assertEquals(INSERTED_LOCAL_DATE, appointment.getDate());
+    assertEquals(INSERTED_TIME, appointment.getTimeBlock());
+    assertEquals(INSERTED_DESC, appointment.getDescription());
+    assertEquals(INSERTED_STATUS, appointment.getStatus());
+    assertEquals(INSERTED_CANCEL_DESC, appointment.getCancelDesc());
+    assertEquals(AUX_INDICATIONS, appointment.getIndications());
+  }
+
+  @Test
+  public void testUpdateAppointmentIndicationsAppointmnentNotFound() {
+    // 1. Precondiciones
+    // 2. Ejercitar la class under test
+    assertThrows(
+        AppointmentNotFoundException.class,
+        () -> appointmentDao.setAppointmentIndications(AUX_APP_ID, AUX_INDICATIONS));
     // 3. Meaninful assertions
   }
 
