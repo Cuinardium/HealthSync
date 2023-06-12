@@ -150,4 +150,9 @@ public class DoctorServiceImpl implements DoctorService {
   public Map<City, Integer> getUsedCities() {
     return doctorDao.getUsedCities();
   }
+
+  @Override
+  public List<Specialty> getPopularSpecialties() {
+    return doctorDao.getPopularSpecialties();
+  }
 }

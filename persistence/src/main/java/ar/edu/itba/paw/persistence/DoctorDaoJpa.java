@@ -162,7 +162,9 @@ public class DoctorDaoJpa implements DoctorDao {
     @SuppressWarnings("unchecked")
     final List<Long> idList =
         (List<Long>)
-            nativeQuery.getResultList().stream()
+            nativeQuery
+                .getResultList()
+                .stream()
                 .map(o -> ((Number) o).longValue())
                 .collect(Collectors.toList());
 
@@ -188,7 +190,9 @@ public class DoctorDaoJpa implements DoctorDao {
   @Override
   public Map<HealthInsurance, Integer> getUsedHealthInsurances() {
     List<Set<HealthInsurance>> hList =
-        em.createQuery("from Doctor", Doctor.class).getResultList().stream()
+        em.createQuery("from Doctor", Doctor.class)
+            .getResultList()
+            .stream()
             .map(Doctor::getHealthInsurances)
             .collect(Collectors.toCollection(ArrayList::new));
 
@@ -206,7 +210,9 @@ public class DoctorDaoJpa implements DoctorDao {
   @Override
   public Map<Specialty, Integer> getUsedSpecialties() {
     List<Specialty> sList =
-        em.createQuery("from Doctor", Doctor.class).getResultList().stream()
+        em.createQuery("from Doctor", Doctor.class)
+            .getResultList()
+            .stream()
             .map(Doctor::getSpecialty)
             .collect(Collectors.toCollection(ArrayList::new));
 
@@ -223,7 +229,9 @@ public class DoctorDaoJpa implements DoctorDao {
   @Override
   public Map<City, Integer> getUsedCities() {
     List<City> lList =
-        em.createQuery("from Doctor", Doctor.class).getResultList().stream()
+        em.createQuery("from Doctor", Doctor.class)
+            .getResultList()
+            .stream()
             .map(Doctor::getCity)
             .collect(Collectors.toCollection(ArrayList::new));
 
@@ -241,5 +249,17 @@ public class DoctorDaoJpa implements DoctorDao {
     for (AttendingHours att : doctor.getAttendingHours()) {
       att.setDoctor(doctor);
     }
+  }
+
+  @Override
+  public List<Specialty> getPopularSpecialties() {
+    final TypedQuery<Specialty> query =
+        em.createQuery(
+            "select doc.specialty from Doctor as doc group by doc.specialty order by count(*) desc",
+            Specialty.class);
+    query.setMaxResults(7);
+    List<Specialty> sList = query.getResultList();
+
+    return sList;
   }
 }

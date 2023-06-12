@@ -8,7 +8,6 @@ import ar.edu.itba.paw.webapp.auth.UserRoles;
 import ar.edu.itba.paw.webapp.exceptions.UserNotFoundException;
 import ar.edu.itba.paw.webapp.form.DoctorFilterForm;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import org.slf4j.Logger;
@@ -40,14 +39,7 @@ public class HomeController {
   public ModelAndView landingPage() {
     ModelAndView mav = new ModelAndView("/home/home");
 
-    List<Specialty> featuredSpecialties = new ArrayList<>();
-    featuredSpecialties.add(Specialty.CARDIOLOGY);
-    featuredSpecialties.add(Specialty.DERMATOLOGY);
-    featuredSpecialties.add(Specialty.NEUROLOGY);
-    featuredSpecialties.add(Specialty.NUTRITION);
-    featuredSpecialties.add(Specialty.OPHTHALMOLOGY);
-    featuredSpecialties.add(Specialty.PEDIATRICS);
-    featuredSpecialties.add(Specialty.UROLOGY);
+    List<Specialty> featuredSpecialties = doctorService.getPopularSpecialties();
 
     mav.addObject("featuredSpecialties", featuredSpecialties);
     LOGGER.debug("Landing page requested");

@@ -351,4 +351,14 @@ public class DoctorDaoImplTest {
     Assert.assertEquals(1, cities.size());
     Assert.assertEquals((Integer) 1, cities.get(City.ADOLFO_GONZALES_CHAVES));
   }
+
+  @Test
+  public void testGetPopularSpecialties() {
+    // 1.Precondiciones
+    // 2. Ejercitar la class under test
+    List<Specialty> specialties = doctorDao.getPopularSpecialties();
+    // 3. Meaningful assertions
+    Assert.assertEquals(1, specialties.size());
+    assertEquals(Specialty.PEDIATRIC_ALLERGY_AND_IMMUNOLOGY, specialties.get(0));
+  }
 }

@@ -64,6 +64,8 @@ public interface DoctorService {
   // Get all Specialties and health insurances that are used by doctors
   public Map<Specialty, Integer> getUsedSpecialties();
 
+  public List<Specialty> getPopularSpecialties();
+
   public Map<HealthInsurance, Integer> getUsedHealthInsurances();
 
   // Gets all cities used by doctors & qty of appearences

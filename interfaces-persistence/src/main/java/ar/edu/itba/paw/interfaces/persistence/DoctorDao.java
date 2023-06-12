@@ -13,8 +13,7 @@ public interface DoctorDao {
 
   // =============== Inserts ===============
 
-  public Doctor createDoctor(Doctor doctor)
-      throws DoctorAlreadyExistsException;
+  public Doctor createDoctor(Doctor doctor) throws DoctorAlreadyExistsException;
 
   // =============== Updates ===============
 
@@ -52,4 +51,6 @@ public interface DoctorDao {
 
   // Get all city present in the database & qty of appearences
   public Map<City, Integer> getUsedCities();
+
+  public List<Specialty> getPopularSpecialties();
 }
