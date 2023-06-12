@@ -66,13 +66,6 @@
     <h1>${title}</h1>
     <form:form modelAttribute="patientEditForm" class="card" action="${patientEditUrl}" method="POST"
                enctype="multipart/form-data">
-        <c:if test="${emailAlreadyInUse}">
-            <div class="formRow">
-                <p class="error">
-                        ${emailAlreadyInUseError}
-                </p>
-            </div>
-        </c:if>
         <div class="profileContainer">
             <div class="profileImageContainer">
                 <c:url value="/img/${user.image == null ? \"patientDefault.png\" : user.image.imageId}"
@@ -121,6 +114,13 @@
                         <form:label path="email">${email}</form:label>
                         <form:input class="form-control" path="email" type="text" placeholder='${email_hint}'/>
                         <form:errors path="email" cssClass="error" element="p"/>
+                        <c:if test="${emailAlreadyInUse}">
+                            <div class="formRow">
+                                <p class="error">
+                                        ${emailAlreadyInUseError}
+                                </p>
+                            </div>
+                        </c:if>
                     </div>
                 </div>
                 <div class="profileRow">
