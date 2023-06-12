@@ -3,8 +3,10 @@ package ar.edu.itba.paw.models;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 import javax.persistence.*;
@@ -17,9 +19,8 @@ public class Doctor extends User {
   @Enumerated(EnumType.ORDINAL)
   @ElementCollection(fetch = FetchType.LAZY, targetClass = HealthInsurance.class)
   @JoinTable(
-    name = "health_insurance_accepted_by_doctor",
-    joinColumns = @JoinColumn(name = "doctor_id")
-  )
+      name = "health_insurance_accepted_by_doctor",
+      joinColumns = @JoinColumn(name = "doctor_id"))
   @Column(name = "health_insurance_code", nullable = false)
   private Set<HealthInsurance> healthInsurances;
 
@@ -35,12 +36,18 @@ public class Doctor extends User {
   private String address;
 
   @OneToMany(
-    mappedBy = "doctor",
-    fetch = FetchType.LAZY,
-    cascade = CascadeType.ALL,
-    orphanRemoval = true
-  )
+      mappedBy = "doctor",
+      fetch = FetchType.LAZY,
+      cascade = CascadeType.ALL,
+      orphanRemoval = true)
   private Set<AttendingHours> attendingHours;
+
+  @OneToMany(
+      mappedBy = "doctor",
+      fetch = FetchType.LAZY,
+      cascade = CascadeType.ALL,
+      orphanRemoval = true)
+  private Set<Vacation> vacations;
 
   @Formula("(SELECT AVG(r.rating) FROM Review r WHERE r.doctor_id = doctor_id)")
   private Float rating;
@@ -64,6 +71,7 @@ public class Doctor extends User {
       City city,
       String address,
       Set<AttendingHours> attendingHours,
+      Set<Vacation> vacations,
       Float rating,
       Integer ratingCount,
       Locale locale) {
@@ -73,6 +81,7 @@ public class Doctor extends User {
     this.city = city;
     this.address = address;
     this.attendingHours = attendingHours;
+    this.vacations = vacations;
     this.rating = rating;
     this.ratingCount = ratingCount;
   }
@@ -91,13 +100,13 @@ public class Doctor extends User {
     this.city = builder.city;
     this.address = builder.address;
     this.attendingHours = builder.attendingHours;
+    this.vacations = builder.vacations;
     this.rating = builder.rating;
     this.ratingCount = builder.ratingCount;
   }
 
   public List<ThirtyMinuteBlock> getAttendingBlocksForDay(DayOfWeek day) {
-    return attendingHours
-        .stream()
+    return attendingHours.stream()
         .filter(attendingDays -> attendingDays.getId().getDay().equals(day))
         .map(AttendingHours::getHourBlock)
         .collect(Collectors.toCollection(ArrayList::new));
@@ -120,6 +129,10 @@ public class Doctor extends User {
     return attendingHours;
   }
 
+  public Set<Vacation> getVacations() {
+    return vacations;
+  }
+
   public Float getRating() {
     return rating;
   }
@@ -139,6 +152,19 @@ public class Doctor extends User {
   public void setAttendingHours(Set<AttendingHours> attendingHours) {
     this.attendingHours.retainAll(attendingHours);
     this.attendingHours.addAll(attendingHours);
+  }
+
+  public void setVacations(Set<Vacation> vacations) {
+    this.vacations.retainAll(vacations);
+    this.vacations.addAll(vacations);
+  }
+
+  public void addVacation(Vacation vacation) {
+    vacations.add(vacation);
+  }
+
+  public void removeVacation(Vacation vacation) {
+    vacations.remove(vacation);
   }
 
   public void setRating(Float rating) {
@@ -184,6 +210,43 @@ public class Doctor extends User {
         + ']';
   }
 
+  @Override
+  public int hashCode() {
+    final int prime = 31;
+    int result = super.hashCode();
+
+    result = prime * result + ((address == null) ? 0 : address.hashCode());
+    result = prime * result + ((city == null) ? 0 : city.hashCode());
+    result = prime * result + ((healthInsurances == null) ? 0 : healthInsurances.hashCode());
+    result = prime * result + ((rating == null) ? 0 : rating.hashCode());
+    result = prime * result + ((ratingCount == null) ? 0 : ratingCount.hashCode());
+    result = prime * result + ((specialty == null) ? 0 : specialty.hashCode());
+    result = prime * result + ((attendingHours == null) ? 0 : attendingHours.hashCode());
+    result = prime * result + ((vacations == null) ? 0 : vacations.hashCode());
+
+    return result;
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj) return true;
+
+    if (!super.equals(obj)) return false;
+
+    if (!(obj instanceof Doctor)) return false;
+
+    Doctor other = (Doctor) obj;
+
+    return Objects.equals(address, other.address)
+        && Objects.equals(city, other.city)
+        && Objects.equals(healthInsurances, other.healthInsurances)
+        && Objects.equals(rating, other.rating)
+        && Objects.equals(ratingCount, other.ratingCount)
+        && Objects.equals(specialty, other.specialty)
+        && Objects.equals(attendingHours, other.attendingHours)
+        && Objects.equals(vacations, other.vacations);
+  }
+
   public static class Builder {
     // required
     private String email, password, firstName, lastName;
@@ -197,6 +260,7 @@ public class Doctor extends User {
     // default
     private Long id = null;
     private Image image = null;
+    private Set<Vacation> vacations = Collections.emptySet();
 
     // TODO: set defaults
     private Float rating;
@@ -227,6 +291,11 @@ public class Doctor extends User {
 
     public Builder id(long id) {
       this.id = id;
+      return this;
+    }
+
+    public Builder vacations(Set<Vacation> vacations) {
+      this.vacations = vacations;
       return this;
     }
 
