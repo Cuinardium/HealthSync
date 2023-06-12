@@ -91,6 +91,7 @@ public class AppointmentServiceImplTest {
           CITY,
           ADDRESS,
           ATTENDING_HOURS,
+          Collections.emptySet(),
           RATING,
           RATING_COUNT,
           DOCTOR_LOCALE);
