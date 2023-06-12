@@ -75,7 +75,7 @@
                 </p>
             </div>
         </c:if>
-        <div class="profileTitle titleMarginTop">
+        <div class="profileTitle firstTitleMargin">
             <strong>${personalInfo}</strong>
             <i class="fa-solid fa-user"></i>
         </div>
@@ -110,7 +110,10 @@
                 <form:errors/>
             </div>
         </div>
-        <div class="profileTitle titleMarginTop">
+
+        <hr>
+
+        <div class="profileTitle">
             <strong>${location}</strong>
             <i class="fa-solid fa-location-dot"></i>
         </div>
@@ -133,7 +136,10 @@
                 <form:errors path="address" cssClass="error" element="p"/>
             </div>
         </div>
-        <div class="profileTitle titleMarginTop">
+
+        <hr>
+
+        <div class="profileTitle">
             <strong>${workInfo}</strong>
             <i class="fa-solid fa-user-doctor"></i>
         </div>
@@ -159,7 +165,9 @@
             </div>
         </div>
 
-        <div class="profileTitle titleMarginTop">
+        <hr>
+
+        <div class="profileTitle">
             <strong>${schedule}</strong>
             <i class="fa-solid fa-calendar"></i>
         </div>

@@ -2,14 +2,14 @@
     position: relative;
     left: 100px;
     z-index: 1;
-    bottom: 320px;
+    bottom: 345px;
     margin-bottom: -170px;
 }
 .pfpEdit input {
     display: none;
 }
 .doctorPfpEdit{
-    bottom: 280px;
+    bottom: 300px;
 }
 
 .pfpEdit label i {

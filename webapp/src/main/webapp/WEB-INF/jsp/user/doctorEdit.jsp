@@ -140,8 +140,10 @@
             </div>
         </div>
 
+        <hr>
+
         <div class="doctorData">
-            <div class="profileTitle titleMarginTop">
+            <div class="profileTitle">
                 <strong>${location}</strong>
                 <i class="fa-solid fa-location-dot"></i>
             </div>
@@ -166,7 +168,9 @@
                 </div>
             </div>
 
-            <div class="profileTitle titleMarginTop">
+            <hr>
+
+            <div class="profileTitle">
                 <strong>${workInfo}</strong>
                 <i class="fa-solid fa-user-doctor"></i>
             </div>
@@ -194,7 +198,9 @@
                 </div>
             </div>
 
-            <div class="profileTitle titleMarginTop">
+            <hr>
+
+            <div class="profileTitle">
                 <strong>${schedule}</strong>
                 <i class="fa-solid fa-calendar"></i>
             </div>

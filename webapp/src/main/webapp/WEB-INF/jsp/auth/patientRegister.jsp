@@ -66,7 +66,7 @@
             </p>
           </div>
         </c:if>
-        <div class="profileTitle titleMarginTop">
+        <div class="profileTitle firstTitleMargin">
             <strong>${personalInfo}</strong>
             <i class="fa-solid fa-user"></i>
         </div>
