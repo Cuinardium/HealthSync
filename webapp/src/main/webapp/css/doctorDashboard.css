@@ -125,6 +125,7 @@ a.stretched-link:hover {
     flex-direction: row;
     justify-content: start;
     align-items: center;
+    margin: 1rem 0;
 }
 
 .ratingCount {
@@ -154,8 +155,4 @@ a.stretched-link:hover {
     display: flex;
     flex-direction: column;
     width: 45%;
-}
-
-#rating-selector {
-    margin-top: 10px;
 }

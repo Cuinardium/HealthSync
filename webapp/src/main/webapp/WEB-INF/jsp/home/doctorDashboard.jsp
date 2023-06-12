@@ -38,8 +38,7 @@
 <spring:message code="form.date" var="date"/>
 <spring:message code="doctor.noReviews" var="noReviews"/>
 <spring:message code="filters.byAvailability" var="byAvailability"/>
-<spring:message code="review.rating" var="ratingTitle"/>
-
+<spring:message code="filters.byRating" var="byRating"/>
 <html>
 <head>
     <title>${title}</title>
@@ -96,7 +95,8 @@
                     </c:forEach>
                 </form:select>
 
-                <h5>${ratingTitle}</h5>
+                <hr>
+                <h4>${byRating}</h4>
 
                 <form:input id="min-rating" type="text" path="minRating" onchange="this.form.submit()" hidden="true"/>
                 <div id="rating-selector" class="starContainer">
