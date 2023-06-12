@@ -41,7 +41,7 @@ public class ImageServiceImpl implements ImageService {
 
   // =============== Queries ===============
 
-  @Transactional
+  @Transactional(readOnly = true)
   @Override
   public Optional<Image> getImage(long id) {
     return imageDao.getImage(id);

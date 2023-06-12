@@ -92,7 +92,7 @@ public class PatientServiceImpl implements PatientService {
 
   // =============== Queries ===============
 
-  @Transactional
+  @Transactional(readOnly = true)
   @Override
   public Optional<Patient> getPatientById(long id) {
     return patientDao.getPatientById(id);

@@ -67,6 +67,7 @@ public class ReviewServiceImpl implements ReviewService {
 
   // =============== Queries ===============
 
+  @Transactional(readOnly = true)
   @Override
   public boolean canReview(long doctorId, long patientId) {
 
@@ -83,7 +84,7 @@ public class ReviewServiceImpl implements ReviewService {
     return appointmentService.hasPatientMetDoctor(patientId, doctorId);
   }
 
-  @Transactional
+  @Transactional(readOnly = true)
   @Override
   public Page<Review> getReviewsForDoctor(long doctorId, Integer page, Integer pageSize) {
     return reviewDao.getReviewsForDoctor(doctorId, page, pageSize);

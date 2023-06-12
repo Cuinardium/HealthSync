@@ -106,13 +106,13 @@ public class UserServiceImpl implements UserService {
 
   // =============== Queries ===============
 
-  @Transactional
+  @Transactional(readOnly = true)
   @Override
   public Optional<User> getUserById(long id) {
     return userDao.getUserById(id);
   }
 
-  @Transactional
+  @Transactional(readOnly = true)
   @Override
   public Optional<User> getUserByEmail(String email) {
     return userDao.getUserByEmail(email);
