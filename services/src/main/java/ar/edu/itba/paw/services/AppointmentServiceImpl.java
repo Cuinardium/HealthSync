@@ -153,7 +153,8 @@ public class AppointmentServiceImpl implements AppointmentService {
           "Appointment indications could not be updated due to it not existing");
     }
 
-    // TODO: mailService send appoinment indications to patient
+    mailService.sendAppointmentIndicationMail(appointment);
+
 
     return updatedAppointment;
   }
