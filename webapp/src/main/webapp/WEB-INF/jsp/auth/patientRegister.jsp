@@ -9,6 +9,7 @@
 <!--Variables -->
 <c:url value="/css/main.css" var="mainCss"/>
 <c:url value="/css/forms.css" var="formsCss"/>
+<c:url value="/css/profile.css" var="profileCss"/>
 
 <c:url value="/patient-register" var="patientRegisterUrl"/>
 <c:url value="/" var="successfulUrl"/>
@@ -31,6 +32,8 @@
 <spring:message code="register.modal.text" var="modalDesc"/>
 <spring:message code="register.modal.button" var="modalButton"/>
 <spring:message code="register.emailInUse.error" var="emailAlreadyInUseError"/>
+<spring:message code="profile.personalInfo" var="personalInfo"/>
+
 
 <html>
 <head>
@@ -40,6 +43,7 @@
     <jsp:include page="../components/favicon.jsp"/>
     <link href="${mainCss}" rel="stylesheet"/>
     <link href="${formsCss}" rel="stylesheet"/>
+    <link href="${profileCss}" rel="stylesheet"/>
 
     <script>
         $(document).ready(function(){
@@ -62,6 +66,10 @@
             </p>
           </div>
         </c:if>
+        <div class="profileTitle titleMarginTop">
+            <strong>${personalInfo}</strong>
+            <i class="fa-solid fa-user"></i>
+        </div>
         <div class="formRow">
             <div class="formItem">
                 <form:label path="name">${name}</form:label>
