@@ -51,13 +51,7 @@ h1, .h1{
 }
 
 .form-control, .form-select{
-    width: 70%;
-}
-
-@media (max-width: 1250px) {
-    .form-control, .form-select{
-        width: 60%;
-    }
+    width: 75%;
 }
 
 .form-check{

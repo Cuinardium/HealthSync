@@ -40,8 +40,10 @@
 .profileItem {
     display: flex;
     flex-direction: column;
-    justify-content: center;
     width: 50%;
+    align-items: center;
+    padding-left: 1%;
+    padding-right: 1%;
 }
 
 .profileItem input {
@@ -52,6 +54,7 @@
     display: flex;
     flex-direction: column;
     align-items: center;
+    justify-content: inherit;
     padding-left: 25px;
     margin-right: 25px;
     width: 30%;
@@ -76,10 +79,13 @@
 .profileTitle {
     display: flex;
     flex-direction: row;
-    justify-content: start;
+    justify-content: center;
     align-items: center;
-    padding-top: 40px;
     font-size: larger;
+}
+
+.titleMarginTop{
+    margin-top: 3rem;
 }
 
 .profileTitle i {
@@ -93,4 +99,8 @@
     min-width: max-content;
     margin-top: 10px;
     margin-bottom: 10px;
+}
+
+.scheduleMargin{
+    margin-bottom: 3rem;
 }

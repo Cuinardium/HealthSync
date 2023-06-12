@@ -25,6 +25,7 @@
 <spring:message code="profile.edit.modal.button" var="modalButton"/>
 <spring:message code="profile.edit" var="editProfile"/>
 <spring:message code="profile.changePassword" var="changePassword"/>
+<spring:message code="profile.personalInfo" var="personalInfo"/>
 
 <!-- ALT img text -->
 <spring:message code="user.alt.loggedUserImg" var="altLoggedUserImg"/>
@@ -51,6 +52,10 @@
                 <img src="${loggedUserImg}" alt="${altLoggedUserImg}" width="200" height="200" class="rounded-circle">
             </div>
             <div class="profileData">
+                <div class="profileTitle">
+                    <strong>${personalInfo}</strong>
+                    <i class="fa-solid fa-user"></i>
+                </div>
                 <div class="profileRow">
                     <div class="profileItem">
                         <label for="firstName">${name}</label>

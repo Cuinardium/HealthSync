@@ -58,17 +58,15 @@
     <div class="card">
         <div class="profileContainer">
             <div class="profileImageContainer">
-                <c:url value="/img/${doctor.image.imageId == null ? \"doctorDefault.png\" : doctor.image.imageId}" var="loggedUserImg"/>
+                <c:url value="/img/${doctor.image.imageId == null ? \"doctorDefault.png\" : doctor.image.imageId}"
+                       var="loggedUserImg"/>
                 <img src="${loggedUserImg}" alt="${altLoggedUserImg}" width="200" height="200" class="rounded-circle">
             </div>
 
             <div class="profileData">
-
-                <div class="profileItem">
-                    <div class="profileTitle">
-                        <strong>${personalInfo}</strong>
-                        <i class="fa-solid fa-user"></i>
-                    </div>
+                <div class="profileTitle">
+                    <strong>${personalInfo}</strong>
+                    <i class="fa-solid fa-user"></i>
                 </div>
 
                 <div class="profileRow">
@@ -100,13 +98,10 @@
         </div>
 
         <div class="doctorData">
-            <div class="profileItem">
-                <div class="profileTitle">
-                    <strong>${location}</strong>
-                    <i class="fa-solid fa-location-dot"></i>
-                </div>
+            <div class="profileTitle titleMarginTop">
+                <strong>${location}</strong>
+                <i class="fa-solid fa-location-dot"></i>
             </div>
-
             <div class="profileRow">
                 <div class="profileItem">
                     <label for="city">${city}</label>
@@ -119,11 +114,9 @@
                 </div>
             </div>
 
-            <div class="profileItem">
-                <div class="profileTitle">
-                    <strong>${workInfo}</strong>
-                    <i class="fa-solid fa-user-doctor"></i>
-                </div>
+            <div class="profileTitle titleMarginTop">
+                <strong>${workInfo}</strong>
+                <i class="fa-solid fa-user-doctor"></i>
             </div>
 
             <div class="profileRow">
@@ -146,20 +139,16 @@
                 </div>
             </div>
 
-            <div class="profileItem">
-                <div class="profileTitle">
-                    <strong>${schedule}</strong>
-                    <i class="fa-solid fa-calendar"></i>
-                </div>
+            <div class="profileTitle titleMarginTop">
+                <strong>${schedule}</strong>
+                <i class="fa-solid fa-calendar"></i>
             </div>
 
-            <div class="profileItem">
-                <div class="scheduleContainer">
-                    <c:set var="timeEnumValues" scope="request" value="${thirtyMinuteBlocks}"/>
-                    <c:set var="dayEnumValues" scope="request" value="${days}"/>
-                    <c:set var="selectedAttendingHours" scope="request" value="${doctor.attendingHours}"/>
-                    <jsp:include page="../components/scheduleViewer.jsp"/>
-                </div>
+            <div class="scheduleMargin">
+                <c:set var="timeEnumValues" scope="request" value="${thirtyMinuteBlocks}"/>
+                <c:set var="dayEnumValues" scope="request" value="${days}"/>
+                <c:set var="selectedAttendingHours" scope="request" value="${doctor.attendingHours}"/>
+                <jsp:include page="../components/scheduleViewer.jsp"/>
             </div>
         </div>
 

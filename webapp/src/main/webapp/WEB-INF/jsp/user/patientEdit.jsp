@@ -30,6 +30,7 @@
 <spring:message code="edit.modal.text" var="modalDesc"/>
 <spring:message code="profile.edit.modal.button" var="modalButton"/>
 <spring:message code="profile.edit.emailInUse.error" var="emailAlreadyInUseError"/>
+<spring:message code="profile.personalInfo" var="personalInfo"/>
 
 <!-- ALT img text -->
 <spring:message code="user.alt.loggedUserImg" var="altLoggedUserImg"/>
@@ -91,6 +92,10 @@
             </div>
             <form:errors path="image" cssClass="error" element="p"/>
             <div class="profileData">
+                <div class="profileTitle">
+                    <strong>${personalInfo}</strong>
+                    <i class="fa-solid fa-user"></i>
+                </div>
                 <div class="profileRow">
                     <div class="profileItem">
                         <form:label path="name">${name}</form:label>

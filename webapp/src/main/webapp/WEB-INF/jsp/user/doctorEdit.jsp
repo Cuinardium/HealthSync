@@ -81,8 +81,9 @@
             <div class="profileImageContainer">
                 <c:url value="/img/${user.image == null ? \"patientDefault.png\" : user.image.imageId}"
                        var="loggedUserImg"/>
-                <img src="${loggedUserImg}" alt="${altLoggedUserImg}" id="imgPreview" width="200" height="200" class="rounded-circle">
-                <div class="pfpEdit">
+                <img src="${loggedUserImg}" alt="${altLoggedUserImg}" id="imgPreview" width="200" height="200"
+                     class="rounded-circle">
+                <div class="pfpEdit doctorPfpEdit">
                     <form:label path="image">
                         <span class="fa-stack">
                             <i class="fa fa-circle fa-2xl fa-stack-1x"></i>
@@ -95,11 +96,9 @@
             </div>
 
             <div class="profileData">
-                <div class="profileItem">
-                    <div class="profileTitle">
-                        <strong>${personalInfo}</strong>
-                        <i class="fa-solid fa-user"></i>
-                    </div>
+                <div class="profileTitle">
+                    <strong>${personalInfo}</strong>
+                    <i class="fa-solid fa-user"></i>
                 </div>
 
                 <div class="profileRow">
@@ -134,11 +133,9 @@
         </div>
 
         <div class="doctorData">
-            <div class="profileItem">
-                <div class="profileTitle">
-                    <strong>${location}</strong>
-                    <i class="fa-solid fa-location-dot"></i>
-                </div>
+            <div class="profileTitle titleMarginTop">
+                <strong>${location}</strong>
+                <i class="fa-solid fa-location-dot"></i>
             </div>
 
             <div class="profileRow">
@@ -161,11 +158,9 @@
                 </div>
             </div>
 
-            <div class="profileItem">
-                <div class="profileTitle">
-                    <strong>${workInfo}</strong>
-                    <i class="fa-solid fa-user-doctor"></i>
-                </div>
+            <div class="profileTitle titleMarginTop">
+                <strong>${workInfo}</strong>
+                <i class="fa-solid fa-user-doctor"></i>
             </div>
 
             <div class="profileRow">
@@ -191,21 +186,14 @@
                 </div>
             </div>
 
-            <div class="profileItem">
-                <div class="profileTitle">
-                    <strong>${schedule}</strong>
-                    <i class="fa-solid fa-calendar"></i>
-                </div>
+            <div class="profileTitle titleMarginTop">
+                <strong>${schedule}</strong>
+                <i class="fa-solid fa-calendar"></i>
             </div>
 
-            <div class="profileItem">
-                <div class="scheduleContainer">
-                    <!-- Doctor schedule selector -->
-                    <c:set var="timeEnumValues" value="${timeEnumValues}" scope="request"/>
-                    <jsp:include page="../components/scheduleSelector.jsp"/>
-                </div>
-            </div>
-
+            <!-- Doctor schedule selector -->
+            <c:set var="timeEnumValues" value="${timeEnumValues}" scope="request"/>
+            <jsp:include page="../components/scheduleSelector.jsp"/>
         </div>
 
         <div class="profileButtonContainer">
