@@ -11,6 +11,7 @@ import ar.edu.itba.paw.interfaces.services.exceptions.CancelForbiddenException;
 import ar.edu.itba.paw.interfaces.services.exceptions.DoctorNotAvailableException;
 import ar.edu.itba.paw.interfaces.services.exceptions.DoctorNotFoundException;
 import ar.edu.itba.paw.interfaces.services.exceptions.PatientNotFoundException;
+import ar.edu.itba.paw.interfaces.services.exceptions.SetIndicationsForbiddenException;
 import ar.edu.itba.paw.models.Appointment;
 import ar.edu.itba.paw.models.AppointmentStatus;
 import ar.edu.itba.paw.models.Doctor;
@@ -127,6 +128,33 @@ public class AppointmentServiceImpl implements AppointmentService {
     } else {
       mailService.sendAppointmentCancelledByDoctorMail(updatedAppointment);
     }
+
+    return updatedAppointment;
+  }
+
+  @Transactional
+  @Override
+  public Appointment setAppointmentIndications(
+      long appointmentId, String indications, long requesterId)
+      throws AppointmentNotFoundException, SetIndicationsForbiddenException {
+    Appointment appointment =
+        getAppointmentById(appointmentId).orElseThrow(AppointmentNotFoundException::new);
+
+    if (requesterId != appointment.getDoctorId()) {
+      throw new SetIndicationsForbiddenException();
+    }
+
+    Appointment updatedAppointment;
+
+    try {
+      updatedAppointment = appointmentDao.setAppointmentIndications(appointmentId, indications);
+    } catch (ar.edu.itba.paw.interfaces.persistence.exceptions.AppointmentNotFoundException e) {
+      throw new IllegalStateException(
+          "Appointment indications could not be updated due to it not existing");
+    }
+
+    mailService.sendAppointmentIndicationMail(appointment);
+
 
     return updatedAppointment;
   }

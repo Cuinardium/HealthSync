@@ -69,6 +69,20 @@ public class AppointmentDaoJpa implements AppointmentDao {
   }
 
   @Override
+  public Appointment setAppointmentIndications(long appointmentId, String indications)
+      throws AppointmentNotFoundException {
+
+    Appointment app =
+        getAppointmentById(appointmentId).orElseThrow(AppointmentNotFoundException::new);
+
+    app.setIndications(indications);
+
+    em.persist(app);
+
+    return app;
+  }
+
+  @Override
   public void completeAppointmentsInDateBlock(LocalDate date, ThirtyMinuteBlock timeBlock) {
     // JPA Query Language (JQL) / Hibernate Query Language (HQL)
     final TypedQuery<Appointment> query =

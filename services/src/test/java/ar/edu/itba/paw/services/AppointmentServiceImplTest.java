@@ -10,6 +10,7 @@ import ar.edu.itba.paw.interfaces.services.exceptions.CancelForbiddenException;
 import ar.edu.itba.paw.interfaces.services.exceptions.DoctorNotAvailableException;
 import ar.edu.itba.paw.interfaces.services.exceptions.DoctorNotFoundException;
 import ar.edu.itba.paw.interfaces.services.exceptions.PatientNotFoundException;
+import ar.edu.itba.paw.interfaces.services.exceptions.SetIndicationsForbiddenException;
 import ar.edu.itba.paw.models.Appointment;
 import ar.edu.itba.paw.models.AppointmentStatus;
 import ar.edu.itba.paw.models.AttendingHours;
@@ -137,6 +138,7 @@ public class AppointmentServiceImplTest {
           APPOINTMENT_TIME,
           AppointmentStatus.CONFIRMED,
           APPOINTMENT_DESCRIPTION,
+          null,
           null);
 
   private static final Appointment CANCELLED_APPOINTMENT =
@@ -148,7 +150,20 @@ public class AppointmentServiceImplTest {
           APPOINTMENT_TIME,
           AppointmentStatus.CANCELLED,
           APPOINTMENT_DESCRIPTION,
-          CANCELLED_APPOINTMENT_DESCRIPTION);
+          CANCELLED_APPOINTMENT_DESCRIPTION,
+          null);
+  private static final String INDICATIONS = "appointment_indications";
+  private static final Appointment APPOINTMENT_WITH_INDICATIONS =
+      new Appointment(
+          APPOINTMENT_ID,
+          PATIENT,
+          DOCTOR,
+          APPOINTMENT_DATE,
+          APPOINTMENT_TIME,
+          AppointmentStatus.CANCELLED,
+          APPOINTMENT_DESCRIPTION,
+          null,
+          INDICATIONS);
 
   private static final List<Appointment> APPOINTMENTS =
       Collections.singletonList(CREATED_APPOINTMENT);
@@ -398,6 +413,60 @@ public class AppointmentServiceImplTest {
 
     // 2. Ejercitar la class under test
     as.cancelAppointment(APPOINTMENT_ID, CANCELLED_APPOINTMENT_DESCRIPTION, FORBIDDEN_USER_ID);
+  }
+
+  // ================== Set indications ==================
+
+  @Test
+  public void testSetAppointmentIndications()
+      throws AppointmentNotFoundException, SetIndicationsForbiddenException,
+          ar.edu.itba.paw.interfaces.persistence.exceptions.AppointmentNotFoundException {
+    // 1. Precondiciones
+
+    // Mock appointmentDao
+    Mockito.when(appointmentDao.getAppointmentById(APPOINTMENT_ID))
+        .thenReturn(Optional.of(CREATED_APPOINTMENT));
+
+    Mockito.when(appointmentDao.setAppointmentIndications(APPOINTMENT_ID, INDICATIONS))
+        .thenReturn(APPOINTMENT_WITH_INDICATIONS);
+
+    // Mock mailService
+    Mockito.doNothing()
+        .when(mailService)
+        .sendAppointmentIndicationMail(Mockito.any(Appointment.class));
+
+    // 2. Ejercitar la class under test
+
+    Appointment appointment = as.setAppointmentIndications(APPOINTMENT_ID, INDICATIONS, DOCTOR_ID);
+
+    // 3. Meaningful assertions
+    Assert.assertEquals(APPOINTMENT_WITH_INDICATIONS, appointment);
+    Assert.assertEquals(INDICATIONS, appointment.getIndications());
+  }
+
+  @Test(expected = AppointmentNotFoundException.class)
+  public void testSetAppointmentIndicationsAppointmentNotFound()
+      throws AppointmentNotFoundException, SetIndicationsForbiddenException {
+    // 1. Precondiciones
+
+    // Mock appointmentDao
+    Mockito.when(appointmentDao.getAppointmentById(APPOINTMENT_ID)).thenReturn(Optional.empty());
+
+    // 2. Ejercitar la class under test
+    as.setAppointmentIndications(APPOINTMENT_ID, INDICATIONS, DOCTOR_ID);
+  }
+
+  @Test(expected = SetIndicationsForbiddenException.class)
+  public void testSetAppointmentIndicationsForbidden()
+      throws AppointmentNotFoundException, SetIndicationsForbiddenException {
+    // 1. Precondiciones
+
+    // Mock appointmentDao
+    Mockito.when(appointmentDao.getAppointmentById(APPOINTMENT_ID))
+        .thenReturn(Optional.of(CREATED_APPOINTMENT));
+
+    // 2. Ejercitar la class under test
+    as.setAppointmentIndications(APPOINTMENT_ID, INDICATIONS, PATIENT_ID);
   }
 
   // ================== getAvailableHoursOnRange ==================

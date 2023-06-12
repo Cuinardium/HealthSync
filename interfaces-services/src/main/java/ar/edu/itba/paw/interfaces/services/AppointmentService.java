@@ -5,6 +5,7 @@ import ar.edu.itba.paw.interfaces.services.exceptions.CancelForbiddenException;
 import ar.edu.itba.paw.interfaces.services.exceptions.DoctorNotAvailableException;
 import ar.edu.itba.paw.interfaces.services.exceptions.DoctorNotFoundException;
 import ar.edu.itba.paw.interfaces.services.exceptions.PatientNotFoundException;
+import ar.edu.itba.paw.interfaces.services.exceptions.SetIndicationsForbiddenException;
 import ar.edu.itba.paw.models.Appointment;
 import ar.edu.itba.paw.models.AppointmentStatus;
 import ar.edu.itba.paw.models.Page;
@@ -31,6 +32,10 @@ public interface AppointmentService {
       long appointmentId, String cancelDescription, long requesterId)
       throws AppointmentNotFoundException, CancelForbiddenException;
 
+  public Appointment setAppointmentIndications(
+      long appointmentId, String indications, long requesterId)
+      throws AppointmentNotFoundException, SetIndicationsForbiddenException;
+
   // =============== Queries ===============
 
   public Optional<Appointment> getAppointmentById(long appointmentId);
@@ -40,9 +45,11 @@ public interface AppointmentService {
   public Page<Appointment> getFilteredAppointments(
       long userId, AppointmentStatus status, Integer page, Integer pageSize, boolean isPatient);
 
-  Page<Appointment> getTodayAppointments(long userId, AppointmentStatus status, Integer page, Integer pageSize, boolean isPatient);
+  Page<Appointment> getTodayAppointments(
+      long userId, AppointmentStatus status, Integer page, Integer pageSize, boolean isPatient);
 
-  public List<ThirtyMinuteBlock> getAvailableHoursForDoctorOnDate(long doctorId, LocalDate date) throws DoctorNotFoundException;
+  public List<ThirtyMinuteBlock> getAvailableHoursForDoctorOnDate(long doctorId, LocalDate date)
+      throws DoctorNotFoundException;
 
   public List<List<ThirtyMinuteBlock>> getAvailableHoursForDoctorOnRange(
       long doctorId, LocalDate from, LocalDate to) throws DoctorNotFoundException;

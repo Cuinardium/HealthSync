@@ -24,7 +24,7 @@
 <spring:message code="appointments.modal.deny" var="modalDeny"/>
 <spring:message code="appointments.modal.cancelDesc" var="cancelDesc"/>
 <spring:message code="appointments.details" var="seeDetails"/>
-
+<spring:message code="detailedAppointment.indication" var="indication"/>
 <spring:message code="detailedAppointment.title" var="title"/>
 <spring:message code="detailedAppointment.doctor" var="doctor"/>
 <spring:message code="detailedAppointment.patient" var="patient"/>
@@ -116,6 +116,9 @@
                             <c:if test="${not empty appointment.cancelDesc}">
                                 <div class="card-title">
                                     <strong>${cancelDescriptionTitle}: </strong>${appointment.cancelDesc}</div>
+                            </c:if>
+                            <c:if test="${not empty appointment.indications}">
+                                <div class="card-title"><strong>${indication}: </strong>${appointment.indications}</div>
                             </c:if>
 
                             <div class="cardButtonContainer">

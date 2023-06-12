@@ -14,4 +14,6 @@ public interface MailService {
   public void sendAppointmentCancelledByPatientMail(Appointment appointment);
 
   public void sendAppointmentCompletedMail(Appointment appointment);
+
+  public void sendAppointmentIndicationMail(Appointment appointment);
 }
