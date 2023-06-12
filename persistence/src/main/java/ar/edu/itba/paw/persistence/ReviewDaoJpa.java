@@ -3,20 +3,17 @@ package ar.edu.itba.paw.persistence;
 import ar.edu.itba.paw.interfaces.persistence.ReviewDao;
 import ar.edu.itba.paw.models.Page;
 import ar.edu.itba.paw.models.Review;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
-
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
-
 import org.springframework.stereotype.Repository;
 
 @Repository
-public class ReviewDaoJPA implements ReviewDao {
+public class ReviewDaoJpa implements ReviewDao {
 
   @PersistenceContext EntityManager em;
 
@@ -26,7 +23,7 @@ public class ReviewDaoJPA implements ReviewDao {
     return review;
   }
 
-    @Override
+  @Override
   public Page<Review> getReviewsForDoctor(long doctorId, Integer page, Integer pageSize) {
     Query nativeQuery =
         em.createNativeQuery("SELECT review_id FROM review WHERE doctor_id = " + doctorId);
@@ -36,9 +33,12 @@ public class ReviewDaoJPA implements ReviewDao {
       nativeQuery.setFirstResult(page * pageSize);
     }
 
+    @SuppressWarnings("unchecked")
     final List<Long> idList =
         (List<Long>)
-            nativeQuery.getResultList().stream()
+            nativeQuery
+                .getResultList()
+                .stream()
                 .map(o -> ((Number) o).longValue())
                 .collect(Collectors.toList());
 
@@ -52,5 +52,4 @@ public class ReviewDaoJPA implements ReviewDao {
 
     return new Page<>(content, page, content.size(), pageSize);
   }
-
 }
