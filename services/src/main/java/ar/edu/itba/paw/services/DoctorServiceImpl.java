@@ -2,6 +2,7 @@ package ar.edu.itba.paw.services;
 
 import ar.edu.itba.paw.interfaces.persistence.DoctorDao;
 import ar.edu.itba.paw.interfaces.persistence.exceptions.DoctorAlreadyExistsException;
+import ar.edu.itba.paw.interfaces.persistence.exceptions.VacationCollisionException;
 import ar.edu.itba.paw.interfaces.services.DoctorService;
 import ar.edu.itba.paw.interfaces.services.UserService;
 import ar.edu.itba.paw.interfaces.services.exceptions.*;
@@ -124,6 +125,8 @@ public class DoctorServiceImpl implements DoctorService {
       return doctorDao.addVacation(doctorId, vacation);
     } catch (ar.edu.itba.paw.interfaces.persistence.exceptions.DoctorNotFoundException e) {
       throw new DoctorNotFoundException();
+    } catch (VacationCollisionException e) {
+      throw new VacationInvalidException();
     }
   }
 

@@ -5,6 +5,7 @@ import static org.junit.Assert.assertThrows;
 import ar.edu.itba.paw.interfaces.persistence.exceptions.DoctorAlreadyExistsException;
 import ar.edu.itba.paw.interfaces.persistence.exceptions.DoctorNotFoundException;
 import ar.edu.itba.paw.interfaces.persistence.exceptions.EmailAlreadyExistsException;
+import ar.edu.itba.paw.interfaces.persistence.exceptions.VacationCollisionException;
 import ar.edu.itba.paw.interfaces.persistence.exceptions.VacationNotFoundException;
 import ar.edu.itba.paw.models.*;
 import ar.edu.itba.paw.persistence.config.TestConfig;
@@ -272,7 +273,7 @@ public class DoctorDaoImplTest {
   // ============================== addVacation ================================
 
   @Test
-  public void testAddVacation() throws DoctorNotFoundException {
+  public void testAddVacation() throws DoctorNotFoundException, VacationCollisionException {
     // 1.Precondiciones
     Set<Vacation> expectedVacations = new HashSet<>(DOCTOR_7.getVacations());
     expectedVacations.add(VACATION_NEW);
@@ -290,6 +291,15 @@ public class DoctorDaoImplTest {
     // 2. Ejercitar la class under test
     assertThrows(
         DoctorNotFoundException.class, () -> doctorDao.addVacation(AUX_DOCTOR_ID, VACATION_NEW));
+  }
+
+  @Test
+  public void testAddVacationCollision() {
+    // 1.Precondiciones
+    // 2. Ejercitar la class under test
+    assertThrows(
+        VacationCollisionException.class,
+        () -> doctorDao.addVacation(INSERTED_DOCTOR_ID, DOCTOR_7.getVacations().iterator().next()));
   }
 
   // ============================== removeVacation ================================

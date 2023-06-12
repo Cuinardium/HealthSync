@@ -3,6 +3,7 @@ package ar.edu.itba.paw.persistence;
 import ar.edu.itba.paw.interfaces.persistence.DoctorDao;
 import ar.edu.itba.paw.interfaces.persistence.exceptions.DoctorAlreadyExistsException;
 import ar.edu.itba.paw.interfaces.persistence.exceptions.DoctorNotFoundException;
+import ar.edu.itba.paw.interfaces.persistence.exceptions.VacationCollisionException;
 import ar.edu.itba.paw.interfaces.persistence.exceptions.VacationNotFoundException;
 import ar.edu.itba.paw.models.*;
 import ar.edu.itba.paw.persistence.utils.QueryBuilder;
@@ -58,8 +59,40 @@ public class DoctorDaoJpa implements DoctorDao {
   }
 
   @Override
-  public Doctor addVacation(long doctorId, Vacation vacation) throws DoctorNotFoundException {
+  public Doctor addVacation(long doctorId, Vacation vacation) throws DoctorNotFoundException, VacationCollisionException {
     Doctor doctor = getDoctorById(doctorId).orElseThrow(DoctorNotFoundException::new);
+
+    // Check vacation does not collide with other vacations
+    Set<Vacation> vacations = doctor.getVacations();
+
+    for (Vacation doctorVacation : vacations) {
+      boolean vacationFromAfterDoctorVacationFrom =
+          vacation.getFromDate().isAfter(doctorVacation.getFromDate())
+              || (vacation.getFromDate().equals(doctorVacation.getFromDate())
+                  && vacation.getFromTime().ordinal() >= doctorVacation.getFromTime().ordinal());
+      boolean vacationFromBeforeDoctorVacationTo =
+          vacation.getFromDate().isBefore(doctorVacation.getToDate())
+              || (vacation.getFromDate().equals(doctorVacation.getToDate())
+                  && vacation.getFromTime().ordinal() <= doctorVacation.getToTime().ordinal());
+      boolean vacationToAfterDoctorVacationFrom =
+          vacation.getToDate().isAfter(doctorVacation.getFromDate())
+              || (vacation.getToDate().equals(doctorVacation.getFromDate())
+                  && vacation.getToTime().ordinal() >= doctorVacation.getFromTime().ordinal());
+      boolean vacationToBeforeDoctorVacationTo =
+          vacation.getToDate().isBefore(doctorVacation.getToDate())
+              || (vacation.getToDate().equals(doctorVacation.getToDate())
+                  && vacation.getToTime().ordinal() <= doctorVacation.getToTime().ordinal());
+
+      boolean vacationCollidesWithDoctorVacation =
+          (vacationFromAfterDoctorVacationFrom && vacationFromBeforeDoctorVacationTo)
+              || (vacationToAfterDoctorVacationFrom && vacationToBeforeDoctorVacationTo)
+              || (vacationFromBeforeDoctorVacationTo && vacationToAfterDoctorVacationFrom)
+              || (vacationFromAfterDoctorVacationFrom && vacationToBeforeDoctorVacationTo);
+
+      if (vacationCollidesWithDoctorVacation) {
+        throw new VacationCollisionException();
+      }
+    }
 
     vacation.setDoctor(doctor);
 
@@ -145,7 +178,7 @@ public class DoctorDaoJpa implements DoctorDao {
       // Query de horarios disponibles (attending hours) y luego hago el horario que me pide NOT IN
       // appintments en el rang y fecha
 
-      String dateSQLString = "'" + Date.valueOf(date).toString() + "'";
+      String dateSQLString = "'" + Date.valueOf(date) + "'";
 
       String appointmentQuery =
           new QueryBuilder()

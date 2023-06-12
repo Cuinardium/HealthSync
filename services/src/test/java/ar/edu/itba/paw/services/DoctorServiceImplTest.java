@@ -4,6 +4,7 @@ import ar.edu.itba.paw.interfaces.persistence.DoctorDao;
 import ar.edu.itba.paw.interfaces.persistence.exceptions.DoctorAlreadyExistsException;
 import ar.edu.itba.paw.interfaces.persistence.exceptions.DoctorNotFoundException;
 import ar.edu.itba.paw.interfaces.persistence.exceptions.EmailAlreadyExistsException;
+import ar.edu.itba.paw.interfaces.persistence.exceptions.VacationCollisionException;
 import ar.edu.itba.paw.interfaces.persistence.exceptions.VacationNotFoundException;
 import ar.edu.itba.paw.interfaces.services.UserService;
 import ar.edu.itba.paw.interfaces.services.exceptions.EmailInUseException;
@@ -421,7 +422,7 @@ public class DoctorServiceImplTest {
   public void testAddVacation()
       throws DoctorNotFoundException,
           ar.edu.itba.paw.interfaces.services.exceptions.DoctorNotFoundException,
-          VacationInvalidException {
+          VacationInvalidException, VacationCollisionException {
     // 1. Precondiciones
     Mockito.when(doctorDao.addVacation(ID, VACATION_NEW)).thenReturn(DOCTOR_WITH_VACATIONS);
 
@@ -436,7 +437,7 @@ public class DoctorServiceImplTest {
   public void testAddVacationDoesNotExist()
       throws DoctorNotFoundException,
           ar.edu.itba.paw.interfaces.services.exceptions.DoctorNotFoundException,
-          VacationInvalidException {
+          VacationInvalidException, VacationCollisionException {
     // 1. Precondiciones
     Mockito.when(doctorDao.addVacation(ID, VACATION_NEW)).thenThrow(DoctorNotFoundException.class);
 
@@ -477,6 +478,17 @@ public class DoctorServiceImplTest {
 
     // 2. Ejercitar la class under test
     ds.addVacation(ID, invalidVacation);
+  }
+
+  @Test(expected = VacationInvalidException.class)
+  public void testAddVacationCollsion()
+      throws ar.edu.itba.paw.interfaces.services.exceptions.DoctorNotFoundException,
+          VacationInvalidException, DoctorNotFoundException, VacationCollisionException {
+    // 1. Precondiciones
+    Mockito.when(doctorDao.addVacation(ID, VACATION_NEW)).thenThrow(VacationCollisionException.class);
+
+    // 2. Ejercitar la class under test
+    ds.addVacation(ID, VACATION_NEW);
   }
 
   // ======================== Remove Vacation ========================
