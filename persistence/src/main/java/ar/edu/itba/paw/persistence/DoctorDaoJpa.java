@@ -3,6 +3,7 @@ package ar.edu.itba.paw.persistence;
 import ar.edu.itba.paw.interfaces.persistence.DoctorDao;
 import ar.edu.itba.paw.interfaces.persistence.exceptions.DoctorAlreadyExistsException;
 import ar.edu.itba.paw.interfaces.persistence.exceptions.DoctorNotFoundException;
+import ar.edu.itba.paw.interfaces.persistence.exceptions.VacationNotFoundException;
 import ar.edu.itba.paw.models.*;
 import ar.edu.itba.paw.persistence.utils.QueryBuilder;
 import java.sql.Date;
@@ -20,6 +21,8 @@ public class DoctorDaoJpa implements DoctorDao {
 
   @PersistenceContext private EntityManager em;
 
+  // =============== Inserts ===============
+
   @Override
   public Doctor createDoctor(Doctor doctor) throws DoctorAlreadyExistsException {
 
@@ -31,6 +34,8 @@ public class DoctorDaoJpa implements DoctorDao {
     em.persist(doctor);
     return doctor;
   }
+
+  // ================= Updates ==============
 
   @Override
   public Doctor updateDoctorInfo(
@@ -51,6 +56,32 @@ public class DoctorDaoJpa implements DoctorDao {
     em.persist(doctor);
     return doctor;
   }
+
+  @Override
+  public Doctor addVacation(long doctorId, Vacation vacation) throws DoctorNotFoundException {
+    Doctor doctor = getDoctorById(doctorId).orElseThrow(DoctorNotFoundException::new);
+
+    vacation.setDoctor(doctor);
+
+    doctor.addVacation(vacation);
+    em.persist(doctor);
+    return doctor;
+  }
+
+  @Override
+  public Doctor removeVacation(long doctorId, Vacation vacation) throws DoctorNotFoundException, VacationNotFoundException {
+    Doctor doctor = getDoctorById(doctorId).orElseThrow(DoctorNotFoundException::new);
+
+    if (!doctor.getVacations().contains(vacation)) {
+      throw new VacationNotFoundException();
+    }
+
+    doctor.removeVacation(vacation);
+    em.persist(doctor);
+    return doctor;
+  }
+
+  // =============== Queries ===============
 
   @Override
   public Optional<Doctor> getDoctorById(long id) {

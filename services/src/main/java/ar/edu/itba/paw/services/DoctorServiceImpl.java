@@ -7,6 +7,7 @@ import ar.edu.itba.paw.interfaces.services.UserService;
 import ar.edu.itba.paw.interfaces.services.exceptions.DoctorNotFoundException;
 import ar.edu.itba.paw.interfaces.services.exceptions.EmailInUseException;
 import ar.edu.itba.paw.interfaces.services.exceptions.UserNotFoundException;
+import ar.edu.itba.paw.interfaces.services.exceptions.VacationNotFoundException;
 import ar.edu.itba.paw.models.*;
 import java.time.LocalDate;
 import java.util.*;
@@ -98,6 +99,32 @@ public class DoctorServiceImpl implements DoctorService {
     } catch (ar.edu.itba.paw.interfaces.persistence.exceptions.DoctorNotFoundException
         | UserNotFoundException e) {
       throw new DoctorNotFoundException();
+    }
+  }
+
+  @Override
+  public Doctor addVacation(
+      long doctorId,
+      Vacation vacation)
+      throws DoctorNotFoundException {
+    try {
+      return doctorDao.addVacation(doctorId, vacation);
+    } catch (ar.edu.itba.paw.interfaces.persistence.exceptions.DoctorNotFoundException e) {
+      throw new DoctorNotFoundException();
+    }
+  }
+
+  @Override
+  public Doctor removeVacation(
+      long doctorId,
+      Vacation vacation)
+      throws DoctorNotFoundException, VacationNotFoundException {
+    try {
+      return doctorDao.removeVacation(doctorId, vacation);
+    } catch (ar.edu.itba.paw.interfaces.persistence.exceptions.DoctorNotFoundException e) {
+      throw new DoctorNotFoundException();
+    } catch (ar.edu.itba.paw.interfaces.persistence.exceptions.VacationNotFoundException e) {
+      throw new VacationNotFoundException();
     }
   }
 
