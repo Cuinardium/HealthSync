@@ -137,6 +137,7 @@ public class AppointmentServiceImplTest {
           APPOINTMENT_TIME,
           AppointmentStatus.CONFIRMED,
           APPOINTMENT_DESCRIPTION,
+          null,
           null);
 
   private static final Appointment CANCELLED_APPOINTMENT =
@@ -148,7 +149,8 @@ public class AppointmentServiceImplTest {
           APPOINTMENT_TIME,
           AppointmentStatus.CANCELLED,
           APPOINTMENT_DESCRIPTION,
-          CANCELLED_APPOINTMENT_DESCRIPTION);
+          CANCELLED_APPOINTMENT_DESCRIPTION,
+          null);
 
   private static final List<Appointment> APPOINTMENTS =
       Collections.singletonList(CREATED_APPOINTMENT);

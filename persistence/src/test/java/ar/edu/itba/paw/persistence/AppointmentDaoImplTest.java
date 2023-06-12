@@ -109,6 +109,7 @@ public class AppointmentDaoImplTest {
   private static final AppointmentStatus AUX_STATUS = AppointmentStatus.CANCELLED;
   private static final String AUX_CANCEL_DESC = "Que me importa";
   private static final Long AUX_APP_ID = 5L;
+  private static final String INSERTED_INDICATIONS = "Toma ibuprofeno cada 8 horas";
 
   private static final Appointment APPOINTMENT_1 =
       new Appointment(
@@ -119,7 +120,8 @@ public class AppointmentDaoImplTest {
           INSERTED_TIME,
           INSERTED_STATUS,
           INSERTED_DESC,
-          INSERTED_CANCEL_DESC);
+          INSERTED_CANCEL_DESC,
+          INSERTED_INDICATIONS);
 
   @Autowired private DataSource ds;
 
