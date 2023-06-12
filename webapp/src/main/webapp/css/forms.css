@@ -66,3 +66,17 @@ h1, .h1{
 .formItem > .rounded-circle{
     margin-top: 2rem;
 }
+
+.loginPadding{
+    padding: 3rem 30%;
+}
+@media(max-width: 1300px){
+    .loginPadding{
+        padding: 3rem 20%;
+    }
+}
+
+.haveAccountRow{
+    display: flex;
+    justify-content: center;
+}

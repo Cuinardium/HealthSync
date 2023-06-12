@@ -19,6 +19,7 @@
 <spring:message code="form.password_hint" var="password_hint"/>
 <spring:message code="login.rememberMe" var="rememberMe"/>
 <spring:message code="login.submit" var="submit"/>
+<spring:message code="login.haveAccount" var="haveAccount"/>
 <spring:message code="login.register" var="register"/>
 <spring:message code="login.error" var="error"/>
 
@@ -36,7 +37,7 @@
 <jsp:include page="../components/header.jsp"/>
 
 <!-- Content -->
-<div class="formContainer generalPadding">
+<div class="formContainer loginPadding">
     <h1>${title}</h1>
     <form:form modelAttribute="loginForm" class="card" action="${loginUrl}" method="POST">
         <c:if test="${hasError}">
@@ -69,7 +70,9 @@
 
         <button type="submit" class="btn btn-primary submitButton">${submit}</button>
 
-        <div class="formRow">
+
+        <div class="haveAccountRow">
+            <p><b>${haveAccount}&nbsp;</b></p>
             <a href="${patientRegister}">${register}</a>
         </div>
     </form:form>
