@@ -100,6 +100,7 @@ public class DoctorServiceImpl implements DoctorService {
     }
   }
 
+  @Transactional
   @Override
   public Doctor addVacation(long doctorId, Vacation vacation)
       throws DoctorNotFoundException, VacationInvalidException {
@@ -126,6 +127,7 @@ public class DoctorServiceImpl implements DoctorService {
     }
   }
 
+  @Transactional
   @Override
   public Doctor removeVacation(long doctorId, Vacation vacation)
       throws DoctorNotFoundException, VacationNotFoundException {
