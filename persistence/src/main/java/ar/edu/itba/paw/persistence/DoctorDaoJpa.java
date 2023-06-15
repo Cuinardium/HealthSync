@@ -59,7 +59,8 @@ public class DoctorDaoJpa implements DoctorDao {
   }
 
   @Override
-  public Doctor addVacation(long doctorId, Vacation vacation) throws DoctorNotFoundException, VacationCollisionException {
+  public Doctor addVacation(long doctorId, Vacation vacation)
+      throws DoctorNotFoundException, VacationCollisionException {
     Doctor doctor = getDoctorById(doctorId).orElseThrow(DoctorNotFoundException::new);
 
     // Check vacation does not collide with other vacations
@@ -149,7 +150,7 @@ public class DoctorDaoJpa implements DoctorDao {
           new QueryBuilder()
               .select("user_id as doctor_id")
               .from("users")
-              .where("CONCAT(first_name, ' ', last_name) LIKE CONCAT('" + name + "', '%')")
+              .where("CONCAT(first_name, ' ', last_name) ILIKE CONCAT('" + name + "', '%')")
               .build();
 
       nativeQueryBuilder.where("doctor.doctor_id IN (" + nameQuery + ")");
