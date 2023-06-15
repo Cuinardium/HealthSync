@@ -4,7 +4,7 @@ import ar.edu.itba.paw.interfaces.services.DoctorService;
 import ar.edu.itba.paw.interfaces.services.PatientService;
 import ar.edu.itba.paw.models.*;
 import ar.edu.itba.paw.webapp.auth.PawAuthUserDetails;
-import ar.edu.itba.paw.webapp.auth.UserRoles;
+import ar.edu.itba.paw.webapp.auth.UserRole;
 import ar.edu.itba.paw.webapp.exceptions.UserNotFoundException;
 import ar.edu.itba.paw.webapp.form.DoctorFilterForm;
 import java.time.LocalDate;
@@ -109,7 +109,7 @@ public class HomeController {
             DEFAULT_PAGE_SIZE);
 
     // TODO: hacer esto en spring sec
-    if (PawAuthUserDetails.getRole().equals(UserRoles.ROLE_PATIENT)) {
+    if (PawAuthUserDetails.getRole().equals(UserRole.ROLE_PATIENT)) {
       PawAuthUserDetails currentUser = PawAuthUserDetails.getCurrentUser();
 
       HealthInsurance patientHealthInsurance =
@@ -142,9 +142,9 @@ public class HomeController {
     mav.addObject("totalPages", doctors.getTotalPages());
 
     // Only patients can book appointments
-    boolean notLogged = PawAuthUserDetails.getRole().equals(UserRoles.ROLE_NULL);
+    boolean notLogged = PawAuthUserDetails.getRole().equals(UserRole.ROLE_NULL);
     mav.addObject("notLogged", notLogged);
-    boolean canBook = PawAuthUserDetails.getRole().equals(UserRoles.ROLE_PATIENT) || notLogged;
+    boolean canBook = PawAuthUserDetails.getRole().equals(UserRole.ROLE_PATIENT) || notLogged;
     mav.addObject("canBook", canBook);
 
     return mav;

@@ -6,7 +6,7 @@ import ar.edu.itba.paw.interfaces.services.exceptions.SetIndicationsForbiddenExc
 import ar.edu.itba.paw.models.Appointment;
 import ar.edu.itba.paw.models.AppointmentStatus;
 import ar.edu.itba.paw.webapp.auth.PawAuthUserDetails;
-import ar.edu.itba.paw.webapp.auth.UserRoles;
+import ar.edu.itba.paw.webapp.auth.UserRole;
 import ar.edu.itba.paw.webapp.exceptions.AppointmentForbiddenException;
 import ar.edu.itba.paw.webapp.exceptions.AppointmentNotFoundException;
 import ar.edu.itba.paw.webapp.form.IndicationForm;
@@ -43,14 +43,14 @@ public class AppointmentController {
 
     ModelAndView mav = new ModelAndView("appointment/appointments");
 
-    boolean isPatient = PawAuthUserDetails.getRole().equals(UserRoles.ROLE_PATIENT);
+    boolean isPatient = PawAuthUserDetails.getRole().equals(UserRole.ROLE_PATIENT);
     long userId = PawAuthUserDetails.getCurrentUserId();
 
     // Get relevant appointments
-    List<Appointment> todayAppointments=
-            appointmentService
-                    .getTodayAppointments(userId, AppointmentStatus.CONFIRMED, null, null, isPatient)
-                    .getContent();
+    List<Appointment> todayAppointments =
+        appointmentService
+            .getTodayAppointments(userId, AppointmentStatus.CONFIRMED, null, null, isPatient)
+            .getContent();
 
     List<Appointment> upcomingAppointments =
         appointmentService
@@ -111,10 +111,10 @@ public class AppointmentController {
 
   @RequestMapping(value = "/{id:\\d+}/detailed-appointment", method = RequestMethod.GET)
   public ModelAndView getDetailedAppointment(
-          @ModelAttribute("modalForm") final ModalForm modalForm,
-          @ModelAttribute("indicationForm") final IndicationForm indicationForm,
-          @PathVariable("id") final int appointmentId,
-          @RequestParam(name = "selected_tab", required = false, defaultValue = "1")
+      @ModelAttribute("modalForm") final ModalForm modalForm,
+      @ModelAttribute("indicationForm") final IndicationForm indicationForm,
+      @PathVariable("id") final int appointmentId,
+      @RequestParam(name = "selected_tab", required = false, defaultValue = "1")
           final int selectedTab) {
 
     Appointment appointment =
@@ -140,23 +140,25 @@ public class AppointmentController {
 
   @RequestMapping(value = "/{id:\\d+}/detailed-appointment", method = RequestMethod.POST)
   public ModelAndView postAppointmentIndications(
-          @ModelAttribute("modalForm") final ModalForm modalForm,
-          @ModelAttribute("indicationForm") final IndicationForm indicationForm,
-          @PathVariable("id") final int appointmentId) {
+      @ModelAttribute("modalForm") final ModalForm modalForm,
+      @ModelAttribute("indicationForm") final IndicationForm indicationForm,
+      @PathVariable("id") final int appointmentId) {
 
-    //TODO hacer try catch
+    // TODO hacer try catch
     try {
       Appointment appointment =
-              appointmentService.setAppointmentIndications(
-                      appointmentId, indicationForm.getIndications(), PawAuthUserDetails.getCurrentUserId());
+          appointmentService.setAppointmentIndications(
+              appointmentId,
+              indicationForm.getIndications(),
+              PawAuthUserDetails.getCurrentUserId());
 
       LOGGER.info("Cancelled {}", appointment);
-    }catch(ar.edu.itba.paw.interfaces.services.exceptions.AppointmentNotFoundException e){
+    } catch (ar.edu.itba.paw.interfaces.services.exceptions.AppointmentNotFoundException e) {
       LOGGER.error("Could not cancel appointment {} because it does not exist", appointmentId);
-    }catch (SetIndicationsForbiddenException e){
-      LOGGER.error("Forbidden indications for appointment {}", appointmentId);//TODO check this log
+    } catch (SetIndicationsForbiddenException e) {
+      LOGGER.error(
+          "Forbidden indications for appointment {}", appointmentId); // TODO check this log
     }
-
 
     return new ModelAndView("redirect:/" + appointmentId + "/detailed-appointment");
   }

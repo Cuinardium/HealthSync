@@ -37,21 +37,21 @@ public class PawUserDetailsService implements UserDetailsService {
             .getUserByEmail(username)
             .orElseThrow(() -> new UsernameNotFoundException("No user for email " + username));
 
-    String role = getUserRole(user);
+    UserRole role = getUserRole(user);
     // ROLES
     final Collection<GrantedAuthority> authorities = new HashSet<>();
-    authorities.add(new SimpleGrantedAuthority(role));
+    authorities.add(new SimpleGrantedAuthority(role.getRoleName()));
 
     return new PawAuthUserDetails(user.getEmail(), user.getPassword(), user.getId(), authorities);
   }
 
-  private String getUserRole(User user) {
+  private UserRole getUserRole(User user) {
     if (doctorService.getDoctorById(user.getId()).isPresent()) {
-      return "ROLE_DOCTOR";
+      return UserRole.ROLE_DOCTOR;
     }
     if (patientService.getPatientById(user.getId()).isPresent()) {
-      return "ROLE_PATIENT";
+      return UserRole.ROLE_PATIENT;
     }
-    return null;
+    return UserRole.ROLE_NULL;
   }
 }

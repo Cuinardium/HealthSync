@@ -13,7 +13,7 @@ import ar.edu.itba.paw.models.Page;
 import ar.edu.itba.paw.models.Review;
 import ar.edu.itba.paw.models.ThirtyMinuteBlock;
 import ar.edu.itba.paw.webapp.auth.PawAuthUserDetails;
-import ar.edu.itba.paw.webapp.auth.UserRoles;
+import ar.edu.itba.paw.webapp.auth.UserRole;
 import ar.edu.itba.paw.webapp.exceptions.UserNotFoundException;
 import ar.edu.itba.paw.webapp.form.AppointmentForm;
 import ar.edu.itba.paw.webapp.form.ReviewForm;
@@ -208,7 +208,7 @@ public class DoctorController {
     mav.addObject("doctor", doctor);
 
     // Only patients can book appointments
-    boolean canBook = PawAuthUserDetails.getRole().equals(UserRoles.ROLE_PATIENT);
+    boolean canBook = PawAuthUserDetails.getRole().equals(UserRole.ROLE_PATIENT);
 
     // Booking starts from the day after today because of not allowing to book appointments in the
     // past

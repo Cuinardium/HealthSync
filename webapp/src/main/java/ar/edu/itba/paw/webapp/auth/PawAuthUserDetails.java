@@ -64,18 +64,18 @@ public class PawAuthUserDetails extends User {
     return null;
   }
 
-  public static UserRoles getRole() {
+  public static UserRole getRole() {
     Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 
     if (auth != null && !(auth instanceof AnonymousAuthenticationToken) && auth.isAuthenticated()) {
       Collection<? extends GrantedAuthority> authorities = auth.getAuthorities();
       if (authorities.contains(new SimpleGrantedAuthority("ROLE_PATIENT"))) {
-        return UserRoles.ROLE_PATIENT;
+        return UserRole.ROLE_PATIENT;
       }
       if (authorities.contains(new SimpleGrantedAuthority("ROLE_DOCTOR"))) {
-        return UserRoles.ROLE_DOCTOR;
+        return UserRole.ROLE_DOCTOR;
       }
     }
-    return UserRoles.ROLE_NULL;
+    return UserRole.ROLE_NULL;
   }
 }
