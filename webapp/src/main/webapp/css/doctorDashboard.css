@@ -64,6 +64,10 @@ body {
     flex-wrap: wrap;
 }
 
+.healthInsurancesOverflow{
+    overflow-y: scroll;
+}
+
 a {
     text-decoration: none;
 }
@@ -93,8 +97,8 @@ a.stretched-link:hover {
 }
 
 .imageContainer {
-    width: 20rem;
-    height: 20rem;
+    width: 17rem;
+    height: 17rem;
     object-fit: cover;
 }
 
@@ -103,7 +107,7 @@ a.stretched-link:hover {
     flex-direction: column;
     flex: 1;
     padding: 15px;
-    height: 20rem;
+    height: 17rem;
 }
 
 .buttonsContainer {

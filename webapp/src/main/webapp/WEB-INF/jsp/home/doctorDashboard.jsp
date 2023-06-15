@@ -186,7 +186,7 @@
                                 </div>
                             </div>
                             <div class="card-text">${address} ${doctor.address}, ${doctorCity}</div>
-                            <div class="chipsContainer">
+                            <div class="chipsContainer healthInsurancesOverflow">
                                 <div class="card-text">${insurances}:</div>
                                 <c:forEach items="${doctor.healthInsurances}" var="healthInsurance">
                                     <spring:message code="${healthInsurance.messageID}"
