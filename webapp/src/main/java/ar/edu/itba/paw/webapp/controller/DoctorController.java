@@ -23,7 +23,6 @@ import javax.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -80,14 +79,12 @@ public class DoctorController {
       return getDetailedDoctorMav(doctorId, page, appointmentForm, true, true);
     }
 
-    PawAuthUserDetails currentUser =
-        (PawAuthUserDetails)
-            (SecurityContextHolder.getContext().getAuthentication().getPrincipal());
+    long currentUserId = PawAuthUserDetails.getCurrentUserId();
 
     try {
       Appointment appointment =
           appointmentService.createAppointment(
-              currentUser.getId(),
+              currentUserId,
               doctorId,
               appointmentForm.getDate(),
               appointmentForm.getBlockEnum(),
@@ -97,7 +94,7 @@ public class DoctorController {
     } catch (DoctorNotFoundException e) {
       LOGGER.error(
           "Failed to create Appointment for patient {} because doctor {} was not found",
-          currentUser.getId(),
+          currentUserId,
           doctorId,
           new DoctorNotFoundException());
 
@@ -105,7 +102,7 @@ public class DoctorController {
     } catch (PatientNotFoundException e) {
       LOGGER.error(
           "Failed to create Appointment for patient {} because patient was not found",
-          currentUser.getId(),
+          currentUserId,
           new PatientNotFoundException());
 
       throw new RuntimeException(e);
@@ -113,7 +110,7 @@ public class DoctorController {
       LOGGER.error(
           "Failed to create Appointment for patient {} because doctor {}"
               + "was not available at {} {}",
-          currentUser.getId(),
+          currentUserId,
           doctorId,
           appointmentForm.getDate(),
           appointmentForm.getBlockEnum().getBlockBeginning(),

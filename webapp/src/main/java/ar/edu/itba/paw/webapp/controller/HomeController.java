@@ -13,7 +13,6 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -109,10 +108,10 @@ public class HomeController {
             parsedPage - 1,
             DEFAULT_PAGE_SIZE);
 
+    // TODO: hacer esto en spring sec
     if (PawAuthUserDetails.getRole().equals(UserRoles.ROLE_PATIENT)) {
-      PawAuthUserDetails currentUser =
-          (PawAuthUserDetails)
-              (SecurityContextHolder.getContext().getAuthentication().getPrincipal());
+      PawAuthUserDetails currentUser = PawAuthUserDetails.getCurrentUser();
+
       HealthInsurance patientHealthInsurance =
           patientService
               .getPatientById(currentUser.getId())
