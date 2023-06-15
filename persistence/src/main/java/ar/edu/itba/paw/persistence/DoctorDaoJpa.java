@@ -150,7 +150,7 @@ public class DoctorDaoJpa implements DoctorDao {
           new QueryBuilder()
               .select("user_id as doctor_id")
               .from("users")
-              .where("CONCAT(first_name, ' ', last_name) ILIKE CONCAT('" + name + "', '%')")
+              .where("CONCAT(first_name, ' ', last_name) ILIKE CONCAT(:name, '%')")
               .build();
 
       nativeQueryBuilder.where("doctor.doctor_id IN (" + nameQuery + ")");
@@ -247,6 +247,11 @@ public class DoctorDaoJpa implements DoctorDao {
 
     Query nativeQuery = em.createNativeQuery(builtQuery);
     Query qtyDoctorsQuery = em.createNativeQuery(builtQuery);
+
+    if (name != null && !name.isEmpty()) {
+      nativeQuery.setParameter("name", name);
+      qtyDoctorsQuery.setParameter("name", name);
+    }
 
     if (page != null && page >= 0 && pageSize != null && pageSize > 0) {
       nativeQuery.setMaxResults(pageSize);
