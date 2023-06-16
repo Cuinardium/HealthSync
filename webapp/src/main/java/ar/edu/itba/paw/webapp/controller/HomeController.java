@@ -22,7 +22,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 @Controller
 public class HomeController {
-  private static final int DEFAULT_PAGE_SIZE = 10;
+  private static final int DEFAULT_PAGE_SIZE = 2;
   private final DoctorService doctorService;
   private final PatientService patientService;
 
@@ -49,17 +49,9 @@ public class HomeController {
   @RequestMapping(value = "/doctor-dashboard", method = RequestMethod.GET)
   public ModelAndView doctorDashboard(
       @ModelAttribute("doctorFilterForm") DoctorFilterForm doctorFilterForm,
-      @RequestParam(value = "page", required = false, defaultValue = "1") String page) {
+      @RequestParam(value = "page", required = false, defaultValue = "1") int page) {
 
-    // Parse page here to catch NumberFormatException
-    // If done in parameter, it would be caught by the ExceptionHandler
-    int parsedPage;
-    try {
-      parsedPage = Integer.parseInt(page);
-    } catch (NumberFormatException e) {
-      parsedPage = 1;
-    }
-    parsedPage = Math.max(parsedPage, 1);
+    page = Math.max(page, 1);
 
     final ModelAndView mav = new ModelAndView("home/doctorDashboard");
 
@@ -105,7 +97,7 @@ public class HomeController {
             city,
             healthInsurance,
             minRating,
-            parsedPage - 1,
+            page - 1,
             DEFAULT_PAGE_SIZE);
 
     // TODO: hacer esto en spring sec
