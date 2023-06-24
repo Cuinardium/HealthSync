@@ -140,8 +140,6 @@ public class AppointmentServiceImpl implements AppointmentService {
           "Appointment indications could not be updated due to it not existing");
     }
 
-    mailService.sendAppointmentIndicationMail(appointment);
-
     return updatedAppointment;
   }
 
