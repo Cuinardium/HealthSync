@@ -1,5 +1,6 @@
 package ar.edu.itba.paw.webapp.controller;
 
+import ar.edu.itba.paw.interfaces.services.AppointmentService;
 import ar.edu.itba.paw.interfaces.services.DoctorService;
 import ar.edu.itba.paw.interfaces.services.PatientService;
 import ar.edu.itba.paw.interfaces.services.UserService;
@@ -37,6 +38,7 @@ import org.springframework.web.servlet.ModelAndView;
 @Controller
 public class ProfileController {
   private final DoctorService doctorService;
+  private final AppointmentService appointmentService;
   private final PatientService patientService;
   private final UserService userService;
 
@@ -45,9 +47,11 @@ public class ProfileController {
   @Autowired
   public ProfileController(
       final DoctorService doctorService,
+      final AppointmentService appointmentService,
       final PatientService patientService,
       final UserService userService) {
     this.doctorService = doctorService;
+    this.appointmentService = appointmentService;
     this.patientService = patientService;
     this.userService = userService;
   }
@@ -112,6 +116,19 @@ public class ProfileController {
     }
 
     LOGGER.debug("Doctor added vacation successfully");
+
+    boolean hasAppointmentsInVacation =
+        appointmentService.hasAppointmentsInRange(
+            doctor.getId(),
+            doctorVacationForm.getFromDate(),
+            doctorVacationForm.getFromTimeEnum(),
+            doctorVacationForm.getToDate(),
+            doctorVacationForm.getToTimeEnum());
+
+    if (hasAppointmentsInVacation) {
+      // TODO: implement logic
+      // this should propt user to cancel appointments
+    }
 
     return getDoctorProfileMav(doctor, doctorVacationForm, false, true, false);
   }

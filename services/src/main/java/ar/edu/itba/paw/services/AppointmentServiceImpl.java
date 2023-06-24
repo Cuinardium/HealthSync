@@ -259,6 +259,42 @@ public class AppointmentServiceImpl implements AppointmentService {
     return appointmentDao.hasPatientMetDoctor(patientId, doctorId);
   }
 
+  @Transactional(readOnly = true)
+  @Override
+  public boolean hasAppointmentsInRange(
+      long doctorId,
+      LocalDate fromDate,
+      ThirtyMinuteBlock fromTime,
+      LocalDate toDate,
+      ThirtyMinuteBlock toTime) {
+
+    List<Appointment> appointmentsInDateRange =
+        appointmentDao
+            .getFilteredAppointments(
+                doctorId, AppointmentStatus.CONFIRMED, fromDate, toDate, null, null, false)
+            .getContent();
+
+    for (Appointment appointment : appointmentsInDateRange) {
+      LocalDate appointmentDate = appointment.getDate();
+      ThirtyMinuteBlock appointmentTimeBlock = appointment.getTimeBlock();
+
+      if (appointmentDate.equals(fromDate) && appointmentTimeBlock.compareTo(fromTime) >= 0) {
+        return true;
+      }
+
+      if (appointmentDate.equals(toDate) && appointmentTimeBlock.compareTo(toTime) <= 0) {
+        return true;
+      }
+
+      // Probably unnecesary
+      if (appointmentDate.isAfter(fromDate) && appointmentDate.isBefore(toDate)) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
   // ======================================== TASKS ========================================
 
   // Run every 30 minutes
