@@ -17,7 +17,7 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name = "doctor_vacation")
-public class Vacation {
+public class Vacation implements Comparable<Vacation> {
 
   @EmbeddedId private VacationId id;
 
@@ -112,8 +112,14 @@ public class Vacation {
     return Objects.equals(id, other.id);
   }
 
+  @Override
+  public int compareTo(Vacation other) {
+
+    return id.compareTo(other.id);
+  }
+
   @Embeddable
-  public static class VacationId implements Serializable {
+  public static class VacationId implements Serializable, Comparable<VacationId> {
 
     @Column(name = "doctor_id", nullable = false)
     private Long doctorId;
@@ -231,6 +237,25 @@ public class Vacation {
           && Objects.equals(this.fromTime, other.fromTime)
           && Objects.equals(this.toDate, other.toDate)
           && Objects.equals(this.toTime, other.toTime);
+    }
+
+    @Override
+    public int compareTo(VacationId other) {
+      int result = this.fromDate.compareTo(other.fromDate);
+
+      if (result == 0) {
+        result = this.fromTime.compareTo(other.fromTime);
+      }
+
+      if (result == 0) {
+        result = this.toDate.compareTo(other.toDate);
+      }
+
+      if (result == 0) {
+        result = this.toTime.compareTo(other.toTime);
+      }
+
+      return result;
     }
   }
 }

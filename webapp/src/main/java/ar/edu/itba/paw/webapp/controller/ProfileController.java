@@ -1,13 +1,11 @@
 package ar.edu.itba.paw.webapp.controller;
 
-import ar.edu.itba.paw.interfaces.services.AppointmentService;
 import ar.edu.itba.paw.interfaces.services.DoctorService;
 import ar.edu.itba.paw.interfaces.services.PatientService;
 import ar.edu.itba.paw.interfaces.services.UserService;
 import ar.edu.itba.paw.interfaces.services.exceptions.DoctorNotFoundException;
 import ar.edu.itba.paw.interfaces.services.exceptions.EmailInUseException;
 import ar.edu.itba.paw.interfaces.services.exceptions.PatientNotFoundException;
-import ar.edu.itba.paw.interfaces.services.exceptions.VacationInvalidException;
 import ar.edu.itba.paw.models.*;
 import ar.edu.itba.paw.webapp.auth.PawAuthUserDetails;
 import ar.edu.itba.paw.webapp.exceptions.UserNotFoundException;
@@ -38,7 +36,6 @@ import org.springframework.web.servlet.ModelAndView;
 @Controller
 public class ProfileController {
   private final DoctorService doctorService;
-  private final AppointmentService appointmentService;
   private final PatientService patientService;
   private final UserService userService;
 
@@ -47,11 +44,9 @@ public class ProfileController {
   @Autowired
   public ProfileController(
       final DoctorService doctorService,
-      final AppointmentService appointmentService,
       final PatientService patientService,
       final UserService userService) {
     this.doctorService = doctorService;
-    this.appointmentService = appointmentService;
     this.patientService = patientService;
     this.userService = userService;
   }
@@ -82,56 +77,6 @@ public class ProfileController {
     return getDoctorProfileMav(doctor, doctorVacationForm, false, false, false);
   }
 
-  @RequestMapping(value = "/add-vacation", method = RequestMethod.POST)
-  public ModelAndView doctorAddVacations(
-      @Valid @ModelAttribute("doctorVacationForm") final DoctorVacationForm doctorVacationForm,
-      final BindingResult errors) {
-
-    Doctor doctor =
-        doctorService
-            .getDoctorById(PawAuthUserDetails.getCurrentUserId())
-            .orElseThrow(UserNotFoundException::new);
-
-    if (errors.hasErrors()) {
-      LOGGER.warn("Failed to add vacation due to form errors");
-      return getDoctorProfileMav(doctor, doctorVacationForm, true, false, false);
-    }
-
-    try {
-      doctorService.addVacation(
-          doctor.getId(),
-          new Vacation(
-              doctor.getId(),
-              doctorVacationForm.getFromDate(),
-              doctorVacationForm.getFromTimeEnum(),
-              doctorVacationForm.getToDate(),
-              doctorVacationForm.getToTimeEnum()));
-    } catch (DoctorNotFoundException e) {
-      LOGGER.warn("Failed to add vacation due to doctor not found");
-      throw new UserNotFoundException();
-    } catch (VacationInvalidException e) {
-      LOGGER.warn("Failed to add vacation due to invalid vacation");
-
-      return getDoctorProfileMav(doctor, doctorVacationForm, true, false, true);
-    }
-
-    LOGGER.debug("Doctor added vacation successfully");
-
-    boolean hasAppointmentsInVacation =
-        appointmentService.hasAppointmentsInRange(
-            doctor.getId(),
-            doctorVacationForm.getFromDate(),
-            doctorVacationForm.getFromTimeEnum(),
-            doctorVacationForm.getToDate(),
-            doctorVacationForm.getToTimeEnum());
-
-    if (hasAppointmentsInVacation) {
-      // TODO: implement logic
-      // this should propt user to cancel appointments
-    }
-
-    return getDoctorProfileMav(doctor, doctorVacationForm, false, true, false);
-  }
 
   @RequestMapping(value = "/doctor-edit", method = RequestMethod.POST)
   public ModelAndView doctorEditSubmit(
