@@ -14,6 +14,8 @@
     <c:param name="selected_tab" value="${selectedTab}"/>
 </c:url>
 
+<c:url value="/${appointment.doctorId}/detailed-doctor" var="detailedDoctorUrl"/>
+
 <spring:message code="${appointment.doctor.city.messageID}" var="city"/>
 <spring:message code="${appointment.patient.healthInsurance.messageID}" var="healthInsurance"/>
 <spring:message code="${appointment.status.messageID}" var="status"/>
@@ -27,6 +29,7 @@
 <spring:message code="detailedAppointment.description" var="description"/>
 <spring:message code="detailedAppointment.cancelDesc" var="cancelDescriptionTitle"/>
 <spring:message code="detailedAppointment.indication" var="indication"/>
+<spring:message code="appointments.button.appointment" var="bookAppointment"/>
 <spring:message code="appointments.modal.title" var="modalTitle"/>
 <spring:message code="appointments.modal.desc" var="modalDesc"/>
 <spring:message code="appointments.modal.confirm" var="modalConfirm"/>
@@ -87,6 +90,11 @@
                 <div class="card-title"><strong>${indication}: </strong>${appointment.indications}</div>
             </c:if>
             <div class="cardButtonContainer">
+                <c:if test="${(appointment.status == 'COMPLETED' || appointment.status == 'CANCELLED') && !isDoctor}">
+                    <a href="${detailedDoctorUrl}">
+                        <button type="button" class="btn btn-primary">${bookAppointment}</button>
+                    </a>
+                </c:if>
                 <c:if test="${appointment.status == 'CONFIRMED'}">
 
                     <c:url value="/my-appointments/${appointment.id}/cancel" var="cancelUrl">
