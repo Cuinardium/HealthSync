@@ -3,9 +3,8 @@ package ar.edu.itba.paw.webapp.form;
 import ar.edu.itba.paw.models.HealthInsurance;
 import ar.edu.itba.paw.models.Specialty;
 import ar.edu.itba.paw.models.ThirtyMinuteBlock;
-import org.springframework.format.annotation.DateTimeFormat;
-
 import java.time.LocalDate;
+import org.springframework.format.annotation.DateTimeFormat;
 
 public class DoctorFilterForm {
   private String name;
@@ -24,9 +23,6 @@ public class DoctorFilterForm {
   private int from = 0, to = ThirtyMinuteBlock.values().length - 1;
 
   public String getCity() {
-    if(city.isEmpty())
-      return null;
-
     return city;
   }
 
@@ -71,7 +67,7 @@ public class DoctorFilterForm {
   }
 
   public void setDate(LocalDate date) {
-      this.date = date;
+    this.date = date;
   }
 
   public int getFrom() {

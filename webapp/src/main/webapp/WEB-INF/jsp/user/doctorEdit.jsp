@@ -154,8 +154,8 @@
 
             <div class="profileRow">
                 <div class="profileItem">
-                    <form:label path="cityCode">${city}</form:label>
-                    <form:select class="form-select" path="cityCode">
+                    <form:label path="city">${city}</form:label>
+                    <form:select class="form-select" path="city">
                         <form:option value="-1" disabled="true" hidden="true"> -- </form:option>
                         <c:forEach items="${cities}" var="city" varStatus="status">
                             <form:option value="${status.index}">
