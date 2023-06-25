@@ -42,7 +42,8 @@
 <spring:message code="appointments.indicationModal.indication" var="indicationDesc"/>
 <spring:message code="appointments.noIndications" var="noIndications"/>
 <spring:message code="appointments.indication.title" var="indicationsTitle"/>
-<spring:message code="detailedDoctor.review" var="indicationButton"/>
+<spring:message code="appointments.indication.button" var="indicationButton"/>
+<spring:message code="detailedAppointment.me" var="me"/>
 
 
 <html>
@@ -137,32 +138,24 @@
                         </div>
                     </div>
                 </c:if>
-                <c:if test="${appointment.status == 'COMPLETED' && isDoctor}">
-
-                    <button onclick="openIndicationModal()"
-                            class="post-button btn btn-primary">
-                        <spring:message code="detailedAppointment.indicationButton"/>
-                    </button>
-                </c:if>
             </div>
         </div>
     </div>
+    <c:if test="${appointment.status=='COMPLETED'}">
+    <div class="indicationsHeader">
+        <h3>${empty indications ? noIndications : indicationsTitle}</h3>
+
+
+        <c:url value="/${appointment.id}/indication" var="indicationUrl"/>
+        <a href="${indicationUrl}" class="btn btn-outline-primary detailed-link">
+            ${indicationButton}
+        </a>
+
+    </div>
     <c:if test="${not empty indications}">
-        <div class="reviewsHeader">
-            <h3>${empty indications ? noIndications : indicationsTitle}</h3>
-
-
-                <c:url value="/${appointment.id}/indication" var="indicationUrl"/>
-                <a href="${indicationUrl}" class="btn btn-outline-primary detailed-link">
-                        ${indicationButton}
-                </a>
-
-        </div>
-
-
         <div>
             <c:forEach items="${indications}" var="indication">
-                <div class="card reviewCard">
+                <div class="card indicationCard">
                     <div class="card-body">
                         <div class="card-text cardDescription">
                                 ${indication.description}
@@ -178,7 +171,14 @@
                         <img src="${userImg}" alt="${altUserImg}" width="50" height="50"
                              class="rounded-circle">
                         <div class="cardNameDate">
-                            <strong>${indication.user.firstName} ${indication.user.lastName}</strong>
+                            <c:choose>
+                                <c:when test="${indication.user.id==user.id}">
+                                    <strong>${me}</strong>
+                                </c:when>
+                                <c:otherwise>
+                                    <strong>${indication.user.firstName} ${indication.user.lastName}</strong>
+                                </c:otherwise>
+                            </c:choose>
                                 ${indication.date}
                         </div>
 
@@ -189,9 +189,10 @@
             <jsp:include page="../components/pagination.jsp">
                 <jsp:param name="currentPage" value="${currentPage}"/>
                 <jsp:param name="totalPages" value="${totalPages}"/>
-                <jsp:param name="url" value="/${doctor.id}/detailed-doctor"/>
+                <jsp:param name="url" value="/${appointment.id}/detailed-appointment"/>
             </jsp:include>
         </div>
+    </c:if>
     </c:if>
 </div>
 </body>

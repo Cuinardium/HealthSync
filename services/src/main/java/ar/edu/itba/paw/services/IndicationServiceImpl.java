@@ -32,6 +32,7 @@ public class IndicationServiceImpl implements IndicationService {
     }
 
 
+    @Transactional
     @Override
     public Indication createIndication(long appointmentId, long userId, String description)
             throws UserNotFoundException, AppointmentNotFoundException {

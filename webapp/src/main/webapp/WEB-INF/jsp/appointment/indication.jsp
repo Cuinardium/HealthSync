@@ -52,7 +52,7 @@
                    method="POST">
 
             <div class="formItem">
-                <form:label cssClass="formLabel" path="description">${description}</form:label>
+                <form:label cssClass="formLabel" path="indications">${description}</form:label>
                 <form:textarea cols="50" rows="10" class="form-control" type="text" placeholder="${descriptionPlaceholder}" path="indications"/>
                 <form:errors path="indications" cssClass="error" element="p"/>
             </div>
