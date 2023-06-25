@@ -67,7 +67,7 @@
                 </div>
                 <hr>
                 <form:select id="city-select" cssClass="form-select" path="city" onchange="this.form.submit()">
-                    <form:option value="-1" disabled="true" hidden="true"> ${city} </form:option>
+                    <form:option value="-1" disabled="true" hidden="true" selected="true"> ${city} </form:option>
                     <c:forEach items="${cityMap}" var="city">
                         <form:option value="${city.key}">
                             ${city.key} (${city.value})
@@ -166,7 +166,6 @@
             <div class="cardsContainer">
                 <c:forEach items="${doctors}" var="doctor">
                     <spring:message code="${doctor.specialty.messageID}" var="doctorSpecialty"/>
-                    ${doctor.city}
                     <spring:message code="doctor.alt.doctorImg" arguments="${doctor.firstName}, ${doctor.lastName}"
                                     var="altDoctorImg"/>
                     <c:url value="/${doctor.id}/detailed-doctor" var="detailedUrl"/>
@@ -265,7 +264,7 @@
                     <jsp:param name="currentPage" value="${currentPage}"/>
                     <jsp:param name="totalPages" value="${totalPages}"/>
                     <jsp:param name="url"
-                               value="/doctor-dashboard?name=${name}&cityCode=${city}&specialtyCode=${specialtyCode}&date=${dateFilter}&from=${fromBlock.ordinal()}&to=${toBlock.ordinal()}"/>
+                               value="/doctor-dashboard?name=${name}&city=${city}&specialtyCode=${specialtyCode}&date=${dateFilter}&from=${fromBlock.ordinal()}&to=${toBlock.ordinal()}"/>
                 </jsp:include>
             </div>
         </div>

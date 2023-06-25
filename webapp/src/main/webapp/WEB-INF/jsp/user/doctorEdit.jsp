@@ -163,7 +163,7 @@
                             </form:option>
                         </c:forEach>
                     </form:select>
-                    <form:errors path="cityCode" cssClass="error" element="p"/>
+                    <form:errors path="city" cssClass="error" element="p"/>
                 </div>
                 <div class="profileItem">
                     <form:label path="address">${address}</form:label>
