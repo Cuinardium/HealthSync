@@ -8,10 +8,12 @@ import ar.edu.itba.paw.interfaces.services.exceptions.AppointmentNotFoundExcepti
 import ar.edu.itba.paw.interfaces.services.exceptions.UserNotFoundException;
 import ar.edu.itba.paw.models.Notification;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+@Service
 public class NotificationServiceImpl implements NotificationService {
 
     private final UserService userService;

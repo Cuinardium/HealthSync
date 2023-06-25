@@ -2,8 +2,7 @@ package ar.edu.itba.paw.persistence;
 
 import ar.edu.itba.paw.interfaces.persistence.NotificationDao;
 import ar.edu.itba.paw.models.Notification;
-import ar.edu.itba.paw.models.Page;
-import ar.edu.itba.paw.models.Review;
+import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -13,6 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Repository
 public class NotificationDaoJpa implements NotificationDao {
 
     @PersistenceContext
