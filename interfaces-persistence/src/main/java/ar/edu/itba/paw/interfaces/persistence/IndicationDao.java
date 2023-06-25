@@ -8,7 +8,7 @@ public interface IndicationDao {
 
     // =============== Inserts ===============
 
-    public Indication createReview(Indication indication);
+    public Indication createIndication(Indication indication);
 
     // =============== Queries ===============
 
