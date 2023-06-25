@@ -21,9 +21,9 @@ VALUES (7, '2020-01-01', 0, '2020-01-10', 0),
 INSERT INTO health_insurance_accepted_by_doctor (doctor_id, health_insurance_code)
 VALUES (7, 1), (7, 2);
 
-INSERT INTO appointment (appointment_id, patient_id, doctor_id, appointment_date, appointment_time, status_code, appointment_description, cancel_description, indications)
-VALUES (3, 5, 7, '2023-05-17', 1, 0, 'Me duele la cabeza', NULL, 'Toma ibuprofeno cada 8 horas'),
-       (4, 5, 7, '2023-05-17', 2, 0, 'Hola', NULL, NULL);
+INSERT INTO appointment (appointment_id, patient_id, doctor_id, appointment_date, appointment_time, status_code, appointment_description, cancel_description)
+VALUES (3, 5, 7, '2023-05-17', 1, 0, 'Me duele la cabeza', NULL),
+       (4, 5, 7, '2023-05-17', 2, 0, 'Hola', NULL);
 
 INSERT INTO review (review_id, patient_id, doctor_id, review_date, review_description, rating)
 VALUES (7, 5, 7, '2023-05-17', 'Muy buen doctor', 5),
