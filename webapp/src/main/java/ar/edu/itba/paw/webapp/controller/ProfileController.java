@@ -74,7 +74,15 @@ public class ProfileController {
             .orElseThrow(UserNotFoundException::new);
 
     LOGGER.debug("Doctor profile page requested");
-    return getDoctorProfileMav(doctor, doctorVacationForm, false, false, false);
+
+    final ModelAndView mav = new ModelAndView("user/doctorProfile");
+
+    mav.addObject("doctor", doctor);
+    mav.addObject("days", DayOfWeek.values());
+    mav.addObject("thirtyMinuteBlocks", ThirtyMinuteBlock.values());
+    mav.addObject("doctorVacationForm", doctorVacationForm);
+
+    return mav;
   }
 
 
@@ -300,27 +308,6 @@ public class ProfileController {
     mav.addObject("form", changePasswordForm);
     mav.addObject("showModal", false);
     LOGGER.debug("Change password page requested");
-    return mav;
-  }
-
-  // ======================= Private methods =======================
-
-  private ModelAndView getDoctorProfileMav(
-      Doctor doctor,
-      DoctorVacationForm doctorVacationForm,
-      boolean showVacationModal,
-      boolean successModal,
-      boolean invalidVacation) {
-    final ModelAndView mav = new ModelAndView("user/doctorProfile");
-
-    mav.addObject("doctor", doctor);
-    mav.addObject("days", DayOfWeek.values());
-    mav.addObject("thirtyMinuteBlocks", ThirtyMinuteBlock.values());
-    mav.addObject("doctorVacationForm", doctorVacationForm);
-    mav.addObject("showVacationModal", showVacationModal);
-    mav.addObject("successModal", successModal);
-    mav.addObject("invalidVacation", invalidVacation);
-
     return mav;
   }
 }
