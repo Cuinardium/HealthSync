@@ -4,6 +4,7 @@ import ar.edu.itba.paw.interfaces.services.AppointmentService;
 import ar.edu.itba.paw.interfaces.services.DoctorService;
 import ar.edu.itba.paw.interfaces.services.exceptions.DoctorNotFoundException;
 import ar.edu.itba.paw.interfaces.services.exceptions.VacationInvalidException;
+import ar.edu.itba.paw.interfaces.services.exceptions.VacationNotFoundException;
 import ar.edu.itba.paw.models.Doctor;
 import ar.edu.itba.paw.models.Vacation;
 import ar.edu.itba.paw.webapp.auth.PawAuthUserDetails;
@@ -99,6 +100,40 @@ public class VacationController {
       // TODO: implement logic
       // this should propt user to cancel appointments
     }
+
+    return new ModelAndView("doctor-vacations");
+  }
+
+  @RequestMapping(value = "/delete-vacation", method = RequestMethod.POST)
+  public ModelAndView doctorDeleteVacations(
+      @Valid @ModelAttribute("doctorVacationForm") final DoctorVacationForm doctorVacationForm,
+      final BindingResult errors) {
+
+    long userId = PawAuthUserDetails.getCurrentUserId();
+
+    if (errors.hasErrors()) {
+      LOGGER.warn("Failed to delete vacation due to form errors");
+      return new ModelAndView("doctor-vacations");
+    }
+
+    try {
+      doctorService.removeVacation(
+          userId,
+          new Vacation(
+              userId,
+              doctorVacationForm.getFromDate(),
+              doctorVacationForm.getFromTimeEnum(),
+              doctorVacationForm.getToDate(),
+              doctorVacationForm.getToTimeEnum()));
+    } catch (DoctorNotFoundException e) {
+      LOGGER.warn("Failed to delete vacation due to doctor not found");
+      throw new UserNotFoundException();
+    } catch (VacationNotFoundException e) {
+      LOGGER.warn("Failed to delete vacation due to vacation not found");
+      throw new UserNotFoundException();
+    }
+
+    LOGGER.debug("Doctor deleted vacation successfully");
 
     return new ModelAndView("doctor-vacations");
   }
