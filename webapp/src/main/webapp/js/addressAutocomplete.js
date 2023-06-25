@@ -32,21 +32,34 @@ function initMap() {
             let city = "";
             let streetNumber = "";
 
-            for (let i = 0; i < place.address_components.length; i++) {
-                const component = place.address_components[i];
+            let cityCandidate1 = "", cityCandidate2 = "";
+            for (const component of place.address_components) {
+                console.log(component);
 
                 if (component.types.includes("route")) {
-                    address += component.long_name + " ";
-                } else if (component.types.includes("locality")) {
-                    city = component.long_name;
+                    address += component.long_name;
+                } else if (component.types.includes("political")) {
+                    if(component.types.includes("locality"))
+                        cityCandidate1 = component.short_name;
+                    if (component.types.includes("administrative_area_level_1"))
+                        cityCandidate2 = component.short_name;
                 } else if (component.types.includes("street_number")) {
                     streetNumber = component.long_name;
                 }
+                else if (component.types.includes("postal_code")){
+                    if(cityCandidate1.startsWith(component.long_name))
+                        cityCandidate1 = "";
+                }
             }
+
+            if(cityCandidate1 !== "")
+                city = cityCandidate1;
+            else
+                city = cityCandidate2;
 
             // Combine street number and address
             if (streetNumber) {
-                address =  address + streetNumber;
+                address =  address + " " + streetNumber;
             }
 
             input.value = address;
