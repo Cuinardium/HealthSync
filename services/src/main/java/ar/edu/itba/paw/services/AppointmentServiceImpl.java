@@ -119,29 +119,6 @@ public class AppointmentServiceImpl implements AppointmentService {
     return updatedAppointment;
   }
 
-  @Transactional
-  @Override
-  public Appointment setAppointmentIndications(
-      long appointmentId, String indications, long requesterId)
-      throws AppointmentNotFoundException, SetIndicationsForbiddenException {
-    Appointment appointment =
-        getAppointmentById(appointmentId).orElseThrow(AppointmentNotFoundException::new);
-
-    if (requesterId != appointment.getDoctorId()) {
-      throw new SetIndicationsForbiddenException();
-    }
-
-    Appointment updatedAppointment;
-
-    try {
-      updatedAppointment = appointmentDao.setAppointmentIndications(appointmentId, indications);
-    } catch (ar.edu.itba.paw.interfaces.persistence.exceptions.AppointmentNotFoundException e) {
-      throw new IllegalStateException(
-          "Appointment indications could not be updated due to it not existing");
-    }
-
-    return updatedAppointment;
-  }
 
   // =============== Queries ===============
 

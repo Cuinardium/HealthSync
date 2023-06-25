@@ -32,9 +32,6 @@ public interface AppointmentService {
       long appointmentId, String cancelDescription, long requesterId)
       throws AppointmentNotFoundException, CancelForbiddenException;
 
-  public Appointment setAppointmentIndications(
-      long appointmentId, String indications, long requesterId)
-      throws AppointmentNotFoundException, SetIndicationsForbiddenException;
 
   // =============== Queries ===============
 
