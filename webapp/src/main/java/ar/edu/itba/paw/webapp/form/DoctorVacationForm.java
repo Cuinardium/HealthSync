@@ -16,7 +16,9 @@ public class DoctorVacationForm {
 
   private String toTime;
 
-  private String cancelReason;
+  private boolean cancelAppointmentsInVacation = true;
+
+  private String cancelReason = null;
 
 
   public LocalDate getFromDate() {
@@ -43,6 +45,10 @@ public class DoctorVacationForm {
     return cancelReason;
   }
 
+  public boolean getCancelAppointmentsInVacation() {
+    return cancelAppointmentsInVacation;
+  }
+
   public void setToDate(LocalDate toDate) {
     this.toDate = toDate;
   }
@@ -57,6 +63,10 @@ public class DoctorVacationForm {
 
   public void setCancelReason(String cancelReason) {
     this.cancelReason = cancelReason;
+  }
+
+  public void setCancelAppointmentsInVacation(boolean cancelAppointmentsInVacation) {
+    this.cancelAppointmentsInVacation = cancelAppointmentsInVacation;
   }
 
   public ThirtyMinuteBlock getFromTimeEnum() {

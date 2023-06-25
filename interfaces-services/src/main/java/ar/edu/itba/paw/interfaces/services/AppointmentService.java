@@ -65,13 +65,6 @@ public interface AppointmentService {
 
   public boolean hasPatientMetDoctor(long patientId, long doctorId);
 
-  public boolean hasAppointmentsInRange(
-      long doctorId,
-      LocalDate fromDate,
-      ThirtyMinuteBlock fromTime,
-      LocalDate toDate,
-      ThirtyMinuteBlock toTime);
-
   // ================ Tasks ================
   public void sendAppointmentReminders();
 

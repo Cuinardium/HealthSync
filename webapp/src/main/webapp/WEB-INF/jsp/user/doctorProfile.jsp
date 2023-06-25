@@ -163,7 +163,6 @@
         <div class="profileButtonContainer">
             <a type="button" href="${doctorEditUrl}" class="btn btn-primary">${editProfile}</a>
             <a type="button" href="${changePasswordUrl}" class="btn btn-primary">${changePassword}</a>
-            <button class="btn btn-primary" onclick="openVacationModal()">${vacationTitle}</button>
         </div>
     </div>
 </div>

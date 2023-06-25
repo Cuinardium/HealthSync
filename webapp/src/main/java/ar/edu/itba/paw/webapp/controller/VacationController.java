@@ -39,8 +39,10 @@ public class VacationController {
   }
 
   @RequestMapping(value = "/doctor-vacation", method = RequestMethod.GET)
-  public ModelAndView getVacations() {
-    return getVacationsModelAndView(false, false, null, false, false, false, false);
+  public ModelAndView getVacations(
+          @ModelAttribute("doctorVacationForm") final DoctorVacationForm doctorVacationForm
+  ) {
+    return getVacationsModelAndView( false, false, false, false);
   }
 
   @RequestMapping(value = "/doctor-vacation", method = RequestMethod.POST)
@@ -52,7 +54,7 @@ public class VacationController {
 
     if (errors.hasErrors()) {
       LOGGER.warn("Failed to add vacation due to form errors");
-      return getVacationsModelAndView(true, false, null, true, false, false, false);
+      return getVacationsModelAndView(true, false, false, false);
     }
 
     Vacation newVacation =
@@ -65,33 +67,29 @@ public class VacationController {
 
     try {
       doctorService.addVacation(userId, newVacation);
+
+      if (doctorVacationForm.getCancelAppointmentsInVacation()) {
+        appointmentService.cancelAppointmentsInRange(
+                userId,
+                newVacation.getFromDate(),
+                newVacation.getFromTime(),
+                newVacation.getToDate(),
+                newVacation.getToTime(),
+                doctorVacationForm.getCancelReason());
+      }
+
     } catch (DoctorNotFoundException e) {
       LOGGER.warn("Failed to add vacation due to doctor not found");
       throw new UserNotFoundException();
     } catch (VacationInvalidException e) {
       LOGGER.warn("Failed to add vacation due to invalid vacation");
 
-      return getVacationsModelAndView(true, false, null, true, false, false, false);
+      return getVacationsModelAndView(true, true, false, false);
     }
 
     LOGGER.debug("Doctor added vacation successfully");
 
-    boolean hasAppointmentsInVacation =
-        appointmentService.hasAppointmentsInRange(
-            userId,
-            doctorVacationForm.getFromDate(),
-            doctorVacationForm.getFromTimeEnum(),
-            doctorVacationForm.getToDate(),
-            doctorVacationForm.getToTimeEnum());
-
-    return getVacationsModelAndView(
-        true,
-        hasAppointmentsInVacation,
-        hasAppointmentsInVacation ? newVacation : null,
-        false,
-        true,
-        false,
-        false);
+    return getVacationsModelAndView(false, false, true, false);
   }
 
   @RequestMapping(value = "/delete-vacation", method = RequestMethod.POST)
@@ -119,45 +117,17 @@ public class VacationController {
 
     LOGGER.debug("Doctor deleted vacation successfully");
 
-    return getVacationsModelAndView(true, false, null, false, false, true, false);
-  }
-
-  @RequestMapping(value = "/cancel-vacation-appointments", method = RequestMethod.POST)
-  public ModelAndView doctorCancelVacationAppointments(
-      @ModelAttribute("cancelVacationAppointmentsForm") final DoctorVacationForm doctorVacationForm,
-      final BindingResult errors) {
-
-    long userId = PawAuthUserDetails.getCurrentUserId();
-
-    try {
-      appointmentService.cancelAppointmentsInRange(
-          userId,
-          doctorVacationForm.getFromDate(),
-          doctorVacationForm.getFromTimeEnum(),
-          doctorVacationForm.getToDate(),
-          doctorVacationForm.getToTimeEnum(),
-          doctorVacationForm.getCancelReason());
-    } catch (DoctorNotFoundException e) {
-      LOGGER.warn("Failed to cancel vacation appointments due to doctor not found");
-      throw new UserNotFoundException();
-    }
-
-    LOGGER.debug("Doctor canceled vacation appointments successfully");
-
-    return getVacationsModelAndView(true, false, null, false, false, false, true);
+    return getVacationsModelAndView(false, false, false, true);
   }
 
   // ============== Private methods ==============
 
   private ModelAndView getVacationsModelAndView(
-      boolean redirect,
-      boolean hasAppointmentsInVacation,
-      Vacation vacationToCancelAppointments,
       boolean showAddVacationModal,
+      boolean isVacationInvalid,
       boolean showVacationSuccessModal,
-      boolean showVacationDeleteSuccessModal,
-      boolean showCancelVacationAppointmentsSuccessModal) {
-    ModelAndView mav = new ModelAndView(redirect ? "redirect:/doctorVacation" : "doctorVacation");
+      boolean showVacationDeleteSuccessModal) {
+    ModelAndView mav = new ModelAndView("vacation/doctorVacation");
 
     long userId = PawAuthUserDetails.getCurrentUserId();
 
@@ -168,13 +138,10 @@ public class VacationController {
 
     mav.addObject("vacations", orderedVacations);
     mav.addObject("timeEnumValues", ThirtyMinuteBlock.values());
-    mav.addObject("hasAppointmentsInVacation", hasAppointmentsInVacation);
-    mav.addObject("vacationToCancelAppointments", vacationToCancelAppointments);
+    mav.addObject("isVacationInvalid", isVacationInvalid);
     mav.addObject("showAddVacationModal", showAddVacationModal);
     mav.addObject("showVacationSuccessModal", showVacationSuccessModal);
     mav.addObject("showVacationDeleteSuccessModal", showVacationDeleteSuccessModal);
-    mav.addObject(
-        "showCancelVacationAppointmentsSuccessModal", showCancelVacationAppointmentsSuccessModal);
 
     return mav;
   }
