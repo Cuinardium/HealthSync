@@ -1,7 +1,6 @@
 package ar.edu.itba.paw.webapp.form;
 
 import ar.edu.itba.paw.models.ThirtyMinuteBlock;
-import ar.edu.itba.paw.webapp.annotations.DateAnnotation;
 import java.time.LocalDate;
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -16,6 +15,8 @@ public class DoctorVacationForm {
   LocalDate toDate;
 
   private String toTime;
+
+  private String cancelReason;
 
 
   public LocalDate getFromDate() {
@@ -38,6 +39,10 @@ public class DoctorVacationForm {
     return toDate;
   }
 
+  public String getCancelReason() {
+    return cancelReason;
+  }
+
   public void setToDate(LocalDate toDate) {
     this.toDate = toDate;
   }
@@ -48,6 +53,10 @@ public class DoctorVacationForm {
 
   public void setToTime(String toTime) {
     this.toTime = toTime;
+  }
+
+  public void setCancelReason(String cancelReason) {
+    this.cancelReason = cancelReason;
   }
 
   public ThirtyMinuteBlock getFromTimeEnum() {

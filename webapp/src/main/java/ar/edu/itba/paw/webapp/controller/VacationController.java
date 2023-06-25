@@ -6,6 +6,7 @@ import ar.edu.itba.paw.interfaces.services.exceptions.DoctorNotFoundException;
 import ar.edu.itba.paw.interfaces.services.exceptions.VacationInvalidException;
 import ar.edu.itba.paw.interfaces.services.exceptions.VacationNotFoundException;
 import ar.edu.itba.paw.models.Doctor;
+import ar.edu.itba.paw.models.ThirtyMinuteBlock;
 import ar.edu.itba.paw.models.Vacation;
 import ar.edu.itba.paw.webapp.auth.PawAuthUserDetails;
 import ar.edu.itba.paw.webapp.exceptions.UserNotFoundException;
@@ -37,20 +38,9 @@ public class VacationController {
     this.appointmentService = appointmentService;
   }
 
-  @RequestMapping(value = "/doctor-vacations", method = RequestMethod.GET)
+  @RequestMapping(value = "/doctor-vacation", method = RequestMethod.GET)
   public ModelAndView getVacations() {
-    ModelAndView mav = new ModelAndView("doctor-vacations");
-
-    long userId = PawAuthUserDetails.getCurrentUserId();
-
-    Doctor doctor = doctorService.getDoctorById(userId).orElseThrow(UserNotFoundException::new);
-
-    List<Vacation> orderedVacations =
-        doctor.getVacations().stream().sorted().collect(Collectors.toList());
-
-    mav.addObject("vacations", orderedVacations);
-
-    return mav;
+    return getVacationsModelAndView(false, false, null, false, false, false, false);
   }
 
   @RequestMapping(value = "/doctor-vacation", method = RequestMethod.POST)
@@ -58,63 +48,57 @@ public class VacationController {
       @Valid @ModelAttribute("doctorVacationForm") final DoctorVacationForm doctorVacationForm,
       final BindingResult errors) {
 
-    Doctor doctor =
-        doctorService
-            .getDoctorById(PawAuthUserDetails.getCurrentUserId())
-            .orElseThrow(UserNotFoundException::new);
+    long userId = PawAuthUserDetails.getCurrentUserId();
 
     if (errors.hasErrors()) {
       LOGGER.warn("Failed to add vacation due to form errors");
-      return new ModelAndView("doctor-vacations");
+      return getVacationsModelAndView(true, false, null, true, false, false, false);
     }
 
+    Vacation newVacation =
+        new Vacation(
+            userId,
+            doctorVacationForm.getFromDate(),
+            doctorVacationForm.getFromTimeEnum(),
+            doctorVacationForm.getToDate(),
+            doctorVacationForm.getToTimeEnum());
+
     try {
-      doctorService.addVacation(
-          doctor.getId(),
-          new Vacation(
-              doctor.getId(),
-              doctorVacationForm.getFromDate(),
-              doctorVacationForm.getFromTimeEnum(),
-              doctorVacationForm.getToDate(),
-              doctorVacationForm.getToTimeEnum()));
+      doctorService.addVacation(userId, newVacation);
     } catch (DoctorNotFoundException e) {
       LOGGER.warn("Failed to add vacation due to doctor not found");
       throw new UserNotFoundException();
     } catch (VacationInvalidException e) {
       LOGGER.warn("Failed to add vacation due to invalid vacation");
 
-      return new ModelAndView("doctor-vacations");
+      return getVacationsModelAndView(true, false, null, true, false, false, false);
     }
 
     LOGGER.debug("Doctor added vacation successfully");
 
     boolean hasAppointmentsInVacation =
         appointmentService.hasAppointmentsInRange(
-            doctor.getId(),
+            userId,
             doctorVacationForm.getFromDate(),
             doctorVacationForm.getFromTimeEnum(),
             doctorVacationForm.getToDate(),
             doctorVacationForm.getToTimeEnum());
 
-    if (hasAppointmentsInVacation) {
-      // TODO: implement logic
-      // this should propt user to cancel appointments
-    }
-
-    return new ModelAndView("doctor-vacations");
+    return getVacationsModelAndView(
+        true,
+        hasAppointmentsInVacation,
+        hasAppointmentsInVacation ? newVacation : null,
+        false,
+        true,
+        false,
+        false);
   }
 
   @RequestMapping(value = "/delete-vacation", method = RequestMethod.POST)
   public ModelAndView doctorDeleteVacations(
-      @Valid @ModelAttribute("doctorVacationForm") final DoctorVacationForm doctorVacationForm,
-      final BindingResult errors) {
+      @ModelAttribute("doctorVacationForm") final DoctorVacationForm doctorVacationForm) {
 
     long userId = PawAuthUserDetails.getCurrentUserId();
-
-    if (errors.hasErrors()) {
-      LOGGER.warn("Failed to delete vacation due to form errors");
-      return new ModelAndView("doctor-vacations");
-    }
 
     try {
       doctorService.removeVacation(
@@ -135,20 +119,15 @@ public class VacationController {
 
     LOGGER.debug("Doctor deleted vacation successfully");
 
-    return new ModelAndView("doctor-vacations");
+    return getVacationsModelAndView(true, false, null, false, false, true, false);
   }
 
   @RequestMapping(value = "/cancel-vacation-appointments", method = RequestMethod.POST)
   public ModelAndView doctorCancelVacationAppointments(
-    @Valid @ModelAttribute("cancelVacationAppointmentsForm") final DoctorVacationForm doctorVacationForm,
+      @ModelAttribute("cancelVacationAppointmentsForm") final DoctorVacationForm doctorVacationForm,
       final BindingResult errors) {
 
     long userId = PawAuthUserDetails.getCurrentUserId();
-
-    if (errors.hasErrors()) {
-      LOGGER.warn("Failed to cancel vacation appointments due to form errors");
-      return new ModelAndView("doctor-vacations");
-    }
 
     try {
       appointmentService.cancelAppointmentsInRange(
@@ -165,6 +144,38 @@ public class VacationController {
 
     LOGGER.debug("Doctor canceled vacation appointments successfully");
 
-    return new ModelAndView("doctor-vacations");
+    return getVacationsModelAndView(true, false, null, false, false, false, true);
+  }
+
+  // ============== Private methods ==============
+
+  private ModelAndView getVacationsModelAndView(
+      boolean redirect,
+      boolean hasAppointmentsInVacation,
+      Vacation vacationToCancelAppointments,
+      boolean showAddVacationModal,
+      boolean showVacationSuccessModal,
+      boolean showVacationDeleteSuccessModal,
+      boolean showCancelVacationAppointmentsSuccessModal) {
+    ModelAndView mav = new ModelAndView(redirect ? "redirect:/doctorVacation" : "doctorVacation");
+
+    long userId = PawAuthUserDetails.getCurrentUserId();
+
+    Doctor doctor = doctorService.getDoctorById(userId).orElseThrow(UserNotFoundException::new);
+
+    List<Vacation> orderedVacations =
+        doctor.getVacations().stream().sorted().collect(Collectors.toList());
+
+    mav.addObject("vacations", orderedVacations);
+    mav.addObject("timeEnumValues", ThirtyMinuteBlock.values());
+    mav.addObject("hasAppointmentsInVacation", hasAppointmentsInVacation);
+    mav.addObject("vacationToCancelAppointments", vacationToCancelAppointments);
+    mav.addObject("showAddVacationModal", showAddVacationModal);
+    mav.addObject("showVacationSuccessModal", showVacationSuccessModal);
+    mav.addObject("showVacationDeleteSuccessModal", showVacationDeleteSuccessModal);
+    mav.addObject(
+        "showCancelVacationAppointmentsSuccessModal", showCancelVacationAppointmentsSuccessModal);
+
+    return mav;
   }
 }
