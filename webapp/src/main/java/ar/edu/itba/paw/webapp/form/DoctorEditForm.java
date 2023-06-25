@@ -1,7 +1,6 @@
 package ar.edu.itba.paw.webapp.form;
 
 import ar.edu.itba.paw.models.AttendingHours;
-import ar.edu.itba.paw.models.City;
 import ar.edu.itba.paw.models.Specialty;
 import ar.edu.itba.paw.webapp.annotations.ExistsInEnum;
 import java.time.DayOfWeek;
@@ -18,8 +17,9 @@ import org.hibernate.validator.constraints.NotEmpty;
 public class DoctorEditForm extends UserEditForm {
   @NotEmpty private List<Integer> healthInsuranceCodes;
 
-  @ExistsInEnum(enumClass = City.class)
-  private Integer cityCode = -1;
+  @Size(min = 1)
+  @Pattern(regexp = "[a-zA-Z0-9. ]+")
+  private String city;
 
   @Size(min = 1)
   @Pattern(regexp = "[a-zA-Z0-9. ]+")
@@ -45,12 +45,12 @@ public class DoctorEditForm extends UserEditForm {
     this.healthInsuranceCodes = healthInsuranceCodes;
   }
 
-  public int getCityCode() {
-    return cityCode;
+  public String getCity() {
+    return city;
   }
 
-  public void setCityCode(int cityCode) {
-    this.cityCode = cityCode;
+  public void setCity(String city) {
+    this.city = city;
   }
 
   public String getAddress() {

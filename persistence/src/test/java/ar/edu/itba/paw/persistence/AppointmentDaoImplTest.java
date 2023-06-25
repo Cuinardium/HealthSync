@@ -60,7 +60,7 @@ public class AppointmentDaoImplTest {
       new HashSet<>(Arrays.asList(HealthInsurance.OMINT, HealthInsurance.OSDE));
   private static final Specialty INSERTED_DOCTOR_SPECIALTY =
       Specialty.PEDIATRIC_ALLERGY_AND_IMMUNOLOGY;
-  private static final City INSERTED_DOCTOR_CITY = City.ADOLFO_GONZALES_CHAVES;
+  private static final String INSERTED_DOCTOR_CITY = "Adolfo Gonzalez Chaves";
   private static final String INSERTED_DOCTOR_ADDRESS = "doctor_address";
   private static final Image INSERTED_DOCTOR_IMAGE = null;
   private static final Float INSERTED_DOCTOR_RATING = 3f;

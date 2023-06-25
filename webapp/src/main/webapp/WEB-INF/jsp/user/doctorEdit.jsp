@@ -11,6 +11,8 @@
 <c:url value="/css/forms.css" var="formsCss"/>
 <c:url value="/css/profile.css" var="profileCss"/>
 <c:url value="/css/profileEdit.css" var="profileEditCss"/>
+
+<c:url value="/js/addressAutocomplete.js" var="addressAutocompleteJs"/>
 <c:url value="/js/profileEdit.js" var="profileEditJs"/>
 
 <c:url value="/doctor-edit" var="doctorEditUrl"/>
@@ -62,6 +64,8 @@
         })
     </script>
     <script src="${profileEditJs}"></script>
+    <script src="${addressAutocompleteJs}"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDHBThPhUQ9OHY--MJtNOv6wFBpmpSl2_U&libraries=places"></script>
 </head>
 
 <body>

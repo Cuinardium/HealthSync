@@ -1,7 +1,6 @@
 package ar.edu.itba.paw.webapp.form;
 
 import ar.edu.itba.paw.models.AttendingHours;
-import ar.edu.itba.paw.models.City;
 import ar.edu.itba.paw.models.Specialty;
 import ar.edu.itba.paw.webapp.annotations.ExistsInEnum;
 import java.time.DayOfWeek;
@@ -17,15 +16,15 @@ import javax.validation.constraints.Size;
 import org.hibernate.validator.constraints.NotEmpty;
 
 public class DoctorRegisterForm extends UserRegisterForm {
-
   @NotEmpty private List<Integer> healthInsuranceCodes = new ArrayList<>();
-
-  @ExistsInEnum(enumClass = City.class)
-  private Integer cityCode = -1;
 
   @Size(min = 1)
   @Pattern(regexp = "[a-zA-Z0-9. ñÑ]+")
   private String address;
+
+  @Size(min = 1)
+  @Pattern(regexp = "[a-zA-Z0-9. ñÑ]+")
+  private String city;
 
   @ExistsInEnum(enumClass = Specialty.class)
   private Integer specialtyCode = -1;
@@ -47,12 +46,12 @@ public class DoctorRegisterForm extends UserRegisterForm {
     this.healthInsuranceCodes = healthInsuranceCodes;
   }
 
-  public int getCityCode() {
-    return cityCode;
+  public String getCity() {
+    return city;
   }
 
-  public void setCityCode(int cityCode) {
-    this.cityCode = cityCode;
+  public void setCity(String city) {
+    this.city = city;
   }
 
   public String getAddress() {
