@@ -32,6 +32,15 @@ public interface AppointmentService {
       long appointmentId, String cancelDescription, long requesterId)
       throws AppointmentNotFoundException, CancelForbiddenException;
 
+  public void cancelAppointmentsInRange(
+      long doctorId,
+      LocalDate fromDate,
+      ThirtyMinuteBlock fromTime,
+      LocalDate toDate,
+      ThirtyMinuteBlock toTime,
+      String cancelDescription)
+      throws DoctorNotFoundException;
+
   public Appointment setAppointmentIndications(
       long appointmentId, String indications, long requesterId)
       throws AppointmentNotFoundException, SetIndicationsForbiddenException;

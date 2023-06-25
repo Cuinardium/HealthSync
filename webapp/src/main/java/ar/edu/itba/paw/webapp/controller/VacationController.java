@@ -53,7 +53,7 @@ public class VacationController {
     return mav;
   }
 
-  @RequestMapping(value = "/add-vacation", method = RequestMethod.POST)
+  @RequestMapping(value = "/doctor-vacation", method = RequestMethod.POST)
   public ModelAndView doctorAddVacations(
       @Valid @ModelAttribute("doctorVacationForm") final DoctorVacationForm doctorVacationForm,
       final BindingResult errors) {
@@ -134,6 +134,36 @@ public class VacationController {
     }
 
     LOGGER.debug("Doctor deleted vacation successfully");
+
+    return new ModelAndView("doctor-vacations");
+  }
+
+  @RequestMapping(value = "/cancel-vacation-appointments", method = RequestMethod.POST)
+  public ModelAndView doctorCancelVacationAppointments(
+    @Valid @ModelAttribute("cancelVacationAppointmentsForm") final DoctorVacationForm doctorVacationForm,
+      final BindingResult errors) {
+
+    long userId = PawAuthUserDetails.getCurrentUserId();
+
+    if (errors.hasErrors()) {
+      LOGGER.warn("Failed to cancel vacation appointments due to form errors");
+      return new ModelAndView("doctor-vacations");
+    }
+
+    try {
+      appointmentService.cancelAppointmentsInRange(
+          userId,
+          doctorVacationForm.getFromDate(),
+          doctorVacationForm.getFromTimeEnum(),
+          doctorVacationForm.getToDate(),
+          doctorVacationForm.getToTimeEnum(),
+          doctorVacationForm.getCancelReason());
+    } catch (DoctorNotFoundException e) {
+      LOGGER.warn("Failed to cancel vacation appointments due to doctor not found");
+      throw new UserNotFoundException();
+    }
+
+    LOGGER.debug("Doctor canceled vacation appointments successfully");
 
     return new ModelAndView("doctor-vacations");
   }

@@ -119,6 +119,46 @@ public class AppointmentServiceImpl implements AppointmentService {
     return updatedAppointment;
   }
 
+  @Override
+  public void cancelAppointmentsInRange(
+      long doctorId,
+      LocalDate fromDate,
+      ThirtyMinuteBlock fromTime,
+      LocalDate toDate,
+      ThirtyMinuteBlock toTime,
+      String cancelDescription)
+      throws DoctorNotFoundException {
+
+    doctorService.getDoctorById(doctorId).orElseThrow(DoctorNotFoundException::new);
+
+    List<Appointment> appointmentsInDateRange =
+        appointmentDao
+            .getFilteredAppointments(
+                doctorId, AppointmentStatus.CONFIRMED, fromDate, toDate, null, null, false)
+            .getContent();
+    try {
+      for (Appointment appointment : appointmentsInDateRange) {
+        LocalDate appointmentDate = appointment.getDate();
+        ThirtyMinuteBlock appointmentTimeBlock = appointment.getTimeBlock();
+
+        if (appointmentDate.equals(fromDate) && appointmentTimeBlock.compareTo(fromTime) >= 0) {
+          cancelAppointment(appointment.getId(), cancelDescription, doctorId);
+        }
+
+        if (appointmentDate.equals(toDate) && appointmentTimeBlock.compareTo(toTime) <= 0) {
+          cancelAppointment(appointment.getId(), cancelDescription, doctorId);
+        }
+
+        // Probably unnecesary
+        if (appointmentDate.isAfter(fromDate) && appointmentDate.isBefore(toDate)) {
+          cancelAppointment(appointment.getId(), cancelDescription, doctorId);
+        }
+      }
+    } catch (AppointmentNotFoundException | CancelForbiddenException e) {
+      throw new IllegalStateException("Appointment could not be cancelled");
+    }
+  }
+
   @Transactional
   @Override
   public Appointment setAppointmentIndications(
