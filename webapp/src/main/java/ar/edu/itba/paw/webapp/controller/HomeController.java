@@ -9,8 +9,6 @@ import ar.edu.itba.paw.webapp.exceptions.UserNotFoundException;
 import ar.edu.itba.paw.webapp.form.DoctorFilterForm;
 import java.time.LocalDate;
 import java.util.*;
-import java.util.stream.Collectors;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -75,7 +73,7 @@ public class HomeController {
     ThirtyMinuteBlock toTime = ThirtyMinuteBlock.values()[toOrdinal];
 
     Set<Specialty> specialties = new HashSet<>();
-    if(specialtyCodes != null) {
+    if (specialtyCodes != null) {
       for (Integer specialtyCode : specialtyCodes) {
         if (specialtyCode < 0 || specialtyCode >= Specialty.values().length) {
           continue;
@@ -85,7 +83,7 @@ public class HomeController {
     }
 
     Set<HealthInsurance> healthInsurances = new HashSet<>();
-    if(healthInsuranceCodes != null){
+    if (healthInsuranceCodes != null) {
       for (Integer healthInsuranceCode : healthInsuranceCodes) {
         if (healthInsuranceCode < 0 || healthInsuranceCode >= HealthInsurance.values().length) {
           continue;
@@ -127,9 +125,9 @@ public class HomeController {
     mav.addObject("doctors", doctors.getContent());
     mav.addObject("cityMap", usedCities);
     mav.addObject("cities", cities);
-    mav.addObject("specialties", specialtyCodes);
+    mav.addObject("specialtyCodes", specialtyCodes);
     mav.addObject("specialtyMap", usedSpecialties);
-    mav.addObject("healthInsurances", healthInsuranceCodes);
+    mav.addObject("healthInsuranceCodes", healthInsuranceCodes);
     mav.addObject("healthInsuranceMap", usedHealthInsurances);
     mav.addObject("dateFilter", date);
     mav.addObject("fromBlock", fromTime);

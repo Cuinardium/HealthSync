@@ -12,8 +12,8 @@
 <c:url value="/js/filters.js" var="filtersJs"/>
 
 <c:url value="/doctor-dashboard" var="doctorDashboardUrl"/>
-<c:url value="/doctor-dashboard?specialtyCode=" var="specialtyFilter"/>
-<c:url value="/doctor-dashboard?healthInsuranceCode=" var="healthInsuranceFilter"/>
+<c:url value="/doctor-dashboard?specialtyCodes=" var="specialtyFilter"/>
+<c:url value="/doctor-dashboard?healthInsuranceCodes=" var="healthInsuranceFilter"/>
 
 <spring:message code="doctorDashboard.title" var="title"/>
 <spring:message code="detailedDoctor.specialties" var="specialties"/>
@@ -267,12 +267,32 @@
                     </div>
                 </c:if>
 
+                <c:url var="doctorDashboardFilteredUrl" value="/doctor-dashboard">
+                    <c:if test="${not empty specialtyCodes}">
+                        <c:forEach items="${specialtyCodes}" var="specialtyVal">
+                            <c:param name="specialtyCodes" value="${specialtyVal}" />
+                        </c:forEach>
+                    </c:if>
+                    <c:if test="${not empty cities}">
+                        <c:forEach items="${cities}" var="cityVal">
+                            <c:param name="cities" value="${cityVal}" />
+                        </c:forEach>
+                    </c:if>
+                    <c:if test="${not empty healthInsuranceCodes}">
+                        <c:forEach items="${healthInsuranceCodes}" var="insuranceVal">
+                            <c:param name="healthInsuranceCodes" value="${insuranceVal}" />
+                        </c:forEach>
+                    </c:if>
+                    <c:param name="name" value="${name}" />
+                    <c:param name="date" value="${dateFilter}" />
+                    <c:param name="from" value="${fromBlock.ordinal()}" />
+                    <c:param name="to" value="${toBlock.ordinal()}" />
+                </c:url>
 
                 <jsp:include page="../components/pagination.jsp">
                     <jsp:param name="currentPage" value="${currentPage}"/>
                     <jsp:param name="totalPages" value="${totalPages}"/>
-                    <jsp:param name="url"
-                               value="/doctor-dashboard?name=${name}&city=${cities}&specialtyCode=${specialties}&healthInsuranceCode=${healthInsurances}&date=${dateFilter}&from=${fromBlock.ordinal()}&to=${toBlock.ordinal()}"/>
+                    <jsp:param name="url" value="${doctorDashboardFilteredUrl}"/>
                 </jsp:include>
             </div>
         </div>
