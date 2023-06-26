@@ -1,6 +1,7 @@
 package ar.edu.itba.paw.services;
 
 import ar.edu.itba.paw.interfaces.persistence.TokenDao;
+import ar.edu.itba.paw.interfaces.services.MailService;
 import ar.edu.itba.paw.interfaces.services.TokenService;
 import ar.edu.itba.paw.interfaces.services.exceptions.TokenNotFoundException;
 import ar.edu.itba.paw.models.User;
@@ -15,10 +16,12 @@ import org.springframework.transaction.annotation.Transactional;
 public class TokenServiceImpl implements TokenService {
 
   private TokenDao verificationTokenDao;
+  private MailService mailService;
 
   @Autowired
-  public TokenServiceImpl(TokenDao verificationTokenDao) {
+  public TokenServiceImpl(TokenDao verificationTokenDao, MailService mailService) {
     this.verificationTokenDao = verificationTokenDao;
+    this.mailService = mailService;
   }
 
   // ============= CREATE =============
@@ -61,5 +64,8 @@ public class TokenServiceImpl implements TokenService {
         verificationTokenDao.getUserToken(user).orElseThrow(TokenNotFoundException::new);
 
     verificationToken.renewExpiryDateTime();
+    verificationToken.setToken(UUID.randomUUID().toString());
+
+    mailService.sendConfirmationMail(verificationToken);
   }
 }
