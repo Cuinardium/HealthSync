@@ -8,8 +8,8 @@ VALUES (5, 'patient@email.com', 'patient_password', 'patient_first_name', 'patie
 INSERT INTO patient (patient_id, health_insurance_code)
 VALUES (5, 1);
 
-INSERT INTO doctor (doctor_id, specialty_code, city_code, address)
-VALUES (7, 1, 1, 'doctor_address');
+INSERT INTO doctor (doctor_id, specialty_code, city, address)
+VALUES (7, 1, 'Adolfo Gonzalez Chaves', 'doctor_address');
 
 INSERT INTO doctor_attending_hours (doctor_id, day, hour_block)
 VALUES (7,0,0), (7,1,0), (7,2,0), (7,3,0), (7,4,0);
