@@ -65,6 +65,16 @@ public class DoctorServiceImplTest {
 
   private static final Float RATING = 3F;
   private static final Integer RATING_COUNT = 1;
+  private static final User USER =
+      new User(
+          ID,
+          EMAIL,
+          PASSWORD_ENCODED,
+          FIRST_NAME,
+          LAST_NAME,
+          IMAGE,
+          LOCALE,
+          true);
   private static final Doctor DOCTOR =
       new Doctor(
           ID,
@@ -186,6 +196,7 @@ public class DoctorServiceImplTest {
                     LOCALE,
                     false)))
         .thenReturn(DOCTOR);
+    Mockito.when(userService.getUserById(Mockito.eq(ID))).thenReturn(Optional.of(USER));
     Mockito.when(tokenService.createToken(Mockito.any(User.class)))
         .thenReturn(Mockito.mock(VerificationToken.class));
     Mockito.doNothing()
