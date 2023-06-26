@@ -6,6 +6,7 @@
 <spring:message code="indication.description" var="description"/>
 <spring:message code="indication.description.placeholder" var="descriptionPlaceholder"/>
 <spring:message code="indication.submit" var="submit"/>
+<spring:message code="indication.file.title" var="fileTitle"/>
 
 <spring:message code="indication.modal.title" var="modalTitle"/>
 <spring:message code="indication.modal.text" var="modalDesc"/>
@@ -59,7 +60,7 @@
 
             <div class="formItem">
                 <div class="mb-3">
-                    <form:label  cssClass="formLabel" path="file">Default file input example</form:label>
+                    <form:label  cssClass="formLabel" path="file">${fileTitle}</form:label>
                     <form:input class="form-control" type="file" path="file"/>
                 </div>
             </div>
