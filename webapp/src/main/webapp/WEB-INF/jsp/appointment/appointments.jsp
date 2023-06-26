@@ -125,7 +125,7 @@
                                     <c:if test="${appointment.status=='COMPLETED'}">
                                         <c:forEach items="${appointmentNotifications}" var="notification">
                                             <c:if test="${notification.appointment.id==appointment.id}">
-                                                <i class="fa-solid fa-comments" style="color: #ff0000;"></i>
+                                                <i class="fa-solid fa-circle" style="color: #ff0000;"></i>
                                             </c:if>
                                         </c:forEach>
                                     </c:if>

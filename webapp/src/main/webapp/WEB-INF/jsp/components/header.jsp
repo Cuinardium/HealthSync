@@ -56,7 +56,7 @@
                     <i class="fa-solid fa-calendar-check"></i>
                 </a>
                 <c:if test="${hasNotifications}">
-                    <i class="fa-solid fa-comments" style="color: #ff0000;"></i>
+                    <i class="fa-solid fa-circle" style="color: #ff0000;"></i>
                 </c:if>
             </c:if>
         </div>
