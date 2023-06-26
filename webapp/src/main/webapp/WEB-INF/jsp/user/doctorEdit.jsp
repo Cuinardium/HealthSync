@@ -11,6 +11,8 @@
 <c:url value="/css/forms.css" var="formsCss"/>
 <c:url value="/css/profile.css" var="profileCss"/>
 <c:url value="/css/profileEdit.css" var="profileEditCss"/>
+
+<c:url value="/js/addressAutocomplete.js" var="addressAutocompleteJs"/>
 <c:url value="/js/profileEdit.js" var="profileEditJs"/>
 
 <c:url value="/doctor-edit" var="doctorEditUrl"/>
@@ -62,6 +64,7 @@
         })
     </script>
     <script src="${profileEditJs}"></script>
+    <script src="${addressAutocompleteJs}"></script>
 </head>
 
 <body>
@@ -150,21 +153,16 @@
 
             <div class="profileRow">
                 <div class="profileItem">
-                    <form:label path="cityCode">${city}</form:label>
-                    <form:select class="form-select" path="cityCode">
-                        <form:option value="-1" disabled="true" hidden="true"> -- </form:option>
-                        <c:forEach items="${cities}" var="city" varStatus="status">
-                            <form:option value="${status.index}">
-                                <spring:message code="${city.messageID}"/>
-                            </form:option>
-                        </c:forEach>
-                    </form:select>
-                    <form:errors path="cityCode" cssClass="error" element="p"/>
+                    <form:label path="address">${address}</form:label>
+                    <form:input id="addr-input" class="form-control" path="address" type="text"
+                                placeholder="${address_hint}"/>
+                    <form:errors path="address" cssClass="error" element="p"/>
                 </div>
                 <div class="profileItem">
-                    <form:label path="address">${address}</form:label>
-                    <form:input class="form-control" path="address" type="text" placeholder="${address_hint}"/>
-                    <form:errors path="address" cssClass="error" element="p"/>
+                    <form:label path="city">${city}</form:label>
+                    <form:input id="city-input" class="form-control" path="city" type="text"
+                                placeholder="${city_hint}" readonly="true"/>
+                    <form:errors path="city" cssClass="error" element="p"/>
                 </div>
             </div>
 
@@ -232,5 +230,9 @@
         </div>
     </div>
 </div>
+<script
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDHBThPhUQ9OHY--MJtNOv6wFBpmpSl2_U&callback=initMap&libraries=places&v=weekly"
+        defer
+></script>
 </body>
 </html>
