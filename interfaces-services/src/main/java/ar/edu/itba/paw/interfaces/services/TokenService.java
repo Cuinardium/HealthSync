@@ -1,13 +1,12 @@
 package ar.edu.itba.paw.interfaces.services;
 
-import java.util.Optional;
-
 import ar.edu.itba.paw.interfaces.services.exceptions.TokenNotFoundException;
 import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.models.VerificationToken;
+import java.util.Optional;
 
 public interface TokenService {
-  
+
   // ============= CREATE =============
 
   VerificationToken createToken(User user);

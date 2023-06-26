@@ -2,8 +2,12 @@ package ar.edu.itba.paw.webapp.controller;
 
 import ar.edu.itba.paw.interfaces.services.DoctorService;
 import ar.edu.itba.paw.interfaces.services.PatientService;
+import ar.edu.itba.paw.interfaces.services.TokenService;
+import ar.edu.itba.paw.interfaces.services.UserService;
 import ar.edu.itba.paw.interfaces.services.exceptions.EmailInUseException;
+import ar.edu.itba.paw.interfaces.services.exceptions.TokenNotFoundException;
 import ar.edu.itba.paw.models.*;
+import ar.edu.itba.paw.webapp.exceptions.UserNotFoundException;
 import ar.edu.itba.paw.webapp.form.DoctorRegisterForm;
 import ar.edu.itba.paw.webapp.form.LoginForm;
 import ar.edu.itba.paw.webapp.form.PatientRegisterForm;
@@ -41,15 +45,23 @@ public class AuthController {
 
   private final PatientService patientService;
 
+  private final UserService userService;
+
+  private final TokenService tokenService;
+
   private final AuthenticationManager authenticationManager;
 
   @Autowired
   public AuthController(
       final DoctorService doctorService,
       final PatientService patientService,
+      final UserService userService,
+      final TokenService tokenService,
       AuthenticationManager authenticationManager) {
     this.doctorService = doctorService;
     this.patientService = patientService;
+    this.userService = userService;
+    this.tokenService = tokenService;
     this.authenticationManager = authenticationManager;
   }
 
@@ -205,6 +217,39 @@ public class AuthController {
     mav.addObject("timeEnumValues", ThirtyMinuteBlock.values());
     mav.addObject("showModal", false);
     LOGGER.debug("Doctor register page requested");
+    return mav;
+  }
+
+  // this mav recieves mail and token as query params
+  @RequestMapping(value = "/verify", method = RequestMethod.GET)
+  public ModelAndView verify(
+      @RequestParam(value = "email", required = true) String email,
+      @RequestParam(value = "token", required = true) String token) {
+    // TODO: implement this
+    boolean succesful = false;
+    if (!succesful) {
+      final ModelAndView mav = new ModelAndView("auth/verify");
+      return mav;
+    }
+    // if succesful -> automatic login
+    // if token matches then it is enough to log in user
+    return new ModelAndView("redirect:/login");
+  }
+
+  // this mav recieves mail and token as query params
+  @RequestMapping(value = "/renew-token", method = RequestMethod.GET)
+  public ModelAndView renewToken(@RequestParam(value = "id", required = true) long userId)
+      throws UserNotFoundException {
+    final ModelAndView mav = new ModelAndView("auth/renewToken");
+    Boolean tokenRenewed = true;
+    try {
+      tokenService.renewUserToken(
+          userService.getUserById(userId).orElseThrow(UserNotFoundException::new));
+    } catch (TokenNotFoundException e) {
+      LOGGER.warn("Token for userId {} not found!", userId);
+      tokenRenewed = false;
+    }
+    mav.addObject("tokenRenewed", tokenRenewed);
     return mav;
   }
 
