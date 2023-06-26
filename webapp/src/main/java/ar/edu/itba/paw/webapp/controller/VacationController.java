@@ -10,6 +10,7 @@ import ar.edu.itba.paw.models.ThirtyMinuteBlock;
 import ar.edu.itba.paw.models.Vacation;
 import ar.edu.itba.paw.webapp.auth.PawAuthUserDetails;
 import ar.edu.itba.paw.webapp.exceptions.UserNotFoundException;
+import ar.edu.itba.paw.webapp.form.DoctorDeleteVacationForm;
 import ar.edu.itba.paw.webapp.form.DoctorVacationForm;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -40,14 +41,15 @@ public class VacationController {
 
   @RequestMapping(value = "/doctor-vacation", method = RequestMethod.GET)
   public ModelAndView getVacations(
-          @ModelAttribute("doctorVacationForm") final DoctorVacationForm doctorVacationForm
-  ) {
-    return getVacationsModelAndView( false, false, false, false);
+      @ModelAttribute("doctorVacationForm") final DoctorVacationForm doctorVacationForm,
+      @ModelAttribute("deleteVacationForm") final DoctorDeleteVacationForm deleteVacationForm) {
+    return getVacationsModelAndView(false, false, false, false);
   }
 
   @RequestMapping(value = "/doctor-vacation", method = RequestMethod.POST)
   public ModelAndView doctorAddVacations(
       @Valid @ModelAttribute("doctorVacationForm") final DoctorVacationForm doctorVacationForm,
+      @ModelAttribute("deleteVacationForm") final DoctorDeleteVacationForm deleteVacationForm,
       final BindingResult errors) {
 
     long userId = PawAuthUserDetails.getCurrentUserId();
@@ -70,12 +72,12 @@ public class VacationController {
 
       if (doctorVacationForm.getCancelAppointmentsInVacation()) {
         appointmentService.cancelAppointmentsInRange(
-                userId,
-                newVacation.getFromDate(),
-                newVacation.getFromTime(),
-                newVacation.getToDate(),
-                newVacation.getToTime(),
-                doctorVacationForm.getCancelReason());
+            userId,
+            newVacation.getFromDate(),
+            newVacation.getFromTime(),
+            newVacation.getToDate(),
+            newVacation.getToTime(),
+            doctorVacationForm.getCancelReason());
       }
 
     } catch (DoctorNotFoundException e) {
@@ -94,6 +96,7 @@ public class VacationController {
 
   @RequestMapping(value = "/delete-vacation", method = RequestMethod.POST)
   public ModelAndView doctorDeleteVacations(
+      @ModelAttribute("deleteVacationForm") final DoctorDeleteVacationForm deleteVacationForm, 
       @ModelAttribute("doctorVacationForm") final DoctorVacationForm doctorVacationForm) {
 
     long userId = PawAuthUserDetails.getCurrentUserId();
@@ -103,10 +106,10 @@ public class VacationController {
           userId,
           new Vacation(
               userId,
-              doctorVacationForm.getFromDate(),
-              doctorVacationForm.getFromTimeEnum(),
-              doctorVacationForm.getToDate(),
-              doctorVacationForm.getToTimeEnum()));
+              deleteVacationForm.getFromDate(),
+              deleteVacationForm.getFromTimeEnum(),
+              deleteVacationForm.getToDate(),
+              deleteVacationForm.getToTimeEnum()));
     } catch (DoctorNotFoundException e) {
       LOGGER.warn("Failed to delete vacation due to doctor not found");
       throw new UserNotFoundException();

@@ -31,6 +31,11 @@
 <spring:message code="vacation.appointmentsInVacationCancelReasonTitle" var="appointmentCancelReason"/>
 <spring:message code="vacation.cancelAppointmentsInVacation" var="cancelAppointments"/>
 <spring:message code="vacation.doNotCancelAppointmentsInVacation" var="doNotCancelAppointments"/>
+<spring:message code="vacation.noVacations" var="noVacations"/>
+<spring:message code="vacation.deleteTitle" var="deleteTitle"/>
+<spring:message code="vacation.deleteDescription" var="deleteDescription"/>
+<spring:message code="vacation.deleteDeny" var="deleteDeny"/>
+<spring:message code="vacation.deleteConfirm" var="deleteConfirm"/>
 
 <html>
 <head>
@@ -64,6 +69,14 @@
             $('#addVacationModal').modal('hide');
         }
 
+        function openDeleteVacationModal(i) {
+            $('#' + i).modal('show')
+        }
+
+        function closeDeleteVacationModal() {
+            $('#deleteVacationModal').modal('hide')
+        }
+
         function showCancelReason() {
             document.getElementById('appointmentCancelReason').classList.remove('hidden');
         }
@@ -76,7 +89,63 @@
 </head>
 <body>
 
-<button class="btn btn-primary" onclick="openAddVacationModal()">${vacationAddTitle}</button>
+<jsp:include page="../components/header.jsp"/>
+
+<div class="generalPadding vacationContainer">
+    <div class="buttonsContainer">
+        <button class="btn btn-primary" onclick="openAddVacationModal()">${vacationAddTitle}</button>
+    </div>
+    <c:forEach items="${vacations}" var="vacation" varStatus="status">
+        <div>
+                ${vacation.fromDate} ${vacation.fromTime} ${vacation.toDate} ${vacation.toTime}
+        </div>
+
+        <button onclick="openDeleteVacationModal('${status.index}')"
+                class="post-button btn btn-danger">
+            <spring:message code="appointments.cancel"/>
+        </button>
+
+        <div class="modal fade" id="${status.index}" tabindex="-1" role="dialog"
+             aria-labelledby="modalLabel"
+             aria-hidden="true">
+            <div class="modal-dialog" role="dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="modalLabel">${deleteTitle}</h5>
+                    </div>
+                    <form:form modelAttribute="deleteVacationForm" action="${deleteVacationUrl}" method="post">
+                        <form:input path="fromDate" hidden="true" value="${vacation.fromDate}"/>
+                        <form:input path="fromTime" hidden="true" value="${vacation.fromTime.blockBeginning}"/>
+                        <form:input path="toDate" hidden="true" value="${vacation.toDate}"/>
+                        <form:input path="toTime" hidden="true" value="${vacation.toTime.blockBeginning}"/>
+
+                        <div class="modal-body">
+                                ${deleteDescription}
+                        </div>
+                        <div class="modal-footer">
+                            <div class="cardButtonContainer">
+                                <button type="button" class="btn btn-danger"
+                                        onclick="closeModal()">${deleteDeny}</button>
+                                <button type="submit"
+                                        class="btn btn-primary">${deleteConfirm}</button>
+                            </div>
+
+                        </div>
+                    </form:form>
+                </div>
+            </div>
+        </div>
+
+    </c:forEach>
+    <c:if test="${empty vacations}">
+        <div class="noVacationsMsg">
+            <div class="alert alert-info">${noVacations}</div>
+        </div>
+    </c:if>
+
+
+</div>
+
 
 <div class="modal fade" id="addVacationModal" role="dialog" aria-labelledby="modalLabel"
      aria-hidden="true">
@@ -178,5 +247,19 @@
     .hidden {
         display: none;
     }
+
+    .vacationContainer {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .buttonsContainer {
+        display: flex;
+        flex-direction: row;
+        justify-content: end;
+        width: 100%;
+    }
+
 </style>
 </html>
