@@ -193,7 +193,7 @@ public class AppointmentController {
   }
 
 
-  // ========================== Review ==========================
+  // ========================== Indication ==========================
   @RequestMapping(value = "/{id:\\d+}/indication", method = RequestMethod.GET)
   public ModelAndView indication(
           @PathVariable("id") final long appointmentId,
@@ -213,7 +213,7 @@ public class AppointmentController {
           @Valid @ModelAttribute("indicationForm") final IndicationForm indicationForm,
           final BindingResult errors) {
 
-    if (errors.hasErrors()) {
+    if (errors.hasFieldErrors("indications")) {
       return indication(appointmentId, indicationForm);
     }
 
@@ -221,9 +221,10 @@ public class AppointmentController {
 
     try {
       File file = null;
-      if (!indicationForm.getFile().isEmpty()) {
-        file = new File(indicationForm.getFile().getBytes());
+      if (!(indicationForm.getFile()==null)) {
+        file = new File.Builder(indicationForm.getFile().getBytes()).build();
       }
+
       indication =
               indicationService.createIndication(
                       appointmentId,

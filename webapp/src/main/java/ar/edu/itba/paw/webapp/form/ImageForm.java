@@ -5,7 +5,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 public class ImageForm {
 
-  @ValidateImage private MultipartFile image;
+  @ValidateImage private MultipartFile image ;
 
   public MultipartFile getImage() {
     return image;
