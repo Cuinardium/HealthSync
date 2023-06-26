@@ -1,6 +1,7 @@
 package ar.edu.itba.paw.interfaces.services;
 
 import ar.edu.itba.paw.models.Appointment;
+import ar.edu.itba.paw.models.VerificationToken;
 
 public interface MailService {
 
@@ -15,4 +16,5 @@ public interface MailService {
 
   public void sendAppointmentCompletedMail(Appointment appointment);
 
+  public void sendConfirmationMail(VerificationToken token);
 }

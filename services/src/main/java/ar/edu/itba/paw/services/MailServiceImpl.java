@@ -2,6 +2,9 @@ package ar.edu.itba.paw.services;
 
 import ar.edu.itba.paw.interfaces.services.MailService;
 import ar.edu.itba.paw.models.Appointment;
+import ar.edu.itba.paw.models.User;
+import ar.edu.itba.paw.models.VerificationToken;
+
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Locale;
@@ -266,4 +269,31 @@ public class MailServiceImpl implements MailService {
     sendHtmlMessage(appointment.getPatient().getEmail(), subject, htmlBody);
   }
 
+  @Override
+  @Async
+  public void sendConfirmationMail(VerificationToken token) {
+
+    User user = token.getUser();
+    Locale locale = user.getLocale();
+
+    String name = user.getFirstName() + " " + user.getLastName();
+
+    Map<String, Object> templateModel = new HashMap<>();
+
+    String baseUrl = env.getProperty("webapp.baseUrl");
+
+    String confirmationUrl = baseUrl + "confirm-account?token=" + token.getToken();
+
+    // Load model
+    templateModel.put("baseUrl", baseUrl);
+    templateModel.put("confirmationUrl", confirmationUrl);
+
+    templateModel.put("userName", name);
+
+    String htmlBody = getHtmlBody("confirmation", templateModel, locale);
+
+    String subject = mailMessageSource.getMessage("confirmation.subject", null, locale);
+
+    sendHtmlMessage(user.getEmail(), subject, htmlBody);
+  }
 }

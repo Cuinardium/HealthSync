@@ -1,5 +1,7 @@
 package ar.edu.itba.paw.models;
 
+import java.time.LocalDateTime;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -24,49 +26,54 @@ public class VerificationToken {
   @Column(length = 32, nullable = false)
   private String token;
 
+  @Column(nullable = false)
+  private LocalDateTime expiryDateTime;
+
   protected VerificationToken() {
     // solo para hibernate
   }
 
-  public VerificationToken(Long id, User user, String token) {
-    this.id = id;
+  public VerificationToken(User user, String token) {
+    this.id = user.getId();
     this.user = user;
+    this.token = token;
+    this.expiryDateTime = LocalDateTime.now().plusMinutes(EXPIRATION);
+  }
+
+  public Long getId() {
+    return id;
+  }
+
+  public User getUser() {
+    return user;
+  }
+
+  public String getToken() {
+    return token;
+  }
+
+  public LocalDateTime getExpiryDateTime() {
+    return expiryDateTime;
+  }
+
+  public void setUser(User user) {
+    this.id = user.getId();
+    this.user = user;
+  }
+
+  public void setToken(String token) {
     this.token = token;
   }
 
-  public VerificationToken(Builder builder) {
-    this.id = builder.id;
-    this.user = builder.user;
-    this.token = builder.token;
+  public void setExpiryDateTime(LocalDateTime expiryDateTime) {
+    this.expiryDateTime = expiryDateTime;
   }
 
-  // TODO: implement this
-  private String generateToken() {
-    return new String();
+  public void renewExpiryDateTime() {
+    this.expiryDateTime = LocalDateTime.now().plusMinutes(EXPIRATION);
   }
 
-  public class Builder {
-    private User user;
-    // defaults
-    private Long id = null;
-    private String token = generateToken();
-
-    public Builder(User user) {
-      this.user = user;
-    }
-
-    public Builder id(long id) {
-      this.id = id;
-      return this;
-    }
-
-    public Builder token(String token) {
-      this.token = token;
-      return this;
-    }
-
-    public VerificationToken build() {
-      return new VerificationToken(this);
-    }
+  public boolean isExpired() {
+    return LocalDateTime.now().isAfter(this.expiryDateTime);
   }
 }

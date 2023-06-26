@@ -3,11 +3,16 @@ package ar.edu.itba.paw.services;
 import ar.edu.itba.paw.interfaces.persistence.UserDao;
 import ar.edu.itba.paw.interfaces.persistence.exceptions.EmailAlreadyExistsException;
 import ar.edu.itba.paw.interfaces.services.ImageService;
+import ar.edu.itba.paw.interfaces.services.TokenService;
 import ar.edu.itba.paw.interfaces.services.UserService;
 import ar.edu.itba.paw.interfaces.services.exceptions.EmailInUseException;
+import ar.edu.itba.paw.interfaces.services.exceptions.TokenInvalidException;
+import ar.edu.itba.paw.interfaces.services.exceptions.TokenNotFoundException;
 import ar.edu.itba.paw.interfaces.services.exceptions.UserNotFoundException;
 import ar.edu.itba.paw.models.Image;
 import ar.edu.itba.paw.models.User;
+import ar.edu.itba.paw.models.VerificationToken;
+
 import java.util.Locale;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,13 +25,18 @@ public class UserServiceImpl implements UserService {
 
   private final UserDao userDao;
   private final ImageService imageService;
+  private final TokenService tokenService;
   private final PasswordEncoder passwordEncoder;
 
   @Autowired
   public UserServiceImpl(
-      UserDao userDao, ImageService imageService, final PasswordEncoder passwordEncoder) {
+      final UserDao userDao,
+      final ImageService imageService,
+      final TokenService tokenService,
+      final PasswordEncoder passwordEncoder) {
     this.userDao = userDao;
     this.imageService = imageService;
+    this.tokenService = tokenService;
     this.passwordEncoder = passwordEncoder;
   }
 
@@ -37,12 +47,21 @@ public class UserServiceImpl implements UserService {
   public User createUser(
       String email, String password, String firstName, String lastName, Locale locale)
       throws EmailInUseException {
+
+    final User user;
+
     try {
-      return userDao.createUser(
+      user = userDao.createUser(
           email, passwordEncoder.encode(password), firstName, lastName, locale);
     } catch (EmailAlreadyExistsException e) {
       throw new EmailInUseException();
     }
+
+    final VerificationToken token = tokenService.createToken(user);
+
+    // TODO: send email
+
+    return user;
   }
 
   // =============== Updates ===============
@@ -95,13 +114,28 @@ public class UserServiceImpl implements UserService {
     }
 
     try {
-      // TODO: return true <-> hay afected rows?
       userDao.updateUserPassword(userId, passwordEncoder.encode(password));
       return true;
 
     } catch (ar.edu.itba.paw.interfaces.persistence.exceptions.UserNotFoundException e) {
       throw new IllegalStateException("User could not be updated because it does not exist");
     }
+  }
+
+  @Transactional
+  @Override
+  public void confirmUser(long userId, String token) throws UserNotFoundException, TokenNotFoundException, TokenInvalidException {
+    final User user =
+        userDao.getUserById(userId).orElseThrow(UserNotFoundException::new);
+
+    final VerificationToken verificationToken = tokenService.getUserToken(user).orElseThrow(TokenNotFoundException::new);
+
+    if (!verificationToken.getToken().equals(token) || verificationToken.isExpired()) {
+      throw new TokenInvalidException();
+    }
+
+    user.setIsVerified(true);
+    tokenService.deleteUserToken(user);
   }
 
   // =============== Queries ===============
