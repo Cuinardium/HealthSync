@@ -19,8 +19,9 @@ public class Doctor extends User {
   @Enumerated(EnumType.ORDINAL)
   @ElementCollection(fetch = FetchType.LAZY, targetClass = HealthInsurance.class)
   @JoinTable(
-      name = "health_insurance_accepted_by_doctor",
-      joinColumns = @JoinColumn(name = "doctor_id"))
+    name = "health_insurance_accepted_by_doctor",
+    joinColumns = @JoinColumn(name = "doctor_id")
+  )
   @Column(name = "health_insurance_code", nullable = false)
   private Set<HealthInsurance> healthInsurances;
 
@@ -36,17 +37,19 @@ public class Doctor extends User {
   private String address;
 
   @OneToMany(
-      mappedBy = "doctor",
-      fetch = FetchType.LAZY,
-      cascade = CascadeType.ALL,
-      orphanRemoval = true)
+    mappedBy = "doctor",
+    fetch = FetchType.LAZY,
+    cascade = CascadeType.ALL,
+    orphanRemoval = true
+  )
   private Set<AttendingHours> attendingHours;
 
   @OneToMany(
-      mappedBy = "doctor",
-      fetch = FetchType.LAZY,
-      cascade = CascadeType.ALL,
-      orphanRemoval = true)
+    mappedBy = "doctor",
+    fetch = FetchType.LAZY,
+    cascade = CascadeType.ALL,
+    orphanRemoval = true
+  )
   private Set<Vacation> vacations;
 
   @Formula("(SELECT AVG(r.rating) FROM Review r WHERE r.doctor_id = doctor_id)")
@@ -74,8 +77,9 @@ public class Doctor extends User {
       Set<Vacation> vacations,
       Float rating,
       Integer ratingCount,
-      Locale locale) {
-    super(id, email, password, firstName, lastName, image, locale);
+      Locale locale,
+      Boolean isVerified) {
+    super(id, email, password, firstName, lastName, image, locale, isVerified);
     this.healthInsurances = healthInsurances;
     this.specialty = specialty;
     this.city = city;
@@ -94,7 +98,8 @@ public class Doctor extends User {
         builder.firstName,
         builder.lastName,
         builder.image,
-        builder.locale);
+        builder.locale,
+        builder.isVerified);
     this.healthInsurances = builder.healthInsurances;
     this.specialty = builder.specialty;
     this.city = builder.city;
@@ -106,7 +111,8 @@ public class Doctor extends User {
   }
 
   public List<ThirtyMinuteBlock> getAttendingBlocksForDay(DayOfWeek day) {
-    return attendingHours.stream()
+    return attendingHours
+        .stream()
         .filter(attendingDays -> attendingDays.getId().getDay().equals(day))
         .map(AttendingHours::getHourBlock)
         .collect(Collectors.toCollection(ArrayList::new));
@@ -261,6 +267,7 @@ public class Doctor extends User {
     private Long id = null;
     private Image image = null;
     private Set<Vacation> vacations = Collections.emptySet();
+    private Boolean isVerified = false;
 
     // TODO: set defaults
     private Float rating;
@@ -311,6 +318,11 @@ public class Doctor extends User {
 
     public Builder ratingCount(int ratingCount) {
       this.ratingCount = ratingCount;
+      return this;
+    }
+
+    public Builder isVerified(boolean isVerified) {
+      this.isVerified = isVerified;
       return this;
     }
 

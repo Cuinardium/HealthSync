@@ -139,7 +139,8 @@ public class DoctorDaoImplTest {
           INSERTED_DOCTOR_VACATIONS,
           INSERTED_DOCTOR_RATING,
           INSERTED_DOCTOR_RATING_COUNT,
-          INSERTED_LOCALE);
+          INSERTED_LOCALE,
+          true);
 
   @Autowired private DataSource ds;
 
@@ -177,7 +178,8 @@ public class DoctorDaoImplTest {
                 Collections.emptySet(),
                 INSERTED_DOCTOR_RATING,
                 INSERTED_DOCTOR_RATING_COUNT,
-                INSERTED_LOCALE));
+                INSERTED_LOCALE,
+                false));
 
     em.flush();
 
@@ -221,7 +223,8 @@ public class DoctorDaoImplTest {
                     Collections.emptySet(),
                     INSERTED_DOCTOR_RATING,
                     INSERTED_DOCTOR_RATING_COUNT,
-                    INSERTED_LOCALE)));
+                    INSERTED_LOCALE,
+                    false)));
   }
 
   // ============================== updateDoctorInfo ==============================
@@ -404,7 +407,7 @@ public class DoctorDaoImplTest {
     Assert.assertEquals(expectedDoctor, doctors.getContent().get(0));
   }
 
-  @Test 
+  @Test
   public void testGetFilteredDoctorsOnVacation() {
     // 1.Precondiciones
     LocalDate mondayOnVacation = LocalDate.of(2020, 1, 11);

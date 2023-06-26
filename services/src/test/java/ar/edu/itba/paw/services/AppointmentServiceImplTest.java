@@ -105,7 +105,8 @@ public class AppointmentServiceImplTest {
           new HashSet<>(Arrays.asList(DOCTOR_VACATION)),
           RATING,
           RATING_COUNT,
-          DOCTOR_LOCALE);
+          DOCTOR_LOCALE,
+          true);
 
   // ================== Patient Constants ==================
 
@@ -127,7 +128,8 @@ public class AppointmentServiceImplTest {
           PATIENT_LAST_NAME,
           PATIENT_IMAGE,
           PATIENT_HEALTH_INSURANCE,
-          PATIENT_LOCALE);
+          PATIENT_LOCALE,
+          true);
 
   // ================== Appointment Constants ==================
 
@@ -459,11 +461,6 @@ public class AppointmentServiceImplTest {
     Mockito.when(appointmentDao.setAppointmentIndications(APPOINTMENT_ID, INDICATIONS))
         .thenReturn(APPOINTMENT_WITH_INDICATIONS);
 
-    // Mock mailService
-    Mockito.doNothing()
-        .when(mailService)
-        .sendAppointmentIndicationMail(Mockito.any(Appointment.class));
-
     // 2. Ejercitar la class under test
 
     Appointment appointment = as.setAppointmentIndications(APPOINTMENT_ID, INDICATIONS, DOCTOR_ID);
@@ -514,7 +511,7 @@ public class AppointmentServiceImplTest {
 
     expectedAvailableHours.add(availableHoursForSecondDay);
 
-    // Vacations in third day from 10:00 
+    // Vacations in third day from 10:00
     List<ThirtyMinuteBlock> availableHoursForThirdDay = new ArrayList<>(ATTENDING_HOURS_FOR_DAY);
     availableHoursForThirdDay.removeAll(
         ThirtyMinuteBlock.fromRange(ThirtyMinuteBlock.BLOCK_10_00, ThirtyMinuteBlock.BLOCK_23_30));

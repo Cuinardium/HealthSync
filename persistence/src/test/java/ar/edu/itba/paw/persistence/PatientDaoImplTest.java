@@ -57,7 +57,8 @@ public class PatientDaoImplTest {
           INSERTED_PATIENT_LAST_NAME,
           INSERTED_PATIENT_IMAGE,
           INSERTED_PATIENT_HEALTH_INSURANCE,
-          INSERTED_PATIENT_LOCALE);
+          INSERTED_PATIENT_LOCALE,
+          true);
 
   private static final Patient AUX_PATIENT =
       new Patient(
@@ -68,7 +69,8 @@ public class PatientDaoImplTest {
           AUX_PATIENT_LAST_NAME,
           AUX_PATIENT_IMAGE,
           AUX_PATIENT_HEALTH_INSURANCE,
-          AUX_PATIENT_LOCALE);
+          AUX_PATIENT_LOCALE,
+          false);
 
   @Autowired private DataSource ds;
 
@@ -98,7 +100,8 @@ public class PatientDaoImplTest {
                 AUX_PATIENT_LAST_NAME,
                 AUX_PATIENT_IMAGE,
                 AUX_PATIENT_HEALTH_INSURANCE,
-                AUX_PATIENT_LOCALE));
+                AUX_PATIENT_LOCALE,
+                false));
     // 3. Meaningful assertions
 
     em.flush();

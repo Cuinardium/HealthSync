@@ -79,7 +79,8 @@ public class DoctorServiceImplTest {
           Collections.emptySet(),
           RATING,
           RATING_COUNT,
-          LOCALE);
+          LOCALE,
+          true);
 
   private static final Doctor DOCTOR_WITH_VACATIONS =
       new Doctor(
@@ -97,7 +98,8 @@ public class DoctorServiceImplTest {
           new HashSet<>(Arrays.asList(VACATION)),
           RATING,
           RATING_COUNT,
-          LOCALE);
+          LOCALE,
+          true);
 
   private static final String EMAIL_NEW = "new_email";
   private static final String FIRST_NAME_NEW = "new_fist_name";
@@ -144,7 +146,8 @@ public class DoctorServiceImplTest {
           Collections.emptySet(),
           RATING,
           RATING_COUNT,
-          LOCALE);
+          LOCALE,
+          true);
 
   @Mock private DoctorDao doctorDao;
   @Mock private PasswordEncoder passwordEncoder;
@@ -176,7 +179,8 @@ public class DoctorServiceImplTest {
                     Collections.emptySet(),
                     null,
                     null,
-                    LOCALE)))
+                    LOCALE,
+                    false)))
         .thenReturn(DOCTOR);
 
     // 2. Ejercitar la class under test
@@ -219,7 +223,8 @@ public class DoctorServiceImplTest {
                     Collections.emptySet(),
                     null,
                     null,
-                    LOCALE)))
+                    LOCALE,
+                    false)))
         .thenThrow(DoctorAlreadyExistsException.class);
 
     // 2. Ejercitar la class under test
@@ -259,7 +264,8 @@ public class DoctorServiceImplTest {
                     Collections.emptySet(),
                     null,
                     null,
-                    LOCALE)))
+                    LOCALE,
+                    false)))
         .thenThrow(IllegalStateException.class);
 
     // 2. Ejercitar la class under test
@@ -485,7 +491,8 @@ public class DoctorServiceImplTest {
       throws ar.edu.itba.paw.interfaces.services.exceptions.DoctorNotFoundException,
           VacationInvalidException, DoctorNotFoundException, VacationCollisionException {
     // 1. Precondiciones
-    Mockito.when(doctorDao.addVacation(ID, VACATION_NEW)).thenThrow(VacationCollisionException.class);
+    Mockito.when(doctorDao.addVacation(ID, VACATION_NEW))
+        .thenThrow(VacationCollisionException.class);
 
     // 2. Ejercitar la class under test
     ds.addVacation(ID, VACATION_NEW);

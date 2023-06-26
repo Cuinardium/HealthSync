@@ -48,10 +48,14 @@ public class User {
   @Column(name = "locale", length = 10, nullable = false)
   private Locale locale;
 
+  @Column(nullable = false)
+  private Boolean isVerified;
+
   protected User() {
     // Solo para hibernate
   }
 
+  // TODO: ver lo de boolean
   public User(
       Long id,
       String email,
@@ -59,7 +63,8 @@ public class User {
       String firstName,
       String lastName,
       Image image,
-      Locale locale) {
+      Locale locale,
+      Boolean isVerified) {
     this.id = id;
     this.email = email;
     this.password = password;
@@ -67,6 +72,7 @@ public class User {
     this.lastName = lastName;
     this.image = image;
     this.locale = locale;
+    this.isVerified = isVerified;
   }
 
   // Getters and setters
@@ -79,6 +85,7 @@ public class User {
     this.lastName = builder.lastName;
     this.image = builder.image;
     this.locale = builder.locale;
+    this.isVerified = builder.isVerified;
   }
 
   public String getEmail() {
@@ -164,6 +171,7 @@ public class User {
     // defaults
     private Long id = null;
     private Image image = null;
+    private Boolean isVerified = false;
 
     public Builder(
         String email, String password, String firstName, String lastName, Locale locale) {
@@ -181,6 +189,11 @@ public class User {
 
     public Builder image(Image image) {
       this.image = image;
+      return this;
+    }
+
+    public Builder isVerified(boolean isVerified) {
+      this.isVerified = isVerified;
       return this;
     }
 

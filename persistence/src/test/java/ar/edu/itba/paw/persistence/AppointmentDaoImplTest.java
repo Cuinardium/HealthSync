@@ -49,7 +49,8 @@ public class AppointmentDaoImplTest {
           INSERTED_PATIENT_LAST_NAME,
           INSERTED_PATIENT_IMAGE,
           INSERTED_PATIENT_HEALTH_INSURANCE,
-          INSERTED_PATIENT_LOCALE);
+          INSERTED_PATIENT_LOCALE,
+          true);
 
   private static final Long INSERTED_DOCTOR_ID = 7L;
   private static final String INSERTED_DOCTOR_EMAIL = "doctor@email.com";
@@ -113,7 +114,8 @@ public class AppointmentDaoImplTest {
           INSERTED_DOCTOR_VACATIONS,
           INSERTED_DOCTOR_RATING,
           INSERTED_DOCTOR_RATING_COUNT,
-          INSERTED_DOCTOR_LOCALE);
+          INSERTED_DOCTOR_LOCALE,
+          true);
 
   private static final ThirtyMinuteBlock INSERTED_TIME = ThirtyMinuteBlock.BLOCK_00_30;
   private static final Long INSERTED_APP_ID = 3L;

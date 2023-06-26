@@ -37,10 +37,18 @@ public class PatientServiceImplTest {
   private static final Locale LOCALE = new Locale("en");
 
   private static final User USER =
-      new User(ID, EMAIL, PASSWORD, FIRST_NAME, LAST_NAME, IMAGE, LOCALE);
+      new User(ID, EMAIL, PASSWORD, FIRST_NAME, LAST_NAME, IMAGE, LOCALE, true);
   private static final Patient PATIENT =
       new Patient(
-          ID, EMAIL, PASSWORD_ENCODED, FIRST_NAME, LAST_NAME, IMAGE, HEALTH_INSURANCE, LOCALE);
+          ID,
+          EMAIL,
+          PASSWORD_ENCODED,
+          FIRST_NAME,
+          LAST_NAME,
+          IMAGE,
+          HEALTH_INSURANCE,
+          LOCALE,
+          true);
   private static final String EMAIL_NEW = "new_email";
   private static final String FIRST_NAME_NEW = "new_fist_name";
   private static final String LAST_NAME_NEW = "new_last_name";
@@ -54,7 +62,8 @@ public class PatientServiceImplTest {
           LAST_NAME_NEW,
           IMAGE,
           HEALTH_INSURANCE_NEW,
-          LOCALE);
+          LOCALE,
+          true);
   private static final Locale LOCALE_NEW = new Locale("es");
 
   @Mock private PatientDao patientDao;
@@ -73,15 +82,9 @@ public class PatientServiceImplTest {
 
     Mockito.when(
             patientDao.createPatient(
-                new Patient(
-                    null,
-                    EMAIL,
-                    PASSWORD_ENCODED,
-                    FIRST_NAME,
-                    LAST_NAME,
-                    null,
-                    HEALTH_INSURANCE,
-                    LOCALE)))
+                new Patient.Builder(
+                        EMAIL, PASSWORD_ENCODED, FIRST_NAME, LAST_NAME, HEALTH_INSURANCE, LOCALE)
+                    .build()))
         .thenReturn(PATIENT);
 
     // 2. Ejercitar la class under test
@@ -101,15 +104,9 @@ public class PatientServiceImplTest {
 
     Mockito.when(
             patientDao.createPatient(
-                new Patient(
-                    null,
-                    EMAIL,
-                    PASSWORD_ENCODED,
-                    FIRST_NAME,
-                    LAST_NAME,
-                    null,
-                    HEALTH_INSURANCE,
-                    LOCALE)))
+                new Patient.Builder(
+                        EMAIL, PASSWORD_ENCODED, FIRST_NAME, LAST_NAME, HEALTH_INSURANCE, LOCALE)
+                    .build()))
         .thenThrow(PatientAlreadyExistsException.class);
 
     // 2. Ejercitar la class under test

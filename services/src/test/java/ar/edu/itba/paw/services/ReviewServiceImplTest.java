@@ -79,7 +79,8 @@ public class ReviewServiceImplTest {
           Collections.emptySet(),
           RATING,
           RATING_COUNT,
-          LOCALE);
+          LOCALE,
+          true);
 
   // ================== Patient Constants ==================
 
@@ -99,7 +100,8 @@ public class ReviewServiceImplTest {
           PATIENT_LAST_NAME,
           IMAGE,
           PATIENT_HEALTH_INSURANCE,
-          LOCALE);
+          LOCALE,
+          true);
 
   // ================== Review Constants ==================
 

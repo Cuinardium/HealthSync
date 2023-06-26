@@ -28,8 +28,9 @@ public class Patient extends User {
       String lastName,
       Image image,
       HealthInsurance healthInsurance,
-      Locale locale) {
-    super(id, email, password, firstName, lastName, image, locale);
+      Locale locale,
+      Boolean isVerified) {
+    super(id, email, password, firstName, lastName, image, locale, isVerified);
     this.healthInsurance = healthInsurance;
   }
 
@@ -41,7 +42,8 @@ public class Patient extends User {
         builder.firstName,
         builder.lastName,
         builder.image,
-        builder.locale);
+        builder.locale,
+        builder.isVerified);
     this.healthInsurance = builder.healthInsurance;
   }
 
@@ -67,6 +69,7 @@ public class Patient extends User {
     // default
     private Long id = null;
     private Image image = null;
+    private Boolean isVerified = false;
 
     public Builder(
         String email,
@@ -85,6 +88,11 @@ public class Patient extends User {
 
     public Builder id(long id) {
       this.id = id;
+      return this;
+    }
+
+    public Builder isVerified(boolean isVerified) {
+      this.isVerified = isVerified;
       return this;
     }
 
