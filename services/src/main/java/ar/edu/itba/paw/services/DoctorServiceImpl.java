@@ -4,6 +4,8 @@ import ar.edu.itba.paw.interfaces.persistence.DoctorDao;
 import ar.edu.itba.paw.interfaces.persistence.exceptions.DoctorAlreadyExistsException;
 import ar.edu.itba.paw.interfaces.persistence.exceptions.VacationCollisionException;
 import ar.edu.itba.paw.interfaces.services.DoctorService;
+import ar.edu.itba.paw.interfaces.services.MailService;
+import ar.edu.itba.paw.interfaces.services.TokenService;
 import ar.edu.itba.paw.interfaces.services.UserService;
 import ar.edu.itba.paw.interfaces.services.exceptions.*;
 import ar.edu.itba.paw.models.*;
@@ -20,14 +22,22 @@ public class DoctorServiceImpl implements DoctorService {
   private final DoctorDao doctorDao;
   private final PasswordEncoder passwordEncoder;
   private final UserService userService;
+  private final TokenService tokenService;
+  private final MailService mailService;
 
   @Autowired
   public DoctorServiceImpl(
-      DoctorDao doctorDao, UserService userService, PasswordEncoder passwordEncoder) {
+      DoctorDao doctorDao,
+      UserService userService,
+      TokenService tokenService,
+      MailService mailService,
+      PasswordEncoder passwordEncoder) {
 
     this.doctorDao = doctorDao;
 
     this.userService = userService;
+    this.tokenService = tokenService;
+    this.mailService = mailService;
 
     this.passwordEncoder = passwordEncoder;
   }
@@ -68,10 +78,15 @@ public class DoctorServiceImpl implements DoctorService {
             .build();
 
     try {
-      return doctorDao.createDoctor(doctor);
+      doctor = doctorDao.createDoctor(doctor);
     } catch (DoctorAlreadyExistsException e) {
       throw new IllegalStateException("Doctor should not exist when id is null");
     }
+
+    final VerificationToken token = tokenService.createToken(doctor.toUser());
+    mailService.sendConfirmationMail(token);
+
+    return doctor;
   }
 
   // =============== Updates ===============

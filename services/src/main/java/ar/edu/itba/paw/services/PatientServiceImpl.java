@@ -2,7 +2,9 @@ package ar.edu.itba.paw.services;
 
 import ar.edu.itba.paw.interfaces.persistence.PatientDao;
 import ar.edu.itba.paw.interfaces.persistence.exceptions.PatientAlreadyExistsException;
+import ar.edu.itba.paw.interfaces.services.MailService;
 import ar.edu.itba.paw.interfaces.services.PatientService;
+import ar.edu.itba.paw.interfaces.services.TokenService;
 import ar.edu.itba.paw.interfaces.services.UserService;
 import ar.edu.itba.paw.interfaces.services.exceptions.EmailInUseException;
 import ar.edu.itba.paw.interfaces.services.exceptions.PatientNotFoundException;
@@ -10,6 +12,7 @@ import ar.edu.itba.paw.interfaces.services.exceptions.UserNotFoundException;
 import ar.edu.itba.paw.models.HealthInsurance;
 import ar.edu.itba.paw.models.Image;
 import ar.edu.itba.paw.models.Patient;
+import ar.edu.itba.paw.models.VerificationToken;
 import java.util.Locale;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,14 +25,22 @@ public class PatientServiceImpl implements PatientService {
   private final PatientDao patientDao;
 
   private final UserService userService;
+  private final TokenService tokenService;
+  private final MailService mailService;
 
   private final PasswordEncoder passwordEncoder;
 
   @Autowired
   public PatientServiceImpl(
-      PatientDao patientDao, UserService userService, PasswordEncoder passwordEncoder) {
+      PatientDao patientDao,
+      UserService userService,
+      TokenService tokenService,
+      MailService mailService,
+      PasswordEncoder passwordEncoder) {
     this.patientDao = patientDao;
     this.userService = userService;
+    this.tokenService = tokenService;
+    this.mailService = mailService;
     this.passwordEncoder = passwordEncoder;
   }
 
@@ -49,22 +60,26 @@ public class PatientServiceImpl implements PatientService {
     if (userService.getUserByEmail(email).isPresent()) {
       throw new EmailInUseException();
     }
+    Patient patient =
+        new Patient.Builder(
+                email,
+                passwordEncoder.encode(password),
+                firstName,
+                lastName,
+                healthInsurance,
+                locale)
+            .build();
 
     try {
-      Patient patient =
-          patientDao.createPatient(
-              new Patient.Builder(
-                      email,
-                      passwordEncoder.encode(password),
-                      firstName,
-                      lastName,
-                      healthInsurance,
-                      locale)
-                  .build());
-      return patient;
+      patient = patientDao.createPatient(patient);
     } catch (PatientAlreadyExistsException e) {
       throw new IllegalStateException("Patient should not exist when id is null");
     }
+
+    final VerificationToken token = tokenService.createToken(patient.toUser());
+    mailService.sendConfirmationMail(token);
+
+    return patient;
   }
 
   // =============== Updates ===============

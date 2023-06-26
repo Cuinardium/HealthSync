@@ -60,6 +60,18 @@ public class Patient extends User {
     return "Patient [healthInsurance=" + healthInsurance + " " + super.toString() + "]";
   }
 
+  public User toUser() {
+    return new User(
+        this.getId(),
+        this.getEmail(),
+        this.getPassword(),
+        this.getFirstName(),
+        this.getLastName(),
+        this.getImage(),
+        this.getLocale(),
+        this.getIsVerified());
+  }
+
   public static class Builder {
     // required
     private String email, password, firstName, lastName;

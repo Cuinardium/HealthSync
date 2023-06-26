@@ -213,6 +213,7 @@ public class Doctor extends User {
         + rating
         + ", ratingCount="
         + ratingCount
+        + super.toString()
         + ']';
   }
 
@@ -251,6 +252,18 @@ public class Doctor extends User {
         && Objects.equals(specialty, other.specialty)
         && Objects.equals(attendingHours, other.attendingHours)
         && Objects.equals(vacations, other.vacations);
+  }
+
+  public User toUser() {
+    return new User(
+        getId(),
+        getEmail(),
+        getPassword(),
+        getFirstName(),
+        getLastName(),
+        getImage(),
+        getLocale(),
+        getIsVerified());
   }
 
   public static class Builder {

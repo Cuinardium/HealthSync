@@ -6,6 +6,8 @@ import ar.edu.itba.paw.interfaces.persistence.exceptions.DoctorNotFoundException
 import ar.edu.itba.paw.interfaces.persistence.exceptions.EmailAlreadyExistsException;
 import ar.edu.itba.paw.interfaces.persistence.exceptions.VacationCollisionException;
 import ar.edu.itba.paw.interfaces.persistence.exceptions.VacationNotFoundException;
+import ar.edu.itba.paw.interfaces.services.MailService;
+import ar.edu.itba.paw.interfaces.services.TokenService;
 import ar.edu.itba.paw.interfaces.services.UserService;
 import ar.edu.itba.paw.interfaces.services.exceptions.EmailInUseException;
 import ar.edu.itba.paw.interfaces.services.exceptions.UserNotFoundException;
@@ -152,6 +154,8 @@ public class DoctorServiceImplTest {
   @Mock private DoctorDao doctorDao;
   @Mock private PasswordEncoder passwordEncoder;
   @Mock private UserService userService;
+  @Mock private MailService mailService;
+  @Mock private TokenService tokenService;
 
   @InjectMocks private DoctorServiceImpl ds;
 
@@ -182,6 +186,11 @@ public class DoctorServiceImplTest {
                     LOCALE,
                     false)))
         .thenReturn(DOCTOR);
+    Mockito.when(tokenService.createToken(Mockito.any(User.class)))
+        .thenReturn(Mockito.mock(VerificationToken.class));
+    Mockito.doNothing()
+        .when(mailService)
+        .sendConfirmationMail(Mockito.any(VerificationToken.class));
 
     // 2. Ejercitar la class under test
     Doctor doctor =
