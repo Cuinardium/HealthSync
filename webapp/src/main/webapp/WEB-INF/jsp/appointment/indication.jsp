@@ -49,7 +49,7 @@
     <div class="formContainer">
         <h1>${title}</h1>
         <form:form modelAttribute="indicationForm" class="card" action="${indicationUrl}"
-                   method="POST">
+                   method="POST" enctype="multipart/form-data">
 
             <div class="formItem">
                 <form:label cssClass="formLabel" path="indications">${description}</form:label>
