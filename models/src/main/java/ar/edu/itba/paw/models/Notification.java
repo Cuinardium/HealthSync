@@ -7,16 +7,15 @@ import java.util.Objects;
 @Entity
 @Table(name = "notification")
 public class Notification {
-
     @EmbeddedId private NotificationId id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "user_id", nullable = false)
     @MapsId("userId")
     private User user;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "appointment_id")
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "appointment_id", nullable = false)
     @MapsId("appointmentId")
     private Appointment appointment;
 
@@ -24,8 +23,10 @@ public class Notification {
         //Solo para hibernate
     }
 
-    public Notification(Long userId, Long appointmentId) {
-        this.id = new Notification.NotificationId(userId, appointmentId);
+    public Notification(User user, Appointment appointment) {
+        this.user = user;
+        this.appointment = appointment;
+        this.id = new Notification.NotificationId(user.getId(), appointment.getId());
     }
 
     public NotificationId getId() {

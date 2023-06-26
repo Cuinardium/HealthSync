@@ -55,7 +55,7 @@ public class Appointment {
   private String cancelDesc;
 
 
-  /* package */ Appointment() {
+  protected Appointment() {
     // Solo para hibernate
   }
 

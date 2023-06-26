@@ -6,7 +6,9 @@ import ar.edu.itba.paw.interfaces.services.NotificationService;
 import ar.edu.itba.paw.interfaces.services.UserService;
 import ar.edu.itba.paw.interfaces.services.exceptions.AppointmentNotFoundException;
 import ar.edu.itba.paw.interfaces.services.exceptions.UserNotFoundException;
+import ar.edu.itba.paw.models.Appointment;
 import ar.edu.itba.paw.models.Notification;
+import ar.edu.itba.paw.models.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,9 +20,7 @@ import java.util.Optional;
 public class NotificationServiceImpl implements NotificationService {
 
     private final UserService userService;
-
     private final AppointmentService appointmentService;
-
     private final NotificationDao notificationDao;
 
     @Autowired
@@ -33,31 +33,39 @@ public class NotificationServiceImpl implements NotificationService {
     @Transactional
     @Override
     public Notification createNotification(long userId, long appointmentId) throws UserNotFoundException, AppointmentNotFoundException {
-        if (!appointmentService.getAppointmentById(appointmentId).isPresent()) {
+        Optional<Appointment> appointmentOptional = appointmentService.getAppointmentById(appointmentId);
+        if (!appointmentOptional.isPresent()) {
             throw new AppointmentNotFoundException();
         }
-        if (!userService.getUserById(userId).isPresent()) {
+
+        Optional<User> userOptional = userService.getUserById(userId);
+        if (!userOptional.isPresent()) {
             throw new UserNotFoundException();
         }
 
-        Notification notification= new Notification(userId, appointmentId);
-
-        return notificationDao.createNotification(notification);
+        return notificationDao.createNotification(new Notification(userOptional.get(), appointmentOptional.get()));
     }
 
     @Transactional
     @Override
-    public void deleteNotification(long userId, long appointmentId) throws UserNotFoundException, AppointmentNotFoundException {
-        if (!appointmentService.getAppointmentById(appointmentId).isPresent()) {
+    public void deleteNotificationIfExists(long userId, long appointmentId) throws AppointmentNotFoundException, UserNotFoundException{
+        Optional<Notification> notificationOptional = getUserAppointmentNotification(userId, appointmentId);
+
+        if (!notificationOptional.isPresent()) {
+            return;
+        }
+
+        Optional<Appointment> appointmentOptional = appointmentService.getAppointmentById(appointmentId);
+        if (!appointmentOptional.isPresent()) {
             throw new AppointmentNotFoundException();
         }
-        if (!userService.getUserById(userId).isPresent()) {
+
+        Optional<User> userOptional = userService.getUserById(userId);
+        if (!userOptional.isPresent()) {
             throw new UserNotFoundException();
         }
 
-        Notification notification= new Notification(userId, appointmentId);
-
-        notificationDao.deleteNotification(notification);
+        notificationDao.deleteNotification(notificationOptional.get());
     }
 
     @Transactional(readOnly = true)
@@ -71,13 +79,4 @@ public class NotificationServiceImpl implements NotificationService {
     public Optional<Notification> getUserAppointmentNotification(long userId, long appointmentId) {
         return notificationDao.getUserAppointmentNotification(userId, appointmentId);
     }
-
-    @Transactional
-    @Override
-    public void deleteNotificationIfExists(long userId, long appointmentId) throws UserNotFoundException, AppointmentNotFoundException {
-        if(getUserAppointmentNotification(userId, appointmentId).isPresent()){
-            deleteNotification(userId, appointmentId);
-        }
-    }
-
 }
