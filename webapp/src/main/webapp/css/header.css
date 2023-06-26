@@ -47,3 +47,10 @@
 .navbar-nav .dropdown-menu {
     position: absolute;
 }
+
+.notification{
+    color: #ff0000;
+    position: relative;
+    bottom: 13px;
+    font-size: small;
+}
