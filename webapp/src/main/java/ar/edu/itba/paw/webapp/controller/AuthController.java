@@ -25,10 +25,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.i18n.LocaleContextHolder;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -50,20 +46,16 @@ public class AuthController {
 
   private final TokenService tokenService;
 
-  private final AuthenticationManager authenticationManager;
-
   @Autowired
   public AuthController(
       final DoctorService doctorService,
       final PatientService patientService,
       final UserService userService,
-      final TokenService tokenService,
-      AuthenticationManager authenticationManager) {
+      final TokenService tokenService) {
     this.doctorService = doctorService;
     this.patientService = patientService;
     this.userService = userService;
     this.tokenService = tokenService;
-    this.authenticationManager = authenticationManager;
   }
 
   @RequestMapping(value = "/login")
@@ -137,7 +129,6 @@ public class AuthController {
     return mav;
   }
 
-  // TODO: revisar campos
   @RequestMapping(value = "/doctor-register", method = RequestMethod.POST)
   public ModelAndView doctorRegisterSubmit(
       @Valid @ModelAttribute("doctorRegisterForm") final DoctorRegisterForm doctorRegisterForm,
@@ -265,12 +256,5 @@ public class AuthController {
     }
     mav.addObject("tokenRenewed", tokenRenewed);
     return mav;
-  }
-
-  private void authUser(String username, String password) {
-    UsernamePasswordAuthenticationToken authToken =
-        new UsernamePasswordAuthenticationToken(username, password);
-    Authentication authentication = authenticationManager.authenticate(authToken);
-    SecurityContextHolder.getContext().setAuthentication(authentication);
   }
 }
