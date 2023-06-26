@@ -16,7 +16,6 @@
 
 <c:url value="/${appointment.doctorId}/detailed-doctor" var="detailedDoctorUrl"/>
 
-<spring:message code="${appointment.doctor.city.messageID}" var="city"/>
 <spring:message code="${appointment.patient.healthInsurance.messageID}" var="healthInsurance"/>
 <spring:message code="${appointment.status.messageID}" var="status"/>
 
@@ -82,7 +81,7 @@
             <div class="card-title">
                 <strong>${doctor}: </strong>${appointment.doctor.firstName} ${appointment.doctor.lastName}</div>
 
-            <div class="card-title"><strong>${address}: </strong>${address}, ${city}</div>
+            <div class="card-title"><strong>${address}: </strong>${address}, ${appointment.doctor.city}</div>
 
 
             <div class="card-title"><strong>${healthInsurance_title}: </strong>${healthInsurance}</div>

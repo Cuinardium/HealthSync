@@ -102,9 +102,8 @@
                                         <strong>${doctor}: </strong>${appointment.doctor.firstName} ${appointment.doctor.lastName}
                                     </div>
 
-                                    <spring:message code="${appointment.doctor.city.messageID}" var="city"/>
                                     <div class="card-title">
-                                        <strong>${address}: </strong>${appointment.doctor.address}, ${city}</div>
+                                        <strong>${address}: </strong>${appointment.doctor.address}, ${appointment.doctor.city}</div>
                                 </c:otherwise>
                             </c:choose>
 
