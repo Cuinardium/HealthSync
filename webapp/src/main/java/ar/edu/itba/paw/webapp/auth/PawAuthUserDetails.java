@@ -18,8 +18,9 @@ public class PawAuthUserDetails extends User {
       String username,
       String password,
       long id,
+      boolean enabled,
       Collection<? extends GrantedAuthority> authorities) {
-    super(username, password, authorities);
+    super(username, password, enabled, true, true, true, authorities);
     this.id = id;
   }
 

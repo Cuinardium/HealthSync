@@ -5,6 +5,7 @@ import ar.edu.itba.paw.interfaces.services.PatientService;
 import ar.edu.itba.paw.interfaces.services.TokenService;
 import ar.edu.itba.paw.interfaces.services.UserService;
 import ar.edu.itba.paw.interfaces.services.exceptions.EmailInUseException;
+import ar.edu.itba.paw.interfaces.services.exceptions.TokenInvalidException;
 import ar.edu.itba.paw.interfaces.services.exceptions.TokenNotFoundException;
 import ar.edu.itba.paw.models.*;
 import ar.edu.itba.paw.webapp.exceptions.UserNotFoundException;
@@ -150,9 +151,7 @@ public class AuthController {
     City city = City.values()[doctorRegisterForm.getCityCode()];
 
     Set<HealthInsurance> healthInsurances =
-        doctorRegisterForm
-            .getHealthInsuranceCodes()
-            .stream()
+        doctorRegisterForm.getHealthInsuranceCodes().stream()
             .map(code -> HealthInsurance.values()[code])
             .collect(Collectors.toSet());
 
@@ -221,17 +220,39 @@ public class AuthController {
   // this mav recieves mail and token as query params
   @RequestMapping(value = "/verify", method = RequestMethod.GET)
   public ModelAndView verify(
-      @RequestParam(value = "email", required = true) String email,
+      @RequestParam(value = "id", required = true) Long id,
       @RequestParam(value = "token", required = true) String token) {
-    // TODO: implement this
-    boolean succesful = false;
-    if (!succesful) {
-      final ModelAndView mav = new ModelAndView("auth/verify");
-      return mav;
+
+    boolean successful = false;
+    boolean tokenInvalid = false;
+    boolean alreadyVerified = false;
+
+    try {
+      userService.confirmUser(id, token);
+      successful = true;
+    } catch (ar.edu.itba.paw.interfaces.services.exceptions.UserNotFoundException e) {
+      LOGGER.warn("User with id {} not found!", id);
+
+      throw new UserNotFoundException();
+    } catch (TokenNotFoundException e) {
+      LOGGER.warn("Token for userId {} not found!", id);
+
+      alreadyVerified = true;
+    } catch (TokenInvalidException e) {
+      LOGGER.debug("Token for userId {} is invalid!", id);
+
+      tokenInvalid = true;
     }
-    // if succesful -> automatic login
-    // if token matches then it is enough to log in user
-    return new ModelAndView("redirect:/login");
+
+    if (successful) {
+      return new ModelAndView("redirect:/login");
+    }
+
+    final ModelAndView mav = new ModelAndView("auth/verify");
+    mav.addObject("tokenInvalid", tokenInvalid);
+    mav.addObject("alreadyVerified", alreadyVerified);
+
+    return mav;
   }
 
   // this mav recieves mail and token as query params
