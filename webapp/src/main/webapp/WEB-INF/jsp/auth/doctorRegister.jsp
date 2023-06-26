@@ -130,7 +130,7 @@
             <div class="formItem">
                 <form:label path="city">${city}</form:label>
                 <form:input id="city-input" class="form-control" path="city" type="text"
-                            placeholder="${city_hint}"/>
+                            placeholder="${city_hint}" readonly="true"/>
                 <form:errors path="city" cssClass="error" element="p"/>
             </div>
         </div>

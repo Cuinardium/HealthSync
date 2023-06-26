@@ -6,7 +6,6 @@
 function initMap() {
     const input = document.getElementById("addr-input");
     const cityInput = document.getElementById("city-input");
-    cityInput.disabled = true;
     const options = {
         fields: ["address_components"],
         strictBounds: false,
