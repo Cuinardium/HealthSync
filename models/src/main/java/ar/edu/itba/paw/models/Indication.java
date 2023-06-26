@@ -32,17 +32,22 @@ public class Indication {
     @Column(name = "indication_description", length = 1000, nullable = false)
     private String description;
 
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "file_id", referencedColumnName = "file_id")
+    private File file;
+
     protected Indication() {
         // Solo para hibernate
     }
 
     public Indication(
-            Long id, Appointment appointment, User user, LocalDate date, String description) {
+            Long id, Appointment appointment, User user, LocalDate date, String description, File file) {
         this.id = id;
         this.appointment=appointment;
         this.user = user;
         this.date = date;
         this.description = description;
+        this.file=file;
     }
 
     public Indication(Builder builder) {
@@ -51,6 +56,7 @@ public class Indication {
         this.date = builder.date;
         this.description = builder.description;
         this.appointment = builder.appointment;
+        this.file = builder.file;
     }
 
     public Long getId() {
@@ -93,9 +99,17 @@ public class Indication {
         this.description = description;
     }
 
+    public File getFile() {
+        return file;
+    }
+
+    public void setFile(File file) {
+        this.file = file;
+    }
+
     @Override
     public String toString() {
-        return "Review ["
+        return "Indication ["
                 + "id="
                 + id
                 + ", appointment="
@@ -106,6 +120,8 @@ public class Indication {
                 + date
                 + ", description='"
                 + description
+                + ", file='"
+                + file
                 + ']';
     }
 
@@ -131,15 +147,18 @@ public class Indication {
         private String description;
         private LocalDate date;
         private User user;
+
+        private File file;
         // default
         private Long id = null;
 
         public Builder(
-                Appointment appointment, User user, LocalDate date, String description) {
+                Appointment appointment, User user, LocalDate date, String description, File file) {
             this.appointment= appointment;
             this.user= user;
             this.date = date;
             this.description = description;
+            this.file = file;
         }
 
         public Builder id(long id) {
