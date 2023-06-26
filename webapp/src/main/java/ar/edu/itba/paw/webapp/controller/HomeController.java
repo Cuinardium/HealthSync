@@ -45,7 +45,6 @@ public class HomeController {
     return mav;
   }
 
-  // TODO: REFACTOR THIS
   @RequestMapping(value = "/doctor-dashboard", method = RequestMethod.GET)
   public ModelAndView doctorDashboard(
       @ModelAttribute("doctorFilterForm") DoctorFilterForm doctorFilterForm,
@@ -98,7 +97,7 @@ public class HomeController {
             page - 1,
             DEFAULT_PAGE_SIZE);
 
-    // TODO: hacer esto en spring sec
+
     if (PawAuthUserDetails.getRole().equals(UserRole.ROLE_PATIENT)) {
       PawAuthUserDetails currentUser = PawAuthUserDetails.getCurrentUser();
 
@@ -131,11 +130,6 @@ public class HomeController {
     mav.addObject("currentPage", doctors.getCurrentPage() + 1);
     mav.addObject("totalPages", doctors.getTotalPages());
 
-    // Only patients can book appointments
-    boolean notLogged = PawAuthUserDetails.getRole().equals(UserRole.ROLE_NULL);
-    mav.addObject("notLogged", notLogged);
-    boolean canBook = PawAuthUserDetails.getRole().equals(UserRole.ROLE_PATIENT) || notLogged;
-    mav.addObject("canBook", canBook);
 
     return mav;
   }

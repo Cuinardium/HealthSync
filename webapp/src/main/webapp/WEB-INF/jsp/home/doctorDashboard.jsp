@@ -216,7 +216,7 @@
                                 </c:otherwise>
                             </c:choose>
 
-                            <c:if test="${canBook}">
+                            <c:if test="${!isDoctor}">
                                 <div class="buttonsContainer">
                                     <a class="btn btn-primary"
                                        onclick="checkInsurance(
@@ -276,7 +276,7 @@
 
 
     function checkInsurance(appointmentUrl, object) {
-        if (object.includes(${patientHealthInsurance.ordinal()}) || ${notLogged}) {
+        if (object.includes(${patientHealthInsurance.ordinal()})) {
             redirect(appointmentUrl);
         } else {
             $('#modal').modal('show');

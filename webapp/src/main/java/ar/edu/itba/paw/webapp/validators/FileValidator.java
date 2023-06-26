@@ -21,6 +21,6 @@ public class FileValidator implements ConstraintValidator<ValidateFile, Multipar
 
     private boolean isValidExtension(String extension) {
         return extension != null
-                && (extension.equals("png") || extension.equals("jpg") || extension.equals("jpeg") || extension.equals("pdf"));
+                && (extension.equals("png") || extension.equals("jpg") || extension.equals("jpeg"));
     }
 }
