@@ -11,6 +11,7 @@
 <c:url value="/css/forms.css" var="formsCss"/>
 <c:url value="/css/profile.css" var="profileCss"/>
 
+<c:url value="/doctor-vacation" var="vacationUrl"/>
 <c:url value="/doctor-edit" var="doctorEditUrl"/>
 <c:url value="/change-password" var="changePasswordUrl"/>
 
@@ -31,6 +32,7 @@
 <spring:message code="edit.modal.title" var="modalTitle"/>
 <spring:message code="edit.modal.text" var="modalDesc"/>
 <spring:message code="profile.edit.modal.button" var="modalButton"/>
+<spring:message code="profile.viewVacations" var="viewVacations"/>
 <spring:message code="profile.edit" var="editProfile"/>
 <spring:message code="profile.changePassword" var="changePassword"/>
 
@@ -161,6 +163,7 @@
         </div>
 
         <div class="profileButtonContainer">
+            <a type="button" href="${vacationUrl}" class="btn btn-primary">${viewVacations}</a>
             <a type="button" href="${doctorEditUrl}" class="btn btn-primary">${editProfile}</a>
             <a type="button" href="${changePasswordUrl}" class="btn btn-primary">${changePassword}</a>
         </div>

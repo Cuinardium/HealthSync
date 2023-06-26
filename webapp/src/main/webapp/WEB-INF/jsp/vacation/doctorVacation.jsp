@@ -96,14 +96,30 @@
         <button class="btn btn-primary" onclick="openAddVacationModal()">${vacationAddTitle}</button>
     </div>
     <c:forEach items="${vacations}" var="vacation" varStatus="status">
-        <div>
-                ${vacation.fromDate} ${vacation.fromTime} ${vacation.toDate} ${vacation.toTime}
-        </div>
+        <div class="card">
+            <div class="card-body">
+                <div class="vacationCardContent">
+                    <div class="vacationCardItem">
+                        <strong>${vacationFrom}</strong>
+                        <div>
+                                ${vacation.fromDate} ${vacation.fromTime.blockBeginning}
+                        </div>
 
-        <button onclick="openDeleteVacationModal('${status.index}')"
-                class="post-button btn btn-danger">
-            <spring:message code="appointments.cancel"/>
-        </button>
+                    </div>
+                    <div class="vacationCardItem">
+                        <strong>${vacationTo}</strong>
+                        <div>
+                                ${vacation.toDate} ${vacation.toTime.blockEnd}
+                        </div>
+
+                    </div>
+                        <button onclick="openDeleteVacationModal('${status.index}')"
+                                class="btn btn-danger btn-sm">
+                                ${vacationCancel}
+                        </button>
+                </div>
+            </div>
+        </div>
 
         <div class="modal fade" id="${status.index}" tabindex="-1" role="dialog"
              aria-labelledby="modalLabel"
@@ -207,8 +223,11 @@
                     </div>
                 </div>
 
-                <form:textarea id="appointmentCancelReason" cols="30" rows="10" class="form-control" type="text"
-                               placeholder="${appointmentCancelReason}" path="cancelReason"/>
+                <c:if test="${doctorVacationForm.cancelAppointmentsInVacation}">
+                    <form:textarea id="appointmentCancelReason" cols="30" rows="10" class="form-control" type="text"
+                                   placeholder="${appointmentCancelReason}" path="cancelReason"/>
+                </c:if>
+
                 <c:if test="${isVacationInvalid}">
                     <div class="profileItem">
                         <label class="error">${addInvalidVacationMessage}</label>
@@ -258,7 +277,32 @@
         display: flex;
         flex-direction: row;
         justify-content: end;
-        width: 100%;
+        width: 50%;
+        margin-bottom: 1rem;
+    }
+
+    .vacationCardContent{
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+    }
+
+
+    .vacationCardContent > .btn {
+        margin-left: auto;
+    }
+
+    .vacationCardItem {
+        display: flex;
+        flex-direction: column;
+        align-items: start;
+        margin-right: 1rem;
+    }
+
+    .vacationContainer > .card {
+        width: 50%;
+        margin-bottom: 1rem;
+        background-color: white;
     }
 
 </style>
