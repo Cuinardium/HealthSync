@@ -41,10 +41,6 @@ public interface AppointmentService {
       String cancelDescription)
       throws DoctorNotFoundException;
 
-  public Appointment setAppointmentIndications(
-      long appointmentId, String indications, long requesterId)
-      throws AppointmentNotFoundException, SetIndicationsForbiddenException;
-
   // =============== Queries ===============
 
   public Optional<Appointment> getAppointmentById(long appointmentId);
