@@ -4,9 +4,12 @@ import ar.edu.itba.paw.interfaces.persistence.UserDao;
 import ar.edu.itba.paw.interfaces.persistence.exceptions.EmailAlreadyExistsException;
 import ar.edu.itba.paw.interfaces.persistence.exceptions.UserNotFoundException;
 import ar.edu.itba.paw.interfaces.services.ImageService;
+import ar.edu.itba.paw.interfaces.services.MailService;
+import ar.edu.itba.paw.interfaces.services.TokenService;
 import ar.edu.itba.paw.interfaces.services.exceptions.EmailInUseException;
 import ar.edu.itba.paw.models.Image;
 import ar.edu.itba.paw.models.User;
+import ar.edu.itba.paw.models.VerificationToken;
 import java.util.Locale;
 import java.util.Optional;
 import org.junit.Assert;
@@ -41,9 +44,13 @@ public class UserServiceImplTest {
   private static final Image IMAGE_NEW = new Image(1L, new byte[] {1, 4});
   private static final Locale LOCALE_NEW = new Locale("es");
 
+  private static final String TOKEN = "hola";
+
   @Mock private UserDao userDao;
   @Mock private PasswordEncoder passwordEncoder;
   @Mock private ImageService imageService; // imageservice.cualquerCosa() lo necesita
+  @Mock private TokenService tokenService;
+  @Mock private MailService mailService;
 
   @InjectMocks private UserServiceImpl us;
 
@@ -58,6 +65,12 @@ public class UserServiceImplTest {
         .thenReturn(
             new User(ID, EMAIL, PASSWORD_ENCODED, FIRST_NAME, LAST_NAME, IMAGE, LOCALE, false));
 
+    Mockito.when(tokenService.createToken(Mockito.any(User.class)))
+        .thenReturn(Mockito.mock(VerificationToken.class));
+    Mockito.doNothing()
+        .when(mailService)
+        .sendConfirmationMail(Mockito.any(VerificationToken.class));
+
     // 2. Ejercitar la class under test
     User newUser = us.createUser(EMAIL, PASSWORD, FIRST_NAME, LAST_NAME, LOCALE);
 
@@ -67,6 +80,8 @@ public class UserServiceImplTest {
     Assert.assertEquals(PASSWORD_ENCODED, newUser.getPassword());
     Assert.assertEquals(FIRST_NAME, newUser.getFirstName());
     Assert.assertEquals(LAST_NAME, newUser.getLastName());
+    Assert.assertEquals(LOCALE, newUser.getLocale());
+    Assert.assertFalse(newUser.getIsVerified());
   }
 
   @Test(expected = EmailInUseException.class)
