@@ -28,6 +28,10 @@ public class ReviewDaoJpa implements ReviewDao {
     Query nativeQuery =
         em.createNativeQuery("SELECT review_id FROM review WHERE doctor_id = " + doctorId);
 
+    Query countQuery =
+        em.createNativeQuery(
+            "SELECT COUNT(*) FROM review WHERE doctor_id = " + doctorId);
+
     if (page != null && page >= 0 && pageSize != null && pageSize > 0) {
       nativeQuery.setMaxResults(pageSize);
       nativeQuery.setFirstResult(page * pageSize);
@@ -49,7 +53,8 @@ public class ReviewDaoJpa implements ReviewDao {
     query.setParameter("idList", idList);
 
     List<Review> content = query.getResultList();
+    Number count = (Number) countQuery.getSingleResult();
 
-    return new Page<>(content, page, content.size(), pageSize);
+    return new Page<>(content, page, count.intValue(), pageSize);
   }
 }
