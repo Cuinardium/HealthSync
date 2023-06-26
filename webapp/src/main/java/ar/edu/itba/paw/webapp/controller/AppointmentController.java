@@ -11,6 +11,8 @@ import ar.edu.itba.paw.webapp.exceptions.AppointmentForbiddenException;
 import ar.edu.itba.paw.webapp.exceptions.AppointmentNotFoundException;
 import ar.edu.itba.paw.webapp.form.IndicationForm;
 import ar.edu.itba.paw.webapp.form.ModalForm;
+
+import java.io.IOException;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -191,7 +193,7 @@ public class AppointmentController {
   }
 
 
-  // ========================== Review ==========================
+  // ========================== Indication ==========================
   @RequestMapping(value = "/{id:\\d+}/indication", method = RequestMethod.GET)
   public ModelAndView indication(
           @PathVariable("id") final long appointmentId,
@@ -211,18 +213,27 @@ public class AppointmentController {
           @Valid @ModelAttribute("indicationForm") final IndicationForm indicationForm,
           final BindingResult errors) {
 
-    if (errors.hasErrors()) {
+    if (errors.hasFieldErrors("indications")) {
       return indication(appointmentId, indicationForm);
     }
 
     Indication indication;
 
     try {
+      File file = null;
+      if (!(indicationForm.getFile()==null) && !indicationForm.getFile().isEmpty()) {
+        if(errors.hasFieldErrors("file")){
+          return indication(appointmentId, indicationForm);
+        }
+        file = new File.Builder(indicationForm.getFile().getBytes()).build();
+      }
+
       indication =
               indicationService.createIndication(
                       appointmentId,
                       PawAuthUserDetails.getCurrentUserId(),
-                      indicationForm.getIndications());
+                      indicationForm.getIndications(),
+                      file);
 
       LOGGER.info("Created indication {}", indication);
     } catch (ar.edu.itba.paw.interfaces.services.exceptions.AppointmentNotFoundException e) {
@@ -238,6 +249,8 @@ public class AppointmentController {
               appointmentId,
               new UserNotFoundException());
 
+      throw new RuntimeException(e);
+    } catch (IOException e) {
       throw new RuntimeException(e);
     }
 

@@ -49,12 +49,19 @@
     <div class="formContainer">
         <h1>${title}</h1>
         <form:form modelAttribute="indicationForm" class="card" action="${indicationUrl}"
-                   method="POST">
+                   method="POST" enctype="multipart/form-data">
 
             <div class="formItem">
                 <form:label cssClass="formLabel" path="indications">${description}</form:label>
                 <form:textarea cols="50" rows="10" class="form-control" type="text" placeholder="${descriptionPlaceholder}" path="indications"/>
                 <form:errors path="indications" cssClass="error" element="p"/>
+            </div>
+
+            <div class="formItem">
+                <div class="mb-3">
+                    <form:label  cssClass="formLabel" path="file">Default file input example</form:label>
+                    <form:input class="form-control" type="file" path="file"/>
+                </div>
             </div>
 
             <button type="submit" class="btn btn-primary submitButton">${submit}</button>

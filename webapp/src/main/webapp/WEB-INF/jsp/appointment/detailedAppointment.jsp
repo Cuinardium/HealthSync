@@ -45,6 +45,8 @@
 <spring:message code="appointments.indication.patient.button" var="indicationPatientButton"/>
 <spring:message code="detailedAppointment.me" var="me"/>
 
+<spring:message code="user.alt.loggedUserImg" var="altLoggedUserImg"/>
+
 
 <html>
 <head>
@@ -159,6 +161,12 @@
                         <div class="card-text cardDescription">
                                 ${indication.description}
                         </div>
+                        <c:if test="${not empty indication.file}">
+                            <div class="card-text cardDescription">
+                                <c:url value="/file/${indication.file.fileId}" var="loggedFileImg"/>
+                                <img src="${loggedFileImg}"  width="200" height="200" alt="${altLoggedUserImg}">
+                            </div>
+                        </c:if>
                     </div>
 
                     <div class="cardFooter">
