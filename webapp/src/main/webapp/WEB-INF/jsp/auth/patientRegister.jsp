@@ -12,7 +12,7 @@
 <c:url value="/css/profile.css" var="profileCss"/>
 
 <c:url value="/patient-register" var="patientRegisterUrl"/>
-<c:url value="/" var="successfulUrl"/>
+<c:url value="/login" var="successfulUrl"/>
 
 <spring:message code="registerPatient.title" var="title"/>
 <spring:message code="form.name" var="name"/>

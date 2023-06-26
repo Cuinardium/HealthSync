@@ -111,7 +111,6 @@ public class AuthController {
               LocaleContextHolder.getLocale());
 
       LOGGER.info("Registered {}", patient);
-      authUser(patient.getEmail(), patientRegisterForm.getPassword());
 
       final ModelAndView mav = new ModelAndView("auth/patientRegister");
       mav.addObject("form", patientRegisterForm);
@@ -180,7 +179,6 @@ public class AuthController {
               attendingHours,
               LocaleContextHolder.getLocale());
       LOGGER.info("Registered {}", doctor);
-      authUser(doctor.getEmail(), doctorRegisterForm.getPassword());
 
       final ModelAndView mav = new ModelAndView("auth/doctorRegister");
       mav.addObject("form", doctorRegisterForm);
