@@ -3,12 +3,10 @@ package ar.edu.itba.paw.models;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.MapsId;
 import javax.persistence.OneToOne;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 @Entity
@@ -16,21 +14,11 @@ import javax.persistence.Table;
 public class VerificationToken {
   private static final int EXPIRATION = 60 * 24;
 
-  @Id
-  @GeneratedValue(
-    strategy = GenerationType.SEQUENCE,
-    generator = "verification_token_verification_id_seq"
-  )
-  @SequenceGenerator(
-    sequenceName = "verification_token_verification_id_seq",
-    name = "verification_token_verification_id_seq",
-    allocationSize = 1
-  )
-  @Column(name = "verification_id")
-  private Long id;
+  @Id private Long id;
 
   @OneToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "user_id", nullable = false)
+  @MapsId
   private User user;
 
   @Column(length = 32, nullable = false)

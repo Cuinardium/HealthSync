@@ -49,8 +49,9 @@ public class User {
   @Column(name = "locale", length = 10, nullable = false)
   private Locale locale;
 
+  // si no existe tupla en la tabla de verification token -> el usuario esta verificado
   @Formula(
-      "(SELECT CASE WHEN EXISTS (SELECT * FROM VerificationToken vf WHERE vf.user_id = user_id) THEN TRUE ELSE FALSE END)")
+      "(SELECT CASE WHEN EXISTS (SELECT * FROM verification_token vf WHERE vf.user_id = user_id) THEN 0 ELSE 1 END)")
   private Boolean isVerified;
 
   protected User() {
