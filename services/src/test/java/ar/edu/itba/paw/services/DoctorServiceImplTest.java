@@ -13,7 +13,6 @@ import ar.edu.itba.paw.interfaces.services.exceptions.VacationInvalidException;
 import ar.edu.itba.paw.models.*;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
-import java.time.LocalTime;
 import java.util.*;
 import org.junit.Assert;
 import org.junit.Test;
@@ -471,8 +470,8 @@ public class DoctorServiceImplTest {
     Vacation invalidVacation =
         new Vacation(
             ID,
-            LocalDate.now(),
-            ThirtyMinuteBlock.fromTime(LocalTime.now().minusHours(1)),
+            LocalDate.now().minusDays(1),
+            ThirtyMinuteBlock.BLOCK_00_00,
             LocalDate.now().plusDays(1),
             ThirtyMinuteBlock.BLOCK_00_00);
 
