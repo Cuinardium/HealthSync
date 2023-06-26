@@ -25,6 +25,24 @@
     margin: 15px;
 }
 
+.infoContainer{
+    min-width: 35%;
+}
+
+.locationContactContainer{
+    width: 19rem;
+}
+
+.map{
+    width: 100%;
+    height: 500px;
+}
+
+.mapButton{
+    font-size: large;
+    padding: 0 0.2rem;
+}
+
 .buttonsContainer{
     display: flex;
     align-items: flex-end;

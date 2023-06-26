@@ -22,13 +22,14 @@ public interface DoctorDao {
   public Doctor updateDoctorInfo(
       long doctorId,
       Specialty specialty,
-      City city,
+      String city,
       String address,
       Set<HealthInsurance> healthInsurances,
       Set<AttendingHours> attendingHours)
       throws DoctorNotFoundException;
 
-  public Doctor addVacation(long doctorId, Vacation vacation) throws DoctorNotFoundException, VacationCollisionException;
+  public Doctor addVacation(long doctorId, Vacation vacation)
+      throws DoctorNotFoundException, VacationCollisionException;
 
   public Doctor removeVacation(long doctorId, Vacation vacation)
       throws DoctorNotFoundException, VacationNotFoundException;
@@ -43,7 +44,7 @@ public interface DoctorDao {
       ThirtyMinuteBlock fromTime,
       ThirtyMinuteBlock toTime,
       Specialty specialty,
-      City city,
+      String city,
       HealthInsurance healthInsurance,
       Integer minRating,
       Integer page,
@@ -57,7 +58,7 @@ public interface DoctorDao {
   public Map<Specialty, Integer> getUsedSpecialties();
 
   // Get all city present in the database & qty of appearences
-  public Map<City, Integer> getUsedCities();
+  public Map<String, Integer> getUsedCities();
 
   public List<Specialty> getPopularSpecialties();
 }

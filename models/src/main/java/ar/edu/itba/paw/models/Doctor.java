@@ -28,9 +28,8 @@ public class Doctor extends User {
   @Column(name = "specialty_code", nullable = false)
   private Specialty specialty;
 
-  @Enumerated(EnumType.ORDINAL)
-  @Column(name = "city_code", nullable = false)
-  private City city;
+  @Column(name = "city", nullable = false)
+  private String city;
 
   @Column(name = "address", nullable = false)
   private String address;
@@ -68,7 +67,7 @@ public class Doctor extends User {
       Image image,
       Set<HealthInsurance> healthInsurances,
       Specialty specialty,
-      City city,
+      String city,
       String address,
       Set<AttendingHours> attendingHours,
       Set<Vacation> vacations,
@@ -175,11 +174,11 @@ public class Doctor extends User {
     this.ratingCount = ratingCount;
   }
 
-  public City getCity() {
+  public String getCity() {
     return city;
   }
 
-  public void setCity(City city) {
+  public void setCity(String city) {
     this.city = city;
   }
 
@@ -252,7 +251,7 @@ public class Doctor extends User {
     private String email, password, firstName, lastName;
     private Set<HealthInsurance> healthInsurances;
     private Specialty specialty;
-    private City city;
+    private String city;
     private String address;
     private Set<AttendingHours> attendingHours;
     public Locale locale;
@@ -273,7 +272,7 @@ public class Doctor extends User {
         String lastName,
         Set<HealthInsurance> healthInsurances,
         Specialty specialty,
-        City city,
+        String city,
         String address,
         Set<AttendingHours> attendingHours,
         Locale locale) {

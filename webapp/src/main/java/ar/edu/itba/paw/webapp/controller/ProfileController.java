@@ -126,7 +126,6 @@ public class ProfileController {
     }
 
     Specialty specialty = Specialty.values()[doctorEditForm.getSpecialtyCode()];
-    City city = City.values()[doctorEditForm.getCityCode()];
 
     Set<HealthInsurance> healthInsurances =
         doctorEditForm.getHealthInsuranceCodes().stream()
@@ -159,7 +158,7 @@ public class ProfileController {
               doctorEditForm.getName(),
               doctorEditForm.getLastname(),
               specialty,
-              city,
+              doctorEditForm.getCity(),
               doctorEditForm.getAddress(),
               healthInsurances,
               attendingHours,
@@ -179,7 +178,6 @@ public class ProfileController {
     final ModelAndView mav = new ModelAndView("user/doctorEdit");
     mav.addObject("showModal", true);
     mav.addObject("form", doctorEditForm);
-    mav.addObject("cities", Arrays.asList(City.values()));
     mav.addObject("specialties", Arrays.asList(Specialty.values()));
     mav.addObject("currentHealthInsuranceCodes", doctorEditForm.getHealthInsuranceCodes());
     mav.addObject("healthInsurances", Arrays.asList(HealthInsurance.values()));
@@ -204,7 +202,7 @@ public class ProfileController {
             .map(HealthInsurance::ordinal)
             .collect(Collectors.toList()));
     doctorEditForm.setAddress(doctor.getAddress());
-    doctorEditForm.setCityCode(doctor.getCity().ordinal());
+    doctorEditForm.setCity(doctor.getCity());
     doctorEditForm.setSpecialtyCode(doctor.getSpecialty().ordinal());
     doctorEditForm.setLocale(doctor.getLocale());
 
@@ -215,7 +213,6 @@ public class ProfileController {
     final ModelAndView mav = new ModelAndView("user/doctorEdit");
     mav.addObject("form", doctorEditForm);
     mav.addObject("emailAlreadyInUse", emailAlreadyInUse);
-    mav.addObject("cities", Arrays.asList(City.values()));
     mav.addObject("specialties", Arrays.asList(Specialty.values()));
     mav.addObject("currentHealthInsuranceCodes", doctorEditForm.getHealthInsuranceCodes());
     mav.addObject("healthInsurances", Arrays.asList(HealthInsurance.values()));
