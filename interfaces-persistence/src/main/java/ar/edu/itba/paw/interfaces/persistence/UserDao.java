@@ -9,12 +9,6 @@ import java.util.Optional;
 
 public interface UserDao {
 
-  // =============== Inserts ===============
-
-  public User createUser(
-      String email, String password, String firstName, String lastName, Locale locale)
-      throws EmailAlreadyExistsException;
-
   // =============== Updates ===============
 
   public User updateUserInfo(

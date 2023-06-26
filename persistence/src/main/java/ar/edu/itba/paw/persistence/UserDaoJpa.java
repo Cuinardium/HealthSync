@@ -18,19 +18,6 @@ public class UserDaoJpa implements UserDao {
   @PersistenceContext private EntityManager em;
 
   @Override
-  public User createUser(
-      String email, String password, String firstName, String lastName, Locale locale)
-      throws EmailAlreadyExistsException {
-    final User user =
-        new User.Builder(email, password, firstName, lastName, locale).isVerified(false).build();
-    if (getUserByEmail(email).isPresent()) {
-      throw new EmailAlreadyExistsException();
-    }
-    em.persist(user);
-    return user;
-  }
-
-  @Override
   public User updateUserInfo(
       long userId, String email, String firstName, String lastName, Image image, Locale locale)
       throws UserNotFoundException, EmailAlreadyExistsException {

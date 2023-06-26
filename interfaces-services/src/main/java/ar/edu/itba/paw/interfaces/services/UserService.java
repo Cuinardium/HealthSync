@@ -11,12 +11,6 @@ import java.util.Optional;
 
 public interface UserService {
 
-  // =============== Inserts ===============
-
-  public User createUser(
-      String email, String password, String firstName, String lastName, Locale locale)
-      throws EmailInUseException;
-
   // =============== Updates ===============
 
   public User updateUser(

@@ -11,17 +11,13 @@ import java.util.Locale;
 import java.util.Optional;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.sql.DataSource;
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.jdbc.JdbcTestUtils;
 import org.springframework.transaction.annotation.Transactional;
 
 @Transactional
@@ -47,18 +43,9 @@ public class UserDaoImplTest {
   private static final Locale AUX_LOCALE = new Locale("en");
   private static final Locale INSERTED_LOCALE = new Locale("en");
 
-  @Autowired private DataSource ds;
-
-  private JdbcTemplate jdbcTemplate;
-
   @PersistenceContext private EntityManager em;
 
   @Autowired private UserDaoJpa userDao;
-
-  @Before
-  public void setUp() {
-    jdbcTemplate = new JdbcTemplate(ds);
-  }
 
   @Test
   public void testGetUserById() {
@@ -110,44 +97,6 @@ public class UserDaoImplTest {
 
     // 3. Meaningful assertions
     Assert.assertFalse(maybeUser.isPresent());
-  }
-
-  @Test
-  public void testCreateUser() throws EmailAlreadyExistsException {
-    // 1. Precondiciones
-    // 2. Ejercitar la class under test
-    User user =
-        userDao.createUser(AUX_EMAIL, AUX_PASSWORD, AUX_FIRST_NAME, AUX_LAST_NAME, AUX_LOCALE);
-
-    em.flush();
-
-    // 3. Meaningful assertions
-    Assert.assertNotNull(user);
-    Assert.assertEquals(AUX_EMAIL, user.getEmail());
-    Assert.assertEquals(AUX_PASSWORD, user.getPassword());
-    Assert.assertEquals(AUX_FIRST_NAME, user.getFirstName());
-    Assert.assertEquals(AUX_LAST_NAME, user.getLastName());
-    Assert.assertEquals(INSERTED_USER_IMAGE, user.getImage());
-    Assert.assertEquals(INSERTED_LOCALE, user.getLocale());
-
-    Assert.assertEquals(3, JdbcTestUtils.countRowsInTable(jdbcTemplate, "users"));
-  }
-
-  @Test
-  public void testCreateUserAlreadyExists() {
-    // 1. Precondiciones
-    // 2. Ejercitar la class under test
-    assertThrows(
-        EmailAlreadyExistsException.class,
-        () ->
-            userDao.createUser(
-                INSERTED_USER_EMAIL,
-                INSERTED_USER_PASSWORD,
-                INSERTED_USER_FIRST_NAME,
-                INSERTED_USER_LAST_NAME,
-                INSERTED_LOCALE));
-
-    // 3. Meaningful assertions
   }
 
   @Test

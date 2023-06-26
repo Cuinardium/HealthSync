@@ -4,7 +4,6 @@ import ar.edu.itba.paw.interfaces.persistence.UserDao;
 import ar.edu.itba.paw.interfaces.persistence.exceptions.EmailAlreadyExistsException;
 import ar.edu.itba.paw.interfaces.persistence.exceptions.UserNotFoundException;
 import ar.edu.itba.paw.interfaces.services.ImageService;
-import ar.edu.itba.paw.interfaces.services.MailService;
 import ar.edu.itba.paw.interfaces.services.TokenService;
 import ar.edu.itba.paw.interfaces.services.exceptions.EmailInUseException;
 import ar.edu.itba.paw.interfaces.services.exceptions.TokenInvalidException;
@@ -53,57 +52,8 @@ public class UserServiceImplTest {
   @Mock private PasswordEncoder passwordEncoder;
   @Mock private ImageService imageService; // imageservice.cualquerCosa() lo necesita
   @Mock private TokenService tokenService;
-  @Mock private MailService mailService;
 
   @InjectMocks private UserServiceImpl us;
-
-  // ====================== Create user ======================
-
-  @Test
-  public void testCreateUser() throws EmailAlreadyExistsException, EmailInUseException {
-    // 1. Precondiciones
-    // UserDao mock = Mockito.mock(UserDao.class);
-    Mockito.when(passwordEncoder.encode(Mockito.eq(PASSWORD))).thenReturn(PASSWORD_ENCODED);
-    Mockito.when(userDao.createUser(EMAIL, PASSWORD_ENCODED, FIRST_NAME, LAST_NAME, LOCALE))
-        .thenReturn(
-            new User(ID, EMAIL, PASSWORD_ENCODED, FIRST_NAME, LAST_NAME, IMAGE, LOCALE, false));
-
-    Mockito.when(tokenService.createToken(Mockito.any(User.class)))
-        .thenReturn(Mockito.mock(VerificationToken.class));
-    Mockito.doNothing()
-        .when(mailService)
-        .sendConfirmationMail(Mockito.any(VerificationToken.class));
-
-    // 2. Ejercitar la class under test
-    User newUser = us.createUser(EMAIL, PASSWORD, FIRST_NAME, LAST_NAME, LOCALE);
-
-    // 3. Meaningful assertions
-    Assert.assertNotNull(newUser);
-    Assert.assertEquals(EMAIL, newUser.getEmail());
-    Assert.assertEquals(PASSWORD_ENCODED, newUser.getPassword());
-    Assert.assertEquals(FIRST_NAME, newUser.getFirstName());
-    Assert.assertEquals(LAST_NAME, newUser.getLastName());
-    Assert.assertEquals(LOCALE, newUser.getLocale());
-    Assert.assertFalse(newUser.getIsVerified());
-  }
-
-  @Test(expected = EmailInUseException.class)
-  public void testCreateUserAlreadyExists()
-      throws EmailAlreadyExistsException, EmailInUseException {
-    // 1. Precondiciones
-    Mockito.when(passwordEncoder.encode(Mockito.eq(PASSWORD))).thenReturn(PASSWORD_ENCODED);
-    Mockito.when(
-            userDao.createUser(
-                Mockito.eq(EMAIL),
-                Mockito.eq(PASSWORD_ENCODED),
-                Mockito.eq(FIRST_NAME),
-                Mockito.eq(LAST_NAME),
-                Mockito.eq(LOCALE)))
-        .thenThrow(EmailAlreadyExistsException.class);
-
-    // 2. Ejercitar la class under test
-    us.createUser(EMAIL, PASSWORD, FIRST_NAME, LAST_NAME, LOCALE);
-  }
 
   // ============================== Get user by id ==============================
 

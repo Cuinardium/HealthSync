@@ -27,7 +27,6 @@ public class UserServiceImpl implements UserService {
   private final UserDao userDao;
   private final ImageService imageService;
   private final TokenService tokenService;
-  private final MailService mailService;
   private final PasswordEncoder passwordEncoder;
 
   @Autowired
@@ -35,37 +34,11 @@ public class UserServiceImpl implements UserService {
       final UserDao userDao,
       final ImageService imageService,
       final TokenService tokenService,
-      final MailService mailService,
       final PasswordEncoder passwordEncoder) {
     this.userDao = userDao;
     this.imageService = imageService;
     this.tokenService = tokenService;
-    this.mailService = mailService;
     this.passwordEncoder = passwordEncoder;
-  }
-
-  // =============== Inserts ===============
-
-  @Transactional
-  @Override
-  public User createUser(
-      String email, String password, String firstName, String lastName, Locale locale)
-      throws EmailInUseException {
-
-    final User user;
-
-    try {
-      user = userDao.createUser(
-          email, passwordEncoder.encode(password), firstName, lastName, locale);
-    } catch (EmailAlreadyExistsException e) {
-      throw new EmailInUseException();
-    }
-
-    final VerificationToken token = tokenService.createToken(user);
-
-    mailService.sendConfirmationMail(token);
-
-    return user;
   }
 
   // =============== Updates ===============
