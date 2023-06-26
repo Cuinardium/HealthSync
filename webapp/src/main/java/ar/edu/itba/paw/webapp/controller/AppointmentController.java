@@ -221,7 +221,7 @@ public class AppointmentController {
 
     try {
       File file = null;
-      if (!(indicationForm.getFile()==null)) {
+      if (!(indicationForm.getFile()==null) && !indicationForm.getFile().isEmpty()) {
         if(errors.hasFieldErrors("file")){
           return indication(appointmentId, indicationForm);
         }
