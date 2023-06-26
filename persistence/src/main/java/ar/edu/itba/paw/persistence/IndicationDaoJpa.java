@@ -46,7 +46,7 @@ public class IndicationDaoJpa implements IndicationDao {
         if (idList.isEmpty()) return new Page<>(new ArrayList<>(), page, 0, pageSize);
 
         final TypedQuery<Indication> query =
-                em.createQuery("from Indication where id in :idList", Indication.class);
+                em.createQuery("from Indication where id in :idList order by id desc", Indication.class);
         query.setParameter("idList", idList);
 
         List<Indication> content = query.getResultList();
