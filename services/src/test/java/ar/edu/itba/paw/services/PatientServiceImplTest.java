@@ -85,6 +85,7 @@ public class PatientServiceImplTest {
     // 1. Precondiciones
     Mockito.when(passwordEncoder.encode(Mockito.eq(PASSWORD))).thenReturn(PASSWORD_ENCODED);
     Mockito.when(userService.getUserByEmail(Mockito.eq(EMAIL))).thenReturn(Optional.empty());
+    Mockito.when(userService.getUserById(Mockito.eq(ID))).thenReturn(Optional.of(USER));
 
     Mockito.when(
             patientDao.createPatient(

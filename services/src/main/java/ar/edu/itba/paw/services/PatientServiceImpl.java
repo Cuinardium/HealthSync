@@ -12,6 +12,7 @@ import ar.edu.itba.paw.interfaces.services.exceptions.UserNotFoundException;
 import ar.edu.itba.paw.models.HealthInsurance;
 import ar.edu.itba.paw.models.Image;
 import ar.edu.itba.paw.models.Patient;
+import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.models.VerificationToken;
 import java.util.Locale;
 import java.util.Optional;
@@ -76,7 +77,9 @@ public class PatientServiceImpl implements PatientService {
       throw new IllegalStateException("Patient should not exist when id is null");
     }
 
-    final VerificationToken token = tokenService.createToken(patient.toUser());
+    User patientUser = userService.getUserById(patient.getId()).orElseThrow(() -> new IllegalStateException("User should exist but does not"));
+
+    final VerificationToken token = tokenService.createToken(patientUser);
     mailService.sendConfirmationMail(token);
 
     return patient;

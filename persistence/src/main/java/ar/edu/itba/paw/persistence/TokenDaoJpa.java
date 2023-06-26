@@ -4,7 +4,6 @@ import java.util.Optional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.persistence.TypedQuery;
 
 import org.springframework.stereotype.Repository;
 
@@ -26,10 +25,8 @@ public class TokenDaoJpa implements TokenDao {
 
   @Override
   public Optional<VerificationToken> getUserToken(User user) {
-    final TypedQuery<VerificationToken> query = em.createQuery(
-        "from VerificationToken as vt where vt.user = :user", VerificationToken.class);
-    query.setParameter("user", user);
-    return query.getResultList().stream().findFirst();
+    return Optional.ofNullable(
+        em.find(VerificationToken.class, user.getId()));
   }
 
   @Override

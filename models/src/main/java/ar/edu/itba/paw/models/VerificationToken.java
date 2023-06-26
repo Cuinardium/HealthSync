@@ -23,7 +23,7 @@ public class VerificationToken {
   @MapsId
   private User user;
 
-  @Column(length = 32, nullable = false)
+  @Column(length = 100, nullable = false)
   private String token;
 
   @Column(nullable = false)

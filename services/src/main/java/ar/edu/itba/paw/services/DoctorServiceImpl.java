@@ -83,7 +83,8 @@ public class DoctorServiceImpl implements DoctorService {
       throw new IllegalStateException("Doctor should not exist when id is null");
     }
 
-    final VerificationToken token = tokenService.createToken(doctor.toUser());
+    User patientUser = userService.getUserById(doctor.getId()).orElseThrow(() -> new IllegalStateException("User should exist but does not"));
+    final VerificationToken token = tokenService.createToken(patientUser);
     mailService.sendConfirmationMail(token);
 
     return doctor;
