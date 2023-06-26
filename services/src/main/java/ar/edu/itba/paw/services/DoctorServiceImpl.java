@@ -159,14 +159,14 @@ public class DoctorServiceImpl implements DoctorService {
       LocalDate date,
       ThirtyMinuteBlock fromTime,
       ThirtyMinuteBlock toTime,
-      Specialty specialty,
-      String city,
-      HealthInsurance healthInsurance,
+      Set<Specialty> specialties,
+      Set<String> cities,
+      Set<HealthInsurance> healthInsurances,
       Integer minRating,
       Integer page,
       Integer pageSize) {
     return doctorDao.getFilteredDoctors(
-        name, date, fromTime, toTime, specialty, city, healthInsurance, minRating, page, pageSize);
+        name, date, fromTime, toTime, specialties, cities, healthInsurances, minRating, page, pageSize);
   }
 
   @Transactional(readOnly = true)

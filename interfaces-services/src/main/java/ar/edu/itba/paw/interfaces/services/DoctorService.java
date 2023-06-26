@@ -59,9 +59,9 @@ public interface DoctorService {
       LocalDate date,
       ThirtyMinuteBlock fromTime,
       ThirtyMinuteBlock toTime,
-      Specialty specialty,
-      String city,
-      HealthInsurance healthInsurance,
+      Set<Specialty> specialties,
+      Set<String> cities,
+      Set<HealthInsurance> healthInsurance,
       Integer minRating,
       Integer page,
       Integer pageSize);

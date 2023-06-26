@@ -64,18 +64,17 @@
                     <input type="submit" class="btn btn-danger" value="${clear}" onclick="clearFilters()">
                 </div>
                 <hr>
-                <form:select id="city-select" cssClass="form-select" path="city" onchange="this.form.submit()">
+                <form:select id="city-select" cssClass="form-select" path="cities" multiple="true">
                     <form:option value="-1" disabled="true" hidden="true" selected="true"> ${city} </form:option>
                     <c:forEach items="${cityMap}" var="city">
-                        <form:option value="${city.key}">
+                        <form:option value="${city.key}" disabled="${currentCities.contains(city.key)}">
                             ${city.key} (${city.value})
                         </form:option>
                     </c:forEach>
                 </form:select>
 
-                <form:select id="specialty-select" cssClass="form-select" path="specialtyCode"
-                             onchange="this.form.submit()">
-                    <form:option value="-1" disabled="true" hidden="true"> ${specialty} </form:option>
+                <form:select id="specialty-select" cssClass="form-select" path="specialtyCodes" multiple="true">
+                    <form:option value="-1" disabled="true" hidden="true" selected="true"> ${specialty} </form:option>
                     <c:forEach items="${specialtyMap}" var="specialty">
                         <form:option value="${specialty.key.ordinal()}">
                             <spring:message code="${specialty.key.messageID}"/> (${specialty.value})
@@ -83,9 +82,8 @@
                     </c:forEach>
                 </form:select>
 
-                <form:select id="health-insurance-select" cssClass="form-select" path="healthInsuranceCode"
-                             onchange="this.form.submit()">
-                    <form:option value="-1" disabled="true" hidden="true"> ${insurance} </form:option>
+                <form:select id="health-insurance-select" cssClass="form-select" path="healthInsuranceCodes" multiple="true">
+                    <form:option value="-1" disabled="true" hidden="true" selected="true"> ${insurance} </form:option>
                     <c:forEach items="${healthInsuranceMap}" var="healthInsurance">
                         <form:option value="${healthInsurance.key.ordinal()}">
                             <spring:message code="${healthInsurance.key.messageID}"/> (${healthInsurance.value})
@@ -145,6 +143,18 @@
                     </div>
                 </c:if>
 
+                <hr>
+
+                <div class="chipsContainer">
+                    <c:forEach items="${cityMap}" var="city">
+                        <div class="chip ${currentCities.contains(city.key) ? "" : "hidden"}">
+                            ${city.value}
+                            <button type="button" data-index="${city.value}" class="chipClose">
+                                X
+                            </button>
+                        </div>
+                    </c:forEach>
+                </div>
 
             </div>
         </div>
@@ -262,7 +272,7 @@
                     <jsp:param name="currentPage" value="${currentPage}"/>
                     <jsp:param name="totalPages" value="${totalPages}"/>
                     <jsp:param name="url"
-                               value="/doctor-dashboard?name=${name}&city=${city}&specialtyCode=${specialtyCode}&date=${dateFilter}&from=${fromBlock.ordinal()}&to=${toBlock.ordinal()}"/>
+                               value="/doctor-dashboard?name=${name}&city=${cities}&specialtyCode=${specialties}&healthInsuranceCode=${healthInsurances}&date=${dateFilter}&from=${fromBlock.ordinal()}&to=${toBlock.ordinal()}"/>
                 </jsp:include>
             </div>
         </div>
@@ -271,8 +281,6 @@
 </body>
 </html>
 <script>
-
-
     function checkInsurance(appointmentUrl, object) {
         if (object.includes(${patientHealthInsurance.ordinal()}) || ${notLogged}) {
             redirect(appointmentUrl);
@@ -290,6 +298,61 @@
     function redirect(appointmentUrl) {
         window.location.href = appointmentUrl;
     }
+
+    function setParam(name, toAdd){
+        var searchParams = new URLSearchParams(window.location.search);
+
+        var params = searchParams.getAll(name);
+
+        // Add or update the "specialty" parameter with selected filters
+        if(params != null) {
+            if (!params.includes(toAdd)) {
+                searchParams.append(name, toAdd);
+            }
+        }
+        else{
+            searchParams.set(name, toAdd);
+        }
+
+        // Construct the new URL with merged search parameters
+        // Redirect to the new URL
+        window.location.href = window.location.pathname + "?" + searchParams.toString();
+
+        this.form.submit();
+    }
+
+    document.getElementById("city-select").addEventListener("change", function(event) {
+        event.preventDefault(); // Prevent the default form submission
+
+        // Get selected cities
+        var cityFilters = Array.from(document.querySelectorAll('#city-select option:checked')).map(function (option) {
+            return option.value;
+        });
+
+        setParam("cities", cityFilters[0]);
+    });
+
+    document.getElementById("specialty-select").addEventListener("change", function(event) {
+        event.preventDefault(); // Prevent the default form submission
+
+        // Get selected specialties
+        var specialtyFilters = Array.from(document.querySelectorAll('#specialty-select option:checked')).map(function (option) {
+            return option.value;
+        });
+
+        setParam("specialtyCodes", specialtyFilters[0]);
+    });
+
+    document.getElementById("health-insurance-select").addEventListener("change", function(event) {
+        event.preventDefault(); // Prevent the default form submission
+
+        // Get selected health insurances
+        var healthInsuranceFilters = Array.from(document.querySelectorAll('#health-insurance-select option:checked')).map(function (option) {
+            return option.value;
+        });
+
+        setParam("healthInsuranceCodes", healthInsuranceFilters[0]);
+    });
 </script>
 
 
