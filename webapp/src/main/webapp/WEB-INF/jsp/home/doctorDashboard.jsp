@@ -65,6 +65,7 @@
                         <input type="submit" class="btn btn-danger" value="${clear}" onclick="clearFilters()">
                     </div>
                     <hr>
+                    <h4>${city}</h4>
                     <form:select id="city-select" cssClass="form-select" path="cities" multiple="true">
                         <form:option value="-1" disabled="true" hidden="true" selected="true"> ${city} </form:option>
                         <c:forEach items="${cityMap}" var="city">
@@ -74,6 +75,7 @@
                         </c:forEach>
                     </form:select>
 
+                    <h4>${specialty}</h4>
                     <form:select id="specialty-select" cssClass="form-select" path="specialtyCodes" multiple="true">
                         <form:option value="-1" disabled="true" hidden="true" selected="true"> ${specialty} </form:option>
                         <c:forEach items="${specialtyMap}" var="specialty">
@@ -83,6 +85,7 @@
                         </c:forEach>
                     </form:select>
 
+                    <h4>${insurance}</h4>
                     <form:select id="health-insurance-select" cssClass="form-select" path="healthInsuranceCodes" multiple="true">
                         <form:option value="-1" disabled="true" hidden="true" selected="true"> ${insurance} </form:option>
                         <c:forEach items="${healthInsuranceMap}" var="healthInsurance">
