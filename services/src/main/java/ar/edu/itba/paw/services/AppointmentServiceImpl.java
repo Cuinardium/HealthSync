@@ -11,7 +11,6 @@ import ar.edu.itba.paw.interfaces.services.exceptions.CancelForbiddenException;
 import ar.edu.itba.paw.interfaces.services.exceptions.DoctorNotAvailableException;
 import ar.edu.itba.paw.interfaces.services.exceptions.DoctorNotFoundException;
 import ar.edu.itba.paw.interfaces.services.exceptions.PatientNotFoundException;
-import ar.edu.itba.paw.interfaces.services.exceptions.SetIndicationsForbiddenException;
 import ar.edu.itba.paw.models.Appointment;
 import ar.edu.itba.paw.models.AppointmentStatus;
 import ar.edu.itba.paw.models.Doctor;
@@ -121,26 +120,43 @@ public class AppointmentServiceImpl implements AppointmentService {
 
   @Transactional
   @Override
-  public Appointment setAppointmentIndications(
-      long appointmentId, String indications, long requesterId)
-      throws AppointmentNotFoundException, SetIndicationsForbiddenException {
-    Appointment appointment =
-        getAppointmentById(appointmentId).orElseThrow(AppointmentNotFoundException::new);
+  public void cancelAppointmentsInRange(
+      long doctorId,
+      LocalDate fromDate,
+      ThirtyMinuteBlock fromTime,
+      LocalDate toDate,
+      ThirtyMinuteBlock toTime,
+      String cancelDescription)
+      throws DoctorNotFoundException {
 
-    if (requesterId != appointment.getDoctorId()) {
-      throw new SetIndicationsForbiddenException();
-    }
+    doctorService.getDoctorById(doctorId).orElseThrow(DoctorNotFoundException::new);
 
-    Appointment updatedAppointment;
-
+    List<Appointment> appointmentsInDateRange =
+        appointmentDao
+            .getFilteredAppointments(
+                doctorId, AppointmentStatus.CONFIRMED, fromDate, toDate, null, null, false)
+            .getContent();
     try {
-      updatedAppointment = appointmentDao.setAppointmentIndications(appointmentId, indications);
-    } catch (ar.edu.itba.paw.interfaces.persistence.exceptions.AppointmentNotFoundException e) {
-      throw new IllegalStateException(
-          "Appointment indications could not be updated due to it not existing");
-    }
+      for (Appointment appointment : appointmentsInDateRange) {
+        LocalDate appointmentDate = appointment.getDate();
+        ThirtyMinuteBlock appointmentTimeBlock = appointment.getTimeBlock();
 
-    return updatedAppointment;
+        if (appointmentDate.equals(fromDate) && appointmentTimeBlock.compareTo(fromTime) >= 0) {
+          cancelAppointment(appointment.getId(), cancelDescription, doctorId);
+        }
+
+        if (appointmentDate.equals(toDate) && appointmentTimeBlock.compareTo(toTime) <= 0) {
+          cancelAppointment(appointment.getId(), cancelDescription, doctorId);
+        }
+
+        // Probably unnecesary
+        if (appointmentDate.isAfter(fromDate) && appointmentDate.isBefore(toDate)) {
+          cancelAppointment(appointment.getId(), cancelDescription, doctorId);
+        }
+      }
+    } catch (AppointmentNotFoundException | CancelForbiddenException e) {
+      throw new IllegalStateException("Appointment could not be cancelled");
+    }
   }
 
   // =============== Queries ===============
@@ -282,7 +298,7 @@ public class AppointmentServiceImpl implements AppointmentService {
   }
 
   // Run every 30 minutes
-  @Transactional(readOnly = true)
+  @Transactional
   @Scheduled(cron = "0 0/30 * * * ?")
   @Override
   public void updateCompletedAppointmentsStatus() {

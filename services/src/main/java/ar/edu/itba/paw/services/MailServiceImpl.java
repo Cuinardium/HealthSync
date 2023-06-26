@@ -182,8 +182,7 @@ public class MailServiceImpl implements MailService {
     String doctorName =
         appointment.getDoctor().getFirstName() + " " + appointment.getDoctor().getLastName();
     String doctorAddress = appointment.getDoctor().getAddress();
-    String doctorCity =
-        messageSource.getMessage(appointment.getDoctor().getCity().getMessageID(), null, locale);
+    String doctorCity = appointment.getDoctor().getCity();
 
     // Load model
     templateModel.put("baseUrl", env.getProperty("webapp.baseUrl"));

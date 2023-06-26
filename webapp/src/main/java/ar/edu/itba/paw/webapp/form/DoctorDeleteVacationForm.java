@@ -4,7 +4,7 @@ import ar.edu.itba.paw.models.ThirtyMinuteBlock;
 import java.time.LocalDate;
 import org.springframework.format.annotation.DateTimeFormat;
 
-public class DoctorVacationForm {
+public class DoctorDeleteVacationForm {
 
   @DateTimeFormat(pattern = "yyyy-MM-dd")
   LocalDate fromDate;
@@ -15,11 +15,6 @@ public class DoctorVacationForm {
   LocalDate toDate;
 
   private String toTime;
-
-  private boolean cancelAppointmentsInVacation = true;
-
-  private String cancelReason = null;
-
 
   public LocalDate getFromDate() {
     return fromDate;
@@ -41,14 +36,6 @@ public class DoctorVacationForm {
     return toDate;
   }
 
-  public String getCancelReason() {
-    return cancelReason;
-  }
-
-  public boolean getCancelAppointmentsInVacation() {
-    return cancelAppointmentsInVacation;
-  }
-
   public void setToDate(LocalDate toDate) {
     this.toDate = toDate;
   }
@@ -59,14 +46,6 @@ public class DoctorVacationForm {
 
   public void setToTime(String toTime) {
     this.toTime = toTime;
-  }
-
-  public void setCancelReason(String cancelReason) {
-    this.cancelReason = cancelReason;
-  }
-
-  public void setCancelAppointmentsInVacation(boolean cancelAppointmentsInVacation) {
-    this.cancelAppointmentsInVacation = cancelAppointmentsInVacation;
   }
 
   public ThirtyMinuteBlock getFromTimeEnum() {

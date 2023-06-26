@@ -10,11 +10,9 @@ import ar.edu.itba.paw.interfaces.services.exceptions.CancelForbiddenException;
 import ar.edu.itba.paw.interfaces.services.exceptions.DoctorNotAvailableException;
 import ar.edu.itba.paw.interfaces.services.exceptions.DoctorNotFoundException;
 import ar.edu.itba.paw.interfaces.services.exceptions.PatientNotFoundException;
-import ar.edu.itba.paw.interfaces.services.exceptions.SetIndicationsForbiddenException;
 import ar.edu.itba.paw.models.Appointment;
 import ar.edu.itba.paw.models.AppointmentStatus;
 import ar.edu.itba.paw.models.AttendingHours;
-import ar.edu.itba.paw.models.City;
 import ar.edu.itba.paw.models.Doctor;
 import ar.edu.itba.paw.models.HealthInsurance;
 import ar.edu.itba.paw.models.Image;
@@ -52,7 +50,7 @@ public class AppointmentServiceImplTest {
   private static final Set<HealthInsurance> DOCTOR_HEALTH_INSURANCES =
       new HashSet<>(Arrays.asList(HealthInsurance.OSDE, HealthInsurance.OMINT));
   private static final Specialty SPECIALTY = Specialty.CARDIOLOGY;
-  private static final City CITY = City.AYACUCHO;
+  private static final String CITY = "Ayacucho";
   private static final String ADDRESS = "1234";
   private static final Collection<ThirtyMinuteBlock> ATTENDING_HOURS_FOR_DAY =
       ThirtyMinuteBlock.fromRange(ThirtyMinuteBlock.BLOCK_08_00, ThirtyMinuteBlock.BLOCK_16_00);
@@ -151,7 +149,6 @@ public class AppointmentServiceImplTest {
           APPOINTMENT_TIME,
           AppointmentStatus.CONFIRMED,
           APPOINTMENT_DESCRIPTION,
-          null,
           null);
 
   private static final Appointment CANCELLED_APPOINTMENT =
@@ -163,20 +160,7 @@ public class AppointmentServiceImplTest {
           APPOINTMENT_TIME,
           AppointmentStatus.CANCELLED,
           APPOINTMENT_DESCRIPTION,
-          CANCELLED_APPOINTMENT_DESCRIPTION,
-          null);
-  private static final String INDICATIONS = "appointment_indications";
-  private static final Appointment APPOINTMENT_WITH_INDICATIONS =
-      new Appointment(
-          APPOINTMENT_ID,
-          PATIENT,
-          DOCTOR,
-          APPOINTMENT_DATE,
-          APPOINTMENT_TIME,
-          AppointmentStatus.CANCELLED,
-          APPOINTMENT_DESCRIPTION,
-          null,
-          INDICATIONS);
+          CANCELLED_APPOINTMENT_DESCRIPTION);
 
   private static final List<Appointment> APPOINTMENTS =
       Collections.singletonList(CREATED_APPOINTMENT);
@@ -444,55 +428,6 @@ public class AppointmentServiceImplTest {
 
     // 2. Ejercitar la class under test
     as.cancelAppointment(APPOINTMENT_ID, CANCELLED_APPOINTMENT_DESCRIPTION, FORBIDDEN_USER_ID);
-  }
-
-  // ================== Set indications ==================
-
-  @Test
-  public void testSetAppointmentIndications()
-      throws AppointmentNotFoundException, SetIndicationsForbiddenException,
-          ar.edu.itba.paw.interfaces.persistence.exceptions.AppointmentNotFoundException {
-    // 1. Precondiciones
-
-    // Mock appointmentDao
-    Mockito.when(appointmentDao.getAppointmentById(APPOINTMENT_ID))
-        .thenReturn(Optional.of(CREATED_APPOINTMENT));
-
-    Mockito.when(appointmentDao.setAppointmentIndications(APPOINTMENT_ID, INDICATIONS))
-        .thenReturn(APPOINTMENT_WITH_INDICATIONS);
-
-    // 2. Ejercitar la class under test
-
-    Appointment appointment = as.setAppointmentIndications(APPOINTMENT_ID, INDICATIONS, DOCTOR_ID);
-
-    // 3. Meaningful assertions
-    Assert.assertEquals(APPOINTMENT_WITH_INDICATIONS, appointment);
-    Assert.assertEquals(INDICATIONS, appointment.getIndications());
-  }
-
-  @Test(expected = AppointmentNotFoundException.class)
-  public void testSetAppointmentIndicationsAppointmentNotFound()
-      throws AppointmentNotFoundException, SetIndicationsForbiddenException {
-    // 1. Precondiciones
-
-    // Mock appointmentDao
-    Mockito.when(appointmentDao.getAppointmentById(APPOINTMENT_ID)).thenReturn(Optional.empty());
-
-    // 2. Ejercitar la class under test
-    as.setAppointmentIndications(APPOINTMENT_ID, INDICATIONS, DOCTOR_ID);
-  }
-
-  @Test(expected = SetIndicationsForbiddenException.class)
-  public void testSetAppointmentIndicationsForbidden()
-      throws AppointmentNotFoundException, SetIndicationsForbiddenException {
-    // 1. Precondiciones
-
-    // Mock appointmentDao
-    Mockito.when(appointmentDao.getAppointmentById(APPOINTMENT_ID))
-        .thenReturn(Optional.of(CREATED_APPOINTMENT));
-
-    // 2. Ejercitar la class under test
-    as.setAppointmentIndications(APPOINTMENT_ID, INDICATIONS, PATIENT_ID);
   }
 
   // ================== getAvailableHoursOnRange ==================

@@ -21,6 +21,11 @@
     align-items: center;
     flex-wrap: wrap;
     flex-direction: row;
+    font-size: large;
+}
+
+.iconIdentifier{
+    margin-right: 2px
 }
 
 .headerLink{

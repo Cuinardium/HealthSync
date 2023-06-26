@@ -22,7 +22,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 @Controller
 public class HomeController {
-  private static final int DEFAULT_PAGE_SIZE = 2;
+  private static final int DEFAULT_PAGE_SIZE = 10;
   private final DoctorService doctorService;
   private final PatientService patientService;
 
@@ -57,12 +57,12 @@ public class HomeController {
 
     // Get used specialties, cities and health insurances
     Map<Specialty, Integer> usedSpecialties = doctorService.getUsedSpecialties();
-    Map<City, Integer> usedCities = doctorService.getUsedCities();
+    Map<String, Integer> usedCities = doctorService.getUsedCities();
     Map<HealthInsurance, Integer> usedHealthInsurances = doctorService.getUsedHealthInsurances();
 
     // Get filters
     int specialtyCode = doctorFilterForm.getSpecialtyCode();
-    int cityCode = doctorFilterForm.getCityCode();
+    String city = doctorFilterForm.getCity();
     int healthInsuranceCode = doctorFilterForm.getHealthInsuranceCode();
     LocalDate date = doctorFilterForm.getDate();
     int fromOrdinal = doctorFilterForm.getFrom();
@@ -76,8 +76,6 @@ public class HomeController {
         specialtyCode < 0 || specialtyCode >= Specialty.values().length
             ? null
             : Specialty.values()[specialtyCode];
-
-    City city = cityCode < 0 || cityCode >= City.values().length ? null : City.values()[cityCode];
 
     HealthInsurance healthInsurance =
         healthInsuranceCode < 0 || healthInsuranceCode >= HealthInsurance.values().length
@@ -117,7 +115,7 @@ public class HomeController {
 
     mav.addObject("name", name);
     mav.addObject("doctors", doctors.getContent());
-    mav.addObject("cityCode", cityCode);
+    mav.addObject("city", city);
     mav.addObject("cityMap", usedCities);
     mav.addObject("specialtyCode", specialtyCode);
     mav.addObject("specialtyMap", usedSpecialties);

@@ -15,7 +15,6 @@ import ar.edu.itba.paw.interfaces.services.exceptions.VacationInvalidException;
 import ar.edu.itba.paw.models.*;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
-import java.time.LocalTime;
 import java.util.*;
 import org.junit.Assert;
 import org.junit.Test;
@@ -42,7 +41,7 @@ public class DoctorServiceImplTest {
   private static final Image IMAGE = null;
   private static final Locale LOCALE = new Locale("en");
   private static final Specialty SPECIALTY = Specialty.CARDIOLOGY;
-  private static final City CITY = City.AYACUCHO;
+  private static final String CITY = "Ayacucho";
   private static final String ADDRESS = "1234";
   private static final Set<AttendingHours> ATTENDING_HOURS =
       new HashSet<>(
@@ -119,7 +118,7 @@ public class DoctorServiceImplTest {
   private static final Set<HealthInsurance> HEALTH_INSURANCES_NEW =
       new HashSet<>(Arrays.asList(HealthInsurance.NONE, HealthInsurance.SWISS_MEDICAL));
   private static final Specialty SPECIALTY_NEW = Specialty.ALLERGY_AND_IMMUNOLOGY;
-  private static final City CITY_NEW = City.ARRECIFES;
+  private static final String CITY_NEW = "Arrecifes";
   private static final String ADDRESS_NEW = "1234asdsa";
   private static final Set<AttendingHours> ATTENDING_HOURS_NEW =
       new HashSet<>(
@@ -497,8 +496,8 @@ public class DoctorServiceImplTest {
     Vacation invalidVacation =
         new Vacation(
             ID,
-            LocalDate.now(),
-            ThirtyMinuteBlock.fromTime(LocalTime.now().minusHours(1)),
+            LocalDate.now().minusDays(1),
+            ThirtyMinuteBlock.BLOCK_00_00,
             LocalDate.now().plusDays(1),
             ThirtyMinuteBlock.BLOCK_00_00);
 

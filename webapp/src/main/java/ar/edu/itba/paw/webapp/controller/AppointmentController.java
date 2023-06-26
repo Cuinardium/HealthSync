@@ -1,10 +1,10 @@
 package ar.edu.itba.paw.webapp.controller;
 
 import ar.edu.itba.paw.interfaces.services.AppointmentService;
-import ar.edu.itba.paw.interfaces.services.exceptions.CancelForbiddenException;
-import ar.edu.itba.paw.interfaces.services.exceptions.SetIndicationsForbiddenException;
-import ar.edu.itba.paw.models.Appointment;
-import ar.edu.itba.paw.models.AppointmentStatus;
+import ar.edu.itba.paw.interfaces.services.IndicationService;
+import ar.edu.itba.paw.interfaces.services.NotificationService;
+import ar.edu.itba.paw.interfaces.services.exceptions.*;
+import ar.edu.itba.paw.models.*;
 import ar.edu.itba.paw.webapp.auth.PawAuthUserDetails;
 import ar.edu.itba.paw.webapp.auth.UserRole;
 import ar.edu.itba.paw.webapp.exceptions.AppointmentForbiddenException;
@@ -12,10 +12,12 @@ import ar.edu.itba.paw.webapp.exceptions.AppointmentNotFoundException;
 import ar.edu.itba.paw.webapp.form.IndicationForm;
 import ar.edu.itba.paw.webapp.form.ModalForm;
 import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,14 +25,24 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.validation.Valid;
+
 @Controller
 public class AppointmentController {
   private final AppointmentService appointmentService;
+
+  private final IndicationService indicationService;
+
+  private final NotificationService notificationService;
   private static final Logger LOGGER = LoggerFactory.getLogger(AppointmentController.class);
 
+  private static final int PAGE_SIZE = 10;
+
   @Autowired
-  public AppointmentController(final AppointmentService appointmentService) {
+  public AppointmentController(final AppointmentService appointmentService, IndicationService indicationService, NotificationService notificationService) {
     this.appointmentService = appointmentService;
+    this.indicationService = indicationService;
+    this.notificationService = notificationService;
   }
 
   // ==================================  My Appointments   ========================================
@@ -67,12 +79,16 @@ public class AppointmentController {
             .getFilteredAppointments(userId, AppointmentStatus.COMPLETED, null, null, isPatient)
             .getContent();
 
+    List<Notification> appointmentNotifications=
+            notificationService.getUserNotifications(userId);
+
     // Add values to model
     mav.addObject("selectedTab", selectedTab >= 1 && selectedTab <= 4 ? selectedTab : 1);
     mav.addObject("todayAppointments", todayAppointments);
     mav.addObject("upcomingAppointments", upcomingAppointments);
     mav.addObject("cancelledAppointments", cancelledAppointments);
     mav.addObject("completedAppointments", completedAppointments);
+    mav.addObject("appointmentNotifications", appointmentNotifications);
     mav.addObject("modalForm", modalForm);
 
     LOGGER.debug("Patient requested his appointments");
@@ -112,8 +128,8 @@ public class AppointmentController {
   @RequestMapping(value = "/{id:\\d+}/detailed-appointment", method = RequestMethod.GET)
   public ModelAndView getDetailedAppointment(
       @ModelAttribute("modalForm") final ModalForm modalForm,
-      @ModelAttribute("indicationForm") final IndicationForm indicationForm,
       @PathVariable("id") final int appointmentId,
+      @RequestParam(value = "page", required = false, defaultValue = "1") final int page,
       @RequestParam(name = "selected_tab", required = false, defaultValue = "1")
           final int selectedTab) {
 
@@ -128,38 +144,109 @@ public class AppointmentController {
       throw new AppointmentForbiddenException();
     }
 
+    try{
+      notificationService.deleteNotificationIfExists(PawAuthUserDetails.getCurrentUserId(), appointmentId);
+    } catch (UserNotFoundException e){
+      LOGGER.error(
+              "Failed to find notification for user {} because user was not found",
+              PawAuthUserDetails.getCurrentUserId(),
+              new UserNotFoundException());
+
+      throw new RuntimeException();
+    }catch (ar.edu.itba.paw.interfaces.services.exceptions.AppointmentNotFoundException e) {
+      LOGGER.error(
+              "Failed to find notification for appointment {} because appointment was not found",
+              appointmentId,
+              new AppointmentNotFoundException());
+
+      throw new RuntimeException();
+    }
+
+    // Get Indications
+    Page<Indication> indications;
+
+    try {
+      indications = indicationService.getIndicationsForAppointment(appointmentId, page - 1, PAGE_SIZE);
+
+      LOGGER.debug("Indications for appointment {} are: {}", appointmentId, indications.getContent());
+    } catch (ar.edu.itba.paw.interfaces.services.exceptions.AppointmentNotFoundException e) {
+      LOGGER.error(
+              "Failed to get indications for appointment {} because appointment was not found",
+              appointmentId,
+              new AppointmentNotFoundException());
+
+      throw new RuntimeException();
+    }
+
     ModelAndView mav = new ModelAndView("appointment/detailedAppointment");
 
     // Add values to model
-    mav.addObject("indicationForm", indicationForm);
     mav.addObject("appointment", appointment);
+    mav.addObject("indications", indications.getContent());
+    mav.addObject("currentPage", indications.getCurrentPage() + 1);
+    mav.addObject("totalPages", indications.getTotalPages());
     mav.addObject("selectedTab", selectedTab >= 1 && selectedTab <= 3 ? selectedTab : 1);
 
     return mav;
   }
 
-  @RequestMapping(value = "/{id:\\d+}/detailed-appointment", method = RequestMethod.POST)
-  public ModelAndView postAppointmentIndications(
-      @ModelAttribute("modalForm") final ModalForm modalForm,
-      @ModelAttribute("indicationForm") final IndicationForm indicationForm,
-      @PathVariable("id") final int appointmentId) {
 
-    // TODO hacer try catch
-    try {
-      Appointment appointment =
-          appointmentService.setAppointmentIndications(
-              appointmentId,
-              indicationForm.getIndications(),
-              PawAuthUserDetails.getCurrentUserId());
+  // ========================== Review ==========================
+  @RequestMapping(value = "/{id:\\d+}/indication", method = RequestMethod.GET)
+  public ModelAndView indication(
+          @PathVariable("id") final long appointmentId,
+          @ModelAttribute("indicationForm") final IndicationForm indicationForm) {
 
-      LOGGER.info("Cancelled {}", appointment);
-    } catch (ar.edu.itba.paw.interfaces.services.exceptions.AppointmentNotFoundException e) {
-      LOGGER.error("Could not cancel appointment {} because it does not exist", appointmentId);
-    } catch (SetIndicationsForbiddenException e) {
-      LOGGER.error(
-          "Forbidden indications for appointment {}", appointmentId); // TODO check this log
+    final ModelAndView mav = new ModelAndView("appointment/indication");
+    mav.addObject("showModal", false);
+    mav.addObject("appointmentId", appointmentId);
+    mav.addObject("indicationForm", indicationForm);
+
+    return mav;
+  }
+
+  @RequestMapping(value = "/{id:\\d+}/indication", method = RequestMethod.POST)
+  public ModelAndView submitIndication(
+          @PathVariable("id") final long appointmentId,
+          @Valid @ModelAttribute("indicationForm") final IndicationForm indicationForm,
+          final BindingResult errors) {
+
+    if (errors.hasErrors()) {
+      return indication(appointmentId, indicationForm);
     }
 
-    return new ModelAndView("redirect:/" + appointmentId + "/detailed-appointment");
+    Indication indication;
+
+    try {
+      indication =
+              indicationService.createIndication(
+                      appointmentId,
+                      PawAuthUserDetails.getCurrentUserId(),
+                      indicationForm.getIndications());
+
+      LOGGER.info("Created indication {}", indication);
+    } catch (ar.edu.itba.paw.interfaces.services.exceptions.AppointmentNotFoundException e) {
+      LOGGER.error(
+              "Failed to create indication for appointment {} because appointment was not found",
+              appointmentId,
+              new AppointmentNotFoundException());
+
+      throw new RuntimeException(e);
+    } catch (UserNotFoundException e) {
+      LOGGER.error(
+              "Failed to create indication for appointment {} because user was not found",
+              appointmentId,
+              new UserNotFoundException());
+
+      throw new RuntimeException(e);
+    }
+
+    final ModelAndView mav = new ModelAndView("appointment/indication");
+
+    mav.addObject("showModal", true);
+    mav.addObject("appointmentId", appointmentId);
+    mav.addObject("indicationForm", indicationForm);
+
+    return mav;
   }
 }

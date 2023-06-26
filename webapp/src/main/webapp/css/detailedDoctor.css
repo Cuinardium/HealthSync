@@ -12,8 +12,8 @@
 }
 
 .imageContainer{
-    width: 20rem;
-    height: 20rem;
+    width: 21rem;
+    height: 21rem;
     object-fit: cover;
 }
 
@@ -23,6 +23,24 @@
 
 .locationContactContainer, .infoContainer{
     margin: 15px;
+}
+
+.infoContainer{
+    min-width: 35%;
+}
+
+.locationContactContainer{
+    width: 19rem;
+}
+
+.map{
+    width: 100%;
+    height: 500px;
+}
+
+.mapButton{
+    font-size: large;
+    padding: 0 0.2rem;
 }
 
 .buttonsContainer{

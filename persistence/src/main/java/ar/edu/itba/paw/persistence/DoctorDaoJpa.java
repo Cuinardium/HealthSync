@@ -42,7 +42,7 @@ public class DoctorDaoJpa implements DoctorDao {
   public Doctor updateDoctorInfo(
       long doctorId,
       Specialty specialty,
-      City city,
+      String city,
       String address,
       Set<HealthInsurance> healthInsurances,
       Set<AttendingHours> attendingHours)
@@ -67,30 +67,7 @@ public class DoctorDaoJpa implements DoctorDao {
     Set<Vacation> vacations = doctor.getVacations();
 
     for (Vacation doctorVacation : vacations) {
-      boolean vacationFromAfterDoctorVacationFrom =
-          vacation.getFromDate().isAfter(doctorVacation.getFromDate())
-              || (vacation.getFromDate().equals(doctorVacation.getFromDate())
-                  && vacation.getFromTime().ordinal() >= doctorVacation.getFromTime().ordinal());
-      boolean vacationFromBeforeDoctorVacationTo =
-          vacation.getFromDate().isBefore(doctorVacation.getToDate())
-              || (vacation.getFromDate().equals(doctorVacation.getToDate())
-                  && vacation.getFromTime().ordinal() <= doctorVacation.getToTime().ordinal());
-      boolean vacationToAfterDoctorVacationFrom =
-          vacation.getToDate().isAfter(doctorVacation.getFromDate())
-              || (vacation.getToDate().equals(doctorVacation.getFromDate())
-                  && vacation.getToTime().ordinal() >= doctorVacation.getFromTime().ordinal());
-      boolean vacationToBeforeDoctorVacationTo =
-          vacation.getToDate().isBefore(doctorVacation.getToDate())
-              || (vacation.getToDate().equals(doctorVacation.getToDate())
-                  && vacation.getToTime().ordinal() <= doctorVacation.getToTime().ordinal());
-
-      boolean vacationCollidesWithDoctorVacation =
-          (vacationFromAfterDoctorVacationFrom && vacationFromBeforeDoctorVacationTo)
-              || (vacationToAfterDoctorVacationFrom && vacationToBeforeDoctorVacationTo)
-              || (vacationFromBeforeDoctorVacationTo && vacationToAfterDoctorVacationFrom)
-              || (vacationFromAfterDoctorVacationFrom && vacationToBeforeDoctorVacationTo);
-
-      if (vacationCollidesWithDoctorVacation) {
+      if (vacation.collidesWith(doctorVacation)) {
         throw new VacationCollisionException();
       }
     }
@@ -116,6 +93,15 @@ public class DoctorDaoJpa implements DoctorDao {
     return doctor;
   }
 
+  @Override
+  public void deleteOldVacations(LocalDate today, ThirtyMinuteBlock now) {
+    Query query =
+        em.createQuery(
+            "DELETE FROM Vacation v WHERE v.id.toDate < :today OR (v.id.toDate = :today AND v.id.toTime < :now)");
+    query.setParameter("today", today);
+    query.setParameter("now", now);
+    query.executeUpdate();
+  }
   // =============== Queries ===============
 
   @Override
@@ -130,14 +116,14 @@ public class DoctorDaoJpa implements DoctorDao {
       ThirtyMinuteBlock fromTime,
       ThirtyMinuteBlock toTime,
       Specialty specialty,
-      City city,
+      String city,
       HealthInsurance healthInsurance,
       Integer minRating,
       Integer page,
       Integer pageSize) {
 
     int specialtyCode = specialty != null ? specialty.ordinal() : -1;
-    int cityCode = city != null ? city.ordinal() : -1;
+    String cityS = city;
     int healthInsuranceCode = healthInsurance != null ? healthInsurance.ordinal() : -1;
 
     // Start building the query
@@ -150,7 +136,7 @@ public class DoctorDaoJpa implements DoctorDao {
           new QueryBuilder()
               .select("user_id as doctor_id")
               .from("users")
-              .where("CONCAT(first_name, ' ', last_name) ILIKE CONCAT(:name, '%')")
+              .where("CONCAT(first_name, ' ', last_name) ILIKE CONCAT('%', :name, '%')")
               .build();
 
       nativeQueryBuilder.where("doctor.doctor_id IN (" + nameQuery + ")");
@@ -160,8 +146,8 @@ public class DoctorDaoJpa implements DoctorDao {
       nativeQueryBuilder.where("specialty_code = " + specialtyCode);
     }
 
-    if (cityCode >= 0) {
-      nativeQueryBuilder.where("city_code = " + cityCode);
+    if (cityS != null && !cityS.isEmpty()) {
+      nativeQueryBuilder.where("city = :city");
     }
 
     if (healthInsuranceCode >= 0) {
@@ -253,6 +239,11 @@ public class DoctorDaoJpa implements DoctorDao {
       qtyDoctorsQuery.setParameter("name", name);
     }
 
+    if (cityS != null && !cityS.isEmpty()) {
+      nativeQuery.setParameter("city", cityS);
+      qtyDoctorsQuery.setParameter("city", cityS);
+    }
+
     if (page != null && page >= 0 && pageSize != null && pageSize > 0) {
       nativeQuery.setMaxResults(pageSize);
       nativeQuery.setFirstResult(page * pageSize);
@@ -320,12 +311,12 @@ public class DoctorDaoJpa implements DoctorDao {
   }
 
   @Override
-  public Map<City, Integer> getUsedCities() {
-    List<City> lList = em.createQuery("select city from Doctor", City.class).getResultList();
+  public Map<String, Integer> getUsedCities() {
+    List<String> lList = em.createQuery("select city from Doctor", String.class).getResultList();
 
-    Map<City, Integer> map = new HashMap<>();
+    Map<String, Integer> map = new HashMap<>();
 
-    for (City c : lList) {
+    for (String c : lList) {
       map.put(c, map.getOrDefault(c, 0) + 1);
     }
 

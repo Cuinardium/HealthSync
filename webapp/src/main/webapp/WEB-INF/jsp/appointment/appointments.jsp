@@ -102,9 +102,8 @@
                                         <strong>${doctor}: </strong>${appointment.doctor.firstName} ${appointment.doctor.lastName}
                                     </div>
 
-                                    <spring:message code="${appointment.doctor.city.messageID}" var="city"/>
                                     <div class="card-title">
-                                        <strong>${address}: </strong>${appointment.doctor.address}, ${city}</div>
+                                        <strong>${address}: </strong>${appointment.doctor.address}, ${appointment.doctor.city}</div>
                                 </c:otherwise>
                             </c:choose>
 
@@ -117,16 +116,20 @@
                                 <div class="card-title">
                                     <strong>${cancelDescriptionTitle}: </strong>${appointment.cancelDesc}</div>
                             </c:if>
-                            <c:if test="${not empty appointment.indications}">
-                                <div class="card-title"><strong>${indication}: </strong>${appointment.indications}</div>
-                            </c:if>
 
                             <div class="cardButtonContainer">
                                 <c:url value="/${appointment.id}/detailed-appointment" var="detailsUrl">
                                     <c:param name="selected_tab" value="${selectedTab}"/>
                                 </c:url>
                                 <a href="${detailsUrl}" class="btn btn-outline-primary detailed-link">
-                                    ${seeDetails}
+                                    <c:if test="${appointment.status=='COMPLETED'}">
+                                        <c:forEach items="${appointmentNotifications}" var="notification">
+                                            <c:if test="${notification.appointment.id==appointment.id}">
+                                                <i class="fa-solid fa-comments" style="color: #ff0000;"></i>
+                                            </c:if>
+                                        </c:forEach>
+                                    </c:if>
+                                        ${seeDetails}
                                 </a>
                                 <c:if test="${i == 1 || i == 2}">
                                     <c:url value="/my-appointments/${appointment.id}/cancel" var="cancelUrl"/>

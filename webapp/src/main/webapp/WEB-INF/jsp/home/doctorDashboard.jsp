@@ -16,8 +16,6 @@
 <c:url value="/doctor-dashboard?healthInsuranceCode=" var="healthInsuranceFilter"/>
 
 <spring:message code="doctorDashboard.title" var="title"/>
-
-<spring:message code="detailedDoctor.title" var="title"/>
 <spring:message code="detailedDoctor.specialties" var="specialties"/>
 <spring:message code="detailedDoctor.address" var="address"/>
 <spring:message code="detailedDoctor.insurance" var="insurances"/>
@@ -66,11 +64,11 @@
                     <input type="submit" class="btn btn-danger" value="${clear}" onclick="clearFilters()">
                 </div>
                 <hr>
-                <form:select id="city-select" cssClass="form-select" path="cityCode" onchange="this.form.submit()">
-                    <form:option value="-1" disabled="true" hidden="true"> ${city} </form:option>
+                <form:select id="city-select" cssClass="form-select" path="city" onchange="this.form.submit()">
+                    <form:option value="-1" disabled="true" hidden="true" selected="true"> ${city} </form:option>
                     <c:forEach items="${cityMap}" var="city">
-                        <form:option value="${city.key.ordinal()}">
-                            <spring:message code="${city.key.messageID}"/> (${city.value})
+                        <form:option value="${city.key}">
+                            ${city.key} (${city.value})
                         </form:option>
                     </c:forEach>
                 </form:select>
@@ -166,7 +164,6 @@
             <div class="cardsContainer">
                 <c:forEach items="${doctors}" var="doctor">
                     <spring:message code="${doctor.specialty.messageID}" var="doctorSpecialty"/>
-                    <spring:message code="${doctor.city.messageID}" var="doctorCity"/>
                     <spring:message code="doctor.alt.doctorImg" arguments="${doctor.firstName}, ${doctor.lastName}"
                                     var="altDoctorImg"/>
                     <c:url value="/${doctor.id}/detailed-doctor" var="detailedUrl"/>
@@ -179,15 +176,15 @@
                         <div class="infoContainer">
                             <h5 class="card-title">${doctor.firstName} ${doctor.lastName}</h5>
                             <div class="chipsContainer">
-                                <div class="card-text">${specialties}:</div>
+                                <div class="card-text"><strong>${specialties}:</strong></div>
                                 <div class="chip" data-mdb-close="true">
                                     <a class="stretched-link"
                                        href="${specialtyFilter}${doctor.specialty.ordinal()}">${doctorSpecialty}</a>
                                 </div>
                             </div>
-                            <div class="card-text">${address} ${doctor.address}, ${doctorCity}</div>
+                            <div class="card-text"><strong>${address}</strong> ${doctor.address}, ${doctor.city}</div>
                             <div class="chipsContainer healthInsurancesOverflow">
-                                <div class="card-text">${insurances}:</div>
+                                <div class="card-text"><strong>${insurances}:</strong></div>
                                 <c:forEach items="${doctor.healthInsurances}" var="healthInsurance">
                                     <spring:message code="${healthInsurance.messageID}"
                                                     var="doctorHealthInsurance"/>
@@ -212,7 +209,7 @@
                                 </c:when>
                                 <c:otherwise>
                                     <div class="card-text">
-                                            ${noReviews}
+                                        ${noReviews}
                                     </div>
                                 </c:otherwise>
                             </c:choose>
@@ -265,7 +262,7 @@
                     <jsp:param name="currentPage" value="${currentPage}"/>
                     <jsp:param name="totalPages" value="${totalPages}"/>
                     <jsp:param name="url"
-                               value="/doctor-dashboard?name=${name}&cityCode=${cityCode}&specialtyCode=${specialtyCode}&date=${dateFilter}&from=${fromBlock.ordinal()}&to=${toBlock.ordinal()}"/>
+                               value="/doctor-dashboard?name=${name}&city=${city}&specialtyCode=${specialtyCode}&date=${dateFilter}&from=${fromBlock.ordinal()}&to=${toBlock.ordinal()}"/>
                 </jsp:include>
             </div>
         </div>

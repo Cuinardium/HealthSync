@@ -16,7 +16,6 @@
 
 <c:url value="/${appointment.doctorId}/detailed-doctor" var="detailedDoctorUrl"/>
 
-<spring:message code="${appointment.doctor.city.messageID}" var="city"/>
 <spring:message code="${appointment.patient.healthInsurance.messageID}" var="healthInsurance"/>
 <spring:message code="${appointment.status.messageID}" var="status"/>
 
@@ -40,6 +39,11 @@
 <spring:message code="appointments.indicationModal.confirm" var="indicationModalConfirm"/>
 <spring:message code="appointments.indicationModal.deny" var="indicationModalDeny"/>
 <spring:message code="appointments.indicationModal.indication" var="indicationDesc"/>
+<spring:message code="appointments.noIndications" var="noIndications"/>
+<spring:message code="appointments.indication.title" var="indicationsTitle"/>
+<spring:message code="appointments.indication.doctor.button" var="indicationDoctorButton"/>
+<spring:message code="appointments.indication.patient.button" var="indicationPatientButton"/>
+<spring:message code="detailedAppointment.me" var="me"/>
 
 
 <html>
@@ -78,16 +82,13 @@
             <div class="card-title">
                 <strong>${doctor}: </strong>${appointment.doctor.firstName} ${appointment.doctor.lastName}</div>
 
-            <div class="card-title"><strong>${address}: </strong>${address}, ${city}</div>
+            <div class="card-title"><strong>${address}: </strong>${appointment.doctor.address}, ${appointment.doctor.city}</div>
 
 
             <div class="card-title"><strong>${healthInsurance_title}: </strong>${healthInsurance}</div>
             <div class="card-title"><strong>${description}: </strong>${appointment.description}</div>
             <c:if test="${not empty appointment.cancelDesc}">
                 <div class="card-title"><strong>${cancelDescriptionTitle}: </strong>${appointment.cancelDesc}</div>
-            </c:if>
-            <c:if test="${not empty appointment.indications}">
-                <div class="card-title"><strong>${indication}: </strong>${appointment.indications}</div>
             </c:if>
             <div class="cardButtonContainer">
                 <c:if test="${(appointment.status == 'COMPLETED' || appointment.status == 'CANCELLED') && !isDoctor}">
@@ -137,47 +138,61 @@
                         </div>
                     </div>
                 </c:if>
-                <c:if test="${appointment.status == 'COMPLETED' && isDoctor}">
-
-                    <button onclick="openIndicationModal()"
-                            class="post-button btn btn-primary">
-                        <spring:message code="detailedAppointment.indicationButton"/>
-                    </button>
-                    <div class="modal fade" id="indicationModal" tabindex="-1" role="dialog" aria-labelledby="modalLabel"
-                         aria-hidden="true">
-                        <div class="modal-dialog" role="dialog">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h5 class="modal-title" id="indicationModalLabel">${indicationModalTitle}</h5>
-                                </div>
-                                <form:form modelAttribute="indicationForm" id="post-indicationModal">
-                                    <div class="modal-body">
-
-                                            ${indicationModalDesc}
-                                        <div class="form-group">
-                                            <form:label path="indications" for="indicationsDesc"
-                                                        class="col-form-label">${indicationDesc}</form:label>
-                                            <form:input path="indications" class="form-control" id="indicationsDesc"/>
-                                        </div>
-
-                                    </div>
-                                    <div class="modal-footer">
-
-                                        <div class="cardButtonContainer">
-                                            <button type="button" class="btn btn-danger"
-                                                    onclick="closeIndicationModal()">${indicationModalDeny}</button>
-                                            <button type="submit" class="btn btn-primary">${indicationModalConfirm}</button>
-                                        </div>
-
-                                    </div>
-                                </form:form>
-                            </div>
-                        </div>
-                    </div>
-                </c:if>
             </div>
         </div>
     </div>
+    <c:if test="${appointment.status=='COMPLETED'}">
+    <div class="indicationsHeader">
+        <h3>${empty indications ? noIndications : indicationsTitle}</h3>
+
+        <c:url value="/${appointment.id}/indication" var="indicationUrl"/>
+        <a href="${indicationUrl}" class="btn btn-outline-primary detailed-link">
+            ${isDoctor ? indicationDoctorButton : indicationPatientButton}
+        </a>
+
+    </div>
+    <c:if test="${not empty indications}">
+        <div>
+            <c:forEach items="${indications}" var="indication">
+                <div class="card indicationCard">
+                    <div class="card-body">
+                        <div class="card-text cardDescription">
+                                ${indication.description}
+                        </div>
+                    </div>
+
+                    <div class="cardFooter">
+                        <c:url value="/img/${indication.user.image == null ? \"patientDefault.png\" : indication.user.image.imageId}"
+                               var="userImg"/>
+                        <spring:message code="patient.alt.patientImg"
+                                        arguments="${indication.user.firstName}, ${indication.user.lastName}"
+                                        var="altUserImg"/>
+                        <img src="${userImg}" alt="${altUserImg}" width="50" height="50"
+                             class="rounded-circle">
+                        <div class="cardNameDate">
+                            <c:choose>
+                                <c:when test="${indication.user.id==user.id}">
+                                    <strong>${me}</strong>
+                                </c:when>
+                                <c:otherwise>
+                                    <strong>${indication.user.firstName} ${indication.user.lastName}</strong>
+                                </c:otherwise>
+                            </c:choose>
+                                ${indication.date}
+                        </div>
+
+                    </div>
+                </div>
+            </c:forEach>
+
+            <jsp:include page="../components/pagination.jsp">
+                <jsp:param name="currentPage" value="${currentPage}"/>
+                <jsp:param name="totalPages" value="${totalPages}"/>
+                <jsp:param name="url" value="/${appointment.id}/detailed-appointment"/>
+            </jsp:include>
+        </div>
+    </c:if>
+    </c:if>
 </div>
 </body>
 </html>
@@ -187,13 +202,6 @@
         $('#post-modal').attr('action', action);
     }
 
-    function openIndicationModal(){
-        $('#indicationModal').modal('show');
-    }
-
-    function closeIndicationModal(){
-        $('#indicationModal').modal('hide');
-    }
 
     function closeModal() {
         $('#modal').modal('hide')

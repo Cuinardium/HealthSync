@@ -148,7 +148,6 @@ public class AuthController {
     }
 
     Specialty specialty = Specialty.values()[doctorRegisterForm.getSpecialtyCode()];
-    City city = City.values()[doctorRegisterForm.getCityCode()];
 
     Set<HealthInsurance> healthInsurances =
         doctorRegisterForm.getHealthInsuranceCodes().stream()
@@ -172,7 +171,7 @@ public class AuthController {
               doctorRegisterForm.getName(),
               doctorRegisterForm.getLastname(),
               specialty,
-              city,
+              doctorRegisterForm.getCity(),
               doctorRegisterForm.getAddress(),
               healthInsurances,
               attendingHours,
@@ -182,7 +181,6 @@ public class AuthController {
       final ModelAndView mav = new ModelAndView("auth/doctorRegister");
       mav.addObject("form", doctorRegisterForm);
       mav.addObject("showModal", true);
-      mav.addObject("cities", Arrays.asList(City.values()));
       mav.addObject("specialties", Arrays.asList(Specialty.values()));
       mav.addObject("currentHealthInsurances", Collections.emptyList());
       mav.addObject("healthInsurances", Arrays.asList(HealthInsurance.values()));
@@ -207,7 +205,6 @@ public class AuthController {
     final ModelAndView mav = new ModelAndView("auth/doctorRegister");
     mav.addObject("emailAlreadyInUse", emailAlreadyInUse);
     mav.addObject("form", doctorRegisterForm);
-    mav.addObject("cities", Arrays.asList(City.values()));
     mav.addObject("specialties", Arrays.asList(Specialty.values()));
     mav.addObject("healthInsurances", Arrays.asList(HealthInsurance.values()));
     mav.addObject("currentHealthInsurances", Collections.emptyList());

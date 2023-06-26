@@ -6,7 +6,6 @@ import ar.edu.itba.paw.interfaces.services.UserService;
 import ar.edu.itba.paw.interfaces.services.exceptions.DoctorNotFoundException;
 import ar.edu.itba.paw.interfaces.services.exceptions.EmailInUseException;
 import ar.edu.itba.paw.interfaces.services.exceptions.PatientNotFoundException;
-import ar.edu.itba.paw.interfaces.services.exceptions.VacationInvalidException;
 import ar.edu.itba.paw.models.*;
 import ar.edu.itba.paw.webapp.auth.PawAuthUserDetails;
 import ar.edu.itba.paw.webapp.exceptions.UserNotFoundException;
@@ -75,46 +74,17 @@ public class ProfileController {
             .orElseThrow(UserNotFoundException::new);
 
     LOGGER.debug("Doctor profile page requested");
-    return getDoctorProfileMav(doctor, doctorVacationForm, false, false, false);
+
+    final ModelAndView mav = new ModelAndView("user/doctorProfile");
+
+    mav.addObject("doctor", doctor);
+    mav.addObject("days", DayOfWeek.values());
+    mav.addObject("thirtyMinuteBlocks", ThirtyMinuteBlock.values());
+    mav.addObject("doctorVacationForm", doctorVacationForm);
+
+    return mav;
   }
 
-  @RequestMapping(value = "/add-vacation", method = RequestMethod.POST)
-  public ModelAndView doctorAddVacations(
-      @Valid @ModelAttribute("doctorVacationForm") final DoctorVacationForm doctorVacationForm,
-      final BindingResult errors) {
-
-    Doctor doctor =
-        doctorService
-            .getDoctorById(PawAuthUserDetails.getCurrentUserId())
-            .orElseThrow(UserNotFoundException::new);
-
-    if (errors.hasErrors()) {
-      LOGGER.warn("Failed to add vacation due to form errors");
-      return getDoctorProfileMav(doctor, doctorVacationForm, true, false, false);
-    }
-
-    try {
-      doctorService.addVacation(
-          doctor.getId(),
-          new Vacation(
-              doctor.getId(),
-              doctorVacationForm.getFromDate(),
-              doctorVacationForm.getFromTimeEnum(),
-              doctorVacationForm.getToDate(),
-              doctorVacationForm.getToTimeEnum()));
-    } catch (DoctorNotFoundException e) {
-      LOGGER.warn("Failed to add vacation due to doctor not found");
-      throw new UserNotFoundException();
-    } catch (VacationInvalidException e) {
-      LOGGER.warn("Failed to add vacation due to invalid vacation");
-
-      return getDoctorProfileMav(doctor, doctorVacationForm, true, false, true);
-    }
-
-    LOGGER.debug("Doctor added vacation successfully");
-
-    return getDoctorProfileMav(doctor, doctorVacationForm, false, true, false);
-  }
 
   @RequestMapping(value = "/doctor-edit", method = RequestMethod.POST)
   public ModelAndView doctorEditSubmit(
@@ -126,7 +96,6 @@ public class ProfileController {
     }
 
     Specialty specialty = Specialty.values()[doctorEditForm.getSpecialtyCode()];
-    City city = City.values()[doctorEditForm.getCityCode()];
 
     Set<HealthInsurance> healthInsurances =
         doctorEditForm.getHealthInsuranceCodes().stream()
@@ -159,7 +128,7 @@ public class ProfileController {
               doctorEditForm.getName(),
               doctorEditForm.getLastname(),
               specialty,
-              city,
+              doctorEditForm.getCity(),
               doctorEditForm.getAddress(),
               healthInsurances,
               attendingHours,
@@ -179,7 +148,6 @@ public class ProfileController {
     final ModelAndView mav = new ModelAndView("user/doctorEdit");
     mav.addObject("showModal", true);
     mav.addObject("form", doctorEditForm);
-    mav.addObject("cities", Arrays.asList(City.values()));
     mav.addObject("specialties", Arrays.asList(Specialty.values()));
     mav.addObject("currentHealthInsuranceCodes", doctorEditForm.getHealthInsuranceCodes());
     mav.addObject("healthInsurances", Arrays.asList(HealthInsurance.values()));
@@ -204,7 +172,7 @@ public class ProfileController {
             .map(HealthInsurance::ordinal)
             .collect(Collectors.toList()));
     doctorEditForm.setAddress(doctor.getAddress());
-    doctorEditForm.setCityCode(doctor.getCity().ordinal());
+    doctorEditForm.setCity(doctor.getCity());
     doctorEditForm.setSpecialtyCode(doctor.getSpecialty().ordinal());
     doctorEditForm.setLocale(doctor.getLocale());
 
@@ -215,7 +183,6 @@ public class ProfileController {
     final ModelAndView mav = new ModelAndView("user/doctorEdit");
     mav.addObject("form", doctorEditForm);
     mav.addObject("emailAlreadyInUse", emailAlreadyInUse);
-    mav.addObject("cities", Arrays.asList(City.values()));
     mav.addObject("specialties", Arrays.asList(Specialty.values()));
     mav.addObject("currentHealthInsuranceCodes", doctorEditForm.getHealthInsuranceCodes());
     mav.addObject("healthInsurances", Arrays.asList(HealthInsurance.values()));
@@ -338,27 +305,6 @@ public class ProfileController {
     mav.addObject("form", changePasswordForm);
     mav.addObject("showModal", false);
     LOGGER.debug("Change password page requested");
-    return mav;
-  }
-
-  // ======================= Private methods =======================
-
-  private ModelAndView getDoctorProfileMav(
-      Doctor doctor,
-      DoctorVacationForm doctorVacationForm,
-      boolean showVacationModal,
-      boolean successModal,
-      boolean invalidVacation) {
-    final ModelAndView mav = new ModelAndView("user/doctorProfile");
-
-    mav.addObject("doctor", doctor);
-    mav.addObject("days", DayOfWeek.values());
-    mav.addObject("thirtyMinuteBlocks", ThirtyMinuteBlock.values());
-    mav.addObject("doctorVacationForm", doctorVacationForm);
-    mav.addObject("showVacationModal", showVacationModal);
-    mav.addObject("successModal", successModal);
-    mav.addObject("invalidVacation", invalidVacation);
-
     return mav;
   }
 }
