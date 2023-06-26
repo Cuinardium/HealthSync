@@ -11,66 +11,76 @@ import ar.edu.itba.paw.models.Appointment;
 import ar.edu.itba.paw.models.Indication;
 import ar.edu.itba.paw.models.Page;
 import ar.edu.itba.paw.models.User;
+import java.time.LocalDate;
+import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
-
 @Service
 public class IndicationServiceImpl implements IndicationService {
 
-    private final UserService userService;
+  private final UserService userService;
 
-    private final AppointmentService appointmentService;
-    private final IndicationDao indicationDao;
+  private final AppointmentService appointmentService;
+  private final IndicationDao indicationDao;
 
-    private final NotificationService notificationService;
+  private final NotificationService notificationService;
 
-    @Autowired
-    public IndicationServiceImpl(UserService userService, AppointmentService appointmentService, IndicationDao indicationDao, NotificationService notificationService) {
-        this.userService = userService;
-        this.appointmentService = appointmentService;
-        this.indicationDao = indicationDao;
-        this.notificationService = notificationService;
+  @Autowired
+  public IndicationServiceImpl(
+      UserService userService,
+      AppointmentService appointmentService,
+      IndicationDao indicationDao,
+      NotificationService notificationService) {
+    this.userService = userService;
+    this.appointmentService = appointmentService;
+    this.indicationDao = indicationDao;
+    this.notificationService = notificationService;
+  }
+
+  @Transactional
+  @Override
+  public Indication createIndication(long appointmentId, long userId, String description)
+      throws UserNotFoundException, AppointmentNotFoundException {
+
+    Optional<Appointment> appointmentOptional =
+        appointmentService.getAppointmentById(appointmentId);
+    if (!appointmentOptional.isPresent()) {
+      throw new AppointmentNotFoundException();
     }
 
-
-    @Transactional
-    @Override
-    public Indication createIndication(long appointmentId, long userId, String description)
-            throws UserNotFoundException, AppointmentNotFoundException {
-        if (!appointmentService.getAppointmentById(appointmentId).isPresent()) {
-            throw new AppointmentNotFoundException();
-        }
-        if (!userService.getUserById(userId).isPresent()) {
-            throw new UserNotFoundException();
-        }
-
-        Appointment appointment= appointmentService.getAppointmentById(appointmentId).get();
-        User user= userService.getUserById(userId).get();
-
-        //Notify other user
-        User otherUser;
-        if (appointment.getDoctorId()==user.getId()){
-            otherUser=appointment.getPatient();
-        }
-        else {
-            otherUser=appointment.getDoctor();
-        }
-        if(!notificationService.getUserAppointmentNotification(otherUser.getId(), appointmentId).isPresent()){
-            notificationService.createNotification(otherUser.getId(), appointmentId);
-        }
-
-
-        Indication indication=
-                new Indication.Builder(appointment, user, LocalDate.now(), description).build();
-        return indicationDao.createIndication(indication);
+    Optional<User> userOptional = userService.getUserById(userId);
+    if (!userOptional.isPresent()) {
+      throw new UserNotFoundException();
     }
 
-    @Transactional(readOnly = true)
-    @Override
-    public Page<Indication> getIndicationsForAppointment(long appointmentId, Integer page, Integer pageSize) throws AppointmentNotFoundException {
-        return indicationDao.getIndicationsForAppointment(appointmentId, page, pageSize);
+    Appointment appointment = appointmentOptional.get();
+    User user = userOptional.get();
+
+    // Notify other user
+    User otherUser;
+    if (appointment.getDoctorId() == user.getId()) {
+      otherUser = appointment.getPatient();
+    } else {
+      otherUser = appointment.getDoctor();
     }
+
+    if (!notificationService
+        .getUserAppointmentNotification(otherUser.getId(), appointmentId)
+        .isPresent()) {
+      notificationService.createNotification(otherUser.getId(), appointmentId);
+    }
+
+    Indication indication =
+        new Indication.Builder(appointment, user, LocalDate.now(), description).build();
+    return indicationDao.createIndication(indication);
+  }
+
+  @Transactional(readOnly = true)
+  @Override
+  public Page<Indication> getIndicationsForAppointment(
+      long appointmentId, Integer page, Integer pageSize) throws AppointmentNotFoundException {
+    return indicationDao.getIndicationsForAppointment(appointmentId, page, pageSize);
+  }
 }
