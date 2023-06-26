@@ -122,7 +122,14 @@
                                     <c:param name="selected_tab" value="${selectedTab}"/>
                                 </c:url>
                                 <a href="${detailsUrl}" class="btn btn-outline-primary detailed-link">
-                                    ${seeDetails}
+                                    <c:if test="${appointment.status=='COMPLETED'}">
+                                        <c:forEach items="${appointmentNotifications}" var="notification">
+                                            <c:if test="${notification.appointment.id==appointment.id}">
+                                                <i class="fa-solid fa-comments" style="color: #ff0000;"></i>
+                                            </c:if>
+                                        </c:forEach>
+                                    </c:if>
+                                        ${seeDetails}
                                 </a>
                                 <c:if test="${i == 1 || i == 2}">
                                     <c:url value="/my-appointments/${appointment.id}/cancel" var="cancelUrl"/>

@@ -41,6 +41,6 @@ public class GlobalControllerAdvice {
   @ModelAttribute("hasNotifications")
   public boolean hasNotifications(){
     long userId = PawAuthUserDetails.getCurrentUserId();
-    return !notificationService.getUserNotifications(userId).isEmpty();
+    return !(notificationService.getUserNotifications(userId).isEmpty());
   }
 }
