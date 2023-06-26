@@ -178,15 +178,15 @@
                         <div class="infoContainer">
                             <h5 class="card-title">${doctor.firstName} ${doctor.lastName}</h5>
                             <div class="chipsContainer">
-                                <div class="card-text">${specialties}:</div>
+                                <div class="card-text"><strong>${specialties}:</strong></div>
                                 <div class="chip" data-mdb-close="true">
                                     <a class="stretched-link"
                                        href="${specialtyFilter}${doctor.specialty.ordinal()}">${doctorSpecialty}</a>
                                 </div>
                             </div>
-                            <div class="card-text">${address} ${doctor.address}, ${doctor.city}</div>
+                            <div class="card-text"><strong>${address}</strong> ${doctor.address}, ${doctor.city}</div>
                             <div class="chipsContainer healthInsurancesOverflow">
-                                <div class="card-text">${insurances}:</div>
+                                <div class="card-text"><strong>${insurances}:</strong></div>
                                 <c:forEach items="${doctor.healthInsurances}" var="healthInsurance">
                                     <spring:message code="${healthInsurance.messageID}"
                                                     var="doctorHealthInsurance"/>
@@ -211,7 +211,7 @@
                                 </c:when>
                                 <c:otherwise>
                                     <div class="card-text">
-                                            ${noReviews}
+                                        ${noReviews}
                                     </div>
                                 </c:otherwise>
                             </c:choose>

@@ -97,8 +97,8 @@ a.stretched-link:hover {
 }
 
 .imageContainer {
-    width: 17rem;
-    height: 17rem;
+    width: 19rem;
+    height: 19rem;
     object-fit: cover;
 }
 
@@ -107,7 +107,7 @@ a.stretched-link:hover {
     flex-direction: column;
     flex: 1;
     padding: 15px;
-    height: 17rem;
+    height: 19rem;
 }
 
 .buttonsContainer {
