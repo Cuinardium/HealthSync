@@ -2,6 +2,7 @@ package ar.edu.itba.paw.webapp.controller;
 
 import ar.edu.itba.paw.interfaces.services.AppointmentService;
 import ar.edu.itba.paw.interfaces.services.IndicationService;
+import ar.edu.itba.paw.interfaces.services.NotificationService;
 import ar.edu.itba.paw.interfaces.services.exceptions.*;
 import ar.edu.itba.paw.models.*;
 import ar.edu.itba.paw.webapp.auth.PawAuthUserDetails;
@@ -12,7 +13,6 @@ import ar.edu.itba.paw.webapp.form.IndicationForm;
 import ar.edu.itba.paw.webapp.form.ModalForm;
 import java.util.List;
 
-import ar.edu.itba.paw.webapp.form.ReviewForm;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,14 +32,17 @@ public class AppointmentController {
   private final AppointmentService appointmentService;
 
   private final IndicationService indicationService;
+
+  private final NotificationService notificationService;
   private static final Logger LOGGER = LoggerFactory.getLogger(AppointmentController.class);
 
   private static final int PAGE_SIZE = 10;
 
   @Autowired
-  public AppointmentController(final AppointmentService appointmentService, IndicationService indicationService) {
+  public AppointmentController(final AppointmentService appointmentService, IndicationService indicationService, NotificationService notificationService) {
     this.appointmentService = appointmentService;
     this.indicationService = indicationService;
+    this.notificationService = notificationService;
   }
 
   // ==================================  My Appointments   ========================================
@@ -76,12 +79,16 @@ public class AppointmentController {
             .getFilteredAppointments(userId, AppointmentStatus.COMPLETED, null, null, isPatient)
             .getContent();
 
+    List<Notification> appointmentNotifications=
+            notificationService.getUserNotifications(userId);
+
     // Add values to model
     mav.addObject("selectedTab", selectedTab >= 1 && selectedTab <= 4 ? selectedTab : 1);
     mav.addObject("todayAppointments", todayAppointments);
     mav.addObject("upcomingAppointments", upcomingAppointments);
     mav.addObject("cancelledAppointments", cancelledAppointments);
     mav.addObject("completedAppointments", completedAppointments);
+    mav.addObject("appointmentNotifications", appointmentNotifications);
     mav.addObject("modalForm", modalForm);
 
     LOGGER.debug("Patient requested his appointments");
@@ -135,6 +142,24 @@ public class AppointmentController {
     if (PawAuthUserDetails.getCurrentUserId() != appointment.getPatient().getId()
         && PawAuthUserDetails.getCurrentUserId() != appointment.getDoctor().getId()) {
       throw new AppointmentForbiddenException();
+    }
+
+    try{
+      notificationService.deleteNotificationIfExists(PawAuthUserDetails.getCurrentUserId(), appointmentId);
+    } catch (UserNotFoundException e){
+      LOGGER.error(
+              "Failed to find notification for user {} because user was not found",
+              PawAuthUserDetails.getCurrentUserId(),
+              new UserNotFoundException());
+
+      throw new RuntimeException();
+    }catch (ar.edu.itba.paw.interfaces.services.exceptions.AppointmentNotFoundException e) {
+      LOGGER.error(
+              "Failed to find notification for appointment {} because appointment was not found",
+              appointmentId,
+              new AppointmentNotFoundException());
+
+      throw new RuntimeException();
     }
 
     // Get Indications

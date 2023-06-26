@@ -16,7 +16,6 @@
 
 <c:url value="/${appointment.doctorId}/detailed-doctor" var="detailedDoctorUrl"/>
 
-<spring:message code="${appointment.doctor.city.messageID}" var="city"/>
 <spring:message code="${appointment.patient.healthInsurance.messageID}" var="healthInsurance"/>
 <spring:message code="${appointment.status.messageID}" var="status"/>
 
@@ -42,7 +41,8 @@
 <spring:message code="appointments.indicationModal.indication" var="indicationDesc"/>
 <spring:message code="appointments.noIndications" var="noIndications"/>
 <spring:message code="appointments.indication.title" var="indicationsTitle"/>
-<spring:message code="appointments.indication.button" var="indicationButton"/>
+<spring:message code="appointments.indication.doctor.button" var="indicationDoctorButton"/>
+<spring:message code="appointments.indication.patient.button" var="indicationPatientButton"/>
 <spring:message code="detailedAppointment.me" var="me"/>
 
 
@@ -82,7 +82,7 @@
             <div class="card-title">
                 <strong>${doctor}: </strong>${appointment.doctor.firstName} ${appointment.doctor.lastName}</div>
 
-            <div class="card-title"><strong>${address}: </strong>${address}, ${city}</div>
+            <div class="card-title"><strong>${address}: </strong>${appointment.doctor.address}, ${appointment.doctor.city}</div>
 
 
             <div class="card-title"><strong>${healthInsurance_title}: </strong>${healthInsurance}</div>
@@ -145,10 +145,9 @@
     <div class="indicationsHeader">
         <h3>${empty indications ? noIndications : indicationsTitle}</h3>
 
-
         <c:url value="/${appointment.id}/indication" var="indicationUrl"/>
         <a href="${indicationUrl}" class="btn btn-outline-primary detailed-link">
-            ${indicationButton}
+            ${isDoctor ? indicationDoctorButton : indicationPatientButton}
         </a>
 
     </div>
