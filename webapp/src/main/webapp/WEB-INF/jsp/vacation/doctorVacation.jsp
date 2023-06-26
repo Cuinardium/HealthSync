@@ -305,5 +305,8 @@
         background-color: white;
     }
 
+    textarea.form-control{
+        width: -webkit-fill-available;
+    }
 </style>
 </html>
