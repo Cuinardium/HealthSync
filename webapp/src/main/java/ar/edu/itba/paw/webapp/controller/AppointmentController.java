@@ -222,6 +222,9 @@ public class AppointmentController {
     try {
       File file = null;
       if (!(indicationForm.getFile()==null)) {
+        if(errors.hasFieldErrors("file")){
+          return indication(appointmentId, indicationForm);
+        }
         file = new File.Builder(indicationForm.getFile().getBytes()).build();
       }
 
