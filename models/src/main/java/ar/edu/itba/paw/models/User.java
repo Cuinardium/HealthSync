@@ -49,16 +49,13 @@ public class User {
   @Column(name = "locale", length = 10, nullable = false)
   private Locale locale;
 
-  // si no existe tupla en la tabla de verification token -> el usuario esta verificado
-  @Formula(
-      "(SELECT CASE WHEN EXISTS (SELECT * FROM verification_token vf WHERE vf.user_id = user_id) THEN 0 ELSE 1 END)")
+  @Column(name = "is_verified", nullable = false)
   private Boolean isVerified;
 
   protected User() {
     // Solo para hibernate
   }
 
-  // TODO: ver lo de boolean
   public User(
       Long id,
       String email,

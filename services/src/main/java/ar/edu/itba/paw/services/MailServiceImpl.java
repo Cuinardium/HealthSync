@@ -4,7 +4,6 @@ import ar.edu.itba.paw.interfaces.services.MailService;
 import ar.edu.itba.paw.models.Appointment;
 import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.models.VerificationToken;
-
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Locale;
@@ -282,7 +281,8 @@ public class MailServiceImpl implements MailService {
 
     String baseUrl = env.getProperty("webapp.baseUrl");
 
-    String confirmationUrl = baseUrl + "confirm-account?token=" + token.getToken();
+    String confirmationUrl =
+        baseUrl + "confirm-account?token=" + token.getToken() + "&id=" + user.getId();
 
     // Load model
     templateModel.put("baseUrl", baseUrl);

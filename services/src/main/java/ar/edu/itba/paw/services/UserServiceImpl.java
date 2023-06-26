@@ -3,6 +3,7 @@ package ar.edu.itba.paw.services;
 import ar.edu.itba.paw.interfaces.persistence.UserDao;
 import ar.edu.itba.paw.interfaces.persistence.exceptions.EmailAlreadyExistsException;
 import ar.edu.itba.paw.interfaces.services.ImageService;
+import ar.edu.itba.paw.interfaces.services.MailService;
 import ar.edu.itba.paw.interfaces.services.TokenService;
 import ar.edu.itba.paw.interfaces.services.UserService;
 import ar.edu.itba.paw.interfaces.services.exceptions.EmailInUseException;
@@ -26,6 +27,7 @@ public class UserServiceImpl implements UserService {
   private final UserDao userDao;
   private final ImageService imageService;
   private final TokenService tokenService;
+  private final MailService mailService;
   private final PasswordEncoder passwordEncoder;
 
   @Autowired
@@ -33,10 +35,12 @@ public class UserServiceImpl implements UserService {
       final UserDao userDao,
       final ImageService imageService,
       final TokenService tokenService,
+      final MailService mailService,
       final PasswordEncoder passwordEncoder) {
     this.userDao = userDao;
     this.imageService = imageService;
     this.tokenService = tokenService;
+    this.mailService = mailService;
     this.passwordEncoder = passwordEncoder;
   }
 
@@ -59,7 +63,7 @@ public class UserServiceImpl implements UserService {
 
     final VerificationToken token = tokenService.createToken(user);
 
-    // TODO: send email
+    mailService.sendConfirmationMail(token);
 
     return user;
   }
