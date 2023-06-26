@@ -77,4 +77,9 @@ public interface DoctorService {
 
   // Gets all cities used by doctors & qty of appearences
   public Map<City, Integer> getUsedCities();
+
+  // ================= Tasks =================
+  
+  // Deletes all vacations that have ended
+  public void deleteOldVacations();
 }

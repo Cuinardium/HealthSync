@@ -325,7 +325,7 @@ public class AppointmentServiceImpl implements AppointmentService {
   }
 
   // Run every 30 minutes
-  @Transactional(readOnly = true)
+  @Transactional
   @Scheduled(cron = "0 0/30 * * * ?")
   @Override
   public void updateCompletedAppointmentsStatus() {

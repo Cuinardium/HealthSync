@@ -11,6 +11,7 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -197,5 +198,23 @@ public class DoctorServiceImpl implements DoctorService {
   @Override
   public List<Specialty> getPopularSpecialties() {
     return doctorDao.getPopularSpecialties();
+  }
+
+  // ================= Tasks =================
+  
+  // Deletes all vacations that have ended
+  @Transactional
+  @Scheduled(cron = "0 0/30 * * * ?")
+  @Override
+  public void deleteOldVacations() {
+
+    // Get today's date
+    LocalDate today = LocalDate.now();
+
+    // Get actual thirty minute block
+    ThirtyMinuteBlock now = ThirtyMinuteBlock.fromTime(LocalTime.now());
+
+    // Delete all vacations that have ended
+    doctorDao.deleteOldVacations(today, now);
   }
 }

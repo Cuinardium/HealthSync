@@ -33,6 +33,8 @@ public interface DoctorDao {
   public Doctor removeVacation(long doctorId, Vacation vacation)
       throws DoctorNotFoundException, VacationNotFoundException;
 
+  public void deleteOldVacations(LocalDate today, ThirtyMinuteBlock now);
+
   // =============== Queries ===============
 
   public Optional<Doctor> getDoctorById(long id);

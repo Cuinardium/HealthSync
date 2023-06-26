@@ -118,6 +118,46 @@ public class Vacation implements Comparable<Vacation> {
     return id.compareTo(other.id);
   }
 
+  public boolean collidesWith(Vacation other) {
+    LocalDate vacationFromDate = id.getFromDate();
+    ThirtyMinuteBlock vacationFromTime = id.getFromTime();
+    LocalDate vacationToDate = id.getToDate();
+    ThirtyMinuteBlock vacationToTime = id.getToTime();
+
+    LocalDate otherVacationFromDate = other.id.getFromDate();
+    LocalDate otherVacationToDate = other.id.getToDate();
+    ThirtyMinuteBlock otherVacationFromTime = other.id.getFromTime();
+    ThirtyMinuteBlock otherVacationToTime = other.id.getToTime();
+
+    boolean vacationFromAfterOtherVacationFrom =
+        vacationFromDate.isAfter(otherVacationFromDate)
+            || (vacationFromDate.equals(otherVacationFromDate)
+                && vacationFromTime.compareTo(otherVacationFromTime) >= 0);
+
+    boolean vacationFromBeforeOtherVacationTo =
+        vacationFromDate.isBefore(otherVacationToDate)
+            || (vacationFromDate.equals(otherVacationToDate)
+                && vacationFromTime.compareTo(otherVacationToTime) <= 0);
+
+    boolean vacationToAfterOtherVacationFrom =
+        vacationToDate.isAfter(otherVacationFromDate)
+            || (vacationToDate.equals(otherVacationFromDate)
+                && vacationToTime.compareTo(otherVacationFromTime) >= 0);
+
+    boolean vacationToBeforeOtherVacationTo =
+        vacationToDate.isBefore(otherVacationToDate)
+            || (vacationToDate.equals(otherVacationToDate)
+                && vacationToTime.compareTo(otherVacationToTime) <= 0);
+
+    boolean vacationCollidesWithOtherVacation =
+        (vacationFromAfterOtherVacationFrom && vacationFromBeforeOtherVacationTo)
+            || (vacationToAfterOtherVacationFrom && vacationToBeforeOtherVacationTo)
+            || (vacationFromBeforeOtherVacationTo && vacationToAfterOtherVacationFrom)
+            || (vacationFromAfterOtherVacationFrom && vacationToBeforeOtherVacationTo);
+
+    return vacationCollidesWithOtherVacation;
+  }
+
   @Embeddable
   public static class VacationId implements Serializable, Comparable<VacationId> {
 

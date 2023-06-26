@@ -67,30 +67,7 @@ public class DoctorDaoJpa implements DoctorDao {
     Set<Vacation> vacations = doctor.getVacations();
 
     for (Vacation doctorVacation : vacations) {
-      boolean vacationFromAfterDoctorVacationFrom =
-          vacation.getFromDate().isAfter(doctorVacation.getFromDate())
-              || (vacation.getFromDate().equals(doctorVacation.getFromDate())
-                  && vacation.getFromTime().ordinal() >= doctorVacation.getFromTime().ordinal());
-      boolean vacationFromBeforeDoctorVacationTo =
-          vacation.getFromDate().isBefore(doctorVacation.getToDate())
-              || (vacation.getFromDate().equals(doctorVacation.getToDate())
-                  && vacation.getFromTime().ordinal() <= doctorVacation.getToTime().ordinal());
-      boolean vacationToAfterDoctorVacationFrom =
-          vacation.getToDate().isAfter(doctorVacation.getFromDate())
-              || (vacation.getToDate().equals(doctorVacation.getFromDate())
-                  && vacation.getToTime().ordinal() >= doctorVacation.getFromTime().ordinal());
-      boolean vacationToBeforeDoctorVacationTo =
-          vacation.getToDate().isBefore(doctorVacation.getToDate())
-              || (vacation.getToDate().equals(doctorVacation.getToDate())
-                  && vacation.getToTime().ordinal() <= doctorVacation.getToTime().ordinal());
-
-      boolean vacationCollidesWithDoctorVacation =
-          (vacationFromAfterDoctorVacationFrom && vacationFromBeforeDoctorVacationTo)
-              || (vacationToAfterDoctorVacationFrom && vacationToBeforeDoctorVacationTo)
-              || (vacationFromBeforeDoctorVacationTo && vacationToAfterDoctorVacationFrom)
-              || (vacationFromAfterDoctorVacationFrom && vacationToBeforeDoctorVacationTo);
-
-      if (vacationCollidesWithDoctorVacation) {
+      if (vacation.collidesWith(doctorVacation)) {
         throw new VacationCollisionException();
       }
     }
@@ -116,6 +93,15 @@ public class DoctorDaoJpa implements DoctorDao {
     return doctor;
   }
 
+  @Override
+  public void deleteOldVacations(LocalDate today, ThirtyMinuteBlock now) {
+    Query query =
+        em.createQuery(
+            "DELETE FROM Vacation v WHERE v.id.toDate < :today OR (v.id.toDate = :today AND v.id.toTime < :now)");
+    query.setParameter("today", today);
+    query.setParameter("now", now);
+    query.executeUpdate();
+  }
   // =============== Queries ===============
 
   @Override
