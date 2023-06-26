@@ -10,6 +10,7 @@ import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Repository
@@ -53,6 +54,30 @@ public class NotificationDaoJpa implements NotificationDao {
 
         return new ArrayList<Notification>(content) {
         };
+    }
+
+    @Override
+    public Optional<Notification> getUserAppointmentNotification(long userId, long appointmentId) {
+        Query nativeQuery=
+                em.createNativeQuery("SELECT id FROM notification WHERE user_id = " + userId + "AND appointment_id = " + appointmentId);
+
+        @SuppressWarnings("unchecked")
+        final List<Long> idList =
+                (List<Long>)
+                        nativeQuery
+                                .getResultList()
+                                .stream()
+                                .map(o -> ((Number) o).longValue())
+                                .collect(Collectors.toList());
+
+        if (idList.isEmpty()) return Optional.empty();
+
+        final TypedQuery<Notification> query =
+                em.createQuery("from Notification where id in :idList", Notification.class);
+        query.setParameter("idList", idList);
+
+        List<Notification> content = query.getResultList();
+        return content.stream().findFirst();
     }
 
 }

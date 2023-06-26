@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class NotificationServiceImpl implements NotificationService {
@@ -63,6 +64,11 @@ public class NotificationServiceImpl implements NotificationService {
     @Override
     public List<Notification> getUserNotifications(long userId) {
         return notificationDao.getUserNotifications(userId);
+    }
+
+    @Override
+    public Optional<Notification> getUserAppointmentNotification(long userId, long appointmentId) {
+        return notificationDao.getUserAppointmentNotification(userId, appointmentId);
     }
 
 }
