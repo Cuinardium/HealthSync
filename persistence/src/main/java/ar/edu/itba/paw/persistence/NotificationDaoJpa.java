@@ -32,52 +32,18 @@ public class NotificationDaoJpa implements NotificationDao {
 
     @Override
     public List<Notification> getUserNotifications(long userId) {
-        Query nativeQuery=
-                em.createNativeQuery("SELECT id FROM notification WHERE user_id = " + userId);
+        TypedQuery<Notification> query= em.createQuery("from Notification where user_id = :userId", Notification.class);
+        query.setParameter("userId", userId);
+        return query.getResultList();
 
-        @SuppressWarnings("unchecked")
-        final List<Long> idList =
-                (List<Long>)
-                        nativeQuery
-                                .getResultList()
-                                .stream()
-                                .map(o -> ((Number) o).longValue())
-                                .collect(Collectors.toList());
-
-        if (idList.isEmpty()) return new ArrayList<>();
-
-        final TypedQuery<Notification> query =
-                em.createQuery("from Notification where id in :idList", Notification.class);
-        query.setParameter("idList", idList);
-
-        List<Notification> content = query.getResultList();
-
-        return new ArrayList<Notification>(content) {
-        };
     }
 
     @Override
     public Optional<Notification> getUserAppointmentNotification(long userId, long appointmentId) {
-        Query nativeQuery=
-                em.createNativeQuery("SELECT id FROM notification WHERE user_id = " + userId + "AND appointment_id = " + appointmentId);
-
-        @SuppressWarnings("unchecked")
-        final List<Long> idList =
-                (List<Long>)
-                        nativeQuery
-                                .getResultList()
-                                .stream()
-                                .map(o -> ((Number) o).longValue())
-                                .collect(Collectors.toList());
-
-        if (idList.isEmpty()) return Optional.empty();
-
-        final TypedQuery<Notification> query =
-                em.createQuery("from Notification where id in :idList", Notification.class);
-        query.setParameter("idList", idList);
-
-        List<Notification> content = query.getResultList();
-        return content.stream().findFirst();
+        TypedQuery<Notification> query= em.createQuery("from Notification where user_id = :userId and appointment_id = :appointmentId", Notification.class);
+        query.setParameter("userId", userId);
+        query.setParameter("appointmentId", appointmentId);
+        return query.getResultList().stream().findFirst();
     }
 
 }
