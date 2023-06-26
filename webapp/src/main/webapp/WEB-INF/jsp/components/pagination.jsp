@@ -11,6 +11,7 @@
     <nav class="paginationContainer">
         <ul class="pagination">
                 <%-- Previous --%>
+            <%-- TODO: FIX THIS --%>
             <li class="page-item ${param.currentPage == 1 ? "disabled" : ""}">
                 <c:url value="${param.url}" var="url">
                     <c:param name="page" value="${param.currentPage - 1}"/>
