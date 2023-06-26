@@ -67,11 +67,11 @@
                 <div class="container-fluid">
                     <c:choose>
                         <c:when test="${isDoctor}">
-                            <i class="fa-solid fa-user-doctor"></i>
+                            <i class="fa-solid fa-user-nurse iconIdentifier"></i>
                             <spring:message code="profile.doctor" var="tooltipText"/>
                         </c:when>
                         <c:otherwise>
-                            <i class="fa-solid fa-user"></i>
+                            <i class="fa-solid fa-user iconIdentifier"></i>
                             <spring:message code="profile.patient" var="tooltipText"/>
                         </c:otherwise>
                     </c:choose>
@@ -87,7 +87,7 @@
                                 <ul class="dropdown-menu">
                                     <c:choose>
                                         <c:when test="${isDoctor}">
-                                            <li><a class="dropdown-item" href="${doctorProfileUrl}">${profile}</a></li>
+                                            <li><a class="dropdown-item icon" href="${doctorProfileUrl}">${profile}</a></li>
                                         </c:when>
                                         <c:otherwise>
                                             <li><a class="dropdown-item" href="${patientProfileUrl}">${profile}</a>

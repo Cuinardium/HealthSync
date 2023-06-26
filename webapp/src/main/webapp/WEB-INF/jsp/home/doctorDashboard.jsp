@@ -16,8 +16,6 @@
 <c:url value="/doctor-dashboard?healthInsuranceCode=" var="healthInsuranceFilter"/>
 
 <spring:message code="doctorDashboard.title" var="title"/>
-
-<spring:message code="detailedDoctor.title" var="title"/>
 <spring:message code="detailedDoctor.specialties" var="specialties"/>
 <spring:message code="detailedDoctor.address" var="address"/>
 <spring:message code="detailedDoctor.insurance" var="insurances"/>
