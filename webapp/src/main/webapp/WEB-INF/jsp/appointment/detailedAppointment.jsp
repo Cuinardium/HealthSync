@@ -159,6 +159,11 @@
                         <div class="card-text cardDescription">
                                 ${indication.description}
                         </div>
+                        <c:if test="${not empty indication.file}">
+                            <div class="card-text cardDescription">
+                                    ${indication.file}
+                            </div>
+                        </c:if>
                     </div>
 
                     <div class="cardFooter">

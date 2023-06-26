@@ -57,6 +57,13 @@
                 <form:errors path="indications" cssClass="error" element="p"/>
             </div>
 
+            <div class="formItem">
+                <div class="mb-3">
+                    <form:label  cssClass="formLabel" path="file">Default file input example</form:label>
+                    <form:input class="form-control" type="file" path="file"/>
+                </div>
+            </div>
+
             <button type="submit" class="btn btn-primary submitButton">${submit}</button>
         </form:form>
 

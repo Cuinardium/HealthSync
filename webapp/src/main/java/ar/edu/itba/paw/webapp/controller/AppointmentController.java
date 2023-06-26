@@ -11,6 +11,8 @@ import ar.edu.itba.paw.webapp.exceptions.AppointmentForbiddenException;
 import ar.edu.itba.paw.webapp.exceptions.AppointmentNotFoundException;
 import ar.edu.itba.paw.webapp.form.IndicationForm;
 import ar.edu.itba.paw.webapp.form.ModalForm;
+
+import java.io.IOException;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -218,11 +220,16 @@ public class AppointmentController {
     Indication indication;
 
     try {
+      File file = null;
+      if (!indicationForm.getFile().isEmpty()) {
+        file = new File(indicationForm.getFile().getBytes());
+      }
       indication =
               indicationService.createIndication(
                       appointmentId,
                       PawAuthUserDetails.getCurrentUserId(),
-                      indicationForm.getIndications());
+                      indicationForm.getIndications(),
+                      file);
 
       LOGGER.info("Created indication {}", indication);
     } catch (ar.edu.itba.paw.interfaces.services.exceptions.AppointmentNotFoundException e) {
@@ -238,6 +245,8 @@ public class AppointmentController {
               appointmentId,
               new UserNotFoundException());
 
+      throw new RuntimeException(e);
+    } catch (IOException e) {
       throw new RuntimeException(e);
     }
 

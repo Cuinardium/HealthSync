@@ -1,16 +1,11 @@
 package ar.edu.itba.paw.services;
 
 import ar.edu.itba.paw.interfaces.persistence.IndicationDao;
-import ar.edu.itba.paw.interfaces.services.AppointmentService;
-import ar.edu.itba.paw.interfaces.services.IndicationService;
-import ar.edu.itba.paw.interfaces.services.NotificationService;
-import ar.edu.itba.paw.interfaces.services.UserService;
+import ar.edu.itba.paw.interfaces.services.*;
 import ar.edu.itba.paw.interfaces.services.exceptions.AppointmentNotFoundException;
 import ar.edu.itba.paw.interfaces.services.exceptions.UserNotFoundException;
-import ar.edu.itba.paw.models.Appointment;
-import ar.edu.itba.paw.models.Indication;
-import ar.edu.itba.paw.models.Page;
-import ar.edu.itba.paw.models.User;
+import ar.edu.itba.paw.models.*;
+
 import java.time.LocalDate;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,21 +22,24 @@ public class IndicationServiceImpl implements IndicationService {
 
   private final NotificationService notificationService;
 
+  private final FileService fileService;
+
   @Autowired
   public IndicationServiceImpl(
-      UserService userService,
-      AppointmentService appointmentService,
-      IndicationDao indicationDao,
-      NotificationService notificationService) {
+          UserService userService,
+          AppointmentService appointmentService,
+          IndicationDao indicationDao,
+          NotificationService notificationService, FileService fileService) {
     this.userService = userService;
     this.appointmentService = appointmentService;
     this.indicationDao = indicationDao;
     this.notificationService = notificationService;
+    this.fileService = fileService;
   }
 
   @Transactional
   @Override
-  public Indication createIndication(long appointmentId, long userId, String description)
+  public Indication createIndication(long appointmentId, long userId, String description, File file)
       throws UserNotFoundException, AppointmentNotFoundException {
 
     Optional<Appointment> appointmentOptional =
@@ -74,6 +72,11 @@ public class IndicationServiceImpl implements IndicationService {
 
     Indication indication =
         new Indication.Builder(appointment, user, LocalDate.now(), description).build();
+
+    if(file!=null){
+      file=fileService.uploadFile(file);
+      indication.setFile(file);
+    }
     return indicationDao.createIndication(indication);
   }
 

@@ -148,21 +148,25 @@ public class Indication {
         private LocalDate date;
         private User user;
 
-        private File file;
+        private File file = null;
         // default
         private Long id = null;
 
         public Builder(
-                Appointment appointment, User user, LocalDate date, String description, File file) {
+                Appointment appointment, User user, LocalDate date, String description) {
             this.appointment= appointment;
             this.user= user;
             this.date = date;
             this.description = description;
-            this.file = file;
         }
 
         public Builder id(long id) {
             this.id = id;
+            return this;
+        }
+
+        public Builder file(File file) {
+            this.file = file;
             return this;
         }
 
