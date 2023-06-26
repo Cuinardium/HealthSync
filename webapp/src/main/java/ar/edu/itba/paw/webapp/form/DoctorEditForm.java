@@ -18,11 +18,11 @@ public class DoctorEditForm extends UserEditForm {
   @NotEmpty private List<Integer> healthInsuranceCodes;
 
   @Size(min = 1)
-  @Pattern(regexp = "[a-zA-Z0-9. ]+")
+  @Pattern(regexp = "[a-zA-Z0-9. ñÑáÁéÉíÍóÓúÚ]+")
   private String city;
 
   @Size(min = 1)
-  @Pattern(regexp = "[a-zA-Z0-9. ]+")
+  @Pattern(regexp = "[a-zA-Z0-9. ñÑáÁéÉíÍóÓúÚ]+")
   private String address;
 
   @ExistsInEnum(enumClass = Specialty.class)

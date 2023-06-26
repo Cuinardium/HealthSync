@@ -19,11 +19,11 @@ public class DoctorRegisterForm extends UserRegisterForm {
   @NotEmpty private List<Integer> healthInsuranceCodes = new ArrayList<>();
 
   @Size(min = 1)
-  @Pattern(regexp = "[a-zA-Z0-9. ñÑ]+")
+  @Pattern(regexp = "[a-zA-Z0-9. ñÑáÁéÉíÍóÓúÚ]+")
   private String address;
 
   @Size(min = 1)
-  @Pattern(regexp = "[a-zA-Z0-9. ñÑ]+")
+  @Pattern(regexp = "[a-zA-Z0-9. ñÑáÁéÉíÍóÓúÚ]+")
   private String city;
 
   @ExistsInEnum(enumClass = Specialty.class)
