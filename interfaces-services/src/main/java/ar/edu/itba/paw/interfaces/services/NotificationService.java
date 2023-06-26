@@ -19,4 +19,6 @@ public interface NotificationService {
     public List<Notification> getUserNotifications(long userId);
 
     public Optional<Notification> getUserAppointmentNotification(long userId, long appointmentId);
+
+    public void deleteNotificationIfExists(long userId, long appointmentId) throws UserNotFoundException, AppointmentNotFoundException;
 }

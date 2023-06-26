@@ -66,9 +66,18 @@ public class NotificationServiceImpl implements NotificationService {
         return notificationDao.getUserNotifications(userId);
     }
 
+    @Transactional(readOnly = true)
     @Override
     public Optional<Notification> getUserAppointmentNotification(long userId, long appointmentId) {
         return notificationDao.getUserAppointmentNotification(userId, appointmentId);
+    }
+
+    @Transactional
+    @Override
+    public void deleteNotificationIfExists(long userId, long appointmentId) throws UserNotFoundException, AppointmentNotFoundException {
+        if(getUserAppointmentNotification(userId, appointmentId).isPresent()){
+            deleteNotification(userId, appointmentId);
+        }
     }
 
 }

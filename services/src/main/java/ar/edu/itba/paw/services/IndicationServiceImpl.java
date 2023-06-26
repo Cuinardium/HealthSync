@@ -3,6 +3,7 @@ package ar.edu.itba.paw.services;
 import ar.edu.itba.paw.interfaces.persistence.IndicationDao;
 import ar.edu.itba.paw.interfaces.services.AppointmentService;
 import ar.edu.itba.paw.interfaces.services.IndicationService;
+import ar.edu.itba.paw.interfaces.services.NotificationService;
 import ar.edu.itba.paw.interfaces.services.UserService;
 import ar.edu.itba.paw.interfaces.services.exceptions.AppointmentNotFoundException;
 import ar.edu.itba.paw.interfaces.services.exceptions.UserNotFoundException;
@@ -24,11 +25,14 @@ public class IndicationServiceImpl implements IndicationService {
     private final AppointmentService appointmentService;
     private final IndicationDao indicationDao;
 
+    private final NotificationService notificationService;
+
     @Autowired
-    public IndicationServiceImpl(UserService userService, AppointmentService appointmentService, IndicationDao indicationDao) {
+    public IndicationServiceImpl(UserService userService, AppointmentService appointmentService, IndicationDao indicationDao, NotificationService notificationService) {
         this.userService = userService;
         this.appointmentService = appointmentService;
         this.indicationDao = indicationDao;
+        this.notificationService = notificationService;
     }
 
 
@@ -45,6 +49,19 @@ public class IndicationServiceImpl implements IndicationService {
 
         Appointment appointment= appointmentService.getAppointmentById(appointmentId).get();
         User user= userService.getUserById(userId).get();
+
+        //Notify other user
+        User otherUser;
+        if (appointment.getDoctorId()==user.getId()){
+            otherUser=appointment.getPatient();
+        }
+        else {
+            otherUser=appointment.getDoctor();
+        }
+        if(!notificationService.getUserAppointmentNotification(otherUser.getId(), appointmentId).isPresent()){
+            notificationService.createNotification(otherUser.getId(), appointmentId);
+        }
+
 
         Indication indication=
                 new Indication.Builder(appointment, user, LocalDate.now(), description).build();
