@@ -1,9 +1,9 @@
 INSERT INTO profile_picture (profile_picture_id, profile_picture)
 VALUES (2, X'10'); -- por alguna razon '\x10' no le gusta a hsqldb pero esto si???
 
-INSERT INTO users (user_id, email, password, first_name, last_name, profile_picture_id, locale, isVerified)
-VALUES (5, 'patient@email.com', 'patient_password', 'patient_first_name', 'patient_last_name', NULL, 'en', true),
-       (7, 'doctor@email.com', 'doctor_password', 'doctor_first_name', 'doctor_last_name', NULL, 'en', true);
+INSERT INTO users (user_id, email, password, first_name, last_name, profile_picture_id, locale)
+VALUES (5, 'patient@email.com', 'patient_password', 'patient_first_name', 'patient_last_name', NULL, 'en'),
+       (7, 'doctor@email.com', 'doctor_password', 'doctor_first_name', 'doctor_last_name', NULL, 'en');
 
 INSERT INTO patient (patient_id, health_insurance_code)
 VALUES (5, 1);

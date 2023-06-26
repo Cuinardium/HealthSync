@@ -14,6 +14,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import org.hibernate.annotations.Formula;
 
 @Entity
 @Table(name = "users") // Si la clase no tiene el mismo nombre que la DB table
@@ -48,7 +49,8 @@ public class User {
   @Column(name = "locale", length = 10, nullable = false)
   private Locale locale;
 
-  @Column(nullable = false)
+  @Formula(
+      "(SELECT CASE WHEN EXISTS (SELECT * FROM VerificationToken vf WHERE vf.user_id = user_id) THEN TRUE ELSE FALSE END)")
   private Boolean isVerified;
 
   protected User() {
@@ -132,6 +134,14 @@ public class User {
     this.image = image;
   }
 
+  public Boolean getIsVerified() {
+    return isVerified;
+  }
+
+  public void setIsVerified(Boolean isVerified) {
+    this.isVerified = isVerified;
+  }
+
   @Override
   public String toString() {
     return "User [id="
@@ -145,6 +155,10 @@ public class User {
         + firstName
         + ", lastName="
         + lastName
+        + ", locale="
+        + locale
+        + ", isVerified="
+        + isVerified
         + "]";
   }
 
