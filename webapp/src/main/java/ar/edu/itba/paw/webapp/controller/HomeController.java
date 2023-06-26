@@ -125,9 +125,9 @@ public class HomeController {
     mav.addObject("doctors", doctors.getContent());
     mav.addObject("cityMap", usedCities);
     mav.addObject("cities", cities);
-    mav.addObject("specialtyCodes", specialtyCodes);
+    mav.addObject("specialtyCodesEnum", specialties);
     mav.addObject("specialtyMap", usedSpecialties);
-    mav.addObject("healthInsuranceCodes", healthInsuranceCodes);
+    mav.addObject("healthInsuranceCodesEnum", healthInsurances);
     mav.addObject("healthInsuranceMap", usedHealthInsurances);
     mav.addObject("dateFilter", date);
     mav.addObject("fromBlock", fromTime);

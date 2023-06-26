@@ -1,6 +1,7 @@
 .filtersContainer{
     display: flex;
     flex-direction: column;
+    overflow-y: scroll;
 }
 
 .searchBarContainer{

@@ -59,103 +59,127 @@
     <div class="dashboardContainer">
         <div class="sidebarContainer card">
             <div class="filtersContainer">
-                <div class="titleFilterContainer">
-                    <h2>${filtersTitle}</h2>
-                    <input type="submit" class="btn btn-danger" value="${clear}" onclick="clearFilters()">
-                </div>
-                <hr>
-                <form:select id="city-select" cssClass="form-select" path="cities" multiple="true">
-                    <form:option value="-1" disabled="true" hidden="true" selected="true"> ${city} </form:option>
-                    <c:forEach items="${cityMap}" var="city">
-                        <form:option value="${city.key}" disabled="${currentCities.contains(city.key)}">
-                            ${city.key} (${city.value})
-                        </form:option>
-                    </c:forEach>
-                </form:select>
-
-                <form:select id="specialty-select" cssClass="form-select" path="specialtyCodes" multiple="true">
-                    <form:option value="-1" disabled="true" hidden="true" selected="true"> ${specialty} </form:option>
-                    <c:forEach items="${specialtyMap}" var="specialty">
-                        <form:option value="${specialty.key.ordinal()}">
-                            <spring:message code="${specialty.key.messageID}"/> (${specialty.value})
-                        </form:option>
-                    </c:forEach>
-                </form:select>
-
-                <form:select id="health-insurance-select" cssClass="form-select" path="healthInsuranceCodes" multiple="true">
-                    <form:option value="-1" disabled="true" hidden="true" selected="true"> ${insurance} </form:option>
-                    <c:forEach items="${healthInsuranceMap}" var="healthInsurance">
-                        <form:option value="${healthInsurance.key.ordinal()}">
-                            <spring:message code="${healthInsurance.key.messageID}"/> (${healthInsurance.value})
-                        </form:option>
-                    </c:forEach>
-                </form:select>
-
-                <hr>
-                <h4>${byRating}</h4>
-
-                <form:input id="min-rating" type="text" path="minRating" onchange="this.form.submit()" hidden="true"/>
-                <div id="rating-selector" class="starContainer">
-                    <c:forEach begin="1" end="5" step="1" var="i">
-                        <div class="star ${minRating >= i ? "selected" : "unselected"}" data-index="${i}">
-                            <i class="fa fa-lg fa-star"></i>
-                        </div>
-                    </c:forEach>
-                </div>
-
-
-                <hr>
-                <h4>${byAvailability}</h4>
-
-                <form:input id="date" type="date" cssClass="form-control" placeholder="${date}" path="date"
-                            onchange="this.form.submit()"/>
-
-                <c:if test="${!empty dateFilter}">
-                    <div class="fromToContainer">
-                        <div class="hourPicker">
-                            <h5>${fromTitle}</h5>
-                            <form:select id="from-select" cssClass="form-select" path="from"
-                                         onchange="this.form.submit()">
-                                <form:option value="-1" disabled="true" hidden="true"/>
-                                <c:forEach items="${possibleAttendingHours}" var="attHour">
-                                    <c:if test="${toBlock.ordinal() >= attHour.ordinal()}">
-                                        <form:option value="${attHour.ordinal()}">
-                                            ${attHour.getBlockBeginning()}
-                                        </form:option>
-                                    </c:if>
-                                </c:forEach>
-                            </form:select>
-                        </div>
-
-                        <div class="hourPicker">
-                            <h5>${toTitle}</h5>
-                            <form:select id="to-select" cssClass="form-select" path="to" onchange="this.form.submit()">
-                                <form:option value="-1" disabled="true" hidden="true"/>
-                                <c:forEach items="${possibleAttendingHours}" var="attHour">
-                                    <c:if test="${fromBlock.ordinal() <= attHour.ordinal()}">
-                                        <form:option value="${attHour.ordinal()}">
-                                            ${attHour.blockEnd}
-                                        </form:option>
-                                    </c:if>
-                                </c:forEach>
-                            </form:select>
-                        </div>
+                <div class="nonResizable">
+                    <div class="titleFilterContainer">
+                        <h2>${filtersTitle}</h2>
+                        <input type="submit" class="btn btn-danger" value="${clear}" onclick="clearFilters()">
                     </div>
-                </c:if>
+                    <hr>
+                    <form:select id="city-select" cssClass="form-select" path="cities" multiple="true">
+                        <form:option value="-1" disabled="true" hidden="true" selected="true"> ${city} </form:option>
+                        <c:forEach items="${cityMap}" var="city">
+                            <form:option value="${city.key}">
+                                ${city.key} (${city.value})
+                            </form:option>
+                        </c:forEach>
+                    </form:select>
 
-                <hr>
+                    <form:select id="specialty-select" cssClass="form-select" path="specialtyCodes" multiple="true">
+                        <form:option value="-1" disabled="true" hidden="true" selected="true"> ${specialty} </form:option>
+                        <c:forEach items="${specialtyMap}" var="specialty">
+                            <form:option value="${specialty.key.ordinal()}">
+                                <spring:message code="${specialty.key.messageID}"/> (${specialty.value})
+                            </form:option>
+                        </c:forEach>
+                    </form:select>
+
+                    <form:select id="health-insurance-select" cssClass="form-select" path="healthInsuranceCodes" multiple="true">
+                        <form:option value="-1" disabled="true" hidden="true" selected="true"> ${insurance} </form:option>
+                        <c:forEach items="${healthInsuranceMap}" var="healthInsurance">
+                            <form:option value="${healthInsurance.key.ordinal()}">
+                                <spring:message code="${healthInsurance.key.messageID}"/> (${healthInsurance.value})
+                            </form:option>
+                        </c:forEach>
+                    </form:select>
+
+                    <hr>
+                    <h4>${byRating}</h4>
+
+                    <form:input id="min-rating" type="text" path="minRating" onchange="this.form.submit()" hidden="true"/>
+                    <div id="rating-selector" class="starContainer">
+                        <c:forEach begin="1" end="5" step="1" var="i">
+                            <div class="star ${minRating >= i ? "selected" : "unselected"}" data-index="${i}">
+                                <i class="fa fa-lg fa-star"></i>
+                            </div>
+                        </c:forEach>
+                    </div>
+
+
+                    <hr>
+                    <h4>${byAvailability}</h4>
+
+                    <form:input id="date" type="date" cssClass="form-control" placeholder="${date}" path="date"
+                                onchange="this.form.submit()"/>
+
+                    <c:if test="${!empty dateFilter}">
+                        <div class="fromToContainer">
+                            <div class="hourPicker">
+                                <h5>${fromTitle}</h5>
+                                <form:select id="from-select" cssClass="form-select" path="from"
+                                             onchange="this.form.submit()">
+                                    <form:option value="-1" disabled="true" hidden="true"/>
+                                    <c:forEach items="${possibleAttendingHours}" var="attHour">
+                                        <c:if test="${toBlock.ordinal() >= attHour.ordinal()}">
+                                            <form:option value="${attHour.ordinal()}">
+                                                ${attHour.getBlockBeginning()}
+                                            </form:option>
+                                        </c:if>
+                                    </c:forEach>
+                                </form:select>
+                            </div>
+
+                            <div class="hourPicker">
+                                <h5>${toTitle}</h5>
+                                <form:select id="to-select" cssClass="form-select" path="to" onchange="this.form.submit()">
+                                    <form:option value="-1" disabled="true" hidden="true"/>
+                                    <c:forEach items="${possibleAttendingHours}" var="attHour">
+                                        <c:if test="${fromBlock.ordinal() <= attHour.ordinal()}">
+                                            <form:option value="${attHour.ordinal()}">
+                                                ${attHour.blockEnd}
+                                            </form:option>
+                                        </c:if>
+                                    </c:forEach>
+                                </form:select>
+                            </div>
+                        </div>
+                    </c:if>
+
+                    <hr>
+                </div>
+
 
                 <div class="chipsContainer">
-                    <c:forEach items="${cityMap}" var="city">
-                        <div class="chip ${currentCities.contains(city.key) ? "" : "hidden"}">
-                            ${city.value}
-                            <button type="button" data-index="${city.value}" class="chipClose">
-                                X
-                            </button>
-                        </div>
-                    </c:forEach>
+                    <c:if test="${not empty specialtyCodesEnum}">
+                        <c:forEach items="${specialtyCodesEnum}" var="specialtyVal">
+                            <div class="chip filterChip">
+                                <spring:message code="${specialtyVal.messageID}"/>
+                                <button type="button" data-index="${specialtyVal}" class="chipClose">
+                                    X
+                                </button>
+                            </div>
+                        </c:forEach>
+                    </c:if>
+                    <c:if test="${not empty cities}">
+                        <c:forEach items="${cities}" var="cityVal">
+                            <div class="chip filterChip">
+                                    ${cityVal}
+                                <button type="button" data-index="${cityVal}" class="chipClose">
+                                    X
+                                </button>
+                            </div>
+                        </c:forEach>
+                    </c:if>
+                    <c:if test="${not empty healthInsuranceCodesEnum}">
+                        <c:forEach items="${healthInsuranceCodesEnum}" var="insuranceVal">
+                            <div class="chip filterChip">
+                                <spring:message code="${insuranceVal.messageID}"/>
+                                <button type="button" data-index="${insuranceVal.ordinal()}" class="chipClose">
+                                    X
+                                </button>
+                            </div>
+                        </c:forEach>
+                    </c:if>
                 </div>
-
             </div>
         </div>
 
@@ -268,9 +292,9 @@
                 </c:if>
 
                 <c:url var="doctorDashboardFilteredUrl" value="/doctor-dashboard">
-                    <c:if test="${not empty specialtyCodes}">
-                        <c:forEach items="${specialtyCodes}" var="specialtyVal">
-                            <c:param name="specialtyCodes" value="${specialtyVal}" />
+                    <c:if test="${not empty specialtyCodesEnum}">
+                        <c:forEach items="${specialtyCodesEnum}" var="specialtyVal">
+                            <c:param name="specialtyCodes" value="${specialtyVal.ordinal()}" />
                         </c:forEach>
                     </c:if>
                     <c:if test="${not empty cities}">
@@ -278,9 +302,9 @@
                             <c:param name="cities" value="${cityVal}" />
                         </c:forEach>
                     </c:if>
-                    <c:if test="${not empty healthInsuranceCodes}">
-                        <c:forEach items="${healthInsuranceCodes}" var="insuranceVal">
-                            <c:param name="healthInsuranceCodes" value="${insuranceVal}" />
+                    <c:if test="${not empty healthInsuranceCodesEnum}">
+                        <c:forEach items="${healthInsuranceCodesEnum}" var="insuranceVal">
+                            <c:param name="healthInsuranceCodes" value="${insuranceVal.ordinal()}" />
                         </c:forEach>
                     </c:if>
                     <c:param name="name" value="${name}" />
