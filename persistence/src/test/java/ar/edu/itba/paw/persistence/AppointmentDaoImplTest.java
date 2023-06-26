@@ -60,7 +60,7 @@ public class AppointmentDaoImplTest {
       new HashSet<>(Arrays.asList(HealthInsurance.OMINT, HealthInsurance.OSDE));
   private static final Specialty INSERTED_DOCTOR_SPECIALTY =
       Specialty.PEDIATRIC_ALLERGY_AND_IMMUNOLOGY;
-  private static final City INSERTED_DOCTOR_CITY = City.ADOLFO_GONZALES_CHAVES;
+  private static final String INSERTED_DOCTOR_CITY = "Adolfo Gonzalez Chaves";
   private static final String INSERTED_DOCTOR_ADDRESS = "doctor_address";
   private static final Image INSERTED_DOCTOR_IMAGE = null;
   private static final Float INSERTED_DOCTOR_RATING = 3f;
@@ -127,7 +127,6 @@ public class AppointmentDaoImplTest {
   private static final AppointmentStatus AUX_STATUS = AppointmentStatus.CANCELLED;
   private static final String AUX_CANCEL_DESC = "Que me importa";
   private static final Long AUX_APP_ID = 5L;
-  private static final String INSERTED_INDICATIONS = "Toma ibuprofeno cada 8 horas";
 
   private static final Appointment APPOINTMENT_1 =
       new Appointment(
@@ -138,8 +137,7 @@ public class AppointmentDaoImplTest {
           INSERTED_TIME,
           INSERTED_STATUS,
           INSERTED_DESC,
-          INSERTED_CANCEL_DESC,
-          INSERTED_INDICATIONS);
+          INSERTED_CANCEL_DESC);
   private static final String AUX_INDICATIONS = "Toma ibuprofeno cada 6 horas";
 
   @Autowired private DataSource ds;
@@ -207,7 +205,6 @@ public class AppointmentDaoImplTest {
     assertEquals(INSERTED_DESC, appointment.getDescription());
     assertEquals(AUX_STATUS, appointment.getStatus());
     assertEquals(AUX_CANCEL_DESC, appointment.getCancelDesc());
-    assertEquals(INSERTED_INDICATIONS, appointment.getIndications());
   }
 
   @Test
@@ -220,33 +217,6 @@ public class AppointmentDaoImplTest {
     // 3. Meaninful assertions
   }
 
-  @Test
-  public void testUpdateAppointmentIndications() throws AppointmentNotFoundException {
-    // 1. Precondiciones
-    // 2. Ejercitar la class under test
-    Appointment appointment =
-        appointmentDao.setAppointmentIndications(INSERTED_APP_ID, AUX_INDICATIONS);
-    // 3. Meaninful assertions
-    assertEquals(INSERTED_APP_ID, appointment.getId());
-    assertEquals(PATIENT_5, appointment.getPatient());
-    assertEquals(DOCTOR_7, appointment.getDoctor());
-    assertEquals(INSERTED_LOCAL_DATE, appointment.getDate());
-    assertEquals(INSERTED_TIME, appointment.getTimeBlock());
-    assertEquals(INSERTED_DESC, appointment.getDescription());
-    assertEquals(INSERTED_STATUS, appointment.getStatus());
-    assertEquals(INSERTED_CANCEL_DESC, appointment.getCancelDesc());
-    assertEquals(AUX_INDICATIONS, appointment.getIndications());
-  }
-
-  @Test
-  public void testUpdateAppointmentIndicationsAppointmnentNotFound() {
-    // 1. Precondiciones
-    // 2. Ejercitar la class under test
-    assertThrows(
-        AppointmentNotFoundException.class,
-        () -> appointmentDao.setAppointmentIndications(AUX_APP_ID, AUX_INDICATIONS));
-    // 3. Meaninful assertions
-  }
 
   @Test
   public void testGetAppointmentById() {

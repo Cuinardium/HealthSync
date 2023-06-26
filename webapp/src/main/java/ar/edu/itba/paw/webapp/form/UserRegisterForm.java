@@ -5,11 +5,11 @@ import javax.validation.constraints.Size;
 
 public class UserRegisterForm extends PasswordForm {
   @Size(min = 1)
-  @Pattern(regexp = "[a-zA-Z ñÑ]+")
+  @Pattern(regexp = "[a-zA-Z ñÑáÁéÉíÍóÓúÚ]+")
   private String name;
 
   @Size(min = 1)
-  @Pattern(regexp = "[a-zA-Z ñÑ]+")
+  @Pattern(regexp = "[a-zA-Z ñÑáÁéÉíÍóÓúÚ]+")
   private String lastname;
 
   @Size(min = 1)

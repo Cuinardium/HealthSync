@@ -54,16 +54,6 @@ public class Appointment {
   @Column(name = "cancel_description", length = 1000)
   private String cancelDesc;
 
-  @Column(name = "indications", length = 1000)
-  private String indications;
-
-  public String getIndications() {
-    return indications;
-  }
-
-  public void setIndications(String indications) {
-    this.indications = indications;
-  }
 
   /* package */ Appointment() {
     // Solo para hibernate
@@ -77,8 +67,7 @@ public class Appointment {
       ThirtyMinuteBlock timeBlock,
       AppointmentStatus status,
       String description,
-      String cancelDesc,
-      String indications) {
+      String cancelDesc) {
     this.id = id;
     this.patient = patient;
     this.doctor = doctor;
@@ -87,7 +76,6 @@ public class Appointment {
     this.status = status;
     this.description = description;
     this.cancelDesc = cancelDesc;
-    this.indications = indications;
   }
 
   public Appointment(Builder builder) {
@@ -99,7 +87,6 @@ public class Appointment {
     this.status = builder.status;
     this.description = builder.description;
     this.cancelDesc = builder.cancelDescription;
-    this.indications = builder.indications;
   }
 
   public Long getId() {
@@ -188,8 +175,6 @@ public class Appointment {
         + description
         + ", cancelDesc="
         + cancelDesc
-        + ", indications="
-        + indications
         + " "
         + patient
         + " "
@@ -224,7 +209,6 @@ public class Appointment {
     // default
     private Long id = null;
     private String cancelDescription = null;
-    private String indications = null;
     private AppointmentStatus status = AppointmentStatus.CONFIRMED;
 
     public Builder(
@@ -247,11 +231,6 @@ public class Appointment {
 
     public Builder cancelDescription(String cancelDescription) {
       this.cancelDescription = cancelDescription;
-      return this;
-    }
-
-    public Builder indications(String indications) {
-      this.indications = indications;
       return this;
     }
 

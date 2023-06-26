@@ -37,7 +37,7 @@ public class ReviewServiceImplTest {
   private static final Set<HealthInsurance> DOCTOR_HEALTH_INSURANCES =
       new HashSet<>(Arrays.asList(HealthInsurance.OSDE, HealthInsurance.OMINT));
   private static final Specialty SPECIALTY = Specialty.CARDIOLOGY;
-  private static final City CITY = City.AYACUCHO;
+  private static final String CITY = "Ayacucho";
   private static final String ADDRESS = "1234";
   private static final Collection<ThirtyMinuteBlock> ATTENDING_HOURS_FOR_DAY =
       ThirtyMinuteBlock.fromRange(ThirtyMinuteBlock.BLOCK_08_00, ThirtyMinuteBlock.BLOCK_16_00);

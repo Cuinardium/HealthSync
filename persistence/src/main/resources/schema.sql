@@ -89,6 +89,16 @@ CREATE TABLE IF NOT EXISTS review (
     FOREIGN KEY (patient_id)    REFERENCES patient (patient_id)
 );
 
+CREATE TABLE IF NOT EXISTS indication (
+    indication_id   SERIAL PRIMARY KEY,
+    appointment_id  INTEGER NOT NULL,
+    user_id         INTEGER NOT NULL,
+    indication_date DATE NOT NULL,
+    indication_description  VARCHAR(1000),
+    FOREIGN KEY (appointment_id)    REFERENCES appointment (appointment_id),
+    FOREIGN KEY (user_id)           REFERENCES users (user_id)
+);
+
 /*
     DROP TABLE IF EXISTS appointment;
     DROP TABLE IF EXISTS health_insurance_accepted_by_doctor;

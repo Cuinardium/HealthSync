@@ -42,7 +42,7 @@ public class DoctorDaoImplTest {
       new HashSet<>(Arrays.asList(HealthInsurance.OMINT, HealthInsurance.OSDE));
   private static final Specialty INSERTED_DOCTOR_SPECIALTY =
       Specialty.PEDIATRIC_ALLERGY_AND_IMMUNOLOGY;
-  private static final City INSERTED_DOCTOR_CITY = City.ADOLFO_GONZALES_CHAVES;
+  private static final String INSERTED_DOCTOR_CITY = "Adolfo Gonzalez Chaves";
   private static final String INSERTED_DOCTOR_ADDRESS = "doctor_address";
   private static final Set<AttendingHours> INSERTED_DOCTOR_ATTENDING_HOURS =
       new HashSet<>(
@@ -100,7 +100,7 @@ public class DoctorDaoImplTest {
       new HashSet<>(
           Arrays.asList(HealthInsurance.NONE, HealthInsurance.SWISS_MEDICAL, HealthInsurance.OSDE));
   private static final Specialty AUX_DOCTOR_SPECIALTY = Specialty.NEPHROLOGY;
-  private static final City AUX_DOCTOR_CITY = City.CASEROS;
+  private static final String AUX_DOCTOR_CITY = "Caseros";
   private static final String AUX_DOCTOR_ADDRESS = "notdoctor_address";
 
   private static final Set<AttendingHours> AUX_DOCTOR_ATTENDING_HOURS =
@@ -404,7 +404,7 @@ public class DoctorDaoImplTest {
     Assert.assertEquals(expectedDoctor, doctors.getContent().get(0));
   }
 
-  @Test 
+  @Test
   public void testGetFilteredDoctorsOnVacation() {
     // 1.Precondiciones
     LocalDate mondayOnVacation = LocalDate.of(2020, 1, 11);
@@ -483,10 +483,10 @@ public class DoctorDaoImplTest {
   public void testGetUsedCities() {
     // 1.Precondiciones
     // 2. Ejercitar la class under test
-    Map<City, Integer> cities = doctorDao.getUsedCities();
+    Map<String, Integer> cities = doctorDao.getUsedCities();
     // 3. Meaningful assertions
     Assert.assertEquals(1, cities.size());
-    Assert.assertEquals((Integer) 1, cities.get(City.ADOLFO_GONZALES_CHAVES));
+    Assert.assertEquals((Integer) 1, cities.get("Adolfo Gonzalez Chaves"));
   }
 
   @Test

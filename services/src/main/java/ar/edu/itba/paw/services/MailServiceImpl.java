@@ -180,8 +180,7 @@ public class MailServiceImpl implements MailService {
     String doctorName =
         appointment.getDoctor().getFirstName() + " " + appointment.getDoctor().getLastName();
     String doctorAddress = appointment.getDoctor().getAddress();
-    String doctorCity =
-        messageSource.getMessage(appointment.getDoctor().getCity().getMessageID(), null, locale);
+    String doctorCity = appointment.getDoctor().getCity();
 
     // Load model
     templateModel.put("baseUrl", env.getProperty("webapp.baseUrl"));
@@ -266,35 +265,4 @@ public class MailServiceImpl implements MailService {
     sendHtmlMessage(appointment.getPatient().getEmail(), subject, htmlBody);
   }
 
-  @Override
-  @Async
-  public void sendAppointmentIndicationMail(Appointment appointment) {
-    Locale locale = appointment.getPatient().getLocale();
-
-    Map<String, Object> templateModel = new HashMap<>();
-
-    String dateTime =
-        appointment.getDate().toString() + " " + appointment.getTimeBlock().getBlockBeginning();
-
-    String doctorName =
-        appointment.getDoctor().getFirstName() + " " + appointment.getDoctor().getLastName();
-
-    String indications = appointment.getIndications();
-
-    String baseUrl = env.getProperty("webapp.baseUrl");
-    String appUrl = baseUrl + appointment.getId() + "/detailed-appointment";
-
-    // Load model
-    templateModel.put("baseUrl", baseUrl);
-    templateModel.put("appUrl", appUrl);
-    templateModel.put("docName", doctorName);
-    templateModel.put("date", dateTime);
-    templateModel.put("indications", indications);
-
-    String htmlBody = getHtmlBody("appointmentIndication", templateModel, locale);
-
-    String subject = mailMessageSource.getMessage("appointmentIndication.subject", null, locale);
-
-    sendHtmlMessage(appointment.getPatient().getEmail(), subject, htmlBody);
-  }
 }

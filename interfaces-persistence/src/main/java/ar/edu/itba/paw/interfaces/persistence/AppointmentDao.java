@@ -30,8 +30,6 @@ public interface AppointmentDao {
       long appointmentId, AppointmentStatus status, String cancelDescription)
       throws AppointmentNotFoundException;
 
-  public Appointment setAppointmentIndications(long appointmentId, String indications)
-      throws AppointmentNotFoundException;
 
   public void completeAppointmentsInDateBlock(LocalDate date, ThirtyMinuteBlock block);
 

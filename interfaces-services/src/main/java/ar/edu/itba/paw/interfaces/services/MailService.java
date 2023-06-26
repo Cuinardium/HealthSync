@@ -15,5 +15,4 @@ public interface MailService {
 
   public void sendAppointmentCompletedMail(Appointment appointment);
 
-  public void sendAppointmentIndicationMail(Appointment appointment);
 }

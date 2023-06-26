@@ -11,7 +11,7 @@
 <spring:message code="review.modal.title" var="modalTitle"/>
 <spring:message code="review.modal.text" var="modalDesc"/>
 <spring:message code="review.modal.button" var="modalButton"/>
-<c:url value="/" var="successfulUrl"/>
+
 
 
 <!-- Include -->
@@ -89,7 +89,7 @@
                         ${modalDesc}
                     </div>
                     <div class="modal-footer">
-                        <a type="button" href="${successfulUrl}" class="btn btn-primary">${modalButton}</a>
+                        <a type="button" href="${doctorUrl}" class="btn btn-primary">${modalButton}</a>
                     </div>
                 </div>
             </div>

@@ -43,7 +43,7 @@ public class DoctorServiceImpl implements DoctorService {
       String firstName,
       String lastName,
       Specialty specialty,
-      City city,
+      String city,
       String address,
       Set<HealthInsurance> healthInsurances,
       Set<AttendingHours> attendingHours,
@@ -85,7 +85,7 @@ public class DoctorServiceImpl implements DoctorService {
       String firstName,
       String lastName,
       Specialty specialty,
-      City city,
+      String city,
       String address,
       Set<HealthInsurance> healthInsurances,
       Set<AttendingHours> attendingHours,
@@ -160,7 +160,7 @@ public class DoctorServiceImpl implements DoctorService {
       ThirtyMinuteBlock fromTime,
       ThirtyMinuteBlock toTime,
       Specialty specialty,
-      City city,
+      String city,
       HealthInsurance healthInsurance,
       Integer minRating,
       Integer page,
@@ -190,7 +190,7 @@ public class DoctorServiceImpl implements DoctorService {
 
   @Transactional(readOnly = true)
   @Override
-  public Map<City, Integer> getUsedCities() {
+  public Map<String, Integer> getUsedCities() {
     return doctorDao.getUsedCities();
   }
 

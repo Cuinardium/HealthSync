@@ -117,9 +117,6 @@
                                 <div class="card-title">
                                     <strong>${cancelDescriptionTitle}: </strong>${appointment.cancelDesc}</div>
                             </c:if>
-                            <c:if test="${not empty appointment.indications}">
-                                <div class="card-title"><strong>${indication}: </strong>${appointment.indications}</div>
-                            </c:if>
 
                             <div class="cardButtonContainer">
                                 <c:url value="/${appointment.id}/detailed-appointment" var="detailsUrl">

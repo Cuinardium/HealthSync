@@ -22,7 +22,7 @@ public interface DoctorService {
       String firstName,
       String lastName,
       Specialty specialty,
-      City city,
+      String city,
       String address,
       Set<HealthInsurance> healthInsurances,
       Set<AttendingHours> attendingHours,
@@ -37,7 +37,7 @@ public interface DoctorService {
       String firstName,
       String lastName,
       Specialty specialty,
-      City city,
+      String city,
       String address,
       Set<HealthInsurance> healthInsurances,
       Set<AttendingHours> attendingHours,
@@ -60,7 +60,7 @@ public interface DoctorService {
       ThirtyMinuteBlock fromTime,
       ThirtyMinuteBlock toTime,
       Specialty specialty,
-      City city,
+      String city,
       HealthInsurance healthInsurance,
       Integer minRating,
       Integer page,
@@ -76,7 +76,7 @@ public interface DoctorService {
   public Map<HealthInsurance, Integer> getUsedHealthInsurances();
 
   // Gets all cities used by doctors & qty of appearences
-  public Map<City, Integer> getUsedCities();
+  public Map<String, Integer> getUsedCities();
 
   // ================= Tasks =================
   

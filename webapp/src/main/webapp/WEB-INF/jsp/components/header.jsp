@@ -62,11 +62,21 @@
         <c:when test="${not empty user}">
             <nav class="navbar navbar-expand-lg">
                 <div class="container-fluid">
+                    <c:choose>
+                        <c:when test="${isDoctor}">
+                            <i class="fa-solid fa-user-doctor"></i>
+                            <spring:message code="profile.doctor" var="tooltipText"/>
+                        </c:when>
+                        <c:otherwise>
+                            <i class="fa-solid fa-user"></i>
+                            <spring:message code="profile.patient" var="tooltipText"/>
+                        </c:otherwise>
+                    </c:choose>
                     <div id="profileDropdown">
                         <ul class="navbar-nav">
                             <li class="nav-item dropdown">
                                 <a class="nav-link dropdown-toggle" href="" role="button" data-bs-toggle="dropdown"
-                                   aria-haspopup="true" aria-expanded="false">
+                                   aria-haspopup="true" aria-expanded="false" data-toggle="tooltip" data-placement="top" title="${tooltipText}">
                                     <c:url value="/img/${user.image == null ? (isDoctor ?\"doctorDefault.png\":\"patientDefault.png\") : user.image.imageId}" var="loggedUserImg"/>
                                     <img src="${loggedUserImg}" alt="${altLoggedUserImg}" width="40" height="40"
                                          class="rounded-circle">
