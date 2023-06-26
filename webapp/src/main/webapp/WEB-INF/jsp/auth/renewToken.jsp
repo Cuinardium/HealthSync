@@ -25,9 +25,25 @@
 <jsp:include page="../components/header.jsp"/>
 
 <!-- Content -->
-<div>
-    <h1>${title}</h1>
-    <h3>${tokenRenewed? renewSuccessful: renewUnsuccesful}<h3>
+<div class="generalPadding">
+    <div class="resendCardContainer">
+        <div class="card">
+            <div class="card-body">
+                <h1>${title}</h1>
+                <h4>${tokenRenewed? renewSuccessful: renewUnsuccesful}</h4>
+            </div>
+        </div>
+    </div>
 </div>
 </body>
+
+<style>
+    .resendCardContainer {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+
+</style>
 </html>

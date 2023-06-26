@@ -244,19 +244,17 @@ public class AuthController {
       tokenInvalid = true;
     }
 
-    if (successful) {
-      return new ModelAndView("redirect:/login");
-    }
-
     final ModelAndView mav = new ModelAndView("auth/verify");
     mav.addObject("tokenInvalid", tokenInvalid);
+    mav.addObject("id", id);
     mav.addObject("alreadyVerified", alreadyVerified);
+    mav.addObject("successful", successful);
 
     return mav;
   }
 
   // this mav recieves mail and token as query params
-  @RequestMapping(value = "/renew-token", method = RequestMethod.GET)
+  @RequestMapping(value = "/renew-token", method = RequestMethod.POST)
   public ModelAndView renewToken(@RequestParam(value = "id", required = true) long userId)
       throws UserNotFoundException {
     final ModelAndView mav = new ModelAndView("auth/renewToken");
