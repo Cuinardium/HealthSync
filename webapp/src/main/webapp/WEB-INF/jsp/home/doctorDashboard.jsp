@@ -156,7 +156,7 @@
                         <c:forEach items="${specialtyCodesEnum}" var="specialtyVal">
                             <div class="chip filterChip">
                                 <spring:message code="${specialtyVal.messageID}"/>
-                                <button type="button" data-index="${specialtyVal}" class="chipClose">
+                                <button type="button" data-index="${specialtyVal}" class="chipClose" onclick="deleteParam('specialtyCodes', '${specialtyVal.ordinal()}', 'specialty-select')">
                                     X
                                 </button>
                             </div>
@@ -166,7 +166,7 @@
                         <c:forEach items="${cities}" var="cityVal">
                             <div class="chip filterChip">
                                     ${cityVal}
-                                <button type="button" data-index="${cityVal}" class="chipClose">
+                                <button type="button" data-index="${cityVal}" class="chipClose" onclick="deleteParam('cities', '${cityVal}', 'city-select')">
                                     X
                                 </button>
                             </div>
@@ -176,7 +176,7 @@
                         <c:forEach items="${healthInsuranceCodesEnum}" var="insuranceVal">
                             <div class="chip filterChip">
                                 <spring:message code="${insuranceVal.messageID}"/>
-                                <button type="button" data-index="${insuranceVal.ordinal()}" class="chipClose">
+                                <button type="button" data-index="${insuranceVal.ordinal()}" class="chipClose" onclick="deleteParam('healthInsuranceCodes', '${insuranceVal.ordinal()}', 'health-insurance-select')">
                                     X
                                 </button>
                             </div>
@@ -366,6 +366,30 @@
         window.location.href = window.location.pathname + "?" + searchParams.toString();
 
         this.form.submit();
+    }
+
+    function deleteParam(name, value, select) {
+        var searchParams = new URLSearchParams(window.location.search);
+
+        var params = searchParams.getAll(name);
+
+        // Remove the desired value from the params array
+        var updatedParams = params.filter(param => param !== value);
+
+        // Update the parameter with the updated values
+        searchParams.delete(name);
+        updatedParams.forEach(param => searchParams.append(name, param));
+
+        // Update the form:select element to deselect the option
+        var selectElement = document.getElementById(select);
+        var optionElement = selectElement.querySelector(`option[value="${value}"]`);
+        if (optionElement) {
+            optionElement.selected = false;
+        }
+
+        // Construct the new URL with updated search parameters
+        // Redirect to the new URL
+        window.location.href = window.location.pathname + "?" + searchParams.toString();
     }
 
     document.getElementById("city-select").addEventListener("change", function(event) {
