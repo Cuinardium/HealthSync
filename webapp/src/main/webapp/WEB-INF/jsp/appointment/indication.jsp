@@ -32,8 +32,8 @@
     <link href="${formsCss}" rel="stylesheet"/>
 
     <script>
-        $(document).ready(function(){
-            if(${showModal}){
+        $(document).ready(function () {
+            if (${showModal}) {
                 $('#modalSuccess').modal('show');
             }
         })
@@ -41,7 +41,7 @@
 </head>
 <body>
 <jsp:include page="../components/header.jsp"/>
-<div class="generalPadding">
+<div class="loginPadding">
     <div class="backButtonContainer">
         <a href="${appointmentUrl}" class="btn btn-primary backButton">
             <i class="fa-solid fa-arrow-left"></i>
@@ -52,19 +52,21 @@
         <form:form modelAttribute="indicationForm" class="card" action="${indicationUrl}"
                    method="POST" enctype="multipart/form-data">
 
-            <div class="formItem">
-                <form:label cssClass="formLabel" path="indications">${description}</form:label>
-                <form:textarea cols="50" rows="10" class="form-control" type="text" placeholder="${descriptionPlaceholder}" path="indications"/>
-                <form:errors path="indications" cssClass="error" element="p"/>
-            </div>
-
-            <div class="formItem">
-                <div class="mb-3">
-                    <form:label  cssClass="formLabel" path="file">${fileTitle}</form:label>
-                    <form:input class="form-control" type="file" path="file"/>
+            <div class="formRow">
+                <div class="formItem" style="width: 100%">
+                    <form:label cssClass="formLabel" path="indications">${description}</form:label>
+                    <form:textarea cols="50" rows="10" class="form-control" type="text"
+                                   placeholder="${descriptionPlaceholder}" path="indications"/>
+                    <form:errors path="indications" cssClass="error" element="p"/>
                 </div>
             </div>
 
+            <div class="formRow">
+                <div class="formItem mb-3" style="width: 100%">
+                    <form:label cssClass="formLabel" path="file">${fileTitle}</form:label>
+                    <form:input class="form-control" type="file" path="file"/>
+                </div>
+            </div>
             <button type="submit" class="btn btn-primary submitButton">${submit}</button>
         </form:form>
 
