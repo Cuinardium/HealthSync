@@ -45,9 +45,9 @@ public interface DoctorDao {
       LocalDate date,
       ThirtyMinuteBlock fromTime,
       ThirtyMinuteBlock toTime,
-      Specialty specialty,
-      String city,
-      HealthInsurance healthInsurance,
+      Set<Specialty> specialties,
+      Set<String> cities,
+      Set<HealthInsurance> healthInsurances,
       Integer minRating,
       Integer page,
       Integer pageSize);

@@ -8,8 +8,7 @@ import ar.edu.itba.paw.webapp.auth.UserRole;
 import ar.edu.itba.paw.webapp.exceptions.UserNotFoundException;
 import ar.edu.itba.paw.webapp.form.DoctorFilterForm;
 import java.time.LocalDate;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -60,9 +59,10 @@ public class HomeController {
     Map<HealthInsurance, Integer> usedHealthInsurances = doctorService.getUsedHealthInsurances();
 
     // Get filters
-    int specialtyCode = doctorFilterForm.getSpecialtyCode();
-    String city = doctorFilterForm.getCity();
-    int healthInsuranceCode = doctorFilterForm.getHealthInsuranceCode();
+    String name = doctorFilterForm.getName();
+    Set<Integer> specialtyCodes = doctorFilterForm.getSpecialtyCodes();
+    Set<String> cities = doctorFilterForm.getCities();
+    Set<Integer> healthInsuranceCodes = doctorFilterForm.getHealthInsuranceCodes();
     LocalDate date = doctorFilterForm.getDate();
     int fromOrdinal = doctorFilterForm.getFrom();
     int toOrdinal = doctorFilterForm.getTo();
@@ -71,17 +71,25 @@ public class HomeController {
     ThirtyMinuteBlock fromTime = ThirtyMinuteBlock.values()[fromOrdinal];
     ThirtyMinuteBlock toTime = ThirtyMinuteBlock.values()[toOrdinal];
 
-    Specialty specialty =
-        specialtyCode < 0 || specialtyCode >= Specialty.values().length
-            ? null
-            : Specialty.values()[specialtyCode];
+    Set<Specialty> specialties = new HashSet<>();
+    if (specialtyCodes != null) {
+      for (Integer specialtyCode : specialtyCodes) {
+        if (specialtyCode < 0 || specialtyCode >= Specialty.values().length) {
+          continue;
+        }
+        specialties.add(Specialty.values()[specialtyCode]);
+      }
+    }
 
-    HealthInsurance healthInsurance =
-        healthInsuranceCode < 0 || healthInsuranceCode >= HealthInsurance.values().length
-            ? null
-            : HealthInsurance.values()[healthInsuranceCode];
-
-    String name = doctorFilterForm.getName();
+    Set<HealthInsurance> healthInsurances = new HashSet<>();
+    if (healthInsuranceCodes != null) {
+      for (Integer healthInsuranceCode : healthInsuranceCodes) {
+        if (healthInsuranceCode < 0 || healthInsuranceCode >= HealthInsurance.values().length) {
+          continue;
+        }
+        healthInsurances.add(HealthInsurance.values()[healthInsuranceCode]);
+      }
+    }
 
     // Get doctors
     Page<Doctor> doctors =
@@ -90,9 +98,9 @@ public class HomeController {
             date,
             fromTime,
             toTime,
-            specialty,
-            city,
-            healthInsurance,
+            specialties,
+            cities,
+            healthInsurances,
             minRating,
             page - 1,
             DEFAULT_PAGE_SIZE);
@@ -114,17 +122,17 @@ public class HomeController {
 
     mav.addObject("name", name);
     mav.addObject("doctors", doctors.getContent());
-    mav.addObject("city", city);
     mav.addObject("cityMap", usedCities);
-    mav.addObject("specialtyCode", specialtyCode);
+    mav.addObject("cities", cities);
+    mav.addObject("specialtyCodesEnum", specialties);
     mav.addObject("specialtyMap", usedSpecialties);
-    mav.addObject("healthInsuranceCode", healthInsuranceCode);
+    mav.addObject("healthInsuranceCodesEnum", healthInsurances);
+    mav.addObject("healthInsuranceMap", usedHealthInsurances);
     mav.addObject("dateFilter", date);
     mav.addObject("fromBlock", fromTime);
     mav.addObject("toBlock", toTime);
     mav.addObject("minRating", minRating);
     mav.addObject("possibleAttendingHours", ThirtyMinuteBlock.values());
-    mav.addObject("healthInsuranceMap", usedHealthInsurances);
 
     // Pagination
     mav.addObject("currentPage", doctors.getCurrentPage() + 1);

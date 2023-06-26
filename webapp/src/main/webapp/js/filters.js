@@ -5,6 +5,7 @@ function clearFilters() {
     document.getElementById('name-input').value = '';
     document.getElementById('date').value = '';
 
+
     let fromSelect = document.getElementById('from-select');
     let toSelect = document.getElementById('to-select');
 

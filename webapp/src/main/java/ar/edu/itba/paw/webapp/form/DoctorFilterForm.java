@@ -4,16 +4,19 @@ import ar.edu.itba.paw.models.HealthInsurance;
 import ar.edu.itba.paw.models.Specialty;
 import ar.edu.itba.paw.models.ThirtyMinuteBlock;
 import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.Set;
+
 import org.springframework.format.annotation.DateTimeFormat;
 
 public class DoctorFilterForm {
   private String name;
 
-  private String city;
+  private Set<String> cities;
 
-  private int specialtyCode = -1;
+  private Set<Integer> specialtyCodes;
 
-  private int healthInsuranceCode = -1;
+  private Set<Integer> healthInsuranceCodes;
 
   private int minRating = -1;
 
@@ -22,36 +25,28 @@ public class DoctorFilterForm {
 
   private int from = 0, to = ThirtyMinuteBlock.values().length - 1;
 
-  public String getCity() {
-    return city;
+  public Set<String> getCities() {
+    return cities;
   }
 
-  public void setCity(String city) {
-    this.city = city;
+  public void setCities(Set<String> cities) {
+    this.cities = cities;
   }
 
-  public int getSpecialtyCode() {
-    if (specialtyCode < 0 || specialtyCode > Specialty.values().length) {
-      return -1;
-    }
-
-    return specialtyCode;
+  public Set<Integer> getSpecialtyCodes() {
+    return specialtyCodes;
   }
 
-  public void setSpecialtyCode(int specialtyCode) {
-    this.specialtyCode = specialtyCode;
+  public void setSpecialtyCodes(Set<Integer> specialtieCodes) {
+    this.specialtyCodes = specialtieCodes;
   }
 
-  public int getHealthInsuranceCode() {
-    if (healthInsuranceCode < 0 || healthInsuranceCode > HealthInsurance.values().length) {
-      return -1;
-    }
-
-    return healthInsuranceCode;
+  public Set<Integer> getHealthInsuranceCodes() {
+    return healthInsuranceCodes;
   }
 
-  public void setHealthInsuranceCode(int healthInsuranceCode) {
-    this.healthInsuranceCode = healthInsuranceCode;
+  public void setHealthInsuranceCodes(Set<Integer> healthInsuranceCodes) {
+    this.healthInsuranceCodes = healthInsuranceCodes;
   }
 
   public String getName() {

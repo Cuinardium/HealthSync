@@ -115,16 +115,23 @@ public class DoctorDaoJpa implements DoctorDao {
       LocalDate date,
       ThirtyMinuteBlock fromTime,
       ThirtyMinuteBlock toTime,
-      Specialty specialty,
-      String city,
-      HealthInsurance healthInsurance,
+      Set<Specialty> specialties,
+      Set<String> cities,
+      Set<HealthInsurance> healthInsurance,
       Integer minRating,
       Integer page,
       Integer pageSize) {
 
-    int specialtyCode = specialty != null ? specialty.ordinal() : -1;
-    String cityS = city;
-    int healthInsuranceCode = healthInsurance != null ? healthInsurance.ordinal() : -1;
+    List<Integer> specialtyCodes =
+            specialties != null
+            ? specialties.stream().mapToInt(Specialty::ordinal).boxed().collect(Collectors.toList())
+            : new ArrayList<Integer>();
+
+    List<Integer> healthInsuranceCodes =
+        healthInsurance != null
+            ? healthInsurance.stream().mapToInt(HealthInsurance::ordinal).boxed().collect(Collectors.toList())
+            : new ArrayList<Integer>();
+
 
     // Start building the query
     QueryBuilder nativeQueryBuilder =
@@ -142,20 +149,20 @@ public class DoctorDaoJpa implements DoctorDao {
       nativeQueryBuilder.where("doctor.doctor_id IN (" + nameQuery + ")");
     }
 
-    if (specialtyCode >= 0) {
-      nativeQueryBuilder.where("specialty_code = " + specialtyCode);
+    if (!specialtyCodes.isEmpty()) {
+      nativeQueryBuilder.where("specialty_code IN :specialties");
     }
 
-    if (cityS != null && !cityS.isEmpty()) {
-      nativeQueryBuilder.where("city = :city");
+    if (cities != null && !cities.isEmpty()) {
+      nativeQueryBuilder.where("city IN :cities");
     }
 
-    if (healthInsuranceCode >= 0) {
+    if (!healthInsuranceCodes.isEmpty()) {
       String healthInsuranceQuery =
           new QueryBuilder()
               .select("doctor_id")
               .from("health_insurance_accepted_by_doctor")
-              .where("health_insurance_code = " + healthInsuranceCode)
+              .where("health_insurance_code IN :healthInsurances")
               .build();
 
       nativeQueryBuilder.where("doctor.doctor_id IN (" + healthInsuranceQuery + ")");
@@ -239,9 +246,19 @@ public class DoctorDaoJpa implements DoctorDao {
       qtyDoctorsQuery.setParameter("name", name);
     }
 
-    if (cityS != null && !cityS.isEmpty()) {
-      nativeQuery.setParameter("city", cityS);
-      qtyDoctorsQuery.setParameter("city", cityS);
+    if (cities != null && !cities.isEmpty()) {
+      nativeQuery.setParameter("cities", cities);
+      qtyDoctorsQuery.setParameter("cities", cities);
+    }
+
+    if(!specialtyCodes.isEmpty()) {
+      nativeQuery.setParameter("specialties", specialtyCodes);
+      qtyDoctorsQuery.setParameter("specialties", specialtyCodes);
+    }
+
+    if(!healthInsuranceCodes.isEmpty()) {
+      nativeQuery.setParameter("healthInsurances", healthInsuranceCodes);
+      qtyDoctorsQuery.setParameter("healthInsurances", healthInsuranceCodes);
     }
 
     if (page != null && page >= 0 && pageSize != null && pageSize > 0) {
