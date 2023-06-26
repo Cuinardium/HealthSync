@@ -282,7 +282,7 @@ public class MailServiceImpl implements MailService {
     String baseUrl = env.getProperty("webapp.baseUrl");
 
     String confirmationUrl =
-        baseUrl + "confirm-account?token=" + token.getToken() + "&id=" + user.getId();
+        baseUrl + "verify?token=" + token.getToken() + "&id=" + user.getId();
 
     // Load model
     templateModel.put("baseUrl", baseUrl);
