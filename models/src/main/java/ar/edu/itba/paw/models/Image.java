@@ -1,6 +1,5 @@
 package ar.edu.itba.paw.models;
 
-import java.util.Arrays;
 import java.util.Objects;
 import javax.persistence.*;
 
@@ -72,7 +71,7 @@ public class Image {
 
   @Override
   public String toString() {
-    return "Image [imageId=" + imageId + ", image=" + Arrays.toString(bytes) + "]";
+    return "Image [imageId=" + imageId + "]";
   }
 
   @Override
