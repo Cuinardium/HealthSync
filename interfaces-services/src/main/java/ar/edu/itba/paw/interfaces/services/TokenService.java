@@ -9,17 +9,17 @@ public interface TokenService {
 
   // ============= CREATE =============
 
-  VerificationToken createToken(User user);
+  public VerificationToken createToken(User user);
 
   // ============= QUERY =============
 
-  Optional<VerificationToken> getUserToken(User user);
+  public Optional<VerificationToken> getUserToken(User user);
 
   // ============= DELETE =============
 
-  void deleteUserToken(User user) throws TokenNotFoundException;
+  public void deleteUserToken(User user) throws TokenNotFoundException;
 
   // ============ UPDATE ============
 
-  void renewUserToken(User user) throws TokenNotFoundException;
+  public void renewUserToken(User user) throws TokenNotFoundException;
 }

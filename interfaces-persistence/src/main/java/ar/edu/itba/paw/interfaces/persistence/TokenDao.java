@@ -1,21 +1,20 @@
 package ar.edu.itba.paw.interfaces.persistence;
 
-import java.util.Optional;
-
 import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.models.VerificationToken;
+import java.util.Optional;
 
 public interface TokenDao {
 
   // ============= CREATE =============
 
-  VerificationToken createToken(VerificationToken token);
+  public VerificationToken createToken(VerificationToken token);
 
   // ============= QUERY =============
 
-  Optional<VerificationToken> getUserToken(User user);
+  public Optional<VerificationToken> getUserToken(User user);
 
   // ============= DELETE =============
 
-  void deleteToken(VerificationToken token);
+  public void deleteToken(VerificationToken token);
 }

@@ -25,7 +25,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public class AppointmentDaoJpa implements AppointmentDao {
 
-  @PersistenceContext EntityManager em;
+  @PersistenceContext private EntityManager em;
 
   @Override
   public Appointment createAppointment(
@@ -67,7 +67,6 @@ public class AppointmentDaoJpa implements AppointmentDao {
 
     return app;
   }
-
 
   @Override
   public void completeAppointmentsInDateBlock(LocalDate date, ThirtyMinuteBlock timeBlock) {

@@ -11,7 +11,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public class ImageDaoJpa implements ImageDao {
 
-  @PersistenceContext EntityManager em;
+  @PersistenceContext private EntityManager em;
 
   @Override
   public Image createImage(Image image) {

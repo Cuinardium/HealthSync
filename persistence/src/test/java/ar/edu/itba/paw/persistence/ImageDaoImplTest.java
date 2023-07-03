@@ -33,7 +33,7 @@ public class ImageDaoImplTest {
   private static final Long AUX_IMAGE_ID = 3L;
   private static final byte[] AUX_IMAGE_BYTES = {12, 15, 1, 2};
 
-  @PersistenceContext EntityManager em;
+  @PersistenceContext private EntityManager em;
 
   @Autowired private DataSource ds;
 

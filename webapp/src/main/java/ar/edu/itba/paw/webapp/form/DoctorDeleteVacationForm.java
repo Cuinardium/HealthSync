@@ -7,12 +7,12 @@ import org.springframework.format.annotation.DateTimeFormat;
 public class DoctorDeleteVacationForm {
 
   @DateTimeFormat(pattern = "yyyy-MM-dd")
-  LocalDate fromDate;
+  private LocalDate fromDate;
 
   private String fromTime;
 
   @DateTimeFormat(pattern = "yyyy-MM-dd")
-  LocalDate toDate;
+  private LocalDate toDate;
 
   private String toTime;
 

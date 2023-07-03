@@ -15,7 +15,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public class IndicationDaoJpa implements IndicationDao {
 
-  @PersistenceContext EntityManager em;
+  @PersistenceContext private EntityManager em;
 
   @Override
   public Indication createIndication(Indication indication) {
@@ -42,7 +42,9 @@ public class IndicationDaoJpa implements IndicationDao {
     @SuppressWarnings("unchecked")
     final List<Long> idList =
         (List<Long>)
-            nativeQuery.getResultList().stream()
+            nativeQuery
+                .getResultList()
+                .stream()
                 .map(o -> ((Number) o).longValue())
                 .collect(Collectors.toList());
 

@@ -146,7 +146,7 @@ public class AppointmentDaoImplTest {
 
   private JdbcTemplate jdbcTemplate;
 
-  @PersistenceContext EntityManager em;
+  @PersistenceContext private EntityManager em;
 
   @Autowired private AppointmentDaoJpa appointmentDao;
 
@@ -218,7 +218,6 @@ public class AppointmentDaoImplTest {
         () -> appointmentDao.updateAppointment(AUX_APP_ID, AUX_STATUS, AUX_CANCEL_DESC));
     // 3. Meaninful assertions
   }
-
 
   @Test
   public void testGetAppointmentById() {

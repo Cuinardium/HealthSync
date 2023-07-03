@@ -15,7 +15,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public class ReviewDaoJpa implements ReviewDao {
 
-  @PersistenceContext EntityManager em;
+  @PersistenceContext private EntityManager em;
 
   @Override
   public Review createReview(Review review) {
@@ -29,8 +29,7 @@ public class ReviewDaoJpa implements ReviewDao {
         em.createNativeQuery("SELECT review_id FROM review WHERE doctor_id = " + doctorId);
 
     Query countQuery =
-        em.createNativeQuery(
-            "SELECT COUNT(*) FROM review WHERE doctor_id = " + doctorId);
+        em.createNativeQuery("SELECT COUNT(*) FROM review WHERE doctor_id = " + doctorId);
 
     if (page != null && page >= 0 && pageSize != null && pageSize > 0) {
       nativeQuery.setMaxResults(pageSize);

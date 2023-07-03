@@ -7,19 +7,18 @@ import org.springframework.format.annotation.DateTimeFormat;
 public class DoctorVacationForm {
 
   @DateTimeFormat(pattern = "yyyy-MM-dd")
-  LocalDate fromDate;
+  private LocalDate fromDate;
 
   private String fromTime;
 
   @DateTimeFormat(pattern = "yyyy-MM-dd")
-  LocalDate toDate;
+  private LocalDate toDate;
 
   private String toTime;
 
   private boolean cancelAppointmentsInVacation = true;
 
   private String cancelReason = null;
-
 
   public LocalDate getFromDate() {
     return fromDate;
