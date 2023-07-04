@@ -3,7 +3,7 @@ package ar.edu.itba.paw.persistence;
 import ar.edu.itba.paw.interfaces.persistence.IndicationDao;
 import ar.edu.itba.paw.models.Indication;
 import ar.edu.itba.paw.models.Page;
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 import javax.persistence.EntityManager;
@@ -48,7 +48,9 @@ public class IndicationDaoJpa implements IndicationDao {
                 .map(o -> ((Number) o).longValue())
                 .collect(Collectors.toList());
 
-    if (idList.isEmpty()) return new Page<>(new ArrayList<>(), page, 0, pageSize);
+    if (idList.isEmpty()) {
+      return new Page<>(Collections.emptyList(), page, 0, pageSize);
+    }
 
     Number count = (Number) countQuery.getSingleResult();
 

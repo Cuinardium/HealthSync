@@ -3,7 +3,7 @@ package ar.edu.itba.paw.persistence;
 import ar.edu.itba.paw.interfaces.persistence.ReviewDao;
 import ar.edu.itba.paw.models.Page;
 import ar.edu.itba.paw.models.Review;
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 import javax.persistence.EntityManager;
@@ -45,7 +45,9 @@ public class ReviewDaoJpa implements ReviewDao {
                 .map(o -> ((Number) o).longValue())
                 .collect(Collectors.toList());
 
-    if (idList.isEmpty()) return new Page<>(new ArrayList<>(), page, 0, pageSize);
+    if (idList.isEmpty()) {
+      return new Page<>(Collections.emptyList(), page, 0, pageSize);
+    }
 
     final TypedQuery<Review> query =
         em.createQuery("from Review where id in :idList", Review.class);

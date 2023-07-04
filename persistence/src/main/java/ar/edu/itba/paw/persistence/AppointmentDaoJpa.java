@@ -12,7 +12,7 @@ import ar.edu.itba.paw.models.ThirtyMinuteBlock;
 import ar.edu.itba.paw.persistence.utils.QueryBuilder;
 import java.sql.Date;
 import java.time.LocalDate;
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -173,8 +173,9 @@ public class AppointmentDaoJpa implements AppointmentDao {
                 .map(o -> ((Number) o).longValue())
                 .collect(Collectors.toList());
 
-    if (idList.isEmpty()) return new Page<>(new ArrayList<>(), page, 0, pageSize);
-
+    if (idList.isEmpty()) {
+      return new Page<>(Collections.emptyList(), page, 0, pageSize);
+    }
     // JPA Query Language (JQL) / Hibernate Query Language (HQL)
     final TypedQuery<Appointment> query =
         em.createQuery(

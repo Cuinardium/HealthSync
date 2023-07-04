@@ -123,15 +123,18 @@ public class DoctorDaoJpa implements DoctorDao {
       Integer pageSize) {
 
     List<Integer> specialtyCodes =
-            specialties != null
+        specialties != null
             ? specialties.stream().mapToInt(Specialty::ordinal).boxed().collect(Collectors.toList())
             : new ArrayList<Integer>();
 
     List<Integer> healthInsuranceCodes =
         healthInsurance != null
-            ? healthInsurance.stream().mapToInt(HealthInsurance::ordinal).boxed().collect(Collectors.toList())
+            ? healthInsurance
+                .stream()
+                .mapToInt(HealthInsurance::ordinal)
+                .boxed()
+                .collect(Collectors.toList())
             : new ArrayList<Integer>();
-
 
     // Start building the query
     QueryBuilder nativeQueryBuilder =
@@ -251,12 +254,12 @@ public class DoctorDaoJpa implements DoctorDao {
       qtyDoctorsQuery.setParameter("cities", cities);
     }
 
-    if(!specialtyCodes.isEmpty()) {
+    if (!specialtyCodes.isEmpty()) {
       nativeQuery.setParameter("specialties", specialtyCodes);
       qtyDoctorsQuery.setParameter("specialties", specialtyCodes);
     }
 
-    if(!healthInsuranceCodes.isEmpty()) {
+    if (!healthInsuranceCodes.isEmpty()) {
       nativeQuery.setParameter("healthInsurances", healthInsuranceCodes);
       qtyDoctorsQuery.setParameter("healthInsurances", healthInsuranceCodes);
     }
@@ -276,7 +279,7 @@ public class DoctorDaoJpa implements DoctorDao {
                 .collect(Collectors.toList());
 
     if (idList.isEmpty()) {
-      return new Page<>(new ArrayList<>(), page, 0, pageSize);
+      return new Page<>(Collections.emptyList(), page, 0, pageSize);
     }
 
     final TypedQuery<Doctor> query =

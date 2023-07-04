@@ -207,12 +207,12 @@ public class ReviewServiceImplTest {
   public void testGetReviewsForUnexistingDoctor() {
     // Mock doctorService
     Mockito.when(reviewDao.getReviewsForDoctor(DOCTOR_ID, null, null))
-        .thenReturn(new Page<>(new ArrayList<>(), null, 0, null));
+        .thenReturn(new Page<>(Collections.emptyList(), null, 0, null));
 
     // Call method
     Assert.assertEquals(
         rs.getReviewsForDoctor(DOCTOR_ID, null, null),
-        new Page<>(new ArrayList<>(), null, 0, null));
+        new Page<>(Collections.emptyList(), null, 0, null));
   }
 
   // =================== canReview ===================
