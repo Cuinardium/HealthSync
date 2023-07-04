@@ -253,18 +253,6 @@ public class Doctor extends User {
         && Objects.equals(vacations, other.vacations);
   }
 
-  public User toUser() {
-    return new User(
-        getId(),
-        getEmail(),
-        getPassword(),
-        getFirstName(),
-        getLastName(),
-        getImage(),
-        getLocale(),
-        getIsVerified());
-  }
-
   public static class Builder {
     // required
     private String email, password, firstName, lastName;
