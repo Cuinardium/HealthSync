@@ -30,16 +30,10 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.web.multipart.MultipartResolver;
 import org.springframework.web.multipart.commons.CommonsMultipartResolver;
-import org.springframework.web.servlet.ViewResolver;
-import org.springframework.web.servlet.config.annotation.EnableWebMvc;
-import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
-import org.springframework.web.servlet.view.InternalResourceViewResolver;
-import org.springframework.web.servlet.view.JstlView;
 
 @EnableScheduling
 @EnableTransactionManagement
-@EnableWebMvc
 @ComponentScan(
   basePackages = {
     "ar.edu.itba.paw.webapp.controller",
@@ -56,17 +50,6 @@ public class WebConfig extends WebMvcConfigurerAdapter {
 
   // get properties from application.properties
   @Autowired private Environment env;
-
-  @Bean
-  public ViewResolver viewResolver() {
-    InternalResourceViewResolver viewResolver = new InternalResourceViewResolver();
-
-    viewResolver.setViewClass(JstlView.class);
-    viewResolver.setPrefix("/WEB-INF/jsp/");
-    viewResolver.setSuffix(".jsp");
-
-    return viewResolver;
-  }
 
   @Bean
   public DataSource dataSource() {
@@ -94,16 +77,6 @@ public class WebConfig extends WebMvcConfigurerAdapter {
     final ResourceDatabasePopulator populator = new ResourceDatabasePopulator();
     populator.addScript(schemaSql);
     return populator;
-  }
-
-  @Override
-  public void addResourceHandlers(ResourceHandlerRegistry registry) {
-    super.addResourceHandlers(registry);
-
-    registry.addResourceHandler("/css/**").addResourceLocations("/css/");
-    registry.addResourceHandler("/js/**").addResourceLocations("/js/");
-    registry.addResourceHandler("/icons/**").addResourceLocations("/icons/");
-    registry.addResourceHandler("/img/**").addResourceLocations("/img/");
   }
 
   @Bean

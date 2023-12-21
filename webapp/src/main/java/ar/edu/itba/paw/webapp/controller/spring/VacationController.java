@@ -1,4 +1,4 @@
-package ar.edu.itba.paw.webapp.controller;
+package ar.edu.itba.paw.webapp.controller.spring;
 
 import ar.edu.itba.paw.interfaces.services.AppointmentService;
 import ar.edu.itba.paw.interfaces.services.DoctorService;
@@ -96,7 +96,7 @@ public class VacationController {
 
   @RequestMapping(value = "/delete-vacation", method = RequestMethod.POST)
   public ModelAndView doctorDeleteVacations(
-      @ModelAttribute("deleteVacationForm") final DoctorDeleteVacationForm deleteVacationForm, 
+      @ModelAttribute("deleteVacationForm") final DoctorDeleteVacationForm deleteVacationForm,
       @ModelAttribute("doctorVacationForm") final DoctorVacationForm doctorVacationForm) {
 
     long userId = PawAuthUserDetails.getCurrentUserId();

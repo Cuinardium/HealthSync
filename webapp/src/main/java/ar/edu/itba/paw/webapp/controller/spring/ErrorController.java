@@ -1,4 +1,4 @@
-package ar.edu.itba.paw.webapp.controller;
+package ar.edu.itba.paw.webapp.controller.spring;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;

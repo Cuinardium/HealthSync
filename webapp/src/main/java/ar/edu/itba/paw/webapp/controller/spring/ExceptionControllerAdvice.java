@@ -1,4 +1,4 @@
-package ar.edu.itba.paw.webapp.controller;
+package ar.edu.itba.paw.webapp.controller.spring;
 
 import ar.edu.itba.paw.webapp.exceptions.AppointmentForbiddenException;
 import ar.edu.itba.paw.webapp.exceptions.AppointmentNotFoundException;
@@ -61,5 +61,4 @@ public class ExceptionControllerAdvice {
 
     return mav;
   }
-
 }

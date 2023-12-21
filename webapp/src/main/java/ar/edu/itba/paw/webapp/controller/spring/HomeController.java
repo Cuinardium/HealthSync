@@ -1,4 +1,4 @@
-package ar.edu.itba.paw.webapp.controller;
+package ar.edu.itba.paw.webapp.controller.spring;
 
 import ar.edu.itba.paw.interfaces.services.DoctorService;
 import ar.edu.itba.paw.interfaces.services.PatientService;
@@ -105,7 +105,6 @@ public class HomeController {
             page - 1,
             DEFAULT_PAGE_SIZE);
 
-
     if (PawAuthUserDetails.getRole().equals(UserRole.ROLE_PATIENT)) {
       PawAuthUserDetails currentUser = PawAuthUserDetails.getCurrentUser();
 
@@ -137,7 +136,6 @@ public class HomeController {
     // Pagination
     mav.addObject("currentPage", doctors.getCurrentPage() + 1);
     mav.addObject("totalPages", doctors.getTotalPages());
-
 
     return mav;
   }

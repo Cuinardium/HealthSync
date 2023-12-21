@@ -11,10 +11,9 @@ import ar.edu.itba.paw.webapp.exceptions.AppointmentForbiddenException;
 import ar.edu.itba.paw.webapp.exceptions.AppointmentNotFoundException;
 import ar.edu.itba.paw.webapp.form.IndicationForm;
 import ar.edu.itba.paw.webapp.form.ModalForm;
-
 import java.io.IOException;
 import java.util.List;
-
+import javax.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,8 +25,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
-
-import javax.validation.Valid;
 
 @Controller
 public class AppointmentController {
@@ -41,7 +38,10 @@ public class AppointmentController {
   private static final int PAGE_SIZE = 10;
 
   @Autowired
-  public AppointmentController(final AppointmentService appointmentService, IndicationService indicationService, NotificationService notificationService) {
+  public AppointmentController(
+      final AppointmentService appointmentService,
+      IndicationService indicationService,
+      NotificationService notificationService) {
     this.appointmentService = appointmentService;
     this.indicationService = indicationService;
     this.notificationService = notificationService;
@@ -81,8 +81,7 @@ public class AppointmentController {
             .getFilteredAppointments(userId, AppointmentStatus.COMPLETED, null, null, isPatient)
             .getContent();
 
-    List<Notification> appointmentNotifications=
-            notificationService.getUserNotifications(userId);
+    List<Notification> appointmentNotifications = notificationService.getUserNotifications(userId);
 
     // Add values to model
     mav.addObject("selectedTab", selectedTab >= 1 && selectedTab <= 4 ? selectedTab : 1);
@@ -146,20 +145,21 @@ public class AppointmentController {
       throw new AppointmentForbiddenException();
     }
 
-    try{
-      notificationService.deleteNotificationIfExists(PawAuthUserDetails.getCurrentUserId(), appointmentId);
-    } catch (UserNotFoundException e){
+    try {
+      notificationService.deleteNotificationIfExists(
+          PawAuthUserDetails.getCurrentUserId(), appointmentId);
+    } catch (UserNotFoundException e) {
       LOGGER.error(
-              "Failed to find notification for user {} because user was not found",
-              PawAuthUserDetails.getCurrentUserId(),
-              new UserNotFoundException());
+          "Failed to find notification for user {} because user was not found",
+          PawAuthUserDetails.getCurrentUserId(),
+          new UserNotFoundException());
 
       throw new RuntimeException();
-    }catch (ar.edu.itba.paw.interfaces.services.exceptions.AppointmentNotFoundException e) {
+    } catch (ar.edu.itba.paw.interfaces.services.exceptions.AppointmentNotFoundException e) {
       LOGGER.error(
-              "Failed to find notification for appointment {} because appointment was not found",
-              appointmentId,
-              new AppointmentNotFoundException());
+          "Failed to find notification for appointment {} because appointment was not found",
+          appointmentId,
+          new AppointmentNotFoundException());
 
       throw new RuntimeException();
     }
@@ -168,14 +168,16 @@ public class AppointmentController {
     Page<Indication> indications;
 
     try {
-      indications = indicationService.getIndicationsForAppointment(appointmentId, page - 1, PAGE_SIZE);
+      indications =
+          indicationService.getIndicationsForAppointment(appointmentId, page - 1, PAGE_SIZE);
 
-      LOGGER.debug("Indications for appointment {} are: {}", appointmentId, indications.getContent());
+      LOGGER.debug(
+          "Indications for appointment {} are: {}", appointmentId, indications.getContent());
     } catch (ar.edu.itba.paw.interfaces.services.exceptions.AppointmentNotFoundException e) {
       LOGGER.error(
-              "Failed to get indications for appointment {} because appointment was not found",
-              appointmentId,
-              new AppointmentNotFoundException());
+          "Failed to get indications for appointment {} because appointment was not found",
+          appointmentId,
+          new AppointmentNotFoundException());
 
       throw new RuntimeException();
     }
@@ -192,12 +194,11 @@ public class AppointmentController {
     return mav;
   }
 
-
   // ========================== Indication ==========================
   @RequestMapping(value = "/{id:\\d+}/indication", method = RequestMethod.GET)
   public ModelAndView indication(
-          @PathVariable("id") final long appointmentId,
-          @ModelAttribute("indicationForm") final IndicationForm indicationForm) {
+      @PathVariable("id") final long appointmentId,
+      @ModelAttribute("indicationForm") final IndicationForm indicationForm) {
 
     final ModelAndView mav = new ModelAndView("appointment/indication");
     mav.addObject("showModal", false);
@@ -209,9 +210,9 @@ public class AppointmentController {
 
   @RequestMapping(value = "/{id:\\d+}/indication", method = RequestMethod.POST)
   public ModelAndView submitIndication(
-          @PathVariable("id") final long appointmentId,
-          @Valid @ModelAttribute("indicationForm") final IndicationForm indicationForm,
-          final BindingResult errors) {
+      @PathVariable("id") final long appointmentId,
+      @Valid @ModelAttribute("indicationForm") final IndicationForm indicationForm,
+      final BindingResult errors) {
 
     if (errors.hasFieldErrors("indications")) {
       return indication(appointmentId, indicationForm);
@@ -221,33 +222,33 @@ public class AppointmentController {
 
     try {
       File file = null;
-      if (!(indicationForm.getFile()==null) && !indicationForm.getFile().isEmpty()) {
-        if(errors.hasFieldErrors("file")){
+      if (!(indicationForm.getFile() == null) && !indicationForm.getFile().isEmpty()) {
+        if (errors.hasFieldErrors("file")) {
           return indication(appointmentId, indicationForm);
         }
         file = new File.Builder(indicationForm.getFile().getBytes()).build();
       }
 
       indication =
-              indicationService.createIndication(
-                      appointmentId,
-                      PawAuthUserDetails.getCurrentUserId(),
-                      indicationForm.getIndications(),
-                      file);
+          indicationService.createIndication(
+              appointmentId,
+              PawAuthUserDetails.getCurrentUserId(),
+              indicationForm.getIndications(),
+              file);
 
       LOGGER.info("Created indication {}", indication);
     } catch (ar.edu.itba.paw.interfaces.services.exceptions.AppointmentNotFoundException e) {
       LOGGER.error(
-              "Failed to create indication for appointment {} because appointment was not found",
-              appointmentId,
-              new AppointmentNotFoundException());
+          "Failed to create indication for appointment {} because appointment was not found",
+          appointmentId,
+          new AppointmentNotFoundException());
 
       throw new RuntimeException(e);
     } catch (UserNotFoundException e) {
       LOGGER.error(
-              "Failed to create indication for appointment {} because user was not found",
-              appointmentId,
-              new UserNotFoundException());
+          "Failed to create indication for appointment {} because user was not found",
+          appointmentId,
+          new UserNotFoundException());
 
       throw new RuntimeException(e);
     } catch (IOException e) {
