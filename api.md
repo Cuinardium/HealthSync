@@ -4,7 +4,7 @@ base-url: http://127.0.0.1:8080/paw-2023a-02
 | Endpoint                 | GET | POST | DELETE | PUT |
 |--------------------------|-----|------|--------|-----|
 | [/patients]              |     |      |        |     |
-| [/patients/{id}]         |     |      |        |     |
+| [/patients/{id}]         | x   |      |        |     |
 | [/doctors]               | x   |      |        |     |
 | [/doctors/{id}]          | x   |      |        |     |
 | [/healthinsurances]      | x   |      |        |     |
