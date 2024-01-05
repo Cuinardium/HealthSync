@@ -182,6 +182,11 @@
           <artifactId>org.eclipse.persistence.moxy</artifactId>
         </dependency>
 
+        <!-- jwt dependencies -->
+        <dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt-api</artifactId>
+        </dependency>
     </dependencies>
 
     <build>
