@@ -4,6 +4,7 @@ package ar.edu.itba.paw.webapp.controller;
 import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.webapp.auth.JwtUtil;
 import ar.edu.itba.paw.webapp.form.AuthForm;
+import ar.edu.itba.paw.webapp.responses.AuthRes;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -34,6 +35,6 @@ public class SessionController {
         Authentication auth= authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authForm.getEmail(), authForm.getPassword()));
         User user= (User) auth.getPrincipal();
         String authToken= jwtUtil.generateAccessToken(user);
-        return Response.ok( )//TODO tema response con el token
+        return Response.ok(new AuthRes(authToken)).build();//TODO view if AuthRes needs more data
     }
 }
