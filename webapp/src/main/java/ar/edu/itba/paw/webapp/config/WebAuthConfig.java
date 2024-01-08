@@ -2,6 +2,8 @@ package ar.edu.itba.paw.webapp.config;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+
+import ar.edu.itba.paw.webapp.auth.JwtFilter;
 import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -19,6 +21,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @EnableWebSecurity
 @ComponentScan({"ar.edu.itba.paw.webapp.auth"})
@@ -29,6 +32,9 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
   private Resource openSSLKey;
 
   @Autowired private UserDetailsService userDetailsService;
+
+  @Autowired
+  private JwtFilter jwtFilter;
 
   @Bean
   public static PasswordEncoder passwordEncoder() {
@@ -74,6 +80,8 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
         .and()
         .csrf()
         .disable();
+
+        http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
   }
 
   private String getKey() throws IOException {

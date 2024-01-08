@@ -35,6 +35,6 @@ public class SessionController {
         Authentication auth= authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authForm.getEmail(), authForm.getPassword()));
         User user= (User) auth.getPrincipal();
         String authToken= jwtUtil.generateAccessToken(user);
-        return Response.ok(new AuthRes(authToken)).build();//TODO view if AuthRes needs more data
+        return Response.ok(new AuthRes(authToken, authForm.getEmail())).build();//TODO view if AuthRes needs more data
     }
 }
