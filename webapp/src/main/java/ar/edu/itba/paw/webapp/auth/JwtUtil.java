@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
+import java.util.function.Function;
 
 @Component
 public class JwtUtil {
@@ -60,5 +61,17 @@ public class JwtUtil {
 
     public boolean validateClaims(Claims claims){
         return claims.getExpiration().after(new Date());
+    }
+
+    public boolean isTokenRefresh(String token) {
+        return getClaimFromToken(token, c -> c.get("refresh", Boolean.class) != null);
+    }
+    public <T> T getClaimFromToken(String token, Function<Claims, T> claimsResolver) {
+        final Claims claims = parseClaims(token);
+        return claimsResolver.apply(claims);
+    }
+
+    private Claims parseClaims(String token) {
+        return Jwts.parserBuilder().setSigningKey(SECRET_KEY).build().parseClaimsJws(token).getBody();
     }
 }
