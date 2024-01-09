@@ -5,9 +5,12 @@ import ar.edu.itba.paw.interfaces.services.exceptions.EmailInUseException;
 import ar.edu.itba.paw.models.*;
 import ar.edu.itba.paw.webapp.dto.DoctorDto;
 import ar.edu.itba.paw.webapp.exceptions.UserNotFoundException;
+import ar.edu.itba.paw.webapp.form.DoctorFilterForm;
 import ar.edu.itba.paw.webapp.form.DoctorRegisterForm;
+import ar.edu.itba.paw.webapp.utils.ResponseUtil;
 import java.net.URI;
 import java.time.DayOfWeek;
+import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 import javax.validation.Valid;
@@ -28,15 +31,20 @@ public class DoctorController {
 
   @Context private UriInfo uriInfo;
 
+  private static final int DEFAULT_PAGE_SIZE = 10;
+
   @Autowired
   public DoctorController(final DoctorService doctorService) {
     this.doctorService = doctorService;
   }
 
+  // TODO: mover el filer form a query params
   @GET
   // @Produces("application/vnd.doctorList.v1+json")
   @Produces(MediaType.APPLICATION_JSON)
-  public Response listDoctors(@QueryParam("page") @DefaultValue("1") final int page) {
+  public Response listDoctors(
+      @Valid final DoctorFilterForm doctorFilterForm,
+      @QueryParam("page") @DefaultValue("1") final int page) {
 
     // page tiene que ser > 1
     if (page < 1) {
@@ -44,8 +52,53 @@ public class DoctorController {
       return Response.status(Response.Status.BAD_REQUEST).build();
     }
 
-    // TODO: filter by page
-    List<Doctor> doctorList = doctorService.getDoctors();
+    String name = doctorFilterForm.getName();
+    Set<Integer> specialtyCodes = doctorFilterForm.getSpecialtyCodes();
+    Set<String> cities = doctorFilterForm.getCities();
+    Set<Integer> healthInsuranceCodes = doctorFilterForm.getHealthInsuranceCodes();
+    LocalDate date = doctorFilterForm.getDate();
+    int fromOrdinal = doctorFilterForm.getFrom();
+    int toOrdinal = doctorFilterForm.getTo();
+    int minRating = doctorFilterForm.getMinRating();
+
+    ThirtyMinuteBlock fromTime = ThirtyMinuteBlock.values()[fromOrdinal];
+    ThirtyMinuteBlock toTime = ThirtyMinuteBlock.values()[toOrdinal];
+
+    Set<Specialty> specialties = new HashSet<>();
+    if (specialtyCodes != null) {
+      for (Integer specialtyCode : specialtyCodes) {
+        if (specialtyCode < 0 || specialtyCode >= Specialty.values().length) {
+          continue;
+        }
+        specialties.add(Specialty.values()[specialtyCode]);
+      }
+    }
+
+    Set<HealthInsurance> healthInsurances = new HashSet<>();
+    if (healthInsuranceCodes != null) {
+      for (Integer healthInsuranceCode : healthInsuranceCodes) {
+        if (healthInsuranceCode < 0 || healthInsuranceCode >= HealthInsurance.values().length) {
+          continue;
+        }
+        healthInsurances.add(HealthInsurance.values()[healthInsuranceCode]);
+      }
+    }
+
+    // TODO: allow for variable page size?
+    Page<Doctor> doctorsPage =
+        doctorService.getFilteredDoctors(
+            name,
+            date,
+            fromTime,
+            toTime,
+            specialties,
+            cities,
+            healthInsurances,
+            minRating,
+            page - 1,
+            DEFAULT_PAGE_SIZE);
+
+    List<Doctor> doctorList = doctorsPage.getContent();
     if (doctorList.isEmpty()) {
       LOGGER.debug("No content for page {}", page);
       return Response.noContent().build();
@@ -53,22 +106,12 @@ public class DoctorController {
 
     final List<DoctorDto> dtoList = DoctorDto.fromDoctorList(uriInfo, doctorList);
 
-    // TODO: fill links
     LOGGER.debug("doctors for page {}", page);
-    // TODO: hay q verificar exitencia para first tambien?
-    String first = uriInfo.getRequestUriBuilder().replaceQueryParam("page", 1).toString();
-    // TODO: cambiar por una consulta para saber cual es el last
-    String last = uriInfo.getRequestUriBuilder().replaceQueryParam("page", 1).toString();
-    // TODO: verificar exitencia de page + 1
-    String next = uriInfo.getRequestUriBuilder().replaceQueryParam("page", page + 1).toString();
-    // TODO: verificar exitencia de page - 1
-    String prev = uriInfo.getRequestUriBuilder().replaceQueryParam("page", page - 1).toString();
-    return Response.ok(new GenericEntity<List<DoctorDto>>(dtoList) {})
-        .link(next, "next")
-        .link(prev, "prev")
-        .link(first, "first")
-        .link(last, "last")
-        .build();
+
+    Response.ResponseBuilder responseBuilder =
+        Response.ok(new GenericEntity<List<DoctorDto>>(dtoList) {});
+
+    return ResponseUtil.setPaginationLinks(responseBuilder, uriInfo, doctorsPage).build();
   }
 
   @POST

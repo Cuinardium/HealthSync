@@ -34,6 +34,14 @@ public class Page<T> {
     return content.size() == 0 ? 1 : (int) Math.ceil((double) totalContentCount / pageSize);
   }
 
+  public boolean hasNext() {
+    return (this.getCurrentPage() < this.getTotalPages());
+  }
+
+  public boolean hasPrev() {
+    return (this.getCurrentPage() > 1);
+  }
+
   @Override
   public boolean equals(Object obj) {
     if (this == obj) return true;
