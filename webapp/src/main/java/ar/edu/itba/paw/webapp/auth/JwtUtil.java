@@ -20,7 +20,9 @@ public class JwtUtil {
   private final String TOKEN_PREFIX = "Bearer ";
 
   public JwtUtil() {
-    final String secretKeyBase = "CFGJ"; // Cuini Franco Gonza Juan
+    // Cuini Franco Gonza Juan
+    final String secretKeyBase =
+        "CFGJCFGJCFGJCFGJCFGJCFGJCFGJCFGJ"; // 32 characters * 8 bits per character = 256 bits
     this.SECRET_KEY = Keys.hmacShaKeyFor(secretKeyBase.getBytes(StandardCharsets.UTF_8));
     this.jwtParserBuilder = Jwts.parserBuilder().setSigningKey(this.SECRET_KEY);
   }
