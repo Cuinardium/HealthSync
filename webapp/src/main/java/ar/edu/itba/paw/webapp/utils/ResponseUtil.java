@@ -20,14 +20,16 @@ public class ResponseUtil {
     if (page.hasNext()) {
       String next =
           uri.getRequestUriBuilder()
-              .replaceQueryParam("page", page.getCurrentPage() + 1)
+              .replaceQueryParam(
+                  "page", page.getCurrentPage() + 2) // TODO: por q Page usa 0 como inicial
               .toString();
       responseBuilder.link(next, "next");
     }
     if (page.hasPrev()) {
       String prev =
           uri.getRequestUriBuilder()
-              .replaceQueryParam("page", page.getCurrentPage() - 1)
+              .replaceQueryParam(
+                  "page", page.getCurrentPage()) // TODO: porque Page usa 0 como inicial
               .toString();
       responseBuilder.link(prev, "prev");
     }

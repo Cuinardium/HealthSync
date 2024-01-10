@@ -11,6 +11,7 @@ import ar.edu.itba.paw.webapp.utils.ResponseUtil;
 import java.net.URI;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 import javax.validation.Valid;
@@ -32,6 +33,7 @@ public class DoctorController {
   @Context private UriInfo uriInfo;
 
   private static final int DEFAULT_PAGE_SIZE = 10;
+  private static final String DATE_FORMAT = "dd-MM-yyyy";
 
   @Autowired
   public DoctorController(final DoctorService doctorService) {
@@ -44,7 +46,37 @@ public class DoctorController {
   @Produces(MediaType.APPLICATION_JSON)
   public Response listDoctors(
       @Valid final DoctorFilterForm doctorFilterForm,
-      @QueryParam("page") @DefaultValue("1") final int page) {
+      @QueryParam("page") @DefaultValue("1") final int page,
+      @QueryParam("name") final String name,
+      @QueryParam("fromTime") final String fromTimeString,
+      @QueryParam("toTime") final String toTimeString,
+      @QueryParam("minRating") final Integer minRating,
+      @QueryParam("date") final String dateString,
+      @QueryParam("specialty") final Set<String> specialtiesStringSet,
+      @QueryParam("city") final Set<String> citiesStringSet,
+      @QueryParam("healthInsurance") final Set<String> healthInsurancesStringSet) {
+
+    LOGGER.debug(
+        "\n\n\nValues are:\n"
+            + "page {}\n"
+            + "name {}\n"
+            + "fromTime {}\n"
+            + "toTime {}\n"
+            + "minRating {}\n"
+            + "date {}\n"
+            + "specialty {}\n"
+            + "city {}\n"
+            + "healthInsurance {}\n"
+            + "\n\n\n",
+        page,
+        name,
+        fromTimeString,
+        toTimeString,
+        minRating,
+        dateString,
+        specialtiesStringSet,
+        citiesStringSet,
+        healthInsurancesStringSet);
 
     // page tiene que ser > 1
     if (page < 1) {
@@ -52,39 +84,31 @@ public class DoctorController {
       return Response.status(Response.Status.BAD_REQUEST).build();
     }
 
-    String name = doctorFilterForm.getName();
-    Set<Integer> specialtyCodes = doctorFilterForm.getSpecialtyCodes();
-    Set<String> cities = doctorFilterForm.getCities();
-    Set<Integer> healthInsuranceCodes = doctorFilterForm.getHealthInsuranceCodes();
-    LocalDate date = doctorFilterForm.getDate();
-    int fromOrdinal = doctorFilterForm.getFrom();
-    int toOrdinal = doctorFilterForm.getTo();
-    int minRating = doctorFilterForm.getMinRating();
-
-    ThirtyMinuteBlock fromTime = ThirtyMinuteBlock.values()[fromOrdinal];
-    ThirtyMinuteBlock toTime = ThirtyMinuteBlock.values()[toOrdinal];
-
-    Set<Specialty> specialties = new HashSet<>();
-    if (specialtyCodes != null) {
-      for (Integer specialtyCode : specialtyCodes) {
-        if (specialtyCode < 0 || specialtyCode >= Specialty.values().length) {
-          continue;
-        }
-        specialties.add(Specialty.values()[specialtyCode]);
-      }
+    LocalDate date = null;
+    if (dateString != null) {
+      date = LocalDate.parse(dateString, DateTimeFormatter.ofPattern(DATE_FORMAT));
     }
 
-    Set<HealthInsurance> healthInsurances = new HashSet<>();
-    if (healthInsuranceCodes != null) {
-      for (Integer healthInsuranceCode : healthInsuranceCodes) {
-        if (healthInsuranceCode < 0 || healthInsuranceCode >= HealthInsurance.values().length) {
-          continue;
-        }
-        healthInsurances.add(HealthInsurance.values()[healthInsuranceCode]);
-      }
+    ThirtyMinuteBlock fromTime = null;
+    if (fromTimeString != null) {
+      fromTime = ThirtyMinuteBlock.valueOf(fromTimeString);
     }
+    ThirtyMinuteBlock toTime = null;
+    if (toTimeString != null) {
+      toTime = ThirtyMinuteBlock.valueOf(toTimeString);
+    }
+    // TODO: hace falta esto? (hay otro mapping mas adelante) quizas habria que quedarnos con 1 solo
+    // !!!
+    Set<Specialty> specialties =
+        specialtiesStringSet.stream().map(Specialty::valueOf).collect(Collectors.toSet());
+    Set<HealthInsurance> healthInsurances =
+        healthInsurancesStringSet
+            .stream()
+            .map(HealthInsurance::valueOf)
+            .collect(Collectors.toSet());
 
-    // TODO: allow for variable page size?
+    // TODO: CHECK ERRORS for all types
+    // TODO: allow for variable page size?date
     Page<Doctor> doctorsPage =
         doctorService.getFilteredDoctors(
             name,
@@ -92,7 +116,7 @@ public class DoctorController {
             fromTime,
             toTime,
             specialties,
-            cities,
+            citiesStringSet,
             healthInsurances,
             minRating,
             page - 1,
