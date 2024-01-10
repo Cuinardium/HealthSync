@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
 import ar.edu.itba.paw.webapp.auth.JwtFilter;
+import ar.edu.itba.paw.webapp.auth.PawUserDetailsService;
 import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -31,7 +32,7 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
   @Value("classpath:openssl-key")
   private Resource openSSLKey;
 
-  @Autowired private UserDetailsService userDetailsService;
+  @Autowired private PawUserDetailsService userDetailsService;
 
   @Autowired
   private JwtFilter jwtFilter;

@@ -33,7 +33,7 @@ public class JwtUtil {
         .setIssuer("paw-2023a-02")
         .setIssuedAt(new Date())
         .setExpiration(new Date(System.currentTimeMillis() + accessTokenValidity))
-        .signWith(SECRET_KEY, SignatureAlgorithm.HS512)
+        .signWith(SECRET_KEY, SignatureAlgorithm.HS256)
         .compact();
   }
 
