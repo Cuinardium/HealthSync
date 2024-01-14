@@ -24,7 +24,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-@Path("/")//TODO see auth path
+@Path("/login")//TODO see auth path
 @Component
 public class SessionController {
     private final UserService userService;

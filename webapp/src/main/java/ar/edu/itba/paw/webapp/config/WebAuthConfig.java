@@ -72,17 +72,15 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
         // .anonymous()
         // .antMatchers("/doctor-edit")
         // .hasRole("DOCTOR")
-        .antMatchers("/**")
+        .antMatchers("/login")
         .permitAll()
-        // .authenticated()
+        .anyRequest().authenticated()
         .and()
         .exceptionHandling()
         .accessDeniedPage("/errors/403")
-        .and()
+        .and().addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
         .csrf()
         .disable();
-
-        http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
   }
 
   private String getKey() throws IOException {
