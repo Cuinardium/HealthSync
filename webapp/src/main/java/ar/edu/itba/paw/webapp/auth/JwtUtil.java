@@ -8,12 +8,16 @@ import java.security.Key;
 import java.util.Date;
 import java.util.function.Function;
 import javax.servlet.http.HttpServletRequest;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 @Component
 public class JwtUtil {
 
   private static final long accessTokenValidity = 24 * 60 * 60 * 1000;
+
+  @Autowired private PawUserDetailsService userDetailsService;
   private final JwtParserBuilder jwtParserBuilder;
   private final Key SECRET_KEY;
   private final String TOKEN_HEADER = "Authorization";
@@ -29,7 +33,7 @@ public class JwtUtil {
 
   public String generateAccessToken(User user) {
     return Jwts.builder()
-        .setSubject(String.format("%s,%s", user.getId(), user.getEmail()))
+        .setSubject(user.getEmail())
         .setIssuer("paw-2023a-02")
         .setIssuedAt(new Date())
         .setExpiration(new Date(System.currentTimeMillis() + accessTokenValidity))
@@ -41,13 +45,22 @@ public class JwtUtil {
     return jwtParserBuilder.build().parseClaimsJws(token).getBody();
   }
 
-  public Claims resolveClaims(HttpServletRequest req) {
+  /** jws: Json Web Signature (https://datatracker.ietf.org/doc/html/rfc7515) */
+  public UserDetails parseToken(String jws) {
+    try {
+      final Claims claims =
+          Jwts.parserBuilder().setSigningKey(SECRET_KEY).build().parseClaimsJws(jws).getBody();
 
-    String token = resolveToken(req);
-    if (token != null) {
-      return parseJwtClaims(token);
+      if (new Date(System.currentTimeMillis()).after(claims.getExpiration())) {
+        return null;
+      }
+
+      final String username = claims.getSubject();
+
+      return userDetailsService.loadUserByUsername(username);
+    } catch (Exception e) {
+      return null;
     }
-    return null;
   }
 
   public String resolveToken(HttpServletRequest request) {
