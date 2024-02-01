@@ -26,10 +26,9 @@ public class FileController {
   }
 
   @RequestMapping(
-    value = "/file/{id:\\d+}",
-    method = RequestMethod.GET,
-    produces = MediaType.IMAGE_JPEG_VALUE
-  )
+      value = "/file/{id:\\d+}",
+      method = RequestMethod.GET,
+      produces = MediaType.IMAGE_JPEG_VALUE)
   @ResponseBody
   public ResponseEntity<byte[]> getFile(@PathVariable("id") final long id) {
     try {

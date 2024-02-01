@@ -26,10 +26,9 @@ public class ImageController {
   }
 
   @RequestMapping(
-    value = "/img/{id:\\d+}",
-    method = RequestMethod.GET,
-    produces = MediaType.IMAGE_JPEG_VALUE
-  )
+      value = "/img/{id:\\d+}",
+      method = RequestMethod.GET,
+      produces = MediaType.IMAGE_JPEG_VALUE)
   @ResponseBody
   public ResponseEntity<byte[]> getImage(@PathVariable("id") final long id) {
     try {
