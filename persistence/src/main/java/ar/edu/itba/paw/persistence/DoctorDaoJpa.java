@@ -125,7 +125,7 @@ public class DoctorDaoJpa implements DoctorDao {
     List<Integer> specialtyCodes =
         specialties != null
             ? specialties.stream().mapToInt(Specialty::ordinal).boxed().collect(Collectors.toList())
-            : new ArrayList<Integer>();
+            : Collections.emptyList();
 
     List<Integer> healthInsuranceCodes =
         healthInsurance != null
@@ -134,7 +134,7 @@ public class DoctorDaoJpa implements DoctorDao {
                 .mapToInt(HealthInsurance::ordinal)
                 .boxed()
                 .collect(Collectors.toList())
-            : new ArrayList<Integer>();
+            : Collections.emptyList();
 
     // Start building the query
     QueryBuilder nativeQueryBuilder =
