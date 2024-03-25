@@ -139,6 +139,7 @@ public class DoctorDaoJpa implements DoctorDao {
     // Start building the query
     QueryBuilder nativeQueryBuilder =
         new QueryBuilder().select("doctor.doctor_id").from("doctor").groupBy("doctor.doctor_id");
+    QueryBuilder qtyQueryBuilder = new QueryBuilder().select("count(*)").from("doctor");
 
     // Add the filters to the query, if it is the first filter, don't add AND
     if (name != null && !name.isEmpty()) {
@@ -150,14 +151,17 @@ public class DoctorDaoJpa implements DoctorDao {
               .build();
 
       nativeQueryBuilder.where("doctor.doctor_id IN (" + nameQuery + ")");
+      qtyQueryBuilder.where("doctor.doctor_id IN (" + nameQuery + ")");
     }
 
     if (!specialtyCodes.isEmpty()) {
       nativeQueryBuilder.where("specialty_code IN :specialties");
+      qtyQueryBuilder.where("specialty_code IN :specialties");
     }
 
     if (cities != null && !cities.isEmpty()) {
       nativeQueryBuilder.where("city IN :cities");
+      qtyQueryBuilder.where("city IN :cities");
     }
 
     if (!healthInsuranceCodes.isEmpty()) {
@@ -169,6 +173,7 @@ public class DoctorDaoJpa implements DoctorDao {
               .build();
 
       nativeQueryBuilder.where("doctor.doctor_id IN (" + healthInsuranceQuery + ")");
+      qtyQueryBuilder.where("doctor.doctor_id IN (" + healthInsuranceQuery + ")");
     }
 
     if (date != null && fromTime != null && toTime != null) {
@@ -223,7 +228,9 @@ public class DoctorDaoJpa implements DoctorDao {
               .build();
 
       nativeQueryBuilder.where("doctor.doctor_id IN (" + attendingHoursQuery + ")");
+      qtyQueryBuilder.where("doctor.doctor_id IN (" + attendingHoursQuery + ")");
       nativeQueryBuilder.where("doctor.doctor_id NOT IN (" + vacationQuery + ")");
+      qtyQueryBuilder.where("doctor.doctor_id NOT IN (" + vacationQuery + ")");
     }
 
     if (minRating != null && minRating >= 0 && minRating <= 5) {
@@ -237,12 +244,14 @@ public class DoctorDaoJpa implements DoctorDao {
               .build();
 
       nativeQueryBuilder.where("doctor.doctor_id IN (" + ratingQuery + ")");
+      qtyQueryBuilder.where("doctor.doctor_id IN (" + ratingQuery + ")");
     }
 
-    String builtQuery = nativeQueryBuilder.build();
+    String builtNativeQuery = nativeQueryBuilder.build();
+    Query nativeQuery = em.createNativeQuery(builtNativeQuery);
 
-    Query nativeQuery = em.createNativeQuery(builtQuery);
-    Query qtyDoctorsQuery = em.createNativeQuery(builtQuery);
+    String builtQtyQuery = qtyQueryBuilder.build();
+    Query qtyDoctorsQuery = em.createNativeQuery(builtQtyQuery);
 
     if (name != null && !name.isEmpty()) {
       nativeQuery.setParameter("name", name);
@@ -287,9 +296,8 @@ public class DoctorDaoJpa implements DoctorDao {
     query.setParameter("idList", idList);
 
     List<Doctor> content = query.getResultList();
-    int qtyDoctors = qtyDoctorsQuery.getResultList().size();
-
-    return new Page<>(content, page, qtyDoctors, pageSize);
+    Number qtyDoctors = (Number) qtyDoctorsQuery.getSingleResult();
+    return new Page<>(content, page, qtyDoctors.intValue(), pageSize);
   }
 
   @Override
