@@ -2,11 +2,16 @@ package ar.edu.itba.paw.webapp.controller;
 
 import ar.edu.itba.paw.interfaces.services.PatientService;
 import ar.edu.itba.paw.interfaces.services.exceptions.EmailInUseException;
+import ar.edu.itba.paw.interfaces.services.exceptions.PatientNotFoundException;
 import ar.edu.itba.paw.models.HealthInsurance;
+import ar.edu.itba.paw.models.Image;
 import ar.edu.itba.paw.models.Patient;
 import ar.edu.itba.paw.webapp.dto.PatientDto;
 import ar.edu.itba.paw.webapp.exceptions.UserNotFoundException;
+import ar.edu.itba.paw.webapp.form.PatientEditForm;
 import ar.edu.itba.paw.webapp.form.PatientRegisterForm;
+
+import java.io.IOException;
 import java.net.URI;
 import javax.validation.Valid;
 import javax.ws.rs.*;
@@ -74,5 +79,39 @@ public class PatientController {
     Patient patient = patientService.getPatientById(id).orElseThrow(UserNotFoundException::new);
     LOGGER.debug("returning patient with id {}", id);
     return Response.ok(PatientDto.fromPatient(uriInfo, patient)).build();
+  }
+
+  @PUT
+  @Path("/{id}")
+  @Produces(MediaType.APPLICATION_JSON)
+  public Response updatePatient(@PathParam("id") final long id, @Valid final PatientEditForm patientEditForm) throws PatientNotFoundException, EmailInUseException {
+    try {
+      HealthInsurance healthInsurance =
+              HealthInsurance.values()[patientEditForm.getHealthInsuranceCode()];
+      Image image = null;
+      if (!patientEditForm.getImage().isEmpty()) {
+        image = new Image(patientEditForm.getImage().getBytes());
+      }
+      Patient patient = patientService.updatePatient(
+              id,
+              patientEditForm.getEmail(),
+              patientEditForm.getName(),
+              patientEditForm.getLastname(),
+              healthInsurance,
+              image,
+              patientEditForm.getLocale());
+
+      LOGGER.debug("updated patient {}", patient);
+      return Response.noContent().build();
+    }catch (IOException e) {
+      // TODO: handle
+      return Response.status(Response.Status.CONFLICT).build();
+    }catch (PatientNotFoundException e){
+      LOGGER.warn("Failed to find patient");
+      return Response.status(Response.Status.CONFLICT).build();
+    }catch (EmailInUseException e){
+      LOGGER.warn("Failed to modify patient´s email due to email unique constraint");
+      return Response.status(Response.Status.CONFLICT).build();
+    }
   }
 }
