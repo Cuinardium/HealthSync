@@ -4,6 +4,9 @@ import ar.edu.itba.paw.interfaces.services.AppointmentService;
 import ar.edu.itba.paw.models.Appointment;
 import ar.edu.itba.paw.webapp.dto.AppointmentDto;
 import ar.edu.itba.paw.webapp.exceptions.AppointmentNotFoundException;
+
+import java.util.Optional;
+
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -29,6 +32,7 @@ public class AppointmentController {
     this.appointmentService = appointmentService;
   }
 
+
   // TODO: Add authentication so the appointment is only visible to the users involved
   @GET
   @Produces(MediaType.APPLICATION_JSON)
@@ -36,9 +40,14 @@ public class AppointmentController {
   public Response getAppointment(@PathParam("id") final long id)
       throws AppointmentNotFoundException {
 
-    // TODO: Correct response status
-    Appointment appointment =
-        appointmentService.getAppointmentById(id).orElseThrow(AppointmentNotFoundException::new);
+    Optional<Appointment> possibleAppointment = appointmentService.getAppointmentById(id);
+
+    if (!possibleAppointment.isPresent()) {
+      LOGGER.debug("appointment with id {} not found", id);
+      return Response.status(Response.Status.NOT_FOUND).build();
+    }
+
+    Appointment appointment = possibleAppointment.get();
 
     LOGGER.debug("returning appointment with id {}", id);
     return Response.ok(AppointmentDto.fromAppointment(uriInfo, appointment)).build();
