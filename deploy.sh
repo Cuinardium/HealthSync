@@ -45,21 +45,14 @@ if [ ! -f ./webapp/target/webapp.war ]; then
     exit 1
 fi
 
-# if ENV variable PAMPER_USER is not set, then exit
-if [ -z "$PAMPERO_USER" ]; then
-    echo -e "\n[ERROR] ENV var PAMPERO_USER is not set!"
-    exit 1
-fi
-
-# change if needed
+# change anything if needed
 local_port=2222
-# in seconds -> change if needed
 ssh_tunnel_uptime=10
-# change if needed
 paw_user="paw-2023a-02"
+internal_ip=10.16.1.111
 
 # create temporary ssh-tunnel
-ssh -f -L ${local_port}:10.16.1.110:22 ${PAMPERO_USER}@pampero.itba.edu.ar sleep ${ssh_tunnel_uptime}
+ssh -f -L ${local_port}:${internal_ip}:22 pampero sleep ${ssh_tunnel_uptime}
 
 # upload ./webapp/target/webapp.war to web/app.war on server
 sftp -P ${local_port} ${paw_user}@localhost <<< $"put ./webapp/target/webapp.war web/app.war"

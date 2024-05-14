@@ -3,7 +3,7 @@ import time
 from datetime import date
 current_date = date.today()
 
-url = 'http://pawserver.it.itba.edu.ar/logs/paw-2023a-02.paw.' + str(current_date) + '.log'
+url = 'http://old-pawserver.it.itba.edu.ar/logs/paw-2023a-02.paw.' + str(current_date) + '.log'
 last_position = 0
 
 while True:
