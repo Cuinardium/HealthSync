@@ -1,4 +1,4 @@
-url=http://pawserver.it.itba.edu.ar/logs/localhost.$(date +%Y-%m-%d).log
+url=http://old-pawserver.it.itba.edu.ar/logs/localhost.$(date +%Y-%m-%d).log
 group="paw-2023a-02"
 separator="================================================================"
 
