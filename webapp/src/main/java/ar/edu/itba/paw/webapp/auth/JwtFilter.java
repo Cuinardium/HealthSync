@@ -20,6 +20,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 @Component
 public class JwtFilter extends OncePerRequestFilter {
   private static final String TOKEN_PREFIX = "Bearer ";
+  private static final String REFRESH_HEADER = "X-JWT";
 
   @Autowired private JwtUtil jwtUtil;
 
@@ -76,7 +77,7 @@ public class JwtFilter extends OncePerRequestFilter {
               + request.getContextPath()
               + "/api";
 
-      response.setHeader("X-JWT", jwtUtil.generateAccessToken(user, baseURL));
+      response.setHeader(REFRESH_HEADER, jwtUtil.generateAccessToken(user, baseURL));
     }
 
     final UsernamePasswordAuthenticationToken authentication =
