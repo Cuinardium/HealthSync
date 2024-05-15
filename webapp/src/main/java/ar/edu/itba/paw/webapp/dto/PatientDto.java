@@ -10,6 +10,7 @@ public class PatientDto {
   private String lastName;
   private URI healthInsurance;
   private URI self;
+  private URI appointments;
 
   public static PatientDto fromPatient(UriInfo uri, Patient patient) {
     PatientDto dto = new PatientDto();
@@ -23,6 +24,8 @@ public class PatientDto {
             .build();
     dto.self =
         uri.getBaseUriBuilder().path("/patients").path(String.valueOf(patient.getId())).build();
+    dto.appointments=
+            uri.getBaseUriBuilder().path("/appointments").path(String.valueOf(patient.getId())).build();
 
     return dto;
   }
@@ -58,4 +61,8 @@ public class PatientDto {
   public void setHealthInsurance(URI healthInsurance) {
     this.healthInsurance = healthInsurance;
   }
+
+  public URI getAppointments() {return appointments;}
+
+  public void setAppointments(URI appointments) {this.appointments = appointments;}
 }

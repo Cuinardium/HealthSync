@@ -15,6 +15,7 @@ public class DoctorDto {
 
   private URI healthInsurances;
   private URI attendingHours;
+  private URI appointments;
   private URI image;
   private URI self;
 
@@ -30,6 +31,8 @@ public class DoctorDto {
     // uri.getBaseUriBuilder().path("/images").path(String.valueOf(doctor.getImageId())).build();
     dto.self =
         uri.getBaseUriBuilder().path("/doctors").path(String.valueOf(doctor.getId())).build();
+    dto.appointments=
+            uri.getBaseUriBuilder().path("/appointments").path(String.valueOf(doctor.getId())).build();
     return dto;
   }
 
@@ -84,4 +87,8 @@ public class DoctorDto {
   public void setCity(String city) {
     this.city = city;
   }
+
+  public URI getAppointments() {return appointments;}
+
+  public void setAppointments(URI appointments) {this.appointments = appointments;}
 }
