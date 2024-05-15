@@ -20,13 +20,10 @@ public class JwtUtil {
   @Autowired private PawUserDetailsService userDetailsService;
   private final JwtParserBuilder jwtParserBuilder;
   private final Key SECRET_KEY;
-  private final String TOKEN_HEADER = "Authorization";
-  private final String TOKEN_PREFIX = "Bearer ";
 
   public JwtUtil() {
     // Cuini Franco Gonza Juan
-    final String secretKeyBase =
-        "CFGJCFGJCFGJCFGJCFGJCFGJCFGJCFGJ"; // 32 characters * 8 bits per character = 256 bits
+    final String secretKeyBase = "CFGJCFGJCFGJCFGJCFGJCFGJCFGJCFGJ"; // 32 characters * 8 bits per character = 256 bits
     this.SECRET_KEY = Keys.hmacShaKeyFor(secretKeyBase.getBytes(StandardCharsets.UTF_8));
     this.jwtParserBuilder = Jwts.parserBuilder().setSigningKey(this.SECRET_KEY);
   }
@@ -40,11 +37,6 @@ public class JwtUtil {
         .signWith(SECRET_KEY, SignatureAlgorithm.HS256)
         .compact();
   }
-
-  private Claims parseJwtClaims(String token) {
-    return jwtParserBuilder.build().parseClaimsJws(token).getBody();
-  }
-
   /** jws: Json Web Signature (https://datatracker.ietf.org/doc/html/rfc7515) */
   public UserDetails parseToken(String jws) {
     try {
@@ -63,29 +55,48 @@ public class JwtUtil {
     }
   }
 
-  public String resolveToken(HttpServletRequest request) {
+  public String generateAccessToken(User user, String baseUrl) {
+    Claims claims = Jwts.claims();
+    claims.setSubject(user.getEmail());
+    claims.put("userURL", baseUrl + "/users/" + user.getId());
+    claims.put("authorization", userDetailsService.loadUserByUsername(user.getEmail()).getAuthorities());
+    claims.put("refresh", false);
 
-    String bearerToken = request.getHeader(TOKEN_HEADER);
-    if (bearerToken != null && bearerToken.startsWith(TOKEN_PREFIX)) {
-      return bearerToken.substring(TOKEN_PREFIX.length());
+    return Jwts.builder()
+            .setIssuedAt(new Date(System.currentTimeMillis()))
+            .setExpiration(new Date(System.currentTimeMillis() + accessTokenValidity))
+            .setClaims(claims)
+            .signWith(SECRET_KEY)
+            .compact();
+  }
+
+  private Claims parseJwtClaims(String token) {
+    return jwtParserBuilder.build().parseClaimsJws(token).getBody();
+  }
+
+  public boolean validateAccessToken(String token) {
+    final Claims claims = parseJwtClaims(token);
+    return claims.get("refresh", Boolean.class) != null && !(new Date(System.currentTimeMillis()).after(claims.getExpiration()));
+  }
+
+  public String generateRefreshToken(User user) {
+    Claims claims = Jwts.claims();
+    claims.setSubject(user.getEmail());
+    claims.put("refresh", true);
+    return Jwts.builder()
+            .setClaims(claims)
+            .setIssuedAt(new Date(System.currentTimeMillis()))
+            .setExpiration(new Date(System.currentTimeMillis() + accessTokenValidity))
+            .signWith(SECRET_KEY)
+            .compact();
+  }
+
+  public boolean isRefreshToken(String token) {
+    try {
+      final Claims claims = Jwts.parserBuilder().setSigningKey(SECRET_KEY).build().parseClaimsJws(token).getBody();
+      return claims.get("refresh", Boolean.class);
+    } catch (Exception e) {
+      return false;
     }
-    return null;
-  }
-
-  public boolean validateClaims(Claims claims) {
-    return claims.getExpiration().after(new Date());
-  }
-
-  public boolean isTokenRefresh(String token) {
-    return getClaimFromToken(token, c -> c.get("refresh", Boolean.class) != null);
-  }
-
-  public <T> T getClaimFromToken(String token, Function<Claims, T> claimsResolver) {
-    final Claims claims = parseClaims(token);
-    return claimsResolver.apply(claims);
-  }
-
-  private Claims parseClaims(String token) {
-    return Jwts.parserBuilder().setSigningKey(SECRET_KEY).build().parseClaimsJws(token).getBody();
   }
 }

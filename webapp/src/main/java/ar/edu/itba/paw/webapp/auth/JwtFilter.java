@@ -1,5 +1,7 @@
 package ar.edu.itba.paw.webapp.auth;
 
+import ar.edu.itba.paw.interfaces.services.UserService;
+import ar.edu.itba.paw.models.User;
 import java.io.IOException;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -17,25 +19,38 @@ import org.springframework.web.filter.OncePerRequestFilter;
 /** https://www.toptal.com/spring/spring-security-tutorial */
 @Component
 public class JwtFilter extends OncePerRequestFilter {
+  private static final String TOKEN_PREFIX = "Bearer ";
 
   @Autowired private JwtUtil jwtUtil;
+
+  @Autowired private UserService userService;
 
   @Override
   protected void doFilterInternal(
       HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
       throws ServletException, IOException {
-    // Get authorization header and validate
+
     final String header = request.getHeader(HttpHeaders.AUTHORIZATION);
-    if (header == null || !header.startsWith("Bearer ")) {
+
+    if (header == null || !header.startsWith(TOKEN_PREFIX)) {
       filterChain.doFilter(request, response);
       return;
     }
 
-    // Get JwtToken and UserDetails
-    final String accessToken = header.split(" ")[1].trim();
-    UserDetails userDetails = jwtUtil.parseToken(accessToken);
+    final String token;
+    try {
+      token = header.split(" ")[1].trim();
+      if (!jwtUtil.validateAccessToken(token)) {
+        filterChain.doFilter(request, response);
+        return;
+      }
+    } catch (Exception e) {
+      filterChain.doFilter(request, response);
+      return;
+    }
 
-    // Validate userDetails
+    UserDetails userDetails = jwtUtil.parseToken(token);
+
     if (userDetails == null
         || !userDetails.isEnabled()
         || !userDetails.isAccountNonLocked()
@@ -44,14 +59,32 @@ public class JwtFilter extends OncePerRequestFilter {
       return;
     }
 
-    // Create authentication and set it on the spring security context
+    if (jwtUtil.isRefreshToken(token)) {
+      User user = userService.getUserByEmail(userDetails.getUsername()).orElse(null);
+
+      if (user == null) {
+        filterChain.doFilter(request, response);
+        return;
+      }
+
+      String baseURL =
+          request.getScheme()
+              + "://"
+              + request.getServerName()
+              + ":"
+              + request.getServerPort()
+              + request.getContextPath()
+              + "/api";
+
+      response.setHeader("X-JWT", jwtUtil.generateAccessToken(user, baseURL));
+    }
+
     final UsernamePasswordAuthenticationToken authentication =
         new UsernamePasswordAuthenticationToken(
             userDetails.getUsername(), userDetails.getPassword(), userDetails.getAuthorities());
-    authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 
+    authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
     SecurityContextHolder.getContext().setAuthentication(authentication);
-    response.setHeader(HttpHeaders.AUTHORIZATION, header);
     filterChain.doFilter(request, response);
   }
 }
