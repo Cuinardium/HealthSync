@@ -39,6 +39,8 @@
         <commons-fileupload.version>1.4</commons-fileupload.version>
         <junit.version>4.13.2</junit.version>
 
+        <frontend.plugin.version>1.12.1</frontend.plugin.version>
+
     </properties>
 
 
@@ -237,6 +239,8 @@
 
 
     <modules>
+        <module>frontend</module>
+
         <module>webapp</module>
 
         <module>models</module>
@@ -250,4 +254,15 @@
         <module>interfaces-persistence</module>
     </modules>
 
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>com.github.eirslett</groupId>
+                    <artifactId>frontend-maven-plugin</artifactId>
+                    <version>${frontend.plugin.version}</version>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
 </project>
