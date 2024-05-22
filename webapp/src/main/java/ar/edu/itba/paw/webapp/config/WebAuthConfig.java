@@ -3,8 +3,10 @@ package ar.edu.itba.paw.webapp.config;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
+import ar.edu.itba.paw.webapp.auth.BasicAuthFilter;
 import ar.edu.itba.paw.webapp.auth.JwtFilter;
 import ar.edu.itba.paw.webapp.auth.PawUserDetailsService;
+import ar.edu.itba.paw.webapp.auth.handlers.HealthSyncAuthenticationEntryPoint;
 import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -22,6 +24,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @EnableWebSecurity
@@ -37,9 +40,17 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
   @Autowired
   private JwtFilter jwtFilter;
 
+  @Autowired
+  private BasicAuthFilter basicAuthFilter;
+
   @Bean
   public static PasswordEncoder passwordEncoder() {
     return new BCryptPasswordEncoder();
+  }
+
+  @Bean
+  public AuthenticationEntryPoint authenticationEntryPoint () {
+    return new HealthSyncAuthenticationEntryPoint();
   }
 
   @Bean
@@ -72,13 +83,15 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
         // .anonymous()
         // .antMatchers("/doctor-edit")
         // .hasRole("DOCTOR")
-        .antMatchers("/login")
-        .permitAll()
+        .antMatchers("/")
+            .authenticated()
         .anyRequest().authenticated()
         .and()
         .exceptionHandling()
         .accessDeniedPage("/errors/403")
-        .and().addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
+        .and()
+            .addFilterBefore(basicAuthFilter, UsernamePasswordAuthenticationFilter.class)
+            .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
         .csrf()
         .disable();
   }
