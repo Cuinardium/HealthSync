@@ -2,6 +2,7 @@ package ar.edu.itba.paw.webapp.auth;
 
 import ar.edu.itba.paw.interfaces.services.UserService;
 import ar.edu.itba.paw.models.User;
+import ar.edu.itba.paw.webapp.auth.utils.AuthUtils;
 import java.io.IOException;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -20,7 +21,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 @Component
 public class JwtFilter extends OncePerRequestFilter {
   private static final String TOKEN_PREFIX = "Bearer ";
-  private static final String REFRESH_HEADER = "X-JWT";
+  private static final String TOKEN_HEADER = "X-JWT";
 
   @Autowired private JwtUtil jwtUtil;
 
@@ -68,16 +69,9 @@ public class JwtFilter extends OncePerRequestFilter {
         return;
       }
 
-      String baseURL =
-          request.getScheme()
-              + "://"
-              + request.getServerName()
-              + ":"
-              + request.getServerPort()
-              + request.getContextPath()
-              + "/api";
+      String baseURL = AuthUtils.getBaseUrl(request);
 
-      response.setHeader(REFRESH_HEADER, jwtUtil.generateAccessToken(user, baseURL));
+      response.setHeader(TOKEN_HEADER, jwtUtil.generateAccessToken(user, baseURL));
     }
 
     final UsernamePasswordAuthenticationToken authentication =
