@@ -1,4 +1,4 @@
-package ar.edu.itba.paw.webapp.controller;
+package ar.edu.itba.paw.webapp.controller.spring;
 
 import ar.edu.itba.paw.interfaces.services.DoctorService;
 import ar.edu.itba.paw.interfaces.services.PatientService;
@@ -141,7 +141,9 @@ public class AuthController {
     Specialty specialty = Specialty.values()[doctorRegisterForm.getSpecialtyCode()];
 
     Set<HealthInsurance> healthInsurances =
-        doctorRegisterForm.getHealthInsuranceCodes().stream()
+        doctorRegisterForm
+            .getHealthInsuranceCodes()
+            .stream()
             .map(code -> HealthInsurance.values()[code])
             .collect(Collectors.toSet());
 

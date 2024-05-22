@@ -1,4 +1,4 @@
-package ar.edu.itba.paw.webapp.controller;
+package ar.edu.itba.paw.webapp.controller.spring;
 
 import ar.edu.itba.paw.interfaces.services.NotificationService;
 import ar.edu.itba.paw.interfaces.services.UserService;
@@ -17,7 +17,8 @@ public class GlobalControllerAdvice {
   private final NotificationService notificationService;
 
   @Autowired
-  public GlobalControllerAdvice(final UserService userService, NotificationService notificationService) {
+  public GlobalControllerAdvice(
+      final UserService userService, NotificationService notificationService) {
     this.userService = userService;
     this.notificationService = notificationService;
   }
@@ -39,7 +40,7 @@ public class GlobalControllerAdvice {
   }
 
   @ModelAttribute("hasNotifications")
-  public boolean hasNotifications(){
+  public boolean hasNotifications() {
     long userId = PawAuthUserDetails.getCurrentUserId();
     return !(notificationService.getUserNotifications(userId).isEmpty());
   }

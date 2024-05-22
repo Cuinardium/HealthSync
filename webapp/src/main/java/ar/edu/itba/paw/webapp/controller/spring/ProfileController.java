@@ -1,4 +1,4 @@
-package ar.edu.itba.paw.webapp.controller;
+package ar.edu.itba.paw.webapp.controller.spring;
 
 import ar.edu.itba.paw.interfaces.services.DoctorService;
 import ar.edu.itba.paw.interfaces.services.PatientService;
@@ -85,7 +85,6 @@ public class ProfileController {
     return mav;
   }
 
-
   @RequestMapping(value = "/doctor-edit", method = RequestMethod.POST)
   public ModelAndView doctorEditSubmit(
       @Valid @ModelAttribute("doctorEditForm") final DoctorEditForm doctorEditForm,
@@ -98,7 +97,9 @@ public class ProfileController {
     Specialty specialty = Specialty.values()[doctorEditForm.getSpecialtyCode()];
 
     Set<HealthInsurance> healthInsurances =
-        doctorEditForm.getHealthInsuranceCodes().stream()
+        doctorEditForm
+            .getHealthInsuranceCodes()
+            .stream()
             .map(code -> HealthInsurance.values()[code])
             .collect(Collectors.toSet());
 
@@ -168,7 +169,9 @@ public class ProfileController {
     doctorEditForm.setLastname(doctor.getLastName());
     doctorEditForm.setEmail(doctor.getEmail());
     doctorEditForm.setHealthInsuranceCodes(
-        doctor.getHealthInsurances().stream()
+        doctor
+            .getHealthInsurances()
+            .stream()
             .map(HealthInsurance::ordinal)
             .collect(Collectors.toList()));
     doctorEditForm.setAddress(doctor.getAddress());
