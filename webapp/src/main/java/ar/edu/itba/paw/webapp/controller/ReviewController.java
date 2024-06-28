@@ -14,7 +14,6 @@ import java.util.List;
 import javax.validation.Valid;
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,12 +32,19 @@ public class ReviewController {
     this.reviewService = reviewService;
   }
 
+  // ================= reviews =================
+
   // TODO: return all reviews?
   @GET
   public Response listReviews(
-      @QueryParam("doctorId") @DefaultValue("-1") final Long doctorId,
+      @QueryParam("doctorId") final Long doctorId,
       @QueryParam("page") @DefaultValue("1") final int page) {
     LOGGER.debug("Listing reviews for doctor: \nDoctorId: {}\nPage: {}", doctorId, page);
+
+    if (doctorId == null) {
+      LOGGER.debug("DoctorId is null");
+      return Response.status(Response.Status.BAD_REQUEST).entity("DoctorId is required.").build();
+    }
 
     if (page < 1) {
       LOGGER.debug("Invalid page number: {}", page);
@@ -75,11 +81,9 @@ public class ReviewController {
   @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED})
   public Response createReview(@Valid final ReviewForm reviewForm) {
 
-
     final long doctorId = reviewForm.getDoctorId();
     final int rating = reviewForm.getRating();
     final String description = reviewForm.getDescription();
-
 
     // TODO: Get patientId from session
     final long patientId = 38;
@@ -103,5 +107,25 @@ public class ReviewController {
         uriInfo.getBaseUriBuilder().path("/reviews").path(String.valueOf(review.getId())).build();
 
     return Response.created(createdReviewUri).build();
+  }
+
+  // ================= reviews/{reviewId} =================
+
+  @GET
+  @Path("/{reviewId:\\d+}")
+  public Response getReview(@PathParam("reviewId") final long reviewId) {
+
+    LOGGER.debug("Getting review: {}", reviewId);
+
+    final Review review = reviewService.getReview(reviewId).orElse(null);
+
+    if (review == null) {
+      LOGGER.debug("Review not found: {}", reviewId);
+      return Response.status(Response.Status.NOT_FOUND).entity("Review not found.").build();
+    }
+
+    final ReviewDto reviewDto = ReviewDto.fromReview(uriInfo, review);
+
+    return Response.ok(reviewDto).build();
   }
 }
