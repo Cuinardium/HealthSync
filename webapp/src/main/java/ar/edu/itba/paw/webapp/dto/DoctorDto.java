@@ -16,6 +16,7 @@ public class DoctorDto {
   private URI healthInsurances;
   private URI attendingHours;
   private URI appointments;
+  private URI reviews;
   private URI image;
   private URI self;
 
@@ -31,8 +32,11 @@ public class DoctorDto {
     // uri.getBaseUriBuilder().path("/images").path(String.valueOf(doctor.getImageId())).build();
     dto.self =
         uri.getBaseUriBuilder().path("/doctors").path(String.valueOf(doctor.getId())).build();
-    dto.appointments=
-            uri.getBaseUriBuilder().path("/appointments").path(String.valueOf(doctor.getId())).build();
+    dto.appointments =
+        uri.getBaseUriBuilder().path("/appointments").path(String.valueOf(doctor.getId())).build();
+
+    dto.reviews = uri.getBaseUriBuilder().path("/reviews").queryParam("doctorId", doctor.getId()).build();
+
     return dto;
   }
 
@@ -88,7 +92,19 @@ public class DoctorDto {
     this.city = city;
   }
 
-  public URI getAppointments() {return appointments;}
+  public URI getAppointments() {
+    return appointments;
+  }
 
-  public void setAppointments(URI appointments) {this.appointments = appointments;}
+  public void setAppointments(URI appointments) {
+    this.appointments = appointments;
+  }
+
+  public URI getReviews() {
+    return reviews;
+  }
+
+  public void setReviews(URI reviews) {
+    this.reviews = reviews;
+  }
 }
