@@ -192,9 +192,10 @@ public class ReviewServiceImplTest {
   // =================== getReviewsForDoctor ===================
 
   @Test
-  public void testGetReviewsForDoctor() {
+  public void testGetReviewsForDoctor() throws DoctorNotFoundException {
     // Mock doctorService
     Mockito.when(reviewDao.getReviewsForDoctor(DOCTOR_ID, null, null)).thenReturn(REVIEWS);
+    Mockito.when(doctorService.getDoctorById(DOCTOR_ID)).thenReturn(Optional.of(DOCTOR));
 
     // Call method
     List<Review> reviews = rs.getReviewsForDoctor(DOCTOR_ID, null, null).getContent();
@@ -204,15 +205,25 @@ public class ReviewServiceImplTest {
   }
 
   @Test
-  public void testGetReviewsForUnexistingDoctor() {
+    public void testGetReviewsForDoctorWithoutReviews() throws DoctorNotFoundException {
+        // Mock doctorService
+        Mockito.when(reviewDao.getReviewsForDoctor(DOCTOR_ID, null, null)).thenReturn(new Page<>(Collections.emptyList(), null, 0, null));
+        Mockito.when(doctorService.getDoctorById(DOCTOR_ID)).thenReturn(Optional.of(DOCTOR));
+
+        // Call method
+        List<Review> reviews = rs.getReviewsForDoctor(DOCTOR_ID, null, null).getContent();
+
+        // Assert
+        Assert.assertTrue(reviews.isEmpty());
+    }
+
+  @Test(expected = DoctorNotFoundException.class)
+  public void testGetReviewsForUnexistingDoctor() throws DoctorNotFoundException {
     // Mock doctorService
-    Mockito.when(reviewDao.getReviewsForDoctor(DOCTOR_ID, null, null))
-        .thenReturn(new Page<>(Collections.emptyList(), null, 0, null));
+    Mockito.when(doctorService.getDoctorById(DOCTOR_ID)).thenReturn(Optional.empty());
 
     // Call method
-    Assert.assertEquals(
-        rs.getReviewsForDoctor(DOCTOR_ID, null, null),
-        new Page<>(Collections.emptyList(), null, 0, null));
+    rs.getReviewsForDoctor(DOCTOR_ID, null, null);
   }
 
   // =================== canReview ===================

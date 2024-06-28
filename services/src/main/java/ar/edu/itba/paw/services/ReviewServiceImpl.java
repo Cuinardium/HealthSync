@@ -86,7 +86,11 @@ public class ReviewServiceImpl implements ReviewService {
 
   @Transactional(readOnly = true)
   @Override
-  public Page<Review> getReviewsForDoctor(long doctorId, Integer page, Integer pageSize) {
+  public Page<Review> getReviewsForDoctor(long doctorId, Integer page, Integer pageSize) throws DoctorNotFoundException {
+    if (!doctorService.getDoctorById(doctorId).isPresent()) {
+      throw new DoctorNotFoundException();
+    }
+
     return reviewDao.getReviewsForDoctor(doctorId, page, pageSize);
   }
 }
