@@ -19,7 +19,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-@Path("reviews")
+@Path("/doctors/{doctorId:\\d+}/reviews")
 @Component
 public class ReviewController {
   private static final Logger LOGGER = LoggerFactory.getLogger(ReviewController.class);
@@ -34,17 +34,12 @@ public class ReviewController {
 
   // ================= reviews =================
 
-  // TODO: return all reviews?
   @GET
   public Response listReviews(
-      @QueryParam("doctorId") final Long doctorId,
+      @PathParam("doctorId") final Long doctorId,
       @QueryParam("page") @DefaultValue("1") final int page) {
-    LOGGER.debug("Listing reviews for doctor: \nDoctorId: {}\nPage: {}", doctorId, page);
 
-    if (doctorId == null) {
-      LOGGER.debug("DoctorId is null");
-      return Response.status(Response.Status.BAD_REQUEST).entity("DoctorId is required.").build();
-    }
+    LOGGER.debug("Listing reviews for doctor: \nDoctorId: {}\nPage: {}", doctorId, page);
 
     if (page < 1) {
       LOGGER.debug("Invalid page number: {}", page);
@@ -79,9 +74,9 @@ public class ReviewController {
 
   @POST
   @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED})
-  public Response createReview(@Valid final ReviewForm reviewForm) {
+  public Response createReview(
+      @PathParam("doctorId") final Long doctorId, @Valid final ReviewForm reviewForm) {
 
-    final long doctorId = reviewForm.getDoctorId();
     final int rating = reviewForm.getRating();
     final String description = reviewForm.getDescription();
 
@@ -113,7 +108,7 @@ public class ReviewController {
 
   @GET
   @Path("/{reviewId:\\d+}")
-  public Response getReview(@PathParam("reviewId") final long reviewId) {
+  public Response getReview(@PathParam("doctorId") final Long doctorId, @PathParam("reviewId") final Long reviewId) {
 
     LOGGER.debug("Getting review: {}", reviewId);
 
@@ -121,6 +116,11 @@ public class ReviewController {
 
     if (review == null) {
       LOGGER.debug("Review not found: {}", reviewId);
+      return Response.status(Response.Status.NOT_FOUND).entity("Review not found.").build();
+    }
+
+    if (!review.getDoctor().getId().equals(doctorId)) {
+      LOGGER.debug("Review {} does not belong to doctor {}", reviewId, doctorId);
       return Response.status(Response.Status.NOT_FOUND).entity("Review not found.").build();
     }
 

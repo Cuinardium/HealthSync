@@ -13,22 +13,12 @@ public class ReviewForm {
   @Max(5)
   private short rating;
 
-  private long doctorId;
-
   public short getRating() {
     return rating;
   }
 
   public void setRating(short rating) {
     this.rating = rating;
-  }
-
-  public long getDoctorId() {
-    return doctorId;
-  }
-
-  public void setDoctorId(long doctorId) {
-    this.doctorId = doctorId;
   }
 
   public String getDescription() {

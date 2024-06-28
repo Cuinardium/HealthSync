@@ -34,7 +34,8 @@ public class ReviewDto {
     dto.doctor = uri.getBaseUriBuilder().path("/doctors").path(String.valueOf(doctorId)).build();
     dto.patient = uri.getBaseUriBuilder().path("/patients").path(String.valueOf(patientId)).build();
     dto.self =
-        uri.getBaseUriBuilder().path("/reviews").path(String.valueOf(review.getId())).build();
+        uri.getBaseUriBuilder().path("/doctors").path(String.valueOf(doctorId)).path("/reviews")
+            .path(String.valueOf(dto.id)).build();
 
     return dto;
   }

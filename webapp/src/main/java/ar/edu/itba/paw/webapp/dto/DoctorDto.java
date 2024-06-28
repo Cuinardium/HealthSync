@@ -35,7 +35,9 @@ public class DoctorDto {
     dto.appointments =
         uri.getBaseUriBuilder().path("/appointments").path(String.valueOf(doctor.getId())).build();
 
-    dto.reviews = uri.getBaseUriBuilder().path("/reviews").queryParam("doctorId", doctor.getId()).build();
+    dto.reviews =
+        uri.getBaseUriBuilder().path("/doctors").path(String.valueOf(doctor.getId())).path("/reviews")
+            .build();
 
     return dto;
   }
