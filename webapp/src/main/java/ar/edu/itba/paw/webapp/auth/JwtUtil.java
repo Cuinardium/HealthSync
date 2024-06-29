@@ -13,7 +13,9 @@ import org.springframework.stereotype.Component;
 @Component
 public class JwtUtil {
 
-  private static final long accessTokenValidity = 24 * 60 * 60 * 1000;
+  private static final long accessTokenValidity = 24 * 60 * 60 * 1000; // 24 hours in milliseconds
+  private static final long refreshTokenValidity =
+      30 * accessTokenValidity; // 30 days in milliseconds
 
   @Autowired private PawUserDetailsService userDetailsService;
   private final JwtParserBuilder jwtParserBuilder;
@@ -87,7 +89,7 @@ public class JwtUtil {
     return Jwts.builder()
         .setClaims(claims)
         .setIssuedAt(new Date(System.currentTimeMillis()))
-        .setExpiration(new Date(System.currentTimeMillis() + accessTokenValidity))
+        .setExpiration(new Date(System.currentTimeMillis() + refreshTokenValidity))
         .signWith(SECRET_KEY)
         .compact();
   }
