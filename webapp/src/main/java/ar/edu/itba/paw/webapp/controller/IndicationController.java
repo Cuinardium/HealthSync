@@ -8,24 +8,18 @@ import ar.edu.itba.paw.models.Indication;
 import ar.edu.itba.paw.models.Page;
 import ar.edu.itba.paw.webapp.auth.PawAuthUserDetails;
 import ar.edu.itba.paw.webapp.dto.IndicationDto;
-import ar.edu.itba.paw.webapp.form.IndicationForm;
 import ar.edu.itba.paw.webapp.utils.ResponseUtil;
-import java.io.IOException;
 import java.net.URI;
 import java.util.List;
 import java.util.stream.Collectors;
-import javax.validation.Valid;
 import javax.ws.rs.*;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.GenericEntity;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriInfo;
+import javax.ws.rs.core.*;
+import org.glassfish.jersey.media.multipart.FormDataParam;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Component;
-import org.springframework.web.multipart.MultipartFile;
 
 @Path("/appointments/{appointmentId:\\d+}/indications")
 @Component
@@ -88,30 +82,24 @@ public class IndicationController {
 
   // TODO: Probablemente mal, subir archivo a otro endpoint?
   @POST
+  @Consumes({MediaType.MULTIPART_FORM_DATA})
   @PreAuthorize("@authorizationFunctions.isInvolvedInAppointment(authentication, #appointmentId)")
   public Response createIndication(
       @PathParam("appointmentId") final Long appointmentId,
-      @Valid final IndicationForm indicationForm) {
+      @FormDataParam("indications") final String indications,
+      @FormDataParam("file") final byte[] fileBytes) {
 
-    final String indications = indicationForm.getIndications();
-    final MultipartFile multipartFile = indicationForm.getFile();
     final long userId = PawAuthUserDetails.getCurrentUserId();
+
+    File file = null;
+    if (fileBytes != null && fileBytes.length > 0) {
+      file = new File(fileBytes);
+    }
 
     Indication indication;
 
     try {
-
-      File file = null;
-      if (multipartFile != null && !multipartFile.isEmpty()) {
-        file = new File.Builder(multipartFile.getBytes()).build();
-      }
-
       indication = indicationService.createIndication(appointmentId, userId, indications, file);
-
-    } catch (IOException e) {
-      LOGGER.error("Error while reading file: {}", e.getMessage());
-      return Response.status(Response.Status.BAD_REQUEST).entity("Invalid file.").build();
-
     } catch (UserNotFoundException e) {
       LOGGER.debug("User not found: {}", userId);
       return Response.status(Response.Status.NOT_FOUND).entity("User not found.").build();
