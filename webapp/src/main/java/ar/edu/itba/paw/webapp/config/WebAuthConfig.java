@@ -5,9 +5,11 @@ import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.security.Key;
 
+import ar.edu.itba.paw.webapp.auth.AuthorizationFunctions;
 import ar.edu.itba.paw.webapp.auth.BasicAuthFilter;
 import ar.edu.itba.paw.webapp.auth.JwtFilter;
 import ar.edu.itba.paw.webapp.auth.PawUserDetailsService;
+import ar.edu.itba.paw.webapp.auth.handlers.ForbiddenHandler;
 import ar.edu.itba.paw.webapp.auth.handlers.HealthSyncAuthenticationEntryPoint;
 import io.jsonwebtoken.security.Keys;
 import org.apache.commons.io.FileUtils;
@@ -19,21 +21,23 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.Resource;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.AuthenticationEntryPoint;
+import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.util.FileCopyUtils;
 
 @EnableWebSecurity
 @ComponentScan({"ar.edu.itba.paw.webapp.auth"})
 @Configuration
+@EnableGlobalMethodSecurity(prePostEnabled = true)
 public class WebAuthConfig extends WebSecurityConfigurerAdapter {
 
   @Value("classpath:openssl-key")
@@ -44,11 +48,9 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
 
   @Autowired private PawUserDetailsService userDetailsService;
 
-  @Autowired
-  private JwtFilter jwtFilter;
+  @Autowired private JwtFilter jwtFilter;
 
-  @Autowired
-  private BasicAuthFilter basicAuthFilter;
+  @Autowired private BasicAuthFilter basicAuthFilter;
 
   @Bean
   public static PasswordEncoder passwordEncoder() {
@@ -56,7 +58,17 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
   }
 
   @Bean
-  public AuthenticationEntryPoint authenticationEntryPoint () {
+  public AuthorizationFunctions authorizationFunctions() {
+    return new AuthorizationFunctions();
+  }
+
+  @Bean
+  public AccessDeniedHandler accessDeniedHandler() {
+    return new ForbiddenHandler();
+  }
+
+  @Bean
+  public AuthenticationEntryPoint authenticationEntryPoint() {
     return new HealthSyncAuthenticationEntryPoint();
   }
 
@@ -82,6 +94,7 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
     http.sessionManagement()
         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
         // .invalidSessionUrl("/")
+
         .and()
         .authorizeRequests()
         // .antMatchers(HttpMethod.POST, "/{id:\\d+}/detailed-doctor")
@@ -99,8 +112,9 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
             .authenticated()
         .anyRequest().authenticated()
         .and()
-        .exceptionHandling()
-        .accessDeniedPage("/errors/403")
+          .exceptionHandling()
+            .authenticationEntryPoint(authenticationEntryPoint())
+            .accessDeniedHandler(accessDeniedHandler())
         .and()
             .addFilterBefore(basicAuthFilter, UsernamePasswordAuthenticationFilter.class)
             .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
