@@ -6,6 +6,7 @@ import ar.edu.itba.paw.interfaces.services.exceptions.PatientNotFoundException;
 import ar.edu.itba.paw.interfaces.services.exceptions.ReviewForbiddenException;
 import ar.edu.itba.paw.models.Page;
 import ar.edu.itba.paw.models.Review;
+import ar.edu.itba.paw.webapp.auth.PawAuthUserDetails;
 import ar.edu.itba.paw.webapp.dto.ReviewDto;
 import ar.edu.itba.paw.webapp.form.ReviewForm;
 import ar.edu.itba.paw.webapp.utils.ResponseUtil;
@@ -17,6 +18,7 @@ import javax.ws.rs.core.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Component;
 
 @Path("/doctors/{doctorId:\\d+}/reviews")
@@ -74,6 +76,7 @@ public class ReviewController {
 
   @POST
   @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED})
+  @PreAuthorize("@authorizationFunctions.canReview(authentication, #doctorId)")
   public Response createReview(
       @PathParam("doctorId") final Long doctorId, @Valid final ReviewForm reviewForm) {
 
@@ -81,7 +84,7 @@ public class ReviewController {
     final String description = reviewForm.getDescription();
 
     // TODO: Get patientId from session
-    final long patientId = 38;
+    final long patientId = PawAuthUserDetails.getCurrentUserId();
 
     Review review;
 
