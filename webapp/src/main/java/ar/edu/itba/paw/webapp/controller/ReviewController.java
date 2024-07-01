@@ -102,7 +102,13 @@ public class ReviewController {
     }
 
     URI createdReviewUri =
-        uriInfo.getBaseUriBuilder().path("/reviews").path(String.valueOf(review.getId())).build();
+        uriInfo
+            .getBaseUriBuilder()
+            .path("doctors")
+            .path(doctorId.toString())
+            .path("reviews")
+            .path(review.getId().toString())
+            .build();
 
     return Response.created(createdReviewUri).build();
   }
@@ -111,7 +117,8 @@ public class ReviewController {
 
   @GET
   @Path("/{reviewId:\\d+}")
-  public Response getReview(@PathParam("doctorId") final Long doctorId, @PathParam("reviewId") final Long reviewId) {
+  public Response getReview(
+      @PathParam("doctorId") final Long doctorId, @PathParam("reviewId") final Long reviewId) {
 
     LOGGER.debug("Getting review: {}", reviewId);
 

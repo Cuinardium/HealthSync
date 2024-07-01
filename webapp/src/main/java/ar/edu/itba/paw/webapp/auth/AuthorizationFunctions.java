@@ -23,6 +23,6 @@ public class AuthorizationFunctions {
         PawAuthUserDetails user = (PawAuthUserDetails) authentication.getPrincipal();
 
 
-        return reviewService.canReview(user.getId(), doctorId);
+        return reviewService.canReview(doctorId, user.getId());
     }
 }
