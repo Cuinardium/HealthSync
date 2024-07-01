@@ -1,12 +1,15 @@
 package ar.edu.itba.paw.webapp.config;
 
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
+import java.security.Key;
 
 import ar.edu.itba.paw.webapp.auth.BasicAuthFilter;
 import ar.edu.itba.paw.webapp.auth.JwtFilter;
 import ar.edu.itba.paw.webapp.auth.PawUserDetailsService;
 import ar.edu.itba.paw.webapp.auth.handlers.HealthSyncAuthenticationEntryPoint;
+import io.jsonwebtoken.security.Keys;
 import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -26,6 +29,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.util.FileCopyUtils;
 
 @EnableWebSecurity
 @ComponentScan({"ar.edu.itba.paw.webapp.auth"})
@@ -34,6 +38,9 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
 
   @Value("classpath:openssl-key")
   private Resource openSSLKey;
+
+  @Value("classpath:jwtPK")
+  private Resource jwtPKRes;
 
   @Autowired private PawUserDetailsService userDetailsService;
 
@@ -57,6 +64,11 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
   @Override
   public AuthenticationManager authenticationManagerBean() throws Exception {
     return super.authenticationManagerBean();
+  }
+
+  @Bean(name = "jwtPK")
+  public Key jwtKey() throws IOException {
+    return Keys.hmacShaKeyFor(FileCopyUtils.copyToString(new InputStreamReader(jwtPKRes.getInputStream())).getBytes(StandardCharsets.UTF_8));
   }
 
   @Override
