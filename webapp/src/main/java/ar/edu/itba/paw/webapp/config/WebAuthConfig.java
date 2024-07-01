@@ -1,7 +1,15 @@
 package ar.edu.itba.paw.webapp.config;
 
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
+import java.security.Key;
+
+import ar.edu.itba.paw.webapp.auth.BasicAuthFilter;
+import ar.edu.itba.paw.webapp.auth.JwtFilter;
+import ar.edu.itba.paw.webapp.auth.PawUserDetailsService;
+import ar.edu.itba.paw.webapp.auth.handlers.HealthSyncAuthenticationEntryPoint;
+import io.jsonwebtoken.security.Keys;
 import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -19,6 +27,9 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.AuthenticationEntryPoint;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.util.FileCopyUtils;
 
 @EnableWebSecurity
 @ComponentScan({"ar.edu.itba.paw.webapp.auth"})
@@ -28,7 +39,16 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
   @Value("classpath:openssl-key")
   private Resource openSSLKey;
 
-  @Autowired private UserDetailsService userDetailsService;
+  @Value("classpath:jwtPK")
+  private Resource jwtPKRes;
+
+  @Autowired private PawUserDetailsService userDetailsService;
+
+  @Autowired
+  private JwtFilter jwtFilter;
+
+  @Autowired
+  private BasicAuthFilter basicAuthFilter;
 
   @Bean
   public static PasswordEncoder passwordEncoder() {
@@ -36,9 +56,19 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
   }
 
   @Bean
+  public AuthenticationEntryPoint authenticationEntryPoint () {
+    return new HealthSyncAuthenticationEntryPoint();
+  }
+
+  @Bean
   @Override
   public AuthenticationManager authenticationManagerBean() throws Exception {
     return super.authenticationManagerBean();
+  }
+
+  @Bean(name = "jwtPK")
+  public Key jwtKey() throws IOException {
+    return Keys.hmacShaKeyFor(FileCopyUtils.copyToString(new InputStreamReader(jwtPKRes.getInputStream())).getBytes(StandardCharsets.UTF_8));
   }
 
   @Override
@@ -65,13 +95,15 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
         // .anonymous()
         // .antMatchers("/doctor-edit")
         // .hasRole("DOCTOR")
-        .antMatchers("/**")
-        .permitAll()
-        // .authenticated()
+        .antMatchers("/")
+            .authenticated()
+        .anyRequest().authenticated()
         .and()
         .exceptionHandling()
         .accessDeniedPage("/errors/403")
         .and()
+            .addFilterBefore(basicAuthFilter, UsernamePasswordAuthenticationFilter.class)
+            .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
         .csrf()
         .disable();
   }
