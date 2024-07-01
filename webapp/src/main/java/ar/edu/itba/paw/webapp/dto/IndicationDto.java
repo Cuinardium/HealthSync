@@ -42,7 +42,12 @@ public class IndicationDto {
             .build();
     dto.file =
         fileId != -1
-            ? uri.getBaseUriBuilder().path("files").path(String.valueOf(fileId)).build()
+            ? uri.getBaseUriBuilder()
+                .path("appointments")
+                .path(String.valueOf(appointmentId))
+                .path("files")
+                .path(String.valueOf(fileId))
+                .build()
             : null;
     dto.self =
         uri.getBaseUriBuilder()
