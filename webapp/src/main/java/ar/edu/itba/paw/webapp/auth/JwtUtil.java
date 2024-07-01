@@ -2,8 +2,6 @@ package ar.edu.itba.paw.webapp.auth;
 
 import ar.edu.itba.paw.models.User;
 import io.jsonwebtoken.*;
-import io.jsonwebtoken.security.Keys;
-import java.nio.charset.StandardCharsets;
 import java.security.Key;
 import java.util.Date;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,19 +11,14 @@ import org.springframework.stereotype.Component;
 @Component
 public class JwtUtil {
 
-  private static final long accessTokenValidity = 24 * 60 * 60 * 1000;
+  private static final long accessTokenValidity = 24 * 60 * 60 * 1000; // 24 hours in milliseconds
+  private static final long refreshTokenValidity =
+      30 * accessTokenValidity; // 30 days in milliseconds
 
   @Autowired private PawUserDetailsService userDetailsService;
-  private final JwtParserBuilder jwtParserBuilder;
-  private final Key SECRET_KEY;
+  @Autowired private Key jwtPK;
 
-  public JwtUtil() {
-    // Cuini Franco Gonza Juan
-    final String secretKeyBase =
-        "CFGJCFGJCFGJCFGJCFGJCFGJCFGJCFGJ"; // 32 characters * 8 bits per character = 256 bits
-    this.SECRET_KEY = Keys.hmacShaKeyFor(secretKeyBase.getBytes(StandardCharsets.UTF_8));
-    this.jwtParserBuilder = Jwts.parserBuilder().setSigningKey(this.SECRET_KEY);
-  }
+  public JwtUtil() {}
 
   public String generateAccessToken(User user) {
     return Jwts.builder()
@@ -33,14 +26,14 @@ public class JwtUtil {
         .setIssuer("paw-2023a-02")
         .setIssuedAt(new Date())
         .setExpiration(new Date(System.currentTimeMillis() + accessTokenValidity))
-        .signWith(SECRET_KEY, SignatureAlgorithm.HS256)
+        .signWith(jwtPK, SignatureAlgorithm.HS256)
         .compact();
   }
   /** jws: Json Web Signature (https://datatracker.ietf.org/doc/html/rfc7515) */
   public UserDetails parseToken(String jws) {
     try {
       final Claims claims =
-          Jwts.parserBuilder().setSigningKey(SECRET_KEY).build().parseClaimsJws(jws).getBody();
+          Jwts.parserBuilder().setSigningKey(jwtPK).build().parseClaimsJws(jws).getBody();
 
       if (new Date(System.currentTimeMillis()).after(claims.getExpiration())) {
         return null;
@@ -66,12 +59,12 @@ public class JwtUtil {
         .setClaims(claims)
         .setIssuedAt(new Date(System.currentTimeMillis()))
         .setExpiration(new Date(System.currentTimeMillis() + accessTokenValidity))
-        .signWith(SECRET_KEY)
+        .signWith(jwtPK)
         .compact();
   }
 
   private Claims parseJwtClaims(String token) {
-    return jwtParserBuilder.build().parseClaimsJws(token).getBody();
+    return Jwts.parserBuilder().setSigningKey(jwtPK).build().parseClaimsJws(token).getBody();
   }
 
   public boolean validateAccessToken(String token) {
@@ -87,15 +80,15 @@ public class JwtUtil {
     return Jwts.builder()
         .setClaims(claims)
         .setIssuedAt(new Date(System.currentTimeMillis()))
-        .setExpiration(new Date(System.currentTimeMillis() + accessTokenValidity))
-        .signWith(SECRET_KEY)
+        .setExpiration(new Date(System.currentTimeMillis() + refreshTokenValidity))
+        .signWith(jwtPK)
         .compact();
   }
 
   public boolean isRefreshToken(String token) {
     try {
       final Claims claims =
-          Jwts.parserBuilder().setSigningKey(SECRET_KEY).build().parseClaimsJws(token).getBody();
+          Jwts.parserBuilder().setSigningKey(jwtPK).build().parseClaimsJws(token).getBody();
       return claims.get("refresh", Boolean.class);
     } catch (Exception e) {
       return false;
