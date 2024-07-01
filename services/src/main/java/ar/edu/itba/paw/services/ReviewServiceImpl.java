@@ -71,15 +71,7 @@ public class ReviewServiceImpl implements ReviewService {
   @Transactional(readOnly = true)
   @Override
   public Optional<Review> getReview(long reviewId) {
-    Optional<Review> review = reviewDao.getReview(reviewId);
-
-    // Load lazy doctorId
-    // TODO: Check if this is correct
-    if (review.isPresent()) {
-        review.get().getDoctor().getId();
-    }
-
-    return review;
+      return reviewDao.getReview(reviewId);
   }
 
   @Transactional(readOnly = true)
