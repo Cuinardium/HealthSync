@@ -1,8 +1,15 @@
 package ar.edu.itba.paw.webapp.config;
 
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
-import java.util.concurrent.TimeUnit;
+import java.security.Key;
+
+import ar.edu.itba.paw.webapp.auth.BasicAuthFilter;
+import ar.edu.itba.paw.webapp.auth.JwtFilter;
+import ar.edu.itba.paw.webapp.auth.PawUserDetailsService;
+import ar.edu.itba.paw.webapp.auth.handlers.HealthSyncAuthenticationEntryPoint;
+import io.jsonwebtoken.security.Keys;
 import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -10,16 +17,19 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.Resource;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.AuthenticationEntryPoint;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.util.FileCopyUtils;
 
 @EnableWebSecurity
 @ComponentScan({"ar.edu.itba.paw.webapp.auth"})
@@ -29,11 +39,25 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
   @Value("classpath:openssl-key")
   private Resource openSSLKey;
 
-  @Autowired private UserDetailsService userDetailsService;
+  @Value("classpath:jwtPK")
+  private Resource jwtPKRes;
+
+  @Autowired private PawUserDetailsService userDetailsService;
+
+  @Autowired
+  private JwtFilter jwtFilter;
+
+  @Autowired
+  private BasicAuthFilter basicAuthFilter;
 
   @Bean
   public static PasswordEncoder passwordEncoder() {
     return new BCryptPasswordEncoder();
+  }
+
+  @Bean
+  public AuthenticationEntryPoint authenticationEntryPoint () {
+    return new HealthSyncAuthenticationEntryPoint();
   }
 
   @Bean
@@ -42,49 +66,44 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
     return super.authenticationManagerBean();
   }
 
+  @Bean(name = "jwtPK")
+  public Key jwtKey() throws IOException {
+    return Keys.hmacShaKeyFor(FileCopyUtils.copyToString(new InputStreamReader(jwtPKRes.getInputStream())).getBytes(StandardCharsets.UTF_8));
+  }
+
   @Override
   protected void configure(AuthenticationManagerBuilder auth) throws Exception {
     auth.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder());
   }
 
+  // TODO: agregar filtros por tipo de autenticacion clase 2 min 45
   @Override
   protected void configure(final HttpSecurity http) throws Exception {
     http.sessionManagement()
-        .invalidSessionUrl("/")
+        .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+        // .invalidSessionUrl("/")
         .and()
         .authorizeRequests()
-        .antMatchers(HttpMethod.POST, "/{id:\\d+}/detailed-doctor")
-        .hasRole("PATIENT")
-        .antMatchers("/doctor-dashboard", "/", "/{id:\\d+}/detailed-doctor")
-        .permitAll()
-        .antMatchers("/patient-edit")
-        .hasRole("PATIENT")
-        .antMatchers("/login", "/patient-register", "/doctor-register", "/verify", "/renew-token")
-        .anonymous()
-        .antMatchers("/doctor-edit")
-        .hasRole("DOCTOR")
-        .antMatchers("/**")
-        .authenticated()
-        .and()
-        .formLogin()
-        .loginPage("/login")
-        .usernameParameter("email")
-        .passwordParameter("password")
-        .defaultSuccessUrl("/", false)
-        .and()
-        .rememberMe()
-        .rememberMeParameter("rememberme")
-        .userDetailsService(userDetailsService)
-        .key(getKey())
-        .tokenValiditySeconds((int) TimeUnit.DAYS.toSeconds(30))
-        .and()
-        .logout()
-        .logoutUrl("/logout")
-        .logoutSuccessUrl("/login")
+        // .antMatchers(HttpMethod.POST, "/{id:\\d+}/detailed-doctor")
+        // .hasRole("PATIENT")
+        // .antMatchers("/doctor-dashboard", "/", "/{id:\\d+}/detailed-doctor")
+        // .permitAll()
+        // .antMatchers("/patient-edit")
+        // .hasRole("PATIENT")
+        // .antMatchers("/login", "/patient-register", "/doctor-register", "/verify",
+        // "/renew-token")
+        // .anonymous()
+        // .antMatchers("/doctor-edit")
+        // .hasRole("DOCTOR")
+        .antMatchers("/")
+            .authenticated()
+        .anyRequest().authenticated()
         .and()
         .exceptionHandling()
         .accessDeniedPage("/errors/403")
         .and()
+            .addFilterBefore(basicAuthFilter, UsernamePasswordAuthenticationFilter.class)
+            .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
         .csrf()
         .disable();
   }

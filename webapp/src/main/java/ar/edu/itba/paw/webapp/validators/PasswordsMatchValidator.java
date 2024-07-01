@@ -10,6 +10,9 @@ public class PasswordsMatchValidator implements ConstraintValidator<PasswordsMat
   @Override
   public boolean isValid(
       PasswordForm passwordForm, ConstraintValidatorContext constraintValidatorContext) {
+    if (passwordForm.getPassword() == null) {
+      return false;
+    }
     return passwordForm.getPassword().equals(passwordForm.getConfirmPassword());
   }
 }

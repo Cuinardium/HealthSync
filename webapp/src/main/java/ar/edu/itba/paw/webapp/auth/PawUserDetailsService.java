@@ -14,13 +14,14 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 
+/** https://github.com/jwtk/jjwt https://github.com/Yoh0xFF/java-spring-security-example */
 @Component
 public class PawUserDetailsService implements UserDetailsService {
 
-  private UserService userService;
-  private DoctorService doctorService;
+  private final UserService userService;
+  private final DoctorService doctorService;
 
-  private PatientService patientService;
+  private final PatientService patientService;
 
   @Autowired
   public PawUserDetailsService(
@@ -42,7 +43,8 @@ public class PawUserDetailsService implements UserDetailsService {
     final Collection<GrantedAuthority> authorities = new HashSet<>();
     authorities.add(new SimpleGrantedAuthority(role.getRoleName()));
 
-    return new PawAuthUserDetails(user.getEmail(), user.getPassword(), user.getId(), user.getIsVerified(), authorities);
+    return new PawAuthUserDetails(
+        user.getEmail(), user.getPassword(), user.getId(), user.getIsVerified(), authorities);
   }
 
   private UserRole getUserRole(User user) {

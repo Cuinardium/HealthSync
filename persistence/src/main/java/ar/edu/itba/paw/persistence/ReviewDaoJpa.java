@@ -5,6 +5,7 @@ import ar.edu.itba.paw.models.Page;
 import ar.edu.itba.paw.models.Review;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -24,6 +25,12 @@ public class ReviewDaoJpa implements ReviewDao {
   }
 
   @Override
+  public Optional<Review> getReview(long reviewId) {
+    Review review = em.find(Review.class, reviewId);
+    return Optional.ofNullable(review);
+  }
+
+  @Override
   public Page<Review> getReviewsForDoctor(long doctorId, Integer page, Integer pageSize) {
     Query nativeQuery =
         em.createNativeQuery("SELECT review_id FROM review WHERE doctor_id = " + doctorId);
@@ -39,9 +46,7 @@ public class ReviewDaoJpa implements ReviewDao {
     @SuppressWarnings("unchecked")
     final List<Long> idList =
         (List<Long>)
-            nativeQuery
-                .getResultList()
-                .stream()
+            nativeQuery.getResultList().stream()
                 .map(o -> ((Number) o).longValue())
                 .collect(Collectors.toList());
 

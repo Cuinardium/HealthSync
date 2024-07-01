@@ -13,6 +13,7 @@ import ar.edu.itba.paw.models.Page;
 import ar.edu.itba.paw.models.Patient;
 import ar.edu.itba.paw.models.Review;
 import java.time.LocalDate;
+import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -69,6 +70,20 @@ public class ReviewServiceImpl implements ReviewService {
 
   @Transactional(readOnly = true)
   @Override
+  public Optional<Review> getReview(long reviewId) {
+    Optional<Review> review = reviewDao.getReview(reviewId);
+
+    // Load lazy doctorId
+    // TODO: Check if this is correct
+    if (review.isPresent()) {
+        review.get().getDoctor().getId();
+    }
+
+    return review;
+  }
+
+  @Transactional(readOnly = true)
+  @Override
   public boolean canReview(long doctorId, long patientId) {
 
     boolean doctorExists = doctorService.getDoctorById(doctorId).isPresent();
@@ -86,7 +101,12 @@ public class ReviewServiceImpl implements ReviewService {
 
   @Transactional(readOnly = true)
   @Override
-  public Page<Review> getReviewsForDoctor(long doctorId, Integer page, Integer pageSize) {
+  public Page<Review> getReviewsForDoctor(long doctorId, Integer page, Integer pageSize)
+      throws DoctorNotFoundException {
+    if (!doctorService.getDoctorById(doctorId).isPresent()) {
+      throw new DoctorNotFoundException();
+    }
+
     return reviewDao.getReviewsForDoctor(doctorId, page, pageSize);
   }
 }

@@ -62,7 +62,6 @@ public class ReviewServiceImplTest {
               .collect(Collectors.toList()));
   private static final Float RATING = 3F;
   private static final Integer RATING_COUNT = 1;
-
   private static final Doctor DOCTOR =
       new Doctor(
           DOCTOR_ID,
@@ -81,9 +80,7 @@ public class ReviewServiceImplTest {
           RATING_COUNT,
           LOCALE,
           true);
-
   // ================== Patient Constants ==================
-
   private static final long PATIENT_ID = 1;
   private static final String PATIENT_EMAIL = "patient_email";
   private static final String PATIENT_PASSWORD = "patient_password";
@@ -102,19 +99,15 @@ public class ReviewServiceImplTest {
           PATIENT_HEALTH_INSURANCE,
           LOCALE,
           true);
-
-  // ================== Review Constants ==================
-
   private static final short REVIEW_RATING = 3;
   private static final String REVIEW_DESCRIPTION = "review_description";
   private static final LocalDate REVIEW_DATE = LocalDate.now();
-
+  // ================== Review Constants ==================
+  private static final long REVIEW_ID = 1;
   private static final Review REVIEW =
       new Review.Builder(DOCTOR, PATIENT, REVIEW_DATE, REVIEW_DESCRIPTION, REVIEW_RATING).build();
-
   private static final Page<Review> REVIEWS =
       new Page<>(Collections.singletonList(REVIEW), null, null, null);
-
   @Mock private DoctorService doctorService;
 
   @Mock private PatientService patientService;
@@ -189,12 +182,40 @@ public class ReviewServiceImplTest {
     rs.createReview(DOCTOR_ID, PATIENT_ID, REVIEW_RATING, REVIEW_DESCRIPTION);
   }
 
+  // =================== getReview ===================
+
+  @Test
+  public void testGetReview() {
+    // Mock reviewDao
+    Mockito.when(reviewDao.getReview(REVIEW_ID)).thenReturn(Optional.of(REVIEW));
+
+    // Call method
+    Optional<Review> review = rs.getReview(REVIEW_ID);
+
+    // Assert
+    Assert.assertEquals(REVIEW, review.get());
+  }
+
+
+  @Test
+  public void testGetUnexistingReview() {
+    // Mock reviewDao
+    Mockito.when(reviewDao.getReview(REVIEW_ID)).thenReturn(Optional.empty());
+
+    // Call method
+    Optional<Review> review = rs.getReview(REVIEW_ID);
+
+   // Assert
+   Assert.assertFalse(review.isPresent());
+  }
+
   // =================== getReviewsForDoctor ===================
 
   @Test
-  public void testGetReviewsForDoctor() {
+  public void testGetReviewsForDoctor() throws DoctorNotFoundException {
     // Mock doctorService
     Mockito.when(reviewDao.getReviewsForDoctor(DOCTOR_ID, null, null)).thenReturn(REVIEWS);
+    Mockito.when(doctorService.getDoctorById(DOCTOR_ID)).thenReturn(Optional.of(DOCTOR));
 
     // Call method
     List<Review> reviews = rs.getReviewsForDoctor(DOCTOR_ID, null, null).getContent();
@@ -204,15 +225,25 @@ public class ReviewServiceImplTest {
   }
 
   @Test
-  public void testGetReviewsForUnexistingDoctor() {
+    public void testGetReviewsForDoctorWithoutReviews() throws DoctorNotFoundException {
+        // Mock doctorService
+        Mockito.when(reviewDao.getReviewsForDoctor(DOCTOR_ID, null, null)).thenReturn(new Page<>(Collections.emptyList(), null, 0, null));
+        Mockito.when(doctorService.getDoctorById(DOCTOR_ID)).thenReturn(Optional.of(DOCTOR));
+
+        // Call method
+        List<Review> reviews = rs.getReviewsForDoctor(DOCTOR_ID, null, null).getContent();
+
+        // Assert
+        Assert.assertTrue(reviews.isEmpty());
+    }
+
+  @Test(expected = DoctorNotFoundException.class)
+  public void testGetReviewsForUnexistingDoctor() throws DoctorNotFoundException {
     // Mock doctorService
-    Mockito.when(reviewDao.getReviewsForDoctor(DOCTOR_ID, null, null))
-        .thenReturn(new Page<>(Collections.emptyList(), null, 0, null));
+    Mockito.when(doctorService.getDoctorById(DOCTOR_ID)).thenReturn(Optional.empty());
 
     // Call method
-    Assert.assertEquals(
-        rs.getReviewsForDoctor(DOCTOR_ID, null, null),
-        new Page<>(Collections.emptyList(), null, 0, null));
+    rs.getReviewsForDoctor(DOCTOR_ID, null, null);
   }
 
   // =================== canReview ===================

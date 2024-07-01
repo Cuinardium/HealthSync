@@ -34,6 +34,16 @@ public class Page<T> {
     return content.size() == 0 ? 1 : (int) Math.ceil((double) totalContentCount / pageSize);
   }
 
+  // TODO: revisar, esto esta asi pq contamos las paginas desde 0 aca, pero desde 1 en el controller
+  // ...
+  public boolean hasNext() {
+    return (this.getCurrentPage() < (this.getTotalPages() - 1));
+  }
+
+  public boolean hasPrev() {
+    return (this.getCurrentPage() > 0);
+  }
+
   @Override
   public boolean equals(Object obj) {
     if (this == obj) return true;

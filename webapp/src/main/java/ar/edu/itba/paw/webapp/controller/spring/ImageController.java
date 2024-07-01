@@ -1,4 +1,4 @@
-package ar.edu.itba.paw.webapp.controller;
+package ar.edu.itba.paw.webapp.controller.spring;
 
 import ar.edu.itba.paw.interfaces.services.ImageService;
 import ar.edu.itba.paw.models.Image;
@@ -26,10 +26,9 @@ public class ImageController {
   }
 
   @RequestMapping(
-    value = "/img/{id:\\d+}",
-    method = RequestMethod.GET,
-    produces = MediaType.IMAGE_JPEG_VALUE
-  )
+      value = "/img/{id:\\d+}",
+      method = RequestMethod.GET,
+      produces = MediaType.IMAGE_JPEG_VALUE)
   @ResponseBody
   public ResponseEntity<byte[]> getImage(@PathVariable("id") final long id) {
     try {

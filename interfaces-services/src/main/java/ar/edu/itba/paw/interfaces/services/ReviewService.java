@@ -5,6 +5,7 @@ import ar.edu.itba.paw.interfaces.services.exceptions.PatientNotFoundException;
 import ar.edu.itba.paw.interfaces.services.exceptions.ReviewForbiddenException;
 import ar.edu.itba.paw.models.Page;
 import ar.edu.itba.paw.models.Review;
+import java.util.Optional;
 
 public interface ReviewService {
 
@@ -14,6 +15,8 @@ public interface ReviewService {
       throws DoctorNotFoundException, PatientNotFoundException, ReviewForbiddenException;
 
   // =============== Queries ===============
+
+  public Optional<Review> getReview(long reviewId);
 
   public Page<Review> getReviewsForDoctor(long doctorId, Integer page, Integer pageSize)
       throws DoctorNotFoundException;
