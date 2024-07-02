@@ -11,10 +11,10 @@ public interface NotificationService {
   public Notification createNotification(long userId, long appointmentId)
       throws UserNotFoundException, AppointmentNotFoundException;
 
-  public void deleteNotificationIfExists(long userId, long appointmentId)
-      throws AppointmentNotFoundException, UserNotFoundException;
-
   public List<Notification> getUserNotifications(long userId);
 
   public Optional<Notification> getUserAppointmentNotification(long userId, long appointmentId);
+  public Optional<Notification> getNotification(long notificationId);
+
+  public void deleteNotification(Notification notification);
 }

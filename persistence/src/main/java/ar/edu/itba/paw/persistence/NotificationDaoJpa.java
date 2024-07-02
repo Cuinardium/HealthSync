@@ -43,4 +43,9 @@ public class NotificationDaoJpa implements NotificationDao {
     query.setParameter("appointmentId", appointmentId);
     return query.getResultList().stream().findFirst();
   }
+
+  @Override
+  public Optional<Notification> getNotification(long notificationId) {
+    return Optional.ofNullable(em.find(Notification.class, notificationId));
+  }
 }

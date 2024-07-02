@@ -144,6 +144,7 @@ public class AppointmentController {
       throw new AppointmentForbiddenException();
     }
 
+    /*
     try {
       notificationService.deleteNotificationIfExists(
           PawAuthUserDetails.getCurrentUserId(), appointmentId);
@@ -162,6 +163,7 @@ public class AppointmentController {
 
       throw new RuntimeException();
     }
+    */
 
     // Get Indications
     Page<Indication> indications;
