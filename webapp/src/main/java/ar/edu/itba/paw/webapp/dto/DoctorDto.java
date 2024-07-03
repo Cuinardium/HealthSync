@@ -17,6 +17,7 @@ public class DoctorDto {
   private URI attendingHours;
   private URI appointments;
   private URI reviews;
+  private URI notifications;
   private URI image;
   private URI self;
 
@@ -27,6 +28,9 @@ public class DoctorDto {
     dto.lastName = doctor.getLastName();
     dto.address = doctor.getAddress();
     dto.city = doctor.getCity();
+
+    dto.notifications =
+        uri.getBaseUriBuilder().path("/notifications").queryParam("userId", doctor.getId()).build();
     // TODO: doctor get Image id para armar el url
     // dto.image =
     // uri.getBaseUriBuilder().path("/images").path(String.valueOf(doctor.getImageId())).build();
@@ -36,7 +40,10 @@ public class DoctorDto {
         uri.getBaseUriBuilder().path("/appointments").path(String.valueOf(doctor.getId())).build();
 
     dto.reviews =
-        uri.getBaseUriBuilder().path("/doctors").path(String.valueOf(doctor.getId())).path("/reviews")
+        uri.getBaseUriBuilder()
+            .path("/doctors")
+            .path(String.valueOf(doctor.getId()))
+            .path("/reviews")
             .build();
 
     return dto;
@@ -108,5 +115,13 @@ public class DoctorDto {
 
   public void setReviews(URI reviews) {
     this.reviews = reviews;
+  }
+
+  public URI getNotifications() {
+    return notifications;
+  }
+
+  public void setNotifications(URI notifications) {
+    this.notifications = notifications;
   }
 }

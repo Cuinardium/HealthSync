@@ -11,6 +11,7 @@ public class PatientDto {
   private URI healthInsurance;
   private URI self;
   private URI appointments;
+  private URI notifications;
 
   public static PatientDto fromPatient(UriInfo uri, Patient patient) {
     PatientDto dto = new PatientDto();
@@ -24,8 +25,14 @@ public class PatientDto {
             .build();
     dto.self =
         uri.getBaseUriBuilder().path("/patients").path(String.valueOf(patient.getId())).build();
-    dto.appointments=
-            uri.getBaseUriBuilder().path("/appointments").path(String.valueOf(patient.getId())).build();
+    dto.appointments =
+        uri.getBaseUriBuilder().path("/appointments").path(String.valueOf(patient.getId())).build();
+
+    dto.notifications =
+        uri.getBaseUriBuilder()
+            .path("/notifications")
+            .queryParam("userId", patient.getId())
+            .build();
 
     return dto;
   }
@@ -62,7 +69,19 @@ public class PatientDto {
     this.healthInsurance = healthInsurance;
   }
 
-  public URI getAppointments() {return appointments;}
+  public URI getAppointments() {
+    return appointments;
+  }
 
-  public void setAppointments(URI appointments) {this.appointments = appointments;}
+  public void setAppointments(URI appointments) {
+    this.appointments = appointments;
+  }
+
+  public URI getNotifications() {
+    return notifications;
+  }
+
+  public void setNotifications(URI notifications) {
+    this.notifications = notifications;
+  }
 }
