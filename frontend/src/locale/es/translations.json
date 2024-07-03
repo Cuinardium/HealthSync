@@ -1,0 +1,240 @@
+{
+  "form": {
+    "name": "Nombre",
+    "name_hint": "Ingresar nombre",
+    "lastname": "Apellido",
+    "lastname_hint": "Ingresar apellido",
+    "email": "Correo",
+    "email_hint": "Ingresar correo",
+    "locale": "Lenguaje",
+    "healthcare": "Obra Social",
+    "healthcare_hint": "Ingresar obra social",
+    "date": "Fecha del turno",
+    "desc": "Descripción del turno",
+    "desc_hint": "Ingresar descripción del turno",
+    "password": "Contraseña",
+    "password_hint": "Ingresa contraseña",
+    "cpassword": "Confirmar contraseña",
+    "cpassword_hint": "Ingresa la misma contraseña",
+    "city": "Ciudad",
+    "city_hint": "Ciudad",
+    "address": "Dirección",
+    "address_hint": "Ingresar dirección",
+    "specialization": "Especialidad",
+    "specialization_hint": "Ingresar Especialidad",
+    "hour": "Hora del turno",
+    "noHourAvailable": "No hay turnos disponibles para este día",
+    "add": "Agregar",
+    "time": "Hora",
+    "scheduleSelector": "Seleccionar horario de atención",
+    "showAllTimes": "Mostrar todos los horarios",
+    "showWeekend": "Mostrar fines de semana",
+    "clear": "Limpiar",
+    "passwordContain": "La contraseña debe contener:",
+    "passwordSize": "Al menos 4 caracteres",
+    "passwordContent": "Solo letras y números"
+  },
+  "appointment": {
+    "title": "Reserva tu turno",
+    "submit": "Crear Turno",
+    "successfull": {
+      "modal": {
+        "title": "Turno Reservado",
+        "text": "Tu turno fue reservado exitosamente, ahora podes verlo dentro de tus turnos",
+        "button": "Ir a tus turnos"
+      }
+    },
+    "error": {
+      "modal": {
+        "title": "Turno denegado",
+        "text": "No podes reservar un turno sin descripción",
+        "button": "Cerrar"
+      }
+    }
+  },
+  "register": {
+    "title": "Registrarse",
+    "submit": "Registrarse",
+    "emailInUse": {
+      "error": "El email ya está en uso"
+    },
+    "modal": {
+      "title": "Registro Exitoso",
+      "text": "Has sido registrado exitosamente, revisa tu email para verificar tu cuenta y empezar a usar HealthSync",
+      "button": "Ir al inicio de sesión"
+    }
+  },
+  "renewToken": {
+    "title": "Renovar Token",
+    "unsuccessful": "El usuario ya estaba verificado, por lo tanto no se va a renovar el token",
+    "successful": "Se renovó el token de verificación de usuario, por favor revise su email"
+  },
+  "verify": {
+    "title": "Verificar",
+    "tokenInvalid": "El token de verificación es inválido o ya ha expirado.",
+    "resendMail": "Puede reenviar el mail de verificación haciendo click aquí.",
+    "resendMailButton": "Reenviar",
+    "alreadyVerified": "El usuario ya ha sido verificado, iniciar sesión haciendo click aquí.",
+    "success": "El usuario ha sido verificado correctamente! Iniciar sesión haciendo click aquí."
+  },
+  "edit": {
+    "modal": {
+      "title": "Cambios Guardados",
+      "text": "Tus cambios han sido guardados exitosamente.",
+      "button": "Ok"
+    }
+  },
+  "registerPatient": {
+    "title": "Registrar Paciente"
+  },
+  "registerMedic": {
+    "title": "Registrar Médico",
+    "submit": "Registrarse"
+  },
+  "profile": {
+    "doctor": "Médico",
+    "patient": "Paciente",
+    "profile": "Perfil",
+    "personalInfo": "Información Personal",
+    "location": "Ubicación",
+    "workInfo": "Información Laboral",
+    "schedule": "Horarios",
+    "edit": "Editar Perfil",
+    "edit": {
+      "emailInUse": {
+        "error": "No se pudo actualizar el Email porque ya está en uso"
+      }
+    },
+    "saveChanges": "Guardar Cambios",
+    "changePassword": "Cambiar Contraseña",
+    "oldPassword": "Contraseña vieja",
+    "oldPasswordDoesNotMatchError": "La contraseña vieja no coincide!",
+    "oldPassword_hint": "Ingresa contraseña vieja",
+    "viewVacations": "Ver Vacaciones"
+  },
+  "vacation": {
+    "title": "Vacaciones",
+    "addSuccessTitle": "Vacaciones Creadas",
+    "addSuccessDescription": "Tus vacaciones han sido creadas exitosamente",
+    "addTitle": "Crear Vacaciones",
+    "date": "Fecha",
+    "time": "Hora",
+    "from": "Desde",
+    "to": "Hasta",
+    "addButton": "Crear",
+    "cancel": "Cancelar",
+    "addInvalidVacation": "Rango de vacaciones inválido",
+    "appointmentsInVacation": "Es posible que usted tenga turnos reservados en sus vacaciones. Decida si deben ser cancelarlos.",
+    "appointmentsInVacationCancelReasonTitle": "Explique la razón de la cancelación",
+    "cancelAppointmentsInVacation": "Quiero cancelar los turnos",
+    "doNotCancelAppointmentsInVacation": "No quiero cancelar los turnos",
+    "noVacations": "Usted no tiene vacaciones todavía",
+    "deleteTitle": "Cancelar vacaciones",
+    "deleteDescription": "¿Está usted seguro que quiere cancelar estas vacaciones?",
+    "deleteDeny": "No",
+    "deleteConfirm": "Sí"
+  },
+  "ValidateImage": {
+    "patientEditForm": {
+      "image": "La imagen debe ser un png/jpg/jpeg de tamaño menor a 8Mb"
+    },
+    "doctorEditForm": {
+      "image": "La imagen debe ser un png/jpg/jpeg de tamaño menor a 8Mb"
+    }
+  },
+  "Pattern": {
+    "appointmentForm": {
+      "name": "Nombres solo pueden contener letras",
+      "lastname": "Apellidos solo pueden contener letras",
+      "email": "No es un correo válido",
+      "healthcare": "La obra social solo puede contener letras"
+    },
+    "doctorRegisterForm": {
+      "name": "Nombres solo pueden contener letras",
+      "lastname": "Apellidos solo pueden contener letras",
+      "email": "No es un correo válido",
+      "healthcare": "La obra social solo puede contener letras",
+      "password": "La contraseña solo puede contener letras o números",
+      "confirmPassword": "La contraseña solo puede contener letras o números",
+      "city": "La ciudad solo puede contener letras",
+      "address": "La dirección solo puede contener letras y números",
+      "specialization": "La especialidad solo puede contener letras"
+    },
+    "doctorEditForm": {
+      "name": "Nombres solo pueden contener letras",
+      "lastname": "Apellidos solo pueden contener letras",
+      "email": "No es un correo válido",
+      "healthcare": "La obra social solo puede contener letras",
+      "city": "La ciudad solo puede contener letras",
+      "address": "La dirección solo puede contener letras y números",
+      "specialization": "La especialidad solo puede contener letras"
+    },
+    "patientRegisterForm": {
+      "name": "Nombres solo pueden contener letras",
+      "lastname": "Apellidos solo pueden contener letras",
+      "email": "No es un correo válido",
+      "healthcare": "La obra social solo puede contener letras",
+      "password": "La contraseña solo puede contener letras o números",
+      "confirmPassword": "La contraseña solo puede contener letras o números"
+    },
+    "patientEditForm": {
+      "name": "Nombres solo pueden contener letras",
+      "lastname": "Apellidos solo pueden contener letras",
+      "email": "No es un correo válido",
+      "healthcare": "La obra social solo puede contener letras"
+    },
+    "changePasswordForm": {
+      "oldPassword": "La contraseña solo puede contener letras o números",
+      "password": "La contraseña solo puede contener letras o números",
+      "confirmPassword": "La contraseña solo puede contener letras o números"
+    }
+  },
+  "Size": {
+    "changePasswordForm": {
+      "oldPassword": "La contraseña tiene que tener como mínimo {2} caracteres",
+      "password": "La contraseña tiene que tener como mínimo {2} caracteres",
+      "confirmPassword": "La contraseña tiene que tener como mínimo {2} caracteres"
+    },
+    "appointmentForm": {
+      "name": "El nombre no puede estar vacío",
+      "lastname": "El apellido no puede estar vacío",
+      "email": "El correo no puede estar vacío",
+      "healthcare": "La obra social no puede estar vacía",
+      "desc": "La descripción debe tener entre {2} y {1} caracteres"
+    },
+    "doctorRegisterForm": {
+      "name": "El nombre no puede estar vacío",
+      "lastname": "El apellido no puede estar vacío",
+      "email": "El correo no puede estar vacío",
+      "healthcare": "La obra social no puede estar vacía",
+      "password": "La contraseña tiene que tener como mínimo {2} caracteres",
+      "confirmPassword": "La contraseña tiene que tener como mínimo {2} caracteres",
+      "city": "La ciudad no puede estar vacía",
+      "address": "La dirección no puede estar vacía",
+      "specialization": "La especialidad no puede estar vacía"
+    },
+    "doctorEditForm": {
+      "name": "El nombre no puede estar vacío",
+      "lastname": "El apellido no puede estar vacío",
+      "email": "El correo no puede estar vacío",
+      "healthcare": "La obra social no puede estar vacía",
+      "city": "La ciudad no puede estar vacía",
+      "address": "La dirección no puede estar vacía",
+      "specialization": "La especialidad no puede estar vacía"
+    },
+    "patientRegisterForm": {
+      "name": "El nombre no puede estar vacío",
+      "lastname": "El apellido no puede estar vacío",
+      "email": "El correo no puede estar vacío",
+      "healthcare": "La obra social no puede estar vacía",
+      "password": "La contraseña tiene que tener como mínimo {2} caracteres",
+      "confirmPassword": "La contraseña tiene que tener como mínimo {2} caracteres"
+    },
+    "patientEditForm": {
+      "name": "El nombre no puede estar vacío",
+      "lastname": "El apellido no puede estar vacío",
+      "email": "El correo no puede estar vacío",
+      "healthcare": "La obra social no puede estar vacía"
+    }
+  }
+}
