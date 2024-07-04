@@ -28,7 +28,7 @@ public interface DoctorDao {
       Set<AttendingHours> attendingHours)
       throws DoctorNotFoundException;
 
-  public Doctor addVacation(long doctorId, Vacation vacation)
+  public Vacation addVacation(long doctorId, Vacation vacation)
       throws DoctorNotFoundException, VacationCollisionException;
 
   public Doctor removeVacation(long doctorId, Vacation vacation)

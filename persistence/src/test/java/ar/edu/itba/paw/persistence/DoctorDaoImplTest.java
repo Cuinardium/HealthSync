@@ -287,10 +287,16 @@ public class DoctorDaoImplTest {
             .build();
 
     // 2. Ejercitar la class under test
-    Doctor doctor = doctorDao.addVacation(INSERTED_DOCTOR_ID, VACATION_NEW);
+    Vacation vacation = doctorDao.addVacation(INSERTED_DOCTOR_ID, newVacation);
+    Assert.assertEquals(VACATION_NEW, vacation);
+
+    Optional<Doctor> maybeDoctor = doctorDao.getDoctorById(INSERTED_DOCTOR_ID);
+    Assert.assertTrue(maybeDoctor.isPresent());
+
+    Set<Vacation> vacations = maybeDoctor.get().getVacations();
 
     // 3. Meaningful assertions
-    Assert.assertEquals(expectedVacations, doctor.getVacations());
+    Assert.assertEquals(expectedVacations, vacations);
   }
 
   @Test

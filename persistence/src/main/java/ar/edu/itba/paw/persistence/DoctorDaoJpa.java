@@ -59,7 +59,7 @@ public class DoctorDaoJpa implements DoctorDao {
   }
 
   @Override
-  public Doctor addVacation(long doctorId, Vacation vacation)
+  public Vacation addVacation(long doctorId, Vacation vacation)
       throws DoctorNotFoundException, VacationCollisionException {
     Doctor doctor = getDoctorById(doctorId).orElseThrow(DoctorNotFoundException::new);
 
@@ -76,7 +76,7 @@ public class DoctorDaoJpa implements DoctorDao {
 
     doctor.addVacation(vacation);
     em.persist(doctor);
-    return doctor;
+    return vacation;
   }
 
   @Override

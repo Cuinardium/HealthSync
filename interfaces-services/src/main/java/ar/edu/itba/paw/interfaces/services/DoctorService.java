@@ -45,7 +45,7 @@ public interface DoctorService {
       Locale locale)
       throws DoctorNotFoundException, EmailInUseException;
 
-  public Doctor addVacation(long doctorId, Vacation vacation) throws DoctorNotFoundException, VacationInvalidException;
+  public Vacation addVacation(long doctorId, Vacation vacation) throws DoctorNotFoundException, VacationInvalidException;
 
   public Doctor removeVacation(long doctorId, Vacation vacation)
       throws DoctorNotFoundException, VacationNotFoundException;

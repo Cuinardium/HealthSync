@@ -442,14 +442,15 @@ public class DoctorServiceImplTest {
       throws DoctorNotFoundException,
           ar.edu.itba.paw.interfaces.services.exceptions.DoctorNotFoundException,
           VacationInvalidException, VacationCollisionException {
+
     // 1. Precondiciones
-    Mockito.when(doctorDao.addVacation(ID, VACATION_NEW)).thenReturn(DOCTOR_WITH_VACATIONS);
+    Mockito.when(doctorDao.addVacation(ID, VACATION_NEW)).thenReturn(VACATION_NEW);
 
     // 2. Ejercitar la class under test
-    Doctor doctor = ds.addVacation(ID, VACATION_NEW);
+    Vacation vacation = ds.addVacation(ID, VACATION_NEW);
 
     // 3. Meaningful assertions
-    Assert.assertEquals(DOCTOR_WITH_VACATIONS, doctor);
+    Assert.assertEquals(VACATION_NEW, vacation);
   }
 
   @Test(expected = ar.edu.itba.paw.interfaces.services.exceptions.DoctorNotFoundException.class)
