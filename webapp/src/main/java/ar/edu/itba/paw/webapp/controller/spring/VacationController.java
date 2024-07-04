@@ -25,7 +25,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
-@Controller
+//@Controller
 public class VacationController {
 
   private final DoctorService doctorService;
@@ -59,7 +59,7 @@ public class VacationController {
       return getVacationsModelAndView(true, false, false, false);
     }
 
-    Vacation newVacation =
+    /*Vacation newVacation =
         new Vacation(
             userId,
             doctorVacationForm.getFromDate(),
@@ -88,6 +88,8 @@ public class VacationController {
 
       return getVacationsModelAndView(true, true, false, false);
     }
+    /*
+     */
 
     LOGGER.debug("Doctor added vacation successfully");
 
@@ -101,6 +103,7 @@ public class VacationController {
 
     long userId = PawAuthUserDetails.getCurrentUserId();
 
+    /*
     try {
       doctorService.removeVacation(
           userId,
@@ -118,6 +121,7 @@ public class VacationController {
       throw new UserNotFoundException();
     }
 
+     */
     LOGGER.debug("Doctor deleted vacation successfully");
 
     return getVacationsModelAndView(false, false, false, true);

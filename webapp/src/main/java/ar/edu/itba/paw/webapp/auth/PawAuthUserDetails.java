@@ -44,10 +44,6 @@ public class PawAuthUserDetails extends User {
     this.id = id;
   }
 
-  public long getId() {
-    return id;
-  }
-
   public static long getCurrentUserId() {
     Authentication auth = SecurityContextHolder.getContext().getAuthentication();
     if (auth != null && !(auth instanceof AnonymousAuthenticationToken) && auth.isAuthenticated()) {
@@ -78,5 +74,9 @@ public class PawAuthUserDetails extends User {
       }
     }
     return UserRole.ROLE_NULL;
+  }
+
+  public long getId() {
+    return id;
   }
 }
