@@ -79,25 +79,24 @@ public class AppointmentDaoImplTest {
                   INSERTED_DOCTOR_ID, DayOfWeek.THURSDAY, ThirtyMinuteBlock.BLOCK_00_00),
               new AttendingHours(
                   INSERTED_DOCTOR_ID, DayOfWeek.FRIDAY, ThirtyMinuteBlock.BLOCK_00_00)));
-
   private static final Set<Vacation> INSERTED_DOCTOR_VACATIONS =
       new HashSet<>(
           Arrays.asList(
-              new Vacation(
-                  INSERTED_DOCTOR_ID,
-                  LocalDate.of(2020, 1, 1),
-                  ThirtyMinuteBlock.BLOCK_00_00,
-                  LocalDate.of(2020, 1, 10),
-                  ThirtyMinuteBlock.BLOCK_00_00),
-              new Vacation(
-                  INSERTED_DOCTOR_ID,
-                  LocalDate.of(2020, 2, 1),
-                  ThirtyMinuteBlock.BLOCK_00_00,
-                  LocalDate.of(2020, 2, 10),
-                  ThirtyMinuteBlock.BLOCK_00_00)));
-
+                  Vacation.builder()
+                          .id(2L)
+                          .fromDate(LocalDate.of(2020, 1, 1))
+                          .fromTime(ThirtyMinuteBlock.BLOCK_00_00)
+                          .toDate(LocalDate.of(2020, 1, 10))
+                          .toTime(ThirtyMinuteBlock.BLOCK_00_00)
+                          .build(),
+                  Vacation.builder()
+                          .id(3L)
+                          .fromDate(LocalDate.of(2020, 2, 1))
+                          .fromTime(ThirtyMinuteBlock.BLOCK_00_00)
+                          .toDate(LocalDate.of(2020, 2, 10))
+                          .toTime(ThirtyMinuteBlock.BLOCK_00_00)
+                          .build()));
   private static final Locale INSERTED_DOCTOR_LOCALE = new Locale("en");
-
   private static final Doctor DOCTOR_7 =
       new Doctor(
           INSERTED_DOCTOR_ID,
@@ -116,20 +115,12 @@ public class AppointmentDaoImplTest {
           INSERTED_DOCTOR_RATING_COUNT,
           INSERTED_DOCTOR_LOCALE,
           true);
-
   private static final ThirtyMinuteBlock INSERTED_TIME = ThirtyMinuteBlock.BLOCK_00_30;
   private static final Long INSERTED_APP_ID = 3L;
   private static final LocalDate INSERTED_LOCAL_DATE = LocalDate.of(2023, 5, 17);
   private static final AppointmentStatus INSERTED_STATUS = AppointmentStatus.CONFIRMED;
   private static final String INSERTED_DESC = "Me duele la cabeza";
   private static final String INSERTED_CANCEL_DESC = null;
-  private static final LocalDate AUX_LOCAL_DATE = LocalDate.of(2023, 5, 18);
-  private static final ThirtyMinuteBlock AUX_TIME = ThirtyMinuteBlock.BLOCK_06_00;
-  private static final String AUX_DESC = "Revision medica";
-  private static final AppointmentStatus AUX_STATUS = AppointmentStatus.CANCELLED;
-  private static final String AUX_CANCEL_DESC = "Que me importa";
-  private static final Long AUX_APP_ID = 5L;
-
   private static final Appointment APPOINTMENT_1 =
       new Appointment(
           INSERTED_APP_ID,
@@ -140,6 +131,12 @@ public class AppointmentDaoImplTest {
           INSERTED_STATUS,
           INSERTED_DESC,
           INSERTED_CANCEL_DESC);
+  private static final LocalDate AUX_LOCAL_DATE = LocalDate.of(2023, 5, 18);
+  private static final ThirtyMinuteBlock AUX_TIME = ThirtyMinuteBlock.BLOCK_06_00;
+  private static final String AUX_DESC = "Revision medica";
+  private static final AppointmentStatus AUX_STATUS = AppointmentStatus.CANCELLED;
+  private static final String AUX_CANCEL_DESC = "Que me importa";
+  private static final Long AUX_APP_ID = 5L;
   private static final String AUX_INDICATIONS = "Toma ibuprofeno cada 6 horas";
 
   @Autowired private DataSource ds;

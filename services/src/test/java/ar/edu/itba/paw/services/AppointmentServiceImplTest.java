@@ -80,12 +80,12 @@ public class AppointmentServiceImplTest {
   private static final Locale DOCTOR_LOCALE = new Locale("en");
 
   private static final Vacation DOCTOR_VACATION =
-      new Vacation(
-          DOCTOR_ID,
-          LocalDate.now().plusDays(1),
-          ThirtyMinuteBlock.BLOCK_10_00,
-          LocalDate.now().plusDays(3),
-          ThirtyMinuteBlock.BLOCK_10_00);
+      Vacation.builder()
+              .fromDate(LocalDate.now().plusDays(1))
+              .fromTime(ThirtyMinuteBlock.BLOCK_10_00)
+              .toDate(LocalDate.now().plusDays(3))
+              .toTime(ThirtyMinuteBlock.BLOCK_10_00)
+              .build();
 
   private static final Doctor DOCTOR =
       new Doctor(

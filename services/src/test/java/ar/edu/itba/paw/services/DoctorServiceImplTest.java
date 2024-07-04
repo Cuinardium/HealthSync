@@ -53,27 +53,16 @@ public class DoctorServiceImplTest {
               new AttendingHours(ID, DayOfWeek.FRIDAY, ThirtyMinuteBlock.BLOCK_00_30),
               new AttendingHours(ID, DayOfWeek.SATURDAY, ThirtyMinuteBlock.BLOCK_00_30),
               new AttendingHours(ID, DayOfWeek.SUNDAY, ThirtyMinuteBlock.BLOCK_00_30)));
-
   private static final Vacation VACATION =
-      new Vacation(
-          ID,
-          LocalDate.of(2020, 1, 1),
-          ThirtyMinuteBlock.BLOCK_00_00,
-          LocalDate.of(2020, 1, 10),
-          ThirtyMinuteBlock.BLOCK_00_00);
-
+          Vacation.builder()
+                  .id(1L)
+                  .fromDate(LocalDate.of(2020, 1, 1))
+                  .fromTime(ThirtyMinuteBlock.BLOCK_00_00)
+                  .toDate(LocalDate.of(2020, 1, 10))
+                  .toTime(ThirtyMinuteBlock.BLOCK_00_00)
+                  .build();
   private static final Float RATING = 3F;
   private static final Integer RATING_COUNT = 1;
-  private static final User USER =
-      new User(
-          ID,
-          EMAIL,
-          PASSWORD_ENCODED,
-          FIRST_NAME,
-          LAST_NAME,
-          IMAGE,
-          LOCALE,
-          true);
   private static final Doctor DOCTOR =
       new Doctor(
           ID,
@@ -92,7 +81,6 @@ public class DoctorServiceImplTest {
           RATING_COUNT,
           LOCALE,
           true);
-
   private static final Doctor DOCTOR_WITH_VACATIONS =
       new Doctor(
           ID,
@@ -106,12 +94,21 @@ public class DoctorServiceImplTest {
           CITY,
           ADDRESS,
           ATTENDING_HOURS,
-          new HashSet<>(Arrays.asList(VACATION)),
+          new HashSet<>(Collections.singletonList(VACATION)),
           RATING,
           RATING_COUNT,
           LOCALE,
           true);
-
+  private static final User USER =
+      new User(
+          ID,
+          EMAIL,
+          PASSWORD_ENCODED,
+          FIRST_NAME,
+          LAST_NAME,
+          IMAGE,
+          LOCALE,
+          true);
   private static final String EMAIL_NEW = "new_email";
   private static final String FIRST_NAME_NEW = "new_fist_name";
   private static final String LAST_NAME_NEW = "new_last_name";
@@ -130,17 +127,6 @@ public class DoctorServiceImplTest {
               new AttendingHours(ID, DayOfWeek.FRIDAY, ThirtyMinuteBlock.BLOCK_00_30),
               new AttendingHours(ID, DayOfWeek.SATURDAY, ThirtyMinuteBlock.BLOCK_00_30),
               new AttendingHours(ID, DayOfWeek.SUNDAY, ThirtyMinuteBlock.BLOCK_00_30)));
-
-  private static final Locale LOCALE_NEW = new Locale("es");
-
-  private static final Vacation VACATION_NEW =
-      new Vacation(
-          ID,
-          LocalDate.now().plusDays(1),
-          ThirtyMinuteBlock.BLOCK_00_00,
-          LocalDate.now().plusDays(10),
-          ThirtyMinuteBlock.BLOCK_00_00);
-
   private static final Doctor DOCTOR_UPDATED =
       new Doctor(
           ID,
@@ -159,7 +145,15 @@ public class DoctorServiceImplTest {
           RATING_COUNT,
           LOCALE,
           true);
-
+  private static final Locale LOCALE_NEW = new Locale("es");
+  private static final Vacation VACATION_NEW =
+          Vacation.builder()
+                  .id(2L)
+                  .fromDate(LocalDate.now().plusDays(1))
+                  .fromTime(ThirtyMinuteBlock.BLOCK_00_00)
+                  .toDate(LocalDate.now().plusDays(10))
+                  .toTime(ThirtyMinuteBlock.BLOCK_00_00)
+                  .build();
   @Mock private DoctorDao doctorDao;
   @Mock private PasswordEncoder passwordEncoder;
   @Mock private UserService userService;
@@ -475,14 +469,15 @@ public class DoctorServiceImplTest {
       throws DoctorNotFoundException,
           ar.edu.itba.paw.interfaces.services.exceptions.DoctorNotFoundException,
           VacationInvalidException {
+
     // 1. Precondiciones
     Vacation invalidVacation =
-        new Vacation(
-            ID,
-            LocalDate.now(),
-            ThirtyMinuteBlock.BLOCK_00_00,
-            LocalDate.now().minusDays(1),
-            ThirtyMinuteBlock.BLOCK_00_00);
+        Vacation.builder()
+                .fromDate(LocalDate.now())
+                .fromTime(ThirtyMinuteBlock.BLOCK_00_00)
+                .toDate(LocalDate.now().minusDays(1))
+                .toTime(ThirtyMinuteBlock.BLOCK_00_00)
+                .build();
 
     // 2. Ejercitar la class under test
     ds.addVacation(ID, invalidVacation);
@@ -494,12 +489,12 @@ public class DoctorServiceImplTest {
           VacationInvalidException {
     // 1. Precondiciones
     Vacation invalidVacation =
-        new Vacation(
-            ID,
-            LocalDate.now().minusDays(1),
-            ThirtyMinuteBlock.BLOCK_00_00,
-            LocalDate.now().plusDays(1),
-            ThirtyMinuteBlock.BLOCK_00_00);
+            Vacation.builder()
+                    .fromDate(LocalDate.now().minusDays(1))
+                    .fromTime(ThirtyMinuteBlock.BLOCK_00_00)
+                    .toDate(LocalDate.now().plusDays(1))
+                    .toTime(ThirtyMinuteBlock.BLOCK_00_00)
+                    .build();
 
     // 2. Ejercitar la class under test
     ds.addVacation(ID, invalidVacation);

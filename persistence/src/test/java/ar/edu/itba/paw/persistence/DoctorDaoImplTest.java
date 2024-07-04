@@ -59,70 +59,39 @@ public class DoctorDaoImplTest {
                   INSERTED_DOCTOR_ID, DayOfWeek.FRIDAY, ThirtyMinuteBlock.BLOCK_00_00)));
 
   private static final Vacation VACATION_NEW =
-      new Vacation(
-          INSERTED_DOCTOR_ID,
-          LocalDate.of(2020, 3, 1),
-          ThirtyMinuteBlock.BLOCK_00_00,
-          LocalDate.of(2020, 3, 10),
-          ThirtyMinuteBlock.BLOCK_00_00);
+      Vacation.builder()
+              .id(1L)
+              .fromDate(LocalDate.of(2020, 3, 1))
+              .fromTime(ThirtyMinuteBlock.BLOCK_00_00)
+              .toDate(LocalDate.of(2020, 3, 10))
+              .toTime(ThirtyMinuteBlock.BLOCK_00_00)
+              .build();
 
   private static final Vacation VACATION_TO_REMOVE =
-      new Vacation(
-          INSERTED_DOCTOR_ID,
-          LocalDate.of(2020, 1, 1),
-          ThirtyMinuteBlock.BLOCK_00_00,
-          LocalDate.of(2020, 1, 10),
-          ThirtyMinuteBlock.BLOCK_00_00);
+          Vacation.builder()
+                  .id(2L)
+                  .fromDate(LocalDate.of(2020, 1, 1))
+                  .fromTime(ThirtyMinuteBlock.BLOCK_00_00)
+                  .toDate(LocalDate.of(2020, 1, 10))
+                  .toTime(ThirtyMinuteBlock.BLOCK_00_00)
+                  .build();
 
   private static final Set<Vacation> INSERTED_DOCTOR_VACATIONS =
       new HashSet<>(
           Arrays.asList(
               VACATION_TO_REMOVE,
-              new Vacation(
-                  INSERTED_DOCTOR_ID,
-                  LocalDate.of(2020, 2, 1),
-                  ThirtyMinuteBlock.BLOCK_00_00,
-                  LocalDate.of(2020, 2, 10),
-                  ThirtyMinuteBlock.BLOCK_00_00)));
+                  Vacation.builder()
+                          .id(3L)
+                          .fromDate(LocalDate.of(2020, 2, 1))
+                          .fromTime(ThirtyMinuteBlock.BLOCK_00_00)
+                          .toDate(LocalDate.of(2020, 2, 10))
+                          .toTime(ThirtyMinuteBlock.BLOCK_00_00)
+                          .build()));
 
   private static final Image INSERTED_DOCTOR_IMAGE = null;
   private static final Locale INSERTED_LOCALE = new Locale("en");
-
   private static final Float INSERTED_DOCTOR_RATING = 3f;
   private static final Integer INSERTED_DOCTOR_RATING_COUNT = 5;
-
-  private static final Long AUX_DOCTOR_ID = 8L;
-  private static final String AUX_DOCTOR_EMAIL = "notdoctor_1@email.com";
-  private static final String AUX_DOCTOR_PASSWORD = "notdoctor_password";
-  private static final String AUX_DOCTOR_FIRST_NAME = "notdoctor_first_name";
-  private static final String AUX_DOCTOR_LAST_NAME = "notdoctor_last_name";
-  private static final Set<HealthInsurance> AUX_DOCTOR_INSURANCES =
-      new HashSet<>(
-          Arrays.asList(HealthInsurance.NONE, HealthInsurance.SWISS_MEDICAL, HealthInsurance.OSDE));
-  private static final Specialty AUX_DOCTOR_SPECIALTY = Specialty.NEPHROLOGY;
-  private static final String AUX_DOCTOR_CITY = "Caseros";
-  private static final String AUX_DOCTOR_ADDRESS = "notdoctor_address";
-
-  private static final Set<AttendingHours> AUX_DOCTOR_ATTENDING_HOURS =
-      new HashSet<>(
-          Arrays.asList(
-              new AttendingHours(
-                  INSERTED_DOCTOR_ID, DayOfWeek.MONDAY, ThirtyMinuteBlock.BLOCK_00_00),
-              new AttendingHours(
-                  INSERTED_DOCTOR_ID, DayOfWeek.TUESDAY, ThirtyMinuteBlock.BLOCK_02_00),
-              new AttendingHours(
-                  INSERTED_DOCTOR_ID, DayOfWeek.WEDNESDAY, ThirtyMinuteBlock.BLOCK_02_00),
-              new AttendingHours(
-                  INSERTED_DOCTOR_ID, DayOfWeek.THURSDAY, ThirtyMinuteBlock.BLOCK_02_00),
-              new AttendingHours(
-                  INSERTED_DOCTOR_ID, DayOfWeek.FRIDAY, ThirtyMinuteBlock.BLOCK_02_00),
-              new AttendingHours(
-                  INSERTED_DOCTOR_ID, DayOfWeek.SATURDAY, ThirtyMinuteBlock.BLOCK_02_00),
-              new AttendingHours(
-                  INSERTED_DOCTOR_ID, DayOfWeek.SUNDAY, ThirtyMinuteBlock.BLOCK_02_00)));
-
-  private static final Locale AUX_LOCALE = new Locale("en");
-
   private static final Doctor DOCTOR_7 =
       new Doctor(
           INSERTED_DOCTOR_ID,
@@ -142,6 +111,35 @@ public class DoctorDaoImplTest {
           INSERTED_LOCALE,
           true);
 
+  private static final Long AUX_DOCTOR_ID = 8L;
+  private static final String AUX_DOCTOR_EMAIL = "notdoctor_1@email.com";
+  private static final String AUX_DOCTOR_PASSWORD = "notdoctor_password";
+  private static final String AUX_DOCTOR_FIRST_NAME = "notdoctor_first_name";
+  private static final String AUX_DOCTOR_LAST_NAME = "notdoctor_last_name";
+  private static final Set<HealthInsurance> AUX_DOCTOR_INSURANCES =
+      new HashSet<>(
+          Arrays.asList(HealthInsurance.NONE, HealthInsurance.SWISS_MEDICAL, HealthInsurance.OSDE));
+  private static final Specialty AUX_DOCTOR_SPECIALTY = Specialty.NEPHROLOGY;
+  private static final String AUX_DOCTOR_CITY = "Caseros";
+  private static final String AUX_DOCTOR_ADDRESS = "notdoctor_address";
+  private static final Set<AttendingHours> AUX_DOCTOR_ATTENDING_HOURS =
+      new HashSet<>(
+          Arrays.asList(
+              new AttendingHours(
+                  INSERTED_DOCTOR_ID, DayOfWeek.MONDAY, ThirtyMinuteBlock.BLOCK_00_00),
+              new AttendingHours(
+                  INSERTED_DOCTOR_ID, DayOfWeek.TUESDAY, ThirtyMinuteBlock.BLOCK_02_00),
+              new AttendingHours(
+                  INSERTED_DOCTOR_ID, DayOfWeek.WEDNESDAY, ThirtyMinuteBlock.BLOCK_02_00),
+              new AttendingHours(
+                  INSERTED_DOCTOR_ID, DayOfWeek.THURSDAY, ThirtyMinuteBlock.BLOCK_02_00),
+              new AttendingHours(
+                  INSERTED_DOCTOR_ID, DayOfWeek.FRIDAY, ThirtyMinuteBlock.BLOCK_02_00),
+              new AttendingHours(
+                  INSERTED_DOCTOR_ID, DayOfWeek.SATURDAY, ThirtyMinuteBlock.BLOCK_02_00),
+              new AttendingHours(
+                  INSERTED_DOCTOR_ID, DayOfWeek.SUNDAY, ThirtyMinuteBlock.BLOCK_02_00)));
+  private static final Locale AUX_LOCALE = new Locale("en");
   @Autowired private DataSource ds;
 
   private JdbcTemplate jdbcTemplate;
@@ -280,6 +278,13 @@ public class DoctorDaoImplTest {
     // 1.Precondiciones
     Set<Vacation> expectedVacations = new HashSet<>(DOCTOR_7.getVacations());
     expectedVacations.add(VACATION_NEW);
+
+    Vacation newVacation = Vacation.builder()
+            .fromDate(VACATION_NEW.getFromDate())
+            .toDate(VACATION_NEW.getToDate())
+            .fromTime(VACATION_NEW.getFromTime())
+            .toTime(VACATION_NEW.getToTime())
+            .build();
 
     // 2. Ejercitar la class under test
     Doctor doctor = doctorDao.addVacation(INSERTED_DOCTOR_ID, VACATION_NEW);
