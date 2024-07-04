@@ -86,7 +86,7 @@ public class NotificationController {
 
     if (notification == null) {
       LOGGER.debug("Notification not found: {}", notificationId);
-      return Response.status(Response.Status.NOT_FOUND).entity("Notification not found.").build();
+      return Response.noContent().build();
     }
 
     notificationService.deleteNotification(notification);
