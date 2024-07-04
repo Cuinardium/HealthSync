@@ -1,0 +1,50 @@
+.card {
+    margin-top: 10px;
+}
+
+.card-header {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.cardButtonContainer{
+    display: flex;
+    justify-content: end;
+}
+
+.indicationsHeader {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    margin-top: 1rem;
+}
+
+.indicationCard{
+    margin-top: 10px;
+    margin-bottom: 10px;
+    flex-direction: column;
+}
+
+.cardDescription {
+    margin-top: 30px;
+    margin-bottom: 10px;
+}
+
+.cardFooter {
+    display: flex;
+    flex-direction: row;
+    justify-content: start;
+    align-items: center;
+    margin-left: 20px;
+    margin-bottom: 20px;
+    margin-top: 10px;
+}
+
+.cardNameDate {
+    display: flex;
+    flex-direction: column;
+    justify-content: start;
+    align-items: start;
+    margin-left: 10px;
+}

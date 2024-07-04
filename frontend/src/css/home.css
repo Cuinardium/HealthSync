@@ -1,0 +1,177 @@
+.foot{
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+}
+
+.text-gradient {
+    display: inline;
+    background: -webkit-linear-gradient(315deg, #0275d8 0%, black 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+.circles{
+    max-width: 60%;
+    padding-bottom: 5%;
+    margin-bottom: 1%;
+}
+
+.welcome{
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.welcome1Container{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    max-width: 45%;
+}
+
+.profile {
+    flex: 1;
+}
+
+
+.text{
+    margin: 3rem;
+}
+
+section{
+    position: relative;
+}
+
+.carouselSectionContainer{
+    display: flex;
+    flex-direction: column;
+}
+
+.carouselContainer{
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.carouselNavButton{
+    color: #223E6A;
+    font-size: 1.5rem;
+    margin: 0.2rem;
+}
+
+.card{
+    margin: 0 3px;
+}
+
+.card-img{
+    height: 20rem;
+}
+
+.img-fluid{
+    height: 100%;
+    width: 100%;
+    object-fit: cover;
+}
+
+.card-img-overlay{
+    color: white;
+    text-shadow: 1px 1px 3px #000000;
+    font-size: 2rem;
+    text-transform: capitalize;
+    font-weight: lighter;
+}
+
+.sloganSmall{
+    font-size: 2rem;
+    font-weight: lighter;
+    --bs-text-opacity: 1;
+    color: var(--bs-secondary-color);
+}
+
+.sloganBig{
+    font-size: 3.3rem;
+    font-weight: bolder;
+    margin-bottom: 2rem;
+}
+
+.categoriesTitle{
+    margin-bottom: 1.5rem;
+    font-weight: normal;
+}
+
+p{
+    text-align: justify;
+    text-align-last: center;
+}
+
+.searchBar{
+    width: 90%;
+}
+
+.about{
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: self-start;
+    --bs-bg-opacity: 1;
+    background-color: rgba(var(--bs-light-rgb),var(--bs-bg-opacity))!important;
+}
+
+.aboutCircleContainer{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 0 3%;
+    max-width: 28rem;
+}
+
+@media screen and (max-width: 767px) {
+    .carousel-inner .carousel-item > .card {
+        display: none;
+    }
+    .carousel-inner .carousel-item > .card:first-child {
+        display: block;
+    }
+}
+
+.carousel-inner .carousel-item.active,
+.carousel-inner .carousel-item-next,
+.carousel-inner .carousel-item-prev {
+    display: flex;
+}
+
+/* medium and up screens */
+@media screen and (min-width: 768px) {
+
+    .carousel-inner .carousel-item-end.active,
+    .carousel-inner .carousel-item-next {
+        transform: translateX(25%);
+    }
+
+    .carousel-inner .carousel-item-start.active,
+    .carousel-inner .carousel-item-prev {
+        transform: translateX(-25%);
+    }
+}
+
+.carousel-inner .carousel-item-end,
+.carousel-inner .carousel-item-start {
+    transform: translateX(0);
+}
+
+@media screen and (max-width: 1120px){
+    div.card-img-overlay{
+        font-size: 1.6rem;
+    }
+}

@@ -1,0 +1,73 @@
+
+.contentContainer{
+    display:flex;
+    flex-direction:column;
+    padding:25px 50px 75px 100px;
+}
+
+/* Date filters */
+
+.dateFilter{
+    display:flex;
+    flex-direction:row;
+    align-items: center;
+    justify-content: start;
+}
+
+.datePickerContainer{
+    display: flex;
+    flex-direction: row;
+    justify-content: start;
+}
+
+.fromDatePicker label{
+    margin-left: 10px;
+}
+
+.toDatePicker{
+    align-self: end;
+    margin-left: 30px;
+}
+
+.toDatePicker label{
+    margin-left: 10px;
+}
+
+/* Appointmnet cards */
+
+.card{
+    margin-top: 10px;
+}
+
+.card-header{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.cardButtonContainer{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: end;
+}
+
+.cardButtonContainer form button{
+    display: flex;
+    align-self: center;
+    align-items: center;
+    margin-left: 10px;
+    margin-top: 10px;
+}
+
+.detailed-link {
+    margin-right: 10px;
+}
+
+.noAppointmentsMsg{
+    display: flex;
+    justify-content: center;
+    margin-top: 10px;
+}
+

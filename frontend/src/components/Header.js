@@ -5,7 +5,7 @@ const Header = () => {
   const { t } = useTranslation();
 
   return (
-    <h1>{t('nav.myAppointments')}</h1>
+    <h1>{t('home.myAppointments')}</h1>
   );
 }
 
