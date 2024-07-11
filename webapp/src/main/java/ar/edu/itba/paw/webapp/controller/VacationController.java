@@ -180,6 +180,7 @@ public class VacationController {
 
   @DELETE
   @Path("/{vacationId:\\d+}")
+  @PreAuthorize("@authorizationFunctions.isUser(authentication, #doctorId)")
   public Response deleteVacation(
       @PathParam("doctorId") final Long doctorId, @PathParam("vacationId") final Long vacationId) {
 
