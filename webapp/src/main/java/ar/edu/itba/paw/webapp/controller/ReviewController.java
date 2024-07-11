@@ -9,6 +9,7 @@ import ar.edu.itba.paw.models.Review;
 import ar.edu.itba.paw.webapp.auth.PawAuthUserDetails;
 import ar.edu.itba.paw.webapp.dto.ReviewDto;
 import ar.edu.itba.paw.webapp.form.ReviewForm;
+import ar.edu.itba.paw.webapp.mediaType.VndType;
 import ar.edu.itba.paw.webapp.utils.ResponseUtil;
 import java.net.URI;
 import java.util.List;
@@ -37,6 +38,7 @@ public class ReviewController {
   // ================= reviews =================
 
   @GET
+  @Produces(VndType.APPLICATION_REVIEWS_LIST)
   public Response listReviews(
       @PathParam("doctorId") final Long doctorId,
       @QueryParam("page") @DefaultValue("1") final int page) {
@@ -75,7 +77,7 @@ public class ReviewController {
   }
 
   @POST
-  @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED})
+  @Consumes(VndType.APPLICATION_REVIEW)
   @PreAuthorize("@authorizationFunctions.canReview(authentication, #doctorId)")
   public Response createReview(
       @PathParam("doctorId") final Long doctorId, @Valid final ReviewForm reviewForm) {
@@ -117,6 +119,7 @@ public class ReviewController {
 
   @GET
   @Path("/{reviewId:\\d+}")
+  @Consumes(VndType.APPLICATION_REVIEW)
   public Response getReview(
       @PathParam("doctorId") final Long doctorId, @PathParam("reviewId") final Long reviewId) {
 

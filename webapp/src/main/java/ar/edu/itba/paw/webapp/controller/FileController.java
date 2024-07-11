@@ -5,6 +5,7 @@ import ar.edu.itba.paw.models.File;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,6 +31,7 @@ public class FileController {
   // TODO: Servir multiples tipos de archivos
   @GET
   @Path("/{fileId:\\d+}")
+  @Produces("image/jpeg")
   @PreAuthorize("@authorizationFunctions.isInvolvedInAppointment(authentication, #appointmentId)")
   public Response getFile(
       @PathParam("appointmentId") final Long appointmentId,

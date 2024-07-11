@@ -10,6 +10,8 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.*;
+
+import ar.edu.itba.paw.webapp.mediaType.VndType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -23,7 +25,7 @@ public class HealthInsuranceController {
 
   // TODO: paginate?
   @GET
-  @Produces(MediaType.APPLICATION_JSON)
+  @Produces(VndType.APPLICATION_HEALTH_INSURANCE_LIST)
   public Response listHealthInsurances() {
     List<HealthInsurance> healthInsuranceList = Arrays.asList(HealthInsurance.values());
 
@@ -33,6 +35,7 @@ public class HealthInsuranceController {
   }
 
   @GET
+  @Produces(VndType.APPLICATION_HEALTH_INSURANCE)
   @Path("/{id}")
   public Response getHealthInsurance(@PathParam("id") final int id) throws UserNotFoundException {
     HealthInsurance[] healthInsurances = HealthInsurance.values();

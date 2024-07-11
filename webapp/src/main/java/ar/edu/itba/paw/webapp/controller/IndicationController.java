@@ -8,6 +8,7 @@ import ar.edu.itba.paw.models.Indication;
 import ar.edu.itba.paw.models.Page;
 import ar.edu.itba.paw.webapp.auth.PawAuthUserDetails;
 import ar.edu.itba.paw.webapp.dto.IndicationDto;
+import ar.edu.itba.paw.webapp.mediaType.VndType;
 import ar.edu.itba.paw.webapp.utils.ResponseUtil;
 import java.net.URI;
 import java.util.List;
@@ -37,6 +38,7 @@ public class IndicationController {
   // ================= indications =================
 
   @GET
+  @Produces(VndType.APPLICATION_INDICATION_LIST)
   @PreAuthorize("@authorizationFunctions.isInvolvedInAppointment(authentication, #appointmentId)")
   public Response listIndications(
       @PathParam("appointmentId") final Long appointmentId,
@@ -82,7 +84,7 @@ public class IndicationController {
 
   // TODO: Probablemente mal, subir archivo a otro endpoint?
   @POST
-  @Consumes({MediaType.MULTIPART_FORM_DATA})
+  @Consumes({MediaType.MULTIPART_FORM_DATA, VndType.APPLICATION_INDICATION})
   @PreAuthorize("@authorizationFunctions.isInvolvedInAppointment(authentication, #appointmentId)")
   public Response createIndication(
       @PathParam("appointmentId") final Long appointmentId,
@@ -125,6 +127,7 @@ public class IndicationController {
 
   @GET
   @Path("/{indicationId:\\d+}")
+  @Produces(VndType.APPLICATION_INDICATION)
   @PreAuthorize("@authorizationFunctions.isInvolvedInAppointment(authentication, #appointmentId)")
   public Response getIndication(
       @PathParam("appointmentId") final Long appointmentId,

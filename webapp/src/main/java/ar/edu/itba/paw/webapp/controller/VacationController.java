@@ -21,6 +21,8 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
+
+import ar.edu.itba.paw.webapp.mediaType.VndType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,6 +50,7 @@ public class VacationController {
   // =============== vacations ==============
 
   @GET
+  @Produces(VndType.APPLICATION_VACATION_LIST)
   public Response listVacations(@PathParam("doctorId") final Long doctorId) {
 
     LOGGER.debug("Listing vacations for doctor: {}", doctorId);
@@ -75,6 +78,7 @@ public class VacationController {
   }
 
   @POST
+  @Consumes(VndType.APPLICATION_VACATION_FORM)
   @PreAuthorize("@authorizationFunctions.isUser(authentication, #doctorId)")
   public Response createVacation(
       @PathParam("doctorId") final Long doctorId,
@@ -150,6 +154,7 @@ public class VacationController {
 
   @GET
   @Path("/{vacationId:\\d+}")
+  @Produces(VndType.APPLICATION_VACATION)
   public Response getVacation(
       @PathParam("doctorId") final Long doctorId, @PathParam("vacationId") final Long vacationId) {
 

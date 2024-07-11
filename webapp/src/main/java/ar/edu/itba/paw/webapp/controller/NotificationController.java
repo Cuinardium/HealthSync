@@ -11,6 +11,8 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
+
+import ar.edu.itba.paw.webapp.mediaType.VndType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +37,7 @@ public class NotificationController {
   // ================= notifications ===============
 
   @GET
+  @Produces(VndType.APPLICATION_NOTIFICATIONS_LIST)
   @PreAuthorize("@authorizationFunctions.isUser(authentication, #userId)")
   public Response getNotifications(@NotNull @QueryParam("userId") final Long userId) {
 
@@ -58,6 +61,7 @@ public class NotificationController {
 
   @Path("{notificationId:\\d+}")
   @GET
+  @Produces(VndType.APPLICATION_NOTIFICATION)
   @PreAuthorize("@authorizationFunctions.isNotificationRecipient(authentication, #notificationId)")
   public Response getNotification(@PathParam("notificationId") final Long notificationId) {
 
