@@ -4,8 +4,6 @@ import ar.edu.itba.paw.interfaces.services.AppointmentService;
 import ar.edu.itba.paw.interfaces.services.NotificationService;
 import ar.edu.itba.paw.interfaces.services.ReviewService;
 import ar.edu.itba.paw.models.Appointment;
-import java.util.Optional;
-
 import ar.edu.itba.paw.models.Notification;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -20,77 +18,69 @@ public class AuthorizationFunctions {
 
   @Autowired private NotificationService notificationService;
 
-
   // ================= User ====================
 
   public boolean isUser(Authentication authentication, long userId) {
-    if (authentication == null
-        || !authentication.isAuthenticated()
-        || authentication.getPrincipal() == null
-        || userId < 0) {
+    if (isInvalid(authentication) || userId < 0) {
       return false;
     }
 
     PawAuthUserDetails user = (PawAuthUserDetails) authentication.getPrincipal();
+    if (user == null) {
+      return false;
+    }
 
     return user.getId() == userId;
-  }
-
-  // ================= Reviews =================
-
-  public boolean canReview(Authentication authentication, long doctorId) {
-
-    if (authentication == null
-        || !authentication.isAuthenticated()
-        || authentication.getPrincipal() == null
-        || doctorId < 0) {
-      return false;
-    }
-
-    PawAuthUserDetails user = (PawAuthUserDetails) authentication.getPrincipal();
-
-    return reviewService.canReview(doctorId, user.getId());
   }
 
   // ================= Appointment =================
 
   public boolean isInvolvedInAppointment(Authentication authentication, long appointmentId) {
-    if (authentication == null
-        || !authentication.isAuthenticated()
-        || authentication.getPrincipal() == null
-        || appointmentId < 0) {
+    if (isInvalid(authentication) || appointmentId < 0) {
       return false;
     }
 
     PawAuthUserDetails user = (PawAuthUserDetails) authentication.getPrincipal();
+    if (user == null) {
+      return false;
+    }
 
-    Optional<Appointment> appointment = appointmentService.getAppointmentById(appointmentId);
+    Appointment appointment = appointmentService.getAppointmentById(appointmentId).orElse(null);
+    if (appointment == null) {
+      return false;
+    }
 
-    return appointment
-        .filter(
-            value ->
-                value.getDoctor().getId() == user.getId()
-                    || value.getPatient().getId() == user.getId())
-        .isPresent();
+    return appointment.getDoctor().getId() == user.getId()
+        || appointment.getPatient().getId() == user.getId();
   }
 
   // ================== Notification ==================
 
   public boolean isNotificationRecipient(Authentication authentication, long notificationId) {
 
-    if (authentication == null
-        || !authentication.isAuthenticated()
-        || authentication.getPrincipal() == null
-        || notificationId < 0) {
+    if (isInvalid(authentication) || notificationId < 0) {
       return false;
     }
 
     PawAuthUserDetails user = (PawAuthUserDetails) authentication.getPrincipal();
+    if (user == null) {
+      return false;
+    }
 
-    Optional<Notification> notification = notificationService.getNotification(notificationId);
+    Notification notification = notificationService.getNotification(notificationId).orElse(null);
+    if (notification == null) {
+      // So we can return 404
+      return true;
+    }
 
-    return notification
-        .filter(value -> value.getUser().getId() == user.getId())
-        .isPresent();
+    return notification.getUser().getId() == user.getId();
+  }
+
+  // ================== Private =======================
+
+  private boolean isInvalid(Authentication authentication) {
+    return authentication == null
+        || !authentication.isAuthenticated()
+        || authentication.getPrincipal() == null;
   }
 }

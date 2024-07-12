@@ -4,8 +4,7 @@ import ar.edu.itba.paw.models.Page;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
-// TODO: how to properly do utils? should it be Singleton?
-public class ResponseUtil {
+public final class ResponseUtil {
   private ResponseUtil() {
     throw new RuntimeException();
   }

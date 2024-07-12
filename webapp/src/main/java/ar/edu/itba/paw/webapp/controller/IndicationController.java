@@ -8,6 +8,7 @@ import ar.edu.itba.paw.models.Indication;
 import ar.edu.itba.paw.models.Page;
 import ar.edu.itba.paw.webapp.auth.PawAuthUserDetails;
 import ar.edu.itba.paw.webapp.dto.IndicationDto;
+import ar.edu.itba.paw.webapp.exceptions.IndicationNotFoundException;
 import ar.edu.itba.paw.webapp.mediaType.VndType;
 import ar.edu.itba.paw.webapp.utils.ResponseUtil;
 import java.net.URI;
@@ -42,7 +43,8 @@ public class IndicationController {
   @PreAuthorize("@authorizationFunctions.isInvolvedInAppointment(authentication, #appointmentId)")
   public Response listIndications(
       @PathParam("appointmentId") final Long appointmentId,
-      @QueryParam("page") @DefaultValue("1") final int page) {
+      @QueryParam("page") @DefaultValue("1") final int page)
+      throws AppointmentNotFoundException {
 
     LOGGER.debug(
         "Listing indications for appointment: \nAppointmentId: {}\nPage: {}", appointmentId, page);
@@ -54,16 +56,8 @@ public class IndicationController {
           .build();
     }
 
-    Page<Indication> indications;
-
-    try {
-      indications =
-          indicationService.getIndicationsForAppointment(
-              appointmentId, page - 1, DEFAULT_PAGE_SIZE);
-    } catch (AppointmentNotFoundException e) {
-      LOGGER.debug("Appointment not found: {}", appointmentId);
-      return Response.status(Response.Status.NOT_FOUND).entity("Appointment not found.").build();
-    }
+    Page<Indication> indications =
+        indicationService.getIndicationsForAppointment(appointmentId, page - 1, DEFAULT_PAGE_SIZE);
 
     if (indications.getContent().isEmpty()) {
       LOGGER.debug("No indications found for appointment: {}", appointmentId);
@@ -89,7 +83,8 @@ public class IndicationController {
   public Response createIndication(
       @PathParam("appointmentId") final Long appointmentId,
       @FormDataParam("indications") final String indications,
-      @FormDataParam("file") final byte[] fileBytes) {
+      @FormDataParam("file") final byte[] fileBytes)
+      throws AppointmentNotFoundException, UserNotFoundException {
 
     final long userId = PawAuthUserDetails.getCurrentUserId();
 
@@ -98,18 +93,8 @@ public class IndicationController {
       file = new File(fileBytes);
     }
 
-    Indication indication;
-
-    try {
-      indication = indicationService.createIndication(appointmentId, userId, indications, file);
-    } catch (UserNotFoundException e) {
-      LOGGER.debug("User not found: {}", userId);
-      return Response.status(Response.Status.NOT_FOUND).entity("User not found.").build();
-
-    } catch (AppointmentNotFoundException e) {
-      LOGGER.debug("Appointment not found: {}", appointmentId);
-      return Response.status(Response.Status.NOT_FOUND).entity("Appointment not found.").build();
-    }
+    Indication indication =
+        indicationService.createIndication(appointmentId, userId, indications, file);
 
     URI createdIndicationUri =
         uriInfo
@@ -131,20 +116,16 @@ public class IndicationController {
   @PreAuthorize("@authorizationFunctions.isInvolvedInAppointment(authentication, #appointmentId)")
   public Response getIndication(
       @PathParam("appointmentId") final Long appointmentId,
-      @PathParam("indicationId") final Long indicationId) {
+      @PathParam("indicationId") final Long indicationId)
+      throws IndicationNotFoundException {
 
     LOGGER.debug("Getting indication: {}", indicationId);
 
-    final Indication indication = indicationService.getIndication(indicationId).orElse(null);
-
-    if (indication == null) {
-      LOGGER.debug("Indication not found: {}", indicationId);
-      return Response.status(Response.Status.NOT_FOUND).entity("Indication not found.").build();
-    }
+    final Indication indication =
+        indicationService.getIndication(indicationId).orElseThrow(IndicationNotFoundException::new);
 
     if (!indication.getAppointment().getId().equals(appointmentId)) {
-      LOGGER.debug("Indication {} does not belong to appointment {}", indicationId, appointmentId);
-      return Response.status(Response.Status.NOT_FOUND).entity("Indication not found.").build();
+      throw new IndicationNotFoundException();
     }
 
     final IndicationDto indicationDto = IndicationDto.fromIndication(uriInfo, indication);

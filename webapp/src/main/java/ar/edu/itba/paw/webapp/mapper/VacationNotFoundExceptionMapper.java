@@ -1,7 +1,7 @@
 package ar.edu.itba.paw.webapp.mapper;
 
+import ar.edu.itba.paw.interfaces.services.exceptions.VacationNotFoundException;
 import ar.edu.itba.paw.webapp.dto.ErrorDto;
-import ar.edu.itba.paw.interfaces.services.exceptions.UserNotFoundException;
 import ar.edu.itba.paw.webapp.mediaType.VndType;
 import ar.edu.itba.paw.webapp.utils.LocaleUtil;
 import java.util.Locale;
@@ -16,19 +16,20 @@ import org.springframework.stereotype.Component;
 
 @Component
 @Provider
-public class UserNotFoundExceptionMapper implements ExceptionMapper<UserNotFoundException> {
+public class VacationNotFoundExceptionMapper implements ExceptionMapper<VacationNotFoundException> {
 
-  private static final Logger LOGGER = LoggerFactory.getLogger(UserNotFoundExceptionMapper.class);
+  private static final Logger LOGGER =
+      LoggerFactory.getLogger(VacationNotFoundExceptionMapper.class);
 
-  private static final String MESSAGE_ID = "error.userNotFound";
+  private static final String MESSAGE_ID = "error.vacationNotFound";
   private static final Response.Status Status = Response.Status.NOT_FOUND;
 
   @Autowired private MessageSource messageSource;
 
   @Override
-  public Response toResponse(UserNotFoundException e) {
+  public Response toResponse(VacationNotFoundException e) {
 
-    LOGGER.debug("User not found", e);
+    LOGGER.debug("Vacation not found", e);
 
     Locale locale = LocaleUtil.getCurrentRequestLocale();
     String message = messageSource.getMessage(MESSAGE_ID, null, locale);

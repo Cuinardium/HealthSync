@@ -8,6 +8,7 @@ import ar.edu.itba.paw.models.Page;
 import ar.edu.itba.paw.models.Review;
 import ar.edu.itba.paw.webapp.auth.PawAuthUserDetails;
 import ar.edu.itba.paw.webapp.dto.ReviewDto;
+import ar.edu.itba.paw.webapp.exceptions.ReviewNotFoundException;
 import ar.edu.itba.paw.webapp.form.ReviewForm;
 import ar.edu.itba.paw.webapp.mediaType.VndType;
 import ar.edu.itba.paw.webapp.utils.ResponseUtil;
@@ -41,10 +42,12 @@ public class ReviewController {
   @Produces(VndType.APPLICATION_REVIEWS_LIST)
   public Response listReviews(
       @PathParam("doctorId") final Long doctorId,
-      @QueryParam("page") @DefaultValue("1") final int page) {
+      @QueryParam("page") @DefaultValue("1") final int page)
+      throws DoctorNotFoundException {
 
     LOGGER.debug("Listing reviews for doctor: \nDoctorId: {}\nPage: {}", doctorId, page);
 
+    // TODO: Validar page usando un beanparam
     if (page < 1) {
       LOGGER.debug("Invalid page number: {}", page);
       return Response.status(Response.Status.BAD_REQUEST)
@@ -52,14 +55,7 @@ public class ReviewController {
           .build();
     }
 
-    Page<Review> reviews;
-
-    try {
-      reviews = reviewService.getReviewsForDoctor(doctorId, page - 1, DEFAULT_PAGE_SIZE);
-    } catch (DoctorNotFoundException e) {
-      LOGGER.debug("Doctor not found: {}", doctorId);
-      return Response.status(Response.Status.NOT_FOUND).entity("Doctor not found.").build();
-    }
+    Page<Review> reviews = reviewService.getReviewsForDoctor(doctorId, page - 1, DEFAULT_PAGE_SIZE);
 
     if (reviews.getContent().isEmpty()) {
       LOGGER.debug("No reviews found for doctor: {}", doctorId);
@@ -78,30 +74,16 @@ public class ReviewController {
 
   @POST
   @Consumes(VndType.APPLICATION_REVIEW)
-  @PreAuthorize("@authorizationFunctions.canReview(authentication, #doctorId)")
   public Response createReview(
-      @PathParam("doctorId") final Long doctorId, @Valid final ReviewForm reviewForm) {
+      @PathParam("doctorId") final Long doctorId, @Valid final ReviewForm reviewForm)
+      throws DoctorNotFoundException, PatientNotFoundException, ReviewForbiddenException {
 
     final int rating = reviewForm.getRating();
     final String description = reviewForm.getDescription();
 
-    // TODO: Get patientId from session
     final long patientId = PawAuthUserDetails.getCurrentUserId();
 
-    Review review;
-
-    try {
-      review = reviewService.createReview(doctorId, patientId, rating, description);
-    } catch (DoctorNotFoundException e) {
-      LOGGER.debug("Doctor not found: {}", doctorId);
-      return Response.status(Response.Status.NOT_FOUND).entity("Doctor not found.").build();
-    } catch (PatientNotFoundException e) {
-      LOGGER.debug("Patient not found: {}", patientId);
-      return Response.status(Response.Status.NOT_FOUND).entity("Patient not found.").build();
-    } catch (ReviewForbiddenException e) {
-      LOGGER.debug("Forbidden review for doctor: {} and patient: {}", doctorId, patientId);
-      return Response.status(Response.Status.FORBIDDEN).entity("Forbidden review.").build();
-    }
+    Review review = reviewService.createReview(doctorId, patientId, rating, description);
 
     URI createdReviewUri =
         uriInfo
@@ -119,26 +101,21 @@ public class ReviewController {
 
   @GET
   @Path("/{reviewId:\\d+}")
-  @Consumes(VndType.APPLICATION_REVIEW)
+  @Produces(VndType.APPLICATION_REVIEW)
   public Response getReview(
-      @PathParam("doctorId") final Long doctorId, @PathParam("reviewId") final Long reviewId) {
+      @PathParam("doctorId") final Long doctorId, @PathParam("reviewId") final Long reviewId)
+      throws ReviewNotFoundException {
 
     LOGGER.debug("Getting review: {}", reviewId);
 
-    final Review review = reviewService.getReview(reviewId).orElse(null);
-
-    if (review == null) {
-      LOGGER.debug("Review not found: {}", reviewId);
-      return Response.status(Response.Status.NOT_FOUND).entity("Review not found.").build();
-    }
+    final Review review =
+        reviewService.getReview(reviewId).orElseThrow(ReviewNotFoundException::new);
 
     if (!review.getDoctor().getId().equals(doctorId)) {
-      LOGGER.debug("Review {} does not belong to doctor {}", reviewId, doctorId);
-      return Response.status(Response.Status.NOT_FOUND).entity("Review not found.").build();
+      throw new ReviewNotFoundException();
     }
 
     final ReviewDto reviewDto = ReviewDto.fromReview(uriInfo, review);
-
     return Response.ok(reviewDto).build();
   }
 }

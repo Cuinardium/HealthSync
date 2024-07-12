@@ -7,12 +7,17 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
+
+import ar.edu.itba.paw.webapp.exceptions.FileNotFoundException;
+import ar.edu.itba.paw.webapp.mediaType.VndType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.stereotype.Component;
 
 @Path("/appointments/{appointmentId:\\d+}/files")
+@Component
 public class FileController {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(FileController.class);
@@ -31,18 +36,19 @@ public class FileController {
   // TODO: Servir multiples tipos de archivos
   @GET
   @Path("/{fileId:\\d+}")
-  @Produces("image/jpeg")
+  @Produces({"image/jpeg"})
   @PreAuthorize("@authorizationFunctions.isInvolvedInAppointment(authentication, #appointmentId)")
   public Response getFile(
       @PathParam("appointmentId") final Long appointmentId,
       @PathParam("fileId") final Long fileId) {
     LOGGER.debug("Getting file with id: {}", fileId);
 
-    final File file = fileService.getFile(fileId).orElse(null);
+    final File file = fileService.getFile(fileId).orElseThrow(FileNotFoundException::new);
 
-    if (file == null) {
-      LOGGER.debug("File not found: {}", fileId);
-      return Response.status(Response.Status.NOT_FOUND).entity("File not found.").build();
+    long fileAppointmentId = file.getIndication().getAppointment().getId();
+
+    if (fileAppointmentId != appointmentId) {
+      throw new FileNotFoundException();
     }
 
     final String filename = appointmentId + "-" + fileId + ".jpg";

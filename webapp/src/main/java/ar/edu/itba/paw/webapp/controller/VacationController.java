@@ -10,6 +10,7 @@ import ar.edu.itba.paw.models.ThirtyMinuteBlock;
 import ar.edu.itba.paw.models.Vacation;
 import ar.edu.itba.paw.webapp.dto.VacationDto;
 import ar.edu.itba.paw.webapp.form.DoctorVacationForm;
+import ar.edu.itba.paw.webapp.mediaType.VndType;
 import java.net.URI;
 import java.time.LocalDate;
 import java.util.Collection;
@@ -21,8 +22,6 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
-
-import ar.edu.itba.paw.webapp.mediaType.VndType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,16 +50,13 @@ public class VacationController {
 
   @GET
   @Produces(VndType.APPLICATION_VACATION_LIST)
-  public Response listVacations(@PathParam("doctorId") final Long doctorId) {
+  public Response listVacations(@PathParam("doctorId") final Long doctorId)
+      throws DoctorNotFoundException {
 
     LOGGER.debug("Listing vacations for doctor: {}", doctorId);
 
-    final Doctor doctor = doctorService.getDoctorById(doctorId).orElse(null);
-
-    if (doctor == null) {
-      LOGGER.debug("Doctor not found: {}", doctorId);
-      return Response.status(Response.Status.NOT_FOUND).entity("Doctor not found").build();
-    }
+    final Doctor doctor =
+        doctorService.getDoctorById(doctorId).orElseThrow(DoctorNotFoundException::new);
 
     Collection<Vacation> vacations = doctor.getVacations();
 
@@ -82,7 +78,8 @@ public class VacationController {
   @PreAuthorize("@authorizationFunctions.isUser(authentication, #doctorId)")
   public Response createVacation(
       @PathParam("doctorId") final Long doctorId,
-      @Valid final DoctorVacationForm doctorVacationForm) {
+      @Valid final DoctorVacationForm doctorVacationForm)
+      throws DoctorNotFoundException, VacationInvalidException {
 
     final LocalDate fromDate = doctorVacationForm.getFromDate();
     final LocalDate toDate = doctorVacationForm.getToDate();
@@ -90,6 +87,7 @@ public class VacationController {
         ThirtyMinuteBlock.fromString(doctorVacationForm.getFromTime());
     final ThirtyMinuteBlock toTime = ThirtyMinuteBlock.fromString(doctorVacationForm.getToTime());
 
+    // TODO: usar bean validation?
     if (fromTime == null || toTime == null) {
       LOGGER.debug(
           "Invalid time parameter, from: {}, to {}",
@@ -102,6 +100,7 @@ public class VacationController {
         doctorVacationForm.getCancelAppointmentsInVacation();
     final String cancelReason = doctorVacationForm.getCancelReason();
 
+    // TODO: usar validacion
     if (cancelAppointmentsInVacation && cancelReason == null) {
       LOGGER.debug("Appointments are to be cancelled but no reason was indicated");
       return Response.status(Response.Status.BAD_REQUEST)
@@ -117,25 +116,13 @@ public class VacationController {
             .toTime(toTime)
             .build();
 
-    try {
-      vacation = doctorService.addVacation(doctorId, vacation);
+    vacation = doctorService.addVacation(doctorId, vacation);
 
-      if (cancelAppointmentsInVacation) {
-        LOGGER.debug(
-            "Canceling appointments in range, vacation: {}, reason: {}", vacation, cancelReason);
-        appointmentService.cancelAppointmentsInRange(
-            doctorId, fromDate, fromTime, toDate, toTime, cancelReason);
-      }
-    } catch (VacationInvalidException e) {
-
-      LOGGER.debug("Conflict, doctor already has vacation in range, vacation: {}", vacation);
-      return Response.status(Response.Status.CONFLICT)
-          .entity("Conflict, doctor already has vacation in range")
-          .build();
-    } catch (DoctorNotFoundException e) {
-
-      LOGGER.debug("Doctor not found: {}", doctorId);
-      return Response.status(Response.Status.NOT_FOUND).entity("Doctor not found").build();
+    if (cancelAppointmentsInVacation) {
+      LOGGER.debug(
+          "Canceling appointments in range, vacation: {}, reason: {}", vacation, cancelReason);
+      appointmentService.cancelAppointmentsInRange(
+          doctorId, fromDate, fromTime, toDate, toTime, cancelReason);
     }
 
     final URI createdVacationUri =
@@ -156,30 +143,21 @@ public class VacationController {
   @Path("/{vacationId:\\d+}")
   @Produces(VndType.APPLICATION_VACATION)
   public Response getVacation(
-      @PathParam("doctorId") final Long doctorId, @PathParam("vacationId") final Long vacationId) {
+      @PathParam("doctorId") final Long doctorId, @PathParam("vacationId") final Long vacationId)
+      throws DoctorNotFoundException, VacationNotFoundException {
 
     LOGGER.debug("Getting vacation: {}", vacationId);
 
-    final Doctor doctor = doctorService.getDoctorById(doctorId).orElse(null);
-
-    if (doctor == null) {
-      LOGGER.debug("Doctor not found: {}", doctorId);
-      return Response.status(Response.Status.NOT_FOUND).entity("Doctor not found").build();
-    }
+    final Doctor doctor =
+        doctorService.getDoctorById(doctorId).orElseThrow(DoctorNotFoundException::new);
 
     final Vacation vacation =
         doctor.getVacations().stream()
             .filter(v -> v.getId().equals(vacationId))
             .findAny()
-            .orElse(null);
-
-    if (vacation == null) {
-      LOGGER.debug("Vacation not found, vacation: {}", vacationId);
-      return Response.status(Response.Status.NOT_FOUND).entity("Vacation not found").build();
-    }
+            .orElseThrow(VacationNotFoundException::new);
 
     VacationDto vacationDto = VacationDto.fromVacation(uriInfo, vacation);
-
     return Response.ok(vacationDto).build();
   }
 
@@ -192,7 +170,6 @@ public class VacationController {
     LOGGER.debug("Deleting vacation: {}", vacationId);
 
     try {
-
       final Doctor doctor =
           doctorService.getDoctorById(doctorId).orElseThrow(DoctorNotFoundException::new);
 

@@ -3,6 +3,8 @@ package ar.edu.itba.paw.webapp.controller;
 import ar.edu.itba.paw.interfaces.services.NotificationService;
 import ar.edu.itba.paw.models.Notification;
 import ar.edu.itba.paw.webapp.dto.NotificationDto;
+import ar.edu.itba.paw.webapp.exceptions.NotificationNotFoundException;
+import ar.edu.itba.paw.webapp.mediaType.VndType;
 import java.util.List;
 import java.util.stream.Collectors;
 import javax.validation.constraints.NotNull;
@@ -11,8 +13,6 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
-
-import ar.edu.itba.paw.webapp.mediaType.VndType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -67,12 +67,10 @@ public class NotificationController {
 
     LOGGER.debug("Getting notification with id: {}", notificationId);
 
-    Notification notification = notificationService.getNotification(notificationId).orElse(null);
-
-    if (notification == null) {
-      LOGGER.debug("Notification not found: {}", notificationId);
-      return Response.status(Response.Status.NOT_FOUND).entity("Notification not found.").build();
-    }
+    Notification notification =
+        notificationService
+            .getNotification(notificationId)
+            .orElseThrow(NotificationNotFoundException::new);
 
     final NotificationDto notificationDto = NotificationDto.fromNotification(uriInfo, notification);
 
