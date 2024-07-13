@@ -10,10 +10,12 @@ import ar.edu.itba.paw.webapp.auth.PawAuthUserDetails;
 import ar.edu.itba.paw.webapp.dto.IndicationDto;
 import ar.edu.itba.paw.webapp.exceptions.IndicationNotFoundException;
 import ar.edu.itba.paw.webapp.mediaType.VndType;
+import ar.edu.itba.paw.webapp.query.PageQuery;
 import ar.edu.itba.paw.webapp.utils.ResponseUtil;
 import java.net.URI;
 import java.util.List;
 import java.util.stream.Collectors;
+import javax.validation.Valid;
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
 import org.glassfish.jersey.media.multipart.FormDataParam;
@@ -27,7 +29,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class IndicationController {
   private static final Logger LOGGER = LoggerFactory.getLogger(IndicationController.class);
-  private static final int DEFAULT_PAGE_SIZE = 10;
+
   private final IndicationService indicationService;
   @Context private UriInfo uriInfo;
 
@@ -43,21 +45,17 @@ public class IndicationController {
   @PreAuthorize("@authorizationFunctions.isInvolvedInAppointment(authentication, #appointmentId)")
   public Response listIndications(
       @PathParam("appointmentId") final Long appointmentId,
-      @QueryParam("page") @DefaultValue("1") final int page)
+      @Valid @BeanParam final PageQuery pageQuery)
       throws AppointmentNotFoundException {
 
     LOGGER.debug(
-        "Listing indications for appointment: \nAppointmentId: {}\nPage: {}", appointmentId, page);
-
-    if (page < 1) {
-      LOGGER.debug("Invalid page number: {}", page);
-      return Response.status(Response.Status.BAD_REQUEST)
-          .entity("Invalid page number. Must be greater than 0.")
-          .build();
-    }
+        "Listing indications for appointment: \nAppointmentId: {}\nPage: {}",
+        appointmentId,
+        pageQuery.getPage());
 
     Page<Indication> indications =
-        indicationService.getIndicationsForAppointment(appointmentId, page - 1, DEFAULT_PAGE_SIZE);
+        indicationService.getIndicationsForAppointment(
+            appointmentId, pageQuery.getPage(), pageQuery.getPageSize());
 
     if (indications.getContent().isEmpty()) {
       LOGGER.debug("No indications found for appointment: {}", appointmentId);

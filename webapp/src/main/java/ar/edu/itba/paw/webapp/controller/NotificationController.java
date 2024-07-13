@@ -5,9 +5,10 @@ import ar.edu.itba.paw.models.Notification;
 import ar.edu.itba.paw.webapp.dto.NotificationDto;
 import ar.edu.itba.paw.webapp.exceptions.NotificationNotFoundException;
 import ar.edu.itba.paw.webapp.mediaType.VndType;
+import ar.edu.itba.paw.webapp.query.UserQuery;
 import java.util.List;
 import java.util.stream.Collectors;
-import javax.validation.constraints.NotNull;
+import javax.validation.Valid;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.GenericEntity;
@@ -38,12 +39,13 @@ public class NotificationController {
 
   @GET
   @Produces(VndType.APPLICATION_NOTIFICATIONS_LIST)
-  @PreAuthorize("@authorizationFunctions.isUser(authentication, #userId)")
-  public Response getNotifications(@NotNull @QueryParam("userId") final Long userId) {
+  @PreAuthorize("@authorizationFunctions.isUser(authentication, #userQuery.userId)")
+  public Response getNotifications(@Valid @BeanParam final UserQuery userQuery) {
 
-    LOGGER.debug("Getting notifications for user: {}", userId);
+    LOGGER.debug("Getting notifications for user: {}", userQuery.getUserId());
 
-    List<Notification> notifications = notificationService.getUserNotifications(userId);
+    List<Notification> notifications =
+        notificationService.getUserNotifications(userQuery.getUserId());
 
     if (notifications.isEmpty()) {
       return Response.noContent().build();

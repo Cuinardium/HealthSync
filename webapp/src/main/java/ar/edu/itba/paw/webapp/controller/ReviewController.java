@@ -11,6 +11,7 @@ import ar.edu.itba.paw.webapp.dto.ReviewDto;
 import ar.edu.itba.paw.webapp.exceptions.ReviewNotFoundException;
 import ar.edu.itba.paw.webapp.form.ReviewForm;
 import ar.edu.itba.paw.webapp.mediaType.VndType;
+import ar.edu.itba.paw.webapp.query.PageQuery;
 import ar.edu.itba.paw.webapp.utils.ResponseUtil;
 import java.net.URI;
 import java.util.List;
@@ -20,14 +21,13 @@ import javax.ws.rs.core.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Component;
 
 @Path("/doctors/{doctorId:\\d+}/reviews")
 @Component
 public class ReviewController {
   private static final Logger LOGGER = LoggerFactory.getLogger(ReviewController.class);
-  private static final int DEFAULT_PAGE_SIZE = 10;
+
   private final ReviewService reviewService;
   @Context private UriInfo uriInfo;
 
@@ -41,21 +41,14 @@ public class ReviewController {
   @GET
   @Produces(VndType.APPLICATION_REVIEWS_LIST)
   public Response listReviews(
-      @PathParam("doctorId") final Long doctorId,
-      @QueryParam("page") @DefaultValue("1") final int page)
+      @PathParam("doctorId") final Long doctorId, @Valid @BeanParam final PageQuery pageQuery)
       throws DoctorNotFoundException {
 
-    LOGGER.debug("Listing reviews for doctor: \nDoctorId: {}\nPage: {}", doctorId, page);
+    LOGGER.debug(
+        "Listing reviews for doctor: \nDoctorId: {}\nPage: {}", doctorId, pageQuery.getPage());
 
-    // TODO: Validar page usando un beanparam
-    if (page < 1) {
-      LOGGER.debug("Invalid page number: {}", page);
-      return Response.status(Response.Status.BAD_REQUEST)
-          .entity("Invalid page number. Must be greater than 0.")
-          .build();
-    }
-
-    Page<Review> reviews = reviewService.getReviewsForDoctor(doctorId, page - 1, DEFAULT_PAGE_SIZE);
+    Page<Review> reviews =
+        reviewService.getReviewsForDoctor(doctorId, pageQuery.getPage(), pageQuery.getPageSize());
 
     if (reviews.getContent().isEmpty()) {
       LOGGER.debug("No reviews found for doctor: {}", doctorId);
