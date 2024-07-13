@@ -70,7 +70,7 @@ public class ImageDaoImplTest {
   public void testCreateImage() {
     // 1. Precondiciones (script testImage.sql)
     // 2. Ejercitar la class under test
-    Image image = imageDao.createImage(new Image(AUX_IMAGE_BYTES));
+    Image image = imageDao.createImage(new Image.Builder(AUX_IMAGE_BYTES).build());
 
     em.flush();
 
@@ -84,7 +84,8 @@ public class ImageDaoImplTest {
   public void testUpdateImage() throws ImageNotFoundException {
     // 1. Precondiciones
     // 2. Ejercitar la class under test
-    Image image = imageDao.updateImage(new Image(INSERTED_IMAGE_ID, AUX_IMAGE_BYTES));
+    Image image =
+        imageDao.updateImage(new Image.Builder(AUX_IMAGE_BYTES).id(INSERTED_IMAGE_ID).build());
     // 3. Meanignful assertions
     Assert.assertEquals(INSERTED_IMAGE_ID, image.getImageId());
     Assert.assertArrayEquals(AUX_IMAGE_BYTES, image.getBytes());
@@ -96,7 +97,7 @@ public class ImageDaoImplTest {
     // 2. Ejercitar la class under test
     assertThrows(
         ImageNotFoundException.class,
-        () -> imageDao.updateImage(new Image(AUX_IMAGE_ID, AUX_IMAGE_BYTES)));
+        () -> imageDao.updateImage(new Image.Builder(AUX_IMAGE_BYTES).id(AUX_IMAGE_ID).build()));
     // 3. Meanignful assertions
   }
 }

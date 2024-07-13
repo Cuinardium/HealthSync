@@ -90,7 +90,7 @@ public class IndicationController {
 
     File file = null;
     if (fileBytes != null && fileBytes.length > 0) {
-      file = new File(fileBytes);
+      file = new File.Builder(fileBytes).build();
     }
 
     Indication indication =

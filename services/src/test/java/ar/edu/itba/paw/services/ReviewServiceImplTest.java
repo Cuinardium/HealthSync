@@ -63,23 +63,23 @@ public class ReviewServiceImplTest {
   private static final Float RATING = 3F;
   private static final Integer RATING_COUNT = 1;
   private static final Doctor DOCTOR =
-      new Doctor(
-          DOCTOR_ID,
-          DOCTOR_EMAIL,
-          DOCTOR_PASSWORD,
-          DOCTOR_FIRST_NAME,
-          DOCTOR_LAST_NAME,
-          IMAGE,
-          DOCTOR_HEALTH_INSURANCES,
-          SPECIALTY,
-          CITY,
-          ADDRESS,
-          ATTENDING_HOURS,
-          Collections.emptySet(),
-          RATING,
-          RATING_COUNT,
-          LOCALE,
-          true);
+        new Doctor.Builder(
+                DOCTOR_EMAIL,
+                DOCTOR_PASSWORD,
+                DOCTOR_FIRST_NAME,
+                DOCTOR_LAST_NAME,
+                DOCTOR_HEALTH_INSURANCES,
+                SPECIALTY,
+                CITY,
+                ADDRESS,
+                ATTENDING_HOURS,
+                LOCALE)
+                .id(DOCTOR_ID)
+                .rating(RATING)
+                .ratingCount(RATING_COUNT)
+                .isVerified(true)
+                .image(IMAGE)
+                .build();
   // ================== Patient Constants ==================
   private static final long PATIENT_ID = 1;
   private static final String PATIENT_EMAIL = "patient_email";
@@ -89,25 +89,34 @@ public class ReviewServiceImplTest {
 
   private static final HealthInsurance PATIENT_HEALTH_INSURANCE = HealthInsurance.NONE;
   private static final Patient PATIENT =
-      new Patient(
-          PATIENT_ID,
-          PATIENT_EMAIL,
-          PATIENT_PASSWORD,
-          FIRST_NAME,
-          PATIENT_LAST_NAME,
-          IMAGE,
-          PATIENT_HEALTH_INSURANCE,
-          LOCALE,
-          true);
+      new Patient.Builder(
+              PATIENT_EMAIL,
+              PATIENT_PASSWORD,
+              FIRST_NAME,
+              PATIENT_LAST_NAME,
+              PATIENT_HEALTH_INSURANCE,
+              LOCALE)
+              .id(PATIENT_ID)
+              .isVerified(true)
+              .image(IMAGE)
+              .build();
+
   private static final short REVIEW_RATING = 3;
   private static final String REVIEW_DESCRIPTION = "review_description";
   private static final LocalDate REVIEW_DATE = LocalDate.now();
-  // ================== Review Constants ==================
-  private static final long REVIEW_ID = 1;
   private static final Review REVIEW =
-      new Review.Builder(DOCTOR, PATIENT, REVIEW_DATE, REVIEW_DESCRIPTION, REVIEW_RATING).build();
+          new Review.Builder(
+                  DOCTOR,
+                  REVIEW_RATING,
+                  REVIEW_DESCRIPTION,
+                  REVIEW_DATE,
+                  PATIENT)
+                  .build();
+
   private static final Page<Review> REVIEWS =
       new Page<>(Collections.singletonList(REVIEW), null, null, null);
+  // ================== Review Constants ==================
+  private static final long REVIEW_ID = 1;
   @Mock private DoctorService doctorService;
 
   @Mock private PatientService patientService;

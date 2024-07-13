@@ -10,7 +10,6 @@ import ar.edu.itba.paw.webapp.dto.PatientDto;
 import ar.edu.itba.paw.webapp.exceptions.UserNotFoundException;
 import ar.edu.itba.paw.webapp.form.PatientEditForm;
 import ar.edu.itba.paw.webapp.form.PatientRegisterForm;
-
 import java.io.IOException;
 import java.net.URI;
 import javax.validation.Valid;
@@ -84,15 +83,17 @@ public class PatientController {
   @PUT
   @Path("/{id}")
   @Produces(MediaType.APPLICATION_JSON)
-  public Response updatePatient(@PathParam("id") final long id, @Valid final PatientEditForm patientEditForm) throws PatientNotFoundException, EmailInUseException {
+  public Response updatePatient(
+      @PathParam("id") final long id, @Valid final PatientEditForm patientEditForm) {
     try {
       HealthInsurance healthInsurance =
-              HealthInsurance.values()[patientEditForm.getHealthInsuranceCode()];
+          HealthInsurance.values()[patientEditForm.getHealthInsuranceCode()];
       Image image = null;
       if (!patientEditForm.getImage().isEmpty()) {
-        image = new Image(patientEditForm.getImage().getBytes());
+        image = new Image.Builder(patientEditForm.getImage().getBytes()).build();
       }
-      Patient patient = patientService.updatePatient(
+      Patient patient =
+          patientService.updatePatient(
               id,
               patientEditForm.getEmail(),
               patientEditForm.getName(),
@@ -103,13 +104,13 @@ public class PatientController {
 
       LOGGER.debug("updated patient {}", patient);
       return Response.noContent().build();
-    }catch (IOException e) {
+    } catch (IOException e) {
       // TODO: handle
       return Response.status(Response.Status.CONFLICT).build();
-    }catch (PatientNotFoundException e){
+    } catch (PatientNotFoundException e) {
       LOGGER.warn("Failed to find patient");
       return Response.status(Response.Status.CONFLICT).build();
-    }catch (EmailInUseException e){
+    } catch (EmailInUseException e) {
       LOGGER.warn("Failed to modify patient´s email due to email unique constraint");
       return Response.status(Response.Status.CONFLICT).build();
     }

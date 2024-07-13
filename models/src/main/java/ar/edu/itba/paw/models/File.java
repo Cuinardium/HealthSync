@@ -27,18 +27,9 @@ public class File {
     // Solo para hibernate
   }
 
-  public File(byte[] bytes) {
-    this.bytes = bytes;
-  }
-
-  public File(Builder builder) {
+  private File(Builder builder) {
     this.fileId = builder.id;
     this.bytes = builder.bytes;
-  }
-
-  public File(Long fileId, byte[] bytes) {
-    this.fileId = fileId;
-    this.bytes = bytes;
   }
 
   public Long getFileId() {
@@ -88,7 +79,7 @@ public class File {
 
   public static class Builder {
 
-    private byte[] bytes;
+    private final byte[] bytes;
 
     private Long id = null;
 

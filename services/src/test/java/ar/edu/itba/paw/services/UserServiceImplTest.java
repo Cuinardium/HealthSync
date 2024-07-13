@@ -31,7 +31,7 @@ public class UserServiceImplTest {
   private static final String EMAIL = "email";
   private static final String FIRST_NAME = "firstname";
   private static final String LAST_NAME = "lastname";
-  private static final Image IMAGE = new Image(1L, new byte[0]);
+  private static final Image IMAGE = new Image.Builder(new byte[0]).id(1L).build();
   private static final Locale LOCALE = new Locale("en");
   private static final String PASSWORD = "password";
   private static final String PASSWORD_ENCODED = "password_encoded";
@@ -42,7 +42,7 @@ public class UserServiceImplTest {
   private static final String EMAIL_NEW = "email_new";
   private static final String FIRST_NAME_NEW = "firstname_new";
   private static final String LAST_NAME_NEW = "lastname_new";
-  private static final Image IMAGE_NEW = new Image(1L, new byte[] {1, 4});
+  private static final Image IMAGE_NEW = new Image.Builder(new byte[] {1, 4}).id(1L).build();
   private static final Locale LOCALE_NEW = new Locale("es");
 
   private static final String TOKEN = "hola";
@@ -63,7 +63,17 @@ public class UserServiceImplTest {
     // UserDao mock = Mockito.mock(UserDao.class);
     Mockito.when(userDao.getUserById(Mockito.eq(ID)))
         .thenReturn(
-            Optional.of(new User(ID, EMAIL, PASSWORD, FIRST_NAME, LAST_NAME, IMAGE, LOCALE, true)));
+            Optional.of(
+                new User.Builder(
+                        EMAIL,
+                        PASSWORD,
+                        FIRST_NAME,
+                        LAST_NAME,
+                        LOCALE)
+                    .id(ID)
+                    .isVerified(true)
+                    .image(IMAGE)
+                    .build()));
     // .thenThrow(SQLException.class);
 
     // 2. Ejercitar la class under test
@@ -89,7 +99,16 @@ public class UserServiceImplTest {
   @Test
   public void testGetUserByEmail() {
     // 1. Precondiciones
-    User expectedUser = new User(ID, EMAIL, PASSWORD, FIRST_NAME, LAST_NAME, IMAGE, LOCALE, true);
+    User expectedUser = new User.Builder(
+            EMAIL,
+            PASSWORD,
+            FIRST_NAME,
+            LAST_NAME,
+            LOCALE)
+            .id(ID)
+            .isVerified(true)
+            .image(IMAGE)
+            .build();
     Mockito.when(userDao.getUserByEmail(Mockito.eq(EMAIL))).thenReturn(Optional.of(expectedUser));
     // 2. Ejercitar la class under test
     Optional<User> user = us.getUserByEmail(EMAIL);
@@ -116,10 +135,26 @@ public class UserServiceImplTest {
           ar.edu.itba.paw.interfaces.services.exceptions.UserNotFoundException,
           EmailAlreadyExistsException, EmailInUseException {
     // 1. Precondiciones
-    User USER = new User(ID, EMAIL, PASSWORD, FIRST_NAME, LAST_NAME, IMAGE, LOCALE, true);
-    User USER_UPDATED =
-        new User(
-            ID, EMAIL_NEW, PASSWORD_NEW, FIRST_NAME_NEW, LAST_NAME_NEW, IMAGE_NEW, LOCALE, true);
+    User USER = new User.Builder(
+            EMAIL,
+            PASSWORD,
+            FIRST_NAME,
+            LAST_NAME,
+            LOCALE)
+            .id(ID)
+            .isVerified(true)
+            .image(IMAGE)
+            .build();
+    User USER_UPDATED = new User.Builder(
+            EMAIL_NEW,
+            PASSWORD_NEW,
+            FIRST_NAME_NEW,
+            LAST_NAME_NEW,
+            LOCALE)
+            .id(ID)
+            .isVerified(true)
+            .image(IMAGE_NEW)
+            .build();
     Mockito.when(userDao.getUserById(Mockito.eq(ID))).thenReturn(Optional.of(USER));
     Mockito.when(imageService.updateImage(IMAGE_NEW)).thenReturn(IMAGE_NEW);
     Mockito.when(
@@ -142,9 +177,26 @@ public class UserServiceImplTest {
       throws ar.edu.itba.paw.interfaces.services.exceptions.UserNotFoundException,
           EmailInUseException, UserNotFoundException, EmailAlreadyExistsException {
     // 1. Precondiciones
-    User USER = new User(ID, EMAIL, PASSWORD, FIRST_NAME, LAST_NAME, IMAGE, LOCALE, true);
-    User USER_UPDATED =
-        new User(ID, EMAIL, PASSWORD_NEW, FIRST_NAME_NEW, LAST_NAME_NEW, IMAGE_NEW, LOCALE, true);
+    User USER = new User.Builder(
+            EMAIL,
+            PASSWORD,
+            FIRST_NAME,
+            LAST_NAME,
+            LOCALE)
+            .id(ID)
+            .isVerified(true)
+            .image(IMAGE)
+            .build();
+    User USER_UPDATED = new User.Builder(
+            EMAIL,
+            PASSWORD_NEW,
+            FIRST_NAME_NEW,
+            LAST_NAME_NEW,
+            LOCALE)
+            .id(ID)
+            .isVerified(true)
+            .image(IMAGE_NEW)
+            .build();
 
     Mockito.when(imageService.updateImage(IMAGE_NEW)).thenReturn(IMAGE_NEW);
 
@@ -184,7 +236,16 @@ public class UserServiceImplTest {
           ar.edu.itba.paw.interfaces.services.exceptions.UserNotFoundException {
 
     // 1. Precondiciones
-    User USER = new User(ID, EMAIL, PASSWORD, FIRST_NAME, LAST_NAME, IMAGE, LOCALE, true);
+    User USER = new User.Builder(
+            EMAIL,
+            PASSWORD,
+            FIRST_NAME,
+            LAST_NAME,
+            LOCALE)
+            .id(ID)
+            .isVerified(true)
+            .image(IMAGE)
+            .build();
     Mockito.when(userDao.getUserById(Mockito.eq(ID))).thenReturn(Optional.of(USER));
     Mockito.when(
             userDao.updateUserInfo(
@@ -208,9 +269,26 @@ public class UserServiceImplTest {
           ar.edu.itba.paw.interfaces.services.exceptions.UserNotFoundException {
 
     // 1. Precondiciones
-    User USER = new User(ID, EMAIL, PASSWORD_ENCODED, FIRST_NAME, LAST_NAME, IMAGE, LOCALE, true);
-    User USER_UPDATED =
-        new User(ID, EMAIL, PASSWORD, FIRST_NAME, LAST_NAME, IMAGE_NEW, LOCALE_NEW, true);
+    User USER = new User.Builder(
+            EMAIL,
+            PASSWORD_ENCODED,
+            FIRST_NAME,
+            LAST_NAME,
+            LOCALE)
+            .id(ID)
+            .isVerified(true)
+            .image(IMAGE)
+            .build();
+    User USER_UPDATED = new User.Builder(
+            EMAIL,
+            PASSWORD,
+            FIRST_NAME,
+            LAST_NAME,
+            LOCALE_NEW)
+            .id(ID)
+            .isVerified(true)
+            .image(IMAGE_NEW)
+            .build();
     Mockito.when(userDao.getUserById(Mockito.eq(ID))).thenReturn(Optional.of(USER));
     Mockito.when(passwordEncoder.matches(Mockito.eq(PASSWORD), Mockito.eq(PASSWORD_ENCODED)))
         .thenReturn(true);
@@ -231,7 +309,16 @@ public class UserServiceImplTest {
       throws ar.edu.itba.paw.interfaces.services.exceptions.UserNotFoundException {
 
     // 1. Precondiciones
-    User USER = new User(ID, EMAIL, PASSWORD_ENCODED, FIRST_NAME, LAST_NAME, IMAGE, LOCALE, true);
+    User USER = new User.Builder(
+            EMAIL,
+            PASSWORD_ENCODED,
+            FIRST_NAME,
+            LAST_NAME,
+            LOCALE)
+            .id(ID)
+            .isVerified(true)
+            .image(IMAGE)
+            .build();
     Mockito.when(userDao.getUserById(Mockito.eq(ID))).thenReturn(Optional.of(USER));
     Mockito.when(passwordEncoder.matches(Mockito.eq(NOT_PASSWORD), Mockito.eq(PASSWORD_ENCODED)))
         .thenReturn(false);
@@ -263,7 +350,16 @@ public class UserServiceImplTest {
           ar.edu.itba.paw.interfaces.services.exceptions.UserNotFoundException, TokenNotFoundException, TokenInvalidException {
 
     // 1. Precondiciones
-    User USER = new User(ID, EMAIL, PASSWORD_ENCODED, FIRST_NAME, LAST_NAME, IMAGE, LOCALE, false);
+    User USER = new User.Builder(
+            EMAIL,
+            PASSWORD_ENCODED,
+            FIRST_NAME,
+            LAST_NAME,
+            LOCALE)
+            .id(ID)
+            .isVerified(false)
+            .image(IMAGE)
+            .build();
     VerificationToken VERIFICATION_TOKEN = new VerificationToken(USER, TOKEN);
     Mockito.when(userDao.getUserById(Mockito.eq(ID))).thenReturn(Optional.of(USER));
     Mockito.when(tokenService.getUserToken(USER)).thenReturn(Optional.of(VERIFICATION_TOKEN));
@@ -291,7 +387,16 @@ public class UserServiceImplTest {
           ar.edu.itba.paw.interfaces.services.exceptions.UserNotFoundException, TokenNotFoundException, TokenInvalidException {
 
     // 1. Precondiciones
-    User USER = new User(ID, EMAIL, PASSWORD_ENCODED, FIRST_NAME, LAST_NAME, IMAGE, LOCALE, false);
+    User USER = new User.Builder(
+            EMAIL,
+            PASSWORD_ENCODED,
+            FIRST_NAME,
+            LAST_NAME,
+            LOCALE)
+            .id(ID)
+            .isVerified(false)
+            .image(IMAGE)
+            .build();
     Mockito.when(userDao.getUserById(Mockito.eq(ID))).thenReturn(Optional.of(USER));
     Mockito.when(tokenService.getUserToken(USER)).thenReturn(Optional.empty());
 
@@ -305,7 +410,16 @@ public class UserServiceImplTest {
           ar.edu.itba.paw.interfaces.services.exceptions.UserNotFoundException, TokenNotFoundException, TokenInvalidException {
 
     // 1. Precondiciones
-    User USER = new User(ID, EMAIL, PASSWORD_ENCODED, FIRST_NAME, LAST_NAME, IMAGE, LOCALE, false);
+    User USER = new User.Builder(
+            EMAIL,
+            PASSWORD_ENCODED,
+            FIRST_NAME,
+            LAST_NAME,
+            LOCALE)
+            .id(ID)
+            .isVerified(false)
+            .image(IMAGE)
+            .build();
     VerificationToken VERIFICATION_TOKEN = new VerificationToken(USER, TOKEN);
     Mockito.when(userDao.getUserById(Mockito.eq(ID))).thenReturn(Optional.of(USER));
     Mockito.when(tokenService.getUserToken(USER)).thenReturn(Optional.of(VERIFICATION_TOKEN));

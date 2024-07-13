@@ -47,8 +47,10 @@ public class NotificationServiceImpl implements NotificationService {
       throw new UserNotFoundException();
     }
 
-    return notificationDao.createNotification(
-        new Notification(null, userOptional.get(), appointmentOptional.get()));
+    Notification notification =
+        new Notification.Builder(userOptional.get(), appointmentOptional.get()).build();
+
+    return notificationDao.createNotification(notification);
   }
 
   @Transactional

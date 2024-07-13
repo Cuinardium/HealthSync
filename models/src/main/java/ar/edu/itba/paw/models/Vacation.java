@@ -32,10 +32,6 @@ public class Vacation implements Comparable<Vacation> {
   @Column(name = "to_time", nullable = false)
   private ThirtyMinuteBlock toTime;
 
-  public static Builder builder() {
-    return new Builder();
-  }
-
   protected Vacation() {
     // Just for Hibernate
   }
@@ -48,7 +44,6 @@ public class Vacation implements Comparable<Vacation> {
     this.fromTime = builder.fromTime;
     this.toTime = builder.toTime;
   }
-
 
   public Long getId() {
     return id;
@@ -166,12 +161,25 @@ public class Vacation implements Comparable<Vacation> {
 
   public static class Builder {
 
+    // required
+    private final LocalDate fromDate;
+    private final ThirtyMinuteBlock fromTime;
+    private final LocalDate toDate;
+    private final ThirtyMinuteBlock toTime;
+
     private Long id;
     private Doctor doctor;
-    private LocalDate fromDate;
-    private ThirtyMinuteBlock fromTime;
-    private LocalDate toDate;
-    private ThirtyMinuteBlock toTime;
+
+    public Builder(
+        LocalDate fromDate,
+        ThirtyMinuteBlock fromTime,
+        LocalDate toDate,
+        ThirtyMinuteBlock toTime) {
+      this.fromDate = fromDate;
+      this.fromTime = fromTime;
+      this.toDate = toDate;
+      this.toTime = toTime;
+    }
 
     public Builder id(Long id) {
       this.id = id;
@@ -180,25 +188,6 @@ public class Vacation implements Comparable<Vacation> {
 
     public Builder doctor(Doctor doctor) {
       this.doctor = doctor;
-      return this;
-    }
-    public Builder fromDate(LocalDate fromDate) {
-      this.fromDate = fromDate;
-      return this;
-    }
-
-    public Builder fromTime(ThirtyMinuteBlock fromTime) {
-      this.fromTime = fromTime;
-      return this;
-    }
-
-    public Builder toDate(LocalDate toDate) {
-      this.toDate = toDate;
-      return this;
-    }
-
-    public Builder toTime(ThirtyMinuteBlock toTime) {
-      this.toTime = toTime;
       return this;
     }
 

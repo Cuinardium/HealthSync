@@ -108,13 +108,7 @@ public class VacationController {
           .build();
     }
 
-    Vacation vacation =
-        Vacation.builder()
-            .fromDate(fromDate)
-            .fromTime(fromTime)
-            .toDate(toDate)
-            .toTime(toTime)
-            .build();
+    Vacation vacation = new Vacation.Builder(fromDate, fromTime, toDate, toTime).build();
 
     vacation = doctorService.addVacation(doctorId, vacation);
 

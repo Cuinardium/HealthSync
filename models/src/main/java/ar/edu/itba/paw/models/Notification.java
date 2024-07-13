@@ -28,10 +28,10 @@ public class Notification {
     // Solo para hibernate
   }
 
-  public Notification(Long id, User user, Appointment appointment) {
-    this.id = id;
-    this.user = user;
-    this.appointment = appointment;
+  private Notification(Builder builder) {
+    this.id = builder.id;
+    this.user = builder.user;
+    this.appointment = builder.appointment;
   }
 
   public Long getId() {
@@ -74,5 +74,27 @@ public class Notification {
     if (!(obj instanceof Notification)) return false;
     Notification other = (Notification) obj;
     return Objects.equals(id, other.id);
+  }
+
+  public static class Builder {
+    // Required
+    private final User user;
+    private final Appointment appointment;
+
+    private Long id;
+
+    public Builder(User user, Appointment appointment) {
+      this.user = user;
+      this.appointment = appointment;
+    }
+
+    public Builder id(Long id) {
+      this.id = id;
+      return this;
+    }
+
+    public Notification build() {
+      return new Notification(this);
+    }
   }
 }

@@ -59,58 +59,59 @@ public class DoctorDaoImplTest {
                   INSERTED_DOCTOR_ID, DayOfWeek.FRIDAY, ThirtyMinuteBlock.BLOCK_00_00)));
 
   private static final Vacation VACATION_NEW =
-      Vacation.builder()
-              .id(1L)
-              .fromDate(LocalDate.of(2020, 3, 1))
-              .fromTime(ThirtyMinuteBlock.BLOCK_00_00)
-              .toDate(LocalDate.of(2020, 3, 10))
-              .toTime(ThirtyMinuteBlock.BLOCK_00_00)
-              .build();
+        new Vacation.Builder(
+                LocalDate.of(2020, 3, 1),
+                ThirtyMinuteBlock.BLOCK_00_00,
+                LocalDate.of(2020, 3, 10),
+                ThirtyMinuteBlock.BLOCK_00_00)
+                .id(1L)
+                .build();
 
   private static final Vacation VACATION_TO_REMOVE =
-          Vacation.builder()
-                  .id(2L)
-                  .fromDate(LocalDate.of(2020, 1, 1))
-                  .fromTime(ThirtyMinuteBlock.BLOCK_00_00)
-                  .toDate(LocalDate.of(2020, 1, 10))
-                  .toTime(ThirtyMinuteBlock.BLOCK_00_00)
-                  .build();
+        new Vacation.Builder(
+                LocalDate.of(2020, 1, 1),
+                ThirtyMinuteBlock.BLOCK_00_00,
+                LocalDate.of(2020, 1, 10),
+                ThirtyMinuteBlock.BLOCK_00_00)
+                .id(2L)
+                .build();
 
   private static final Set<Vacation> INSERTED_DOCTOR_VACATIONS =
       new HashSet<>(
           Arrays.asList(
               VACATION_TO_REMOVE,
-                  Vacation.builder()
+                  new Vacation.Builder(
+                          LocalDate.of(2020, 2, 1),
+                          ThirtyMinuteBlock.BLOCK_00_00,
+                          LocalDate.of(2020, 2, 10),
+                          ThirtyMinuteBlock.BLOCK_00_00)
                           .id(3L)
-                          .fromDate(LocalDate.of(2020, 2, 1))
-                          .fromTime(ThirtyMinuteBlock.BLOCK_00_00)
-                          .toDate(LocalDate.of(2020, 2, 10))
-                          .toTime(ThirtyMinuteBlock.BLOCK_00_00)
-                          .build()));
+                          .build())
+      );
 
   private static final Image INSERTED_DOCTOR_IMAGE = null;
   private static final Locale INSERTED_LOCALE = new Locale("en");
   private static final Float INSERTED_DOCTOR_RATING = 3f;
   private static final Integer INSERTED_DOCTOR_RATING_COUNT = 5;
   private static final Doctor DOCTOR_7 =
-      new Doctor(
-          INSERTED_DOCTOR_ID,
-          INSERTED_DOCTOR_EMAIL,
-          INSERTED_DOCTOR_PASSWORD,
-          INSERTED_DOCTOR_FIRST_NAME,
-          INSERTED_DOCTOR_LAST_NAME,
-          INSERTED_DOCTOR_IMAGE,
-          INSERTED_DOCTOR_INSURANCES,
-          INSERTED_DOCTOR_SPECIALTY,
-          INSERTED_DOCTOR_CITY,
-          INSERTED_DOCTOR_ADDRESS,
-          INSERTED_DOCTOR_ATTENDING_HOURS,
-          INSERTED_DOCTOR_VACATIONS,
-          INSERTED_DOCTOR_RATING,
-          INSERTED_DOCTOR_RATING_COUNT,
-          INSERTED_LOCALE,
-          true);
-
+      new Doctor.Builder(
+              INSERTED_DOCTOR_EMAIL,
+              INSERTED_DOCTOR_PASSWORD,
+              INSERTED_DOCTOR_FIRST_NAME,
+              INSERTED_DOCTOR_LAST_NAME,
+              INSERTED_DOCTOR_INSURANCES,
+              INSERTED_DOCTOR_SPECIALTY,
+              INSERTED_DOCTOR_CITY,
+              INSERTED_DOCTOR_ADDRESS,
+              INSERTED_DOCTOR_ATTENDING_HOURS,
+              INSERTED_LOCALE)
+              .id(INSERTED_DOCTOR_ID)
+              .vacations(INSERTED_DOCTOR_VACATIONS)
+              .image(INSERTED_DOCTOR_IMAGE)
+              .rating(INSERTED_DOCTOR_RATING)
+              .ratingCount(INSERTED_DOCTOR_RATING_COUNT)
+              .isVerified(true)
+              .build();
   private static final Long AUX_DOCTOR_ID = 8L;
   private static final String AUX_DOCTOR_EMAIL = "notdoctor_1@email.com";
   private static final String AUX_DOCTOR_PASSWORD = "notdoctor_password";
@@ -161,23 +162,22 @@ public class DoctorDaoImplTest {
     // 2. Ejercitar la class under test
     Doctor doctor =
         doctorDao.createDoctor(
-            new Doctor(
-                null,
-                AUX_DOCTOR_EMAIL,
-                AUX_DOCTOR_PASSWORD,
-                AUX_DOCTOR_FIRST_NAME,
-                AUX_DOCTOR_LAST_NAME,
-                INSERTED_DOCTOR_IMAGE,
-                AUX_DOCTOR_INSURANCES,
-                AUX_DOCTOR_SPECIALTY,
-                AUX_DOCTOR_CITY,
-                AUX_DOCTOR_ADDRESS,
-                AUX_DOCTOR_ATTENDING_HOURS,
-                Collections.emptySet(),
-                INSERTED_DOCTOR_RATING,
-                INSERTED_DOCTOR_RATING_COUNT,
-                INSERTED_LOCALE,
-                false));
+            new Doctor.Builder(
+                    AUX_DOCTOR_EMAIL,
+                    AUX_DOCTOR_PASSWORD,
+                    AUX_DOCTOR_FIRST_NAME,
+                    AUX_DOCTOR_LAST_NAME,
+                    AUX_DOCTOR_INSURANCES,
+                    AUX_DOCTOR_SPECIALTY,
+                    AUX_DOCTOR_CITY,
+                    AUX_DOCTOR_ADDRESS,
+                    AUX_DOCTOR_ATTENDING_HOURS,
+                    INSERTED_LOCALE)
+                    .image(INSERTED_DOCTOR_IMAGE)
+                    .isVerified(false)
+                    .rating(INSERTED_DOCTOR_RATING)
+                    .ratingCount(INSERTED_DOCTOR_RATING_COUNT)
+                    .build());
 
     em.flush();
 
@@ -206,23 +206,23 @@ public class DoctorDaoImplTest {
         DoctorAlreadyExistsException.class,
         () ->
             doctorDao.createDoctor(
-                new Doctor(
-                    INSERTED_DOCTOR_ID,
-                    AUX_DOCTOR_EMAIL,
-                    AUX_DOCTOR_PASSWORD,
-                    AUX_DOCTOR_FIRST_NAME,
-                    AUX_DOCTOR_LAST_NAME,
-                    INSERTED_DOCTOR_IMAGE,
-                    AUX_DOCTOR_INSURANCES,
-                    AUX_DOCTOR_SPECIALTY,
-                    AUX_DOCTOR_CITY,
-                    AUX_DOCTOR_ADDRESS,
-                    AUX_DOCTOR_ATTENDING_HOURS,
-                    Collections.emptySet(),
-                    INSERTED_DOCTOR_RATING,
-                    INSERTED_DOCTOR_RATING_COUNT,
-                    INSERTED_LOCALE,
-                    false)));
+                new Doctor.Builder(
+                        AUX_DOCTOR_EMAIL,
+                        AUX_DOCTOR_PASSWORD,
+                        AUX_DOCTOR_FIRST_NAME,
+                        AUX_DOCTOR_LAST_NAME,
+                        AUX_DOCTOR_INSURANCES,
+                        AUX_DOCTOR_SPECIALTY,
+                        AUX_DOCTOR_CITY,
+                        AUX_DOCTOR_ADDRESS,
+                        AUX_DOCTOR_ATTENDING_HOURS,
+                        INSERTED_LOCALE)
+                        .id(INSERTED_DOCTOR_ID)
+                        .image(INSERTED_DOCTOR_IMAGE)
+                        .isVerified(false)
+                        .rating(INSERTED_DOCTOR_RATING)
+                        .ratingCount(INSERTED_DOCTOR_RATING_COUNT)
+                        .build()));
   }
 
   // ============================== updateDoctorInfo ==============================
@@ -279,11 +279,11 @@ public class DoctorDaoImplTest {
     Set<Vacation> expectedVacations = new HashSet<>(DOCTOR_7.getVacations());
     expectedVacations.add(VACATION_NEW);
 
-    Vacation newVacation = Vacation.builder()
-            .fromDate(VACATION_NEW.getFromDate())
-            .toDate(VACATION_NEW.getToDate())
-            .fromTime(VACATION_NEW.getFromTime())
-            .toTime(VACATION_NEW.getToTime())
+    Vacation newVacation = new Vacation.Builder(
+            VACATION_NEW.getFromDate(),
+            VACATION_NEW.getFromTime(),
+            VACATION_NEW.getToDate(),
+            VACATION_NEW.getToTime())
             .build();
 
     // 2. Ejercitar la class under test

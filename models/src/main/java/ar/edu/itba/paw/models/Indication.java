@@ -40,17 +40,7 @@ public class Indication {
         // Solo para hibernate
     }
 
-    public Indication(
-            Long id, Appointment appointment, User user, LocalDate date, String description, File file) {
-        this.id = id;
-        this.appointment=appointment;
-        this.user = user;
-        this.date = date;
-        this.description = description;
-        this.file=file;
-    }
-
-    public Indication(Builder builder) {
+    private Indication(Builder builder) {
         this.id = builder.id;
         this.user = builder.user;
         this.date = builder.date;

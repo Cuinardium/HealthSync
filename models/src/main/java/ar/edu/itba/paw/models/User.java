@@ -2,20 +2,18 @@ package ar.edu.itba.paw.models;
 
 import java.util.Locale;
 import java.util.Objects;
-
 import javax.persistence.*;
 
 @Entity
-@Table(name = "users") // Si la clase no tiene el mismo nombre que la DB table
+@Table(name = "users")
 @Inheritance(strategy = InheritanceType.JOINED)
 public class User {
   @Id
   @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "users_user_id_seq")
   @SequenceGenerator(
-    sequenceName = "users_user_id_seq",
-    name = "users_user_id_seq",
-    allocationSize = 1
-  )
+      sequenceName = "users_user_id_seq",
+      name = "users_user_id_seq",
+      allocationSize = 1)
   @Column(name = "user_id")
   private Long id; // uso Long para q si es nulo inserte
 
@@ -45,7 +43,7 @@ public class User {
     // Solo para hibernate
   }
 
-  public User(
+  protected User(
       Long id,
       String email,
       String password,
@@ -64,9 +62,7 @@ public class User {
     this.isVerified = isVerified;
   }
 
-  // Getters and setters
-
-  public User(Builder builder) {
+  private User(Builder builder) {
     this.id = builder.id;
     this.email = builder.email;
     this.password = builder.password;
@@ -76,6 +72,8 @@ public class User {
     this.locale = builder.locale;
     this.isVerified = builder.isVerified;
   }
+
+  // Getters and setters
 
   public String getEmail() {
     return email;
@@ -95,6 +93,10 @@ public class User {
 
   public Long getId() {
     return id;
+  }
+
+  public void setId(Long id) {
+    this.id = id;
   }
 
   public String getFirstName() {
@@ -127,6 +129,14 @@ public class User {
 
   public void setIsVerified(Boolean isVerified) {
     this.isVerified = isVerified;
+  }
+
+  public Locale getLocale() {
+    return locale;
+  }
+
+  public void setLocale(Locale locale) {
+    this.locale = locale;
   }
 
   @Override
@@ -169,6 +179,7 @@ public class User {
     // required
     private String email, password, firstName, lastName;
     private Locale locale;
+
     // defaults
     private Long id = null;
     private Image image = null;
@@ -202,17 +213,4 @@ public class User {
       return new User(this);
     }
   }
-
-  public void setId(Long id) {
-    this.id = id;
-  }
-
-  public Locale getLocale() {
-    return locale;
-  }
-
-  public void setLocale(Locale locale) {
-    this.locale = locale;
-  }
-
 }

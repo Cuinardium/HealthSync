@@ -20,21 +20,7 @@ public class Patient extends User {
     // Solo para hibernate
   }
 
-  public Patient(
-      Long id,
-      String email,
-      String password,
-      String firstName,
-      String lastName,
-      Image image,
-      HealthInsurance healthInsurance,
-      Locale locale,
-      Boolean isVerified) {
-    super(id, email, password, firstName, lastName, image, locale, isVerified);
-    this.healthInsurance = healthInsurance;
-  }
-
-  public Patient(Builder builder) {
+  private Patient(Builder builder) {
     super(
         builder.id,
         builder.email,
@@ -62,9 +48,9 @@ public class Patient extends User {
 
   public static class Builder {
     // required
-    private String email, password, firstName, lastName;
-    private HealthInsurance healthInsurance;
-    public Locale locale;
+    private final String email, password, firstName, lastName;
+    private final HealthInsurance healthInsurance;
+    private final Locale locale;
 
     // default
     private Long id = null;

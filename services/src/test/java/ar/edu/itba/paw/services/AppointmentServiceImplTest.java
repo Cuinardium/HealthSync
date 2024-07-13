@@ -80,31 +80,32 @@ public class AppointmentServiceImplTest {
   private static final Locale DOCTOR_LOCALE = new Locale("en");
 
   private static final Vacation DOCTOR_VACATION =
-      Vacation.builder()
-              .fromDate(LocalDate.now().plusDays(1))
-              .fromTime(ThirtyMinuteBlock.BLOCK_10_00)
-              .toDate(LocalDate.now().plusDays(3))
-              .toTime(ThirtyMinuteBlock.BLOCK_10_00)
+      new Vacation.Builder(
+              LocalDate.now().plusDays(1),
+              ThirtyMinuteBlock.BLOCK_10_00,
+              LocalDate.now().plusDays(3),
+              ThirtyMinuteBlock.BLOCK_10_00)
               .build();
 
   private static final Doctor DOCTOR =
-      new Doctor(
-          DOCTOR_ID,
-          DOCTOR_EMAIL,
-          DOCTOR_PASSWORD,
-          DOCTOR_FIRST_NAME,
-          DOCTOR_LAST_NAME,
-          DOCTOR_IMAGE,
-          DOCTOR_HEALTH_INSURANCES,
-          SPECIALTY,
-          CITY,
-          ADDRESS,
-          ATTENDING_HOURS,
-          new HashSet<>(Arrays.asList(DOCTOR_VACATION)),
-          RATING,
-          RATING_COUNT,
-          DOCTOR_LOCALE,
-          true);
+      new Doctor.Builder(
+              DOCTOR_EMAIL,
+              DOCTOR_PASSWORD,
+              DOCTOR_FIRST_NAME,
+              DOCTOR_LAST_NAME,
+              DOCTOR_HEALTH_INSURANCES,
+              SPECIALTY,
+              CITY,
+              ADDRESS,
+              ATTENDING_HOURS,
+              DOCTOR_LOCALE)
+              .id(DOCTOR_ID)
+              .vacations(new HashSet<>(Arrays.asList(DOCTOR_VACATION)))
+              .rating(RATING)
+              .ratingCount(RATING_COUNT)
+              .isVerified(true)
+              .image(DOCTOR_IMAGE)
+              .build();
 
   // ================== Patient Constants ==================
 
@@ -118,16 +119,17 @@ public class AppointmentServiceImplTest {
   private static final HealthInsurance PATIENT_HEALTH_INSURANCE = HealthInsurance.NONE;
   private static final Locale PATIENT_LOCALE = new Locale("en");
   private static final Patient PATIENT =
-      new Patient(
-          PATIENT_ID,
-          PATIENT_EMAIL,
-          PATIENT_PASSWORD,
-          FIRST_NAME,
-          PATIENT_LAST_NAME,
-          PATIENT_IMAGE,
-          PATIENT_HEALTH_INSURANCE,
-          PATIENT_LOCALE,
-          true);
+      new Patient.Builder(
+              PATIENT_EMAIL,
+              PATIENT_PASSWORD,
+              FIRST_NAME,
+              PATIENT_LAST_NAME,
+              PATIENT_HEALTH_INSURANCE,
+              PATIENT_LOCALE)
+              .id(PATIENT_ID)
+              .isVerified(true)
+              .image(PATIENT_IMAGE)
+              .build();
 
   // ================== Appointment Constants ==================
 
@@ -141,26 +143,27 @@ public class AppointmentServiceImplTest {
       "cancelled_appointment_description";
 
   private static final Appointment CREATED_APPOINTMENT =
-      new Appointment(
-          APPOINTMENT_ID,
-          PATIENT,
-          DOCTOR,
-          APPOINTMENT_DATE,
-          APPOINTMENT_TIME,
-          AppointmentStatus.CONFIRMED,
-          APPOINTMENT_DESCRIPTION,
-          null);
+      new Appointment.Builder(
+              PATIENT,
+              DOCTOR,
+              APPOINTMENT_DATE,
+              APPOINTMENT_TIME,
+              APPOINTMENT_DESCRIPTION)
+              .id(APPOINTMENT_ID)
+              .status(AppointmentStatus.CONFIRMED)
+              .build();
 
   private static final Appointment CANCELLED_APPOINTMENT =
-      new Appointment(
-          APPOINTMENT_ID,
-          PATIENT,
-          DOCTOR,
-          APPOINTMENT_DATE,
-          APPOINTMENT_TIME,
-          AppointmentStatus.CANCELLED,
-          APPOINTMENT_DESCRIPTION,
-          CANCELLED_APPOINTMENT_DESCRIPTION);
+      new Appointment.Builder(
+              PATIENT,
+              DOCTOR,
+              APPOINTMENT_DATE,
+              APPOINTMENT_TIME,
+              APPOINTMENT_DESCRIPTION)
+              .id(APPOINTMENT_ID)
+              .status(AppointmentStatus.CANCELLED)
+              .cancelDescription(CANCELLED_APPOINTMENT_DESCRIPTION)
+              .build();
 
   private static final List<Appointment> APPOINTMENTS =
       Collections.singletonList(CREATED_APPOINTMENT);

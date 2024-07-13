@@ -61,7 +61,7 @@ public class ReviewServiceImpl implements ReviewService {
     Patient patient = patientService.getPatientById(patientId).get();
 
     Review review =
-        new Review.Builder(doctor, patient, LocalDate.now(), description, (short) rating).build();
+        new Review.Builder(doctor, (short) rating, description, LocalDate.now(), patient).build();
 
     return reviewDao.createReview(review);
   }
