@@ -25,4 +25,5 @@ public enum VndType {;
 
     // ----- Error --------------
     public static final String APPLICATION_ERROR = "application/vnd.error.v1+json";
+    public static final String APPLICATION_VALIDATION_ERROR_LIST = "application/vnd.validation-error-list.v1+json";
 }
