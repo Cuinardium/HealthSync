@@ -14,4 +14,8 @@ public enum UserRole {
   public String getRoleName() {
     return roleName;
   }
+
+  public String getRoleNameWithoutPrefix() {
+    return roleName.substring(roleName.lastIndexOf("_") + 1);
+  }
 }

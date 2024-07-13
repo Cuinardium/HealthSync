@@ -1,9 +1,6 @@
 package ar.edu.itba.paw.webapp.config;
 
-import ar.edu.itba.paw.webapp.auth.AuthorizationFunctions;
-import ar.edu.itba.paw.webapp.auth.BasicAuthFilter;
-import ar.edu.itba.paw.webapp.auth.JwtFilter;
-import ar.edu.itba.paw.webapp.auth.PawUserDetailsService;
+import ar.edu.itba.paw.webapp.auth.*;
 import ar.edu.itba.paw.webapp.auth.handlers.ForbiddenHandler;
 import ar.edu.itba.paw.webapp.auth.handlers.HealthSyncAuthenticationEntryPoint;
 import io.jsonwebtoken.security.Keys;
@@ -107,7 +104,7 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
 
         // ------------- Reviews  ----------
         .antMatchers(HttpMethod.POST, "/api/doctors/{doctorId:\\d+}/reviews")
-          .authenticated()
+            .hasRole(UserRole.ROLE_PATIENT.getRoleNameWithoutPrefix())
 
         // ------------- Indications --------
         .antMatchers(HttpMethod.GET, "/api/appointments/{appointmentId:\\d+}/indications")
