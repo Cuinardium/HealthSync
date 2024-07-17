@@ -6,13 +6,11 @@ import ar.edu.itba.paw.interfaces.services.exceptions.DoctorNotFoundException;
 import ar.edu.itba.paw.interfaces.services.exceptions.VacationInvalidException;
 import ar.edu.itba.paw.interfaces.services.exceptions.VacationNotFoundException;
 import ar.edu.itba.paw.models.Doctor;
-import ar.edu.itba.paw.models.ThirtyMinuteBlock;
 import ar.edu.itba.paw.models.Vacation;
 import ar.edu.itba.paw.webapp.dto.VacationDto;
 import ar.edu.itba.paw.webapp.form.DoctorVacationForm;
 import ar.edu.itba.paw.webapp.mediaType.VndType;
 import java.net.URI;
-import java.time.LocalDate;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -81,42 +79,31 @@ public class VacationController {
       @Valid final DoctorVacationForm doctorVacationForm)
       throws DoctorNotFoundException, VacationInvalidException {
 
-    final LocalDate fromDate = doctorVacationForm.getFromDate();
-    final LocalDate toDate = doctorVacationForm.getToDate();
-    final ThirtyMinuteBlock fromTime =
-        ThirtyMinuteBlock.fromString(doctorVacationForm.getFromTime());
-    final ThirtyMinuteBlock toTime = ThirtyMinuteBlock.fromString(doctorVacationForm.getToTime());
 
-    // TODO: usar bean validation?
-    if (fromTime == null || toTime == null) {
-      LOGGER.debug(
-          "Invalid time parameter, from: {}, to {}",
-          doctorVacationForm.getFromTime(),
-          doctorVacationForm.getToTime());
-      return Response.status(Response.Status.BAD_REQUEST).entity("Invalid time format").build();
-    }
-
-    final boolean cancelAppointmentsInVacation =
-        doctorVacationForm.getCancelAppointmentsInVacation();
-    final String cancelReason = doctorVacationForm.getCancelReason();
-
-    // TODO: usar validacion
-    if (cancelAppointmentsInVacation && cancelReason == null) {
-      LOGGER.debug("Appointments are to be cancelled but no reason was indicated");
-      return Response.status(Response.Status.BAD_REQUEST)
-          .entity("A cancel reason is required")
-          .build();
-    }
-
-    Vacation vacation = new Vacation.Builder(fromDate, fromTime, toDate, toTime).build();
+    Vacation vacation =
+        new Vacation.Builder(
+                doctorVacationForm.getFromDate(),
+                doctorVacationForm.getFromTimeEnum(),
+                doctorVacationForm.getToDate(),
+                doctorVacationForm.getToTimeEnum())
+            .build();
 
     vacation = doctorService.addVacation(doctorId, vacation);
 
-    if (cancelAppointmentsInVacation) {
+    final boolean cancelAppointments = doctorVacationForm.getCancelAppointments();
+    String cancelReason = doctorVacationForm.getCancelReason();
+
+    if (cancelAppointments) {
       LOGGER.debug(
           "Canceling appointments in range, vacation: {}, reason: {}", vacation, cancelReason);
+
       appointmentService.cancelAppointmentsInRange(
-          doctorId, fromDate, fromTime, toDate, toTime, cancelReason);
+          doctorId,
+          vacation.getFromDate(),
+          vacation.getFromTime(),
+          vacation.getToDate(),
+          vacation.getToTime(),
+          cancelReason);
     }
 
     final URI createdVacationUri =
