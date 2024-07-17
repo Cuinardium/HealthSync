@@ -18,12 +18,13 @@ public class ValidationErrorDto {
     dto.message = messageSource.getMessage(violation.getMessage(), null, locale);
 
     // Obtener el último segmento del propertyPath
-    String propertyPath = violation.getPropertyPath().toString();
+    String[] propertyPath = violation.getPropertyPath().toString().split("\\.");
 
-    dto.attribute =
-        propertyPath.contains(".")
-            ? propertyPath.substring(propertyPath.lastIndexOf(".") + 1)
-            : propertyPath;
+    // Solo especifico el path si el error es de un field
+    // Si es del bean entero no
+    if (propertyPath.length > 2) {
+      dto.attribute = propertyPath[propertyPath.length - 1];
+    }
 
     dto.invalidValue = getInvalidValueString(violation.getInvalidValue());
 
