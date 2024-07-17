@@ -49,10 +49,10 @@ public class DoctorDeleteVacationForm {
   }
 
   public ThirtyMinuteBlock getFromTimeEnum() {
-    return ThirtyMinuteBlock.fromString(fromTime);
+    return ThirtyMinuteBlock.fromBeginning(fromTime);
   }
 
   public ThirtyMinuteBlock getToTimeEnum() {
-    return ThirtyMinuteBlock.fromString(toTime);
+    return ThirtyMinuteBlock.fromBeginning(toTime);
   }
 }

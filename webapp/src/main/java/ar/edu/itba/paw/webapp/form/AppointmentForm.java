@@ -50,7 +50,7 @@ public class AppointmentForm {
   }
 
   public ThirtyMinuteBlock getBlockEnum() {
-    return ThirtyMinuteBlock.fromString(block);
+    return ThirtyMinuteBlock.fromBeginning(block);
   }
 
   public void setBlock(String block) {
