@@ -1,10 +1,10 @@
 package ar.edu.itba.paw.webapp.controller;
 
 import ar.edu.itba.paw.interfaces.services.DoctorService;
+import ar.edu.itba.paw.interfaces.services.exceptions.DoctorNotFoundException;
 import ar.edu.itba.paw.interfaces.services.exceptions.EmailInUseException;
 import ar.edu.itba.paw.models.*;
 import ar.edu.itba.paw.webapp.dto.DoctorDto;
-import ar.edu.itba.paw.webapp.exceptions.UserNotFoundException;
 import ar.edu.itba.paw.webapp.form.DoctorFilterForm;
 import ar.edu.itba.paw.webapp.form.DoctorRegisterForm;
 import ar.edu.itba.paw.webapp.utils.ResponseUtil;
@@ -184,8 +184,8 @@ public class DoctorController {
 
   @GET
   @Path("/{id}")
-  public Response getDoctor(@PathParam("id") final long id) throws UserNotFoundException {
-    Doctor doctor = doctorService.getDoctorById(id).orElseThrow(UserNotFoundException::new);
+  public Response getDoctor(@PathParam("id") final long id) throws DoctorNotFoundException {
+    Doctor doctor = doctorService.getDoctorById(id).orElseThrow(DoctorNotFoundException::new);
     // TODO: links for attributes?
     LOGGER.debug("returning doctor with id {}", id);
     return Response.ok(DoctorDto.fromDoctor(uriInfo, doctor)).build();
