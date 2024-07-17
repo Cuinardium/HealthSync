@@ -1,9 +1,9 @@
 package ar.edu.itba.paw.webapp.validators;
 
 import ar.edu.itba.paw.webapp.annotations.ValidateImage;
+import ar.edu.itba.paw.webapp.utils.FileUtil;
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
-import org.apache.commons.io.FilenameUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 public class ImageValidator implements ConstraintValidator<ValidateImage, MultipartFile> {
@@ -19,7 +19,7 @@ public class ImageValidator implements ConstraintValidator<ValidateImage, Multip
     if (image.getSize() > MAX_IMG_SIZE) {
       return false;
     }
-    String extension = FilenameUtils.getExtension(image.getOriginalFilename());
+    String extension = FileUtil.getFileExtension(image.getOriginalFilename());
     return isValidExtension(extension);
   }
 

@@ -9,6 +9,7 @@ import ar.edu.itba.paw.models.Page;
 import ar.edu.itba.paw.webapp.auth.PawAuthUserDetails;
 import ar.edu.itba.paw.webapp.dto.IndicationDto;
 import ar.edu.itba.paw.webapp.exceptions.IndicationNotFoundException;
+import ar.edu.itba.paw.webapp.form.IndicationForm;
 import ar.edu.itba.paw.webapp.mediaType.VndType;
 import ar.edu.itba.paw.webapp.query.PageQuery;
 import ar.edu.itba.paw.webapp.utils.ResponseUtil;
@@ -18,7 +19,6 @@ import java.util.stream.Collectors;
 import javax.validation.Valid;
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
-import org.glassfish.jersey.media.multipart.FormDataParam;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -74,22 +74,22 @@ public class IndicationController {
         .build();
   }
 
-  // TODO: Probablemente mal, subir archivo a otro endpoint?
   @POST
-  @Consumes({MediaType.MULTIPART_FORM_DATA, VndType.APPLICATION_INDICATION})
+  @Consumes(MediaType.MULTIPART_FORM_DATA)
   @PreAuthorize("@authorizationFunctions.isInvolvedInAppointment(authentication, #appointmentId)")
-  public Response createIndication(
+  public Response createIndicationWithFile(
       @PathParam("appointmentId") final Long appointmentId,
-      @FormDataParam("indications") final String indications,
-      @FormDataParam("file") final byte[] fileBytes)
+      @Valid @BeanParam final IndicationForm indicationForm)
       throws AppointmentNotFoundException, UserNotFoundException {
 
     final long userId = PawAuthUserDetails.getCurrentUserId();
 
     File file = null;
-    if (fileBytes != null && fileBytes.length > 0) {
-      file = new File.Builder(fileBytes).build();
+    if (indicationForm.hasFile()) {
+      file =
+          new File.Builder(indicationForm.getFileContent(), indicationForm.getFileName()).build();
     }
+    String indications = indicationForm.getIndications();
 
     Indication indication =
         indicationService.createIndication(appointmentId, userId, indications, file);
