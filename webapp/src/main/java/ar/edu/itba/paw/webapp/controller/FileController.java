@@ -2,14 +2,14 @@ package ar.edu.itba.paw.webapp.controller;
 
 import ar.edu.itba.paw.interfaces.services.FileService;
 import ar.edu.itba.paw.models.File;
+import ar.edu.itba.paw.webapp.exceptions.FileNotFoundException;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
 
-import ar.edu.itba.paw.webapp.exceptions.FileNotFoundException;
-import ar.edu.itba.paw.webapp.mediaType.VndType;
+import ar.edu.itba.paw.webapp.utils.FileUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,14 +29,11 @@ public class FileController {
     this.fileService = fileService;
   }
 
-  // TODO: Post de archivos aca? validacion que no sean maliciosos?
-
   // ================= files/{fileId} =================
 
-  // TODO: Servir multiples tipos de archivos
   @GET
   @Path("/{fileId:\\d+}")
-  @Produces({"image/jpeg"})
+  @Produces({"image/jpeg", "image/png", "application/pdf", "application/octet-stream"})
   @PreAuthorize("@authorizationFunctions.isInvolvedInAppointment(authentication, #appointmentId)")
   public Response getFile(
       @PathParam("appointmentId") final Long appointmentId,
@@ -51,10 +48,27 @@ public class FileController {
       throw new FileNotFoundException();
     }
 
-    final String filename = appointmentId + "-" + fileId + ".jpg";
+    String contentType = getFileContentType(file.getName());
 
-    return Response.ok(file.getBytes(), "image/jpeg")
-        .header("Content-Disposition", "attachment; filename=\"" + filename + "\"")
+    return Response.ok(file.getBytes(), contentType)
+        .header("Content-Disposition", "attachment; filename=\"" + file.getName() + "\"")
         .build();
+  }
+
+  private String getFileContentType(String fileName) {
+    // jpeg, jpg, png, pdf
+    String extension = FileUtil.getFileExtension(fileName);
+
+    switch (extension) {
+      case "jpeg":
+      case "jpg":
+        return "image/jpeg";
+      case "png":
+        return "image/png";
+      case "pdf":
+        return "application/pdf";
+      default:
+        return "application/octet-stream";
+    }
   }
 }
