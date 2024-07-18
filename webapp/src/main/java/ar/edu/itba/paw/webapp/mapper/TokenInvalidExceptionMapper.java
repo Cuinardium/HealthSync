@@ -1,7 +1,6 @@
 package ar.edu.itba.paw.webapp.mapper;
 
 import ar.edu.itba.paw.interfaces.services.exceptions.TokenInvalidException;
-import ar.edu.itba.paw.interfaces.services.exceptions.TokenNotFoundException;
 import ar.edu.itba.paw.webapp.dto.ErrorDto;
 import ar.edu.itba.paw.webapp.mediaType.VndType;
 import ar.edu.itba.paw.webapp.utils.LocaleUtil;
@@ -19,24 +18,24 @@ import org.springframework.stereotype.Component;
 @Provider
 public class TokenInvalidExceptionMapper implements ExceptionMapper<TokenInvalidException> {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(TokenInvalidExceptionMapper.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(TokenInvalidExceptionMapper.class);
 
-    private static final String MESSAGE_ID = "error.tokenExpired";
-    private static final Response.Status Status = Response.Status.GONE;
+  private static final String MESSAGE_ID = "error.tokenExpired";
+  private static final Response.Status Status = Response.Status.GONE;
 
-    @Autowired private MessageSource messageSource;
+  @Autowired private MessageSource messageSource;
 
-    @Override
-    public Response toResponse(TokenInvalidException e) {
+  @Override
+  public Response toResponse(TokenInvalidException e) {
 
-        LOGGER.debug("Token expired", e);
+    LOGGER.debug("Token expired", e);
 
-        Locale locale = LocaleUtil.getCurrentRequestLocale();
-        String message = messageSource.getMessage(MESSAGE_ID, null, locale);
+    Locale locale = LocaleUtil.getCurrentRequestLocale();
+    String message = messageSource.getMessage(MESSAGE_ID, null, locale);
 
-        return Response.status(Status)
-                .type(VndType.APPLICATION_ERROR)
-                .entity(ErrorDto.fromMessage(message))
-                .build();
-    }
+    return Response.status(Status)
+        .type(VndType.APPLICATION_ERROR)
+        .entity(ErrorDto.fromMessage(message))
+        .build();
+  }
 }
