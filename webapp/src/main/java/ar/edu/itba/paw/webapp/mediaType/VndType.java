@@ -2,6 +2,9 @@ package ar.edu.itba.paw.webapp.mediaType;
 
 public enum VndType {;
 
+    // ----- Email --------------
+    public static final String APPLICATION_EMAIL = "application/vnd.email.v1+json";
+
     // ----- Patient ------------
     public static final String APPLICATION_PATIENT = "application/vnd.patient.v1+json";
 

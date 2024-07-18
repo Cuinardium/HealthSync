@@ -10,6 +10,8 @@ import ar.edu.itba.paw.webapp.form.EmailForm;
 import javax.validation.Valid;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Response;
+
+import ar.edu.itba.paw.webapp.mediaType.VndType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,6 +36,7 @@ public class TokenController {
 
   @POST
   @Path("/verification")
+  @Consumes(VndType.APPLICATION_EMAIL)
   public Response resendVerificationToken(@Valid final EmailForm emailForm)
       throws UserNotFoundException, TokenNotFoundException {
 
@@ -51,6 +54,7 @@ public class TokenController {
   //  o seguimos usando el del basic filter
   @PATCH
   @Path("/verification/{token}")
+  @Consumes(VndType.APPLICATION_EMAIL)
   public Response verifyUser(
       @PathParam("token") final String token, @Valid final EmailForm emailForm)
       throws TokenNotFoundException, UserNotFoundException, TokenInvalidException {
