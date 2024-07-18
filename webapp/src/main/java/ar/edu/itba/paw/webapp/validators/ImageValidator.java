@@ -2,29 +2,26 @@ package ar.edu.itba.paw.webapp.validators;
 
 import ar.edu.itba.paw.webapp.annotations.ValidateImage;
 import ar.edu.itba.paw.webapp.utils.FileUtil;
+import java.util.Arrays;
+import java.util.List;
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
-import org.springframework.web.multipart.MultipartFile;
+import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 
-public class ImageValidator implements ConstraintValidator<ValidateImage, MultipartFile> {
+public class ImageValidator
+    implements ConstraintValidator<ValidateImage, FormDataContentDisposition> {
 
-  private final Integer MAX_IMG_SIZE = 1024 * 1024 * 8;
+  private static final List<String> SUPPORTED_TYPES = Arrays.asList("png", "jpg", "jpeg");
 
   @Override
   public boolean isValid(
-      MultipartFile image, ConstraintValidatorContext constraintValidatorContext) {
-    if (image == null || image.isEmpty()) {
+      FormDataContentDisposition imageDetails,
+      ConstraintValidatorContext constraintValidatorContext) {
+    if (imageDetails == null) {
       return true;
     }
-    if (image.getSize() > MAX_IMG_SIZE) {
-      return false;
-    }
-    String extension = FileUtil.getFileExtension(image.getOriginalFilename());
-    return isValidExtension(extension);
-  }
 
-  private boolean isValidExtension(String extension) {
-    return extension != null
-        && (extension.equals("png") || extension.equals("jpg") || extension.equals("jpeg"));
+    String extension = FileUtil.getFileExtension(imageDetails.getFileName());
+    return extension != null && SUPPORTED_TYPES.contains(extension);
   }
 }
