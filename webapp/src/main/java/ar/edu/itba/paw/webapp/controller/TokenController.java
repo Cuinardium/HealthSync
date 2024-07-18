@@ -7,6 +7,7 @@ import ar.edu.itba.paw.interfaces.services.exceptions.TokenNotFoundException;
 import ar.edu.itba.paw.interfaces.services.exceptions.UserNotFoundException;
 import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.webapp.form.EmailForm;
+import javax.validation.Valid;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Response;
 import org.slf4j.Logger;
@@ -33,7 +34,7 @@ public class TokenController {
 
   @POST
   @Path("/verification")
-  public Response resendVerificationToken(final EmailForm emailForm)
+  public Response resendVerificationToken(@Valid final EmailForm emailForm)
       throws UserNotFoundException, TokenNotFoundException {
 
     LOGGER.debug("Resending verification token to user with email: {}", emailForm.getEmail());
@@ -50,7 +51,8 @@ public class TokenController {
   //  o seguimos usando el del basic filter
   @PATCH
   @Path("/verification/{token}")
-  public Response verifyUser(@PathParam("token") final String token, final EmailForm emailForm)
+  public Response verifyUser(
+      @PathParam("token") final String token, @Valid final EmailForm emailForm)
       throws TokenNotFoundException, UserNotFoundException, TokenInvalidException {
 
     LOGGER.debug("Verifying user with email: {}", emailForm.getEmail());
