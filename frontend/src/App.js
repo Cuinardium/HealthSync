@@ -9,6 +9,7 @@ import PatientProfile from "./user/PatientProfile";
 import Error403 from "./errors/403";
 import Error404 from "./errors/404";
 import Error500 from "./errors/500";
+import Login from "./auth/Login";
 
 function App() {
     const helmetContext = {};
@@ -20,6 +21,7 @@ function App() {
                   <Route path="/" element={<HomePage />} />
                   <Route path="/doctor-profile" element={<DoctorProfile/>}/>
                   <Route path="/patient-profile" element={<PatientProfile/>}/>
+                  <Route path="/login" element={<Login/>}/>
 
                   {/* Error Pages */}
                   <Route path="*" element={<Error404/>} />
