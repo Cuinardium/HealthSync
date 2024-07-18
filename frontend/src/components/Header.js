@@ -63,7 +63,6 @@ const Header = ({ user, hasNotifications, isDoctor }) => {
                                         <li className="nav-item dropdown">
                                             <a
                                                 className="nav-link dropdown-toggle"
-                                                href="#"
                                                 role="button"
                                                 data-bs-toggle="dropdown"
                                                 aria-haspopup="true"
