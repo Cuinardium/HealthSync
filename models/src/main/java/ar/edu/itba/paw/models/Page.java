@@ -17,6 +17,16 @@ public class Page<T> {
     this.pageSize = pageSize;
   }
 
+  public Page(List<T> totalContent, Integer currentPage, Integer pageSize) {
+    int fromIndex = currentPage * pageSize;
+    int toIndex = Math.min(fromIndex + pageSize, totalContent.size());
+
+    this.content = totalContent.subList(fromIndex, toIndex);
+    this.currentPage = currentPage;
+    this.totalContentCount = totalContent.size();
+    this.pageSize = pageSize;
+  }
+
   public List<T> getContent() {
     return content;
   }
