@@ -36,6 +36,7 @@ public class ValidationExceptionMapper implements ExceptionMapper<ConstraintViol
     List<ValidationErrorDto> violations =
         exception.getConstraintViolations().stream()
             .map(violation -> ValidationErrorDto.fromViolation(violation, messageSource, locale))
+            .sorted()
             .collect(Collectors.toList());
 
     return Response.status(STATUS)

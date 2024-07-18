@@ -5,7 +5,7 @@ import javax.validation.ConstraintViolation;
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.springframework.context.MessageSource;
 
-public class ValidationErrorDto {
+public class ValidationErrorDto implements Comparable<ValidationErrorDto> {
 
   private String message;
   private String attribute;
@@ -76,5 +76,23 @@ public class ValidationErrorDto {
 
   public void setInvalidValue(String invalidValue) {
     this.invalidValue = invalidValue;
+  }
+
+  @Override
+  public int compareTo(ValidationErrorDto validationErrorDto) {
+
+    if (this.attribute == null && validationErrorDto.attribute == null) {
+      return 0;
+    }
+
+    if (this.attribute == null) {
+      return -1;
+    }
+
+    if (validationErrorDto.attribute == null) {
+      return 1;
+    }
+
+    return this.attribute.compareTo(validationErrorDto.attribute);
   }
 }
