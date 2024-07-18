@@ -95,6 +95,13 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
         .and()
       .authorizeRequests()
 
+        // ------------- Tokens -----------
+        // verification
+        .antMatchers(HttpMethod.POST, "/api/tokens/verification")
+          .anonymous()
+        .antMatchers(HttpMethod.PUT, "/api/tokens/verification/{token}")
+          .anonymous()
+
         // ------------- Patients ---------
         // patients/{id}
         .antMatchers(HttpMethod.GET, "/api/patients/{patientId:\\d+}")
