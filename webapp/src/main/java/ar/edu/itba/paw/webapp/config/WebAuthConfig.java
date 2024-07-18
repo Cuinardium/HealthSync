@@ -8,7 +8,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.security.Key;
-import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -96,6 +95,13 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
         .and()
       .authorizeRequests()
 
+        // ------------- Patients ---------
+        // patients/{id}
+        .antMatchers(HttpMethod.GET, "/api/patients/{patientId:\\d+}")
+          .authenticated()
+        .antMatchers(HttpMethod.PUT, "/api/patients/{patientId:\\d+}")
+          .authenticated()
+
         // ------------- Vacations ---------
         .antMatchers(HttpMethod.POST, "/api/doctors/{doctorId:\\d+}/vacations")
           .authenticated()
@@ -143,11 +149,6 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
       .addFilterBefore(basicAuthFilter, UsernamePasswordAuthenticationFilter.class)
       .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
       .csrf().disable();
-  }
-
-  private String getKey() throws IOException {
-    byte[] bytes = FileUtils.readFileToByteArray(openSSLKey.getFile());
-    return new String(bytes, StandardCharsets.UTF_8);
   }
 
   @Override
