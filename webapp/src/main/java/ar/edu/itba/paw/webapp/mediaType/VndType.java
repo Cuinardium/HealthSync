@@ -29,6 +29,10 @@ public enum VndType {;
     public static final String APPLICATION_HEALTH_INSURANCE = "application/vnd.health-insurance.v1+json";
     public static final String APPLICATION_HEALTH_INSURANCE_LIST = "application/vnd.health-insurance-list.v1+json";
 
+    // ----- Specialties --------
+    public static final String APPLICATION_SPECIALTY = "application/vnd.specialty.v1+json";
+    public static final String APPLICATION_SPECIALTY_LIST = "application/vnd.specialty-list.v1+json";
+
     // ----- Error --------------
     public static final String APPLICATION_ERROR = "application/vnd.error.v1+json";
     public static final String APPLICATION_VALIDATION_ERROR_LIST = "application/vnd.validation-error-list.v1+json";
