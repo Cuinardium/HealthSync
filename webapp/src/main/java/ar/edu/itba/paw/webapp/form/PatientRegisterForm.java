@@ -1,20 +1,26 @@
 package ar.edu.itba.paw.webapp.form;
 
 import ar.edu.itba.paw.models.HealthInsurance;
-import ar.edu.itba.paw.webapp.annotations.ExistsInEnum;
+import ar.edu.itba.paw.webapp.annotations.ExistsInEnumString;
 import javax.validation.constraints.NotNull;
 
 public class PatientRegisterForm extends UserRegisterForm {
 
-  @NotNull
-  @ExistsInEnum(enumClass = HealthInsurance.class)
-  private Integer healthInsuranceCode = -1;
+  @NotNull(message = "NotNull.patientForm.healthInsurance")
+  @ExistsInEnumString(
+      enumClass = HealthInsurance.class,
+      message = "ExistsInEnumString.patientForm.healthInsurance")
+  private String healthInsurance;
 
-  public int getHealthInsuranceCode() {
-    return healthInsuranceCode;
+  public String getHealthInsurance() {
+    return healthInsurance;
   }
 
-  public void setHealthInsuranceCode(int healthInsuranceCode) {
-    this.healthInsuranceCode = healthInsuranceCode;
+  public void setHealthInsurance(String healthInsurance) {
+    this.healthInsurance = healthInsurance;
+  }
+
+  public HealthInsurance getHealthInsuranceEnum() {
+    return HealthInsurance.valueOf(healthInsurance);
   }
 }

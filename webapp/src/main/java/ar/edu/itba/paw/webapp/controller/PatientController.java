@@ -3,14 +3,14 @@ package ar.edu.itba.paw.webapp.controller;
 import ar.edu.itba.paw.interfaces.services.PatientService;
 import ar.edu.itba.paw.interfaces.services.exceptions.EmailInUseException;
 import ar.edu.itba.paw.interfaces.services.exceptions.PatientNotFoundException;
-import ar.edu.itba.paw.models.HealthInsurance;
 import ar.edu.itba.paw.models.Image;
 import ar.edu.itba.paw.models.Patient;
 import ar.edu.itba.paw.webapp.dto.PatientDto;
-import ar.edu.itba.paw.webapp.exceptions.UserNotFoundException;
 import ar.edu.itba.paw.webapp.form.PatientEditForm;
 import ar.edu.itba.paw.webapp.form.PatientRegisterForm;
 import java.io.IOException;
+import ar.edu.itba.paw.webapp.mediaType.VndType;
+import ar.edu.itba.paw.webapp.utils.LocaleUtil;
 import java.net.URI;
 import javax.validation.Valid;
 import javax.ws.rs.*;
@@ -21,7 +21,6 @@ import javax.ws.rs.core.UriInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Component;
 
 @Path("patients")
@@ -39,36 +38,25 @@ public class PatientController {
   }
 
   @POST
-  public Response createPatient(@Valid final PatientRegisterForm patientRegisterForm) {
-    if (patientRegisterForm == null) {
-      return Response.status(Response.Status.BAD_REQUEST).entity("Form cannot be empty").build();
-    }
-    HealthInsurance healthInsurance =
-        HealthInsurance.values()[patientRegisterForm.getHealthInsuranceCode()];
+  @Consumes(VndType.APPLICATION_PATIENT)
+  public Response createPatient(@Valid final PatientRegisterForm patientRegisterForm)
+      throws EmailInUseException {
 
-    // TODO: include locale in payload??
-    try {
-      final Patient patient =
-          patientService.createPatient(
-              patientRegisterForm.getEmail(),
-              patientRegisterForm.getPassword(),
-              patientRegisterForm.getName(),
-              patientRegisterForm.getLastname(),
-              healthInsurance,
-              LocaleContextHolder.getLocale());
+    final Patient patient =
+        patientService.createPatient(
+            patientRegisterForm.getEmail(),
+            patientRegisterForm.getPassword(),
+            patientRegisterForm.getName(),
+            patientRegisterForm.getLastname(),
+            patientRegisterForm.getHealthInsuranceEnum(),
+            LocaleUtil.getCurrentRequestLocale());
 
-      LOGGER.info("Registered {}", patient);
-      URI createdPatientUri =
-          uriInfo
-              .getBaseUriBuilder()
-              .path("/patients")
-              .path(String.valueOf(patient.getId()))
-              .build();
-      return Response.created(createdPatientUri).build();
-    } catch (EmailInUseException e) {
-      LOGGER.warn("Failed to register patient due to email unique constraint");
-      return Response.status(Response.Status.CONFLICT).build();
-    }
+    LOGGER.debug("Registered {}", patient);
+
+    URI createdPatientUri =
+        uriInfo.getBaseUriBuilder().path("/patients").path(String.valueOf(patient.getId())).build();
+
+    return Response.created(createdPatientUri).build();
   }
 
   @GET
