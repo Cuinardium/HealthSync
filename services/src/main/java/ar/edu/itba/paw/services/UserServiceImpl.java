@@ -3,7 +3,6 @@ package ar.edu.itba.paw.services;
 import ar.edu.itba.paw.interfaces.persistence.UserDao;
 import ar.edu.itba.paw.interfaces.persistence.exceptions.EmailAlreadyExistsException;
 import ar.edu.itba.paw.interfaces.services.ImageService;
-import ar.edu.itba.paw.interfaces.services.MailService;
 import ar.edu.itba.paw.interfaces.services.TokenService;
 import ar.edu.itba.paw.interfaces.services.UserService;
 import ar.edu.itba.paw.interfaces.services.exceptions.EmailInUseException;
@@ -13,7 +12,6 @@ import ar.edu.itba.paw.interfaces.services.exceptions.UserNotFoundException;
 import ar.edu.itba.paw.models.Image;
 import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.models.VerificationToken;
-
 import java.util.Locale;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -101,13 +99,17 @@ public class UserServiceImpl implements UserService {
 
   @Transactional
   @Override
-  public void confirmUser(long userId, String token) throws UserNotFoundException, TokenNotFoundException, TokenInvalidException {
-    final User user =
-        userDao.getUserById(userId).orElseThrow(UserNotFoundException::new);
+  public void confirmUser(long userId, String token)
+      throws UserNotFoundException, TokenNotFoundException, TokenInvalidException {
+    final User user = userDao.getUserById(userId).orElseThrow(UserNotFoundException::new);
 
-    final VerificationToken verificationToken = tokenService.getUserToken(user).orElseThrow(TokenNotFoundException::new);
+    final VerificationToken verificationToken =
+        tokenService
+            .getUserToken(user)
+            .filter(t -> t.getToken().equals(token))
+            .orElseThrow(TokenNotFoundException::new);
 
-    if (!verificationToken.getToken().equals(token) || verificationToken.isExpired()) {
+    if (verificationToken.isExpired()) {
       throw new TokenInvalidException();
     }
 
