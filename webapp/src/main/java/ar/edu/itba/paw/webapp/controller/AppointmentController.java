@@ -69,8 +69,14 @@ public class AppointmentController {
     );
 
     List<Appointment> appointmentList = appointmentsPage.getContent();
+    if (appointmentList.isEmpty()) {
+      LOGGER.debug("No content for page {}",  pageQuery.getPage());
+      return Response.noContent().build();
+    }
 
     final List<AppointmentDto> dtoList = AppointmentDto.fromAppointmentList(uriInfo, appointmentList);
+
+    LOGGER.debug("Appointments for page {}", pageQuery.getPage());
 
     Response.ResponseBuilder responseBuilder = Response.ok(new GenericEntity<List<AppointmentDto>>(dtoList) {});
 
