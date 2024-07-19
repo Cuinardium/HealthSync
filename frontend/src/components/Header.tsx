@@ -2,8 +2,9 @@ import React from 'react';
 import { Navbar, Nav, NavDropdown, Button, Image } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
 
-import logo from '../img/logo.svg'
-import loggedUserImg from '../img/doctorDefault.png'
+
+import * as logo from '../img/logo.svg'
+import * as loggedUserImg from '../img/doctorDefault.png'
 
 import 'bootstrap/dist/css/bootstrap.css';
 import '../css/main.css'

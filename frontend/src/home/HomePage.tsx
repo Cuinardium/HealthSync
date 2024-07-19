@@ -5,11 +5,11 @@ import Header from '../components/Header';
 // import Favicon from '../components/Favicon';
 
 import {useTranslation} from 'react-i18next';
-import categoriesCarouselJs from '../js/categoriesCarousel.js';
-import circle1 from '../img/circle1.svg';
-import circle2 from '../img/circle2.svg';
-import circle3 from '../img/circle3.svg';
-import homeDoctorImg from '../img/homeDoctor.svg';
+//import categoriesCarouselJs from '../ts/categoriesCarousel.js';
+import * as circle1 from '../img/circle1.svg';
+import * as circle2 from '../img/circle2.svg';
+import * as circle3 from '../img/circle3.svg';
+import * as homeDoctorImg from '../img/homeDoctor.svg';
 
 import 'bootstrap/dist/css/bootstrap.css';
 import '../css/main.css';
@@ -122,7 +122,7 @@ const HomePage = () => {
                     <span className="text-body-secondary">&copy; 2023 HealthSync, Inc</span>
                 </div>
             </footer>
-            <script src={categoriesCarouselJs}></script>
+            {/*<script src={categoriesCarouselJs}></script>*/}
         </div>
     );
 };
