@@ -145,6 +145,17 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
         .antMatchers(HttpMethod.DELETE, "/api/notifications/{notificationId:\\d+}")
           .authenticated()
 
+        // ------------- Specialities -------
+        .antMatchers(HttpMethod.GET, "/api/specialities")
+          .permitAll()
+        // specialities/{id}
+        .antMatchers(HttpMethod.GET, "/api/specialities/{specialityId:\\d+}")
+          .permitAll()
+
+        // ------------- Cities -------------
+        .antMatchers(HttpMethod.GET, "/api/cities")
+          .permitAll()
+
         // Permit all other
         .antMatchers("/api/**")
           .permitAll()
