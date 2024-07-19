@@ -1,5 +1,6 @@
 package ar.edu.itba.paw.webapp.dto;
 
+import java.util.List;
 import java.util.Locale;
 import javax.validation.ConstraintViolation;
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
@@ -20,15 +21,32 @@ public class ValidationErrorDto implements Comparable<ValidationErrorDto> {
     // Obtener el último segmento del propertyPath
     String[] propertyPath = violation.getPropertyPath().toString().split("\\.");
 
-    // Solo especifico el path si el error es de un field
-    // Si es del bean entero no
-    if (propertyPath.length > 2) {
-      dto.attribute = propertyPath[propertyPath.length - 1];
-    }
+    dto.attribute = getAttributeString(propertyPath);
 
     dto.invalidValue = getInvalidValueString(violation.getInvalidValue());
 
     return dto;
+  }
+
+  private static String getAttributeString(String[] propertyPath) {
+
+    // Edge cases, esto es un code smell
+    // Pero no se me ocurre una forma más elegante de hacerlo
+
+    // Solo especifico el path si el error es de un field
+    // Si es del bean entero no
+    if (propertyPath.length <= 2) {
+      return null;
+    }
+
+    int attributeIndex = propertyPath.length - 1;
+
+    // Si es un elemento de una coleccion me quedo con el anterior
+    if (propertyPath[attributeIndex].equals("<collection element>")) {
+      attributeIndex--;
+    }
+
+    return propertyPath[attributeIndex];
   }
 
   private static String getInvalidValueString(Object invalidValue) {
@@ -42,6 +60,11 @@ public class ValidationErrorDto implements Comparable<ValidationErrorDto> {
 
     // Si es un array, devolver null para no mostrar referencias de memoria
     if (invalidValue.getClass().isArray()) {
+      return null;
+    }
+
+    // Si es una lista vacia, devolver null
+    if (invalidValue instanceof List && ((List<?>) invalidValue).isEmpty()) {
       return null;
     }
 

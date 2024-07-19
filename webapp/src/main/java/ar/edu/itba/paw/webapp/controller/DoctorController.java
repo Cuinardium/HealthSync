@@ -196,6 +196,42 @@ public class DoctorController {
 
     return Response.ok(DoctorDto.fromDoctor(uriInfo, doctor)).build();
   }
+
+  @PUT
+  @Path("/{doctorId:\\d+}")
+  @Consumes(MediaType.MULTIPART_FORM_DATA)
+  @PreAuthorize("@authorizationFunctions.isUser(authentication, #doctorId)")
+  public Response updateDoctor(
+      @PathParam("doctorId") final long doctorId,
+      @Valid @BeanParam final DoctorEditForm doctorEditForm) throws DoctorNotFoundException, EmailInUseException {
+
+    LOGGER.debug("Updating doctor with id {}", doctorId);
+
+    Doctor doctor = doctorService.getDoctorById(doctorId).orElseThrow(DoctorNotFoundException::new);
+
+    Image image = null;
+    if (doctorEditForm.hasFile()) {
+      image = new Image.Builder(doctorEditForm.getImageData()).build();
+    }
+
+    doctor = doctorService.updateDoctor(
+            doctorId,
+            doctorEditForm.getEmail(),
+            doctorEditForm.getName(),
+            doctorEditForm.getLastname(),
+            doctorEditForm.getSpecialtyEnum(),
+            doctorEditForm.getCity(),
+            doctorEditForm.getAddress(),
+            doctorEditForm.getHealthInsurancesEnum(),
+            doctor.getAttendingHours(),
+            image,
+            doctorEditForm.getLocale());
+
+    LOGGER.debug("Updated doctor {}", doctor);
+
+    return Response.noContent().build();
+  }
+
   // ================= doctors/{id}/attendinghours ========================
 
   @GET
