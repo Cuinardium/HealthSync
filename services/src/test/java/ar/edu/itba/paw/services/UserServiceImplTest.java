@@ -404,7 +404,7 @@ public class UserServiceImplTest {
     us.confirmUser(ID, TOKEN);
   }
 
-  @Test(expected = TokenInvalidException.class)
+  @Test(expected = TokenNotFoundException.class)
   public void testConfirmUserTokenIsInvalid()
       throws UserNotFoundException,
           ar.edu.itba.paw.interfaces.services.exceptions.UserNotFoundException, TokenNotFoundException, TokenInvalidException {
