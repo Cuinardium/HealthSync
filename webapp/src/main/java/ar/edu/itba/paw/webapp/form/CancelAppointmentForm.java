@@ -1,6 +1,6 @@
 package ar.edu.itba.paw.webapp.form;
 
-public class ModalForm {
+public class CancelAppointmentForm {
 
   private String description;
 

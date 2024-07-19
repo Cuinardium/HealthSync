@@ -2,6 +2,8 @@ package ar.edu.itba.paw.webapp.controller;
 
 import ar.edu.itba.paw.interfaces.services.AppointmentService;
 import ar.edu.itba.paw.interfaces.services.PatientService;
+import ar.edu.itba.paw.interfaces.services.exceptions.AppointmentNotFoundException;
+import ar.edu.itba.paw.interfaces.services.exceptions.CancelForbiddenException;
 import ar.edu.itba.paw.models.Appointment;
 import ar.edu.itba.paw.models.AppointmentStatus;
 import ar.edu.itba.paw.models.Page;
@@ -14,6 +16,8 @@ import javax.validation.Valid;
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
 
+import ar.edu.itba.paw.webapp.exceptions.AppointmentAlreadyCancelledException;
+import ar.edu.itba.paw.webapp.form.CancelAppointmentForm;
 import ar.edu.itba.paw.webapp.query.AppointmentQuery;
 import ar.edu.itba.paw.webapp.query.PageQuery;
 import ar.edu.itba.paw.webapp.query.UserQuery;
@@ -88,18 +92,49 @@ public class AppointmentController {
   @Produces(MediaType.APPLICATION_JSON)
   @Path("/{id:\\d+}")
   @PreAuthorize("@authorizationFunctions.isInvolvedInAppointment(authentication, #id)")
-  public Response getAppointment(@PathParam("id") final long id) {
+  public Response getAppointment(@PathParam("id") final long id) throws AppointmentNotFoundException {
 
     Optional<Appointment> possibleAppointment = appointmentService.getAppointmentById(id);
 
     if (!possibleAppointment.isPresent()) {
       LOGGER.debug("appointment with id {} not found", id);
-      return Response.status(Response.Status.NOT_FOUND).build();
+      throw new AppointmentNotFoundException();
     }
 
     Appointment appointment = possibleAppointment.get();
 
     LOGGER.debug("returning appointment with id {}", id);
+    return Response.ok(AppointmentDto.fromAppointment(uriInfo, appointment)).build();
+  }
+
+  @PATCH
+  @Path("/{id:\\d+}")
+  @PreAuthorize("@authorizationFunctions.isInvolvedInAppointment(authentication, #id)")
+  public Response cancelAppointment(
+          @PathParam("id") final long id,
+          @Valid final CancelAppointmentForm cancelAppointmentForm
+  ) throws AppointmentNotFoundException, AppointmentAlreadyCancelledException {
+    Optional<Appointment> possibleAppointment = appointmentService.getAppointmentById(id);
+
+    if (!possibleAppointment.isPresent()) {
+      LOGGER.debug("appointment with id {} not found", id);
+      throw new AppointmentNotFoundException();
+    }
+
+    Appointment appointment = possibleAppointment.get();
+
+    if(appointment.getStatus().equals(AppointmentStatus.CANCELLED)) {
+      LOGGER.debug("appointment with id {} was already cancelled", id);
+      throw new AppointmentAlreadyCancelledException();
+    }
+
+    try {
+      appointmentService.cancelAppointment(id, cancelAppointmentForm.getDescription(), PawAuthUserDetails.getCurrentUserId());
+    } catch (CancelForbiddenException e) {
+      LOGGER.debug("User should have been preauthorized");
+      throw new IllegalStateException();
+    }
+
     return Response.ok(AppointmentDto.fromAppointment(uriInfo, appointment)).build();
   }
 }
