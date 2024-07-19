@@ -1,5 +1,6 @@
 package ar.edu.itba.paw.models;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -21,7 +22,12 @@ public class Page<T> {
     int fromIndex = currentPage * pageSize;
     int toIndex = Math.min(fromIndex + pageSize, totalContent.size());
 
-    this.content = totalContent.subList(fromIndex, toIndex);
+    if (fromIndex <= toIndex) {
+      this.content = totalContent.subList(fromIndex, toIndex);
+    } else {
+      this.content = Collections.emptyList();
+    }
+
     this.currentPage = currentPage;
     this.totalContentCount = totalContent.size();
     this.pageSize = pageSize;
