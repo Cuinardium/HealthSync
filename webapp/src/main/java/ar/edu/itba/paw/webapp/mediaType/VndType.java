@@ -33,6 +33,9 @@ public enum VndType {;
     public static final String APPLICATION_SPECIALTY = "application/vnd.specialty.v1+json";
     public static final String APPLICATION_SPECIALTY_LIST = "application/vnd.specialty-list.v1+json";
 
+    // ------ Cities ------------
+    public static final String APPLICATION_CITY_LIST = "application/vnd.city-list.v1+json";
+
     // ----- Error --------------
     public static final String APPLICATION_ERROR = "application/vnd.error.v1+json";
     public static final String APPLICATION_VALIDATION_ERROR_LIST = "application/vnd.validation-error-list.v1+json";
