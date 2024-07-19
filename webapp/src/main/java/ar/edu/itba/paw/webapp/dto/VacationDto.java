@@ -8,11 +8,10 @@ import javax.ws.rs.core.UriInfo;
 
 public class VacationDto {
 
-  private long id;
   private LocalDate fromDate;
-  private ThirtyMinuteBlock fromTime;
+  private String fromTime;
   private LocalDate toDate;
-  private ThirtyMinuteBlock toTime;
+  private String toTime;
 
   private URI doctor;
   private URI self;
@@ -23,11 +22,10 @@ public class VacationDto {
 
     final long doctorId = vacation.getDoctor().getId();
 
-    dto.id = vacation.getId();
     dto.fromDate = vacation.getFromDate();
     dto.toDate = vacation.getToDate();
-    dto.fromTime = vacation.getFromTime();
-    dto.toTime = vacation.getToTime();
+    dto.fromTime = vacation.getFromTime().getBlockBeginning();
+    dto.toTime = vacation.getToTime().getBlockEnd();
 
     dto.doctor = uri.getBaseUriBuilder().path("doctors").path(String.valueOf(doctorId)).build();
     dto.self =
@@ -35,18 +33,10 @@ public class VacationDto {
             .path("doctors")
             .path(String.valueOf(doctorId))
             .path("vacations")
-            .path(String.valueOf(dto.id))
+            .path(String.valueOf(vacation.getId()))
             .build();
 
     return dto;
-  }
-
-  public long getId() {
-    return id;
-  }
-
-  public void setId(long id) {
-    this.id = id;
   }
 
   public LocalDate getFromDate() {
@@ -57,11 +47,11 @@ public class VacationDto {
     this.fromDate = fromDate;
   }
 
-  public ThirtyMinuteBlock getFromTime() {
+  public String getFromTime() {
     return fromTime;
   }
 
-  public void setFromTime(ThirtyMinuteBlock fromTime) {
+  public void setFromTime(String  fromTime) {
     this.fromTime = fromTime;
   }
 
@@ -73,11 +63,11 @@ public class VacationDto {
     this.toDate = toDate;
   }
 
-  public ThirtyMinuteBlock getToTime() {
+  public String getToTime() {
     return toTime;
   }
 
-  public void setToTime(ThirtyMinuteBlock toTime) {
+  public void setToTime(String toTime) {
     this.toTime = toTime;
   }
 
