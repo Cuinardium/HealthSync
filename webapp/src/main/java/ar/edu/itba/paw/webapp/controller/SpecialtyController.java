@@ -76,8 +76,12 @@ public class SpecialtyController {
     Page<SpecialtyDto> specialtyPage =
         new Page<>(specialtyDtoList, specialtyQuery.getPage(), specialtyQuery.getPageSize());
 
+    if (specialtyPage.getContent().isEmpty()) {
+      return Response.noContent().build();
+    }
+
     return ResponseUtil.setPaginationLinks(
-            Response.ok(new GenericEntity<List<SpecialtyDto>>(specialtyDtoList) {}),
+            Response.ok(new GenericEntity<List<SpecialtyDto>>(specialtyPage.getContent()) {}),
             uriInfo,
             specialtyPage)
         .build();
