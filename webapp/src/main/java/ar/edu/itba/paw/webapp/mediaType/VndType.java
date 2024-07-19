@@ -13,6 +13,9 @@ public enum VndType {;
     public static final String APPLICATION_VACATION_LIST = "application/vnd.vacation-list.v1+json";
     public static final String APPLICATION_VACATION_FORM =  "application/vnd.vacation-form.v1+json";
 
+    // ----- Attending Hours ----
+    public static final String APPLICATION_ATTENDING_HOURS_LIST = "application/vnd.attending-hours-list.v1+json";
+
     // ----- Indications --------
     public static final String APPLICATION_INDICATION = "application/vnd.indication.v1+json";
     public static final String APPLICATION_INDICATION_LIST = "application/vnd.indication-list.v1+json";

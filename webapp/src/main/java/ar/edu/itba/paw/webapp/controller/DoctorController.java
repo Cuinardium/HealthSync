@@ -4,9 +4,11 @@ import ar.edu.itba.paw.interfaces.services.DoctorService;
 import ar.edu.itba.paw.interfaces.services.exceptions.DoctorNotFoundException;
 import ar.edu.itba.paw.interfaces.services.exceptions.EmailInUseException;
 import ar.edu.itba.paw.models.*;
+import ar.edu.itba.paw.webapp.dto.AttendingHoursDto;
 import ar.edu.itba.paw.webapp.dto.DoctorDto;
 import ar.edu.itba.paw.webapp.form.DoctorFilterForm;
 import ar.edu.itba.paw.webapp.form.DoctorRegisterForm;
+import ar.edu.itba.paw.webapp.mediaType.VndType;
 import ar.edu.itba.paw.webapp.utils.ResponseUtil;
 import java.net.URI;
 import java.time.DayOfWeek;
@@ -34,12 +36,15 @@ public class DoctorController {
 
   private static final int DEFAULT_PAGE_SIZE = 10;
   private static final String DATE_FORMAT = "dd-MM-yyyy";
+  private final DoctorService doctorService;
+  @Context private UriInfo uriInfo;
 
   @Autowired
   public DoctorController(final DoctorService doctorService) {
     this.doctorService = doctorService;
   }
 
+  // ================= doctors ========================
   // TODO: mover el filer form a query params
   @GET
   // @Produces("application/vnd.doctorList.v1+json")
@@ -182,6 +187,8 @@ public class DoctorController {
     }
   }
 
+  // ================= doctors/{id} ========================
+
   @GET
   @Path("/{id}")
   public Response getDoctor(@PathParam("id") final long id) throws DoctorNotFoundException {
@@ -190,4 +197,23 @@ public class DoctorController {
     LOGGER.debug("returning doctor with id {}", id);
     return Response.ok(DoctorDto.fromDoctor(uriInfo, doctor)).build();
   }
+  // ================= doctors/{id}/attendinghours ========================
+
+  @GET
+  @Path("/{doctorId:\\d+}/attendinghours")
+  @Produces(VndType.APPLICATION_ATTENDING_HOURS_LIST)
+  public Response getAttendingHours(@PathParam("doctorId") final long doctorId)
+      throws DoctorNotFoundException {
+
+    Doctor doctor = doctorService.getDoctorById(doctorId).orElseThrow(DoctorNotFoundException::new);
+
+    Set<AttendingHours> attendingHours = doctor.getAttendingHours();
+
+    List<AttendingHoursDto> attendingHoursDtoList =
+        AttendingHoursDto.fromAttendingHours(attendingHours);
+
+    return Response.ok(new GenericEntity<List<AttendingHoursDto>>(attendingHoursDtoList) {})
+        .build();
+  }
+
 }
