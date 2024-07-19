@@ -6,6 +6,7 @@ import ar.edu.itba.paw.interfaces.services.exceptions.EmailInUseException;
 import ar.edu.itba.paw.models.*;
 import ar.edu.itba.paw.webapp.dto.AttendingHoursDto;
 import ar.edu.itba.paw.webapp.dto.DoctorDto;
+import ar.edu.itba.paw.webapp.form.DoctorEditForm;
 import ar.edu.itba.paw.webapp.form.DoctorFilterForm;
 import ar.edu.itba.paw.webapp.form.DoctorRegisterForm;
 import ar.edu.itba.paw.webapp.mediaType.VndType;
@@ -23,17 +24,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Component;
 
 @Path("doctors")
 @Component
 public class DoctorController {
   private static final Logger LOGGER = LoggerFactory.getLogger(DoctorController.class);
-
-  private final DoctorService doctorService;
-
-  @Context private UriInfo uriInfo;
-
   private static final int DEFAULT_PAGE_SIZE = 10;
   private static final String DATE_FORMAT = "dd-MM-yyyy";
   private final DoctorService doctorService;
@@ -45,10 +42,10 @@ public class DoctorController {
   }
 
   // ================= doctors ========================
+
   // TODO: mover el filer form a query params
   @GET
-  // @Produces("application/vnd.doctorList.v1+json")
-  @Produces(MediaType.APPLICATION_JSON)
+  @Produces(VndType.APPLICATION_DOCTOR_LIST)
   public Response listDoctors(
       @Valid final DoctorFilterForm doctorFilterForm,
       @QueryParam("page") @DefaultValue("1") final int page,
@@ -107,8 +104,7 @@ public class DoctorController {
     Set<Specialty> specialties =
         specialtiesStringSet.stream().map(Specialty::valueOf).collect(Collectors.toSet());
     Set<HealthInsurance> healthInsurances =
-        healthInsurancesStringSet
-            .stream()
+        healthInsurancesStringSet.stream()
             .map(HealthInsurance::valueOf)
             .collect(Collectors.toSet());
 
@@ -144,15 +140,14 @@ public class DoctorController {
   }
 
   @POST
+  @Consumes(VndType.APPLICATION_DOCTOR)
   public Response createDoctor(@Valid final DoctorRegisterForm doctorRegisterForm) {
 
     // TODO: form errors?
 
     Specialty specialty = Specialty.values()[doctorRegisterForm.getSpecialtyCode()];
     Set<HealthInsurance> healthInsurances =
-        doctorRegisterForm
-            .getHealthInsuranceCodes()
-            .stream()
+        doctorRegisterForm.getHealthInsuranceCodes().stream()
             .map(code -> HealthInsurance.values()[code])
             .collect(Collectors.toSet());
 
@@ -190,11 +185,15 @@ public class DoctorController {
   // ================= doctors/{id} ========================
 
   @GET
-  @Path("/{id}")
-  public Response getDoctor(@PathParam("id") final long id) throws DoctorNotFoundException {
-    Doctor doctor = doctorService.getDoctorById(id).orElseThrow(DoctorNotFoundException::new);
-    // TODO: links for attributes?
-    LOGGER.debug("returning doctor with id {}", id);
+  @Path("/{doctorId:\\d+}")
+  @Produces(VndType.APPLICATION_DOCTOR)
+  public Response getDoctor(@PathParam("doctorId") final long doctorId)
+      throws DoctorNotFoundException {
+
+    Doctor doctor = doctorService.getDoctorById(doctorId).orElseThrow(DoctorNotFoundException::new);
+
+    LOGGER.debug("returning doctor with id {}", doctorId);
+
     return Response.ok(DoctorDto.fromDoctor(uriInfo, doctor)).build();
   }
   // ================= doctors/{id}/attendinghours ========================
