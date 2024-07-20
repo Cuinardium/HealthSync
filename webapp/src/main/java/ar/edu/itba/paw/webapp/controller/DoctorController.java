@@ -143,45 +143,30 @@ public class DoctorController {
 
   @POST
   @Consumes(VndType.APPLICATION_DOCTOR)
-  public Response createDoctor(@Valid final DoctorRegisterForm doctorRegisterForm) {
+  public Response createDoctor(@Valid final DoctorRegisterForm doctorRegisterForm)
+      throws EmailInUseException {
 
-    // TODO: form errors?
+    final Doctor doctor =
+        doctorService.createDoctor(
+            doctorRegisterForm.getEmail(),
+            doctorRegisterForm.getPassword(),
+            doctorRegisterForm.getName(),
+            doctorRegisterForm.getLastname(),
+            doctorRegisterForm.getSpecialtyEnum(),
+            doctorRegisterForm.getCity(),
+            doctorRegisterForm.getAddress(),
+            doctorRegisterForm.getHealthInsurancesEnum(),
+            DoctorRegisterForm.getDefaultAttendingHours(),
+            LocaleContextHolder.getLocale());
 
-    Specialty specialty = Specialty.values()[doctorRegisterForm.getSpecialtyCode()];
-    Set<HealthInsurance> healthInsurances =
-        doctorRegisterForm.getHealthInsuranceCodes().stream()
-            .map(code -> HealthInsurance.values()[code])
-            .collect(Collectors.toSet());
+    LOGGER.info("Registered {}", doctor);
 
-    ThirtyMinuteBlock[] values = ThirtyMinuteBlock.values();
-    Set<AttendingHours> attendingHours = new HashSet<>();
-    for (Map.Entry<DayOfWeek, List<Integer>> aux :
-        doctorRegisterForm.getAttendingHours().entrySet()) {
-      for (Integer ordinal : aux.getValue()) {
-        attendingHours.add(new AttendingHours(null, aux.getKey(), values[ordinal]));
-      }
-    }
-    try {
-      final Doctor doctor =
-          doctorService.createDoctor(
-              doctorRegisterForm.getEmail(),
-              doctorRegisterForm.getPassword(),
-              doctorRegisterForm.getName(),
-              doctorRegisterForm.getLastname(),
-              specialty,
-              doctorRegisterForm.getCity(),
-              doctorRegisterForm.getAddress(),
-              healthInsurances,
-              attendingHours,
-              LocaleContextHolder.getLocale());
-      LOGGER.info("Registered {}", doctor);
-      URI createdDoctorUri =
-          uriInfo.getBaseUriBuilder().path("/doctors").path(String.valueOf(doctor.getId())).build();
-      return Response.created(createdDoctorUri).build();
-    } catch (EmailInUseException e) {
-      LOGGER.warn("Failed to register doctor due to email unique constraint");
-      return Response.status(Response.Status.CONFLICT).build();
-    }
+    URI createdDoctorUri =
+        uriInfo.getBaseUriBuilder().path("/doctors")
+                 .path(String.valueOf(doctor.getId()))
+      .build();
+
+    return Response.created(createdDoctorUri).build();
   }
 
   // ================= doctors/{id} ========================

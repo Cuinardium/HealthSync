@@ -17,8 +17,8 @@ public class DoctorDto {
   private String address;
   private String city;
 
-  private float rating;
-  private int ratingCount;
+  private Float rating;
+  private Integer ratingCount;
 
   private List<URI> healthInsurances;
   private URI appointments;
@@ -49,8 +49,10 @@ public class DoctorDto {
     dto.address = doctor.getAddress();
     dto.city = doctor.getCity();
 
-    dto.rating = doctor.getRating();
-    dto.ratingCount = doctor.getRatingCount();
+    if (doctor.getRatingCount() > 0) {
+      dto.rating = doctor.getRating();
+      dto.ratingCount = doctor.getRatingCount();
+    }
 
     dto.healthInsurances =
         doctor.getHealthInsurances().stream()
@@ -217,19 +219,19 @@ public class DoctorDto {
     this.vacations = vacations;
   }
 
-  public float getRating() {
+  public Float getRating() {
     return rating;
   }
 
-  public void setRating(float rating) {
+  public void setRating(Float rating) {
     this.rating = rating;
   }
 
-  public int getRatingCount() {
+  public Integer getRatingCount() {
     return ratingCount;
   }
 
-  public void setRatingCount(int ratingCount) {
+  public void setRatingCount(Integer ratingCount) {
     this.ratingCount = ratingCount;
   }
 }

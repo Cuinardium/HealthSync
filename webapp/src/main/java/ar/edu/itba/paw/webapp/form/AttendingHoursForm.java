@@ -1,12 +1,9 @@
 package ar.edu.itba.paw.webapp.form;
 
-import ar.edu.itba.paw.models.AttendingHours;
 import ar.edu.itba.paw.webapp.annotations.ExistsInEnumString;
 import ar.edu.itba.paw.webapp.annotations.ValidThirtyMinuteBlock;
 import java.time.DayOfWeek;
 import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
