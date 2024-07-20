@@ -101,6 +101,24 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
           .anonymous()
         .antMatchers(HttpMethod.PUT, "/api/tokens/verification/{token}")
           .anonymous()
+      
+        // ------------ Doctors -----------
+        .antMatchers(HttpMethod.GET, "/api/doctors")
+          .permitAll()
+        .antMatchers(HttpMethod.POST, "/api/doctors")
+          .permitAll()
+
+        // doctors/{id}
+        .antMatchers(HttpMethod.GET, "/api/doctors/{doctorId:\\d+}")
+          .permitAll()
+        .antMatchers(HttpMethod.PUT, "/api/doctors/{doctorId:\\d+}")
+          .authenticated()
+
+        // doctors/{id}/attendinghours
+        .antMatchers(HttpMethod.GET, "/api/doctors/{doctorId:\\d+}/attendinghours")
+          .permitAll()
+        .antMatchers(HttpMethod.PUT, "/api/doctors/{doctorId:\\d+}/attendinghours")
+          .authenticated()
 
         // ------------- Patients ---------
         // patients/{id}
@@ -154,6 +172,13 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
 
         // ------------- Cities -------------
         .antMatchers(HttpMethod.GET, "/api/cities")
+          .permitAll()
+
+        // ------------- Health Insurances --
+        .antMatchers(HttpMethod.GET, "/api/health-insurances")
+          .permitAll()
+        // health-insurances/{id}
+        .antMatchers(HttpMethod.GET, "/api/health-insurances/{healthInsuranceId:\\d+}")
           .permitAll()
 
         // Permit all other

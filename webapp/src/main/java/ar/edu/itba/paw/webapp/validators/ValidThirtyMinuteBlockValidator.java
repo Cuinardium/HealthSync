@@ -10,6 +10,10 @@ public class ValidThirtyMinuteBlockValidator
 
   @Override
   public boolean isValid(String value, ConstraintValidatorContext constraintValidatorContext) {
+    if (value == null) {
+      return true; // Let @NotNull handle this
+    }
+
     for (ThirtyMinuteBlock thirtyMinuteBlock : ThirtyMinuteBlock.values()) {
       if (thirtyMinuteBlock.getBlockBeginning().equals(value)) {
         return true;

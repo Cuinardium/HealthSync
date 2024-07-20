@@ -9,14 +9,12 @@ import ar.edu.itba.paw.webapp.dto.AttendingHoursDto;
 import ar.edu.itba.paw.webapp.dto.DoctorDto;
 import ar.edu.itba.paw.webapp.form.AttendingHoursForm;
 import ar.edu.itba.paw.webapp.form.DoctorEditForm;
-import ar.edu.itba.paw.webapp.form.DoctorFilterForm;
 import ar.edu.itba.paw.webapp.form.DoctorRegisterForm;
 import ar.edu.itba.paw.webapp.mediaType.VndType;
+import ar.edu.itba.paw.webapp.query.DoctorQuery;
 import ar.edu.itba.paw.webapp.utils.ResponseUtil;
 import java.net.URI;
 import java.time.DayOfWeek;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 import javax.validation.Valid;
@@ -33,8 +31,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class DoctorController {
   private static final Logger LOGGER = LoggerFactory.getLogger(DoctorController.class);
-  private static final int DEFAULT_PAGE_SIZE = 10;
-  private static final String DATE_FORMAT = "dd-MM-yyyy";
+
   private final DoctorService doctorService;
   @Context private UriInfo uriInfo;
 
@@ -45,100 +42,40 @@ public class DoctorController {
 
   // ================= doctors ========================
 
-  // TODO: mover el filer form a query params
   @GET
   @Produces(VndType.APPLICATION_DOCTOR_LIST)
-  public Response listDoctors(
-      @Valid final DoctorFilterForm doctorFilterForm,
-      @QueryParam("page") @DefaultValue("1") final int page,
-      @QueryParam("name") final String name,
-      @QueryParam("fromTime") final String fromTimeString,
-      @QueryParam("toTime") final String toTimeString,
-      @QueryParam("minRating") final Integer minRating,
-      @QueryParam("date") final String dateString,
-      @QueryParam("specialty") final Set<String> specialtiesStringSet,
-      @QueryParam("city") final Set<String> citiesStringSet,
-      @QueryParam("healthInsurance") final Set<String> healthInsurancesStringSet) {
+  public Response listDoctors(@Valid @BeanParam final DoctorQuery doctorQuery) {
 
-    LOGGER.debug(
-        "\n\n\nValues are:\n"
-            + "page {}\n"
-            + "name {}\n"
-            + "fromTime {}\n"
-            + "toTime {}\n"
-            + "minRating {}\n"
-            + "date {}\n"
-            + "specialty {}\n"
-            + "city {}\n"
-            + "healthInsurance {}\n"
-            + "\n\n\n",
-        page,
-        name,
-        fromTimeString,
-        toTimeString,
-        minRating,
-        dateString,
-        specialtiesStringSet,
-        citiesStringSet,
-        healthInsurancesStringSet);
+    LOGGER.debug("Listing doctors, query: {}", doctorQuery);
 
-    // page tiene que ser > 1
-    if (page < 1) {
-      LOGGER.debug("Bad request page starts a 1");
-      return Response.status(Response.Status.BAD_REQUEST).build();
-    }
-
-    LocalDate date = null;
-    if (dateString != null) {
-      date = LocalDate.parse(dateString, DateTimeFormatter.ofPattern(DATE_FORMAT));
-    }
-
-    ThirtyMinuteBlock fromTime = null;
-    if (fromTimeString != null) {
-      fromTime = ThirtyMinuteBlock.valueOf(fromTimeString);
-    }
-    ThirtyMinuteBlock toTime = null;
-    if (toTimeString != null) {
-      toTime = ThirtyMinuteBlock.valueOf(toTimeString);
-    }
-    // TODO: hace falta esto? (hay otro mapping mas adelante) quizas habria que quedarnos con 1 solo
-    // !!!
-    Set<Specialty> specialties =
-        specialtiesStringSet.stream().map(Specialty::valueOf).collect(Collectors.toSet());
-    Set<HealthInsurance> healthInsurances =
-        healthInsurancesStringSet.stream()
-            .map(HealthInsurance::valueOf)
-            .collect(Collectors.toSet());
-
-    // TODO: CHECK ERRORS for all types
-    // TODO: allow for variable page size?date
-    Page<Doctor> doctorsPage =
+    Page<Doctor> doctors =
         doctorService.getFilteredDoctors(
-            name,
-            date,
-            fromTime,
-            toTime,
-            specialties,
-            citiesStringSet,
-            healthInsurances,
-            minRating,
-            page - 1,
-            DEFAULT_PAGE_SIZE);
+            doctorQuery.getName(),
+            doctorQuery.getLocalDate(),
+            doctorQuery.getFromTimeEnum(),
+            doctorQuery.getToTimeEnum(),
+            doctorQuery.getSpecialtiesEnum(),
+            doctorQuery.getCities(),
+            doctorQuery.getHealthInsurancesEnum(),
+            doctorQuery.getMinRating(),
+            doctorQuery.getPage(),
+            doctorQuery.getPageSize());
 
-    List<Doctor> doctorList = doctorsPage.getContent();
-    if (doctorList.isEmpty()) {
-      LOGGER.debug("No content for page {}", page);
+    if (doctors.getContent().isEmpty()) {
+      LOGGER.debug("No doctors found for query: {}", doctorQuery);
       return Response.noContent().build();
     }
 
-    final List<DoctorDto> dtoList = DoctorDto.fromDoctorList(uriInfo, doctorList);
+    final List<DoctorDto> dtoList =
+        doctors.getContent().stream()
+            .map(doctor -> DoctorDto.fromDoctor(uriInfo, doctor))
+            .collect(Collectors.toList());
 
-    LOGGER.debug("doctors for page {}", page);
+    LOGGER.debug("Returning doctors: {}", dtoList);
 
-    Response.ResponseBuilder responseBuilder =
-        Response.ok(new GenericEntity<List<DoctorDto>>(dtoList) {});
-
-    return ResponseUtil.setPaginationLinks(responseBuilder, uriInfo, doctorsPage).build();
+    return ResponseUtil.setPaginationLinks(
+            Response.ok(new GenericEntity<List<DoctorDto>>(dtoList) {}), uriInfo, doctors)
+        .build();
   }
 
   @POST
@@ -162,9 +99,7 @@ public class DoctorController {
     LOGGER.info("Registered {}", doctor);
 
     URI createdDoctorUri =
-        uriInfo.getBaseUriBuilder().path("/doctors")
-                 .path(String.valueOf(doctor.getId()))
-      .build();
+        uriInfo.getBaseUriBuilder().path("/doctors").path(String.valueOf(doctor.getId())).build();
 
     return Response.created(createdDoctorUri).build();
   }
