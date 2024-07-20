@@ -9,7 +9,7 @@ import java.lang.annotation.Target;
 import javax.validation.Constraint;
 import javax.validation.Payload;
 
-@Target(ElementType.FIELD)
+@Target({ElementType.TYPE_USE, ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
 @Constraint(validatedBy = ValidThirtyMinuteBlockValidator.class)
 public @interface ValidThirtyMinuteBlock {
@@ -18,6 +18,4 @@ public @interface ValidThirtyMinuteBlock {
     Class<?>[] groups() default {};
 
     Class<? extends Payload>[] payload() default {};
-
-    Class<? extends Enum<?>> enumClass();
 }

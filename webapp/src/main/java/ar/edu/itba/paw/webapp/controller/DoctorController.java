@@ -4,8 +4,10 @@ import ar.edu.itba.paw.interfaces.services.DoctorService;
 import ar.edu.itba.paw.interfaces.services.exceptions.DoctorNotFoundException;
 import ar.edu.itba.paw.interfaces.services.exceptions.EmailInUseException;
 import ar.edu.itba.paw.models.*;
+import ar.edu.itba.paw.webapp.annotations.HasAllDays;
 import ar.edu.itba.paw.webapp.dto.AttendingHoursDto;
 import ar.edu.itba.paw.webapp.dto.DoctorDto;
+import ar.edu.itba.paw.webapp.form.AttendingHoursForm;
 import ar.edu.itba.paw.webapp.form.DoctorEditForm;
 import ar.edu.itba.paw.webapp.form.DoctorFilterForm;
 import ar.edu.itba.paw.webapp.form.DoctorRegisterForm;
@@ -203,7 +205,8 @@ public class DoctorController {
   @PreAuthorize("@authorizationFunctions.isUser(authentication, #doctorId)")
   public Response updateDoctor(
       @PathParam("doctorId") final long doctorId,
-      @Valid @BeanParam final DoctorEditForm doctorEditForm) throws DoctorNotFoundException, EmailInUseException {
+      @Valid @BeanParam final DoctorEditForm doctorEditForm)
+      throws DoctorNotFoundException, EmailInUseException {
 
     LOGGER.debug("Updating doctor with id {}", doctorId);
 
@@ -214,7 +217,9 @@ public class DoctorController {
       image = new Image.Builder(doctorEditForm.getImageData()).build();
     }
 
-    doctor = doctorService.updateDoctor(
+    // TODO: delete attending hours from method signature
+    doctor =
+        doctorService.updateDoctor(
             doctorId,
             doctorEditForm.getEmail(),
             doctorEditForm.getName(),
@@ -251,4 +256,50 @@ public class DoctorController {
         .build();
   }
 
+  @PUT
+  @Path("/{doctorId:\\d+}/attendinghours")
+  @Consumes(VndType.APPLICATION_ATTENDING_HOURS_LIST)
+  @PreAuthorize("@authorizationFunctions.isUser(authentication, #doctorId)")
+  public Response updateAttendingHours(
+      @PathParam("doctorId") final long doctorId,
+      @Valid @HasAllDays(message = "HasAllDays.attendingHoursForm")
+          final List<@Valid AttendingHoursForm> attendingHourForms)
+      throws DoctorNotFoundException, EmailInUseException {
+
+    LOGGER.debug("Updating attending hours for doctor with id {}", doctorId);
+
+    Doctor doctor = doctorService.getDoctorById(doctorId).orElseThrow(DoctorNotFoundException::new);
+
+    // Unwrap (day, List<ThirtyMinuteBlock>) to Set<AttendingHours>
+    Set<AttendingHours> attendingHours =
+        attendingHourForms.stream()
+            .flatMap(
+                dto ->
+                    dto.getHours().stream()
+                        .map(
+                            hour ->
+                                new AttendingHours(
+                                    doctorId,
+                                    DayOfWeek.valueOf(dto.getDay()),
+                                    ThirtyMinuteBlock.fromBeginning(hour))))
+            .collect(Collectors.toSet());
+
+    // TODO: create a method in doctorService to update attending hours
+    doctorService.updateDoctor(
+        doctorId,
+        doctor.getEmail(),
+        doctor.getFirstName(),
+        doctor.getLastName(),
+        doctor.getSpecialty(),
+        doctor.getCity(),
+        doctor.getAddress(),
+        doctor.getHealthInsurances(),
+        attendingHours,
+        doctor.getImage(),
+        doctor.getLocale());
+
+    LOGGER.debug("Updated attending hours for doctor with id {}", doctorId);
+
+    return Response.noContent().build();
+  }
 }

@@ -8,20 +8,13 @@ import javax.validation.ConstraintValidatorContext;
 public class ValidThirtyMinuteBlockValidator
     implements ConstraintValidator<ValidThirtyMinuteBlock, String> {
 
-  private ThirtyMinuteBlock[] enumConstants;
-
   @Override
   public boolean isValid(String value, ConstraintValidatorContext constraintValidatorContext) {
-    for (ThirtyMinuteBlock thirtyMinuteBlock : enumConstants) {
+    for (ThirtyMinuteBlock thirtyMinuteBlock : ThirtyMinuteBlock.values()) {
       if (thirtyMinuteBlock.getBlockBeginning().equals(value)) {
         return true;
       }
     }
     return false;
-  }
-
-  @Override
-  public void initialize(ValidThirtyMinuteBlock validThirtyMinuteBlock) {
-    this.enumConstants = ThirtyMinuteBlock.values();
   }
 }

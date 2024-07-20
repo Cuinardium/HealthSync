@@ -9,7 +9,7 @@ import java.util.stream.Collectors;
 public class AttendingHoursDto {
 
   private String day;
-  private List<String> attendingHours;
+  private List<String> hours;
 
   public static List<AttendingHoursDto> fromAttendingHours(
       final Set<AttendingHours> attendingHours) {
@@ -38,7 +38,7 @@ public class AttendingHoursDto {
       final DayOfWeek day, final List<ThirtyMinuteBlock> attendingHours) {
     final AttendingHoursDto dto = new AttendingHoursDto();
     dto.day = day.name();
-    dto.attendingHours =
+    dto.hours =
         attendingHours.stream()
             .map(ThirtyMinuteBlock::getBlockBeginning)
             .collect(Collectors.toList());
@@ -53,11 +53,11 @@ public class AttendingHoursDto {
     this.day = day;
   }
 
-  public List<String> getAttendingHours() {
-    return attendingHours;
+  public List<String> getHours() {
+    return hours;
   }
 
-  public void setAttendingHours(List<String> attendingHours) {
-    this.attendingHours = attendingHours;
+  public void setHours(List<String> hours) {
+    this.hours = hours;
   }
 }

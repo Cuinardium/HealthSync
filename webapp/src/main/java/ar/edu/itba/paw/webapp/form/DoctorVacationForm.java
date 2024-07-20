@@ -17,9 +17,7 @@ public class DoctorVacationForm {
   private LocalDate fromDate;
 
   @NotNull(message = "NotNull.doctorVacationForm.fromTime")
-  @ValidThirtyMinuteBlock(
-      enumClass = ThirtyMinuteBlock.class,
-      message = "ExistsInEnum.doctorVacationForm.fromTime")
+  @ValidThirtyMinuteBlock(message = "ExistsInEnum.doctorVacationForm.fromTime")
   private String fromTime;
 
   @NotNull(message = "NotNull.doctorVacationForm.toDate")
@@ -27,9 +25,7 @@ public class DoctorVacationForm {
   private LocalDate toDate;
 
   @NotNull(message = "NotNull.doctorVacationForm.toTime")
-  @ValidThirtyMinuteBlock(
-      enumClass = ThirtyMinuteBlock.class,
-      message = "ExistsInEnum.doctorVacationForm.toTime")
+  @ValidThirtyMinuteBlock(message = "ExistsInEnum.doctorVacationForm.toTime")
   private String toTime;
 
   private boolean cancelAppointments;
