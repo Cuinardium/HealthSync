@@ -49,7 +49,7 @@ const HomePage = () => {
             </Helmet>
 
             {/*<Favicon />*/}
-            <Header user={true} hasNotifications={true} isDoctor={true} />
+            <Header user={false} hasNotifications={true} isDoctor={false} />
 
             <div className="generalPadding welcome">
                 <div className="welcome1Container">
