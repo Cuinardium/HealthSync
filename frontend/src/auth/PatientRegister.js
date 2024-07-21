@@ -7,7 +7,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import '../css/main.css';
 import '../css/forms.css';
 
-const loginUrl= '/login';
+const patientRegisterUrl= '/patient-register';
 
 const PatientRegister = ({ hasError, error }) => {
     const { t } = useTranslation();
@@ -37,7 +37,7 @@ const PatientRegister = ({ hasError, error }) => {
                         <h1 className="text-center">{t('registerPatient.title')}</h1>
                         <Card>
                             <Card.Body>
-                                <Form onSubmit={handleSubmit} action={loginUrl} method="POST">
+                                <Form onSubmit={handleSubmit} action={patientRegisterUrl} method="POST">
                                     {hasError && (
                                         <Alert variant="danger">
                                             <p>{t('login.error')}</p>
