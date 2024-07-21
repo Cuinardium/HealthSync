@@ -1,15 +1,16 @@
 import React, {useEffect, useState} from 'react';
 import {Helmet} from "react-helmet-async";
+import Image from 'react-bootstrap/Image';
 
 import Header from '../components/Header';
 // import Favicon from '../components/Favicon';
 
 import {useTranslation} from 'react-i18next';
-import categoriesCarouselJs from '../js/categoriesCarousel.js';
-import circle1 from '../img/circle1.svg';
-import circle2 from '../img/circle2.svg';
-import circle3 from '../img/circle3.svg';
-import homeDoctorImg from '../img/homeDoctor.svg';
+//import categoriesCarouselJs from '../ts/categoriesCarousel.js';
+import * as circle1 from '../img/circle1.svg';
+import * as circle2 from '../img/circle2.svg';
+import * as circle3 from '../img/circle3.svg';
+import * as homeDoctorImg from '../img/homeDoctor.svg';
 
 import 'bootstrap/dist/css/bootstrap.css';
 import '../css/main.css';
@@ -57,7 +58,7 @@ const HomePage = () => {
                     <h1 className="sloganBig"><span className="text-gradient">{welcome2}</span></h1>
                 </div>
                 <div className="profile">
-                    <img src={homeDoctorImg} alt={altHomeDoctorImg} className="profile-img"/>
+                    <Image src={homeDoctorImg} alt={altHomeDoctorImg} className="profile-img"/>
                 </div>
 
             </div>
@@ -97,17 +98,17 @@ const HomePage = () => {
 
             <section className="about generalPadding border-top">
                 <div className="aboutCircleContainer">
-                    <img className="circles" src={circle1} alt={altCircle1}/>
+                    <Image className="circles" src={circle1} alt={altCircle1}/>
                     <h3>{circleText1}</h3>
                     <p>{description1}</p>
                 </div>
                 <div className="aboutCircleContainer">
-                    <img className="circles" src={circle2} alt={altCircle2}/>
+                    <Image className="circles" src={circle2} alt={altCircle2}/>
                     <h3>{circleText2}</h3>
                     <p>{description2}</p>
                 </div>
                 <div className="aboutCircleContainer">
-                    <img className="circles" src={circle3} alt={altCircle3}/>
+                    <Image className="circles" src={circle3} alt={altCircle3}/>
                     <h3>{circleText3}</h3>
                     <p>{description3}</p>
                 </div>
@@ -122,7 +123,7 @@ const HomePage = () => {
                     <span className="text-body-secondary">&copy; 2023 HealthSync, Inc</span>
                 </div>
             </footer>
-            <script src={categoriesCarouselJs}></script>
+            {/*<script src={categoriesCarouselJs}></script>*/}
         </div>
     );
 };

@@ -2,9 +2,6 @@ import React from 'react';
 import { Navbar, Nav, NavDropdown, Button, Image } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
 
-import logo from '../img/logo.svg'
-import loggedUserImg from '../img/doctorDefault.png'
-
 import 'bootstrap/dist/css/bootstrap.css';
 import '../css/main.css'
 import '../css/header.css'
@@ -20,14 +17,14 @@ const patientProfileUrl= '/patient-profile';
 const loginUrl= '/login';
 const logoutUrl= '/logout';
 
-const Header = ({ user, hasNotifications, isDoctor }) => {
+const Header = ({ user, hasNotifications, isDoctor } : { user:any, hasNotifications:boolean, isDoctor:boolean }) => {
     const { t } = useTranslation();
 
     return (
             <header className="border-bottom">
                 <div className="head">
                 <a href={homeUrl} className="d-flex align-items-center">
-                    <img src={logo} alt="HealthSync logo" className="logo" />
+                    <Image src='./img/logo.svg' alt="HealthSync logo" className="logo" />
                     <div className="health title">Health</div>
                     <div className="sync title">Sync</div>
                 </a>
@@ -70,8 +67,8 @@ const Header = ({ user, hasNotifications, isDoctor }) => {
                                                 data-toggle="tooltip"
                                                 data-placement="top"
                                             >
-                                                <img
-                                                    src={loggedUserImg}
+                                                <Image
+                                                    src='./img/doctorDefault.png'
                                                     alt={t('user.alt.loggedUserImg')}
                                                     width="40"
                                                     height="40"

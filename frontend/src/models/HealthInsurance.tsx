@@ -1,4 +1,4 @@
-export class HealthInsuranceDto {
+export class HealthInsurance {
     name: string;
     code: string;
 
@@ -10,15 +10,15 @@ export class HealthInsuranceDto {
         this.self = self;
     }
 
-    static fromJson(json: any): HealthInsuranceDto {
-        return new HealthInsuranceDto(
+    static fromJson(json: any): HealthInsurance {
+        return new HealthInsurance(
             json.name,
             json.code,
             json.self
         );
     }
 
-    static toJson(healthInsurance: HealthInsuranceDto): any {
+    static toJson(healthInsurance: HealthInsurance): any {
         return {
             name: healthInsurance.name,
             code: healthInsurance.code,

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, {FormEvent, useState} from 'react';
 import { Form, Button, Container, Card, Alert, Row, Col } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
 
@@ -10,12 +10,12 @@ import '../css/forms.css';
 const loginUrl= '/login';
 const patientRegisterUrl= '/patient-register';
 
-const Login = ({ hasError, error }) => {
+const Login = ({ hasError, error } : {hasError:boolean, error:any}) => {
     const { t } = useTranslation();
     const [form, setForm] = useState({ email: '', password: '', rememberMe: false });
     const [errors, setErrors] = useState({ email: '', password: '' });
 
-    const handleChange = (e) => {
+    const handleChange = (e:React.ChangeEvent<HTMLInputElement>) => {
         const { name, value, checked, type } = e.target;
         setForm({
             ...form,
@@ -23,7 +23,7 @@ const Login = ({ hasError, error }) => {
         });
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = (e:FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         // TODO handle submit
     };

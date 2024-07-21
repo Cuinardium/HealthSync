@@ -4,8 +4,8 @@ import {HelmetProvider} from "react-helmet-async";
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min';
-import DoctorProfile from "./user/DoctorProfile";
-import PatientProfile from "./user/PatientProfile";
+// import DoctorProfile from "./user/DoctorProfile";
+// import PatientProfile from "./user/PatientProfile";
 import Error403 from "./errors/403";
 import Error404 from "./errors/404";
 import Error500 from "./errors/500";
@@ -21,11 +21,12 @@ function App() {
           <BrowserRouter>
               <Routes>
                   <Route path="/" element={<HomePage />} />
-                  {/*<Route path="/doctor-profile" element={<DoctorProfile/>}/>*/}
-                  <Route path="/patient-profile" element={<PatientProfile/>}/>
                   <Route path="/doctor-register" element={<DoctorRegister/>}/>
                   <Route path="/patient-register" element={<PatientRegister/>}/>
-                  <Route path="/login" element={<Login/>}/>
+                  {/*<Route path="/doctor-profile" element={<DoctorProfile/>}/>
+                  <Route path="/patient-profile" element={<PatientProfile/>}/> */}
+                  <Route path="/login" element={<Login hasError={false} error={false}/>}/>
+
 
                   {/* Error Pages */}
                   <Route path="*" element={<Error404/>} />
