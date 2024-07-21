@@ -1,5 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {Helmet} from "react-helmet-async";
+import Image from 'react-bootstrap/Image';
 
 import Header from '../components/Header';
 // import Favicon from '../components/Favicon';
@@ -57,7 +58,7 @@ const HomePage = () => {
                     <h1 className="sloganBig"><span className="text-gradient">{welcome2}</span></h1>
                 </div>
                 <div className="profile">
-                    <img src={homeDoctorImg} alt={altHomeDoctorImg} className="profile-img"/>
+                    <Image src={homeDoctorImg} alt={altHomeDoctorImg} className="profile-img"/>
                 </div>
 
             </div>
@@ -97,17 +98,17 @@ const HomePage = () => {
 
             <section className="about generalPadding border-top">
                 <div className="aboutCircleContainer">
-                    <img className="circles" src={circle1} alt={altCircle1}/>
+                    <Image className="circles" src={circle1} alt={altCircle1}/>
                     <h3>{circleText1}</h3>
                     <p>{description1}</p>
                 </div>
                 <div className="aboutCircleContainer">
-                    <img className="circles" src={circle2} alt={altCircle2}/>
+                    <Image className="circles" src={circle2} alt={altCircle2}/>
                     <h3>{circleText2}</h3>
                     <p>{description2}</p>
                 </div>
                 <div className="aboutCircleContainer">
-                    <img className="circles" src={circle3} alt={altCircle3}/>
+                    <Image className="circles" src={circle3} alt={altCircle3}/>
                     <h3>{circleText3}</h3>
                     <p>{description3}</p>
                 </div>

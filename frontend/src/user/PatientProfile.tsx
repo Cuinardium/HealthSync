@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button, Card, Form, Container, Row, Col } from 'react-bootstrap';
+import { Button, Card, Form, Container, Row, Col, Image } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
 
 import Header from '../components/Header';
@@ -7,11 +7,14 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import '../css/main.css';
 import '../css/forms.css';
 import '../css/profile.css';
+import {Patient} from "../models/Patient";
 
-const PatientProfile = ({ patient, patientEditUrl, changePasswordUrl }) => {
+const PatientProfile = ({ patient, patientEditUrl, changePasswordUrl } :
+                            { patient:Patient, patientEditUrl:string, changePasswordUrl:string }) => {
     const { t } = useTranslation();
 
-    const loggedUserImg = patient.image.imageId ? `/img/${patient.image.imageId}` : '/img/patientDefault.png';
+    // const loggedUserImg = patient.image.imageId ? `/img/${patient.image.imageId}` : '/img/patientDefault.png';
+    const loggedUserImg = '/img/patientDefault.png';
 
     return (
         <div>
@@ -22,7 +25,7 @@ const PatientProfile = ({ patient, patientEditUrl, changePasswordUrl }) => {
                 <Card>
                     <div className="profileContainer">
                         <div className="profileImageContainer">
-                            <img src={loggedUserImg} alt={t('user.alt.loggedUserImg')} width="200" height="200" className="rounded-circle" />
+                            <Image src={loggedUserImg} alt={t('user.alt.loggedUserImg')} width="200" height="200" className="rounded-circle" />
                         </div>
 
                         <div className="profileData">
@@ -46,7 +49,7 @@ const PatientProfile = ({ patient, patientEditUrl, changePasswordUrl }) => {
                                 <Col className="profileItem">
                                     <Form.Label>{t('form.healthcare')}</Form.Label>
                                     <div className="chip">
-                                        {t(patient.healthInsurance.messageID)}
+                                        {/*{t(patient.healthInsurance.messageID)}*/}
                                     </div>
                                 </Col>
                                 <Col className="profileItem">
@@ -59,7 +62,7 @@ const PatientProfile = ({ patient, patientEditUrl, changePasswordUrl }) => {
                                 <Col className="profileItem">
                                     <Form.Label>{t('form.locale')}</Form.Label>
                                     <div className="chip">
-                                        {patient.locale}
+                                        {/*{patient.locale}*/}
                                     </div>
                                 </Col>
                                 <Col className="profileItem"></Col>

@@ -1,55 +1,82 @@
+import {Specialty} from "./Specialty";
+import {Vacation} from "./Vacation";
+import {Review} from "./Review";
+import {Appointment} from "./Appointment";
+import {AttendingHours} from "./AttendingHours";
+
 export class Doctor {
     firstName: string;
     lastName: string;
+    email: string;
+
+    image: string;
+
     address: string;
     city: string;
-    healthInsurances: string;
-    attendingHours: string;
-    appointments: string;
-    reviews: string;
+
+    rating: number;
+    ratingCount: number;
+
+    healthInsurances: string[];
+    appointments: Appointment[];
     notifications: string;
-    image: string;
-    self: string;
+
+    specialty: Specialty;
+    reviews: Review[];
+    attendingHours: AttendingHours[];
+    vacations: Vacation[];
 
     constructor(
         firstName: string,
         lastName: string,
+        email: string,
+        image: string,
         address: string,
         city: string,
-        healthInsurances: string,
-        attendingHours: string,
-        appointments: string,
-        reviews: string,
+        rating: number,
+        ratingCount: number,
+        healthInsurances: string[],
+        appointments: Appointment[],
         notifications: string,
-        image: string,
-        self: string
+        specialty: Specialty,
+        reviews: Review[],
+        attendingHours: AttendingHours[],
+        vacations: Vacation[]
     ) {
         this.firstName = firstName;
         this.lastName = lastName;
+        this.email = email;
+        this.image = image;
         this.address = address;
         this.city = city;
+        this.rating = rating;
+        this.ratingCount = ratingCount;
         this.healthInsurances = healthInsurances;
-        this.attendingHours = attendingHours;
         this.appointments = appointments;
-        this.reviews = reviews;
         this.notifications = notifications;
-        this.image = image;
-        this.self = self;
+        this.specialty = specialty;
+        this.reviews = reviews;
+        this.attendingHours = attendingHours;
+        this.vacations = vacations;
     }
 
     static fromJson(json: any): Doctor {
         return new Doctor(
             json.firstName,
             json.lastName,
+            json.email,
+            json.image,
             json.address,
             json.city,
+            json.rating,
+            json.ratingCount,
             json.healthInsurances,
-            json.attendingHours,
             json.appointments,
-            json.reviews,
             json.notifications,
-            json.image,
-            json.self
+            json.specialty,
+            json.reviews,
+            json.attendingHours,
+            json.vacations
         );
     }
 
@@ -57,15 +84,19 @@ export class Doctor {
         return {
             firstName: doctor.firstName,
             lastName: doctor.lastName,
+            email: doctor.email,
+            image: doctor.image,
             address: doctor.address,
             city: doctor.city,
+            rating: doctor.rating,
+            ratingCount: doctor.ratingCount,
             healthInsurances: doctor.healthInsurances,
-            attendingHours: doctor.attendingHours,
             appointments: doctor.appointments,
-            reviews: doctor.reviews,
             notifications: doctor.notifications,
-            image: doctor.image,
-            self: doctor.self
+            specialty: doctor.specialty,
+            reviews: doctor.reviews,
+            attendingHours: doctor.attendingHours,
+            vacations: doctor.vacations
         };
     }
 }

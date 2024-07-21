@@ -4,8 +4,8 @@ import {HelmetProvider} from "react-helmet-async";
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min';
-import DoctorProfile from "./user/DoctorProfile";
-import PatientProfile from "./user/PatientProfile";
+// import DoctorProfile from "./user/DoctorProfile";
+// import PatientProfile from "./user/PatientProfile";
 import Error403 from "./errors/403";
 import Error404 from "./errors/404";
 import Error500 from "./errors/500";

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button, Card, Form, Container, Row, Col } from 'react-bootstrap';
+import { Button, Card, Form, Container, Row, Col, Image } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
 
 import Header from '../components/Header';
@@ -7,11 +7,14 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import '../css/main.css';
 import '../css/forms.css';
 import '../css/profile.css';
+import {Doctor} from "../models/Doctor";
 
-const DoctorProfile = ({ doctor, vacationUrl, doctorEditUrl, changePasswordUrl, thirtyMinuteBlocks, days }) => {
+const DoctorProfile = ({ doctor, vacationUrl, doctorEditUrl, changePasswordUrl, thirtyMinuteBlocks, days } :
+                           { doctor:Doctor, vacationUrl:string, doctorEditUrl:string, changePasswordUrl:string, thirtyMinuteBlocks:any, days:any }) => {
     const { t } = useTranslation();
 
-    const loggedUserImg = doctor.image.imageId ? `/img/${doctor.image.imageId}` : '/img/doctorDefault.png';
+    // const loggedUserImg = doctor.image.imageId ? `/img/${doctor.image.imageId}` : '/img/doctorDefault.png';
+    const loggedUserImg = '/img/doctorDefault.png';
 
     return (
         <div>
@@ -22,7 +25,7 @@ const DoctorProfile = ({ doctor, vacationUrl, doctorEditUrl, changePasswordUrl, 
                 <Card>
                     <div className="profileContainer">
                         <div className="profileImageContainer">
-                            <img src={loggedUserImg} alt={t('user.alt.loggedUserImg')} width="200" height="200" className="rounded-circle" />
+                            <Image src={loggedUserImg} alt={t('user.alt.loggedUserImg')} width="200" height="200" className="rounded-circle" />
                         </div>
 
                         <div className="profileData">
@@ -50,7 +53,7 @@ const DoctorProfile = ({ doctor, vacationUrl, doctorEditUrl, changePasswordUrl, 
                                 <Col className="profileItem">
                                     <Form.Label>{t('form.locale')}</Form.Label>
                                     <div className="chip">
-                                        {doctor.locale}
+                                        {/*{doctor.locale}*/}
                                     </div>
                                 </Col>
                             </Row>
@@ -86,12 +89,12 @@ const DoctorProfile = ({ doctor, vacationUrl, doctorEditUrl, changePasswordUrl, 
                         <Row className="profileRow">
                             <Col className="profileItem">
                                 <Form.Label htmlFor="specialtyCode">{t('form.specialization')}</Form.Label>
-                                <Form.Control id="specialtyCode" type="text" value={t(doctor.specialty.messageID)} disabled />
+                                {/*<Form.Control id="specialtyCode" type="text" value={t(doctor.specialty.messageID)} disabled />*/}
                             </Col>
                             <Col className="profileItem">
                                 <Form.Label>{t('form.healthcare')}</Form.Label>
                                 <div className="chipsContainer">
-                                    {doctor.healthInsurances.map((healthInsurance, index) => (
+                                    {doctor.healthInsurances.map((healthInsurance:any, index:number) => (
                                         <div key={index} className="chip">
                                             {t(healthInsurance.messageID)}
                                         </div>
