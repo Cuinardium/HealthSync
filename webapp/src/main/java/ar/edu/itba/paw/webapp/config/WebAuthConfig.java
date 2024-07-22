@@ -117,6 +117,8 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
           .permitAll()
 
         // ------------- Reviews  ----------
+        .antMatchers(HttpMethod.GET, "/api/doctors/{doctorId:\\d+}/reviews")
+            .permitAll()
         .antMatchers(HttpMethod.POST, "/api/doctors/{doctorId:\\d+}/reviews")
             .hasRole(UserRole.ROLE_PATIENT.getRoleNameWithoutPrefix())
 

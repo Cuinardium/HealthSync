@@ -1,7 +1,7 @@
 package ar.edu.itba.paw.webapp.mapper;
 
 
-import ar.edu.itba.paw.interfaces.services.exceptions.AppointmentNotFoundException;
+
 import ar.edu.itba.paw.webapp.dto.ErrorDto;
 import ar.edu.itba.paw.webapp.exceptions.AppointmentAlreadyCancelledException;
 import ar.edu.itba.paw.webapp.mediaType.VndType;
