@@ -15,6 +15,7 @@ import ar.edu.itba.paw.webapp.query.PageQuery;
 import ar.edu.itba.paw.webapp.utils.ResponseUtil;
 import java.net.URI;
 import java.util.List;
+import java.util.stream.Collectors;
 import javax.validation.Valid;
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
@@ -58,7 +59,7 @@ public class ReviewController {
     final List<ReviewDto> reviewDtoList =
         reviews.getContent().stream()
             .map(r -> ReviewDto.fromReview(uriInfo, r))
-            .collect(java.util.stream.Collectors.toList());
+            .collect(Collectors.toList());
 
     return ResponseUtil.setPaginationLinks(
             Response.ok(new GenericEntity<List<ReviewDto>>(reviewDtoList) {}), uriInfo, reviews)
