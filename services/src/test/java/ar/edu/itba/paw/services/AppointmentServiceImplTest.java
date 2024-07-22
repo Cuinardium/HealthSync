@@ -5,11 +5,7 @@ import ar.edu.itba.paw.interfaces.persistence.exceptions.AppointmentAlreadyExist
 import ar.edu.itba.paw.interfaces.services.DoctorService;
 import ar.edu.itba.paw.interfaces.services.MailService;
 import ar.edu.itba.paw.interfaces.services.PatientService;
-import ar.edu.itba.paw.interfaces.services.exceptions.AppointmentNotFoundException;
-import ar.edu.itba.paw.interfaces.services.exceptions.CancelForbiddenException;
-import ar.edu.itba.paw.interfaces.services.exceptions.DoctorNotAvailableException;
-import ar.edu.itba.paw.interfaces.services.exceptions.DoctorNotFoundException;
-import ar.edu.itba.paw.interfaces.services.exceptions.PatientNotFoundException;
+import ar.edu.itba.paw.interfaces.services.exceptions.*;
 import ar.edu.itba.paw.models.Appointment;
 import ar.edu.itba.paw.models.AppointmentStatus;
 import ar.edu.itba.paw.models.AttendingHours;
@@ -74,11 +70,9 @@ public class AppointmentServiceImplTest {
                       DOCTOR_ID, DayOfWeek.SUNDAY, ATTENDING_HOURS_FOR_DAY))
               .flatMap(Collection::stream)
               .collect(Collectors.toList()));
-
   private static final Float RATING = 3F;
   private static final Integer RATING_COUNT = 1;
   private static final Locale DOCTOR_LOCALE = new Locale("en");
-
   private static final Vacation DOCTOR_VACATION =
       new Vacation.Builder(
               LocalDate.now().plusDays(1),
@@ -86,7 +80,6 @@ public class AppointmentServiceImplTest {
               LocalDate.now().plusDays(3),
               ThirtyMinuteBlock.BLOCK_10_00)
               .build();
-
   private static final Doctor DOCTOR =
       new Doctor.Builder(
               DOCTOR_EMAIL,
@@ -106,9 +99,7 @@ public class AppointmentServiceImplTest {
               .isVerified(true)
               .image(DOCTOR_IMAGE)
               .build();
-
   // ================== Patient Constants ==================
-
   private static final long PATIENT_ID = 1;
   private static final String PATIENT_EMAIL = "patient_email";
   private static final String PATIENT_PASSWORD = "patient_password";
@@ -130,18 +121,13 @@ public class AppointmentServiceImplTest {
               .isVerified(true)
               .image(PATIENT_IMAGE)
               .build();
-
-  // ================== Appointment Constants ==================
-
   private static final long APPOINTMENT_ID = 0;
   private static final LocalDate APPOINTMENT_DATE = LocalDate.now();
   private static final ThirtyMinuteBlock APPOINTMENT_TIME = ThirtyMinuteBlock.BLOCK_08_00;
   private static final ThirtyMinuteBlock UNAVAILABLE_APPOINTMENT_TIME =
       ThirtyMinuteBlock.BLOCK_00_00;
   private static final String APPOINTMENT_DESCRIPTION = "appointment_description";
-  private static final String CANCELLED_APPOINTMENT_DESCRIPTION =
-      "cancelled_appointment_description";
-
+  // ================== Appointment Constants ==================
   private static final Appointment CREATED_APPOINTMENT =
       new Appointment.Builder(
               PATIENT,
@@ -152,7 +138,10 @@ public class AppointmentServiceImplTest {
               .id(APPOINTMENT_ID)
               .status(AppointmentStatus.CONFIRMED)
               .build();
-
+  private static final List<Appointment> APPOINTMENTS =
+      Collections.singletonList(CREATED_APPOINTMENT);
+  private static final String CANCELLED_APPOINTMENT_DESCRIPTION =
+      "cancelled_appointment_description";
   private static final Appointment CANCELLED_APPOINTMENT =
       new Appointment.Builder(
               PATIENT,
@@ -164,10 +153,6 @@ public class AppointmentServiceImplTest {
               .status(AppointmentStatus.CANCELLED)
               .cancelDescription(CANCELLED_APPOINTMENT_DESCRIPTION)
               .build();
-
-  private static final List<Appointment> APPOINTMENTS =
-      Collections.singletonList(CREATED_APPOINTMENT);
-
   private static final long FORBIDDEN_USER_ID = 2;
 
   private static final LocalDate RANGE_FROM = APPOINTMENT_DATE.minusDays(1);
@@ -493,5 +478,94 @@ public class AppointmentServiceImplTest {
 
     // 2. Ejercitar la class under test
     as.getAvailableHoursForDoctorOnRange(DOCTOR_ID, RANGE_FROM, RANGE_TO);
+  }
+
+  @Test
+  public void testGetOccupiedHours() throws DoctorNotFoundException, InvalidRangeException {
+
+    DOCTOR_VACATION.setDoctor(DOCTOR);
+
+    // 1. Precondiciones
+    Map<LocalDate, List<ThirtyMinuteBlock>> expectedOccupiedHours = new HashMap<>();
+
+    // Appointment in first day
+    expectedOccupiedHours.put(APPOINTMENT_DATE, Collections.singletonList(APPOINTMENT_TIME));
+
+    // Vacation from 10:00 in second day
+    List<ThirtyMinuteBlock> occupiedHoursForSecondDay = ThirtyMinuteBlock.fromRange(ThirtyMinuteBlock.BLOCK_10_00, ThirtyMinuteBlock.BLOCK_23_30)
+            .stream()
+            .filter(DOCTOR.getAttendingBlocksForDate(APPOINTMENT_DATE.plusDays(1))::contains)
+            .collect(Collectors.toList());
+
+    expectedOccupiedHours.put(APPOINTMENT_DATE.plusDays(1), occupiedHoursForSecondDay);
+
+    // Vacation all day in third day
+    List<ThirtyMinuteBlock> occupiedHoursForThirdDay = ThirtyMinuteBlock.fromRange(ThirtyMinuteBlock.BLOCK_00_00, ThirtyMinuteBlock.BLOCK_23_30)
+            .stream()
+            .filter(DOCTOR.getAttendingBlocksForDate(APPOINTMENT_DATE.plusDays(2))::contains)
+            .collect(Collectors.toList());
+
+    expectedOccupiedHours.put(APPOINTMENT_DATE.plusDays(2), occupiedHoursForThirdDay);
+
+    // Vacation until 10:00 in fourth day
+    List<ThirtyMinuteBlock> occupiedHoursForFourthDay = ThirtyMinuteBlock.fromRange(ThirtyMinuteBlock.BLOCK_00_00, ThirtyMinuteBlock.BLOCK_10_00)
+            .stream()
+            .filter(DOCTOR.getAttendingBlocksForDate(APPOINTMENT_DATE.plusDays(3))::contains)
+            .collect(Collectors.toList());
+
+    expectedOccupiedHours.put(APPOINTMENT_DATE.plusDays(3), occupiedHoursForFourthDay);
+
+    // Free day in fifth day
+
+    // Mock doctorService
+    Mockito.when(doctorService.getDoctorById(DOCTOR_ID)).thenReturn(Optional.of(DOCTOR));
+
+    // Mock appointmentDao
+    Mockito.when(
+            appointmentDao.getFilteredAppointments(
+                DOCTOR_ID, AppointmentStatus.CONFIRMED, APPOINTMENT_DATE, APPOINTMENT_DATE.plusDays(3), null, null, false))
+        .thenReturn(new Page<>(APPOINTMENTS, null, null, null));
+
+    // 2. Ejercitar la class under test
+    Map<LocalDate, List<ThirtyMinuteBlock>> occupiedHours = as.getOccupiedHours(DOCTOR_ID, APPOINTMENT_DATE, APPOINTMENT_DATE.plusDays(3));
+
+    // 3. Meaningful assertions
+    Assert.assertEquals(expectedOccupiedHours, occupiedHours);
+  }
+
+  @Test(expected = DoctorNotFoundException.class)
+  public void testGetOccupiedHoursDoctorNotFound()
+      throws DoctorNotFoundException, InvalidRangeException {
+    // 1. Precondiciones
+
+    // Mock doctorService
+    Mockito.when(doctorService.getDoctorById(DOCTOR_ID)).thenReturn(Optional.empty());
+
+    // 2. Ejercitar la class under test
+    as.getOccupiedHours(DOCTOR_ID, APPOINTMENT_DATE, APPOINTMENT_DATE.plusDays(3));
+  }
+
+  @Test(expected = InvalidRangeException.class)
+  public void testGetOccupiedHoursInvalidRange()
+      throws DoctorNotFoundException, InvalidRangeException {
+    // 1. Precondiciones
+
+    // Mock doctorService
+    Mockito.when(doctorService.getDoctorById(DOCTOR_ID)).thenReturn(Optional.of(DOCTOR));
+
+    // 2. Ejercitar la class under test
+    as.getOccupiedHours(DOCTOR_ID, APPOINTMENT_DATE.plusDays(3), APPOINTMENT_DATE);
+  }
+
+  @Test(expected = InvalidRangeException.class)
+  public void testGetOccupiedHoursNullRange()
+      throws DoctorNotFoundException, InvalidRangeException {
+    // 1. Precondiciones
+
+    // Mock doctorService
+    Mockito.when(doctorService.getDoctorById(DOCTOR_ID)).thenReturn(Optional.of(DOCTOR));
+
+    // 2. Ejercitar la class under test
+    as.getOccupiedHours(DOCTOR_ID, null, null);
   }
 }

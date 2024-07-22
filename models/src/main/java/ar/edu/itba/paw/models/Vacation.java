@@ -1,7 +1,11 @@
 package ar.edu.itba.paw.models;
 
 import java.time.LocalDate;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
 import javax.persistence.*;
 
 @Entity
@@ -157,6 +161,50 @@ public class Vacation implements Comparable<Vacation> {
             || (fromDate.isAfter(other.fromDate) && toDate.isBefore(other.toDate));
 
     return vacationCollidesWithOtherVacation;
+  }
+
+  // If vacations has some intersection with the given range
+  public boolean isDuring(LocalDate fromDate, LocalDate toDate) {
+
+    // If the range is before the vacation
+    if (fromDate.isAfter(this.toDate)) {
+      return false;
+    }
+
+    // If the range is after the vacation
+    if (toDate.isBefore(this.fromDate)) {
+      return false;
+    }
+
+    return true;
+  }
+
+  public Map<LocalDate, List<ThirtyMinuteBlock>> getDatesAndTimes(
+      LocalDate fromDate, LocalDate toDate) {
+    Map<LocalDate, List<ThirtyMinuteBlock>> datesAndTimes = new HashMap<>();
+
+    LocalDate currentDate = this.fromDate.isAfter(fromDate) ? this.fromDate : fromDate;
+    while (!currentDate.isAfter(toDate) && !currentDate.isAfter(this.toDate)) {
+
+      ThirtyMinuteBlock fromBlock =
+          currentDate.equals(this.fromDate) ? fromTime : ThirtyMinuteBlock.BLOCK_00_00;
+
+      ThirtyMinuteBlock toBlock =
+          currentDate.equals(this.toDate) ? toTime : ThirtyMinuteBlock.BLOCK_23_30;
+
+      List<ThirtyMinuteBlock> occupiedBlocks =
+          ThirtyMinuteBlock.fromRange(fromBlock, toBlock).stream()
+              .filter(doctor.getAttendingBlocksForDate(currentDate)::contains)
+              .collect(Collectors.toList());
+
+      if (!occupiedBlocks.isEmpty()) {
+        datesAndTimes.put(currentDate, occupiedBlocks);
+      }
+
+      currentDate = currentDate.plusDays(1);
+    }
+
+    return datesAndTimes;
   }
 
   public static class Builder {

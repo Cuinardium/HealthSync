@@ -6,11 +6,7 @@ import ar.edu.itba.paw.interfaces.services.AppointmentService;
 import ar.edu.itba.paw.interfaces.services.DoctorService;
 import ar.edu.itba.paw.interfaces.services.MailService;
 import ar.edu.itba.paw.interfaces.services.PatientService;
-import ar.edu.itba.paw.interfaces.services.exceptions.AppointmentNotFoundException;
-import ar.edu.itba.paw.interfaces.services.exceptions.CancelForbiddenException;
-import ar.edu.itba.paw.interfaces.services.exceptions.DoctorNotAvailableException;
-import ar.edu.itba.paw.interfaces.services.exceptions.DoctorNotFoundException;
-import ar.edu.itba.paw.interfaces.services.exceptions.PatientNotFoundException;
+import ar.edu.itba.paw.interfaces.services.exceptions.*;
 import ar.edu.itba.paw.models.Appointment;
 import ar.edu.itba.paw.models.AppointmentStatus;
 import ar.edu.itba.paw.models.Doctor;
@@ -249,6 +245,50 @@ public class AppointmentServiceImpl implements AppointmentService {
         .sorted(Map.Entry.comparingByKey())
         .map(Map.Entry::getValue)
         .collect(Collectors.toList());
+  }
+
+  @Transactional(readOnly = true)
+  @Override
+  public Map<LocalDate, List<ThirtyMinuteBlock>> getOccupiedHours(
+      long doctorId, LocalDate from, LocalDate to)
+      throws DoctorNotFoundException, InvalidRangeException {
+
+    if (from == null || to == null || from.isBefore(LocalDate.now()) || from.isAfter(to)) {
+      throw new InvalidRangeException();
+    }
+
+    Doctor doctor = doctorService.getDoctorById(doctorId).orElseThrow(DoctorNotFoundException::new);
+
+    Map<LocalDate, List<ThirtyMinuteBlock>> occupiedHours = new HashMap<>();
+
+    List<Vacation> vacationsInRange =
+        doctor.getVacations().stream()
+            .filter(vacation -> vacation.isDuring(from, to))
+            .collect(Collectors.toList());
+
+    // Add vacation days to occupied hours
+    for (Vacation vacation : vacationsInRange) {
+      Map<LocalDate, List<ThirtyMinuteBlock>> datesAndTimes = vacation.getDatesAndTimes(from, to);
+
+      datesAndTimes.forEach(
+          (date, times) ->
+              occupiedHours.computeIfAbsent(date, k -> new ArrayList<>()).addAll(times));
+    }
+
+    List<Appointment> confirmedAppointments =
+        appointmentDao
+            .getFilteredAppointments(
+                doctorId, AppointmentStatus.CONFIRMED, from, to, null, null, false)
+            .getContent();
+
+    // Add appointments to occupied hours
+    for (Appointment appointment : confirmedAppointments) {
+      occupiedHours
+          .computeIfAbsent(appointment.getDate(), k -> new ArrayList<>())
+          .add(appointment.getTimeBlock());
+    }
+
+    return occupiedHours;
   }
 
   @Transactional(readOnly = true)

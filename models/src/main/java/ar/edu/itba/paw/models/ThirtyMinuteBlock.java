@@ -3,6 +3,7 @@ package ar.edu.itba.paw.models;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 public enum ThirtyMinuteBlock {
   BLOCK_00_00("00:00", "00:30"),
@@ -103,9 +104,9 @@ public enum ThirtyMinuteBlock {
     return result;
   }
 
-  public static Collection<ThirtyMinuteBlock> fromRange(
+  public static List<ThirtyMinuteBlock> fromRange(
       ThirtyMinuteBlock from, ThirtyMinuteBlock to) {
-    Collection<ThirtyMinuteBlock> result = new ArrayList<>();
+    List<ThirtyMinuteBlock> result = new ArrayList<>();
     for (ThirtyMinuteBlock thirtyMinuteBlock : ThirtyMinuteBlock.values()) {
       if (thirtyMinuteBlock.ordinal() >= from.ordinal()
           && thirtyMinuteBlock.ordinal() <= to.ordinal()) {
