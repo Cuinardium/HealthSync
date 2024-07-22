@@ -2,24 +2,28 @@ package ar.edu.itba.paw.webapp.controller;
 
 import ar.edu.itba.paw.interfaces.services.AppointmentService;
 import ar.edu.itba.paw.interfaces.services.PatientService;
-import ar.edu.itba.paw.interfaces.services.exceptions.AppointmentNotFoundException;
-import ar.edu.itba.paw.interfaces.services.exceptions.CancelForbiddenException;
+import ar.edu.itba.paw.interfaces.services.exceptions.*;
 import ar.edu.itba.paw.models.Appointment;
 import ar.edu.itba.paw.models.AppointmentStatus;
 import ar.edu.itba.paw.models.Page;
 import ar.edu.itba.paw.webapp.auth.PawAuthUserDetails;
 import ar.edu.itba.paw.webapp.dto.AppointmentDto;
 import ar.edu.itba.paw.webapp.exceptions.AppointmentAlreadyCancelledException;
+import ar.edu.itba.paw.webapp.form.AppointmentForm;
 import ar.edu.itba.paw.webapp.form.CancelAppointmentForm;
 import ar.edu.itba.paw.webapp.query.AppointmentQuery;
 import ar.edu.itba.paw.webapp.query.PageQuery;
 import ar.edu.itba.paw.webapp.query.UserQuery;
 import ar.edu.itba.paw.webapp.utils.ResponseUtil;
+
+import java.net.URI;
 import java.util.List;
 import java.util.Optional;
 import javax.validation.Valid;
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
+
+import org.glassfish.jersey.server.Uri;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -86,6 +90,27 @@ public class AppointmentController {
         Response.ok(new GenericEntity<List<AppointmentDto>>(dtoList) {});
 
     return ResponseUtil.setPaginationLinks(responseBuilder, uriInfo, appointmentsPage).build();
+  }
+
+  @POST
+  public Response createAppointment(
+          @Valid @BeanParam AppointmentForm appointmentForm
+  ) throws DoctorNotAvailableException, DoctorNotFoundException, PatientNotFoundException {
+    final Appointment appointment = appointmentService.createAppointment(
+            PawAuthUserDetails.getCurrentUserId(),
+            appointmentForm.getDocId(),
+            appointmentForm.getDate(),
+            appointmentForm.getBlockEnum(),
+            appointmentForm.getDescription()
+    );
+
+    LOGGER.info("Appointment created with id {}", appointment.getId());
+
+    URI createdAppointmentUri =
+            uriInfo.getBaseUriBuilder().path("/appointments")
+                    .path(String.valueOf(appointment.getId()))
+                    .build();
+    return Response.created(createdAppointmentUri).build();
   }
 
   @GET
