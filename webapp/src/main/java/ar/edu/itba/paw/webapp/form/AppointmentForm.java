@@ -3,7 +3,10 @@ package ar.edu.itba.paw.webapp.form;
 import ar.edu.itba.paw.models.ThirtyMinuteBlock;
 import ar.edu.itba.paw.webapp.annotations.DateAnnotation;
 import java.time.LocalDate;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+
+import ar.edu.itba.paw.webapp.annotations.ExistsInEnumString;
 import org.springframework.format.annotation.DateTimeFormat;
 
 @DateAnnotation
@@ -22,15 +25,20 @@ public class AppointmentForm {
         + "]";
   }
 
+  // TODO: i18n this shit!
   @DateTimeFormat(pattern = "yyyy-MM-dd")
   private LocalDate date;
 
+  @NotNull(message = "NotNull.appointmentForm.block")
+  @ExistsInEnumString(enumClass = ThirtyMinuteBlock.class, message = "ExistsInEnumString.appointmentForm.block")
   private String block;
 
-  @Size(min = 1, max = 100)
+  @NotNull(message = "NotNull.appointmentForm.description")
+  @Size(min = 1, max = 100, message = "Size.appointmentForm.description")
   private String description;
 
-  private int docId;
+  @NotNull(message = "NotNull.appointmentForm.docId")
+  private Long docId;
 
   public LocalDate getDate() {
     return date;
@@ -65,11 +73,11 @@ public class AppointmentForm {
     this.description = description;
   }
 
-  public int getDocId() {
+  public Long getDocId() {
     return docId;
   }
 
-  public void setDocId(int docId) {
+  public void setDocId(Long docId) {
     this.docId = docId;
   }
 }
