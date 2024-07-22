@@ -111,57 +111,14 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
         // doctors/{id}
         .antMatchers(HttpMethod.GET, "/api/doctors/{doctorId:\\d+}")
           .permitAll()
-        .antMatchers(HttpMethod.PUT, "/api/doctors/{doctorId:\\d+}")
-          .authenticated()
 
         // doctors/{id}/attendinghours
         .antMatchers(HttpMethod.GET, "/api/doctors/{doctorId:\\d+}/attendinghours")
           .permitAll()
-        .antMatchers(HttpMethod.PUT, "/api/doctors/{doctorId:\\d+}/attendinghours")
-          .authenticated()
-
-        // ------------- Patients ---------
-        // patients/{id}
-        .antMatchers(HttpMethod.GET, "/api/patients/{patientId:\\d+}")
-          .authenticated()
-        .antMatchers(HttpMethod.PUT, "/api/patients/{patientId:\\d+}")
-          .authenticated()
-
-        // ------------- Vacations ---------
-        .antMatchers(HttpMethod.POST, "/api/doctors/{doctorId:\\d+}/vacations")
-          .authenticated()
-        .antMatchers(HttpMethod.DELETE, "/api/doctors/{doctorId:\\d+}/vacations/{vacationId:\\d+}")
-          .authenticated()
 
         // ------------- Reviews  ----------
         .antMatchers(HttpMethod.POST, "/api/doctors/{doctorId:\\d+}/reviews")
             .hasRole(UserRole.ROLE_PATIENT.getRoleNameWithoutPrefix())
-
-        // ------------- Indications --------
-        .antMatchers(HttpMethod.GET, "/api/appointments/{appointmentId:\\d+}/indications")
-          .authenticated()
-        .antMatchers(HttpMethod.POST, "/api/appointments/{appointmentId:\\d+}/indications")
-          .authenticated()
-
-        // indications/{id}
-        .antMatchers(
-            HttpMethod.GET,
-            "/api/appointments/{appointmentId:\\d+}/indications/{indicationId:\\d+}")
-          .authenticated()
-
-        // ------------- Files --------------
-        .antMatchers(HttpMethod.GET, "/api/appointments/{appointmentId:\\d+}/files/{fileId:\\d+}")
-          .authenticated()
-
-        // ------------- Notifications -----
-        .antMatchers(HttpMethod.GET, "/api/notifications")
-          .authenticated()
-
-        // notifications/{id}
-        .antMatchers(HttpMethod.GET, "/api/notifications/{notificationId:\\d+}")
-          .authenticated()
-        .antMatchers(HttpMethod.DELETE, "/api/notifications/{notificationId:\\d+}")
-          .authenticated()
 
         // ------------- Specialities -------
         .antMatchers(HttpMethod.GET, "/api/specialities")
@@ -181,9 +138,9 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
         .antMatchers(HttpMethod.GET, "/api/health-insurances/{healthInsuranceId:\\d+}")
           .permitAll()
 
-        // Permit all other
+        // Authenticate all other
         .antMatchers("/api/**")
-          .permitAll()
+          .authenticated()
         .and()
       .exceptionHandling()
         .authenticationEntryPoint(authenticationEntryPoint())
