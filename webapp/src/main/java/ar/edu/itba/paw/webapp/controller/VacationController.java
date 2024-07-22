@@ -6,10 +6,13 @@ import ar.edu.itba.paw.interfaces.services.exceptions.DoctorNotFoundException;
 import ar.edu.itba.paw.interfaces.services.exceptions.VacationInvalidException;
 import ar.edu.itba.paw.interfaces.services.exceptions.VacationNotFoundException;
 import ar.edu.itba.paw.models.Doctor;
+import ar.edu.itba.paw.models.Page;
 import ar.edu.itba.paw.models.Vacation;
 import ar.edu.itba.paw.webapp.dto.VacationDto;
 import ar.edu.itba.paw.webapp.form.DoctorVacationForm;
 import ar.edu.itba.paw.webapp.mediaType.VndType;
+import ar.edu.itba.paw.webapp.query.PageQuery;
+import ar.edu.itba.paw.webapp.utils.ResponseUtil;
 import java.net.URI;
 import java.util.Collection;
 import java.util.List;
@@ -48,7 +51,9 @@ public class VacationController {
 
   @GET
   @Produces(VndType.APPLICATION_VACATION_LIST)
-  public Response listVacations(@PathParam("doctorId") final Long doctorId)
+  @PreAuthorize("@authorizationFunctions.isUser(authentication, #doctorId)")
+  public Response listVacations(
+      @PathParam("doctorId") final Long doctorId, @BeanParam final PageQuery pageQuery)
       throws DoctorNotFoundException {
 
     LOGGER.debug("Listing vacations for doctor: {}", doctorId);
@@ -65,10 +70,22 @@ public class VacationController {
 
     List<VacationDto> vacationDtos =
         vacations.stream()
+            .sorted()
             .map(vacation -> VacationDto.fromVacation(uriInfo, vacation))
             .collect(Collectors.toList());
 
-    return Response.ok(new GenericEntity<List<VacationDto>>(vacationDtos) {}).build();
+    Page<VacationDto> vacationPage =
+        new Page<>(vacationDtos, pageQuery.getPage(), pageQuery.getPageSize());
+
+    if (vacationPage.getContent().isEmpty()) {
+      return Response.noContent().build();
+    }
+
+    return ResponseUtil.setPaginationLinks(
+            Response.ok(new GenericEntity<List<VacationDto>>(vacationPage.getContent()) {}),
+            uriInfo,
+            vacationPage)
+        .build();
   }
 
   @POST
@@ -79,6 +96,7 @@ public class VacationController {
       @Valid final DoctorVacationForm doctorVacationForm)
       throws DoctorNotFoundException, VacationInvalidException {
 
+    LOGGER.debug("Creating vacation for doctor: {}", doctorId);
 
     Vacation vacation =
         new Vacation.Builder(
@@ -123,6 +141,7 @@ public class VacationController {
   @GET
   @Path("/{vacationId:\\d+}")
   @Produces(VndType.APPLICATION_VACATION)
+  @PreAuthorize("@authorizationFunctions.isUser(authentication, #doctorId)")
   public Response getVacation(
       @PathParam("doctorId") final Long doctorId, @PathParam("vacationId") final Long vacationId)
       throws DoctorNotFoundException, VacationNotFoundException {
