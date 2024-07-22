@@ -20,6 +20,9 @@ public enum VndType {;
     // ----- Attending Hours ----
     public static final String APPLICATION_ATTENDING_HOURS_LIST = "application/vnd.attending-hours-list.v1+json";
 
+    // ----- Occupied Hours -----
+    public static final String APPLICATION_OCCUPIED_HOURS_LIST = "application/vnd.occupied-hours-list.v1+json";
+
     // ----- Indications --------
     public static final String APPLICATION_INDICATION = "application/vnd.indication.v1+json";
     public static final String APPLICATION_INDICATION_LIST = "application/vnd.indication-list.v1+json";

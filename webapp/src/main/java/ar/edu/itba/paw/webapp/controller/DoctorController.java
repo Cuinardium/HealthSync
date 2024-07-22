@@ -1,20 +1,25 @@
 package ar.edu.itba.paw.webapp.controller;
 
+import ar.edu.itba.paw.interfaces.services.AppointmentService;
 import ar.edu.itba.paw.interfaces.services.DoctorService;
 import ar.edu.itba.paw.interfaces.services.exceptions.DoctorNotFoundException;
 import ar.edu.itba.paw.interfaces.services.exceptions.EmailInUseException;
+import ar.edu.itba.paw.interfaces.services.exceptions.InvalidRangeException;
 import ar.edu.itba.paw.models.*;
 import ar.edu.itba.paw.webapp.annotations.HasAllDays;
 import ar.edu.itba.paw.webapp.dto.AttendingHoursDto;
 import ar.edu.itba.paw.webapp.dto.DoctorDto;
+import ar.edu.itba.paw.webapp.dto.OccupiedHoursDto;
 import ar.edu.itba.paw.webapp.form.AttendingHoursForm;
 import ar.edu.itba.paw.webapp.form.DoctorEditForm;
 import ar.edu.itba.paw.webapp.form.DoctorRegisterForm;
 import ar.edu.itba.paw.webapp.mediaType.VndType;
 import ar.edu.itba.paw.webapp.query.DoctorQuery;
+import ar.edu.itba.paw.webapp.query.OccupiedHoursQuery;
 import ar.edu.itba.paw.webapp.utils.ResponseUtil;
 import java.net.URI;
 import java.time.DayOfWeek;
+import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 import javax.validation.Valid;
@@ -33,11 +38,14 @@ public class DoctorController {
   private static final Logger LOGGER = LoggerFactory.getLogger(DoctorController.class);
 
   private final DoctorService doctorService;
+  private final AppointmentService appointmentService;
   @Context private UriInfo uriInfo;
 
   @Autowired
-  public DoctorController(final DoctorService doctorService) {
+  public DoctorController(
+      final DoctorService doctorService, final AppointmentService appointmentService) {
     this.doctorService = doctorService;
+    this.appointmentService = appointmentService;
   }
 
   // ================= doctors ========================
@@ -221,5 +229,43 @@ public class DoctorController {
     LOGGER.debug("Updated attending hours for doctor with id {}", doctorId);
 
     return Response.noContent().build();
+  }
+
+  // ================= doctors/{id}/occupiedhours ========================
+
+  @GET
+  @Path("/{doctorId:\\d+}/occupiedhours")
+  @Produces(VndType.APPLICATION_OCCUPIED_HOURS_LIST)
+  public Response getOccupiedHours(
+      @PathParam("doctorId") final long doctorId,
+      @Valid @BeanParam final OccupiedHoursQuery occupiedHoursQuery)
+      throws DoctorNotFoundException, InvalidRangeException {
+
+    LOGGER.debug("Getting occupied hours for doctor with id {}", doctorId);
+
+    Map<LocalDate, List<ThirtyMinuteBlock>> occupiedHours =
+        appointmentService.getOccupiedHours(
+            doctorId, occupiedHoursQuery.getFromDate(), occupiedHoursQuery.getToDate());
+
+    List<OccupiedHoursDto> occupiedHoursDtoList =
+        occupiedHours.entrySet().stream()
+            .sorted(Map.Entry.comparingByKey())
+            .map(entry -> OccupiedHoursDto.fromOccupiedHours(entry.getKey(), entry.getValue()))
+            .collect(Collectors.toList());
+
+    Page<OccupiedHoursDto> occupiedHoursDtoPage =
+        new Page<>(
+            occupiedHoursDtoList, occupiedHoursQuery.getPage(), occupiedHoursQuery.getPageSize());
+
+    if (occupiedHoursDtoPage.getContent().isEmpty()) {
+      return Response.noContent().build();
+    }
+
+    return ResponseUtil.setPaginationLinks(
+            Response.ok(
+                new GenericEntity<List<OccupiedHoursDto>>(occupiedHoursDtoPage.getContent()) {}),
+            uriInfo,
+            occupiedHoursDtoPage)
+        .build();
   }
 }
