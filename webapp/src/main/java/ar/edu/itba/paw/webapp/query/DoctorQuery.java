@@ -4,19 +4,25 @@ import ar.edu.itba.paw.models.HealthInsurance;
 import ar.edu.itba.paw.models.Specialty;
 import ar.edu.itba.paw.models.ThirtyMinuteBlock;
 import ar.edu.itba.paw.webapp.annotations.ExistsInEnumString;
+import ar.edu.itba.paw.webapp.annotations.FutureOrPresent;
+import ar.edu.itba.paw.webapp.annotations.ValidRange;
 import ar.edu.itba.paw.webapp.annotations.ValidThirtyMinuteBlock;
+import ar.edu.itba.paw.webapp.utils.DateUtil;
 import java.time.LocalDate;
-import java.time.format.DateTimeParseException;
 import java.util.Set;
 import java.util.stream.Collectors;
 import javax.validation.Valid;
+import javax.validation.constraints.Pattern;
 import javax.ws.rs.QueryParam;
 
+@ValidRange(message = "ValidRange.doctorQuery")
 public class DoctorQuery extends PageQuery {
 
   @QueryParam("name")
   private String name;
 
+  @FutureOrPresent(message = "FutureOrPresent.doctorQuery.date")
+  @Pattern(regexp = DateUtil.DATE_REGEX, message = "Pattern.doctorQuery.date")
   @QueryParam("date")
   private String date;
 
@@ -68,22 +74,8 @@ public class DoctorQuery extends PageQuery {
     this.date = date;
   }
 
-  // TODO: use @DateTimeFormat(pattern = "yyyy-MM-dd") instead of this method
-  // But it's not working for some reason
   public LocalDate getLocalDate() {
-    if (date == null) {
-      return null;
-    }
-
-    LocalDate date;
-
-    try {
-      date = LocalDate.parse(this.date);
-    } catch (DateTimeParseException e) {
-      date = null;
-    }
-
-    return date;
+    return DateUtil.parseDate(date);
   }
 
   public String getFromTime() {
@@ -152,26 +144,15 @@ public class DoctorQuery extends PageQuery {
 
   @Override
   public String toString() {
-    return "DoctorQuery{"
-        + "name='"
-        + name
-        + '\''
-        + ", date="
-        + date
-        + ", fromTime='"
-        + fromTime
-        + '\''
-        + ", toTime='"
-        + toTime
-        + '\''
-        + ", specialties="
-        + specialties
-        + ", cities="
-        + cities
-        + ", healthInsurances="
-        + healthInsurances
-        + ", minRating="
-        + minRating
-        + '}';
+    return "{" +
+            (name != null ? "name='" + name + "'," : "") +
+            (date != null ? "date='" + date + "'," : "") +
+            (fromTime != null ? "fromTime='" + fromTime + "'," : "") +
+            (toTime != null ? "toTime='" + toTime + "'," : "") +
+            (specialties != null && !specialties.isEmpty() ? "specialties=" + specialties + "," : "") +
+            (cities != null && !cities.isEmpty() ? "cities=" + cities + "," : "") +
+            (healthInsurances != null && !healthInsurances.isEmpty() ? "healthInsurances=" + healthInsurances + "," : "") +
+            (minRating != null ? "minRating=" + minRating + "," : "") +
+            '}';
   }
 }
