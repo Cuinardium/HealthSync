@@ -142,10 +142,10 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
           .permitAll()
 
         // ------------- Health Insurances --
-        .antMatchers(HttpMethod.GET, "/api/health-insurances")
+        .antMatchers(HttpMethod.GET, "/api/healthinsurances")
           .permitAll()
         // health-insurances/{id}
-        .antMatchers(HttpMethod.GET, "/api/health-insurances/{healthInsuranceId:\\d+}")
+        .antMatchers(HttpMethod.GET, "/api/healthinsurances/{healthInsuranceId:\\d+}")
           .permitAll()
 
         // Authenticate all other

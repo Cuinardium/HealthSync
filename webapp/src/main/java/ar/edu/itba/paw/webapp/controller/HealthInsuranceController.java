@@ -45,6 +45,10 @@ public class HealthInsuranceController {
     Page<HealthInsurance> healthInsurancePage =
         new Page<>(healthInsuranceList, pageQuery.getPage(), pageQuery.getPageSize());
 
+    if (healthInsurancePage.getContent().isEmpty()) {
+      return Response.noContent().build();
+    }
+
     final List<HealthInsuranceDto> dtoList =
         healthInsurancePage.getContent().stream()
             .map(
