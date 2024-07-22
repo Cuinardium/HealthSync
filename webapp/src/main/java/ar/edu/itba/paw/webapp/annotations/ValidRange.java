@@ -1,6 +1,8 @@
 package ar.edu.itba.paw.webapp.annotations;
 
-import ar.edu.itba.paw.webapp.validators.ValidRangeValidator;
+import ar.edu.itba.paw.webapp.validators.ValidDoctorQueryRangeValidator;
+import ar.edu.itba.paw.webapp.validators.ValidOccupiedHoursQueryRangeValidator;
+import ar.edu.itba.paw.webapp.validators.ValidVacationFormRangeValidator;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -10,7 +12,12 @@ import javax.validation.Payload;
 
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
-@Constraint(validatedBy = ValidRangeValidator.class)
+@Constraint(
+    validatedBy = {
+      ValidVacationFormRangeValidator.class,
+      ValidDoctorQueryRangeValidator.class,
+      ValidOccupiedHoursQueryRangeValidator.class
+    })
 public @interface ValidRange {
 
   String message() default "Invalid date and time range";

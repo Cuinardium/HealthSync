@@ -8,7 +8,7 @@ import java.time.LocalTime;
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
-public class ValidRangeValidator implements ConstraintValidator<ValidRange, DoctorVacationForm> {
+public class ValidVacationFormRangeValidator implements ConstraintValidator<ValidRange, DoctorVacationForm> {
 
   @Override
   public boolean isValid(
