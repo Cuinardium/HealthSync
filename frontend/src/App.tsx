@@ -21,8 +21,8 @@ function App() {
           <BrowserRouter>
               <Routes>
                   <Route path="/" element={<HomePage />} />
-                  <Route path="/doctor-register" element={<DoctorRegister/>}/>
-                  <Route path="/patient-register" element={<PatientRegister/>}/>
+                  <Route path="/doctor-register" element={<DoctorRegister hasError={false} error={false}/>}/>
+                  <Route path="/patient-register" element={<PatientRegister hasError={false} error={false}/>}/>
                   {/*<Route path="/doctor-profile" element={<DoctorProfile/>}/>
                   <Route path="/patient-profile" element={<PatientProfile/>}/> */}
                   <Route path="/login" element={<Login hasError={false} error={false}/>}/>

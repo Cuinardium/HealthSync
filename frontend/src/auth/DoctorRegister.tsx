@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, {FormEvent, useState} from 'react';
 import { Form, Button, Container, Card, Alert, Row, Col } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
 
@@ -9,12 +9,12 @@ import '../css/forms.css';
 
 const patientRegisterUrl= '/patient-register';
 
-const PatientRegister = ({ hasError, error }) => {
+const DoctorRegister = ({ hasError, error } : {hasError:boolean, error:any}) => {
     const { t } = useTranslation();
-    const [form, setForm] = useState({ name:'', lastName:'', email: '', password: '', confirmPassword: '' });
-    const [errors, setErrors] = useState({ name:'', lastName:'', email: '', password: '', confirmPassword: '' });
+    const [form, setForm] = useState({ name:'', lastName:'', email: '', password: '', confirmPassword: '' , address: '', city: ''});
+    const [errors, setErrors] = useState({ name:'', lastName:'', email: '', password: '', confirmPassword: '' , address: '', city: ''});
 
-    const handleChange = (e) => {
+    const handleChange = (e:React.ChangeEvent<HTMLInputElement>) => {
         const { name, value, checked, type } = e.target;
         setForm({
             ...form,
@@ -22,19 +22,18 @@ const PatientRegister = ({ hasError, error }) => {
         });
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = (e:FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         // TODO handle submit
     };
-
-    return (
+    return(
         <>
             <Header user={false} hasNotifications={false} isDoctor={false}/>
 
             <Container className="formContainer">
                 <Row className="formRow">
                     <Col className="formCol">
-                        <h1 className="text-center">{t('registerPatient.title')}</h1>
+                        <h1 className="text-center">{t('registerMedic.title')}</h1>
                         <Card>
                             <Card.Body>
                                 <Form onSubmit={handleSubmit} action={patientRegisterUrl} method="POST">
@@ -130,7 +129,43 @@ const PatientRegister = ({ hasError, error }) => {
                                         </div>
                                     </Form.Group>
 
-                                    {/* TODO agregar healtinsurance */}
+                                    <Form.Group className="formRow" controlId="formAddress">
+                                        <div className="form-check">
+                                            <Form.Label className="label">{t('form.address')}</Form.Label>
+                                            <Form.Control
+                                                className="form-input"
+                                                type="text"
+                                                name="address"
+                                                value={form.address}
+                                                onChange={handleChange}
+                                                placeholder={t('form.address_hint')}
+                                                isInvalid={!!errors.address}
+                                            />
+                                            <Form.Control.Feedback type="invalid">
+                                                {errors.address}
+                                            </Form.Control.Feedback>
+                                        </div>
+                                    </Form.Group>
+
+                                    <Form.Group className="formRow" controlId="formCity">
+                                        <div className="form-check">
+                                            <Form.Label className="label">{t('form.city')}</Form.Label>
+                                            <Form.Control
+                                                className="form-input"
+                                                type="text"
+                                                name="city"
+                                                value={form.city}
+                                                onChange={handleChange}
+                                                placeholder={t('form.city_hint')}
+                                                isInvalid={!!errors.city}
+                                            />
+                                            <Form.Control.Feedback type="invalid">
+                                                {errors.city}
+                                            </Form.Control.Feedback>
+                                        </div>
+                                    </Form.Group>
+
+                                    {/* TODO agregar healtinsurance, specialty y atending hours */}
 
 
                                     <div className="d-grid gap-2">
@@ -149,4 +184,4 @@ const PatientRegister = ({ hasError, error }) => {
     );
 };
 
-export default PatientRegister;
+export default DoctorRegister;
