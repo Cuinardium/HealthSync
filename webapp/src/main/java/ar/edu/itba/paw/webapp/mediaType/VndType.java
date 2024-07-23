@@ -12,6 +12,11 @@ public enum VndType {;
     // ----- Patient ------------
     public static final String APPLICATION_PATIENT = "application/vnd.patient.v1+json";
 
+    // ----- Appointment --------
+    public static final String APPLICATION_APPOINTMENT = "application/vnd.appointment.v1+json";
+    public static final String APPLICATION_APPOINTMENT_LIST = "application/vnd.appointment-list.v1+json";
+    public static final String APPLICATION_APPOINTMENT_CANCEL = "application/vnd.appointment-cancel.v1+json";
+
     // ----- Vacation -----------
     public static final String APPLICATION_VACATION = "application/vnd.vacation.v1+json";
     public static final String APPLICATION_VACATION_LIST = "application/vnd.vacation-list.v1+json";

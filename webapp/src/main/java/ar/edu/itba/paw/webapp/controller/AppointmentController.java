@@ -11,6 +11,7 @@ import ar.edu.itba.paw.webapp.dto.AppointmentDto;
 import ar.edu.itba.paw.webapp.exceptions.AppointmentAlreadyCancelledException;
 import ar.edu.itba.paw.webapp.form.AppointmentForm;
 import ar.edu.itba.paw.webapp.form.CancelAppointmentForm;
+import ar.edu.itba.paw.webapp.mediaType.VndType;
 import ar.edu.itba.paw.webapp.query.AppointmentQuery;
 import ar.edu.itba.paw.webapp.query.PageQuery;
 import ar.edu.itba.paw.webapp.query.UserQuery;
@@ -49,8 +50,10 @@ public class AppointmentController {
     this.patientService = patientService;
   }
 
+  // ================= appointments ========================
+
   @GET
-  @Produces(MediaType.APPLICATION_JSON)
+  @Produces(VndType.APPLICATION_APPOINTMENT_LIST)
   @PreAuthorize("@authorizationFunctions.isUser(authentication, #userQuery.userId)")
   public Response getAppointments(
       @Valid @BeanParam final UserQuery userQuery,
@@ -97,6 +100,7 @@ public class AppointmentController {
           @Valid @BeanParam AppointmentForm appointmentForm
   ) throws DoctorNotAvailableException, DoctorNotFoundException, PatientNotFoundException {
     final Appointment appointment = appointmentService.createAppointment(
+  @Consumes(MediaType.APPLICATION_JSON)
             PawAuthUserDetails.getCurrentUserId(),
             appointmentForm.getDocId(),
             appointmentForm.getDate(),
@@ -113,11 +117,13 @@ public class AppointmentController {
     return Response.created(createdAppointmentUri).build();
   }
 
+  // ================= appointments/{id} ========================
+
   @GET
-  @Produces(MediaType.APPLICATION_JSON)
-  @Path("/{id:\\d+}")
-  @PreAuthorize("@authorizationFunctions.isInvolvedInAppointment(authentication, #id)")
-  public Response getAppointment(@PathParam("id") final long id)
+  @Produces(VndType.APPLICATION_APPOINTMENT)
+  @Path("/{appointmentId:\\d+}")
+  @PreAuthorize("@authorizationFunctions.isInvolvedInAppointment(authentication, #appointmentId)")
+  public Response getAppointment(@PathParam("appointmentId") final long appointmentId)
       throws AppointmentNotFoundException {
 
     Optional<Appointment> possibleAppointment = appointmentService.getAppointmentById(id);
@@ -134,12 +140,15 @@ public class AppointmentController {
   }
 
   @PATCH
-  @Path("/{id:\\d+}")
-  @PreAuthorize("@authorizationFunctions.isInvolvedInAppointment(authentication, #id)")
+  @Path("/{appointmentId:\\d+}")
+  @Consumes(VndType.APPLICATION_APPOINTMENT_CANCEL)
+  @Produces(VndType.APPLICATION_APPOINTMENT)
+  @PreAuthorize("@authorizationFunctions.isInvolvedInAppointment(authentication, #appointmentId)")
   public Response cancelAppointment(
-      @PathParam("id") final long id, @Valid final CancelAppointmentForm cancelAppointmentForm)
-      throws AppointmentNotFoundException, AppointmentAlreadyCancelledException {
     Optional<Appointment> possibleAppointment = appointmentService.getAppointmentById(id);
+      @PathParam("appointmentId") final long appointmentId,
+      @Valid final CancelAppointmentForm cancelAppointmentForm)
+      throws AppointmentNotFoundException, AppointmentInmutableException {
 
     if (!possibleAppointment.isPresent()) {
       LOGGER.debug("appointment with id {} not found", id);
