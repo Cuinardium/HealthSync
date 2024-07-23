@@ -1,6 +1,7 @@
 package ar.edu.itba.paw.webapp.form;
 
 import ar.edu.itba.paw.webapp.annotations.ExistsInEnumString;
+import ar.edu.itba.paw.webapp.annotations.NoDuplicates;
 import ar.edu.itba.paw.webapp.annotations.ValidThirtyMinuteBlock;
 import java.time.DayOfWeek;
 import java.util.List;
@@ -16,6 +17,7 @@ public class AttendingHoursForm {
   private String day;
 
   @NotNull(message = "NotNull.attendingHoursForm.attendingHours")
+  @NoDuplicates(message = "NoDuplicates.attendingHoursForm.attendingHours")
   @Valid
   private List<
           @ValidThirtyMinuteBlock(
