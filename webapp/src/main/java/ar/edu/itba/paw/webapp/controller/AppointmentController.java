@@ -4,11 +4,9 @@ import ar.edu.itba.paw.interfaces.services.AppointmentService;
 import ar.edu.itba.paw.interfaces.services.PatientService;
 import ar.edu.itba.paw.interfaces.services.exceptions.*;
 import ar.edu.itba.paw.models.Appointment;
-import ar.edu.itba.paw.models.AppointmentStatus;
 import ar.edu.itba.paw.models.Page;
 import ar.edu.itba.paw.webapp.auth.PawAuthUserDetails;
 import ar.edu.itba.paw.webapp.dto.AppointmentDto;
-import ar.edu.itba.paw.webapp.exceptions.AppointmentAlreadyCancelledException;
 import ar.edu.itba.paw.webapp.form.AppointmentForm;
 import ar.edu.itba.paw.webapp.form.CancelAppointmentForm;
 import ar.edu.itba.paw.webapp.mediaType.VndType;
@@ -16,15 +14,11 @@ import ar.edu.itba.paw.webapp.query.AppointmentQuery;
 import ar.edu.itba.paw.webapp.query.PageQuery;
 import ar.edu.itba.paw.webapp.query.UserQuery;
 import ar.edu.itba.paw.webapp.utils.ResponseUtil;
-
 import java.net.URI;
 import java.util.List;
-import java.util.Optional;
 import javax.validation.Valid;
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
-
-import org.glassfish.jersey.server.Uri;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,7 +33,6 @@ public class AppointmentController {
 
   private final AppointmentService appointmentService;
   private final PatientService patientService;
-  private static final int DEFAULT_PAGE_SIZE = 10;
 
   @Context private UriInfo uriInfo;
 
@@ -59,13 +52,10 @@ public class AppointmentController {
       @Valid @BeanParam final UserQuery userQuery,
       @Valid @BeanParam final AppointmentQuery appointmentQuery,
       @Valid @BeanParam final PageQuery pageQuery) {
+
+    LOGGER.debug("Listing appointments, {}, {}, {}", userQuery, appointmentQuery, pageQuery);
+
     long userId = userQuery.getUserId();
-    LOGGER.debug(
-        "\n\n\nValues are:\nuserId {}\nstatus {}\npage {}\npageSize {}\n\n\n",
-        userId,
-        appointmentQuery.getAppointmentStatus(),
-        pageQuery.getPage(),
-        pageQuery.getPageSize());
 
     Page<Appointment> appointmentsPage =
         appointmentService.getFilteredAppointments(
@@ -87,8 +77,6 @@ public class AppointmentController {
     final List<AppointmentDto> dtoList =
         AppointmentDto.fromAppointmentList(uriInfo, appointmentList);
 
-    LOGGER.debug("Appointments for page {}", pageQuery.getPage());
-
     Response.ResponseBuilder responseBuilder =
         Response.ok(new GenericEntity<List<AppointmentDto>>(dtoList) {});
 
@@ -96,24 +84,29 @@ public class AppointmentController {
   }
 
   @POST
-  public Response createAppointment(
-          @Valid @BeanParam AppointmentForm appointmentForm
-  ) throws DoctorNotAvailableException, DoctorNotFoundException, PatientNotFoundException {
-    final Appointment appointment = appointmentService.createAppointment(
   @Consumes(MediaType.APPLICATION_JSON)
+  public Response createAppointment(@Valid @BeanParam AppointmentForm appointmentForm)
+      throws DoctorNotAvailableException, DoctorNotFoundException, PatientNotFoundException {
+
+    LOGGER.debug("Creating appointment: {}", appointmentForm);
+
+    final Appointment appointment =
+        appointmentService.createAppointment(
             PawAuthUserDetails.getCurrentUserId(),
             appointmentForm.getDocId(),
             appointmentForm.getDate(),
             appointmentForm.getBlockEnum(),
-            appointmentForm.getDescription()
-    );
+            appointmentForm.getDescription());
 
-    LOGGER.info("Appointment created with id {}", appointment.getId());
+    LOGGER.debug("Appointment created with id {}", appointment.getId());
 
     URI createdAppointmentUri =
-            uriInfo.getBaseUriBuilder().path("/appointments")
-                    .path(String.valueOf(appointment.getId()))
-                    .build();
+        uriInfo
+            .getBaseUriBuilder()
+            .path("/appointments")
+            .path(String.valueOf(appointment.getId()))
+            .build();
+
     return Response.created(createdAppointmentUri).build();
   }
 
@@ -126,16 +119,15 @@ public class AppointmentController {
   public Response getAppointment(@PathParam("appointmentId") final long appointmentId)
       throws AppointmentNotFoundException {
 
-    Optional<Appointment> possibleAppointment = appointmentService.getAppointmentById(id);
+    LOGGER.debug("Getting appointment with id {}", appointmentId);
 
-    if (!possibleAppointment.isPresent()) {
-      LOGGER.debug("appointment with id {} not found", id);
-      throw new AppointmentNotFoundException();
-    }
+    Appointment appointment =
+        appointmentService
+            .getAppointmentById(appointmentId)
+            .orElseThrow(AppointmentNotFoundException::new);
 
-    Appointment appointment = possibleAppointment.get();
+    LOGGER.debug("returning appointment with id {}", appointmentId);
 
-    LOGGER.debug("returning appointment with id {}", id);
     return Response.ok(AppointmentDto.fromAppointment(uriInfo, appointment)).build();
   }
 
@@ -145,30 +137,29 @@ public class AppointmentController {
   @Produces(VndType.APPLICATION_APPOINTMENT)
   @PreAuthorize("@authorizationFunctions.isInvolvedInAppointment(authentication, #appointmentId)")
   public Response cancelAppointment(
-    Optional<Appointment> possibleAppointment = appointmentService.getAppointmentById(id);
       @PathParam("appointmentId") final long appointmentId,
       @Valid final CancelAppointmentForm cancelAppointmentForm)
       throws AppointmentNotFoundException, AppointmentInmutableException {
 
-    if (!possibleAppointment.isPresent()) {
-      LOGGER.debug("appointment with id {} not found", id);
-      throw new AppointmentNotFoundException();
-    }
+    LOGGER.debug("Cancelling appointment with id {}", appointmentId);
 
-    Appointment appointment = possibleAppointment.get();
+    Appointment appointment =
+        appointmentService
+            .getAppointmentById(appointmentId)
+            .orElseThrow(AppointmentNotFoundException::new);
 
-    if (appointment.getStatus().equals(AppointmentStatus.CANCELLED)) {
-      LOGGER.debug("appointment with id {} was already cancelled", id);
-      throw new AppointmentAlreadyCancelledException();
-    }
+    long userId = PawAuthUserDetails.getCurrentUserId();
 
     try {
       appointmentService.cancelAppointment(
-          id, cancelAppointmentForm.getDescription(), PawAuthUserDetails.getCurrentUserId());
+          appointmentId, cancelAppointmentForm.getDescription(), userId);
     } catch (CancelForbiddenException e) {
-      LOGGER.debug("User should have been preauthorized");
+      LOGGER.error(
+          "User with id {} should not have been authorized to request cancellation", userId);
       throw new IllegalStateException();
     }
+
+    LOGGER.debug("Appointment with id {} cancelled", appointmentId);
 
     return Response.ok(AppointmentDto.fromAppointment(uriInfo, appointment)).build();
   }
