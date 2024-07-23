@@ -2,15 +2,31 @@ package ar.edu.itba.paw.webapp.form;
 
 import ar.edu.itba.paw.models.ThirtyMinuteBlock;
 import ar.edu.itba.paw.webapp.annotations.DateAnnotation;
+import ar.edu.itba.paw.webapp.annotations.ExistsInEnumString;
 import java.time.LocalDate;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-
-import ar.edu.itba.paw.webapp.annotations.ExistsInEnumString;
 import org.springframework.format.annotation.DateTimeFormat;
 
 @DateAnnotation
 public class AppointmentForm {
+
+  @NotNull(message = "NotNull.appointmentForm.date")
+  @DateTimeFormat(pattern = "yyyy-MM-dd")
+  private LocalDate date;
+
+  @NotNull(message = "NotNull.appointmentForm.block")
+  @ExistsInEnumString(
+      enumClass = ThirtyMinuteBlock.class,
+      message = "ExistsInEnumString.appointmentForm.block")
+  private String block;
+
+  @NotNull(message = "NotNull.appointmentForm.description")
+  @Size(min = 1, max = 100, message = "Size.appointmentForm.description")
+  private String description;
+
+  @NotNull(message = "NotNull.appointmentForm.docId")
+  private Long docId;
 
   @Override
   public String toString() {
@@ -24,21 +40,6 @@ public class AppointmentForm {
         + docId
         + "]";
   }
-
-  // TODO: i18n this shit!
-  @DateTimeFormat(pattern = "yyyy-MM-dd")
-  private LocalDate date;
-
-  @NotNull(message = "NotNull.appointmentForm.block")
-  @ExistsInEnumString(enumClass = ThirtyMinuteBlock.class, message = "ExistsInEnumString.appointmentForm.block")
-  private String block;
-
-  @NotNull(message = "NotNull.appointmentForm.description")
-  @Size(min = 1, max = 100, message = "Size.appointmentForm.description")
-  private String description;
-
-  @NotNull(message = "NotNull.appointmentForm.docId")
-  private Long docId;
 
   public LocalDate getDate() {
     return date;
@@ -57,12 +58,12 @@ public class AppointmentForm {
     return block;
   }
 
-  public ThirtyMinuteBlock getBlockEnum() {
-    return ThirtyMinuteBlock.fromBeginning(block);
-  }
-
   public void setBlock(String block) {
     this.block = block;
+  }
+
+  public ThirtyMinuteBlock getBlockEnum() {
+    return ThirtyMinuteBlock.fromBeginning(block);
   }
 
   public String getDescription() {

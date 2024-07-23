@@ -10,7 +10,8 @@ public class CancelAppointmentForm {
   @Pattern(regexp = "CANCELLED", message = "Pattern.cancelAppointmentForm.status")
   private String status;
 
-  @Size(max = 1000, message = "Size.cancelAppointmentForm.description")
+  @NotNull(message = "NotNull.cancelAppointmentForm.description")
+  @Size(min = 1, max = 1000, message = "Size.cancelAppointmentForm.description")
   private String description;
 
   public String getDescription() {
