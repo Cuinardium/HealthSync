@@ -18,4 +18,9 @@ public class UserQuery {
   public void setUserId(Long userId) {
     this.userId = userId;
   }
+
+  @Override
+  public String toString() {
+    return "UserQuery [userId=" + userId + "]";
+  }
 }

@@ -31,4 +31,9 @@ public class PageQuery {
   public void setPageSize(int pageSize) {
     this.pageSize = pageSize;
   }
+
+  @Override
+  public String toString() {
+    return "PageQuery [page=" + page + ", pageSize=" + pageSize + "]";
+  }
 }
