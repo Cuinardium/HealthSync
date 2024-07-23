@@ -153,6 +153,16 @@ public class AppointmentServiceImplTest {
               .status(AppointmentStatus.CANCELLED)
               .cancelDescription(CANCELLED_APPOINTMENT_DESCRIPTION)
               .build();
+  private static final Appointment COMPLETED_APPOINTMENT =
+      new Appointment.Builder(
+              PATIENT,
+              DOCTOR,
+              APPOINTMENT_DATE,
+              APPOINTMENT_TIME,
+              APPOINTMENT_DESCRIPTION)
+              .id(APPOINTMENT_ID)
+              .status(AppointmentStatus.COMPLETED)
+              .build();
   private static final long FORBIDDEN_USER_ID = 2;
 
   private static final LocalDate RANGE_FROM = APPOINTMENT_DATE.minusDays(1);
@@ -339,7 +349,7 @@ public class AppointmentServiceImplTest {
   @Test
   public void testCancelAppointmentByDoctor()
       throws AppointmentNotFoundException, CancelForbiddenException,
-          ar.edu.itba.paw.interfaces.persistence.exceptions.AppointmentNotFoundException {
+          ar.edu.itba.paw.interfaces.persistence.exceptions.AppointmentNotFoundException, AppointmentInmutableException {
     // 1. Precondiciones
 
     // Mock appointmentDao
@@ -367,7 +377,7 @@ public class AppointmentServiceImplTest {
   @Test
   public void testCancelAppointmentByPatient()
       throws AppointmentNotFoundException, CancelForbiddenException,
-          ar.edu.itba.paw.interfaces.persistence.exceptions.AppointmentNotFoundException {
+          ar.edu.itba.paw.interfaces.persistence.exceptions.AppointmentNotFoundException, AppointmentInmutableException {
     // 1. Precondiciones
 
     // Mock appointmentDao
@@ -395,7 +405,7 @@ public class AppointmentServiceImplTest {
 
   @Test(expected = AppointmentNotFoundException.class)
   public void testCancelAppointmentDoesNotExist()
-      throws AppointmentNotFoundException, CancelForbiddenException {
+      throws AppointmentNotFoundException, CancelForbiddenException, AppointmentInmutableException {
     // 1. Precondiciones
 
     // Mock appointmentDao
@@ -407,7 +417,7 @@ public class AppointmentServiceImplTest {
 
   @Test(expected = CancelForbiddenException.class)
   public void testCancelAppointmentForbidden()
-      throws AppointmentNotFoundException, CancelForbiddenException {
+      throws AppointmentNotFoundException, CancelForbiddenException, AppointmentInmutableException {
     // 1. Precondiciones
 
     // Mock appointmentDao
@@ -416,6 +426,32 @@ public class AppointmentServiceImplTest {
 
     // 2. Ejercitar la class under test
     as.cancelAppointment(APPOINTMENT_ID, CANCELLED_APPOINTMENT_DESCRIPTION, FORBIDDEN_USER_ID);
+  }
+
+  @Test(expected = AppointmentInmutableException.class)
+  public void testCancelCancelledAppointment()
+      throws AppointmentNotFoundException, CancelForbiddenException, AppointmentInmutableException {
+    // 1. Precondiciones
+
+    // Mock appointmentDao
+    Mockito.when(appointmentDao.getAppointmentById(APPOINTMENT_ID))
+        .thenReturn(Optional.of(CANCELLED_APPOINTMENT));
+
+    // 2. Ejercitar la class under test
+    as.cancelAppointment(APPOINTMENT_ID, CANCELLED_APPOINTMENT_DESCRIPTION, DOCTOR_ID);
+  }
+
+  @Test(expected = AppointmentInmutableException.class)
+  public void testCancelCompletedAppointment()
+      throws AppointmentNotFoundException, CancelForbiddenException, AppointmentInmutableException {
+    // 1. Precondiciones
+
+    // Mock appointmentDao
+    Mockito.when(appointmentDao.getAppointmentById(APPOINTMENT_ID))
+        .thenReturn(Optional.of(COMPLETED_APPOINTMENT));
+
+    // 2. Ejercitar la class under test
+    as.cancelAppointment(APPOINTMENT_ID, CANCELLED_APPOINTMENT_DESCRIPTION, DOCTOR_ID);
   }
 
   // ================== getAvailableHoursOnRange ==================
@@ -548,24 +584,12 @@ public class AppointmentServiceImplTest {
   @Test(expected = InvalidRangeException.class)
   public void testGetOccupiedHoursInvalidRange()
       throws DoctorNotFoundException, InvalidRangeException {
-    // 1. Precondiciones
-
-    // Mock doctorService
-    Mockito.when(doctorService.getDoctorById(DOCTOR_ID)).thenReturn(Optional.of(DOCTOR));
-
-    // 2. Ejercitar la class under test
     as.getOccupiedHours(DOCTOR_ID, APPOINTMENT_DATE.plusDays(3), APPOINTMENT_DATE);
   }
 
   @Test(expected = InvalidRangeException.class)
   public void testGetOccupiedHoursNullRange()
       throws DoctorNotFoundException, InvalidRangeException {
-    // 1. Precondiciones
-
-    // Mock doctorService
-    Mockito.when(doctorService.getDoctorById(DOCTOR_ID)).thenReturn(Optional.of(DOCTOR));
-
-    // 2. Ejercitar la class under test
     as.getOccupiedHours(DOCTOR_ID, null, null);
   }
 }

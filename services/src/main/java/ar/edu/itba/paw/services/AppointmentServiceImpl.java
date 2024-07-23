@@ -84,7 +84,7 @@ public class AppointmentServiceImpl implements AppointmentService {
   @Override
   public Appointment cancelAppointment(
       long appointmentId, String cancelDescription, long requesterId)
-      throws AppointmentNotFoundException, CancelForbiddenException {
+      throws AppointmentNotFoundException, CancelForbiddenException, AppointmentInmutableException {
 
     // Get appointment
     Appointment appointment =
@@ -93,6 +93,10 @@ public class AppointmentServiceImpl implements AppointmentService {
     // If requester is nor the patient nor the doctor, he can't update the appointment
     if (requesterId != appointment.getPatientId() && requesterId != appointment.getDoctorId()) {
       throw new CancelForbiddenException();
+    }
+
+    if (appointment.getStatus() != AppointmentStatus.CONFIRMED) {
+      throw new AppointmentInmutableException();
     }
 
     Appointment updatedAppointment;
@@ -150,7 +154,9 @@ public class AppointmentServiceImpl implements AppointmentService {
           cancelAppointment(appointment.getId(), cancelDescription, doctorId);
         }
       }
-    } catch (AppointmentNotFoundException | CancelForbiddenException e) {
+    } catch (AppointmentNotFoundException
+        | CancelForbiddenException
+        | AppointmentInmutableException e) {
       throw new IllegalStateException("Appointment could not be cancelled");
     }
   }

@@ -21,7 +21,7 @@ public interface AppointmentService {
 
   public Appointment cancelAppointment(
       long appointmentId, String cancelDescription, long requesterId)
-      throws AppointmentNotFoundException, CancelForbiddenException;
+      throws AppointmentNotFoundException, CancelForbiddenException, AppointmentInmutableException;
 
   public void cancelAppointmentsInRange(
       long doctorId,
