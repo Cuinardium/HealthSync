@@ -2,10 +2,13 @@ package ar.edu.itba.paw.webapp.controller;
 
 import ar.edu.itba.paw.interfaces.services.NotificationService;
 import ar.edu.itba.paw.models.Notification;
+import ar.edu.itba.paw.models.Page;
 import ar.edu.itba.paw.webapp.dto.NotificationDto;
 import ar.edu.itba.paw.webapp.exceptions.NotificationNotFoundException;
 import ar.edu.itba.paw.webapp.mediaType.VndType;
+import ar.edu.itba.paw.webapp.query.PageQuery;
 import ar.edu.itba.paw.webapp.query.UserQuery;
+import ar.edu.itba.paw.webapp.utils.ResponseUtil;
 import java.util.List;
 import java.util.stream.Collectors;
 import javax.validation.Valid;
@@ -40,7 +43,8 @@ public class NotificationController {
   @GET
   @Produces(VndType.APPLICATION_NOTIFICATIONS_LIST)
   @PreAuthorize("@authorizationFunctions.isUser(authentication, #userQuery.userId)")
-  public Response getNotifications(@Valid @BeanParam final UserQuery userQuery) {
+  public Response getNotifications(
+      @Valid @BeanParam final UserQuery userQuery, @Valid @BeanParam final PageQuery pageQuery) {
 
     LOGGER.debug("Getting notifications for user: {}", userQuery.getUserId());
 
@@ -56,7 +60,18 @@ public class NotificationController {
             .map(notification -> NotificationDto.fromNotification(uriInfo, notification))
             .collect(Collectors.toList());
 
-    return Response.ok(new GenericEntity<List<NotificationDto>>(notificationDtos) {}).build();
+    Page<NotificationDto> notificationPage =
+        new Page<>(notificationDtos, pageQuery.getPage(), pageQuery.getPageSize());
+
+    if (notificationPage.getContent().isEmpty()) {
+      return Response.noContent().build();
+    }
+
+    return ResponseUtil.setPaginationLinks(
+            Response.ok(new GenericEntity<List<NotificationDto>>(notificationPage.getContent()) {}),
+            uriInfo,
+            notificationPage)
+        .build();
   }
 
   // ================= notifications/{notificationId} ===============
