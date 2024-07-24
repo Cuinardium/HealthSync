@@ -84,8 +84,8 @@ public class AppointmentController {
   }
 
   @POST
-  @Consumes(MediaType.APPLICATION_JSON)
-  public Response createAppointment(@Valid @BeanParam AppointmentForm appointmentForm)
+  @Consumes(VndType.APPLICATION_APPOINTMENT)
+  public Response createAppointment(@Valid final AppointmentForm appointmentForm)
       throws DoctorNotAvailableException, DoctorNotFoundException, PatientNotFoundException {
 
     LOGGER.debug("Creating appointment: {}", appointmentForm);
