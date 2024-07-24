@@ -12,6 +12,8 @@ import java.time.LocalDate;
 import java.util.Set;
 import java.util.stream.Collectors;
 import javax.validation.Valid;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.Pattern;
 import javax.ws.rs.QueryParam;
 
@@ -55,6 +57,8 @@ public class DoctorQuery extends PageQuery {
           String>
       healthInsurances;
 
+  @Min(value = 1, message = "Min.doctorQuery.minRating")
+  @Max(value = 5, message = "Min.doctorQuery.minRating")
   @QueryParam("minRating")
   private Integer minRating;
 
