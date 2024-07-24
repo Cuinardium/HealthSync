@@ -64,7 +64,8 @@ public class PatientController {
   @GET
   @Path("/{patientId:\\d+}")
   @Produces(VndType.APPLICATION_PATIENT)
-  @PreAuthorize("@authorizationFunctions.isUser(authentication, #patientId)")
+  @PreAuthorize("@authorizationFunctions.isUser(authentication, #patientId) || " +
+                "@authorizationFunctions.hasAppointmentWithPatient(authentication, #patientId)")
   public Response getPatient(@PathParam("patientId") final long patientId)
       throws PatientNotFoundException {
 
