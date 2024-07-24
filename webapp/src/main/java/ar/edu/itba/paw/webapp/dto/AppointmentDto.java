@@ -2,7 +2,6 @@ package ar.edu.itba.paw.webapp.dto;
 
 import ar.edu.itba.paw.models.Appointment;
 import ar.edu.itba.paw.models.AppointmentStatus;
-import ar.edu.itba.paw.models.ThirtyMinuteBlock;
 import java.net.URI;
 import java.time.LocalDate;
 import java.util.List;
@@ -14,7 +13,7 @@ public class AppointmentDto {
   // Properties
   private Long id;
   private LocalDate date;
-  private ThirtyMinuteBlock timeBlock;
+  private String timeBlock;
 
   private AppointmentStatus status;
   private String description;
@@ -32,7 +31,7 @@ public class AppointmentDto {
     // Properties
     dto.id = appointment.getId();
     dto.date = appointment.getDate();
-    dto.timeBlock = appointment.getTimeBlock();
+    dto.timeBlock = appointment.getTimeBlock().getBlockBeginning();
     dto.status = appointment.getStatus();
     dto.description = appointment.getDescription();
     dto.cancelDescription = appointment.getCancelDesc();
@@ -80,11 +79,11 @@ public class AppointmentDto {
     this.date = date;
   }
 
-  public ThirtyMinuteBlock getTimeBlock() {
+  public String getTimeBlock() {
     return timeBlock;
   }
 
-  public void setTimeBlock(ThirtyMinuteBlock timeBlock) {
+  public void setTimeBlock(String timeBlock) {
     this.timeBlock = timeBlock;
   }
 

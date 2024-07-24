@@ -77,7 +77,7 @@ public class IndicationController {
   @POST
   @Consumes(MediaType.MULTIPART_FORM_DATA)
   @PreAuthorize("@authorizationFunctions.isInvolvedInAppointment(authentication, #appointmentId)")
-  public Response createIndicationWithFile(
+  public Response createIndication(
       @PathParam("appointmentId") final Long appointmentId,
       @Valid @BeanParam final IndicationForm indicationForm)
       throws AppointmentNotFoundException, UserNotFoundException {

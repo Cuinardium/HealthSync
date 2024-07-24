@@ -93,7 +93,7 @@ public class AppointmentController {
     final Appointment appointment =
         appointmentService.createAppointment(
             PawAuthUserDetails.getCurrentUserId(),
-            appointmentForm.getDocId(),
+            appointmentForm.getDoctorId(),
             appointmentForm.getDate(),
             appointmentForm.getBlockEnum(),
             appointmentForm.getDescription());

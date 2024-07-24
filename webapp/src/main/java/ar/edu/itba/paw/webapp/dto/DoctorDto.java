@@ -27,6 +27,7 @@ public class DoctorDto {
   private URI specialty;
   private URI reviews;
   private URI attendingHours;
+  private URI occupiedHours;
   private URI vacations;
 
   private URI self;
@@ -88,6 +89,13 @@ public class DoctorDto {
             .path("/doctors")
             .path(String.valueOf(doctor.getId()))
             .path("/attendinghours")
+            .build();
+
+    dto.occupiedHours =
+        uri.getBaseUriBuilder()
+            .path("/doctors")
+            .path(String.valueOf(doctor.getId()))
+            .path("/occupiedhours")
             .build();
 
     dto.vacations =
@@ -209,6 +217,14 @@ public class DoctorDto {
 
   public void setAttendingHours(URI attendingHours) {
     this.attendingHours = attendingHours;
+  }
+
+  public URI getOccupiedHours() {
+    return occupiedHours;
+  }
+
+  public void setOccupiedHours(URI occupiedHours) {
+    this.occupiedHours = occupiedHours;
   }
 
   public URI getVacations() {
