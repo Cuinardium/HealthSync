@@ -41,33 +41,44 @@ public class PatientServiceImplTest {
   private static final Locale LOCALE = new Locale("en");
 
   private static final User USER =
-      new User(ID, EMAIL, PASSWORD, FIRST_NAME, LAST_NAME, IMAGE, LOCALE, true);
+      new User.Builder(
+              EMAIL,
+              PASSWORD,
+              FIRST_NAME,
+              LAST_NAME,
+              LOCALE)
+              .id(ID)
+              .isVerified(true)
+              .image(IMAGE)
+              .build();
   private static final Patient PATIENT =
-      new Patient(
-          ID,
-          EMAIL,
-          PASSWORD_ENCODED,
-          FIRST_NAME,
-          LAST_NAME,
-          IMAGE,
-          HEALTH_INSURANCE,
-          LOCALE,
-          true);
+      new Patient.Builder(
+              EMAIL,
+              PASSWORD_ENCODED,
+              FIRST_NAME,
+              LAST_NAME,
+              HEALTH_INSURANCE,
+              LOCALE)
+              .id(ID)
+              .isVerified(true)
+              .image(IMAGE)
+              .build();
   private static final String EMAIL_NEW = "new_email";
   private static final String FIRST_NAME_NEW = "new_fist_name";
   private static final String LAST_NAME_NEW = "new_last_name";
   private static final HealthInsurance HEALTH_INSURANCE_NEW = HealthInsurance.OMINT;
   private static final Patient PATIENT_UPDATED =
-      new Patient(
-          ID,
-          EMAIL_NEW,
-          PASSWORD,
-          FIRST_NAME_NEW,
-          LAST_NAME_NEW,
-          IMAGE,
-          HEALTH_INSURANCE_NEW,
-          LOCALE,
-          true);
+        new Patient.Builder(
+                EMAIL_NEW,
+                PASSWORD,
+                FIRST_NAME_NEW,
+                LAST_NAME_NEW,
+                HEALTH_INSURANCE_NEW,
+                LOCALE)
+                .id(ID)
+                .isVerified(true)
+                .image(IMAGE)
+                .build();
   private static final Locale LOCALE_NEW = new Locale("es");
 
   @Mock private PatientDao patientDao;

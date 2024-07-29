@@ -1,23 +1,39 @@
 package ar.edu.itba.paw.webapp.form;
 
-import java.util.Locale;
+import ar.edu.itba.paw.webapp.annotations.ValidLocale;
+
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
+import org.glassfish.jersey.media.multipart.FormDataParam;
+
+import java.util.Locale;
 
 public class UserEditForm extends ImageForm {
-  @Size(min = 1)
-  @Pattern(regexp = "[a-zA-Z ñÑáÁéÉíÍóÓúÚ]+")
+  @NotNull(message = "NotNull.userForm.name")
+  @Size(min = 1, max = 50, message = "Size.userForm.name")
+  @Pattern(regexp = "[a-zA-Z ñÑáÁéÉíÍóÓúÚ]+", message = "Pattern.userForm.name")
+  @FormDataParam("name")
   private String name;
 
-  @Size(min = 1)
-  @Pattern(regexp = "[a-zA-Z ñÑáÁéÉíÍóÓúÚ]+")
+  @NotNull(message = "NotNull.userForm.lastname")
+  @Size(min = 1, max = 50, message = "Size.userForm.lastname")
+  @Pattern(regexp = "[a-zA-Z ñÑáÁéÉíÍóÓúÚ]+", message = "Pattern.userForm.lastname")
+  @FormDataParam("lastname")
   private String lastname;
 
-  @Size(min = 1)
-  @Pattern(regexp = "[a-zA-Z0-9.+-nÑ]+@[a-zA-Z0-9.-]+(.com|.com.ar|.edu.ar)")
+  @NotNull(message = "NotNull.userForm.email")
+  @Size(min = 1, max = 50, message = "Size.userForm.email")
+  @Pattern(
+      regexp = "[a-zA-Z0-9.+-ñÑ]+@[a-zA-Z0-9.-]+(.com|.com.ar|.edu.ar)",
+      message = "Pattern.userForm.email")
+  @FormDataParam("email")
   private String email;
 
-  private Locale locale;
+  @NotNull(message = "NotNull.userForm.locale")
+  @ValidLocale(message = "ValidLocale.userForm.locale")
+  @FormDataParam("locale")
+  private String localeName;
 
   public String getName() {
     return name;
@@ -43,11 +59,15 @@ public class UserEditForm extends ImageForm {
     this.email = email;
   }
 
-  public void setLocale(Locale locale) {
-    this.locale = locale;
+  public String getLocaleName() {
+    return localeName;
   }
 
   public Locale getLocale() {
-    return locale;
+    return Locale.forLanguageTag(localeName);
+  }
+
+  public void setLocaleName(String localeName) {
+    this.localeName = localeName;
   }
 }

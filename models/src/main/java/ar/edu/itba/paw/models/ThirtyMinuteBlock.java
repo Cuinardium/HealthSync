@@ -3,6 +3,7 @@ package ar.edu.itba.paw.models;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 public enum ThirtyMinuteBlock {
   BLOCK_00_00("00:00", "00:30"),
@@ -57,59 +58,9 @@ public enum ThirtyMinuteBlock {
   private final String blockBeginning;
   private final String blockEnd;
 
-  // The bit set to 1 encodes the corresponding block
-  private final long blockAsBit;
-
   private ThirtyMinuteBlock(String blockBeginning, String blockEnd) {
     this.blockBeginning = blockBeginning;
     this.blockEnd = blockEnd;
-    this.blockAsBit = 1L << this.ordinal();
-  }
-
-  public String getBlockBeginning() {
-    return this.blockBeginning;
-  }
-
-  public String getBlockEnd() {
-    return this.blockEnd;
-  }
-
-  public long getBlockAsBit() {
-    return this.blockAsBit;
-  }
-
-  public boolean isBlockSet(long attendingHours) {
-    return (attendingHours & this.blockAsBit) != 0;
-  }
-
-  // Most significant 16 bits dont encode anything
-  // The 48 least significant bits encode 30 minute blocks
-  // If the bit is 1 the doctor is available, otherwise it is not
-  // The least significant bit encodes the (0:00, 0:30) block
-  // The 48th bit encodes the (23:3, 0:00) block
-  public static Collection<ThirtyMinuteBlock> fromBits(long bits) {
-
-    Collection<ThirtyMinuteBlock> blocks = new ArrayList<>();
-    ThirtyMinuteBlock[] values = ThirtyMinuteBlock.values();
-
-    for (int i = 0; i < values.length; i++) {
-      if ((bits & (1L << i)) != 0) {
-        blocks.add(values[i]);
-      }
-    }
-
-    return blocks;
-  }
-
-  public static long toBits(Collection<ThirtyMinuteBlock> blocks) {
-
-    long bits = 0;
-
-    for (ThirtyMinuteBlock block : blocks) {
-      bits |= block.getBlockAsBit();
-    }
-
-    return bits;
   }
 
   public static ThirtyMinuteBlock fromTime(LocalTime time) {
@@ -123,9 +74,18 @@ public enum ThirtyMinuteBlock {
     return ThirtyMinuteBlock.values()[blockIndex];
   }
 
-  public static ThirtyMinuteBlock fromString(String block) {
+  public static ThirtyMinuteBlock fromBeginning(String block) {
     for (ThirtyMinuteBlock thirtyMinuteBlock : ThirtyMinuteBlock.values()) {
       if (thirtyMinuteBlock.getBlockBeginning().equals(block)) {
+        return thirtyMinuteBlock;
+      }
+    }
+    return null;
+  }
+
+  public static ThirtyMinuteBlock fromEnd(String block) {
+    for (ThirtyMinuteBlock thirtyMinuteBlock : ThirtyMinuteBlock.values()) {
+      if (thirtyMinuteBlock.getBlockEnd().equals(block)) {
         return thirtyMinuteBlock;
       }
     }
@@ -144,9 +104,9 @@ public enum ThirtyMinuteBlock {
     return result;
   }
 
-  public static Collection<ThirtyMinuteBlock> fromRange(
+  public static List<ThirtyMinuteBlock> fromRange(
       ThirtyMinuteBlock from, ThirtyMinuteBlock to) {
-    Collection<ThirtyMinuteBlock> result = new ArrayList<>();
+    List<ThirtyMinuteBlock> result = new ArrayList<>();
     for (ThirtyMinuteBlock thirtyMinuteBlock : ThirtyMinuteBlock.values()) {
       if (thirtyMinuteBlock.ordinal() >= from.ordinal()
           && thirtyMinuteBlock.ordinal() <= to.ordinal()) {
@@ -154,5 +114,21 @@ public enum ThirtyMinuteBlock {
       }
     }
     return result;
+  }
+
+  public String getBlockBeginning() {
+    return this.blockBeginning;
+  }
+
+  public String getBlockEnd() {
+    return this.blockEnd;
+  }
+
+  public boolean isBefore(ThirtyMinuteBlock other) {
+    return this.ordinal() < other.ordinal();
+  }
+
+  public boolean isAfter(ThirtyMinuteBlock other) {
+    return this.ordinal() > other.ordinal();
   }
 }

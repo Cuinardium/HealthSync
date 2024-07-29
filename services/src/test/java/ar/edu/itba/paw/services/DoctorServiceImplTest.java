@@ -53,65 +53,64 @@ public class DoctorServiceImplTest {
               new AttendingHours(ID, DayOfWeek.FRIDAY, ThirtyMinuteBlock.BLOCK_00_30),
               new AttendingHours(ID, DayOfWeek.SATURDAY, ThirtyMinuteBlock.BLOCK_00_30),
               new AttendingHours(ID, DayOfWeek.SUNDAY, ThirtyMinuteBlock.BLOCK_00_30)));
-
   private static final Vacation VACATION =
-      new Vacation(
-          ID,
-          LocalDate.of(2020, 1, 1),
-          ThirtyMinuteBlock.BLOCK_00_00,
-          LocalDate.of(2020, 1, 10),
-          ThirtyMinuteBlock.BLOCK_00_00);
-
+          new Vacation.Builder(
+                  LocalDate.of(2020, 1, 1),
+                  ThirtyMinuteBlock.BLOCK_00_00,
+                  LocalDate.of(2020, 1, 10),
+                  ThirtyMinuteBlock.BLOCK_00_00)
+                  .id(1L)
+                  .build();
   private static final Float RATING = 3F;
   private static final Integer RATING_COUNT = 1;
-  private static final User USER =
-      new User(
-          ID,
-          EMAIL,
-          PASSWORD_ENCODED,
-          FIRST_NAME,
-          LAST_NAME,
-          IMAGE,
-          LOCALE,
-          true);
   private static final Doctor DOCTOR =
-      new Doctor(
-          ID,
-          EMAIL,
-          PASSWORD_ENCODED,
-          FIRST_NAME,
-          LAST_NAME,
-          IMAGE,
-          HEALTH_INSURANCES,
-          SPECIALTY,
-          CITY,
-          ADDRESS,
-          ATTENDING_HOURS,
-          Collections.emptySet(),
-          RATING,
-          RATING_COUNT,
-          LOCALE,
-          true);
-
+        new Doctor.Builder(
+                EMAIL,
+                PASSWORD_ENCODED,
+                FIRST_NAME,
+                LAST_NAME,
+                HEALTH_INSURANCES,
+                SPECIALTY,
+                CITY,
+                ADDRESS,
+                ATTENDING_HOURS,
+                LOCALE)
+                .id(ID)
+                .image(IMAGE)
+                .rating(RATING)
+                .ratingCount(RATING_COUNT)
+                .isVerified(true)
+                .build();
   private static final Doctor DOCTOR_WITH_VACATIONS =
-      new Doctor(
-          ID,
-          EMAIL,
-          PASSWORD_ENCODED,
-          FIRST_NAME,
-          LAST_NAME,
-          IMAGE,
-          HEALTH_INSURANCES,
-          SPECIALTY,
-          CITY,
-          ADDRESS,
-          ATTENDING_HOURS,
-          new HashSet<>(Arrays.asList(VACATION)),
-          RATING,
-          RATING_COUNT,
-          LOCALE,
-          true);
-
+        new Doctor.Builder(
+                EMAIL,
+                PASSWORD_ENCODED,
+                FIRST_NAME,
+                LAST_NAME,
+                HEALTH_INSURANCES,
+                SPECIALTY,
+                CITY,
+                ADDRESS,
+                ATTENDING_HOURS,
+                LOCALE)
+                .id(ID)
+                .image(IMAGE)
+                .rating(RATING)
+                .ratingCount(RATING_COUNT)
+                .isVerified(true)
+                .vacations(new HashSet<>(Collections.singletonList(VACATION)))
+                .build();
+  private static final User USER =
+      new User.Builder(
+              EMAIL,
+              PASSWORD_ENCODED,
+              FIRST_NAME,
+              LAST_NAME,
+              LOCALE)
+              .id(ID)
+              .image(IMAGE)
+              .isVerified(true)
+              .build();
   private static final String EMAIL_NEW = "new_email";
   private static final String FIRST_NAME_NEW = "new_fist_name";
   private static final String LAST_NAME_NEW = "new_last_name";
@@ -130,36 +129,33 @@ public class DoctorServiceImplTest {
               new AttendingHours(ID, DayOfWeek.FRIDAY, ThirtyMinuteBlock.BLOCK_00_30),
               new AttendingHours(ID, DayOfWeek.SATURDAY, ThirtyMinuteBlock.BLOCK_00_30),
               new AttendingHours(ID, DayOfWeek.SUNDAY, ThirtyMinuteBlock.BLOCK_00_30)));
-
-  private static final Locale LOCALE_NEW = new Locale("es");
-
-  private static final Vacation VACATION_NEW =
-      new Vacation(
-          ID,
-          LocalDate.now().plusDays(1),
-          ThirtyMinuteBlock.BLOCK_00_00,
-          LocalDate.now().plusDays(10),
-          ThirtyMinuteBlock.BLOCK_00_00);
-
   private static final Doctor DOCTOR_UPDATED =
-      new Doctor(
-          ID,
-          EMAIL_NEW,
-          PASSWORD,
-          FIRST_NAME_NEW,
-          LAST_NAME_NEW,
-          IMAGE,
-          HEALTH_INSURANCES_NEW,
-          SPECIALTY_NEW,
-          CITY_NEW,
-          ADDRESS_NEW,
-          ATTENDING_HOURS_NEW,
-          Collections.emptySet(),
-          RATING,
-          RATING_COUNT,
-          LOCALE,
-          true);
-
+        new Doctor.Builder(
+                EMAIL_NEW,
+                PASSWORD,
+                FIRST_NAME_NEW,
+                LAST_NAME_NEW,
+                HEALTH_INSURANCES_NEW,
+                SPECIALTY_NEW,
+                CITY_NEW,
+                ADDRESS_NEW,
+                ATTENDING_HOURS_NEW,
+                LOCALE)
+                .id(ID)
+                .image(IMAGE)
+                .rating(RATING)
+                .ratingCount(RATING_COUNT)
+                .isVerified(true)
+                .build();
+  private static final Locale LOCALE_NEW = new Locale("es");
+  private static final Vacation VACATION_NEW =
+          new Vacation.Builder(
+                  LocalDate.now().plusDays(1),
+                  ThirtyMinuteBlock.BLOCK_00_00,
+                  LocalDate.now().plusDays(10),
+                  ThirtyMinuteBlock.BLOCK_00_00)
+                  .id(2L)
+                  .build();
   @Mock private DoctorDao doctorDao;
   @Mock private PasswordEncoder passwordEncoder;
   @Mock private UserService userService;
@@ -177,23 +173,21 @@ public class DoctorServiceImplTest {
     Mockito.when(passwordEncoder.encode(Mockito.eq(PASSWORD))).thenReturn(PASSWORD_ENCODED);
     Mockito.when(
             doctorDao.createDoctor(
-                new Doctor(
-                    null,
-                    EMAIL,
-                    PASSWORD_ENCODED,
-                    FIRST_NAME,
-                    LAST_NAME,
-                    IMAGE,
-                    HEALTH_INSURANCES,
-                    SPECIALTY,
-                    CITY,
-                    ADDRESS,
-                    ATTENDING_HOURS,
-                    Collections.emptySet(),
-                    null,
-                    null,
-                    LOCALE,
-                    false)))
+                new Doctor.Builder(
+                        EMAIL,
+                        PASSWORD_ENCODED,
+                        FIRST_NAME,
+                        LAST_NAME,
+                        HEALTH_INSURANCES,
+                        SPECIALTY,
+                        CITY,
+                        ADDRESS,
+                        ATTENDING_HOURS,
+                        LOCALE)
+                        .image(IMAGE)
+                        .isVerified(false)
+                        .build()
+                    ))
         .thenReturn(DOCTOR);
     Mockito.when(userService.getUserById(Mockito.eq(ID))).thenReturn(Optional.of(USER));
     Mockito.when(tokenService.createToken(Mockito.any(User.class)))
@@ -227,23 +221,20 @@ public class DoctorServiceImplTest {
     Mockito.when(passwordEncoder.encode(Mockito.eq(PASSWORD))).thenReturn(PASSWORD_ENCODED);
     Mockito.when(
             doctorDao.createDoctor(
-                new Doctor(
-                    null,
-                    EMAIL,
-                    PASSWORD_ENCODED,
-                    FIRST_NAME,
-                    LAST_NAME,
-                    IMAGE,
-                    HEALTH_INSURANCES,
-                    SPECIALTY,
-                    CITY,
-                    ADDRESS,
-                    ATTENDING_HOURS,
-                    Collections.emptySet(),
-                    null,
-                    null,
-                    LOCALE,
-                    false)))
+                new Doctor.Builder(
+                        EMAIL,
+                        PASSWORD_ENCODED,
+                        FIRST_NAME,
+                        LAST_NAME,
+                        HEALTH_INSURANCES,
+                        SPECIALTY,
+                        CITY,
+                        ADDRESS,
+                        ATTENDING_HOURS,
+                        LOCALE)
+                        .image(IMAGE)
+                        .isVerified(false)
+                        .build()))
         .thenThrow(DoctorAlreadyExistsException.class);
 
     // 2. Ejercitar la class under test
@@ -268,23 +259,20 @@ public class DoctorServiceImplTest {
     Mockito.when(passwordEncoder.encode(Mockito.eq(PASSWORD))).thenReturn(PASSWORD_ENCODED);
     Mockito.when(
             doctorDao.createDoctor(
-                new Doctor(
-                    null,
-                    EMAIL,
-                    PASSWORD_ENCODED,
-                    FIRST_NAME,
-                    LAST_NAME,
-                    IMAGE,
-                    HEALTH_INSURANCES,
-                    SPECIALTY,
-                    CITY,
-                    ADDRESS,
-                    ATTENDING_HOURS,
-                    Collections.emptySet(),
-                    null,
-                    null,
-                    LOCALE,
-                    false)))
+                new Doctor.Builder(
+                        EMAIL,
+                        PASSWORD_ENCODED,
+                        FIRST_NAME,
+                        LAST_NAME,
+                        HEALTH_INSURANCES,
+                        SPECIALTY,
+                        CITY,
+                        ADDRESS,
+                        ATTENDING_HOURS,
+                        LOCALE)
+                        .image(IMAGE)
+                        .isVerified(false)
+                        .build()))
         .thenThrow(IllegalStateException.class);
 
     // 2. Ejercitar la class under test
@@ -448,14 +436,15 @@ public class DoctorServiceImplTest {
       throws DoctorNotFoundException,
           ar.edu.itba.paw.interfaces.services.exceptions.DoctorNotFoundException,
           VacationInvalidException, VacationCollisionException {
+
     // 1. Precondiciones
-    Mockito.when(doctorDao.addVacation(ID, VACATION_NEW)).thenReturn(DOCTOR_WITH_VACATIONS);
+    Mockito.when(doctorDao.addVacation(ID, VACATION_NEW)).thenReturn(VACATION_NEW);
 
     // 2. Ejercitar la class under test
-    Doctor doctor = ds.addVacation(ID, VACATION_NEW);
+    Vacation vacation = ds.addVacation(ID, VACATION_NEW);
 
     // 3. Meaningful assertions
-    Assert.assertEquals(DOCTOR_WITH_VACATIONS, doctor);
+    Assert.assertEquals(VACATION_NEW, vacation);
   }
 
   @Test(expected = ar.edu.itba.paw.interfaces.services.exceptions.DoctorNotFoundException.class)
@@ -475,14 +464,15 @@ public class DoctorServiceImplTest {
       throws DoctorNotFoundException,
           ar.edu.itba.paw.interfaces.services.exceptions.DoctorNotFoundException,
           VacationInvalidException {
+
     // 1. Precondiciones
     Vacation invalidVacation =
-        new Vacation(
-            ID,
-            LocalDate.now(),
-            ThirtyMinuteBlock.BLOCK_00_00,
-            LocalDate.now().minusDays(1),
-            ThirtyMinuteBlock.BLOCK_00_00);
+        new Vacation.Builder(
+                LocalDate.now(),
+                ThirtyMinuteBlock.BLOCK_00_00,
+                LocalDate.now().minusDays(1),
+                ThirtyMinuteBlock.BLOCK_00_00)
+                .build();
 
     // 2. Ejercitar la class under test
     ds.addVacation(ID, invalidVacation);
@@ -494,12 +484,12 @@ public class DoctorServiceImplTest {
           VacationInvalidException {
     // 1. Precondiciones
     Vacation invalidVacation =
-        new Vacation(
-            ID,
-            LocalDate.now().minusDays(1),
-            ThirtyMinuteBlock.BLOCK_00_00,
-            LocalDate.now().plusDays(1),
-            ThirtyMinuteBlock.BLOCK_00_00);
+            new Vacation.Builder(
+                    LocalDate.now().minusDays(1),
+                    ThirtyMinuteBlock.BLOCK_00_00,
+                    LocalDate.now().plusDays(1),
+                    ThirtyMinuteBlock.BLOCK_00_00)
+                    .build();
 
     // 2. Ejercitar la class under test
     ds.addVacation(ID, invalidVacation);

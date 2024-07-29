@@ -8,7 +8,14 @@ public class PatientDto {
 
   private String firstName;
   private String lastName;
+  private String email;
+
+  private URI image;
+
   private URI healthInsurance;
+  private URI appointments;
+  private URI notifications;
+
   private URI self;
 
   public static PatientDto fromPatient(UriInfo uri, Patient patient) {
@@ -16,11 +23,29 @@ public class PatientDto {
 
     dto.firstName = patient.getFirstName();
     dto.lastName = patient.getLastName();
+    dto.email = patient.getEmail();
+
+    dto.image =
+        uri.getBaseUriBuilder()
+            .path("/images")
+            .path(String.valueOf(patient.getImage().getImageId()))
+            .build();
+
     dto.healthInsurance =
         uri.getBaseUriBuilder()
             .path("/healthinsurances")
             .path(String.valueOf(patient.getHealthInsurance().ordinal()))
             .build();
+
+    dto.appointments =
+        uri.getBaseUriBuilder().path("/appointments").queryParam("userId", patient.getId()).build();
+
+    dto.notifications =
+        uri.getBaseUriBuilder()
+            .path("/notifications")
+            .queryParam("userId", patient.getId())
+            .build();
+
     dto.self =
         uri.getBaseUriBuilder().path("/patients").path(String.valueOf(patient.getId())).build();
 
@@ -57,5 +82,37 @@ public class PatientDto {
 
   public void setHealthInsurance(URI healthInsurance) {
     this.healthInsurance = healthInsurance;
+  }
+
+  public URI getAppointments() {
+    return appointments;
+  }
+
+  public void setAppointments(URI appointments) {
+    this.appointments = appointments;
+  }
+
+  public URI getNotifications() {
+    return notifications;
+  }
+
+  public void setNotifications(URI notifications) {
+    this.notifications = notifications;
+  }
+
+  public String getEmail() {
+    return email;
+  }
+
+  public void setEmail(String email) {
+    this.email = email;
+  }
+
+  public URI getImage() {
+    return image;
+  }
+
+  public void setImage(URI image) {
+    this.image = image;
   }
 }

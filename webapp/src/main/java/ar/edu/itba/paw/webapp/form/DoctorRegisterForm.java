@@ -1,49 +1,69 @@
 package ar.edu.itba.paw.webapp.form;
 
 import ar.edu.itba.paw.models.AttendingHours;
+import ar.edu.itba.paw.models.HealthInsurance;
 import ar.edu.itba.paw.models.Specialty;
-import ar.edu.itba.paw.webapp.annotations.ExistsInEnum;
+import ar.edu.itba.paw.models.ThirtyMinuteBlock;
+import ar.edu.itba.paw.webapp.annotations.ExistsInEnumString;
 import java.time.DayOfWeek;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
+import org.glassfish.jersey.media.multipart.FormDataParam;
 import org.hibernate.validator.constraints.NotEmpty;
 
 public class DoctorRegisterForm extends UserRegisterForm {
-  @NotEmpty private List<Integer> healthInsuranceCodes = new ArrayList<>();
 
-  @Size(min = 1)
-  @Pattern(regexp = "[a-zA-Z0-9. ñÑáÁéÉíÍóÓúÚ]+")
-  private String address;
+  private static final Collection<ThirtyMinuteBlock> DEFAULT_HOURS =
+      ThirtyMinuteBlock.fromRange(ThirtyMinuteBlock.BLOCK_08_00, ThirtyMinuteBlock.BLOCK_17_00);
 
-  @Size(min = 1)
-  @Pattern(regexp = "[a-zA-Z0-9. ñÑáÁéÉíÍóÓúÚ]+")
+  private static final Collection<DayOfWeek> DEFAULT_DAYS =
+      Arrays.asList(
+          DayOfWeek.MONDAY,
+          DayOfWeek.TUESDAY,
+          DayOfWeek.WEDNESDAY,
+          DayOfWeek.THURSDAY,
+          DayOfWeek.FRIDAY);
+
+  @Valid
+  @NotEmpty(message = "NotEmpty.doctorForm.healthInsurance")
+  @FormDataParam("healthInsurance")
+  private List<
+          @ExistsInEnumString(
+              enumClass = HealthInsurance.class,
+              message = "ExistsInEnumString.doctorForm.healthInsurance")
+          String>
+      healthInsurances;
+
+  @NotNull(message = "NotNull.doctorForm.city")
+  @Size(min = 1, max = 20, message = "Size.doctorForm.city")
+  @Pattern(regexp = "[a-zA-Z0-9. ñÑáÁéÉíÍóÓúÚ]+", message = "Pattern.doctorForm.city")
+  @FormDataParam("city")
   private String city;
 
-  @ExistsInEnum(enumClass = Specialty.class)
-  private Integer specialtyCode = -1;
+  @NotNull(message = "NotNull.doctorForm.address")
+  @Size(min = 1, max = 100, message = "Size.doctorForm.address")
+  @Pattern(regexp = "[a-zA-Z0-9. ñÑáÁéÉíÍóÓúÚ]+", message = "Pattern.doctorForm.address")
+  @FormDataParam("address")
+  private String address;
 
-  // Attending hours encoded as bits
-  private List<Integer> mondayAttendingHours;
-  private List<Integer> tuesdayAttendingHours;
-  private List<Integer> wednesdayAttendingHours;
-  private List<Integer> thursdayAttendingHours;
-  private List<Integer> fridayAttendingHours;
-  private List<Integer> saturdayAttendingHours;
-  private List<Integer> sundayAttendingHours;
+  @NotNull(message = "NotNull.doctorForm.specialty")
+  @ExistsInEnumString(
+      enumClass = Specialty.class,
+      message = "ExistsInEnumString.doctorForm.specialty")
+  @FormDataParam("specialty")
+  private String specialty;
 
-  public List<Integer> getHealthInsuranceCodes() {
-    return healthInsuranceCodes;
-  }
-
-  public void setHealthInsuranceCodes(List<Integer> healthInsuranceCodes) {
-    this.healthInsuranceCodes = healthInsuranceCodes;
+  public static Set<AttendingHours> getDefaultAttendingHours() {
+    return DEFAULT_DAYS.stream()
+        .flatMap(day -> DEFAULT_HOURS.stream().map(hour -> new AttendingHours(null, day, hour)))
+        .collect(Collectors.toSet());
   }
 
   public String getCity() {
@@ -62,164 +82,27 @@ public class DoctorRegisterForm extends UserRegisterForm {
     this.address = address;
   }
 
-  public int getSpecialtyCode() {
-    return specialtyCode;
+  public List<String> getHealthInsurances() {
+    return healthInsurances;
   }
 
-  public void setSpecialtyCode(int specialtyCode) {
-    this.specialtyCode = specialtyCode;
+  public void setHealthInsurances(List<String> healthInsurances) {
+    this.healthInsurances = healthInsurances;
   }
 
-  // =================== Attending hours ==============================
-  public List<Integer> getMondayAttendingHours() {
-    return mondayAttendingHours;
+  public Set<HealthInsurance> getHealthInsurancesEnum() {
+    return healthInsurances.stream().map(HealthInsurance::valueOf).collect(Collectors.toSet());
   }
 
-  public void setMondayAttendingHours(List<Integer> mondayAttendingHours) {
-    if (mondayAttendingHours == null) {
-      this.mondayAttendingHours = Collections.emptyList();
-      return;
-    }
-
-    this.mondayAttendingHours = mondayAttendingHours;
+  public String getSpecialty() {
+    return specialty;
   }
 
-  public List<Integer> getTuesdayAttendingHours() {
-    return tuesdayAttendingHours;
+  public void setSpecialty(String specialty) {
+    this.specialty = specialty;
   }
 
-  public void setTuesdayAttendingHours(List<Integer> tuesdayAttendingHours) {
-    if (tuesdayAttendingHours == null) {
-      this.tuesdayAttendingHours = Collections.emptyList();
-      return;
-    }
-
-    this.tuesdayAttendingHours = tuesdayAttendingHours;
-  }
-
-  public List<Integer> getWednesdayAttendingHours() {
-    return wednesdayAttendingHours;
-  }
-
-  public void setWednesdayAttendingHours(List<Integer> wednesdayAttendingHours) {
-    if (wednesdayAttendingHours == null) {
-      this.wednesdayAttendingHours = Collections.emptyList();
-      return;
-    }
-
-    this.wednesdayAttendingHours = wednesdayAttendingHours;
-  }
-
-  public List<Integer> getThursdayAttendingHours() {
-    return thursdayAttendingHours;
-  }
-
-  public void setThursdayAttendingHours(List<Integer> thursdayAttendingHours) {
-    if (thursdayAttendingHours == null) {
-      this.thursdayAttendingHours = Collections.emptyList();
-      return;
-    }
-
-    this.thursdayAttendingHours = thursdayAttendingHours;
-  }
-
-  public List<Integer> getFridayAttendingHours() {
-    return fridayAttendingHours;
-  }
-
-  public void setFridayAttendingHours(List<Integer> fridayAttendingHours) {
-    if (fridayAttendingHours == null) {
-      this.fridayAttendingHours = Collections.emptyList();
-      return;
-    }
-
-    this.fridayAttendingHours = fridayAttendingHours;
-  }
-
-  public List<Integer> getSaturdayAttendingHours() {
-    return saturdayAttendingHours;
-  }
-
-  public void setSaturdayAttendingHours(List<Integer> saturdayAttendingHours) {
-    if (saturdayAttendingHours == null) {
-      this.saturdayAttendingHours = Collections.emptyList();
-      return;
-    }
-
-    this.saturdayAttendingHours = saturdayAttendingHours;
-  }
-
-  public List<Integer> getSundayAttendingHours() {
-    return sundayAttendingHours;
-  }
-
-  public void setSundayAttendingHours(List<Integer> sundayAttendingHours) {
-    if (sundayAttendingHours == null) {
-      this.sundayAttendingHours = Collections.emptyList();
-      return;
-    }
-
-    this.sundayAttendingHours = sundayAttendingHours;
-  }
-
-  // TODO: needs refactor, duplicate method in doctorEditForm
-  public void setAttendingHours(Set<AttendingHours> attendingHours) {
-    setMondayAttendingHours(
-        attendingHours
-            .stream()
-            .filter((a) -> a.getDay().equals(DayOfWeek.MONDAY))
-            .map((a) -> a.getHourBlock().ordinal())
-            .collect(Collectors.toList()));
-    setTuesdayAttendingHours(
-        attendingHours
-            .stream()
-            .filter((a) -> a.getDay().equals(DayOfWeek.TUESDAY))
-            .map((a) -> a.getHourBlock().ordinal())
-            .collect(Collectors.toList()));
-    setWednesdayAttendingHours(
-        attendingHours
-            .stream()
-            .filter((a) -> a.getDay().equals(DayOfWeek.WEDNESDAY))
-            .map((a) -> a.getHourBlock().ordinal())
-            .collect(Collectors.toList()));
-    setThursdayAttendingHours(
-        attendingHours
-            .stream()
-            .filter((a) -> a.getDay().equals(DayOfWeek.THURSDAY))
-            .map((a) -> a.getHourBlock().ordinal())
-            .collect(Collectors.toList()));
-    setFridayAttendingHours(
-        attendingHours
-            .stream()
-            .filter((a) -> a.getDay().equals(DayOfWeek.FRIDAY))
-            .map((a) -> a.getHourBlock().ordinal())
-            .collect(Collectors.toList()));
-    setSaturdayAttendingHours(
-        attendingHours
-            .stream()
-            .filter((a) -> a.getDay().equals(DayOfWeek.SATURDAY))
-            .map((a) -> a.getHourBlock().ordinal())
-            .collect(Collectors.toList()));
-    setSundayAttendingHours(
-        attendingHours
-            .stream()
-            .filter((a) -> a.getDay().equals(DayOfWeek.SUNDAY))
-            .map((a) -> a.getHourBlock().ordinal())
-            .collect(Collectors.toList()));
-  }
-
-  // TODO: needs refactor, duplicate method in doctorEditForm
-  public Map<DayOfWeek, List<Integer>> getAttendingHours() {
-    Map<DayOfWeek, List<Integer>> attendingHours = new HashMap<>();
-
-    attendingHours.put(DayOfWeek.MONDAY, getMondayAttendingHours());
-    attendingHours.put(DayOfWeek.TUESDAY, getTuesdayAttendingHours());
-    attendingHours.put(DayOfWeek.WEDNESDAY, getWednesdayAttendingHours());
-    attendingHours.put(DayOfWeek.THURSDAY, getThursdayAttendingHours());
-    attendingHours.put(DayOfWeek.FRIDAY, getFridayAttendingHours());
-    attendingHours.put(DayOfWeek.SATURDAY, getSaturdayAttendingHours());
-    attendingHours.put(DayOfWeek.SUNDAY, getSundayAttendingHours());
-
-    return attendingHours;
+  public Specialty getSpecialtyEnum() {
+    return Specialty.valueOf(specialty);
   }
 }

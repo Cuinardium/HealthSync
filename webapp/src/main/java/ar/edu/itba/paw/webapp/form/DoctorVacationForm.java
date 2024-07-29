@@ -1,22 +1,34 @@
 package ar.edu.itba.paw.webapp.form;
 
 import ar.edu.itba.paw.models.ThirtyMinuteBlock;
+import ar.edu.itba.paw.webapp.annotations.HasCancelReasonIfCancelling;
+import ar.edu.itba.paw.webapp.annotations.ValidRange;
+import ar.edu.itba.paw.webapp.annotations.ValidThirtyMinuteBlock;
 import java.time.LocalDate;
+import javax.validation.constraints.NotNull;
 import org.springframework.format.annotation.DateTimeFormat;
 
+@ValidRange(message = "ValidRange.doctorVacationForm")
+@HasCancelReasonIfCancelling(message = "HasCancelReasonIfCancelling.doctorVacationForm")
 public class DoctorVacationForm {
 
+  @NotNull(message = "NotNull.doctorVacationForm.fromDate")
   @DateTimeFormat(pattern = "yyyy-MM-dd")
   private LocalDate fromDate;
 
+  @NotNull(message = "NotNull.doctorVacationForm.fromTime")
+  @ValidThirtyMinuteBlock(message = "ExistsInEnum.doctorVacationForm.fromTime")
   private String fromTime;
 
+  @NotNull(message = "NotNull.doctorVacationForm.toDate")
   @DateTimeFormat(pattern = "yyyy-MM-dd")
   private LocalDate toDate;
 
+  @NotNull(message = "NotNull.doctorVacationForm.toTime")
+  @ValidThirtyMinuteBlock(message = "ExistsInEnum.doctorVacationForm.toTime")
   private String toTime;
 
-  private boolean cancelAppointmentsInVacation = true;
+  private boolean cancelAppointments;
 
   private String cancelReason = null;
 
@@ -40,16 +52,28 @@ public class DoctorVacationForm {
     return toDate;
   }
 
+  public void setToDate(LocalDate toDate) {
+    this.toDate = toDate;
+  }
+
   public String getCancelReason() {
     return cancelReason;
   }
 
-  public boolean getCancelAppointmentsInVacation() {
-    return cancelAppointmentsInVacation;
+  public void setCancelReason(String cancelReason) {
+    this.cancelReason = cancelReason;
   }
 
-  public void setToDate(LocalDate toDate) {
-    this.toDate = toDate;
+  public boolean cancelAppointments() {
+    return cancelAppointments;
+  }
+
+  public boolean getCancelAppointments() {
+    return cancelAppointments;
+  }
+
+  public void setCancelAppointments(boolean cancelAppointments) {
+    this.cancelAppointments = cancelAppointments;
   }
 
   public String getToTime() {
@@ -60,19 +84,16 @@ public class DoctorVacationForm {
     this.toTime = toTime;
   }
 
-  public void setCancelReason(String cancelReason) {
-    this.cancelReason = cancelReason;
-  }
-
-  public void setCancelAppointmentsInVacation(boolean cancelAppointmentsInVacation) {
-    this.cancelAppointmentsInVacation = cancelAppointmentsInVacation;
-  }
-
   public ThirtyMinuteBlock getFromTimeEnum() {
-    return ThirtyMinuteBlock.fromString(fromTime);
+    return ThirtyMinuteBlock.fromBeginning(fromTime);
   }
 
   public ThirtyMinuteBlock getToTimeEnum() {
-    return ThirtyMinuteBlock.fromString(toTime);
+    return ThirtyMinuteBlock.fromEnd(toTime);
+  }
+
+  @Override
+  public String toString() {
+    return "DoctorVacationForm";
   }
 }

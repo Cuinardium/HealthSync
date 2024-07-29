@@ -20,7 +20,7 @@ public class ImageServiceImplTest {
   private static final long ID = 0;
   private static final byte[] BYTES = new byte[] {0, 1, 5, 2};
 
-  private static final Image IMAGE = new Image(ID, BYTES);
+  private static final Image IMAGE = new Image.Builder(BYTES).id(ID).build();
 
   @Mock private ImageDao imageDao;
 

@@ -1,35 +1,37 @@
 package ar.edu.itba.paw.webapp.dto;
 
 import ar.edu.itba.paw.models.HealthInsurance;
+import ar.edu.itba.paw.webapp.utils.LocaleUtil;
 import java.net.URI;
 import java.util.List;
 import java.util.stream.Collectors;
 import javax.ws.rs.core.UriInfo;
+import org.springframework.context.MessageSource;
 
 public class HealthInsuranceDto {
-  private String healthInsuranceName;
+
+  private String name;
+  private String code;
 
   private URI self;
 
   public static HealthInsuranceDto fromHealthInsurance(
-      final UriInfo uri, final HealthInsurance healthInsurance) {
+      final UriInfo uri, final MessageSource messageSource, final HealthInsurance healthInsurance) {
+
     final HealthInsuranceDto dto = new HealthInsuranceDto();
-    // TODO: translate this to i18n name
-    dto.healthInsuranceName = healthInsurance.getMessageID();
+
+    dto.code = healthInsurance.name();
+
+    dto.name =
+        messageSource.getMessage(
+            healthInsurance.getMessageID(), null, LocaleUtil.getCurrentRequestLocale());
+
     dto.self =
         uri.getBaseUriBuilder()
             .path("/healthinsurances")
             .path(String.valueOf(healthInsurance.ordinal()))
             .build();
     return dto;
-  }
-
-  public static List<HealthInsuranceDto> fromHealthInsuranceList(
-      UriInfo uriInfo, List<HealthInsurance> healthInsuranceList) {
-    return healthInsuranceList
-        .stream()
-        .map(h -> fromHealthInsurance(uriInfo, h))
-        .collect(Collectors.toList());
   }
 
   public URI getSelf() {
@@ -40,11 +42,19 @@ public class HealthInsuranceDto {
     this.self = self;
   }
 
-  public String getHealthInsuranceName() {
-    return healthInsuranceName;
+  public String getName() {
+    return name;
   }
 
-  public void setHealthInsuranceName(String healthInsuranceName) {
-    this.healthInsuranceName = healthInsuranceName;
+  public void setName(String name) {
+    this.name = name;
+  }
+
+  public String getCode() {
+    return code;
+  }
+
+  public void setCode(String code) {
+    this.code = code;
   }
 }

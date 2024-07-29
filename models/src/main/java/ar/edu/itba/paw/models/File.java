@@ -10,15 +10,17 @@ public class File {
   @Id
   @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "file_file_id_seq")
   @SequenceGenerator(
-    sequenceName = "file_file_id_seq",
-    name = "file_file_id_seq",
-    allocationSize = 1
-  )
+      sequenceName = "file_file_id_seq",
+      name = "file_file_id_seq",
+      allocationSize = 1)
   @Column(name = "file_id")
   private Long fileId;
 
   @Column(name = "file", nullable = false)
   private byte[] bytes;
+
+  @Column(name = "name", nullable = false)
+  private String name;
 
   @OneToOne(mappedBy = "file")
   private Indication indication;
@@ -27,18 +29,11 @@ public class File {
     // Solo para hibernate
   }
 
-  public File(byte[] bytes) {
-    this.bytes = bytes;
-  }
-
-  public File(Builder builder) {
+  private File(Builder builder) {
     this.fileId = builder.id;
     this.bytes = builder.bytes;
-  }
-
-  public File(Long fileId, byte[] bytes) {
-    this.fileId = fileId;
-    this.bytes = bytes;
+    this.name = builder.name;
+    this.indication = builder.indication;
   }
 
   public Long getFileId() {
@@ -55,6 +50,14 @@ public class File {
 
   public void setBytes(byte[] bytes) {
     this.bytes = bytes;
+  }
+
+  public String getName() {
+    return name;
+  }
+
+  public void setName(String name) {
+    this.name = name;
   }
 
   public Indication getIndication() {
@@ -88,16 +91,25 @@ public class File {
 
   public static class Builder {
 
-    private byte[] bytes;
+    private final byte[] bytes;
+    private final String name;
 
     private Long id = null;
 
-    public Builder(byte[] bytes) {
+    private Indication indication = null;
+
+    public Builder(byte[] bytes, String name) {
       this.bytes = bytes;
+      this.name = name;
     }
 
     public Builder id(long id) {
       this.id = id;
+      return this;
+    }
+
+    public Builder indication(Indication indication) {
+      this.indication = indication;
       return this;
     }
 

@@ -5,7 +5,6 @@ import ar.edu.itba.paw.interfaces.services.*;
 import ar.edu.itba.paw.interfaces.services.exceptions.AppointmentNotFoundException;
 import ar.edu.itba.paw.interfaces.services.exceptions.UserNotFoundException;
 import ar.edu.itba.paw.models.*;
-
 import java.time.LocalDate;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,10 +25,11 @@ public class IndicationServiceImpl implements IndicationService {
 
   @Autowired
   public IndicationServiceImpl(
-          UserService userService,
-          AppointmentService appointmentService,
-          IndicationDao indicationDao,
-          NotificationService notificationService, FileService fileService) {
+      UserService userService,
+      AppointmentService appointmentService,
+      IndicationDao indicationDao,
+      NotificationService notificationService,
+      FileService fileService) {
     this.userService = userService;
     this.appointmentService = appointmentService;
     this.indicationDao = indicationDao;
@@ -73,8 +73,8 @@ public class IndicationServiceImpl implements IndicationService {
     Indication indication =
         new Indication.Builder(appointment, user, LocalDate.now(), description).build();
 
-    if(file!=null){
-      file=fileService.uploadFile(file);
+    if (file != null) {
+      file = fileService.uploadFile(file);
       indication.setFile(file);
     }
     return indicationDao.createIndication(indication);
@@ -85,5 +85,11 @@ public class IndicationServiceImpl implements IndicationService {
   public Page<Indication> getIndicationsForAppointment(
       long appointmentId, Integer page, Integer pageSize) throws AppointmentNotFoundException {
     return indicationDao.getIndicationsForAppointment(appointmentId, page, pageSize);
+  }
+
+  @Transactional(readOnly = true)
+  @Override
+  public Optional<Indication> getIndication(long indicationId) {
+    return indicationDao.getIndication(indicationId);
   }
 }

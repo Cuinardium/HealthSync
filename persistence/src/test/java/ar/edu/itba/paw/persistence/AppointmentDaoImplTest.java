@@ -41,16 +41,17 @@ public class AppointmentDaoImplTest {
   private static final Locale INSERTED_PATIENT_LOCALE = new Locale("en");
 
   private static final Patient PATIENT_5 =
-      new Patient(
-          INSERTED_PATIENT_ID,
-          INSERTED_PATIENT_EMAIL,
-          INSERTED_PATIENT_PASSWORD,
-          INSERTED_PATIENT_FIRST_NAME,
-          INSERTED_PATIENT_LAST_NAME,
-          INSERTED_PATIENT_IMAGE,
-          INSERTED_PATIENT_HEALTH_INSURANCE,
-          INSERTED_PATIENT_LOCALE,
-          true);
+          new Patient.Builder(
+                  INSERTED_PATIENT_EMAIL,
+                  INSERTED_PATIENT_PASSWORD,
+                  INSERTED_PATIENT_FIRST_NAME,
+                  INSERTED_PATIENT_LAST_NAME,
+                  INSERTED_PATIENT_HEALTH_INSURANCE,
+                  INSERTED_PATIENT_LOCALE)
+                  .id(INSERTED_PATIENT_ID)
+                  .isVerified(true)
+                  .image(INSERTED_PATIENT_IMAGE)
+                  .build();
 
   private static final Long INSERTED_DOCTOR_ID = 7L;
   private static final String INSERTED_DOCTOR_EMAIL = "doctor@email.com";
@@ -79,67 +80,67 @@ public class AppointmentDaoImplTest {
                   INSERTED_DOCTOR_ID, DayOfWeek.THURSDAY, ThirtyMinuteBlock.BLOCK_00_00),
               new AttendingHours(
                   INSERTED_DOCTOR_ID, DayOfWeek.FRIDAY, ThirtyMinuteBlock.BLOCK_00_00)));
-
   private static final Set<Vacation> INSERTED_DOCTOR_VACATIONS =
       new HashSet<>(
           Arrays.asList(
-              new Vacation(
-                  INSERTED_DOCTOR_ID,
-                  LocalDate.of(2020, 1, 1),
-                  ThirtyMinuteBlock.BLOCK_00_00,
-                  LocalDate.of(2020, 1, 10),
-                  ThirtyMinuteBlock.BLOCK_00_00),
-              new Vacation(
-                  INSERTED_DOCTOR_ID,
-                  LocalDate.of(2020, 2, 1),
-                  ThirtyMinuteBlock.BLOCK_00_00,
-                  LocalDate.of(2020, 2, 10),
-                  ThirtyMinuteBlock.BLOCK_00_00)));
+                  new Vacation.Builder(
+                            LocalDate.of(2020, 1, 1),
+                            ThirtyMinuteBlock.BLOCK_00_00,
+                            LocalDate.of(2020, 1, 10),
+                            ThirtyMinuteBlock.BLOCK_00_00)
+                          .id(2L)
+                          .build(),
+                  new Vacation.Builder(
+                            LocalDate.of(2020, 2, 1),
+                            ThirtyMinuteBlock.BLOCK_00_00,
+                            LocalDate.of(2020, 2, 10),
+                            ThirtyMinuteBlock.BLOCK_00_00)
+                          .id(3L)
+                          .build()));
 
   private static final Locale INSERTED_DOCTOR_LOCALE = new Locale("en");
-
   private static final Doctor DOCTOR_7 =
-      new Doctor(
-          INSERTED_DOCTOR_ID,
-          INSERTED_DOCTOR_EMAIL,
-          INSERTED_DOCTOR_PASSWORD,
-          INSERTED_DOCTOR_FIRST_NAME,
-          INSERTED_DOCTOR_LAST_NAME,
-          INSERTED_DOCTOR_IMAGE,
-          INSERTED_DOCTOR_INSURANCES,
-          INSERTED_DOCTOR_SPECIALTY,
-          INSERTED_DOCTOR_CITY,
-          INSERTED_DOCTOR_ADDRESS,
-          INSERTED_DOCTOR_ATTENDING_HOURS,
-          INSERTED_DOCTOR_VACATIONS,
-          INSERTED_DOCTOR_RATING,
-          INSERTED_DOCTOR_RATING_COUNT,
-          INSERTED_DOCTOR_LOCALE,
-          true);
-
+        new Doctor.Builder(
+                INSERTED_DOCTOR_EMAIL,
+                INSERTED_DOCTOR_PASSWORD,
+                INSERTED_DOCTOR_FIRST_NAME,
+                INSERTED_DOCTOR_LAST_NAME,
+                INSERTED_DOCTOR_INSURANCES,
+                INSERTED_DOCTOR_SPECIALTY,
+                INSERTED_DOCTOR_CITY,
+                INSERTED_DOCTOR_ADDRESS,
+                INSERTED_DOCTOR_ATTENDING_HOURS,
+                INSERTED_DOCTOR_LOCALE)
+                .id(INSERTED_DOCTOR_ID)
+                .vacations(INSERTED_DOCTOR_VACATIONS)
+                .image(INSERTED_DOCTOR_IMAGE)
+                .rating(INSERTED_DOCTOR_RATING)
+                .ratingCount(INSERTED_DOCTOR_RATING_COUNT)
+                .isVerified(true)
+                .build();
   private static final ThirtyMinuteBlock INSERTED_TIME = ThirtyMinuteBlock.BLOCK_00_30;
   private static final Long INSERTED_APP_ID = 3L;
   private static final LocalDate INSERTED_LOCAL_DATE = LocalDate.of(2023, 5, 17);
   private static final AppointmentStatus INSERTED_STATUS = AppointmentStatus.CONFIRMED;
   private static final String INSERTED_DESC = "Me duele la cabeza";
   private static final String INSERTED_CANCEL_DESC = null;
+  private static final Appointment APPOINTMENT_1 =
+      new Appointment.Builder(
+          PATIENT_5,
+          DOCTOR_7,
+          INSERTED_LOCAL_DATE,
+          INSERTED_TIME,
+          INSERTED_DESC)
+              .id(INSERTED_APP_ID)
+              .cancelDescription(INSERTED_CANCEL_DESC)
+              .status(INSERTED_STATUS)
+              .build();
   private static final LocalDate AUX_LOCAL_DATE = LocalDate.of(2023, 5, 18);
   private static final ThirtyMinuteBlock AUX_TIME = ThirtyMinuteBlock.BLOCK_06_00;
   private static final String AUX_DESC = "Revision medica";
   private static final AppointmentStatus AUX_STATUS = AppointmentStatus.CANCELLED;
   private static final String AUX_CANCEL_DESC = "Que me importa";
   private static final Long AUX_APP_ID = 5L;
-
-  private static final Appointment APPOINTMENT_1 =
-      new Appointment(
-          INSERTED_APP_ID,
-          PATIENT_5,
-          DOCTOR_7,
-          INSERTED_LOCAL_DATE,
-          INSERTED_TIME,
-          INSERTED_STATUS,
-          INSERTED_DESC,
-          INSERTED_CANCEL_DESC);
   private static final String AUX_INDICATIONS = "Toma ibuprofeno cada 6 horas";
 
   @Autowired private DataSource ds;

@@ -1,17 +1,9 @@
 package ar.edu.itba.paw.interfaces.services;
 
-import ar.edu.itba.paw.interfaces.services.exceptions.AppointmentNotFoundException;
-import ar.edu.itba.paw.interfaces.services.exceptions.CancelForbiddenException;
-import ar.edu.itba.paw.interfaces.services.exceptions.DoctorNotAvailableException;
-import ar.edu.itba.paw.interfaces.services.exceptions.DoctorNotFoundException;
-import ar.edu.itba.paw.interfaces.services.exceptions.PatientNotFoundException;
-import ar.edu.itba.paw.models.Appointment;
-import ar.edu.itba.paw.models.AppointmentStatus;
-import ar.edu.itba.paw.models.Page;
-import ar.edu.itba.paw.models.ThirtyMinuteBlock;
+import ar.edu.itba.paw.interfaces.services.exceptions.*;
+import ar.edu.itba.paw.models.*;
 import java.time.LocalDate;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 public interface AppointmentService {
 
@@ -29,7 +21,7 @@ public interface AppointmentService {
 
   public Appointment cancelAppointment(
       long appointmentId, String cancelDescription, long requesterId)
-      throws AppointmentNotFoundException, CancelForbiddenException;
+      throws AppointmentNotFoundException, CancelForbiddenException, AppointmentInmutableException;
 
   public void cancelAppointmentsInRange(
       long doctorId,
@@ -57,6 +49,9 @@ public interface AppointmentService {
 
   public List<List<ThirtyMinuteBlock>> getAvailableHoursForDoctorOnRange(
       long doctorId, LocalDate from, LocalDate to) throws DoctorNotFoundException;
+
+  public Map<LocalDate, List<ThirtyMinuteBlock>> getOccupiedHours(
+      long doctorId, LocalDate from, LocalDate to) throws DoctorNotFoundException, InvalidRangeException;
 
   public boolean hasPatientMetDoctor(long patientId, long doctorId);
 

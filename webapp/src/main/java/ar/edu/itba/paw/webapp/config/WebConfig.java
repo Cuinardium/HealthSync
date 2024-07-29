@@ -35,12 +35,12 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
 @EnableScheduling
 @EnableTransactionManagement
 @ComponentScan(
-  basePackages = {
-    "ar.edu.itba.paw.webapp.controller",
-    "ar.edu.itba.paw.services",
-    "ar.edu.itba.paw.persistence"
-  }
-)
+    basePackages = {
+      "ar.edu.itba.paw.webapp.controller",
+      "ar.edu.itba.paw.webapp.mapper",
+      "ar.edu.itba.paw.services",
+      "ar.edu.itba.paw.persistence"
+    })
 @Configuration
 @PropertySource("classpath:application.properties")
 public class WebConfig extends WebMvcConfigurerAdapter {
@@ -92,8 +92,7 @@ public class WebConfig extends WebMvcConfigurerAdapter {
 
   @Bean
   public MultipartResolver multipartResolver() {
-    CommonsMultipartResolver resolver = new CommonsMultipartResolver();
-    return resolver;
+      return new CommonsMultipartResolver();
   }
 
   @Bean

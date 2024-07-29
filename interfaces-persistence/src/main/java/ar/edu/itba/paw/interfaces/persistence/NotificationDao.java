@@ -14,4 +14,5 @@ public interface NotificationDao {
     public List<Notification> getUserNotifications(long userId);
 
     public Optional<Notification> getUserAppointmentNotification(long userId, long appointmentId);
+    public Optional<Notification> getNotification(long notificationId);
 }

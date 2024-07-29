@@ -59,7 +59,7 @@ public class DoctorDaoJpa implements DoctorDao {
   }
 
   @Override
-  public Doctor addVacation(long doctorId, Vacation vacation)
+  public Vacation addVacation(long doctorId, Vacation vacation)
       throws DoctorNotFoundException, VacationCollisionException {
     Doctor doctor = getDoctorById(doctorId).orElseThrow(DoctorNotFoundException::new);
 
@@ -76,7 +76,7 @@ public class DoctorDaoJpa implements DoctorDao {
 
     doctor.addVacation(vacation);
     em.persist(doctor);
-    return doctor;
+    return vacation;
   }
 
   @Override
@@ -363,9 +363,7 @@ public class DoctorDaoJpa implements DoctorDao {
         em.createQuery(
             "select doc.specialty from Doctor as doc group by doc.specialty order by count(*) desc",
             Specialty.class);
-    query.setMaxResults(7);
-    List<Specialty> sList = query.getResultList();
 
-    return sList;
+      return query.getResultList();
   }
 }

@@ -84,7 +84,10 @@ public class DoctorServiceImpl implements DoctorService {
       throw new IllegalStateException("Doctor should not exist when id is null");
     }
 
-    User patientUser = userService.getUserById(doctor.getId()).orElseThrow(() -> new IllegalStateException("User should exist but does not"));
+    User patientUser =
+        userService
+            .getUserById(doctor.getId())
+            .orElseThrow(() -> new IllegalStateException("User should exist but does not"));
     final VerificationToken token = tokenService.createToken(patientUser);
     mailService.sendConfirmationMail(token);
 
@@ -120,19 +123,22 @@ public class DoctorServiceImpl implements DoctorService {
 
   @Transactional
   @Override
-  public Doctor addVacation(long doctorId, Vacation vacation)
+  public Vacation addVacation(long doctorId, Vacation vacation)
       throws DoctorNotFoundException, VacationInvalidException {
 
+    LocalDate fromDate = vacation.getFromDate();
+    LocalDate toDate = vacation.getToDate();
+    ThirtyMinuteBlock fromTime = vacation.getFromTime();
+    ThirtyMinuteBlock toTime = vacation.getToTime();
+
     boolean fromIsAfterTo =
-        vacation.getFromDate().isAfter(vacation.getToDate())
-            || (vacation.getFromDate().isEqual(vacation.getToDate())
-                && vacation.getFromTime().ordinal() > vacation.getToTime().ordinal());
+        fromDate.isAfter(toDate) || (fromDate.isEqual(toDate) && fromTime.isAfter(toTime));
+
+    LocalDate today = LocalDate.now();
+    ThirtyMinuteBlock now = ThirtyMinuteBlock.fromTime(LocalTime.now());
 
     boolean fromIsBeforeNow =
-        vacation.getFromDate().isBefore(LocalDate.now())
-            || (vacation.getFromDate().isEqual(LocalDate.now())
-                && vacation.getFromTime().ordinal()
-                    < ThirtyMinuteBlock.fromTime(LocalTime.now()).ordinal());
+        fromDate.isBefore(today) || (fromDate.isEqual(today) && fromTime.isBefore(now));
 
     if (fromIsAfterTo || fromIsBeforeNow) {
       throw new VacationInvalidException();
@@ -182,7 +188,16 @@ public class DoctorServiceImpl implements DoctorService {
       Integer page,
       Integer pageSize) {
     return doctorDao.getFilteredDoctors(
-        name, date, fromTime, toTime, specialties, cities, healthInsurances, minRating, page, pageSize);
+        name,
+        date,
+        fromTime,
+        toTime,
+        specialties,
+        cities,
+        healthInsurances,
+        minRating,
+        page,
+        pageSize);
   }
 
   @Transactional(readOnly = true)
@@ -217,7 +232,7 @@ public class DoctorServiceImpl implements DoctorService {
   }
 
   // ================= Tasks =================
-  
+
   // Deletes all vacations that have ended
   @Transactional
   @Scheduled(cron = "0 0/30 * * * ?")

@@ -11,10 +11,9 @@ public class Review {
   @Id
   @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "review_review_id_seq")
   @SequenceGenerator(
-    sequenceName = "review_review_id_seq",
-    name = "review_review_id_seq",
-    allocationSize = 1
-  )
+      sequenceName = "review_review_id_seq",
+      name = "review_review_id_seq",
+      allocationSize = 1)
   @Column(name = "review_id")
   private Long id;
 
@@ -39,17 +38,7 @@ public class Review {
     // Solo para hibernate
   }
 
-  public Review(
-      Long id, Doctor doctor, Patient patient, LocalDate date, String description, Short rating) {
-    this.id = id;
-    this.patient = patient;
-    this.date = date;
-    this.description = description;
-    this.rating = rating;
-    this.doctor = doctor;
-  }
-
-  public Review(Builder builder) {
+  private Review(Builder builder) {
     this.id = builder.id;
     this.patient = builder.patient;
     this.date = builder.date;
@@ -63,24 +52,40 @@ public class Review {
     return id;
   }
 
+  public void setId(Long id) {
+    this.id = id;
+  }
+
   public Patient getPatient() {
     return patient;
+  }
+
+  public void setPatient(Patient patient) {
+    this.patient = patient;
   }
 
   public LocalDate getDate() {
     return date;
   }
 
+  public void setDate(LocalDate date) {
+    this.date = date;
+  }
+
   public String getDescription() {
     return description;
+  }
+
+  public void setDescription(String description) {
+    this.description = description;
   }
 
   public Short getRating() {
     return rating;
   }
 
-  public void setId(Long id) {
-    this.id = id;
+  public void setRating(Short rating) {
+    this.rating = rating;
   }
 
   public Doctor getDoctor() {
@@ -89,22 +94,6 @@ public class Review {
 
   public void setDoctor(Doctor doctor) {
     this.doctor = doctor;
-  }
-
-  public void setPatient(Patient patient) {
-    this.patient = patient;
-  }
-
-  public void setDate(LocalDate date) {
-    this.date = date;
-  }
-
-  public void setDescription(String description) {
-    this.description = description;
-  }
-
-  public void setRating(Short rating) {
-    this.rating = rating;
   }
 
   @Override
@@ -141,21 +130,24 @@ public class Review {
   }
 
   public static class Builder {
-    private Doctor doctor;
-    private Short rating;
-    private String description;
-    private LocalDate date;
-    private Patient patient;
+
+    // Required
+    private final Doctor doctor;
+    private final Short rating;
+    private final String description;
+    private final LocalDate date;
+    private final Patient patient;
+
     // default
     private Long id = null;
 
     public Builder(
-        Doctor doctor, Patient patient, LocalDate date, String description, Short rating) {
-      this.patient = patient;
-      this.date = date;
-      this.description = description;
-      this.rating = rating;
+        Doctor doctor, Short rating, String description, LocalDate date, Patient patient) {
       this.doctor = doctor;
+      this.rating = rating;
+      this.description = description;
+      this.date = date;
+      this.patient = patient;
     }
 
     public Builder id(long id) {

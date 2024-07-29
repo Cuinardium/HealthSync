@@ -61,35 +61,7 @@ public class Doctor extends User {
     // Solo para hibernate
   }
 
-  public Doctor(
-      Long id,
-      String email,
-      String password,
-      String firstName,
-      String lastName,
-      Image image,
-      Set<HealthInsurance> healthInsurances,
-      Specialty specialty,
-      String city,
-      String address,
-      Set<AttendingHours> attendingHours,
-      Set<Vacation> vacations,
-      Float rating,
-      Integer ratingCount,
-      Locale locale,
-      Boolean isVerified) {
-    super(id, email, password, firstName, lastName, image, locale, isVerified);
-    this.healthInsurances = healthInsurances;
-    this.specialty = specialty;
-    this.city = city;
-    this.address = address;
-    this.attendingHours = attendingHours;
-    this.vacations = vacations;
-    this.rating = rating;
-    this.ratingCount = ratingCount;
-  }
-
-  public Doctor(Builder builder) {
+  private Doctor(Builder builder) {
     super(
         builder.id,
         builder.email,
@@ -255,12 +227,12 @@ public class Doctor extends User {
 
   public static class Builder {
     // required
-    private String email, password, firstName, lastName;
-    private Set<HealthInsurance> healthInsurances;
-    private Specialty specialty;
-    private String city;
-    private String address;
-    private Set<AttendingHours> attendingHours;
+    private final String email, password, firstName, lastName;
+    private final Set<HealthInsurance> healthInsurances;
+    private final Specialty specialty;
+    private final String city;
+    private final String address;
+    private final Set<AttendingHours> attendingHours;
     public Locale locale;
 
     // default

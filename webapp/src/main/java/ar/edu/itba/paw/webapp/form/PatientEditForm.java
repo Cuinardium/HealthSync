@@ -1,17 +1,29 @@
 package ar.edu.itba.paw.webapp.form;
 
 import ar.edu.itba.paw.models.HealthInsurance;
-import ar.edu.itba.paw.webapp.annotations.ExistsInEnum;
+import ar.edu.itba.paw.webapp.annotations.ExistsInEnumString;
+import org.glassfish.jersey.media.multipart.FormDataParam;
 
-public class PatientEditForm extends UserEditForm{
-    @ExistsInEnum(enumClass = HealthInsurance.class)
-    private Integer healthInsuranceCode = -1;
+import javax.validation.constraints.NotNull;
 
-    public int getHealthInsuranceCode() {
-        return healthInsuranceCode;
-    }
+public class PatientEditForm extends UserEditForm {
 
-    public void setHealthInsuranceCode(int healthInsuranceCode) {
-        this.healthInsuranceCode = healthInsuranceCode;
-    }
+  @NotNull(message = "NotNull.patientForm.healthInsurance")
+  @ExistsInEnumString(
+      enumClass = HealthInsurance.class,
+      message = "ExistsInEnumString.patientForm.healthInsurance")
+  @FormDataParam("healthInsurance")
+  private String healthInsurance;
+
+  public String getHealthInsurance() {
+    return healthInsurance;
+  }
+
+  public HealthInsurance getHealthInsuranceEnum() {
+    return HealthInsurance.valueOf(healthInsurance);
+  }
+
+  public void setHealthInsurance(String healthInsurance) {
+    this.healthInsurance = healthInsurance;
+  }
 }

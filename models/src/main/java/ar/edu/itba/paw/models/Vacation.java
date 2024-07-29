@@ -1,42 +1,56 @@
 package ar.edu.itba.paw.models;
 
-import java.io.Serializable;
 import java.time.LocalDate;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Objects;
-import javax.persistence.Column;
-import javax.persistence.Embeddable;
-import javax.persistence.EmbeddedId;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.MapsId;
-import javax.persistence.Table;
+import java.util.stream.Collectors;
+import javax.persistence.*;
 
 @Entity
 @Table(name = "doctor_vacation")
 public class Vacation implements Comparable<Vacation> {
 
-  @EmbeddedId private VacationId id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "vacation_id_seq")
+  @SequenceGenerator(sequenceName = "vacation_id_seq", name = "vacation_id_seq", allocationSize = 1)
+  @Column(name = "vacation_id")
+  private Long id;
 
   @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "doctor_id")
-  @MapsId("doctorId")
+  @JoinColumn(name = "doctor_id", nullable = false)
   private Doctor doctor;
+
+  @Column(name = "from_date", nullable = false)
+  private LocalDate fromDate;
+
+  @Enumerated(EnumType.ORDINAL)
+  @Column(name = "from_time", nullable = false)
+  private ThirtyMinuteBlock fromTime;
+
+  @Column(name = "to_date", nullable = false)
+  private LocalDate toDate;
+
+  @Enumerated(EnumType.ORDINAL)
+  @Column(name = "to_time", nullable = false)
+  private ThirtyMinuteBlock toTime;
 
   protected Vacation() {
     // Just for Hibernate
   }
 
-  public Vacation(
-      Long doctorId,
-      LocalDate fromDate,
-      ThirtyMinuteBlock fromTime,
-      LocalDate toDate,
-      ThirtyMinuteBlock toTime) {
-    this.id = new VacationId(doctorId, fromDate, fromTime, toDate, toTime);
+  private Vacation(Builder builder) {
+    this.id = builder.id;
+    this.doctor = builder.doctor;
+    this.fromDate = builder.fromDate;
+    this.toDate = builder.toDate;
+    this.fromTime = builder.fromTime;
+    this.toTime = builder.toTime;
+  }
+
+  public Long getId() {
+    return id;
   }
 
   public Doctor getDoctor() {
@@ -47,255 +61,186 @@ public class Vacation implements Comparable<Vacation> {
     this.doctor = doctor;
   }
 
-  public VacationId getId() {
-    return id;
-  }
-
-  public void setId(VacationId id) {
-    this.id = id;
-  }
-
   public LocalDate getFromDate() {
-    return id.getFromDate();
+    return fromDate;
   }
 
   public void setFromDate(LocalDate fromDate) {
-    id.setFromDate(fromDate);
+    this.fromDate = fromDate;
   }
 
   public ThirtyMinuteBlock getFromTime() {
-    return id.getFromTime();
+    return fromTime;
   }
 
   public void setFromTime(ThirtyMinuteBlock fromTime) {
-    id.setFromTime(fromTime);
+    this.fromTime = fromTime;
   }
 
   public LocalDate getToDate() {
-    return id.getToDate();
+    return toDate;
   }
 
   public void setToDate(LocalDate toDate) {
-    id.setToDate(toDate);
+    this.toDate = toDate;
   }
 
   public ThirtyMinuteBlock getToTime() {
-    return id.getToTime();
+    return toTime;
   }
 
   public void setToTime(ThirtyMinuteBlock toTime) {
-    id.setToTime(toTime);
+    this.toTime = toTime;
   }
 
   @Override
   public String toString() {
-    return "Vacation [" + "id=" + id + ']';
+    return "Vacation ["
+        + "id="
+        + id
+        + ", fromDate="
+        + fromDate
+        + ", fromTime="
+        + fromTime
+        + ", toDate="
+        + toDate
+        + ", toTime="
+        + toTime
+        + ']';
   }
 
   @Override
   public int hashCode() {
-    final int prime = 31;
-    int result = 1;
-
-    result = prime * result + ((id == null) ? 0 : id.hashCode());
-    return result;
+    return Objects.hash(id);
   }
 
   @Override
   public boolean equals(Object obj) {
     if (this == obj) return true;
-
     if (!(obj instanceof Vacation)) return false;
-
     Vacation other = (Vacation) obj;
-
     return Objects.equals(id, other.id);
   }
 
   @Override
   public int compareTo(Vacation other) {
-
-    return id.compareTo(other.id);
+    int result = this.fromDate.compareTo(other.fromDate);
+    if (result == 0) {
+      result = this.fromTime.compareTo(other.fromTime);
+    }
+    if (result == 0) {
+      result = this.toDate.compareTo(other.toDate);
+    }
+    if (result == 0) {
+      result = this.toTime.compareTo(other.toTime);
+    }
+    return result;
   }
 
   public boolean collidesWith(Vacation other) {
-    LocalDate vacationFromDate = id.getFromDate();
-    ThirtyMinuteBlock vacationFromTime = id.getFromTime();
-    LocalDate vacationToDate = id.getToDate();
-    ThirtyMinuteBlock vacationToTime = id.getToTime();
-
-    LocalDate otherVacationFromDate = other.id.getFromDate();
-    LocalDate otherVacationToDate = other.id.getToDate();
-    ThirtyMinuteBlock otherVacationFromTime = other.id.getFromTime();
-    ThirtyMinuteBlock otherVacationToTime = other.id.getToTime();
-
     boolean vacationFromAfterOtherVacationFrom =
-        vacationFromDate.isAfter(otherVacationFromDate)
-            || (vacationFromDate.equals(otherVacationFromDate)
-                && vacationFromTime.compareTo(otherVacationFromTime) >= 0);
+        fromDate.isAfter(other.fromDate)
+            || (fromDate.equals(other.fromDate) && fromTime.compareTo(other.fromTime) >= 0);
 
     boolean vacationFromBeforeOtherVacationTo =
-        vacationFromDate.isBefore(otherVacationToDate)
-            || (vacationFromDate.equals(otherVacationToDate)
-                && vacationFromTime.compareTo(otherVacationToTime) <= 0);
+        fromDate.isBefore(other.toDate)
+            || (fromDate.equals(other.toDate) && fromTime.compareTo(other.toTime) <= 0);
 
     boolean vacationToAfterOtherVacationFrom =
-        vacationToDate.isAfter(otherVacationFromDate)
-            || (vacationToDate.equals(otherVacationFromDate)
-                && vacationToTime.compareTo(otherVacationFromTime) >= 0);
+        toDate.isAfter(other.fromDate)
+            || (toDate.equals(other.fromDate) && toTime.compareTo(other.fromTime) >= 0);
 
     boolean vacationToBeforeOtherVacationTo =
-        vacationToDate.isBefore(otherVacationToDate)
-            || (vacationToDate.equals(otherVacationToDate)
-                && vacationToTime.compareTo(otherVacationToTime) <= 0);
+        toDate.isBefore(other.toDate)
+            || (toDate.equals(other.toDate) && toTime.compareTo(other.toTime) <= 0);
 
     boolean vacationCollidesWithOtherVacation =
         (vacationFromAfterOtherVacationFrom && vacationFromBeforeOtherVacationTo)
             || (vacationToAfterOtherVacationFrom && vacationToBeforeOtherVacationTo)
-            || (vacationFromBeforeOtherVacationTo && vacationToAfterOtherVacationFrom)
-            || (vacationFromAfterOtherVacationFrom && vacationToBeforeOtherVacationTo);
+            || (fromDate.isBefore(other.toDate) && toDate.isAfter(other.fromDate))
+            || (fromDate.isAfter(other.fromDate) && toDate.isBefore(other.toDate));
 
     return vacationCollidesWithOtherVacation;
   }
 
-  @Embeddable
-  public static class VacationId implements Serializable, Comparable<VacationId> {
+  // If vacations has some intersection with the given range
+  public boolean isDuring(LocalDate fromDate, LocalDate toDate) {
 
-    @Column(name = "doctor_id", nullable = false)
-    private Long doctorId;
-
-    @Column(name = "from_date", nullable = false)
-    private LocalDate fromDate;
-
-    @Enumerated(EnumType.ORDINAL)
-    @Column(name = "from_time", nullable = false)
-    private ThirtyMinuteBlock fromTime;
-
-    @Column(name = "to_date", nullable = false)
-    private LocalDate toDate;
-
-    @Enumerated(EnumType.ORDINAL)
-    @Column(name = "to_time", nullable = false)
-    private ThirtyMinuteBlock toTime;
-
-    protected VacationId() {
-      // Just for Hibernate
+    // If the range is before the vacation
+    if (fromDate.isAfter(this.toDate)) {
+      return false;
     }
 
-    protected VacationId(
-        Long doctorId,
+    // If the range is after the vacation
+    if (toDate.isBefore(this.fromDate)) {
+      return false;
+    }
+
+    return true;
+  }
+
+  public Map<LocalDate, List<ThirtyMinuteBlock>> getDatesAndTimes(
+      LocalDate fromDate, LocalDate toDate) {
+    Map<LocalDate, List<ThirtyMinuteBlock>> datesAndTimes = new HashMap<>();
+
+    LocalDate currentDate = this.fromDate.isAfter(fromDate) ? this.fromDate : fromDate;
+    while (!currentDate.isAfter(toDate) && !currentDate.isAfter(this.toDate)) {
+
+      ThirtyMinuteBlock fromBlock =
+          currentDate.equals(this.fromDate) ? fromTime : ThirtyMinuteBlock.BLOCK_00_00;
+
+      ThirtyMinuteBlock toBlock =
+          currentDate.equals(this.toDate) ? toTime : ThirtyMinuteBlock.BLOCK_23_30;
+
+      List<ThirtyMinuteBlock> occupiedBlocks =
+          ThirtyMinuteBlock.fromRange(fromBlock, toBlock).stream()
+              .filter(doctor.getAttendingBlocksForDate(currentDate)::contains)
+              .collect(Collectors.toList());
+
+      if (!occupiedBlocks.isEmpty()) {
+        datesAndTimes.put(currentDate, occupiedBlocks);
+      }
+
+      currentDate = currentDate.plusDays(1);
+    }
+
+    return datesAndTimes;
+  }
+
+  public static class Builder {
+
+    // required
+    private final LocalDate fromDate;
+    private final ThirtyMinuteBlock fromTime;
+    private final LocalDate toDate;
+    private final ThirtyMinuteBlock toTime;
+
+    private Long id;
+    private Doctor doctor;
+
+    public Builder(
         LocalDate fromDate,
         ThirtyMinuteBlock fromTime,
         LocalDate toDate,
         ThirtyMinuteBlock toTime) {
-      this.doctorId = doctorId;
       this.fromDate = fromDate;
       this.fromTime = fromTime;
       this.toDate = toDate;
       this.toTime = toTime;
     }
 
-    public Long getDoctorId() {
-      return doctorId;
+    public Builder id(Long id) {
+      this.id = id;
+      return this;
     }
 
-    public void setDoctorId(Long doctorId) {
-      this.doctorId = doctorId;
+    public Builder doctor(Doctor doctor) {
+      this.doctor = doctor;
+      return this;
     }
 
-    public LocalDate getFromDate() {
-      return fromDate;
-    }
-
-    public void setFromDate(LocalDate fromDate) {
-      this.fromDate = fromDate;
-    }
-
-    public ThirtyMinuteBlock getFromTime() {
-      return fromTime;
-    }
-
-    public void setFromTime(ThirtyMinuteBlock fromTime) {
-      this.fromTime = fromTime;
-    }
-
-    public LocalDate getToDate() {
-      return toDate;
-    }
-
-    public void setToDate(LocalDate toDate) {
-      this.toDate = toDate;
-    }
-
-    public ThirtyMinuteBlock getToTime() {
-      return toTime;
-    }
-
-    public void setToTime(ThirtyMinuteBlock toTime) {
-      this.toTime = toTime;
-    }
-
-    @Override
-    public String toString() {
-      return "VacationId ["
-          + "doctorId="
-          + doctorId
-          + ", fromDate="
-          + fromDate
-          + ", fromTime="
-          + fromTime
-          + ", toDate="
-          + toDate
-          + ", toTime="
-          + toTime
-          + ']';
-    }
-
-    @Override
-    public int hashCode() {
-      final int prime = 31;
-      int result = 1;
-
-      result = prime * result + ((doctorId == null) ? 0 : doctorId.hashCode());
-      result = prime * result + ((fromDate == null) ? 0 : fromDate.hashCode());
-      result = prime * result + ((fromTime == null) ? 0 : fromTime.hashCode());
-      result = prime * result + ((toDate == null) ? 0 : toDate.hashCode());
-      result = prime * result + ((toTime == null) ? 0 : toTime.hashCode());
-
-      return result;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-      if (this == obj) return true;
-      if (!(obj instanceof VacationId)) return false;
-
-      VacationId other = (VacationId) obj;
-
-      return Objects.equals(this.doctorId, other.doctorId)
-          && Objects.equals(this.fromDate, other.fromDate)
-          && Objects.equals(this.fromTime, other.fromTime)
-          && Objects.equals(this.toDate, other.toDate)
-          && Objects.equals(this.toTime, other.toTime);
-    }
-
-    @Override
-    public int compareTo(VacationId other) {
-      int result = this.fromDate.compareTo(other.fromDate);
-
-      if (result == 0) {
-        result = this.fromTime.compareTo(other.fromTime);
-      }
-
-      if (result == 0) {
-        result = this.toDate.compareTo(other.toDate);
-      }
-
-      if (result == 0) {
-        result = this.toTime.compareTo(other.toTime);
-      }
-
-      return result;
+    public Vacation build() {
+      return new Vacation(this);
     }
   }
 }

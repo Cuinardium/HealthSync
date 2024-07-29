@@ -13,6 +13,7 @@ import ar.edu.itba.paw.models.Page;
 import ar.edu.itba.paw.models.Patient;
 import ar.edu.itba.paw.models.Review;
 import java.time.LocalDate;
+import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -60,12 +61,18 @@ public class ReviewServiceImpl implements ReviewService {
     Patient patient = patientService.getPatientById(patientId).get();
 
     Review review =
-        new Review.Builder(doctor, patient, LocalDate.now(), description, (short) rating).build();
+        new Review.Builder(doctor, (short) rating, description, LocalDate.now(), patient).build();
 
     return reviewDao.createReview(review);
   }
 
   // =============== Queries ===============
+
+  @Transactional(readOnly = true)
+  @Override
+  public Optional<Review> getReview(long reviewId) {
+      return reviewDao.getReview(reviewId);
+  }
 
   @Transactional(readOnly = true)
   @Override
@@ -86,7 +93,12 @@ public class ReviewServiceImpl implements ReviewService {
 
   @Transactional(readOnly = true)
   @Override
-  public Page<Review> getReviewsForDoctor(long doctorId, Integer page, Integer pageSize) {
+  public Page<Review> getReviewsForDoctor(long doctorId, Integer page, Integer pageSize)
+      throws DoctorNotFoundException {
+    if (!doctorService.getDoctorById(doctorId).isPresent()) {
+      throw new DoctorNotFoundException();
+    }
+
     return reviewDao.getReviewsForDoctor(doctorId, page, pageSize);
   }
 }

@@ -110,7 +110,7 @@ public class BasicAuthFilter extends OncePerRequestFilter {
     PawAuthUserDetails userDetails =
         (PawAuthUserDetails) userDetailsService.loadUserByUsername(user.getEmail());
     return new UsernamePasswordAuthenticationToken(
-        userDetails.getUsername(), userDetails.getPassword(), userDetails.getAuthorities());
+        userDetails, userDetails.getPassword(), userDetails.getAuthorities());
   }
 
   private String[] getDecodedHeader(String header) {

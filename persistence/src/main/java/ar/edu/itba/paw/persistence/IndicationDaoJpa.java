@@ -5,6 +5,7 @@ import ar.edu.itba.paw.models.Indication;
 import ar.edu.itba.paw.models.Page;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -42,9 +43,7 @@ public class IndicationDaoJpa implements IndicationDao {
     @SuppressWarnings("unchecked")
     final List<Long> idList =
         (List<Long>)
-            nativeQuery
-                .getResultList()
-                .stream()
+            nativeQuery.getResultList().stream()
                 .map(o -> ((Number) o).longValue())
                 .collect(Collectors.toList());
 
@@ -61,5 +60,10 @@ public class IndicationDaoJpa implements IndicationDao {
     List<Indication> content = query.getResultList();
 
     return new Page<>(content, page, count.intValue(), pageSize);
+  }
+
+  @Override
+  public Optional<Indication> getIndication(long id) {
+    return Optional.ofNullable(em.find(Indication.class, id));
   }
 }

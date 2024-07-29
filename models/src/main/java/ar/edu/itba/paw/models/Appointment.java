@@ -59,26 +59,7 @@ public class Appointment {
     // Solo para hibernate
   }
 
-  public Appointment(
-      Long id,
-      Patient patient,
-      Doctor doctor,
-      LocalDate date,
-      ThirtyMinuteBlock timeBlock,
-      AppointmentStatus status,
-      String description,
-      String cancelDesc) {
-    this.id = id;
-    this.patient = patient;
-    this.doctor = doctor;
-    this.date = date;
-    this.timeBlock = timeBlock;
-    this.status = status;
-    this.description = description;
-    this.cancelDesc = cancelDesc;
-  }
-
-  public Appointment(Builder builder) {
+  private Appointment(Builder builder) {
     this.id = builder.id;
     this.patient = builder.patient;
     this.doctor = builder.doctor;
@@ -200,11 +181,11 @@ public class Appointment {
 
   public static class Builder {
     // required
-    private Patient patient;
-    private Doctor doctor;
-    private LocalDate date;
-    private ThirtyMinuteBlock timeBlock;
-    private String description;
+    private final Patient patient;
+    private final Doctor doctor;
+    private final LocalDate date;
+    private final ThirtyMinuteBlock timeBlock;
+    private final String description;
 
     // default
     private Long id = null;

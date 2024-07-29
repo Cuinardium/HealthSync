@@ -1,0 +1,2466 @@
+openapi: 3.0.1
+info:
+  title: HealthSync API
+  version: 1.0.0
+
+tags:
+  - name: doctors
+  - name: vacations
+  - name: reviews
+  - name: patients
+  - name: appointments
+  - name: indications
+  - name: specialties
+  - name: healthinsurances
+  - name: cities
+  - name: notifications
+  - name: tokens
+
+paths:
+  /appointments:
+    get:
+      operationId: getAppointments
+      description: Gets a page of the user's appointments
+      tags:
+        - appointments
+      parameters:
+        - name: userId
+          in: query
+          required: true
+          schema:
+            minimum: 0
+            type: integer
+            format: int64
+        - name: status
+          in: query
+          schema:
+            type: string
+            enum: [CONFIRMED, CANCELLED, COMPLETED]
+          example: COMPLETED
+        - name: page
+          in: query
+          schema:
+            minimum: 1
+            type: integer
+            format: int32
+            default: 1
+        - name: pageSize
+          in: query
+          schema:
+            minimum: 1
+            type: integer
+            format: int32
+            default: 10
+      responses:
+        '200':
+          description: Returns appointment Page
+          content:
+            application/vnd.appointment-list.v1+json:
+              schema:
+                type: array
+                items:
+                  allOf:
+                    - $ref: '#/components/schemas/Appointment'
+        '204':
+          description: No content for specified page
+        '400':
+          description: Invalid request
+          content:
+            application/vnd.validation-error-list.v1+json:
+              schema:
+                type: array
+                items:
+                  allOf:
+                    - $ref: '#/components/schemas/ValidationError'
+        '403':
+          description: Only the user can see its appointments
+          content:
+            application/vnd.error.v1+json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/Error'
+
+    post:
+      operationId: createAppointment
+      description: Creates an appointment
+      tags:
+        - appointments
+      requestBody:
+        content:
+          application/vnd.appointment.v1+json:
+            schema:
+              $ref : '#/components/schemas/AppointmentForm'
+      responses:
+        '201':
+          description: Appointment created successfully
+        '400':
+          description: Invalid request
+          content:
+            application/vnd.validation-error-list.v1+json:
+              schema:
+                type: array
+                items:
+                  allOf:
+                    - $ref: '#/components/schemas/ValidationError'
+        '403':
+          description: Only patients can request appointments
+          content:
+            application/vnd.error.v1+json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/Error'
+        '404':
+          description: Doctor not found
+          content:
+            application/vnd.error.v1+json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/Error'
+        '409':
+          description: Doctor not available at specified date and time
+          content:
+            application/vnd.error.v1+json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/Error'
+  /appointments/{appointmentId}:
+    get:
+      operationId: getAppointment
+      description: Returns the appointment
+      tags:
+        - appointments
+      parameters:
+        - name: appointmentId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Returns the appointment
+          content:
+            application/vnd.appointment.v1+json:
+              schema:
+                allOf:
+                  - $ref : '#/components/schemas/Appointment'
+        '403':
+          description: Only the users involved in the appointment can see it
+          content:
+            application/vnd.error.v1+json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/Error'
+        '404':
+          description: Appointment not found
+          content:
+            application/vnd.error.v1+json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/Error'
+
+    patch:
+      operationId: cancelAppointment
+      description: Cancels an appointment
+      tags:
+        - appointments
+      parameters:
+        - name: appointmentId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        content:
+          application/vnd.appointment-cancel.v1+json:
+            schema:
+              $ref: '#/components/schemas/CancelAppointmentForm'
+      responses:
+        '200':
+          description: Appointment cancelled
+          content:
+            application/vnd.appointment.v1+json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/Appointment'
+              example:
+                {
+                  "cancelDescription": "Tengo examen ese dia, mas adelante agendo otro turno",
+                  "date": "2023-05-20",
+                  "description": "Me duele el pie",
+                  "doctor": "http://old-pawserver.it.itba.edu.ar/paw-2023a-02/api/doctors/20",
+                  "id": 12,
+                  "patient": "http://old-pawserver.it.itba.edu.ar/paw-2023a-02/api/patients/21",
+                  "self": "http://old-pawserver.it.itba.edu.ar/paw-2023a-02/api/appointments/12",
+                  "status": "CANCELLED",
+                  "timeBlock": "10:30"
+                }
+        '403':
+          description: Only the users involved in the appointment can cancel it
+          content:
+            application/vnd.error.v1+json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/Error'
+        '404':
+          description: Appointment not found
+          content:
+            application/vnd.error.v1+json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/Error'
+        '409':
+          description: Appointment is in an inmutable state
+          content:
+            application/vnd.error.v1+json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/Error'
+  /cities:
+    get:
+      operationId: listCities
+      description: Returns a page of used cities
+      tags:
+        - cities
+      parameters:
+        - name: page
+          in: query
+          schema:
+            minimum: 1
+            type: integer
+            format: int32
+            default: 1
+        - name: pageSize
+          in: query
+          schema:
+            minimum: 1
+            type: integer
+            format: int32
+            default: 10
+        - name: sort
+          in: query
+          schema:
+            enum: [popularity, alphabetical]
+            type: string
+            default: popularity
+        - name: order
+          in: query
+          schema:
+            enum: [asc, desc]
+            type: string
+            default: desc
+      responses:
+        '200':
+          description: Returned city page
+          content:
+            application/vnd.city-list.v1+json:
+              schema:
+                type: array
+                items:
+                  allOf:
+                    - $ref : '#/components/schemas/City'
+                example:
+                  [
+                    {
+                      "name": "CABA",
+                      "popularity": 11
+                    },
+                    {
+                      "name": "Cordoba",
+                      "popularity": 1
+                    },
+                    {
+                      "name": "Vicente López",
+                      "popularity": 1
+                    },
+                    {
+                      "name": "Zárate",
+                      "popularity": 1
+                    },
+                    {
+                      "name": "San Isidro",
+                      "popularity": 1
+                    },
+                    {
+                      "name": "Boulogne",
+                      "popularity": 1
+                    },
+                    {
+                      "name": "Benavidez",
+                      "popularity": 1
+                    },
+                    {
+                      "name": "Mendoza",
+                      "popularity": 1
+                    }
+                  ]
+        '204':
+          description: No content for specified page
+  /doctors:
+    get:
+      operationId: listDoctors
+      description: Returns a filtered page of doctors
+      tags:
+        - doctors
+      parameters:
+        - name: page
+          in: query
+          schema:
+            minimum: 1
+            type: integer
+            format: int32
+            default: 1
+        - name: pageSize
+          in: query
+          schema:
+            minimum: 1
+            type: integer
+            format: int32
+            default: 10
+        - name: name
+          in: query
+          schema:
+            type: string
+            example: John Doe
+        - name: date
+          in: query
+          schema:
+            format: date
+            type: string
+            example: 2024-07-25
+        - name: fromTime
+          in: query
+          schema:
+            allOf:
+              - $ref : '#/components/schemas/TimeBlock'
+        - name: toTime
+          in: query
+          schema:
+            allOf:
+              - $ref : '#/components/schemas/TimeBlock'
+        - name: specialty
+          in: query
+          schema:
+            uniqueItems: true
+            type: array
+            items:
+              allOf:
+                - $ref : '#/components/schemas/Specialty'
+        - name: city
+          in: query
+          schema:
+            uniqueItems: true
+            type: array
+            items:
+              type: string
+        - name: healthInsurance
+          in: query
+          schema:
+            uniqueItems: true
+            type: array
+            items:
+              allOf:
+                - $ref : '#/components/schemas/HealthInsurance'
+        - name: minRating
+          in: query
+          schema:
+            minimum: 1
+            maximum: 5
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: Returned page of doctors
+          content:
+            application/vnd.doctor-list.v1+json:
+              schema:
+                type: array
+                items:
+                  allOf:
+                    - $ref : '#/components/schemas/Doctor'
+        '204':
+          description: No content for specified page and filters
+    post:
+      operationId: createDoctor
+      description: Creates a doctor
+      tags:
+        - doctors
+      requestBody:
+        content:
+          application/vnd.doctor.v1+json:
+            schema:
+              $ref: '#/components/schemas/DoctorRegisterForm'
+      responses:
+        '201':
+          description: Doctor Created
+        '400':
+          description: Invalid request
+          content:
+            application/vnd.validation-error-list.v1+json:
+              schema:
+                type: array
+                items:
+                  allOf:
+                    - $ref: '#/components/schemas/ValidationError'
+        '409':
+          description: Email already in use
+          content:
+            application/vnd.error.v1+json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/Error'
+  /doctors/{doctorId}:
+    get:
+      operationId: getDoctor
+      description: Gets the doctor
+      tags:
+        - doctors
+      parameters:
+        - name: doctorId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Returns the doctor
+          content:
+            application/vnd.doctor.v1+json:
+              schema:
+                allOf:
+                  - $ref : '#/components/schemas/Doctor'
+        '404':
+          description: Doctor not found
+          content:
+            application/vnd.error.v1+json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/Error'
+    put:
+      operationId: updateDoctor
+      description: Updates the doctor
+      tags:
+        - doctors
+      parameters:
+        - name: doctorId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              allOf:
+                - $ref : '#/components/schemas/DoctorEditForm'
+      responses:
+        '204':
+          description: Doctor updated successfully
+        '400':
+          description: Invalid request
+          content:
+            application/vnd.validation-error-list.v1+json:
+              schema:
+                type: array
+                items:
+                  allOf:
+                    - $ref: '#/components/schemas/ValidationError'
+        '403':
+          description: Only the doctor can update itself
+          content:
+            application/vnd.error.v1+json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/Error'
+        '404':
+          description: Doctor not found
+          content:
+            application/vnd.error.v1+json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/Error'
+        '409':
+          description: Email already in use
+          content:
+            application/vnd.error.v1+json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/Error'
+  /doctors/{doctorId}/attendinghours:
+    get:
+      operationId: getAttendingHours
+      description: Gets the doctor's attending hours
+      tags:
+        - doctors
+      parameters:
+        - name: doctorId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Returns the doctor's attending hours
+          content:
+            application/vnd.attending-hours-list.v1+json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AttendingHoursForm'
+                example:
+                  [
+                    {
+                      "day": "MONDAY",
+                      "hours": [
+                        "11:00",
+                        "11:30",
+                        "12:00",
+                        "12:30",
+                        "13:00",
+                        "13:30"
+                      ]
+                    },
+                    {
+                      "day": "TUESDAY",
+                      "hours": [
+                        "11:00",
+                        "11:30",
+                        "12:00",
+                        "12:30",
+                        "13:00",
+                        "13:30"
+                      ]
+                    },
+                    {
+                      "day": "WEDNESDAY",
+                      "hours": [
+                        "11:00",
+                        "11:30",
+                        "12:00",
+                        "12:30",
+                        "13:00",
+                        "13:30"
+                      ]
+                    },
+                    {
+                      "day": "THURSDAY",
+                      "hours": [
+                        "11:00",
+                        "11:30",
+                        "12:00",
+                        "12:30",
+                        "13:00",
+                        "13:30"
+                      ]
+                    },
+                    {
+                      "day": "FRIDAY",
+                      "hours": [
+                        "11:00",
+                        "11:30",
+                        "12:00",
+                        "12:30",
+                        "13:00",
+                        "13:30"
+                      ]
+                    },
+                    {
+                      "day": "SATURDAY",
+                      "hours": [
+                        "11:00",
+                        "13:30",
+                        "14:00"
+                      ]
+                    },
+                    {
+                      "day": "SUNDAY",
+                      "hours": []
+                    }
+                  ]
+        '404':
+          description: Doctor not found
+          content:
+            application/vnd.error.v1+json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/Error'
+
+
+    put:
+      operationId: updateAttendingHours
+      description: Updates the doctors attending hours
+      tags:
+        - doctors
+      parameters:
+        - name: doctorId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        content:
+          application/vnd.attending-hours-list.v1+json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/AttendingHoursForm'
+              example:
+                [
+                  {
+                    "day": "MONDAY",
+                    "hours": [
+                      "11:00",
+                      "11:30",
+                      "12:00",
+                      "12:30",
+                      "13:00",
+                      "13:30"
+                    ]
+                  },
+                  {
+                    "day": "TUESDAY",
+                    "hours": [
+                      "11:00",
+                      "11:30",
+                      "12:00",
+                      "12:30",
+                      "13:00",
+                      "13:30"
+                    ]
+                  },
+                  {
+                    "day": "WEDNESDAY",
+                    "hours": [
+                      "11:00",
+                      "11:30",
+                      "12:00",
+                      "12:30",
+                      "13:00",
+                      "13:30"
+                    ]
+                  },
+                  {
+                    "day": "THURSDAY",
+                    "hours": [
+                      "11:00",
+                      "11:30",
+                      "12:00",
+                      "12:30",
+                      "13:00",
+                      "13:30"
+                    ]
+                  },
+                  {
+                    "day": "FRIDAY",
+                    "hours": [
+                      "11:00",
+                      "11:30",
+                      "12:00",
+                      "12:30",
+                      "13:00",
+                      "13:30"
+                    ]
+                  },
+                  {
+                    "day": "SATURDAY",
+                    "hours": [
+                      "11:00",
+                      "13:30",
+                      "14:00"
+                    ]
+                  },
+                  {
+                    "day": "SUNDAY",
+                    "hours": []
+                  }
+                ]
+      responses:
+        '204':
+          description: Attending hours updated successfully
+        '400':
+          description: Invalid request
+          content:
+            application/vnd.validation-error-list.v1+json:
+              schema:
+                type: array
+                items:
+                  allOf:
+                    - $ref: '#/components/schemas/ValidationError'
+        '403':
+          description: Only the doctor can update its attending hours
+          content:
+            application/vnd.error.v1+json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/Error'
+        '404':
+          description: Doctor not found
+          content:
+            application/vnd.error.v1+json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/Error'
+  /doctors/{doctorId}/occupiedhours:
+    get:
+      operationId: getOccupiedHours
+      description: Gets a page of the occupied hours for the doctor per day. The days queried defaults from today to 6 months from today. The doctor can be occupied due to a vacation or due to booked appointments.
+      tags:
+        - doctors
+      parameters:
+        - name: doctorId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: page
+          in: query
+          schema:
+            minimum: 1
+            type: integer
+            format: int32
+            default: 1
+        - name: pageSize
+          in: query
+          schema:
+            minimum: 1
+            type: integer
+            format: int32
+            default: 10
+        - name: from
+          in: query
+          schema:
+            format: date
+            type: string
+            default: today
+        - name: to
+          in: query
+          schema:
+            format: date
+            type: string
+            default: max
+      responses:
+        '200':
+          description: Returns a page of occupied hours
+          content:
+            application/vnd.occupied-hours-list.v1+json:
+              schema:
+                type: array
+                items:
+                  allOf:
+                    - $ref : '#/components/schemas/OccupiedHours'
+        '204':
+          description: No content for specified page
+        '400':
+          description: Invalid request
+          content:
+            application/vnd.validation-error-list.v1+json:
+              schema:
+                type: array
+                items:
+                  allOf:
+                    - $ref: '#/components/schemas/ValidationError'
+        '404':
+          description: Doctor not found
+          content:
+            application/vnd.error.v1+json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/Error'
+  /healthinsurances/{id}:
+    get:
+      operationId: getHealthInsurance
+      description: Gets the health insurance
+      tags:
+        - healthinsurances
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: Returned the health insurance
+          content:
+            application/vnd.health-insurance.v1+json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/HealthInsuranceResponse'
+        '404':
+          description: Health insurance not found
+          content:
+            application/vnd.error.v1+json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/Error'
+  /healthinsurances:
+    get:
+      operationId: listHealthInsurances
+      description: Returns a page of available health insurances
+      tags:
+        - healthinsurances
+      parameters:
+        - name: page
+          in: query
+          schema:
+            minimum: 1
+            type: integer
+            format: int32
+            default: 1
+        - name: pageSize
+          in: query
+          schema:
+            minimum: 1
+            type: integer
+            format: int32
+            default: 10
+      responses:
+        '200':
+          description: Returned health insurance page
+          content:
+            application/vnd.health-insurance-list.v1+json:
+              schema:
+                type: array
+                items:
+                  allOf:
+                    - $ref: '#/components/schemas/HealthInsuranceResponse'
+        '204':
+          description: No content for specified page
+  /appointments/{appointmentId}/indications:
+    get:
+      operationId: listIndications
+      description: Returns a page of the appointment's indications
+      tags:
+        - indications
+      parameters:
+        - name: appointmentId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: page
+          in: query
+          schema:
+            minimum: 1
+            type: integer
+            format: int32
+            default: 1
+        - name: pageSize
+          in: query
+          schema:
+            minimum: 1
+            type: integer
+            format: int32
+            default: 10
+      responses:
+        '200':
+          description: Returned indication page
+          content:
+            application/vnd.indication-list.v1+json:
+              schema:
+                type: array
+                items:
+                  allOf:
+                    - $ref : '#/components/schemas/Indication'
+        '204':
+          description: No content for specified page
+        '403':
+          description: Only the patient or the doctor can see the appointment's indications
+          content:
+            application/vnd.error.v1+json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/Error'
+        '404':
+          description: Appointment not found
+          content:
+            application/vnd.error.v1+json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/Error'
+    post:
+      operationId: createIndication
+      description: Creates an indication for the appointment
+      tags:
+        - indications
+      parameters:
+        - name: appointmentId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/IndicationForm'
+            encoding:
+              file:
+                contentType: image/png, image/jpeg, application/pdf
+      responses:
+        '201':
+          description: Created indication
+        '400':
+          description: Invalid request
+          content:
+            application/vnd.validation-error-list.v1+json:
+              schema:
+                type: array
+                items:
+                  allOf:
+                    - $ref: '#/components/schemas/ValidationError'
+        '403':
+          description: Only the patient or the doctor can create an indication for the appointment
+          content:
+            application/vnd.error.v1+json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/Error'
+        '404':
+          description: Appointment not found
+          content:
+            application/vnd.error.v1+json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/Error'
+  /appointments/{appointmentId}/indications/{indicationId}:
+    get:
+      operationId: getIndication
+      description: Gets the indication
+      tags:
+        - indications
+      parameters:
+        - name: appointmentId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: indicationId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Returned indication
+          content:
+            application/vnd.indication.v1+json:
+              schema:
+                allOf:
+                  - $ref : '#/components/schemas/Indication'
+        '403':
+          description: Only the patient or the doctor can see the indication of the appointment
+          content:
+            application/vnd.error.v1+json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/Error'
+        '404':
+          description: Indication or appointment not found
+          content:
+            application/vnd.error.v1+json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/Error'
+  /appointments/{appointmentId}/files/{fileId}:
+    get:
+      operationId: getFile
+      description: Gets the file
+      tags:
+        - indications
+      parameters:
+        - name: appointmentId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: fileId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Returned file
+          headers:
+            Content-Disposition:
+              schema:
+                type: string
+                example: 'attachment; filename="estudio.pdf"'
+              description: The name of the file
+          content:
+            image/jpeg: {}
+            image/png: {}
+            application/pdf: {}
+            application/octet-stream: {}
+        '404':
+          description: File not found
+          content:
+            application/vnd.error.v1+json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/Error'
+  /notifications/{notificationId}:
+    get:
+      operationId: getNotification
+      description: Gets the notification
+      tags:
+        - notifications
+      parameters:
+        - name: notificationId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Returned notification
+          content:
+            application/vnd.notification.v1+json:
+              schema:
+                allOf:
+                  - $ref : '#/components/schemas/Notification'
+        '403':
+          description: Only the user can see its notification
+          content:
+            application/vnd.error.v1+json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/Error'
+        '404':
+          description: Notification not found
+          content:
+            application/vnd.error.v1+json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/Error'
+    delete:
+      operationId: deleteNotification
+      description: Deletes the notification
+      tags:
+        - notifications
+      parameters:
+        - name: notificationId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '204':
+          description: Ok
+        '403':
+          description: Only the user can delete its notification
+          content:
+            application/vnd.error.v1+json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/Error'
+  /notifications:
+    get:
+      operationId: getNotifications
+      description: Gets a page of notifications for the user
+      tags:
+        - notifications
+      parameters:
+        - name: userId
+          in: query
+          required: true
+          schema:
+            minimum: 0
+            type: integer
+            format: int64
+        - name: page
+          in: query
+          schema:
+            minimum: 1
+            type: integer
+            format: int32
+            default: 1
+        - name: pageSize
+          in: query
+          schema:
+            minimum: 1
+            type: integer
+            format: int32
+            default: 10
+      responses:
+        '200':
+          description: Returns page of notifications
+          content:
+            application/vnd.notifications-list.v1+json:
+              schema:
+                type: array
+                items:
+                  allOf:
+                    - $ref : '#/components/schemas/Notification'
+        '204':
+          description: No content for notification page
+        '403':
+          description: Only the user can see its notifications
+          content:
+            application/vnd.error.v1+json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/Error'
+  /patients:
+    post:
+      operationId: createPatient
+      description: Creates a patient
+      tags:
+        - patients
+      requestBody:
+        content:
+          application/vnd.patient.v1+json:
+            schema:
+              $ref: '#/components/schemas/PatientRegisterForm'
+      responses:
+        '201':
+          description: Patient Created
+        '400':
+          description: Invalid request
+          content:
+            application/vnd.validation-error-list.v1+json:
+              schema:
+                type: array
+                items:
+                  allOf:
+                    - $ref: '#/components/schemas/ValidationError'
+        '409':
+          description: Email already in use
+          content:
+            application/vnd.error.v1+json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/Error'
+  /patients/{patientId}:
+    get:
+      operationId: getPatient
+      description: Gets the patient
+      tags:
+        - patients
+      parameters:
+        - name: patientId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Returned patient
+          content:
+            application/vnd.patient.v1+json:
+              schema:
+                allOf:
+                  - $ref : '#/components/schemas/Patient'
+        '403':
+          description: Only the patient or a doctor that had an appointment with the patient can see the data
+          content:
+            application/vnd.error.v1+json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/Error'
+    put:
+      operationId: updatePatient
+      description: Updates a patient
+      tags:
+        - patients
+      parameters:
+        - name: patientId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              allOf:
+                - $ref : '#/components/schemas/PatientEditForm'
+      responses:
+        '204':
+          description: Patient updated
+        '400':
+          description: Invalid request
+          content:
+            application/vnd.validation-error-list.v1+json:
+              schema:
+                type: array
+                items:
+                  allOf:
+                    - $ref: '#/components/schemas/ValidationError'
+        '403':
+          description: Only the patient can update itself
+          content:
+            application/vnd.error.v1+json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/Error'
+        '404':
+          description: Patient not found
+          content:
+            application/vnd.error.v1+json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/Error'
+        '409':
+          description: Email already in use
+          content:
+            application/vnd.error.v1+json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/Error'
+  /doctors/{doctorId}/reviews:
+    get:
+      operationId: listReviews
+      description: Paginated list of reviews for the doctor
+      tags:
+        - reviews
+      parameters:
+        - name: doctorId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: page
+          in: query
+          schema:
+            minimum: 1
+            type: integer
+            format: int32
+            default: 1
+        - name: pageSize
+          in: query
+          schema:
+            minimum: 1
+            type: integer
+            format: int32
+            default: 10
+      responses:
+        '200':
+          description: Review page
+          content:
+            application/vnd.reviews-list.v1+json:
+              schema:
+                type: array
+                items:
+                  allOf:
+                    - $ref : '#/components/schemas/Review'
+        '204':
+          description: No content for page
+        '404':
+          description: Review or doctor not found
+          content:
+            application/vnd.error.v1+json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/Error'
+    post:
+      operationId: createReview
+      description: Creates a review for the doctor
+      tags:
+        - reviews
+      parameters:
+        - name: doctorId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        content:
+          application/vnd.review.v1+json:
+            schema:
+              $ref: '#/components/schemas/ReviewForm'
+      responses:
+        '201':
+          description: Review Created
+        '400':
+          description: Invalid request
+          content:
+            application/vnd.validation-error-list.v1+json:
+              schema:
+                type: array
+                items:
+                  allOf:
+                    - $ref: '#/components/schemas/ValidationError'
+        '403':
+          description: Only a user that had an appointment with the doctor can review
+          content:
+            application/vnd.error.v1+json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/Error'
+        '404':
+          description: Doctor not found
+          content:
+            application/vnd.error.v1+json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/Error'
+  /doctors/{doctorId}/reviews/{reviewId}:
+    get:
+      operationId: getReview
+      description: Gets the review
+      tags:
+        - reviews
+      parameters:
+        - name: doctorId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: reviewId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Review
+          content:
+            application/vnd.review.v1+json:
+              schema:
+                allOf:
+                  - $ref : '#/components/schemas/Review'
+        '404':
+          description: Review or doctor not found
+          content:
+            application/vnd.error.v1+json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/Error'
+  /specialties/{id}:
+    get:
+      operationId: getSpecialty
+      description: Gets the specialty
+      tags:
+        - specialties
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: Specialty
+          content:
+            application/vnd.specialty.v1+json:
+              schema:
+                allOf:
+                  - $ref : '#/components/schemas/SpecialtyResponse'
+        '404':
+          description: Specialty not found
+          content:
+            application/vnd.error.v1+json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/Error'
+  /specialties:
+    get:
+      operationId: listSpecialties
+      description: Returns a page of Specialties
+      tags:
+        - specialties
+      parameters:
+        - name: page
+          in: query
+          schema:
+            minimum: 1
+            type: integer
+            format: int32
+            default: 1
+        - name: pageSize
+          in: query
+          schema:
+            minimum: 1
+            type: integer
+            format: int32
+            default: 10
+        - name: sort
+          in: query
+          schema:
+            enum: [popularity, standard]
+            type: string
+            default: standard
+        - name: order
+          in: query
+          schema:
+            enum: [asc, desc]
+            type: string
+            default: desc
+      responses:
+        '200':
+          description: Page of specialties
+          content:
+            application/vnd.specialty-list.v1+json:
+              schema:
+                type: array
+                items:
+                  allOf:
+                    - $ref: '#/components/schemas/SpecialtyResponse'
+        '204':
+          description: No content for page
+  /tokens/verification:
+    post:
+      operationId: resendVerificationToken
+      description: Resends the verification token
+      tags:
+        - tokens
+      requestBody:
+        content:
+          application/vnd.email.v1+json:
+            schema:
+              $ref: '#/components/schemas/EmailForm'
+      responses:
+        '202':
+          description: Verification token sent
+        '400':
+          description: Invalid request
+          content:
+            application/vnd.validation-error-list.v1+json:
+              schema:
+                type: array
+                items:
+                  allOf:
+                    - $ref: '#/components/schemas/ValidationError'
+        '404':
+          description: User or not found or already verified
+          content:
+            application/vnd.error.v1+json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/Error'
+  /tokens/verification/{token}:
+    patch:
+      operationId: verifyUser
+      description: Verifies user with specified token
+      tags:
+        - tokens
+      parameters:
+        - name: token
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/vnd.email.v1+json:
+            schema:
+              $ref: '#/components/schemas/EmailForm'
+      responses:
+        '204':
+          description: User verified
+        '400':
+          description: Invalid request
+          content:
+            application/vnd.validation-error-list.v1+json:
+              schema:
+                type: array
+                items:
+                  allOf:
+                    - $ref: '#/components/schemas/ValidationError'
+        '404':
+          description: User or token not found or token not linked to email
+          content:
+            application/vnd.error.v1+json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/Error'
+        '410':
+          description: Token expired
+          content:
+            application/vnd.error.v1+json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/Error'
+  /doctors/{doctorId}/vacations:
+    get:
+      operationId: listVacations
+      description: Paginated list of vacations
+      tags:
+        - vacations
+      parameters:
+        - name: doctorId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: page
+          in: query
+          schema:
+            minimum: 1
+            type: integer
+            format: int32
+            default: 1
+        - name: pageSize
+          in: query
+          schema:
+            minimum: 1
+            type: integer
+            format: int32
+            default: 10
+      responses:
+        '200':
+          description: Page of vacations
+          content:
+            application/vnd.vacation-list.v1+json:
+              schema:
+                type: array
+                items:
+                  allOf:
+                    - $ref: '#/components/schemas/Vacation'
+        '204':
+          description: No content for page
+        '403':
+          description: Only the doctor can create its vacation
+          content:
+            application/vnd.error.v1+json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/Error'
+        '404':
+          description: Doctor not found
+          content:
+            application/vnd.error.v1+json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/Error'
+    post:
+      operationId: createVacation
+      description: Creates a vacation
+      tags:
+        - vacations
+      parameters:
+        - name: doctorId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        content:
+          application/vnd.vacation-form.v1+json:
+            schema:
+              $ref: '#/components/schemas/DoctorVacationForm'
+      responses:
+        '201':
+          description: Created the vacation
+        '400':
+          description: Invalid request
+          content:
+            application/vnd.validation-error-list.v1+json:
+              schema:
+                type: array
+                items:
+                  allOf:
+                    - $ref: '#/components/schemas/ValidationError'
+        '403':
+          description: Only the doctor can create its vacation
+          content:
+            application/vnd.error.v1+json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/Error'
+        '404':
+          description: Doctor not found
+          content:
+            application/vnd.error.v1+json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/Error'
+        '409':
+          description: There already was a vaction in the specified range
+          content:
+            application/vnd.error.v1+json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/Error'
+
+  /doctors/{doctorId}/vacations/{vacationId}:
+    get:
+      operationId: getVacation
+      description: Get a vacation
+      tags:
+        - vacations
+      parameters:
+        - name: doctorId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: vacationId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Returns the vacation
+          content:
+            application/vnd.vacation.v1+json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/Vacation'
+        '403':
+          description: Only the doctor can see its vacation
+          content:
+            application/vnd.error.v1+json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/Error'
+        '404':
+          description: Either doctor or vacation does not exist
+          content:
+            application/vnd.error.v1+json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/Error'
+    delete:
+      operationId: deleteVacation
+      description: Delete a vacation
+      tags:
+        - vacations
+      parameters:
+        - name: doctorId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: vacationId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '204':
+          description: Ok
+        '403':
+          description: Only the doctor can delete its vacation
+          content:
+            application/vnd.error.v1+json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/Error'
+components:
+  schemas:
+    CancelAppointmentForm:
+      required:
+        - description
+        - status
+      type: object
+      properties:
+        status:
+          pattern: CANCELLED
+          type: string
+        description:
+          maxLength: 1000
+          minLength: 1
+          type: string
+          example: 'Tengo examen ese dia, mas adelante agendo otro turno'
+    DoctorRegisterForm:
+      required:
+        - address
+        - city
+        - confirmPassword
+        - email
+        - healthInsurances
+        - lastname
+        - name
+        - password
+        - specialty
+      type: object
+      properties:
+        password:
+          maxLength: 50
+          minLength: 4
+          pattern: '[a-zA-Z0-9]+'
+          type: string
+          example: 'johndoesecret1234'
+        confirmPassword:
+          maxLength: 50
+          minLength: 4
+          pattern: '[a-zA-Z0-9]+'
+          type: string
+          example: 'johndoesecret1234'
+        name:
+          maxLength: 50
+          minLength: 1
+          pattern: '[a-zA-Z ñÑáÁéÉíÍóÓúÚ]+'
+          type: string
+          example: 'john'
+        lastname:
+          maxLength: 50
+          minLength: 1
+          pattern: '[a-zA-Z ñÑáÁéÉíÍóÓúÚ]+'
+          type: string
+          example: 'doe'
+        email:
+          maxLength: 50
+          minLength: 1
+          pattern: '[a-zA-Z0-9.+-ñÑ]+@[a-zA-Z0-9.-]+(.com|.com.ar|.edu.ar)'
+          type: string
+          example: 'john@gmail.con'
+        healthInsurance:
+          type: array
+          items:
+            allOf:
+              - $ref: '#/components/schemas/HealthInsurance'
+          example: ['OSDE', 'OMINT']
+        city:
+          maxLength: 20
+          minLength: 1
+          pattern: '[a-zA-Z0-9. ñÑáÁéÉíÍóÓúÚ]+'
+          type: string
+          example: 'CABA'
+        address:
+          maxLength: 100
+          minLength: 1
+          pattern: '[a-zA-Z0-9. ñÑáÁéÉíÍóÓúÚ]+'
+          type: string
+          example: 'San Martin 202'
+        specialty:
+          allOf:
+            - $ref: '#/components/schemas/Specialty'
+    DoctorEditForm:
+      required:
+        - email
+        - healthInsurance
+        - lastname
+        - locale
+        - name
+        - specialty
+        - address
+        - city
+      type: object
+      properties:
+        image:
+          type: string
+          format: binary
+        name:
+          maxLength: 50
+          minLength: 1
+          pattern: '[a-zA-Z ñÑáÁéÉíÍóÓúÚ]+'
+          type: string
+          example: 'juan'
+        lastname:
+          maxLength: 50
+          minLength: 1
+          pattern: '[a-zA-Z ñÑáÁéÉíÍóÓúÚ]+'
+          type: string
+          example: 'doe'
+        email:
+          maxLength: 50
+          minLength: 1
+          pattern: '[a-zA-Z0-9.+-ñÑ]+@[a-zA-Z0-9.-]+(.com|.com.ar|.edu.ar)'
+          type: string
+          example: 'juan@gmail.com'
+        locale:
+          type: string
+          example: 'es'
+        healthInsurance:
+          type: array
+          items:
+            allOf:
+              - $ref: '#/components/schemas/HealthInsurance'
+          example: ['OSDE', 'OMINT']
+        city:
+          maxLength: 20
+          minLength: 1
+          pattern: '[a-zA-Z0-9. ñÑáÁéÉíÍóÓúÚ]+'
+          type: string
+          example: 'CABA'
+        address:
+          maxLength: 100
+          minLength: 1
+          pattern: '[a-zA-Z0-9. ñÑáÁéÉíÍóÓúÚ]+'
+          type: string
+          example: 'San Martin 202'
+        specialty:
+          allOf:
+            - $ref: '#/components/schemas/Specialty'
+    AppointmentForm:
+      type: object
+      properties:
+        date:
+          type: string
+          format: date
+          example: "2023-08-15"
+        timeBlock:
+          allOf:
+            - $ref : '#/components/schemas/TimeBlock'
+          example: "10:00"
+        description:
+          type: string
+          minLength: 1
+          maxLength: 100
+          example: "Control rutinario"
+        doctorId:
+          type: integer
+          format: int64
+          example: 123
+    AttendingHoursForm:
+      required:
+        - day
+        - hours
+      type: object
+      properties:
+        day:
+          type: string
+          enum:
+            - MONDAY
+            - TUESDAY
+            - WEDNESDAY
+            - FRIDAY
+            - SATURDAY
+            - SUNDAY
+        hours:
+          type: array
+          items:
+            allOf:
+              - $ref: '#/components/schemas/TimeBlock'
+    IndicationForm:
+      type: object
+      required:
+        - indications
+      properties:
+        indications:
+          type: string
+        file:
+          type: string
+          format: binary
+    PatientRegisterForm:
+      required:
+        - confirmPassword
+        - email
+        - healthInsurance
+        - lastname
+        - name
+        - password
+      type: object
+      properties:
+        password:
+          example: 'johndoesecret123'
+          maxLength: 50
+          minLength: 4
+          pattern: '[a-zA-Z0-9]+'
+          type: string
+        confirmPassword:
+          example: 'johndoesecret123'
+          maxLength: 50
+          minLength: 4
+          pattern: '[a-zA-Z0-9]+'
+          type: string
+        name:
+          example: 'john'
+          maxLength: 50
+          minLength: 1
+          pattern: '[a-zA-Z ñÑáÁéÉíÍóÓúÚ]+'
+          type: string
+        lastname:
+          example: 'doe'
+          maxLength: 50
+          minLength: 1
+          pattern: '[a-zA-Z ñÑáÁéÉíÍóÓúÚ]+'
+          type: string
+        email:
+          example: 'john@gmail.com'
+          maxLength: 50
+          minLength: 1
+          pattern: '[a-zA-Z0-9.+-ñÑ]+@[a-zA-Z0-9.-]+(.com|.com.ar|.edu.ar)'
+          type: string
+        healthInsurance:
+          allOf:
+            - $ref: '#/components/schemas/HealthInsurance'
+          example: 'OSDE'
+    PatientEditForm:
+      required:
+        - email
+        - healthInsurance
+        - lastname
+        - locale
+        - name
+      type: object
+      properties:
+        image:
+          type: string
+          format: binary
+        name:
+          maxLength: 50
+          minLength: 1
+          pattern: '[a-zA-Z ñÑáÁéÉíÍóÓúÚ]+'
+          type: string
+          example: 'juan'
+        lastname:
+          maxLength: 50
+          minLength: 1
+          pattern: '[a-zA-Z ñÑáÁéÉíÍóÓúÚ]+'
+          type: string
+          example: 'doe'
+        email:
+          maxLength: 50
+          minLength: 1
+          pattern: '[a-zA-Z0-9.+-ñÑ]+@[a-zA-Z0-9.-]+(.com|.com.ar|.edu.ar)'
+          type: string
+          example: 'juan@gmail.com'
+        locale:
+          type: string
+          example: 'es'
+        healthInsurance:
+          allOf:
+            - $ref : '#/components/schemas/HealthInsurance'
+    ReviewForm:
+      required:
+        - description
+        - rating
+      type: object
+      properties:
+        description:
+          example: "Gran doctor, le doy 5 estrellas"
+          maxLength: 1000
+          minLength: 1
+          type: string
+        rating:
+          maximum: 5
+          minimum: 1
+          type: integer
+          format: int32
+    EmailForm:
+      required:
+        - email
+      type: object
+      properties:
+        email:
+          example: "john@gmail.com"
+          maxLength: 50
+          minLength: 1
+          pattern: '[a-zA-Z0-9.+-ñÑ]+@[a-zA-Z0-9.-]+(.com|.com.ar|.edu.ar)'
+          type: string
+    DoctorVacationForm:
+      required:
+        - fromDate
+        - fromTime
+        - toDate
+        - toTime
+      type: object
+      properties:
+        fromDate:
+          type: string
+          format: date
+          example: '2024-07-23'
+        fromTime:
+          allOf:
+            - $ref: '#/components/schemas/TimeBlock'
+          example: '14:30'
+        toDate:
+          type: string
+          format: date
+          example: '2024-07-26'
+        toTime:
+          allOf:
+            - $ref: '#/components/schemas/TimeBlock'
+          example: '08:00'
+        cancelAppointments:
+          type: boolean
+        cancelReason:
+          type: string
+          example: "Me voy de vacaciones"
+    Error:
+      type: object
+      properties:
+        message:
+          type: string
+    ValidationError:
+      type: object
+      properties:
+        attribute:
+          type: string
+        invalidValue:
+          type: string
+        message:
+          type: string
+    Vacation:
+      type: object
+      properties:
+        doctor:
+          type: string
+          format: uri
+          example: "http://old-pawserver.it.itba.edu.ar/paw-2023a-02/api/doctors/20"
+        fromDate:
+          type: string
+          format: date
+          example: "2026-01-01"
+        fromTime:
+          type: string
+          example: "08:00"
+        self:
+          type: string
+          format: uri
+          example: "http://old-pawserver.it.itba.edu.ar/paw-2023a-02/api/doctors/20/vacations/7"
+        toDate:
+          type: string
+          format: date
+          example: "2027-01-01"
+        toTime:
+          type: string
+          example: "08:30"
+    Review:
+      type: object
+      properties:
+        date:
+          type: string
+          format: date
+          example: "2023-05-17"
+        description:
+          type: string
+          example: "Genial! El doctor me arreglo el pie."
+        doctor:
+          type: string
+          format: uri
+          example: "http://old-pawserver.it.itba.edu.ar/paw-2023a-02/api/doctors/20"
+        id:
+          type: integer
+          format: int64
+          example: 1
+        patient:
+          type: string
+          format: uri
+          example: "http://old-pawserver.it.itba.edu.ar/paw-2023a-02/api/patients/21"
+        rating:
+          type: integer
+          format: int32
+          example: 5
+        self:
+          type: string
+          format: uri
+          example: "http://old-pawserver.it.itba.edu.ar/paw-2023a-02/api/doctors/20/reviews/1"
+    Patient:
+      type: object
+      properties:
+        appointments:
+          type: string
+          format: uri
+          example: "http://old-pawserver.it.itba.edu.ar/paw-2023a-02/api/appointments?userId=21"
+        email:
+          type: string
+          format: email
+          example: "sballerini+10@itba.edu.ar"
+        firstName:
+          type: string
+          example: "Santiago"
+        healthInsurance:
+          type: string
+          format: uri
+          example: "http://old-pawserver.it.itba.edu.ar/paw-2023a-02/api/healthinsurances/3"
+        image:
+          type: string
+          format: uri
+          example: "http://old-pawserver.it.itba.edu.ar/paw-2023a-02/api/images/5"
+        lastName:
+          type: string
+          example: "ballerini"
+        notifications:
+          type: string
+          format: uri
+          example: "http://old-pawserver.it.itba.edu.ar/paw-2023a-02/api/notifications?userId=21"
+        self:
+          type: string
+          format: uri
+          example: "http://old-pawserver.it.itba.edu.ar/paw-2023a-02/api/patients/21"
+    Notification:
+      type: object
+      properties:
+        appointmentId:
+          type: integer
+          format: int64
+          description: The ID of the related appointment.
+          example: 400
+        id:
+          type: integer
+          format: int64
+          example: 6
+        self:
+          type: string
+          format: uri
+          description: The URI for the notification resource.
+          example: "http://old-pawserver.it.itba.edu.ar/paw-2023a-02/api/notifications/6"
+        userId:
+          type: integer
+          format: int64
+          example: 20
+    Indication:
+      type: object
+      properties:
+        appointment:
+          type: string
+          format: uri
+          description: The URI for the related appointment.
+          example: "http://old-pawserver.it.itba.edu.ar/paw-2023a-02/api/appointments/12"
+        creator:
+          type: string
+          format: uri
+          example: "http://old-pawserver.it.itba.edu.ar/paw-2023a-02/api/doctors/20"
+        date:
+          type: string
+          format: date
+          example: "2023-06-26"
+        description:
+          type: string
+          example: "Buen dia, le adjunto el resultado del estudio"
+        file:
+          type: string
+          format: uri
+          description: The URI for the file related to the indication.
+          example: "http://old-pawserver.it.itba.edu.ar/paw-2023a-02/api/appointments/12/files/1"
+        id:
+          type: integer
+          format: int64
+          example: 2
+        self:
+          type: string
+          format: uri
+          example: "http://old-pawserver.it.itba.edu.ar/paw-2023a-02/api/appointments/12/indications/2"
+    OccupiedHours:
+      type: object
+      properties:
+        date:
+          type: string
+          format: date
+          example: "2026-01-01"
+        hours:
+          type: array
+          items:
+            allOf:
+              - $ref : '#/components/schemas/TimeBlock'
+          example:
+            - "11:00"
+            - "11:30"
+            - "12:00"
+            - "12:30"
+            - "13:00"
+            - "13:30"
+    Doctor:
+      type: object
+      properties:
+        address:
+          type: string
+          example: "San Martin 202"
+        appointments:
+          type: string
+          format: uri
+          example: "http://old-pawserver.it.itba.edu.ar/paw-2023a-02/api/appointments?userId=20"
+        attendingHours:
+          type: string
+          format: uri
+          example: "http://old-pawserver.it.itba.edu.ar/paw-2023a-02/api/doctors/20/attendinghours"
+        occupiedHours:
+          type: string
+          format: uri
+          example: "http://old-pawserver.it.itba.edu.ar/paw-2023a-02/api/doctors/20/occupiedhours"
+        city:
+          type: string
+          example: "CABA"
+        email:
+          type: string
+          format: email
+          example: "john@gmail.com"
+        firstName:
+          type: string
+          example: "john"
+        healthInsurances:
+          type: array
+          items:
+            type: string
+            format: uri
+            example: "http://old-pawserver.it.itba.edu.ar/paw-2023a-02/api/healthinsurances/3"
+          example:
+            - "http://old-pawserver.it.itba.edu.ar/paw-2023a-02/api/healthinsurances/3"
+            - "http://old-pawserver.it.itba.edu.ar/paw-2023a-02/api/healthinsurances/2"
+            - "http://old-pawserver.it.itba.edu.ar/paw-2023a-02/api/healthinsurances/1"
+            - "http://old-pawserver.it.itba.edu.ar/paw-2023a-02/api/healthinsurances/0"
+        lastName:
+          type: string
+          example: "doe"
+        notifications:
+          type: string
+          format: uri
+          example: "http://old-pawserver.it.itba.edu.ar/paw-2023a-02/api/notifications?userId=20"
+        rating:
+          type: number
+          format: float
+          example: 3.625
+        ratingCount:
+          type: integer
+          format: int32
+          example: 8
+        reviews:
+          type: string
+          format: uri
+          example: "http://old-pawserver.it.itba.edu.ar/paw-2023a-02/api/doctors/20/reviews"
+        self:
+          type: string
+          format: uri
+          example: "http://old-pawserver.it.itba.edu.ar/paw-2023a-02/api/doctors/20"
+        specialty:
+          type: string
+          format: uri
+          example: "http://old-pawserver.it.itba.edu.ar/paw-2023a-02/api/specialties/17"
+        vacations:
+          type: string
+          format: uri
+          example: "http://old-pawserver.it.itba.edu.ar/paw-2023a-02/api/doctors/20/vacations"
+    City:
+      type: object
+      properties:
+        name:
+          type: string
+          example: "CABA"
+        popularity:
+          type: integer
+          format: int32
+          example: 11
+    SpecialtyResponse:
+      type: object
+      properties:
+        code:
+          type: string
+          example: "TOXICOLOGY"
+        name:
+          type: string
+          example: "TOXICOLOGÍA"
+        popularity:
+          type: integer
+          format: int32
+          description: The amount of doctors with the specialty
+          example: 10
+        self:
+          type: string
+          format: uri
+          example: "http://old-pawserver.it.itba.edu.ar/paw-2023a-02/api/specialties/68"
+    Appointment:
+      type: object
+      properties:
+        date:
+          type: string
+          format: date
+          example: "2023-05-20"
+        description:
+          type: string
+          example: "Me duele el pie"
+        cancelDescription:
+          type: string
+          example: null
+        doctor:
+          type: string
+          format: uri
+          example: "http://old-pawserver.it.itba.edu.ar/paw-2023a-02/api/doctors/20"
+        id:
+          type: integer
+          format: int64
+          example: 12
+        patient:
+          type: string
+          format: uri
+          example: "http://old-pawserver.it.itba.edu.ar/paw-2023a-02/api/patients/21"
+        self:
+          type: string
+          format: uri
+          example: "http://old-pawserver.it.itba.edu.ar/paw-2023a-02/api/appointments/12"
+        status:
+          type: string
+          example: "COMPLETED"
+        timeBlock:
+          type: string
+          example: "10:30"
+    HealthInsuranceResponse:
+      type: object
+      properties:
+        code:
+          type: string
+          example: "SWISS_MEDICAL"
+        name:
+          type: string
+          example: "Swiss Medical"
+        self:
+          type: string
+          format: uri
+          example: "http://old-pawserver.it.itba.edu.ar/paw-2023a-02/api/healthinsurances/3"
+    TimeBlock:
+      type: string
+      enum:
+        - "00:00"
+        - "00:30"
+        - "01:00"
+        - "01:30"
+        - "02:00"
+        - "02:30"
+        - "03:00"
+        - "03:30"
+        - "04:00"
+        - "04:30"
+        - "05:00"
+        - "05:30"
+        - "06:00"
+        - "06:30"
+        - "07:00"
+        - "07:30"
+        - "08:00"
+        - "08:30"
+        - "09:00"
+        - "09:30"
+        - "10:00"
+        - "10:30"
+        - "11:00"
+        - "11:30"
+        - "12:00"
+        - "12:30"
+        - "13:00"
+        - "13:30"
+        - "14:00"
+        - "14:30"
+        - "15:00"
+        - "15:30"
+        - "16:00"
+        - "16:30"
+        - "17:00"
+        - "17:30"
+        - "18:00"
+        - "18:30"
+        - "19:00"
+        - "19:30"
+        - "20:00"
+        - "20:30"
+        - "21:00"
+        - "21:30"
+        - "22:00"
+        - "22:30"
+        - "23:00"
+        - "23:30"
+    HealthInsurance:
+      type: string
+      enum:
+        - NONE
+        - OMINT
+        - OSDE
+        - SWISS_MEDICAL
+        - GALENO
+        - MEDIFE
+        - MEDICUS
+        - ACCORD
+        - HOSPITAL_ITALIANO
+        - HOSPITAL_ALEMAN
+        - HOSPITAL_BRITANICO
+        - PREVENCION_SALUD
+        - AVALIAN
+        - WILLIAM_HOPE
+        - PRE_MEDIC
+        - OSFE
+        - OSPACA
+        - ANDAR
+        - LUIS_PASTEUR
+        - UNION_PERSONAL
+        - JERARQUICOS
+        - OSDEPYM
+        - OSPE
+        - OSPLAD
+        - OSSEG
+        - SANCOR_SALUD
+    Specialty:
+      type: string
+      enum:
+        - ALLERGY_AND_IMMUNOLOGY
+        - PEDIATRIC_ALLERGY_AND_IMMUNOLOGY
+        - PATHOLOGICAL_ANATOMY
+        - ANESTHESIOLOGY
+        - GENERAL_ANGIOLOGY_AND_HEMODYNAMICS
+        - CARDIOLOGY
+        - CHILDRENS_CARDIOLOGIST
+        - CARDIOVASCULAR_SURGERY
+        - PEDIATRIC_CARDIOVASCULAR_SURGERY
+        - HEAD_AND_NECK_SURGERY
+        - THORAX_SURGERY
+        - GENERAL_SURGERY
+        - CHILD_SURGERY
+        - PLASTIC_AND_RECONSTRUCTIVE_SURGERY
+        - PERIPHERAL_VASCULAR_SURGERY
+        - MEDICAL_CLINIC
+        - COLOPROCTOLOGY
+        - DERMATOLOGY
+        - PEDIATRIC_DERMATOLOGY
+        - IMAGE_DIAGNOSIS
+        - CARDIAC_ELECTROPHYSIOLOGY
+        - EMERGENTOLOGY
+        - ENDOCRINOLOGY
+        - INFANT_ENDOCRINOLOGIST
+        - CLINICAL_PHARMACOLOGY
+        - PHYSIATRY
+        - GASTROENTEROLOGY
+        - CHILDRENS_GASTROENTEROLOGIST
+        - MEDICAL_GENETICS
+        - GERIATRICS
+        - GYNECOLOGY
+        - PEDIATRIC_HEMATO_AWARENESS
+        - HEMATOLOGY
+        - HEMOTHERAPY_AND_IMMUNOHEMATOLOGY
+        - HEPATOLOGY
+        - PEDIATRIC_HEPATOLOGY
+        - INFECTOLOGY
+        - CHILD_INFECTOLOGIST
+        - SPORTS_MEDICINE
+        - WORK_MEDICINE
+        - GENERAL_MEDICINE_AND_OR_FAMILY_MEDICINE
+        - LEGAL_MEDICINE
+        - NUCLEAR_MEDICINE
+        - PALITATIVE_MEDICINE
+        - NEPHROLOGY
+        - CHILD_NEPHROLOGIST
+        - NEONATOLOGY
+        - PNEUMONOLOGY
+        - CHILD_PNEUMONOLOGIST
+        - NEUROSURGERY
+        - NEUROLOGY
+        - CHILD_NEUROLOGIST
+        - NUTRITION
+        - OBSTETRICS
+        - OPHTHALMOLOGY
+        - ONCOLOGY
+        - ORTHOPEDICS_AND_TRAUMATOLOGY
+        - ORTHOPEDICS_AND_CHILD_TRAUMATOLOGY
+        - OTORHINOLARYNGOLOGY
+        - PEDIATRICS
+        - PSYCHIATRY
+        - CHILD_AND_YOUTH_PSYCHIATRY
+        - RADIOTHERAPY_OR_RADIATION_THERAPY
+        - RHEUMATOLOGY
+        - CHILD_RHEUMATOLOGIST
+        - INTENSIVE_THERAPY
+        - INTENSIVE_CHILDRENS_THERAPIST
+        - TOCOGINECOLOGY
+        - TOXICOLOGY
+        - UROLOGY

@@ -44,33 +44,34 @@ public class PatientDaoImplTest {
   private static final String AUX_PATIENT_PASSWORD = "notpatient_password";
   private static final String AUX_PATIENT_FIRST_NAME = "notpatient_first_name";
   private static final String AUX_PATIENT_LAST_NAME = "notpatient_last_name";
-  private static final Image AUX_PATIENT_IMAGE = new Image(2L, null);
+  private static final Image AUX_PATIENT_IMAGE = new Image.Builder(null).id(2L).build();
   private static final HealthInsurance AUX_PATIENT_HEALTH_INSURANCE = HealthInsurance.OSDE;
   private static final Locale AUX_PATIENT_LOCALE = new Locale("es");
 
   private static final Patient PATIENT_5 =
-      new Patient(
-          INSERTED_PATIENT_ID,
-          INSERTED_PATIENT_EMAIL,
-          INSERTED_PATIENT_PASSWORD,
-          INSERTED_PATIENT_FIRST_NAME,
-          INSERTED_PATIENT_LAST_NAME,
-          INSERTED_PATIENT_IMAGE,
-          INSERTED_PATIENT_HEALTH_INSURANCE,
-          INSERTED_PATIENT_LOCALE,
-          true);
+      new Patient.Builder(
+              INSERTED_PATIENT_EMAIL,
+              INSERTED_PATIENT_PASSWORD,
+              INSERTED_PATIENT_FIRST_NAME,
+              INSERTED_PATIENT_LAST_NAME,
+              INSERTED_PATIENT_HEALTH_INSURANCE,
+              INSERTED_PATIENT_LOCALE)
+          .id(INSERTED_PATIENT_ID)
+          .image(INSERTED_PATIENT_IMAGE)
+          .isVerified(true)
+          .build();
 
   private static final Patient AUX_PATIENT =
-      new Patient(
-          AUX_PATIENT_ID,
-          INSERTED_PATIENT_EMAIL,
-          AUX_PATIENT_PASSWORD,
-          AUX_PATIENT_FIRST_NAME,
-          AUX_PATIENT_LAST_NAME,
-          AUX_PATIENT_IMAGE,
-          AUX_PATIENT_HEALTH_INSURANCE,
-          AUX_PATIENT_LOCALE,
-          false);
+      new Patient.Builder(
+              AUX_PATIENT_EMAIL,
+              AUX_PATIENT_PASSWORD,
+              AUX_PATIENT_FIRST_NAME,
+              AUX_PATIENT_LAST_NAME,
+              AUX_PATIENT_HEALTH_INSURANCE,
+              AUX_PATIENT_LOCALE)
+          .image(AUX_PATIENT_IMAGE)
+          .isVerified(false)
+          .build();
 
   @Autowired private DataSource ds;
 
@@ -90,18 +91,7 @@ public class PatientDaoImplTest {
   public void testCreatePatient() throws PatientAlreadyExistsException {
     // 1. Precondiciones
     // 2. Ejercitar la class under test
-    Patient patient =
-        patientDao.createPatient(
-            new Patient(
-                null,
-                AUX_PATIENT_EMAIL,
-                AUX_PATIENT_PASSWORD,
-                AUX_PATIENT_FIRST_NAME,
-                AUX_PATIENT_LAST_NAME,
-                AUX_PATIENT_IMAGE,
-                AUX_PATIENT_HEALTH_INSURANCE,
-                AUX_PATIENT_LOCALE,
-                false));
+    Patient patient = patientDao.createPatient(AUX_PATIENT);
     // 3. Meaningful assertions
 
     em.flush();

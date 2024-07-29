@@ -30,18 +30,9 @@ public class Image {
     // Solo para hibernate
   }
 
-  public Image(byte[] bytes) {
-    this.bytes = bytes;
-  }
-
-  public Image(Builder builder) {
+  private Image(Builder builder) {
     this.imageId = builder.id;
     this.bytes = builder.bytes;
-  }
-
-  public Image(Long imageId, byte[] bytes) {
-    this.imageId = imageId;
-    this.bytes = bytes;
   }
 
   // Q: static fromMultiPartFile method

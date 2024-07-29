@@ -1,5 +1,6 @@
 package ar.edu.itba.paw.models;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -14,6 +15,21 @@ public class Page<T> {
     this.content = content;
     this.currentPage = currentPage;
     this.totalContentCount = totalContentCount;
+    this.pageSize = pageSize;
+  }
+
+  public Page(List<T> totalContent, Integer currentPage, Integer pageSize) {
+    int fromIndex = currentPage * pageSize;
+    int toIndex = Math.min(fromIndex + pageSize, totalContent.size());
+
+    if (fromIndex <= toIndex) {
+      this.content = totalContent.subList(fromIndex, toIndex);
+    } else {
+      this.content = Collections.emptyList();
+    }
+
+    this.currentPage = currentPage;
+    this.totalContentCount = totalContent.size();
     this.pageSize = pageSize;
   }
 
@@ -32,6 +48,16 @@ public class Page<T> {
     }
 
     return content.size() == 0 ? 1 : (int) Math.ceil((double) totalContentCount / pageSize);
+  }
+
+  // TODO: revisar, esto esta asi pq contamos las paginas desde 0 aca, pero desde 1 en el controller
+  // ...
+  public boolean hasNext() {
+    return (this.getCurrentPage() < (this.getTotalPages() - 1));
+  }
+
+  public boolean hasPrev() {
+    return (this.getCurrentPage() > 0);
   }
 
   @Override
