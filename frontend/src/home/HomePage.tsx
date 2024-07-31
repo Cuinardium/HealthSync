@@ -7,10 +7,10 @@ import Header from '../components/Header';
 
 import {useTranslation} from 'react-i18next';
 //import categoriesCarouselJs from '../ts/categoriesCarousel.js';
-import * as circle1 from '../img/circle1.svg';
-import * as circle2 from '../img/circle2.svg';
-import * as circle3 from '../img/circle3.svg';
-import * as homeDoctorImg from '../img/homeDoctor.svg';
+import circle1 from '../img/circle1.svg';
+import circle2 from '../img/circle2.svg';
+import circle3 from '../img/circle3.svg';
+import homeDoctorImg from '../img/homeDoctor.svg';
 
 import 'bootstrap/dist/css/bootstrap.css';
 import '../css/main.css';
