@@ -2,6 +2,8 @@ import React from 'react';
 import { Button, Card, Form, Container, Row, Col, Image } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
 
+import { FaUserDoctor, FaCalendar, FaLocationDot } from 'react-icons/fa6';
+
 import Header from '../components/Header';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import '../css/main.css';
@@ -31,7 +33,7 @@ const DoctorProfile = ({ doctor, vacationUrl, doctorEditUrl, changePasswordUrl, 
                         <div className="profileData">
                             <div className="profileTitle">
                                 <strong>{t('profile.personalInfo')}</strong>
-                                <i className="fa-solid fa-user"></i>
+                                <FaUserDoctor />
                             </div>
 
                             <Row className="profileRow">
@@ -65,7 +67,7 @@ const DoctorProfile = ({ doctor, vacationUrl, doctorEditUrl, changePasswordUrl, 
                     <div className="doctorData">
                         <div className="profileTitle">
                             <strong>{t('profile.location')}</strong>
-                            <i className="fa-solid fa-location-dot"></i>
+                            <FaLocationDot />
                         </div>
 
                         <Row className="profileRow">
@@ -83,7 +85,7 @@ const DoctorProfile = ({ doctor, vacationUrl, doctorEditUrl, changePasswordUrl, 
 
                         <div className="profileTitle">
                             <strong>{t('profile.workInfo')}</strong>
-                            <i className="fa-solid fa-user-doctor"></i>
+                            <FaUserDoctor />
                         </div>
 
                         <Row className="profileRow">
@@ -107,7 +109,7 @@ const DoctorProfile = ({ doctor, vacationUrl, doctorEditUrl, changePasswordUrl, 
 
                         <div className="profileTitle">
                             <strong>{t('profile.schedule')}</strong>
-                            <i className="fa-solid fa-calendar"></i>
+                            <FaCalendar />
                         </div>
 
                         <div className="scheduleMargin">

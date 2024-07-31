@@ -2,6 +2,8 @@ import React from 'react';
 import { Button, Card, Form, Container, Row, Col, Image } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
 
+import { FaUser } from 'react-icons/fa6';
+
 import Header from '../components/Header';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import '../css/main.css';
@@ -31,7 +33,7 @@ const PatientProfile = ({ patient, patientEditUrl, changePasswordUrl } :
                         <div className="profileData">
                             <div className="profileTitle">
                                 <strong>{t('profile.personalInfo')}</strong>
-                                <i className="fa-solid fa-user"></i>
+                                <FaUser />
                             </div>
 
                             <Row className="profileRow">

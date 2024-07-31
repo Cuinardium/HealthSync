@@ -7,6 +7,13 @@ import "../css/main.css";
 import "../css/header.css";
 
 import logo from "../img/logo.svg";
+import {
+  FaUser,
+  FaUserNurse,
+  FaUserDoctor,
+  FaCalendarCheck,
+  FaCircle,
+} from "react-icons/fa6";
 
 // Define the API URLs or other variables
 const homeUrl = "/";
@@ -31,9 +38,12 @@ const Header = ({
   const { t } = useTranslation();
 
   return (
-    <header className="border-bottom">
+    <header className="horizontalPadding border-bottom">
       <div className="head">
-        <a href={homeUrl} className="d-flex align-items-center">
+        <a
+          href={homeUrl}
+          className="d-flex align-items-centera title navbar-brand"
+        >
           <Image src={logo} alt="HealthSync logo" className="logo" />
           <div className="health title">Health</div>
           <div className="sync title">Sync</div>
@@ -41,17 +51,15 @@ const Header = ({
         <div className="buttons">
           <a href={dashboardUrl} className="headerLink">
             {t("home.checkDoctor")}
-            <i className="fa-solid fa-user-doctor"></i>
+            <FaUserDoctor />
           </a>
           {user && (
             <>
               <a href={myAppointmentsUrl} className="headerLink">
                 {t("home.myAppointments")}
-                <i className="fa-solid fa-calendar-check"></i>
+                <FaCalendarCheck />
               </a>
-              {hasNotifications && (
-                <i className="fa-solid fa-circle notification"></i>
-              )}
+              {hasNotifications && <FaCircle className="notification" />}
             </>
           )}
         </div>
@@ -60,11 +68,11 @@ const Header = ({
             <div className="container-fluid">
               {isDoctor ? (
                 <>
-                  <i className="fa-solid fa-user-nurse iconIdentifier"></i>
+                  <FaUserNurse className="iconIdentifier" />
                 </>
               ) : (
                 <>
-                  <i className="fa-solid fa-user iconIdentifier"></i>
+                  <FaUser className="iconIdentifier" />
                 </>
               )}
               <div id="profileDropdown">
