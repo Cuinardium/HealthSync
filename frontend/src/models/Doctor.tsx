@@ -5,6 +5,7 @@ import {Appointment} from "./Appointment";
 import {AttendingHours} from "./AttendingHours";
 
 export class Doctor {
+    id: number;
     firstName: string;
     lastName: string;
     email: string;
@@ -27,6 +28,7 @@ export class Doctor {
     vacations: Vacation[];
 
     constructor(
+        id: number,
         firstName: string,
         lastName: string,
         email: string,
@@ -43,6 +45,7 @@ export class Doctor {
         attendingHours: AttendingHours[],
         vacations: Vacation[]
     ) {
+        this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
@@ -62,6 +65,7 @@ export class Doctor {
 
     static fromJson(json: any): Doctor {
         return new Doctor(
+            json.id,
             json.firstName,
             json.lastName,
             json.email,
@@ -82,6 +86,7 @@ export class Doctor {
 
     static toJson(doctor: Doctor): any {
         return {
+            id: doctor.id,
             firstName: doctor.firstName,
             lastName: doctor.lastName,
             email: doctor.email,

@@ -3,6 +3,7 @@ import {Appointment} from "./Appointment";
 import {HealthInsurance} from "./HealthInsurance";
 
 export class Patient {
+    id: number;
     firstName: string;
     lastName: string;
     email: string;
@@ -16,6 +17,7 @@ export class Patient {
     self: string;
 
     constructor(
+        id: number,
         firstName: string,
         lastName: string,
         email: string,
@@ -25,6 +27,7 @@ export class Patient {
         notifications: Notification[],
         self: string
     ) {
+        this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
@@ -37,6 +40,7 @@ export class Patient {
 
     static fromJson(json: any): Patient {
         return new Patient(
+            json.id,
             json.firstName,
             json.lastName,
             json.email,
@@ -50,6 +54,7 @@ export class Patient {
 
     static toJson(patient: Patient): any {
         return {
+            id: patient.id,
             firstName: patient.firstName,
             lastName: patient.lastName,
             email: patient.email,
