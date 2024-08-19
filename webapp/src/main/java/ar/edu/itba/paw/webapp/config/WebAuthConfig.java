@@ -89,76 +89,78 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
   // TODO: agregar filtros por tipo de autenticacion clase 2 min 45
   @Override
   protected void configure(final HttpSecurity http) throws Exception {
-    http
-      .sessionManagement()
+    http.sessionManagement()
         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
         .and()
-      .authorizeRequests()
+        .authorizeRequests()
 
         // ------------- Tokens -----------
         // verification
         .antMatchers(HttpMethod.POST, "/api/tokens/verification")
-          .anonymous()
+        .anonymous()
         .antMatchers(HttpMethod.PUT, "/api/tokens/verification/{token}")
-          .anonymous()
-      
+        .anonymous()
+
         // ------------ Doctors -----------
         .antMatchers(HttpMethod.GET, "/api/doctors")
-          .permitAll()
+        .permitAll()
         .antMatchers(HttpMethod.POST, "/api/doctors")
-          .permitAll()
+        .permitAll()
 
         // doctors/{id}
         .antMatchers(HttpMethod.GET, "/api/doctors/{doctorId:\\d+}")
-          .permitAll()
+        .permitAll()
 
         // doctors/{id}/attendinghours
         .antMatchers(HttpMethod.GET, "/api/doctors/{doctorId:\\d+}/attendinghours")
-          .permitAll()
+        .permitAll()
 
         // doctors/{id}/occupiedhours
         .antMatchers(HttpMethod.GET, "/api/doctors/{doctorId:\\d+}/occupiedhours")
-          .permitAll()
+        .permitAll()
 
         // ------------- Appointments ------
         .antMatchers(HttpMethod.POST, "/api/appointments")
-            .hasRole(UserRole.ROLE_PATIENT.getRoleNameWithoutPrefix())
-
+        .hasRole(UserRole.ROLE_PATIENT.getRoleNameWithoutPrefix())
+        // ------------- Images   ----------
+        .antMatchers(HttpMethod.GET, "/api/images/{id:\\d+}")
+        .permitAll()
         // ------------- Reviews  ----------
         .antMatchers(HttpMethod.GET, "/api/doctors/{doctorId:\\d+}/reviews")
-            .permitAll()
+        .permitAll()
         .antMatchers(HttpMethod.POST, "/api/doctors/{doctorId:\\d+}/reviews")
-            .hasRole(UserRole.ROLE_PATIENT.getRoleNameWithoutPrefix())
+        .hasRole(UserRole.ROLE_PATIENT.getRoleNameWithoutPrefix())
 
         // ------------- Specialities -------
         .antMatchers(HttpMethod.GET, "/api/specialities")
-          .permitAll()
+        .permitAll()
         // specialities/{id}
         .antMatchers(HttpMethod.GET, "/api/specialities/{specialityId:\\d+}")
-          .permitAll()
+        .permitAll()
 
         // ------------- Cities -------------
         .antMatchers(HttpMethod.GET, "/api/cities")
-          .permitAll()
+        .permitAll()
 
         // ------------- Health Insurances --
         .antMatchers(HttpMethod.GET, "/api/healthinsurances")
-          .permitAll()
+        .permitAll()
         // health-insurances/{id}
         .antMatchers(HttpMethod.GET, "/api/healthinsurances/{healthInsuranceId:\\d+}")
-          .permitAll()
+        .permitAll()
 
         // Authenticate all other
         .antMatchers("/api/**")
-          .authenticated()
+        .authenticated()
         .and()
-      .exceptionHandling()
+        .exceptionHandling()
         .authenticationEntryPoint(authenticationEntryPoint())
         .accessDeniedHandler(accessDeniedHandler())
         .and()
-      .addFilterBefore(basicAuthFilter, UsernamePasswordAuthenticationFilter.class)
-      .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
-      .csrf().disable();
+        .addFilterBefore(basicAuthFilter, UsernamePasswordAuthenticationFilter.class)
+        .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
+        .csrf()
+        .disable();
   }
 
   @Override
