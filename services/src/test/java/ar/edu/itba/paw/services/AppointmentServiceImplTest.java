@@ -41,7 +41,7 @@ public class AppointmentServiceImplTest {
   private static final String DOCTOR_PASSWORD = "doctor_password";
   private static final String DOCTOR_FIRST_NAME = "doctor_first_name";
   private static final String DOCTOR_LAST_NAME = "doctor_last_name";
-  private static final Image DOCTOR_IMAGE = new Image.Builder(null).build();
+  private static final Image DOCTOR_IMAGE = new Image.Builder(null, "images/png").build();
 
   private static final Set<HealthInsurance> DOCTOR_HEALTH_INSURANCES =
       new HashSet<>(Arrays.asList(HealthInsurance.OSDE, HealthInsurance.OMINT));
@@ -79,7 +79,7 @@ public class AppointmentServiceImplTest {
               ThirtyMinuteBlock.BLOCK_10_00,
               LocalDate.now().plusDays(3),
               ThirtyMinuteBlock.BLOCK_10_00)
-              .build();
+          .build();
   private static final Doctor DOCTOR =
       new Doctor.Builder(
               DOCTOR_EMAIL,
@@ -92,20 +92,20 @@ public class AppointmentServiceImplTest {
               ADDRESS,
               ATTENDING_HOURS,
               DOCTOR_LOCALE)
-              .id(DOCTOR_ID)
-              .vacations(new HashSet<>(Arrays.asList(DOCTOR_VACATION)))
-              .rating(RATING)
-              .ratingCount(RATING_COUNT)
-              .isVerified(true)
-              .image(DOCTOR_IMAGE)
-              .build();
+          .id(DOCTOR_ID)
+          .vacations(new HashSet<>(Arrays.asList(DOCTOR_VACATION)))
+          .rating(RATING)
+          .ratingCount(RATING_COUNT)
+          .isVerified(true)
+          .image(DOCTOR_IMAGE)
+          .build();
   // ================== Patient Constants ==================
   private static final long PATIENT_ID = 1;
   private static final String PATIENT_EMAIL = "patient_email";
   private static final String PATIENT_PASSWORD = "patient_password";
   private static final String FIRST_NAME = "patient_first_name";
   private static final String PATIENT_LAST_NAME = "patient_last_name";
-  private static final Image PATIENT_IMAGE = new Image.Builder(null).build();
+  private static final Image PATIENT_IMAGE = new Image.Builder(null, "images/png").build();
 
   private static final HealthInsurance PATIENT_HEALTH_INSURANCE = HealthInsurance.NONE;
   private static final Locale PATIENT_LOCALE = new Locale("en");
@@ -117,10 +117,10 @@ public class AppointmentServiceImplTest {
               PATIENT_LAST_NAME,
               PATIENT_HEALTH_INSURANCE,
               PATIENT_LOCALE)
-              .id(PATIENT_ID)
-              .isVerified(true)
-              .image(PATIENT_IMAGE)
-              .build();
+          .id(PATIENT_ID)
+          .isVerified(true)
+          .image(PATIENT_IMAGE)
+          .build();
   private static final long APPOINTMENT_ID = 0;
   private static final LocalDate APPOINTMENT_DATE = LocalDate.now();
   private static final ThirtyMinuteBlock APPOINTMENT_TIME = ThirtyMinuteBlock.BLOCK_08_00;
@@ -130,39 +130,27 @@ public class AppointmentServiceImplTest {
   // ================== Appointment Constants ==================
   private static final Appointment CREATED_APPOINTMENT =
       new Appointment.Builder(
-              PATIENT,
-              DOCTOR,
-              APPOINTMENT_DATE,
-              APPOINTMENT_TIME,
-              APPOINTMENT_DESCRIPTION)
-              .id(APPOINTMENT_ID)
-              .status(AppointmentStatus.CONFIRMED)
-              .build();
+              PATIENT, DOCTOR, APPOINTMENT_DATE, APPOINTMENT_TIME, APPOINTMENT_DESCRIPTION)
+          .id(APPOINTMENT_ID)
+          .status(AppointmentStatus.CONFIRMED)
+          .build();
   private static final List<Appointment> APPOINTMENTS =
       Collections.singletonList(CREATED_APPOINTMENT);
   private static final String CANCELLED_APPOINTMENT_DESCRIPTION =
       "cancelled_appointment_description";
   private static final Appointment CANCELLED_APPOINTMENT =
       new Appointment.Builder(
-              PATIENT,
-              DOCTOR,
-              APPOINTMENT_DATE,
-              APPOINTMENT_TIME,
-              APPOINTMENT_DESCRIPTION)
-              .id(APPOINTMENT_ID)
-              .status(AppointmentStatus.CANCELLED)
-              .cancelDescription(CANCELLED_APPOINTMENT_DESCRIPTION)
-              .build();
+              PATIENT, DOCTOR, APPOINTMENT_DATE, APPOINTMENT_TIME, APPOINTMENT_DESCRIPTION)
+          .id(APPOINTMENT_ID)
+          .status(AppointmentStatus.CANCELLED)
+          .cancelDescription(CANCELLED_APPOINTMENT_DESCRIPTION)
+          .build();
   private static final Appointment COMPLETED_APPOINTMENT =
       new Appointment.Builder(
-              PATIENT,
-              DOCTOR,
-              APPOINTMENT_DATE,
-              APPOINTMENT_TIME,
-              APPOINTMENT_DESCRIPTION)
-              .id(APPOINTMENT_ID)
-              .status(AppointmentStatus.COMPLETED)
-              .build();
+              PATIENT, DOCTOR, APPOINTMENT_DATE, APPOINTMENT_TIME, APPOINTMENT_DESCRIPTION)
+          .id(APPOINTMENT_ID)
+          .status(AppointmentStatus.COMPLETED)
+          .build();
   private static final long FORBIDDEN_USER_ID = 2;
 
   private static final LocalDate RANGE_FROM = APPOINTMENT_DATE.minusDays(1);
@@ -349,7 +337,8 @@ public class AppointmentServiceImplTest {
   @Test
   public void testCancelAppointmentByDoctor()
       throws AppointmentNotFoundException, CancelForbiddenException,
-          ar.edu.itba.paw.interfaces.persistence.exceptions.AppointmentNotFoundException, AppointmentInmutableException {
+          ar.edu.itba.paw.interfaces.persistence.exceptions.AppointmentNotFoundException,
+          AppointmentInmutableException {
     // 1. Precondiciones
 
     // Mock appointmentDao
@@ -377,7 +366,8 @@ public class AppointmentServiceImplTest {
   @Test
   public void testCancelAppointmentByPatient()
       throws AppointmentNotFoundException, CancelForbiddenException,
-          ar.edu.itba.paw.interfaces.persistence.exceptions.AppointmentNotFoundException, AppointmentInmutableException {
+          ar.edu.itba.paw.interfaces.persistence.exceptions.AppointmentNotFoundException,
+          AppointmentInmutableException {
     // 1. Precondiciones
 
     // Mock appointmentDao
@@ -528,7 +518,8 @@ public class AppointmentServiceImplTest {
     expectedOccupiedHours.put(APPOINTMENT_DATE, Collections.singletonList(APPOINTMENT_TIME));
 
     // Vacation from 10:00 in second day
-    List<ThirtyMinuteBlock> occupiedHoursForSecondDay = ThirtyMinuteBlock.fromRange(ThirtyMinuteBlock.BLOCK_10_00, ThirtyMinuteBlock.BLOCK_23_30)
+    List<ThirtyMinuteBlock> occupiedHoursForSecondDay =
+        ThirtyMinuteBlock.fromRange(ThirtyMinuteBlock.BLOCK_10_00, ThirtyMinuteBlock.BLOCK_23_30)
             .stream()
             .filter(DOCTOR.getAttendingBlocksForDate(APPOINTMENT_DATE.plusDays(1))::contains)
             .collect(Collectors.toList());
@@ -536,7 +527,8 @@ public class AppointmentServiceImplTest {
     expectedOccupiedHours.put(APPOINTMENT_DATE.plusDays(1), occupiedHoursForSecondDay);
 
     // Vacation all day in third day
-    List<ThirtyMinuteBlock> occupiedHoursForThirdDay = ThirtyMinuteBlock.fromRange(ThirtyMinuteBlock.BLOCK_00_00, ThirtyMinuteBlock.BLOCK_23_30)
+    List<ThirtyMinuteBlock> occupiedHoursForThirdDay =
+        ThirtyMinuteBlock.fromRange(ThirtyMinuteBlock.BLOCK_00_00, ThirtyMinuteBlock.BLOCK_23_30)
             .stream()
             .filter(DOCTOR.getAttendingBlocksForDate(APPOINTMENT_DATE.plusDays(2))::contains)
             .collect(Collectors.toList());
@@ -544,7 +536,8 @@ public class AppointmentServiceImplTest {
     expectedOccupiedHours.put(APPOINTMENT_DATE.plusDays(2), occupiedHoursForThirdDay);
 
     // Vacation until 10:00 in fourth day
-    List<ThirtyMinuteBlock> occupiedHoursForFourthDay = ThirtyMinuteBlock.fromRange(ThirtyMinuteBlock.BLOCK_00_00, ThirtyMinuteBlock.BLOCK_10_00)
+    List<ThirtyMinuteBlock> occupiedHoursForFourthDay =
+        ThirtyMinuteBlock.fromRange(ThirtyMinuteBlock.BLOCK_00_00, ThirtyMinuteBlock.BLOCK_10_00)
             .stream()
             .filter(DOCTOR.getAttendingBlocksForDate(APPOINTMENT_DATE.plusDays(3))::contains)
             .collect(Collectors.toList());
@@ -559,11 +552,18 @@ public class AppointmentServiceImplTest {
     // Mock appointmentDao
     Mockito.when(
             appointmentDao.getFilteredAppointments(
-                DOCTOR_ID, AppointmentStatus.CONFIRMED, APPOINTMENT_DATE, APPOINTMENT_DATE.plusDays(3), null, null, false))
+                DOCTOR_ID,
+                AppointmentStatus.CONFIRMED,
+                APPOINTMENT_DATE,
+                APPOINTMENT_DATE.plusDays(3),
+                null,
+                null,
+                false))
         .thenReturn(new Page<>(APPOINTMENTS, null, null, null));
 
     // 2. Ejercitar la class under test
-    Map<LocalDate, List<ThirtyMinuteBlock>> occupiedHours = as.getOccupiedHours(DOCTOR_ID, APPOINTMENT_DATE, APPOINTMENT_DATE.plusDays(3));
+    Map<LocalDate, List<ThirtyMinuteBlock>> occupiedHours =
+        as.getOccupiedHours(DOCTOR_ID, APPOINTMENT_DATE, APPOINTMENT_DATE.plusDays(3));
 
     // 3. Meaningful assertions
     Assert.assertEquals(expectedOccupiedHours, occupiedHours);

@@ -75,7 +75,9 @@ public class DoctorController {
     }
 
     final List<DoctorDto> dtoList =
-        doctors.getContent().stream()
+        doctors
+            .getContent()
+            .stream()
             .map(doctor -> DoctorDto.fromDoctor(uriInfo, doctor))
             .collect(Collectors.toList());
 
@@ -142,7 +144,9 @@ public class DoctorController {
 
     Image image = null;
     if (doctorEditForm.hasFile()) {
-      image = new Image.Builder(doctorEditForm.getImageData()).build();
+      image =
+          new Image.Builder(doctorEditForm.getImageData(), doctorEditForm.getImageMediaType())
+              .build();
     }
 
     // TODO: delete attending hours from method signature
@@ -200,10 +204,12 @@ public class DoctorController {
 
     // Unwrap (day, List<ThirtyMinuteBlock>) to Set<AttendingHours>
     Set<AttendingHours> attendingHours =
-        attendingHourForms.stream()
+        attendingHourForms
+            .stream()
             .flatMap(
                 dto ->
-                    dto.getHours().stream()
+                    dto.getHours()
+                        .stream()
                         .map(
                             hour ->
                                 new AttendingHours(
@@ -248,7 +254,9 @@ public class DoctorController {
             doctorId, occupiedHoursQuery.getFromDate(), occupiedHoursQuery.getToDate());
 
     List<OccupiedHoursDto> occupiedHoursDtoList =
-        occupiedHours.entrySet().stream()
+        occupiedHours
+            .entrySet()
+            .stream()
             .sorted(Map.Entry.comparingByKey())
             .map(entry -> OccupiedHoursDto.fromOccupiedHours(entry.getKey(), entry.getValue()))
             .collect(Collectors.toList());

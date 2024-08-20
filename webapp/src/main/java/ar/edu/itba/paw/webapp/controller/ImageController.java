@@ -34,6 +34,6 @@ public class ImageController {
   @Path("/{id:\\d+}")
   public Response getImage(@PathParam("id") final int id) {
     final Image image = imageService.getImage(id).orElseThrow(ImageNotFoundException::new);
-    return Response.ok(image.getBytes()).build();
+    return Response.ok(image.getBytes(), image.getMediaType()).build();
   }
 }

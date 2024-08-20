@@ -64,8 +64,9 @@ public class PatientController {
   @GET
   @Path("/{patientId:\\d+}")
   @Produces(VndType.APPLICATION_PATIENT)
-  @PreAuthorize("@authorizationFunctions.isUser(authentication, #patientId) || " +
-                "@authorizationFunctions.hasAppointmentWithPatient(authentication, #patientId)")
+  @PreAuthorize(
+      "@authorizationFunctions.isUser(authentication, #patientId) || "
+          + "@authorizationFunctions.hasAppointmentWithPatient(authentication, #patientId)")
   public Response getPatient(@PathParam("patientId") final long patientId)
       throws PatientNotFoundException {
 
@@ -88,7 +89,9 @@ public class PatientController {
 
     Image image = null;
     if (patientEditForm.hasFile()) {
-      image = new Image.Builder(patientEditForm.getImageData()).build();
+      image =
+          new Image.Builder(patientEditForm.getImageData(), patientEditForm.getImageMediaType())
+              .build();
     }
 
     Patient patient =

@@ -31,7 +31,7 @@ public class UserServiceImplTest {
   private static final String EMAIL = "email";
   private static final String FIRST_NAME = "firstname";
   private static final String LAST_NAME = "lastname";
-  private static final Image IMAGE = new Image.Builder(new byte[0]).id(1L).build();
+  private static final Image IMAGE = new Image.Builder(new byte[0], "image/png").id(1L).build();
   private static final Locale LOCALE = new Locale("en");
   private static final String PASSWORD = "password";
   private static final String PASSWORD_ENCODED = "password_encoded";
@@ -42,7 +42,8 @@ public class UserServiceImplTest {
   private static final String EMAIL_NEW = "email_new";
   private static final String FIRST_NAME_NEW = "firstname_new";
   private static final String LAST_NAME_NEW = "lastname_new";
-  private static final Image IMAGE_NEW = new Image.Builder(new byte[] {1, 4}).id(1L).build();
+  private static final Image IMAGE_NEW =
+      new Image.Builder(new byte[] {1, 4}, "image/png").id(1L).build();
   private static final Locale LOCALE_NEW = new Locale("es");
 
   private static final String TOKEN = "hola";
@@ -64,12 +65,7 @@ public class UserServiceImplTest {
     Mockito.when(userDao.getUserById(Mockito.eq(ID)))
         .thenReturn(
             Optional.of(
-                new User.Builder(
-                        EMAIL,
-                        PASSWORD,
-                        FIRST_NAME,
-                        LAST_NAME,
-                        LOCALE)
+                new User.Builder(EMAIL, PASSWORD, FIRST_NAME, LAST_NAME, LOCALE)
                     .id(ID)
                     .isVerified(true)
                     .image(IMAGE)
@@ -99,12 +95,8 @@ public class UserServiceImplTest {
   @Test
   public void testGetUserByEmail() {
     // 1. Precondiciones
-    User expectedUser = new User.Builder(
-            EMAIL,
-            PASSWORD,
-            FIRST_NAME,
-            LAST_NAME,
-            LOCALE)
+    User expectedUser =
+        new User.Builder(EMAIL, PASSWORD, FIRST_NAME, LAST_NAME, LOCALE)
             .id(ID)
             .isVerified(true)
             .image(IMAGE)
@@ -135,22 +127,14 @@ public class UserServiceImplTest {
           ar.edu.itba.paw.interfaces.services.exceptions.UserNotFoundException,
           EmailAlreadyExistsException, EmailInUseException {
     // 1. Precondiciones
-    User USER = new User.Builder(
-            EMAIL,
-            PASSWORD,
-            FIRST_NAME,
-            LAST_NAME,
-            LOCALE)
+    User USER =
+        new User.Builder(EMAIL, PASSWORD, FIRST_NAME, LAST_NAME, LOCALE)
             .id(ID)
             .isVerified(true)
             .image(IMAGE)
             .build();
-    User USER_UPDATED = new User.Builder(
-            EMAIL_NEW,
-            PASSWORD_NEW,
-            FIRST_NAME_NEW,
-            LAST_NAME_NEW,
-            LOCALE)
+    User USER_UPDATED =
+        new User.Builder(EMAIL_NEW, PASSWORD_NEW, FIRST_NAME_NEW, LAST_NAME_NEW, LOCALE)
             .id(ID)
             .isVerified(true)
             .image(IMAGE_NEW)
@@ -177,22 +161,14 @@ public class UserServiceImplTest {
       throws ar.edu.itba.paw.interfaces.services.exceptions.UserNotFoundException,
           EmailInUseException, UserNotFoundException, EmailAlreadyExistsException {
     // 1. Precondiciones
-    User USER = new User.Builder(
-            EMAIL,
-            PASSWORD,
-            FIRST_NAME,
-            LAST_NAME,
-            LOCALE)
+    User USER =
+        new User.Builder(EMAIL, PASSWORD, FIRST_NAME, LAST_NAME, LOCALE)
             .id(ID)
             .isVerified(true)
             .image(IMAGE)
             .build();
-    User USER_UPDATED = new User.Builder(
-            EMAIL,
-            PASSWORD_NEW,
-            FIRST_NAME_NEW,
-            LAST_NAME_NEW,
-            LOCALE)
+    User USER_UPDATED =
+        new User.Builder(EMAIL, PASSWORD_NEW, FIRST_NAME_NEW, LAST_NAME_NEW, LOCALE)
             .id(ID)
             .isVerified(true)
             .image(IMAGE_NEW)
@@ -236,12 +212,8 @@ public class UserServiceImplTest {
           ar.edu.itba.paw.interfaces.services.exceptions.UserNotFoundException {
 
     // 1. Precondiciones
-    User USER = new User.Builder(
-            EMAIL,
-            PASSWORD,
-            FIRST_NAME,
-            LAST_NAME,
-            LOCALE)
+    User USER =
+        new User.Builder(EMAIL, PASSWORD, FIRST_NAME, LAST_NAME, LOCALE)
             .id(ID)
             .isVerified(true)
             .image(IMAGE)
@@ -269,22 +241,14 @@ public class UserServiceImplTest {
           ar.edu.itba.paw.interfaces.services.exceptions.UserNotFoundException {
 
     // 1. Precondiciones
-    User USER = new User.Builder(
-            EMAIL,
-            PASSWORD_ENCODED,
-            FIRST_NAME,
-            LAST_NAME,
-            LOCALE)
+    User USER =
+        new User.Builder(EMAIL, PASSWORD_ENCODED, FIRST_NAME, LAST_NAME, LOCALE)
             .id(ID)
             .isVerified(true)
             .image(IMAGE)
             .build();
-    User USER_UPDATED = new User.Builder(
-            EMAIL,
-            PASSWORD,
-            FIRST_NAME,
-            LAST_NAME,
-            LOCALE_NEW)
+    User USER_UPDATED =
+        new User.Builder(EMAIL, PASSWORD, FIRST_NAME, LAST_NAME, LOCALE_NEW)
             .id(ID)
             .isVerified(true)
             .image(IMAGE_NEW)
@@ -309,12 +273,8 @@ public class UserServiceImplTest {
       throws ar.edu.itba.paw.interfaces.services.exceptions.UserNotFoundException {
 
     // 1. Precondiciones
-    User USER = new User.Builder(
-            EMAIL,
-            PASSWORD_ENCODED,
-            FIRST_NAME,
-            LAST_NAME,
-            LOCALE)
+    User USER =
+        new User.Builder(EMAIL, PASSWORD_ENCODED, FIRST_NAME, LAST_NAME, LOCALE)
             .id(ID)
             .isVerified(true)
             .image(IMAGE)
@@ -341,21 +301,17 @@ public class UserServiceImplTest {
     us.updatePassword(ID, PASSWORD, PASSWORD_NEW);
   }
 
-
   // ============================== confirm user ==============================
 
   @Test
   public void testConfirmUserDoesNotThrowException()
       throws UserNotFoundException,
-          ar.edu.itba.paw.interfaces.services.exceptions.UserNotFoundException, TokenNotFoundException, TokenInvalidException {
+          ar.edu.itba.paw.interfaces.services.exceptions.UserNotFoundException,
+          TokenNotFoundException, TokenInvalidException {
 
     // 1. Precondiciones
-    User USER = new User.Builder(
-            EMAIL,
-            PASSWORD_ENCODED,
-            FIRST_NAME,
-            LAST_NAME,
-            LOCALE)
+    User USER =
+        new User.Builder(EMAIL, PASSWORD_ENCODED, FIRST_NAME, LAST_NAME, LOCALE)
             .id(ID)
             .isVerified(false)
             .image(IMAGE)
@@ -372,7 +328,8 @@ public class UserServiceImplTest {
   @Test(expected = ar.edu.itba.paw.interfaces.services.exceptions.UserNotFoundException.class)
   public void testConfirmUserUserDoesNotExist()
       throws UserNotFoundException,
-          ar.edu.itba.paw.interfaces.services.exceptions.UserNotFoundException, TokenNotFoundException, TokenInvalidException {
+          ar.edu.itba.paw.interfaces.services.exceptions.UserNotFoundException,
+          TokenNotFoundException, TokenInvalidException {
 
     // 1. Precondiciones
     Mockito.when(userDao.getUserById(Mockito.eq(ID))).thenReturn(Optional.empty());
@@ -384,15 +341,12 @@ public class UserServiceImplTest {
   @Test(expected = TokenNotFoundException.class)
   public void testConfirmUserTokenDoesNotExist()
       throws UserNotFoundException,
-          ar.edu.itba.paw.interfaces.services.exceptions.UserNotFoundException, TokenNotFoundException, TokenInvalidException {
+          ar.edu.itba.paw.interfaces.services.exceptions.UserNotFoundException,
+          TokenNotFoundException, TokenInvalidException {
 
     // 1. Precondiciones
-    User USER = new User.Builder(
-            EMAIL,
-            PASSWORD_ENCODED,
-            FIRST_NAME,
-            LAST_NAME,
-            LOCALE)
+    User USER =
+        new User.Builder(EMAIL, PASSWORD_ENCODED, FIRST_NAME, LAST_NAME, LOCALE)
             .id(ID)
             .isVerified(false)
             .image(IMAGE)
@@ -407,15 +361,12 @@ public class UserServiceImplTest {
   @Test(expected = TokenNotFoundException.class)
   public void testConfirmUserTokenIsInvalid()
       throws UserNotFoundException,
-          ar.edu.itba.paw.interfaces.services.exceptions.UserNotFoundException, TokenNotFoundException, TokenInvalidException {
+          ar.edu.itba.paw.interfaces.services.exceptions.UserNotFoundException,
+          TokenNotFoundException, TokenInvalidException {
 
     // 1. Precondiciones
-    User USER = new User.Builder(
-            EMAIL,
-            PASSWORD_ENCODED,
-            FIRST_NAME,
-            LAST_NAME,
-            LOCALE)
+    User USER =
+        new User.Builder(EMAIL, PASSWORD_ENCODED, FIRST_NAME, LAST_NAME, LOCALE)
             .id(ID)
             .isVerified(false)
             .image(IMAGE)
@@ -428,5 +379,3 @@ public class UserServiceImplTest {
     us.confirmUser(ID, NOT_TOKEN);
   }
 }
-
-

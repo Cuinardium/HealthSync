@@ -44,7 +44,8 @@ public class PatientDaoImplTest {
   private static final String AUX_PATIENT_PASSWORD = "notpatient_password";
   private static final String AUX_PATIENT_FIRST_NAME = "notpatient_first_name";
   private static final String AUX_PATIENT_LAST_NAME = "notpatient_last_name";
-  private static final Image AUX_PATIENT_IMAGE = new Image.Builder(null).id(2L).build();
+  private static final Image AUX_PATIENT_IMAGE =
+      new Image.Builder(null, "images/png").id(2L).build();
   private static final HealthInsurance AUX_PATIENT_HEALTH_INSURANCE = HealthInsurance.OSDE;
   private static final Locale AUX_PATIENT_LOCALE = new Locale("es");
 

@@ -32,6 +32,7 @@ public class ImageDaoImplTest {
 
   private static final Long AUX_IMAGE_ID = 3L;
   private static final byte[] AUX_IMAGE_BYTES = {12, 15, 1, 2};
+  private static final String AUX_IMAGE_MEDIA_TYPE = "image/jpeg";
 
   @PersistenceContext private EntityManager em;
 
@@ -70,7 +71,8 @@ public class ImageDaoImplTest {
   public void testCreateImage() {
     // 1. Precondiciones (script testImage.sql)
     // 2. Ejercitar la class under test
-    Image image = imageDao.createImage(new Image.Builder(AUX_IMAGE_BYTES).build());
+    Image image =
+        imageDao.createImage(new Image.Builder(AUX_IMAGE_BYTES, AUX_IMAGE_MEDIA_TYPE).build());
 
     em.flush();
 
@@ -85,7 +87,8 @@ public class ImageDaoImplTest {
     // 1. Precondiciones
     // 2. Ejercitar la class under test
     Image image =
-        imageDao.updateImage(new Image.Builder(AUX_IMAGE_BYTES).id(INSERTED_IMAGE_ID).build());
+        imageDao.updateImage(
+            new Image.Builder(AUX_IMAGE_BYTES, AUX_IMAGE_MEDIA_TYPE).id(INSERTED_IMAGE_ID).build());
     // 3. Meanignful assertions
     Assert.assertEquals(INSERTED_IMAGE_ID, image.getImageId());
     Assert.assertArrayEquals(AUX_IMAGE_BYTES, image.getBytes());
@@ -97,7 +100,9 @@ public class ImageDaoImplTest {
     // 2. Ejercitar la class under test
     assertThrows(
         ImageNotFoundException.class,
-        () -> imageDao.updateImage(new Image.Builder(AUX_IMAGE_BYTES).id(AUX_IMAGE_ID).build()));
+        () ->
+            imageDao.updateImage(
+                new Image.Builder(AUX_IMAGE_BYTES, AUX_IMAGE_MEDIA_TYPE).id(AUX_IMAGE_ID).build()));
     // 3. Meanignful assertions
   }
 }

@@ -32,7 +32,7 @@ public class ReviewServiceImplTest {
   private static final String DOCTOR_PASSWORD = "doctor_password";
   private static final String DOCTOR_FIRST_NAME = "doctor_first_name";
   private static final String DOCTOR_LAST_NAME = "doctor_last_name";
-  private static final Image IMAGE = new Image.Builder(null).build();
+  private static final Image IMAGE = new Image.Builder(null, "images/png").build();
   private static final Locale LOCALE = new Locale("en");
   private static final Set<HealthInsurance> DOCTOR_HEALTH_INSURANCES =
       new HashSet<>(Arrays.asList(HealthInsurance.OSDE, HealthInsurance.OMINT));
@@ -63,23 +63,23 @@ public class ReviewServiceImplTest {
   private static final Float RATING = 3F;
   private static final Integer RATING_COUNT = 1;
   private static final Doctor DOCTOR =
-        new Doctor.Builder(
-                DOCTOR_EMAIL,
-                DOCTOR_PASSWORD,
-                DOCTOR_FIRST_NAME,
-                DOCTOR_LAST_NAME,
-                DOCTOR_HEALTH_INSURANCES,
-                SPECIALTY,
-                CITY,
-                ADDRESS,
-                ATTENDING_HOURS,
-                LOCALE)
-                .id(DOCTOR_ID)
-                .rating(RATING)
-                .ratingCount(RATING_COUNT)
-                .isVerified(true)
-                .image(IMAGE)
-                .build();
+      new Doctor.Builder(
+              DOCTOR_EMAIL,
+              DOCTOR_PASSWORD,
+              DOCTOR_FIRST_NAME,
+              DOCTOR_LAST_NAME,
+              DOCTOR_HEALTH_INSURANCES,
+              SPECIALTY,
+              CITY,
+              ADDRESS,
+              ATTENDING_HOURS,
+              LOCALE)
+          .id(DOCTOR_ID)
+          .rating(RATING)
+          .ratingCount(RATING_COUNT)
+          .isVerified(true)
+          .image(IMAGE)
+          .build();
   // ================== Patient Constants ==================
   private static final long PATIENT_ID = 1;
   private static final String PATIENT_EMAIL = "patient_email";
@@ -96,22 +96,16 @@ public class ReviewServiceImplTest {
               PATIENT_LAST_NAME,
               PATIENT_HEALTH_INSURANCE,
               LOCALE)
-              .id(PATIENT_ID)
-              .isVerified(true)
-              .image(IMAGE)
-              .build();
+          .id(PATIENT_ID)
+          .isVerified(true)
+          .image(IMAGE)
+          .build();
 
   private static final short REVIEW_RATING = 3;
   private static final String REVIEW_DESCRIPTION = "review_description";
   private static final LocalDate REVIEW_DATE = LocalDate.now();
   private static final Review REVIEW =
-          new Review.Builder(
-                  DOCTOR,
-                  REVIEW_RATING,
-                  REVIEW_DESCRIPTION,
-                  REVIEW_DATE,
-                  PATIENT)
-                  .build();
+      new Review.Builder(DOCTOR, REVIEW_RATING, REVIEW_DESCRIPTION, REVIEW_DATE, PATIENT).build();
 
   private static final Page<Review> REVIEWS =
       new Page<>(Collections.singletonList(REVIEW), null, null, null);
@@ -205,7 +199,6 @@ public class ReviewServiceImplTest {
     Assert.assertEquals(REVIEW, review.get());
   }
 
-
   @Test
   public void testGetUnexistingReview() {
     // Mock reviewDao
@@ -214,8 +207,8 @@ public class ReviewServiceImplTest {
     // Call method
     Optional<Review> review = rs.getReview(REVIEW_ID);
 
-   // Assert
-   Assert.assertFalse(review.isPresent());
+    // Assert
+    Assert.assertFalse(review.isPresent());
   }
 
   // =================== getReviewsForDoctor ===================
@@ -234,17 +227,18 @@ public class ReviewServiceImplTest {
   }
 
   @Test
-    public void testGetReviewsForDoctorWithoutReviews() throws DoctorNotFoundException {
-        // Mock doctorService
-        Mockito.when(reviewDao.getReviewsForDoctor(DOCTOR_ID, null, null)).thenReturn(new Page<>(Collections.emptyList(), null, 0, null));
-        Mockito.when(doctorService.getDoctorById(DOCTOR_ID)).thenReturn(Optional.of(DOCTOR));
+  public void testGetReviewsForDoctorWithoutReviews() throws DoctorNotFoundException {
+    // Mock doctorService
+    Mockito.when(reviewDao.getReviewsForDoctor(DOCTOR_ID, null, null))
+        .thenReturn(new Page<>(Collections.emptyList(), null, 0, null));
+    Mockito.when(doctorService.getDoctorById(DOCTOR_ID)).thenReturn(Optional.of(DOCTOR));
 
-        // Call method
-        List<Review> reviews = rs.getReviewsForDoctor(DOCTOR_ID, null, null).getContent();
+    // Call method
+    List<Review> reviews = rs.getReviewsForDoctor(DOCTOR_ID, null, null).getContent();
 
-        // Assert
-        Assert.assertTrue(reviews.isEmpty());
-    }
+    // Assert
+    Assert.assertTrue(reviews.isEmpty());
+  }
 
   @Test(expected = DoctorNotFoundException.class)
   public void testGetReviewsForUnexistingDoctor() throws DoctorNotFoundException {

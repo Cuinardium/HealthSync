@@ -20,6 +20,9 @@ public class Image {
   @Column(name = "profile_picture_id")
   private Long imageId;
 
+  @Column(name = "media_type")
+  private String mediaType;
+
   @Column(name = "profile_picture", nullable = false)
   private byte[] bytes;
 
@@ -32,6 +35,7 @@ public class Image {
 
   private Image(Builder builder) {
     this.imageId = builder.id;
+    this.mediaType = builder.mediaType;
     this.bytes = builder.bytes;
   }
 
@@ -42,6 +46,14 @@ public class Image {
 
   public void setImageId(Long imageId) {
     this.imageId = imageId;
+  }
+
+  public String getMediaType() {
+    return mediaType;
+  }
+
+  public void setMediaType(String mediaType) {
+    this.mediaType = mediaType;
   }
 
   public byte[] getBytes() {
@@ -87,8 +99,11 @@ public class Image {
 
     private Long id = null;
 
-    public Builder(byte[] bytes) {
+    private String mediaType;
+
+    public Builder(byte[] bytes, String mediaType) {
       this.bytes = bytes;
+      this.mediaType = mediaType;
     }
 
     public Builder id(long id) {
