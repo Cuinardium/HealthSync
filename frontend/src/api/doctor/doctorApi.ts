@@ -26,15 +26,20 @@ const OCCUPIED_HOURS_CONTENT_TYPE =
 // ========== doctors ==============
 
 export async function getDoctors(params: DoctorQuery): Promise<Doctor[]> {
-  const queryString = createQueryString(params);
   const response = await axios.get<Doctor[]>(
-    `${DOCTOR_ENDPOINT}${queryString}`,
+    DOCTOR_ENDPOINT,
     {
+      params: params,
       headers: {
         Accept: DOCTOR_LIST_CONTENT_TYPE,
       },
     },
   );
+
+  // No content
+  if (response.status === 204) {
+    return [];
+  }
 
   // Add health insurances and specialty to each doctor
   const doctors = await Promise.all(
@@ -215,25 +220,4 @@ async function mapDoctorDetails(doctor: Doctor): Promise<Doctor> {
   }
 
   return doctor;
-}
-
-function createQueryString(params: DoctorQuery): string {
-  const query = new URLSearchParams();
-
-  if (params.page) query.append("page", params.page.toString());
-  if (params.pageSize) query.append("pageSize", params.pageSize.toString());
-  if (params.name) query.append("name", params.name);
-  if (params.date) query.append("date", params.date);
-  if (params.fromTime) query.append("fromTime", params.fromTime);
-  if (params.toTime) query.append("toTime", params.toTime);
-  if (params.specialty)
-    params.specialty.forEach((spec) => query.append("specialty", spec));
-  if (params.city) params.city.forEach((city) => query.append("city", city));
-  if (params.healthInsurance)
-    params.healthInsurance.forEach((ins) =>
-      query.append("healthInsurance", ins),
-    );
-  if (params.minRating) query.append("minRating", params.minRating.toString());
-
-  return query.toString() ? `?${query.toString()}` : "";
 }

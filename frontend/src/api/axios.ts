@@ -14,4 +14,7 @@ export const axios = Axios.create({
   headers: {
     Authorization: "Basic " + basic,
   },
+  paramsSerializer: {
+    indexes: null,
+  }
 });
