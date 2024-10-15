@@ -1,7 +1,8 @@
 import { axios } from "../axios";
 import { AttendingHours } from "../models/AttendingHours";
 import { HealthInsurance } from "../models/HealthInsurance";
-import { Specialty } from "../models/Specialty";
+import { Specialty } from "../specialty/Specialty";
+import { getSpecialty } from "../specialty/specialtyApi";
 import {
   Doctor,
   DoctorQuery,
@@ -180,16 +181,6 @@ export async function getDoctorOccupiedHours(
 
 // ========== Utility functions ===========
 
-async function fetchSpecialty(specialtyUrl: string): Promise<string> {
-  const specialtyResp = await axios.get(specialtyUrl, {
-    headers: {
-      Accept: SPECIALTY_CONTENT_TYPE,
-    },
-  });
-  const specialty = specialtyResp.data as Specialty;
-  return specialty.code;
-}
-
 async function fetchHealthInsurances(
   insuranceUrls: string[],
 ): Promise<string[]> {
@@ -209,7 +200,9 @@ async function fetchHealthInsurances(
 async function mapDoctorDetails(doctor: Doctor): Promise<Doctor> {
   // Fetch specialty details
   if (doctor.specialty) {
-    doctor.specialty = await fetchSpecialty(doctor.specialty);
+    const id = doctor.specialty.split("/").pop();
+    const specialty = await getSpecialty(id as string);
+    doctor.specialty = specialty.code
   }
 
   // Fetch health insurances
