@@ -9,7 +9,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import '../css/main.css';
 import '../css/forms.css';
 import '../css/profile.css';
-import {Doctor} from "../models/Doctor";
+import {Doctor} from "../api/doctor/Doctor";
 
 const DoctorProfile = ({ doctor, vacationUrl, doctorEditUrl, changePasswordUrl, thirtyMinuteBlocks, days } :
                            { doctor:Doctor, vacationUrl:string, doctorEditUrl:string, changePasswordUrl:string, thirtyMinuteBlocks:any, days:any }) => {
