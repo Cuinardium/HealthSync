@@ -2008,6 +2008,10 @@ components:
     Vacation:
       type: object
       properties:
+        id:
+            type: integer
+            format: int32
+            example: 7
         doctor:
           type: string
           format: uri
@@ -2063,6 +2067,10 @@ components:
     Patient:
       type: object
       properties:
+        id:
+            type: integer
+            format: int32
+            example: 21
         appointments:
           type: string
           format: uri
@@ -2168,6 +2176,10 @@ components:
     Doctor:
       type: object
       properties:
+        id:
+            type: integer
+            format: int32
+            example: 20
         address:
           type: string
           example: "San Martin 202"
