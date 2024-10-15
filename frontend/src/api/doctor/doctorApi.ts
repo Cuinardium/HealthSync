@@ -1,7 +1,6 @@
 import { axios } from "../axios";
 import { AttendingHours } from "../models/AttendingHours";
-import { HealthInsurance } from "../models/HealthInsurance";
-import { Specialty } from "../specialty/Specialty";
+import { getHealthInsurance } from "../health-insurance/healthInsuranceApi";
 import { getSpecialty } from "../specialty/specialtyApi";
 import {
   Doctor,
@@ -16,9 +15,6 @@ const OCCUPIED_HOURS_ENDPOINT = "/occupiedhours";
 
 const DOCTOR_CONTENT_TYPE = "application/vnd.doctor.v1+json";
 const DOCTOR_LIST_CONTENT_TYPE = "application/vnd.doctor-list.v1+json";
-const SPECIALTY_CONTENT_TYPE = "application/vnd.specialty.v1+json";
-const HEALTH_INSURANCE_CONTENT_TYPE =
-  "application/vnd.health-insurance.v1+json";
 const ATTENDING_HOURS_CONTENT_TYPE =
   "application/vnd.attending-hours-list.v1+json";
 const OCCUPIED_HOURS_CONTENT_TYPE =
@@ -181,22 +177,6 @@ export async function getDoctorOccupiedHours(
 
 // ========== Utility functions ===========
 
-async function fetchHealthInsurances(
-  insuranceUrls: string[],
-): Promise<string[]> {
-  return Promise.all(
-    insuranceUrls.map(async (insuranceUrl) => {
-      const insuranceResp = await axios.get(insuranceUrl, {
-        headers: {
-          Accept: HEALTH_INSURANCE_CONTENT_TYPE,
-        },
-      });
-      const healthInsurance = insuranceResp.data as HealthInsurance;
-      return healthInsurance.code;
-    }),
-  );
-}
-
 async function mapDoctorDetails(doctor: Doctor): Promise<Doctor> {
   // Fetch specialty details
   if (doctor.specialty) {
@@ -207,9 +187,14 @@ async function mapDoctorDetails(doctor: Doctor): Promise<Doctor> {
 
   // Fetch health insurances
   if (doctor.healthInsurances && doctor.healthInsurances.length > 0) {
-    doctor.healthInsurances = await fetchHealthInsurances(
-      doctor.healthInsurances,
-    );
+    const healthInsurances = doctor.healthInsurances.map(
+      async (healthInsurance) => {
+        const id = healthInsurance.split("/").pop();
+        const healthInsuranceResp = await getHealthInsurance(id as string);
+        return healthInsuranceResp.code;
+      }
+    )
+    doctor.healthInsurances = await Promise.all(healthInsurances);
   }
 
   return doctor;

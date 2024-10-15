@@ -3,3 +3,8 @@ export interface HealthInsurance {
   code: string;
   self: string;
 }
+
+export interface HealthInsuranceQuery {
+  page?: number;
+  pageSize?: number;
+}

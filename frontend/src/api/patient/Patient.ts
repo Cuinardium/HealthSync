@@ -1,6 +1,6 @@
 import {Notification} from "../models/Notification";
 import {Appointment} from "../appointment/Appointment";
-import {HealthInsurance} from "../models/HealthInsurance";
+import {HealthInsurance} from "../health-insurance/HealthInsurance";
 
 export class Patient {
     firstName: string;
