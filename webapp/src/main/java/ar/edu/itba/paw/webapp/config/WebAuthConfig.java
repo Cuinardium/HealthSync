@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.security.Key;
+import java.util.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -29,6 +30,9 @@ import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.util.FileCopyUtils;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 @EnableWebSecurity
 @ComponentScan({"ar.edu.itba.paw.webapp.auth"})
@@ -84,6 +88,20 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
   @Override
   protected void configure(AuthenticationManagerBuilder auth) throws Exception {
     auth.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder());
+  }
+
+  @Bean
+  public CorsConfigurationSource corsConfigurationSource() {
+    CorsConfiguration configuration = new CorsConfiguration();
+    configuration.setAllowedOrigins(Collections.singletonList(CorsConfiguration.ALL));
+    configuration.setAllowedMethods(
+        Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
+    configuration.addAllowedHeader(CorsConfiguration.ALL);
+    configuration.setExposedHeaders(
+        Arrays.asList("Authorization", "Link", "Location", "ETag", "Total-Elements"));
+    UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+    source.registerCorsConfiguration("/**", configuration);
+    return source;
   }
 
   // TODO: agregar filtros por tipo de autenticacion clase 2 min 45
@@ -153,14 +171,15 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
         .antMatchers("/api/**")
         .authenticated()
         .and()
-        .exceptionHandling()
-        .authenticationEntryPoint(authenticationEntryPoint())
-        .accessDeniedHandler(accessDeniedHandler())
+          .cors()
         .and()
-        .addFilterBefore(basicAuthFilter, UsernamePasswordAuthenticationFilter.class)
-        .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
-        .csrf()
-        .disable();
+          .csrf().disable()
+        .exceptionHandling()
+          .authenticationEntryPoint(authenticationEntryPoint())
+          .accessDeniedHandler(accessDeniedHandler())
+        .and()
+          .addFilterBefore(basicAuthFilter, UsernamePasswordAuthenticationFilter.class)
+          .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
   }
 
   @Override
