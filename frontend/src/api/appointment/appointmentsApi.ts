@@ -1,11 +1,11 @@
-import api from "./api";
-import {Appointment} from "../models/Appointment";
+import {axios} from "../axios";
+import {Appointment} from "./Appointment";
 
 const AppointmentsEndpoint = '/appointments'
 
 //TODO revisar tema headers
 export async function getAppointments(id: string): Promise<Appointment[]>{
-    const response = await api.get(AppointmentsEndpoint,{
+    const response = await axios.get(AppointmentsEndpoint,{
         params:{
             userId: id
         }
@@ -21,7 +21,7 @@ export async function getAppointments(id: string): Promise<Appointment[]>{
 }
 
 export async function getAppointmentsById(appId: string): Promise<Appointment>{
-    const response = await api.get(`${AppointmentsEndpoint}/${appId}`);
+    const response = await axios.get(`${AppointmentsEndpoint}/${appId}`);
 
     return Appointment.fromJson(response.data);
 }
