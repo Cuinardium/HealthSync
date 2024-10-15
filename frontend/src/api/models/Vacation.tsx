@@ -1,5 +1,4 @@
 export class Vacation {
-    id: number;
     fromDate: Date;
     fromTime: string;
     toDate: Date;
@@ -9,7 +8,6 @@ export class Vacation {
     self: string;
 
     constructor(
-        id: number,
         fromDate: Date,
         fromTime: string,
         toDate: Date,
@@ -17,7 +15,6 @@ export class Vacation {
         doctor: string,
         self: string
     ) {
-        this.id = id;
         this.fromDate = fromDate;
         this.fromTime = fromTime;
         this.toDate = toDate;
@@ -28,7 +25,6 @@ export class Vacation {
 
     static fromJson(json: any): Vacation {
         return new Vacation(
-            json.id,
             json.fromDate,
             json.fromTime,
             json.toDate,
@@ -40,7 +36,6 @@ export class Vacation {
 
     static toJson(vacation: Vacation): any {
         return {
-            id: vacation.id,
             fromDate: vacation.fromDate,
             fromTime: vacation.fromTime,
             toDate: vacation.toDate,

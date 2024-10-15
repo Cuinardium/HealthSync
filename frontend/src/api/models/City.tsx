@@ -21,5 +21,9 @@ export class City {
         };
     }
 
+    setName(name: string): void {
+        this.name = name;
+    }
+
     // Similarly, add other setter methods if needed
 }

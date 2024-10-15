@@ -1,16 +1,16 @@
-import api from "./api";
-import {Patient} from "../models/Patient";
+import {axios} from "../axios";
+import {Patient} from "./Patient";
 
 const patientEndpoint = '/patients'
 
 
 //TODO revisar tema headers
 export async function createPatient(patient: Patient): Promise<Patient>{
-    const response = await api.post(patientEndpoint, Patient.toJson(patient));
+    const response = await axios.post(patientEndpoint, Patient.toJson(patient));
     return response.data;
 }
 
 export async function getPatientById(id : String): Promise<Patient>{
-    const response = await api.get(`${patientEndpoint}/${id}`);
+    const response = await axios.get(`${patientEndpoint}/${id}`);
     return Patient.fromJson(response.data)
 }
