@@ -21,7 +21,8 @@ export async function getVacations(doctorId: string, query: VacationQuery): Prom
     },
   );
 
-  return response.data;
+  // Set fromDate and toDate to Date object
+  return response.data.map((vacation) => mapDates(vacation));
 }
 
 export async function createVacation(
@@ -42,7 +43,10 @@ export async function createVacation(
     },
   );
 
-  return response.data;
+  const location = response.headers.location;
+
+  const vacationId = location?.split("/").pop();
+  return await getVacation(doctorId, vacationId as string);
 }
 
 // =========== vacations/{id} =======
@@ -57,9 +61,17 @@ export async function getVacation(doctorId: string, id: string): Promise<Vacatio
     },
   );
 
-  return response.data;
+  return mapDates(response.data);
 }
 
 export async function deleteVacation(doctorId: string, id: string): Promise<void> {
   await axios.delete(`${VACATION_ENDPOINT(doctorId)}/${id}`);
+}
+
+// ======== auxiliary functions =========
+
+function mapDates(vacation: Vacation): Vacation {
+  vacation.fromDate = new Date(vacation.fromDate);
+  vacation.toDate = new Date(vacation.toDate);
+  return vacation;
 }
