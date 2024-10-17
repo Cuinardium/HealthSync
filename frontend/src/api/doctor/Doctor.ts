@@ -16,6 +16,11 @@ export interface OccupiedHours {
   hours: string[];
 }
 
+export interface AttendingHours {
+  day: string,
+  hours: string[]
+}
+
 export interface DoctorQuery {
   page?: number;
   pageSize?: number;

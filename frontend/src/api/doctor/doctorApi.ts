@@ -1,5 +1,4 @@
 import { axios } from "../axios";
-import { AttendingHours } from "../models/AttendingHours";
 import { getHealthInsurance } from "../health-insurance/healthInsuranceApi";
 import { getSpecialty } from "../specialty/specialtyApi";
 import {
@@ -7,6 +6,7 @@ import {
   DoctorQuery,
   DoctorRegisterForm,
   OccupiedHours,
+  AttendingHours,
 } from "./Doctor";
 
 const DOCTOR_ENDPOINT = "/doctors";
