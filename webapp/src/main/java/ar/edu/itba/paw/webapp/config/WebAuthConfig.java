@@ -116,7 +116,7 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
         // verification
         .antMatchers(HttpMethod.POST, "/api/tokens/verification")
         .anonymous()
-        .antMatchers(HttpMethod.PUT, "/api/tokens/verification/{token}")
+        .antMatchers(HttpMethod.PATCH, "/api/tokens/verification/{token}")
         .anonymous()
 
         // ------------ Doctors -----------
