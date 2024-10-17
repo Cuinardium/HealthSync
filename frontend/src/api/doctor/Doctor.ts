@@ -20,7 +20,7 @@ export interface DoctorQuery {
   page?: number;
   pageSize?: number;
   name?: string;
-  date?: string;
+  date?: Date;
   fromTime?: string;
   toTime?: string;
   specialty?: string[];

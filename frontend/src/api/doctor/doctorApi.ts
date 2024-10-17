@@ -23,6 +23,11 @@ const OCCUPIED_HOURS_CONTENT_TYPE =
 // ========== doctors ==============
 
 export async function getDoctors(params: DoctorQuery): Promise<Doctor[]> {
+
+  
+  if (params.date) {
+    (params as any).date = params.date.toISOString().split("T")[0];
+  }
   const response = await axios.get<Doctor[]>(
     DOCTOR_ENDPOINT,
     {
