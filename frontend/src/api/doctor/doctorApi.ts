@@ -7,6 +7,7 @@ import {
   DoctorRegisterForm,
   OccupiedHours,
   AttendingHours,
+  DoctorEditForm,
 } from "./Doctor";
 
 const DOCTOR_ENDPOINT = "/doctors";
@@ -80,18 +81,17 @@ export async function getDoctorById(id: String): Promise<Doctor> {
 }
 
 export async function updateDoctor(
-  doctor: Doctor,
-  profilePicture: File | null,
-  locale: string,
-): Promise<Doctor> {
+  id: string,
+  doctor: DoctorEditForm
+): Promise<DoctorEditForm> {
   // Multipart/form-data
   const formData = new FormData();
 
   // Doctor data
-  formData.append("name", doctor.firstName);
-  formData.append("lastname", doctor.lastName);
+  formData.append("name", doctor.name);
+  formData.append("lastname", doctor.lastname);
   formData.append("email", doctor.email);
-  formData.append("locale", locale);
+  formData.append("locale", doctor.locale);
 
   doctor.healthInsurances.forEach((healthInsurance) =>
     formData.append("healthInsurance", healthInsurance),
@@ -101,11 +101,11 @@ export async function updateDoctor(
   formData.append("specialty", doctor.specialty);
 
   // Profile picture
-  if (profilePicture) {
-    formData.append("image", profilePicture);
+  if (doctor.image) {
+    formData.append("image", doctor.image);
   }
 
-  await axios.put(DOCTOR_ENDPOINT + "/" + doctor.id, formData, {
+  await axios.put(DOCTOR_ENDPOINT + "/" + id, formData, {
     headers: {
       "Content-Type": "multipart/form-data",
     },

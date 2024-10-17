@@ -1,14 +1,15 @@
 export interface Doctor {
-    id: number;
-    firstName: string;
-    lastName: string;
-    email: string;
-    address: string;
-    city: string;
-    rating: number;
-    ratingCount: number;
-    specialty: string;
-    healthInsurances: string[];
+  id: number;
+  firstName: string;
+  lastName: string;
+  email: string;
+  address: string;
+  city: string;
+  rating: number;
+  ratingCount: number;
+  specialty: string;
+  healthInsurances: string[];
+  image: string;
 }
 
 export interface OccupiedHours {
@@ -17,8 +18,8 @@ export interface OccupiedHours {
 }
 
 export interface AttendingHours {
-  day: string,
-  hours: string[]
+  day: string;
+  hours: string[];
 }
 
 export interface DoctorQuery {
@@ -34,7 +35,6 @@ export interface DoctorQuery {
   minRating?: number;
 }
 
-
 export interface DoctorRegisterForm {
   password: string;
   confirmPassword: string;
@@ -45,4 +45,15 @@ export interface DoctorRegisterForm {
   city: string;
   address: string;
   specialty: string;
+}
+
+export interface DoctorEditForm {
+  name: string;
+  lastname: string;
+  email: string;
+  healthInsurances: string[];
+  city: string;
+  specialty: string;
+  locale: string;
+  image?: File;
 }
