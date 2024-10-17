@@ -1,63 +1,26 @@
-import {Notification} from "../notification/Notification";
-import {Appointment} from "../appointment/Appointment";
-import {HealthInsurance} from "../health-insurance/HealthInsurance";
-
-export class Patient {
+export interface Patient {
+    id: number;
     firstName: string;
     lastName: string;
     email: string;
-
+    healthInsurance: string;
     image: string;
+}
 
-    healthInsurance: HealthInsurance;
-    appointments: Appointment[];
-    notifications: Notification[];
+export interface PatientRegisterForm {
+    password: string;
+    confirmPassword: string;
+    name: string;
+    lastname: string;
+    email: string;
+    healthInsurance: string;
+}
 
-    self: string;
-
-    constructor(
-        firstName: string,
-        lastName: string,
-        email: string,
-        image: string,
-        healthInsurance: HealthInsurance,
-        appointments: Appointment[],
-        notifications: Notification[],
-        self: string
-    ) {
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.email = email;
-        this.image = image;
-        this.healthInsurance = healthInsurance;
-        this.appointments = appointments;
-        this.notifications = notifications;
-        this.self = self;
-    }
-
-    static fromJson(json: any): Patient {
-        return new Patient(
-            json.firstName,
-            json.lastName,
-            json.email,
-            json.image,
-            json.healthInsurance,
-            json.appointments,
-            json.notifications,
-            json.self
-        );
-    }
-
-    static toJson(patient: Patient): any {
-        return {
-            firstName: patient.firstName,
-            lastName: patient.lastName,
-            email: patient.email,
-            image: patient.image,
-            healthInsurance: patient.healthInsurance,
-            appointments: patient.appointments,
-            notifications: patient.notifications,
-            self: patient.self
-        };
-    }
+export interface PatientEditForm {
+    name: string;
+    lastname: string;
+    email: string;
+    healthInsurance: string;
+    locale: string;
+    image?: File;
 }
