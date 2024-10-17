@@ -27,11 +27,13 @@ public class PatientDto {
     dto.lastName = patient.getLastName();
     dto.email = patient.getEmail();
 
-    dto.image =
-        uri.getBaseUriBuilder()
-            .path("/images")
-            .path(String.valueOf(patient.getImage().getImageId()))
-            .build();
+    if (patient.getImage() != null) {
+      dto.image =
+          uri.getBaseUriBuilder()
+              .path("/images")
+              .path(String.valueOf(patient.getImage().getImageId()))
+              .build();
+    }
 
     dto.healthInsurance =
         uri.getBaseUriBuilder()
