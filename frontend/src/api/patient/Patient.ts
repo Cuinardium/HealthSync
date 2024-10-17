@@ -1,4 +1,4 @@
-import {Notification} from "../models/Notification";
+import {Notification} from "../notification/Notification";
 import {Appointment} from "../appointment/Appointment";
 import {HealthInsurance} from "../health-insurance/HealthInsurance";
 
