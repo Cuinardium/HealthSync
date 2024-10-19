@@ -1,28 +1,75 @@
-import {axios} from "../axios";
-import {Appointment} from "./Appointment";
+import { axios } from "../axios";
+import { Appointment, AppointmentForm, AppointmentQuery } from "./Appointment";
 
-const AppointmentsEndpoint = '/appointments'
+const APPOINTMENT_ENDPOINT = "/appointments";
 
-//TODO revisar tema headers
-export async function getAppointments(id: string): Promise<Appointment[]>{
-    const response = await axios.get(AppointmentsEndpoint,{
-        params:{
-            userId: id
-        }
-    });
+const APPOINTMENT_CONTENT_TYPE = "application/vnd.appointment.v1+json";
+const APPOINTMENT_LIST_CONTENT_TYPE =
+  "application/vnd.appointment-list.v1+json";
+const APPOINTMENT_CANCEL_CONTENT_TYPE =
+  "application/vnd.appointment-cancel.v1+json";
 
-    const responseList = [];
+// =========== appointments ==============
 
-    for (const appointment of response.data){
-        responseList.push(Appointment.fromJson(appointment))
-    }
+export async function getAppointments(
+  query: AppointmentQuery,
+): Promise<Appointment[]> {
+  const response = await axios.get<Appointment[]>(APPOINTMENT_ENDPOINT, {
+    params: query,
+    headers: { Accept: APPOINTMENT_LIST_CONTENT_TYPE },
+  });
 
-    return responseList;
+  return response.data.map((appointment) => mapDates(appointment));
 }
 
-export async function getAppointmentsById(appId: string): Promise<Appointment>{
-    const response = await axios.get(`${AppointmentsEndpoint}/${appId}`);
+export async function createAppointment(appointment: AppointmentForm): Promise<Appointment> {
 
-    return Appointment.fromJson(response.data);
+  (appointment as any).date = appointment.date.toISOString().split("T")[0];
+
+  const response = await axios.post(APPOINTMENT_ENDPOINT, appointment, {
+    headers: { "Content-Type": APPOINTMENT_CONTENT_TYPE },
+  });
+
+  const location = response.headers.location;
+  const appointmentId = location?.split("/").pop();
+
+  return await getAppointment(appointmentId as string);
 }
 
+// =========== appointments/id ==============
+
+export async function getAppointment(id: string): Promise<Appointment> {
+  const response = await axios.get<Appointment>(`${APPOINTMENT_ENDPOINT}/${id}`, {
+    headers: { Accept: APPOINTMENT_CONTENT_TYPE },
+  });
+
+  return mapDates(response.data);
+}
+
+export async function cancelAppointment(
+  id: string,
+  description: string,
+): Promise<Appointment> {
+
+  const body = {
+    status: "CANCELLED",
+    description,
+  };
+
+  const response = await axios.patch<Appointment>(
+    `${APPOINTMENT_ENDPOINT}/${id}`,
+    body,
+    {
+      headers: { "Content-Type": APPOINTMENT_CANCEL_CONTENT_TYPE },
+    },
+  );
+
+  return response.data;
+}
+
+// ========= auxiliary functions =========
+
+export function mapDates(appointment: Appointment): Appointment {
+  appointment.date = new Date(appointment.date);
+  return appointment;
+}

@@ -1,64 +1,30 @@
-export class Appointment {
-    // Properties
-    id: number;
-    date: Date; // Using string to represent LocalDate
-    timeBlock: string;
-    status: string;
-    description: string;
-    cancelDescription: string;
+export interface Appointment {
+  date: Date;
+  description: string;
+  cancelDescription: string | null;
+  doctor: string;
+  id: number;
+  patient: string;
+  self: string;
+  status: "CONFIRMED" | "CANCELLED" | "COMPLETED";
+  timeBlock: string;
+}
 
-    // Links
-    doctor: string;
-    patient: string;
-    self: string;
+export interface CancelAppointmentForm {
+  status: "CANCELLED";
+  description: string;
+}
 
-    constructor(
-        id: number,
-        date: Date,
-        timeBlock: string,
-        status: string,
-        description: string,
-        cancelDescription: string,
-        doctor: string,
-        patient: string,
-        self: string
-    ) {
-        this.id = id;
-        this.date = date;
-        this.timeBlock = timeBlock;
-        this.status = status;
-        this.description = description;
-        this.cancelDescription = cancelDescription;
-        this.doctor = doctor;
-        this.patient = patient;
-        this.self = self;
-    }
+export interface AppointmentForm {
+  date: Date;
+  timeBlock: string;
+  description: string;
+  doctorId: number;
+}
 
-    static fromJson(json: any): Appointment {
-        return new Appointment(
-            json.id,
-            json.date,
-            json.timeBlock,
-            json.status,
-            json.description,
-            json.cancelDescription,
-            json.doctor,
-            json.patient,
-            json.self
-        );
-    }
-
-    static toJson(appointment: Appointment): any {
-        return {
-            id: appointment.id,
-            date: appointment.date,
-            timeBlock: appointment.timeBlock,
-            status: appointment.status,
-            description: appointment.description,
-            cancelDescription: appointment.cancelDescription,
-            doctor: appointment.doctor,
-            patient: appointment.patient,
-            self: appointment.self
-        };
-    }
+export interface AppointmentQuery {
+  userId: string;
+  page?: number;
+  pageSize?: number;
+  status?: "CONFIRMED" | "CANCELLED" | "COMPLETED";
 }
