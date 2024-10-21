@@ -5,6 +5,7 @@ import io.jsonwebtoken.*;
 import java.security.Key;
 import java.util.Date;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
@@ -29,6 +30,7 @@ public class JwtUtil {
         .signWith(jwtPK, SignatureAlgorithm.HS256)
         .compact();
   }
+
   /** jws: Json Web Signature (https://datatracker.ietf.org/doc/html/rfc7515) */
   public UserDetails parseToken(String jws) {
     try {
@@ -50,9 +52,15 @@ public class JwtUtil {
   public String generateAccessToken(User user, String baseUrl) {
     Claims claims = Jwts.claims();
     claims.setSubject(user.getEmail());
-    claims.put("userURL", baseUrl + "/users/" + user.getId());
-    claims.put(
-        "authorization", userDetailsService.loadUserByUsername(user.getEmail()).getAuthorities());
+
+    UserDetails userDetails = userDetailsService.loadUserByUsername(user.getEmail());
+    UserRole role =
+        userDetails.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_DOCTOR"))
+            ? UserRole.ROLE_DOCTOR
+            : UserRole.ROLE_PATIENT;
+
+    claims.put("id", user.getId().toString());
+    claims.put("authorization", role.toString());
     claims.put("refresh", false);
 
     return Jwts.builder()
