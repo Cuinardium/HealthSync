@@ -187,7 +187,9 @@ async function mapDoctorDetails(doctor: Doctor): Promise<Doctor> {
   if (doctor.specialty) {
     const id = doctor.specialty.split("/").pop();
     const specialty = await getSpecialty(id as string);
-    doctor.specialty = specialty.code
+
+    // To map appropiatelly to translation key
+    doctor.specialty = specialty.code.toLowerCase().replace("_", ".");
   }
 
   // Fetch health insurances
@@ -196,7 +198,9 @@ async function mapDoctorDetails(doctor: Doctor): Promise<Doctor> {
       async (healthInsurance) => {
         const id = healthInsurance.split("/").pop();
         const healthInsuranceResp = await getHealthInsurance(id as string);
-        return healthInsuranceResp.code;
+
+        // To map appropiatelly to translation key
+        return healthInsuranceResp.code.toLowerCase().replace("_", ".");
       }
     )
     doctor.healthInsurances = await Promise.all(healthInsurances);

@@ -66,6 +66,8 @@ export async function updatePatient(
 async function mapPatientDetails(patient: Patient): Promise<Patient> {
   const healthInsuranceId = patient.healthInsurance.split("/").pop();
   const healthInsurance = await getHealthInsurance(healthInsuranceId as string);
-  patient.healthInsurance = healthInsurance.code;
+
+  // To map appropiatelly to translation key
+  patient.healthInsurance = healthInsurance.code.toLowerCase().replace("_",".");
   return patient;
 }
