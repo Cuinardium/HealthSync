@@ -10,6 +10,7 @@ export interface Doctor {
   specialty: string;
   healthInsurances: string[];
   image: string;
+  locale: string;
 }
 
 export interface OccupiedHours {

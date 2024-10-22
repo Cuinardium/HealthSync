@@ -5,6 +5,7 @@ export interface Patient {
     email: string;
     healthInsurance: string;
     image: string;
+    locale: string;
 }
 
 export interface PatientRegisterForm {
