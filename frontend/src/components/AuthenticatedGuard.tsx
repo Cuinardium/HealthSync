@@ -3,7 +3,7 @@ import { useAuth } from "../context/AuthContext";
 import Loader from "./Loader";
 
 interface GuardProp {
-  requiredRole: string;
+  requiredRole: string | null;
 }
 
 const AuthenticatedGuard: React.FC<GuardProp> = ({ requiredRole }) => {

@@ -17,6 +17,7 @@ import DoctorRegister from "./pages/auth/DoctorRegister";
 import { AuthProvider } from "./providers/AuthProvider";
 import AuthenticatedGuard from "./components/AuthenticatedGuard";
 import PatientProfile from "./pages/user/PatientProfile";
+import MyAppointments from "./pages/appointments/MyAppointments";
 
 function App() {
   const helmetContext = {};
@@ -38,23 +39,28 @@ function App() {
                 path="/patient-register"
                 element={<PatientRegister hasError={false} error={false} />}
               />
-              <Route
-                path="/login"
-                element={<Login/>}
-              />
+              <Route path="/login" element={<Login />} />
+
+              {/* Private both */}
+              <Route element={<AuthenticatedGuard requiredRole={null} />}>
+                <Route path="my-appointments" element={<MyAppointments />} />
+              </Route>
 
               {/* Only Patient */}
-              <Route element={<AuthenticatedGuard requiredRole="ROLE_PATIENT"/>}>
-                <Route path="/patient-profile" element={
-                  <PatientProfile/>
-                }/>
+              <Route
+                element={<AuthenticatedGuard requiredRole="ROLE_PATIENT" />}
+              >
+                <Route path="/patient-profile" element={<PatientProfile />} />
               </Route>
 
               {/* Only Doctor */}
-              <Route element={<AuthenticatedGuard requiredRole="ROLE_DOCTOR"/>}>
-                <Route path="/doctor-profile" element={
-                  <h1>doctor-profile (WIP)</h1>
-                }/>
+              <Route
+                element={<AuthenticatedGuard requiredRole="ROLE_DOCTOR" />}
+              >
+                <Route
+                  path="/doctor-profile"
+                  element={<h1>doctor-profile (WIP)</h1>}
+                />
               </Route>
 
               {/* Error Pages */}
