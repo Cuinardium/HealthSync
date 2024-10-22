@@ -1,42 +1,40 @@
 import { axios } from "../axios";
+import { getPage, Page } from "../page/Page";
 import { Review, ReviewForm, ReviewQuery } from "./Review";
 
-const REVIEW_ENDPOINT = (doctor_id: string) =>
-  `/doctors/${doctor_id}/reviews`;
+const REVIEW_ENDPOINT = (doctor_id: string) => `/doctors/${doctor_id}/reviews`;
 
 const REVIEW_CONTENT_TYPE = "application/vnd.review.v1+json";
 const REVIEW_LIST_CONTENT_TYPE = "application/vnd.reviews-list.v1+json";
 
 // =========== reviews ==============
 
-export async function getReviews(doctorId: string, reviewQuery: ReviewQuery): Promise<Review[]> {
-  const response = await axios.get<Review[]>(
-    REVIEW_ENDPOINT(doctorId),
-    {
-      params: reviewQuery,
-      headers: {
-        Accept: REVIEW_LIST_CONTENT_TYPE,
-      },
+export async function getReviews(
+  doctorId: string,
+  reviewQuery: ReviewQuery,
+): Promise<Page<Review>> {
+  const response = await axios.get<Review[]>(REVIEW_ENDPOINT(doctorId), {
+    params: reviewQuery,
+    headers: {
+      Accept: REVIEW_LIST_CONTENT_TYPE,
     },
-  );
+  });
 
   // Set date to Date object
-  return response.data.map((review) => mapDates(review));
+  response.data = response.data.map((review) => mapDates(review));
+
+  return getPage(response);
 }
 
 export async function createReview(
   doctorId: string,
   review: ReviewForm,
 ): Promise<Review> {
-  const response = await axios.post<Review>(
-    REVIEW_ENDPOINT(doctorId),
-    review,
-    {
-      headers: {
-        "Content-Type": REVIEW_CONTENT_TYPE,
-      },
+  const response = await axios.post<Review>(REVIEW_ENDPOINT(doctorId), review, {
+    headers: {
+      "Content-Type": REVIEW_CONTENT_TYPE,
     },
-  );
+  });
 
   const location = response.headers.location;
   const reviewId = location?.split("/").pop();

@@ -1,5 +1,6 @@
 import { axios } from "../axios";
 import { getHealthInsurance } from "../health-insurance/healthInsuranceApi";
+import { getPage, Page } from "../page/Page";
 import { getSpecialty } from "../specialty/specialtyApi";
 import {
   Doctor,
@@ -23,33 +24,23 @@ const OCCUPIED_HOURS_CONTENT_TYPE =
 
 // ========== doctors ==============
 
-export async function getDoctors(params: DoctorQuery): Promise<Doctor[]> {
-
-  
+export async function getDoctors(params: DoctorQuery): Promise<Page<Doctor>> {
   if (params.date) {
     (params as any).date = params.date.toISOString().split("T")[0];
   }
-  const response = await axios.get<Doctor[]>(
-    DOCTOR_ENDPOINT,
-    {
-      params: params,
-      headers: {
-        Accept: DOCTOR_LIST_CONTENT_TYPE,
-      },
+  const response = await axios.get<Doctor[]>(DOCTOR_ENDPOINT, {
+    params: params,
+    headers: {
+      Accept: DOCTOR_LIST_CONTENT_TYPE,
     },
-  );
-
-  // No content
-  if (response.status === 204) {
-    return [];
-  }
+  });
 
   // Add health insurances and specialty to each doctor
-  const doctors = await Promise.all(
-    response.data.map(async (doctor) => await mapDoctorDetails(doctor)),
+  response.data = await Promise.all(
+    response.data?.map(async (doctor) => await mapDoctorDetails(doctor)),
   );
 
-  return doctors;
+  return getPage(response);
 }
 
 export async function createDoctor(
@@ -60,7 +51,7 @@ export async function createDoctor(
       "Content-Type": DOCTOR_CONTENT_TYPE,
     },
   });
-    
+
   const location = response.headers.location;
   const doctorId = location?.split("/").pop();
   return await getDoctorById(doctorId as string);
@@ -82,7 +73,7 @@ export async function getDoctorById(id: String): Promise<Doctor> {
 
 export async function updateDoctor(
   id: string,
-  doctor: DoctorEditForm
+  doctor: DoctorEditForm,
 ): Promise<DoctorEditForm> {
   // Multipart/form-data
   const formData = new FormData();
@@ -201,8 +192,8 @@ async function mapDoctorDetails(doctor: Doctor): Promise<Doctor> {
 
         // To map appropiatelly to translation key
         return healthInsuranceResp.code.toLowerCase().replace("_", ".");
-      }
-    )
+      },
+    );
     doctor.healthInsurances = await Promise.all(healthInsurances);
   }
 
