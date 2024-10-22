@@ -5,6 +5,10 @@ interface AuthContextType {
   login: (email: string, password: string) => Promise<void>;
   logout: () => void;
   accessToken: string | null;
+  id: string | null;
+  role: "ROLE_DOCTOR" | "ROLE_PATIENT" | null;
+  authenticated: boolean | null;
+  loading: boolean | null;
 }
 
 // Create context with default values
