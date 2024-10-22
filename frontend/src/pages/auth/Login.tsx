@@ -10,11 +10,11 @@ import {
 } from "react-bootstrap";
 import { useTranslation } from "react-i18next";
 
-import Header from "../components/Header";
+import Header from "../../components/Header";
 import "bootstrap/dist/css/bootstrap.min.css";
-import "../css/main.css";
-import "../css/forms.css";
-import { useAuth } from "../context/AuthContext"
+import "../../css/main.css";
+import "../../css/forms.css";
+import { useAuth } from "../../context/AuthContext"
 import { useLocation, useNavigate } from "react-router-dom";
 
 const patientRegisterUrl = "/patient-register";

@@ -1,5 +1,5 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-import HomePage from "./home/HomePage";
+import HomePage from "./pages/home/HomePage";
 import { HelmetProvider } from "react-helmet-async";
 import { QueryClientProvider } from "@tanstack/react-query";
 
@@ -8,15 +8,15 @@ import { queryClient } from "./api/queryClient";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min";
 
-import Error403 from "./errors/403";
-import Error404 from "./errors/404";
-import Error500 from "./errors/500";
-import Login from "./auth/Login";
-import PatientRegister from "./auth/PatientRegister";
-import DoctorRegister from "./auth/DoctorRegister";
+import Error403 from "./pages/errors/403";
+import Error404 from "./pages/errors/404";
+import Error500 from "./pages/errors/500";
+import Login from "./pages/auth/Login";
+import PatientRegister from "./pages/auth/PatientRegister";
+import DoctorRegister from "./pages/auth/DoctorRegister";
 import { AuthProvider } from "./providers/AuthProvider";
 import AuthenticatedGuard from "./components/AuthenticatedGuard";
-import PatientProfile from "./user/PatientProfile";
+import PatientProfile from "./pages/user/PatientProfile";
 
 function App() {
   const helmetContext = {};

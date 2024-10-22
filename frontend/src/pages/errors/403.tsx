@@ -4,8 +4,8 @@ import { useTranslation } from 'react-i18next';
 
 
 import 'bootstrap/dist/css/bootstrap.min.css';
-import '../css/main.css';
-import '../css/error.css';
+import '../../css/main.css';
+import '../../css/error.css';
 
 const Error403 = () => {
     const { t } = useTranslation();

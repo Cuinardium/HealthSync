@@ -2,19 +2,19 @@ import React, {useEffect, useState} from 'react';
 import {Helmet} from "react-helmet-async";
 import Image from 'react-bootstrap/Image';
 
-import Header from '../components/Header';
+import Header from '../../components/Header';
 // import Favicon from '../components/Favicon';
 
 import {useTranslation} from 'react-i18next';
 //import categoriesCarouselJs from '../ts/categoriesCarousel.js';
-import circle1 from '../img/circle1.svg';
-import circle2 from '../img/circle2.svg';
-import circle3 from '../img/circle3.svg';
-import homeDoctorImg from '../img/homeDoctor.svg';
+import circle1 from '../../img/circle1.svg';
+import circle2 from '../../img/circle2.svg';
+import circle3 from '../../img/circle3.svg';
+import homeDoctorImg from '../../img/homeDoctor.svg';
 
 import 'bootstrap/dist/css/bootstrap.css';
-import '../css/main.css';
-import '../css/home.css';
+import '../../css/main.css';
+import '../../css/home.css';
 
 // Define the API URLs or other variables
 const homeUrl = '/';

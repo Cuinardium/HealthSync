@@ -12,15 +12,15 @@ import { useTranslation } from "react-i18next";
 
 import { FaUser } from "react-icons/fa6";
 
-import Header from "../components/Header";
+import Header from "../../components/Header";
 import "bootstrap/dist/css/bootstrap.min.css";
-import "../css/main.css";
-import "../css/forms.css";
-import "../css/profile.css";
-import { usePatient } from "../hooks/patientHooks";
-import { Patient } from "../api/patient/Patient";
-import { useAuth } from "../context/AuthContext";
-import Loader from "../components/Loader";
+import "../../css/main.css";
+import "../../css/forms.css";
+import "../../css/profile.css";
+import { usePatient } from "../../hooks/patientHooks";
+import { Patient } from "../../api/patient/Patient";
+import { useAuth } from "../../context/AuthContext";
+import Loader from "../../components/Loader";
 
 const PATIENT_EDIT_URL = "/";
 const CHANGE_PASSWORD_URL = "/";
