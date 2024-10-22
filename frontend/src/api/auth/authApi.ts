@@ -17,7 +17,7 @@ export async function getTokens(email: string, password: string): Promise<Creden
 
 export async function renewAccessToken(refreshToken: string): Promise<string> {
 
-  const response = await dummyRequest(refreshToken);
+  const response = await dummyRequest("Bearer " + refreshToken);
 
   return response.headers[ACCESS_TOKEN_HEADER];
 }
