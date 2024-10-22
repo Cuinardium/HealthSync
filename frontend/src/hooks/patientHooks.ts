@@ -7,17 +7,24 @@ import {
 } from "../api//patient/Patient";
 import { queryClient } from "../api/queryClient";
 
+
+const STALE_TIME = 5 * 60 * 1000;
+
+// ========== usePatient ==========
+
 export function usePatient(id: string) {
   return useQuery<Patient, Error>(
     {
       queryKey: ["patient", id],
       queryFn: () => getPatient(id),
       enabled: !!id,
-      staleTime: 5 * 60 * 1000,
+      staleTime: STALE_TIME,
     },
     queryClient,
   );
 }
+
+// ========== useCreatePatient ==========
 
 export function useCreatePatient() {
   return useMutation<Patient, Error, PatientRegisterForm>(
@@ -30,6 +37,8 @@ export function useCreatePatient() {
     queryClient,
   );
 }
+
+// ========== useUpdatePatient ==========
 
 export function useUpdatePatient(id: string) {
   return useMutation<PatientEditForm, Error, PatientEditForm>(
