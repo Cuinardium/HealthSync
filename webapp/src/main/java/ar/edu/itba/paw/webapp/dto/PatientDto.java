@@ -10,6 +10,7 @@ public class PatientDto {
   private String firstName;
   private String lastName;
   private String email;
+  private String locale;
 
   private URI image;
 
@@ -26,6 +27,7 @@ public class PatientDto {
     dto.firstName = patient.getFirstName();
     dto.lastName = patient.getLastName();
     dto.email = patient.getEmail();
+    dto.locale = patient.getLocale().toString();
 
     if (patient.getImage() != null) {
       dto.image =
@@ -126,5 +128,13 @@ public class PatientDto {
 
   public void setId(Long id) {
     this.id = id;
+  }
+
+  public String getLocale() {
+    return locale;
+  }
+
+  public void setLocale(String locale) {
+    this.locale = locale;
   }
 }

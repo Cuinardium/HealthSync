@@ -11,6 +11,7 @@ public class DoctorDto {
   private String firstName;
   private String lastName;
   private String email;
+  private String locale;
 
   private URI image;
 
@@ -39,6 +40,7 @@ public class DoctorDto {
     dto.firstName = doctor.getFirstName();
     dto.lastName = doctor.getLastName();
     dto.email = doctor.getEmail();
+    dto.locale = doctor.getLocale().toString();
 
     if (doctor.getImage() != null) {
       dto.image =
@@ -260,5 +262,13 @@ public class DoctorDto {
 
   public void setRatingCount(Integer ratingCount) {
     this.ratingCount = ratingCount;
+  }
+
+  public String getLocale() {
+    return locale;
+  }
+
+  public void setLocale(String locale) {
+    this.locale = locale;
   }
 }
