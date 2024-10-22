@@ -16,6 +16,7 @@ import PatientRegister from "./auth/PatientRegister";
 import DoctorRegister from "./auth/DoctorRegister";
 import { AuthProvider } from "./providers/AuthProvider";
 import AuthenticatedGuard from "./components/AuthenticatedGuard";
+import PatientProfile from "./user/PatientProfile";
 
 function App() {
   const helmetContext = {};
@@ -45,7 +46,7 @@ function App() {
               {/* Only Patient */}
               <Route element={<AuthenticatedGuard requiredRole="ROLE_PATIENT"/>}>
                 <Route path="/patient-profile" element={
-                  <h1>patient-profile (WIP)</h1>
+                  <PatientProfile/>
                 }/>
               </Route>
 
