@@ -21,6 +21,7 @@ import MyAppointments from "./pages/appointments/MyAppointments";
 import { UserProvider } from "./providers/UserProvider";
 import Layout from "./components/Layout";
 import DoctorProfile from "./pages/user/DoctorProfile";
+import DoctorDashboard from "./pages/doctor/DoctorDashboard";
 
 function App() {
   const helmetContext = {};
@@ -45,6 +46,10 @@ function App() {
                     element={<PatientRegister hasError={false} error={false} />}
                   />
                   <Route path="/login" element={<Login />} />
+                  <Route
+                    path="/doctor-dashboard"
+                    element={<DoctorDashboard />}
+                  />
 
                   {/* Private both */}
                   <Route element={<AuthenticatedGuard requiredRole={null} />}>
@@ -68,10 +73,7 @@ function App() {
                   <Route
                     element={<AuthenticatedGuard requiredRole="ROLE_DOCTOR" />}
                   >
-                    <Route
-                      path="/doctor-profile"
-                      element={<DoctorProfile />}
-                    />
+                    <Route path="/doctor-profile" element={<DoctorProfile />} />
                   </Route>
 
                   {/* Error Pages */}
