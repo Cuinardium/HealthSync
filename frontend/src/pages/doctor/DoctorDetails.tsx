@@ -3,10 +3,15 @@ import { Image } from "react-bootstrap";
 import { useDoctor } from "../../hooks/doctorHooks";
 
 import doctorDefault from "../../img/doctorDefault.png";
+import ReviewList from "../../components/ReviewList";
+import { useState } from "react";
 
 export const DoctorDetails: React.FC = () => {
   const { id } = useParams<{ id: string }>(); // get the doctor id from the URL
   const navigate = useNavigate();
+
+  const [page, setPage] = useState(1);
+  const pageSize = 3;
 
   const { data: doctor, isLoading, isError, error } = useDoctor(id as string);
 
@@ -59,6 +64,13 @@ export const DoctorDetails: React.FC = () => {
           <strong>Rating:</strong> {doctor.rating} / 5
         </p>
       )}
+
+      <ReviewList
+        doctorId={id}
+        page={page}
+        pageSize={pageSize}
+        onPageChange={setPage}
+      />
     </div>
   );
 };
