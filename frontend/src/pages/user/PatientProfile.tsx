@@ -37,8 +37,6 @@ const PatientProfile = () => {
 
   return (
     <div>
-      <Header user={true} hasNotifications={true} isDoctor={true} />
-
       <Container className="generalPadding">
         <h1>{t("profile.profile")}</h1>
         <Card>

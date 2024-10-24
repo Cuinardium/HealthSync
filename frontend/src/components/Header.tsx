@@ -14,6 +14,8 @@ import {
   FaCalendarCheck,
   FaCircle,
 } from "react-icons/fa6";
+import { Patient } from "../api/patient/Patient";
+import { Doctor } from "../api/doctor/Doctor";
 import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 
@@ -27,14 +29,16 @@ const doctorProfileUrl = "/doctor-profile";
 const patientProfileUrl = "/patient-profile";
 const loginUrl = "/login";
 
-const Header = ({
+interface HeaderProps {
+  user: Doctor | Patient | null;
+  hasNotifications: boolean | null;
+  isDoctor: boolean | null;
+}
+
+const Header: React.FC<HeaderProps> = ({
   user,
   hasNotifications,
   isDoctor,
-}: {
-  user: any;
-  hasNotifications: boolean;
-  isDoctor: boolean;
 }) => {
   const { t } = useTranslation();
   const { logout } = useAuth();
@@ -97,7 +101,7 @@ const Header = ({
                       data-placement="top"
                     >
                       <Image
-                        src="./img/doctorDefault.png"
+                        src={user.image}
                         alt={t("user.alt.loggedUserImg")}
                         width="40"
                         height="40"

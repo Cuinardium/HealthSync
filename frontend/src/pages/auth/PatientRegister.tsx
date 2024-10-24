@@ -29,8 +29,6 @@ const PatientRegister = ({ hasError, error } : {hasError:boolean, error:any}) =>
 
     return (
         <>
-            <Header user={false} hasNotifications={false} isDoctor={false}/>
-
             <Container className="formContainer">
                 <Row className="formRow">
                     <Col className="formCol">

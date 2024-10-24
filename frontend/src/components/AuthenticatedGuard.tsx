@@ -7,12 +7,8 @@ interface GuardProp {
 }
 
 const AuthenticatedGuard: React.FC<GuardProp> = ({ requiredRole }) => {
-  const { authenticated, role, loading } = useAuth();
+  const { authenticated, role } = useAuth();
   const location = useLocation();
-
-  if (loading) {
-    return <Loader/>
-  }
 
   return authenticated && (role === requiredRole || !requiredRole) ? (
     <Outlet />

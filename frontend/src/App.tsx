@@ -18,60 +18,72 @@ import { AuthProvider } from "./providers/AuthProvider";
 import AuthenticatedGuard from "./components/AuthenticatedGuard";
 import PatientProfile from "./pages/user/PatientProfile";
 import MyAppointments from "./pages/appointments/MyAppointments";
+import { UserProvider } from "./providers/UserProvider";
+import Layout from "./components/Layout";
 
 function App() {
   const helmetContext = {};
 
   return (
     <HelmetProvider context={helmetContext}>
-      <AuthProvider>
-        <QueryClientProvider client={queryClient}>
-          <BrowserRouter>
-            <Routes>
-              <Route path="/" element={<HomePage />} />
+      <QueryClientProvider client={queryClient}>
+        <AuthProvider>
+          <UserProvider>
+            <BrowserRouter>
+              <Layout>
+                <Routes>
+                  <Route path="/" element={<HomePage />} />
 
-              {/* Public */}
-              <Route
-                path="/doctor-register"
-                element={<DoctorRegister hasError={false} error={false} />}
-              />
-              <Route
-                path="/patient-register"
-                element={<PatientRegister hasError={false} error={false} />}
-              />
-              <Route path="/login" element={<Login />} />
+                  {/* Public */}
+                  <Route
+                    path="/doctor-register"
+                    element={<DoctorRegister hasError={false} error={false} />}
+                  />
+                  <Route
+                    path="/patient-register"
+                    element={<PatientRegister hasError={false} error={false} />}
+                  />
+                  <Route path="/login" element={<Login />} />
 
-              {/* Private both */}
-              <Route element={<AuthenticatedGuard requiredRole={null} />}>
-                <Route path="my-appointments" element={<MyAppointments />} />
-              </Route>
+                  {/* Private both */}
+                  <Route element={<AuthenticatedGuard requiredRole={null} />}>
+                    <Route
+                      path="my-appointments"
+                      element={<MyAppointments />}
+                    />
+                  </Route>
 
-              {/* Only Patient */}
-              <Route
-                element={<AuthenticatedGuard requiredRole="ROLE_PATIENT" />}
-              >
-                <Route path="/patient-profile" element={<PatientProfile />} />
-              </Route>
+                  {/* Only Patient */}
+                  <Route
+                    element={<AuthenticatedGuard requiredRole="ROLE_PATIENT" />}
+                  >
+                    <Route
+                      path="/patient-profile"
+                      element={<PatientProfile />}
+                    />
+                  </Route>
 
-              {/* Only Doctor */}
-              <Route
-                element={<AuthenticatedGuard requiredRole="ROLE_DOCTOR" />}
-              >
-                <Route
-                  path="/doctor-profile"
-                  element={<h1>doctor-profile (WIP)</h1>}
-                />
-              </Route>
+                  {/* Only Doctor */}
+                  <Route
+                    element={<AuthenticatedGuard requiredRole="ROLE_DOCTOR" />}
+                  >
+                    <Route
+                      path="/doctor-profile"
+                      element={<h1>doctor-profile (WIP)</h1>}
+                    />
+                  </Route>
 
-              {/* Error Pages */}
-              <Route path="*" element={<Error404 />} />
-              <Route path="/404" element={<Error404 />} />
-              <Route path="/500" element={<Error500 />} />
-              <Route path="/403" element={<Error403 />} />
-            </Routes>
-          </BrowserRouter>
-        </QueryClientProvider>
-      </AuthProvider>
+                  {/* Error Pages */}
+                  <Route path="*" element={<Error404 />} />
+                  <Route path="/404" element={<Error404 />} />
+                  <Route path="/500" element={<Error500 />} />
+                  <Route path="/403" element={<Error403 />} />
+                </Routes>
+              </Layout>
+            </BrowserRouter>
+          </UserProvider>
+        </AuthProvider>
+      </QueryClientProvider>
     </HelmetProvider>
   );
 }

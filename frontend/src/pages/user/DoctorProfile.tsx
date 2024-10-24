@@ -20,8 +20,6 @@ const DoctorProfile = ({ doctor, vacationUrl, doctorEditUrl, changePasswordUrl, 
 
     return (
         <div>
-            <Header user={true} hasNotifications={true} isDoctor={true} />
-
             <Container className="formContainer generalPadding">
                 <h1>{t('profile.profile')}</h1>
                 <Card>
