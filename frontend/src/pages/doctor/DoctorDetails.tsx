@@ -31,7 +31,7 @@ export const DoctorDetails: React.FC = () => {
   }
 
   return (
-    <div className="doctor-details">
+    <div>
       <h2>
         {doctor.firstName} {doctor.lastName}
       </h2>

@@ -23,6 +23,7 @@ import Layout from "./components/Layout";
 import DoctorProfile from "./pages/user/DoctorProfile";
 import DoctorDashboard from "./pages/doctor/DoctorDashboard";
 import { DoctorDetails } from "./pages/doctor/DoctorDetails";
+import DetailedAppointment from "./pages/appointments/AppointmentDetails";
 
 function App() {
   const helmetContext = {};
@@ -60,6 +61,7 @@ function App() {
                       path="my-appointments"
                       element={<MyAppointments />}
                     />
+                    <Route path="/detailed-appointment/:id" element={<DetailedAppointment />} />
                   </Route>
 
                   {/* Only Patient */}

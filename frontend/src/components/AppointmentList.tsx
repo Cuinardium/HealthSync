@@ -76,6 +76,7 @@ const AppointmentList: React.FC<AppointmentsListProps> = ({
                   {appointment.cancelDescription}
                 </div>
               )}
+            <a href={`detailed-appointment/${appointment.id}`}>More details</a>
           </li>
         ))}
       </ul>
