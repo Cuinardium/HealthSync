@@ -19,6 +19,9 @@ import { Doctor } from "../api/doctor/Doctor";
 import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 
+import patientDefault from "../img/patientDefault.png";
+import doctorDefault from "../img/doctorDefault.png";
+
 // Define the API URLs or other variables
 const homeUrl = "/";
 const dashboardUrl = "/doctor-dashboard";
@@ -101,7 +104,13 @@ const Header: React.FC<HeaderProps> = ({
                       data-placement="top"
                     >
                       <Image
-                        src={user.image}
+                        src={
+                          user.image
+                            ? user.image
+                            : isDoctor
+                              ? doctorDefault
+                              : patientDefault
+                        }
                         alt={t("user.alt.loggedUserImg")}
                         width="40"
                         height="40"

@@ -22,10 +22,11 @@ import { Patient } from "../../api/patient/Patient";
 import { useAuth } from "../../context/AuthContext";
 import Loader from "../../components/Loader";
 
+import patientDefault from "../../img/patientDefault.png";
+
 const PATIENT_EDIT_URL = "/";
 const CHANGE_PASSWORD_URL = "/";
 
-const DEFAULT_IMAGE = "../img/patientDefault.png";
 
 const PatientProfile = () => {
   const { t } = useTranslation();
@@ -44,7 +45,7 @@ const PatientProfile = () => {
             <div className="profileImageContainer">
               <Image
                 src={
-                  !isLoading && patient?.image ? patient.image : DEFAULT_IMAGE
+                  !isLoading && patient?.image ? patient.image : patientDefault
                 }
                 alt={t("user.alt.loggedUserImg")}
                 width="200"
@@ -86,7 +87,9 @@ const PatientProfile = () => {
                 <Col className="profileItem">
                   <Form.Label>{t("form.healthcare")}</Form.Label>
                   <div className="chip">
-                    {!isLoading ? t(`healthInsurance.${patient?.healthInsurance}`) : ''}
+                    {!isLoading
+                      ? t(`healthInsurance.${patient?.healthInsurance}`)
+                      : ""}
                   </div>
                 </Col>
                 <Col className="profileItem">
