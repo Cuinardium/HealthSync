@@ -20,7 +20,10 @@ export async function getAppointments(
     headers: { Accept: APPOINTMENT_LIST_CONTENT_TYPE },
   });
 
-  response.data = response.data?.map((appointment) => mapDates(appointment));
+  if (response.status == 200) {
+    // Set date to Date object
+    response.data = response.data?.map((review) => mapDates(review));
+  }
 
   return getPage(response);
 }

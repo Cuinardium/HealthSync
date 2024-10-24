@@ -20,8 +20,10 @@ export async function getReviews(
     },
   });
 
-  // Set date to Date object
-  response.data = response.data.map((review) => mapDates(review));
+  if (response.status == 200) {
+    // Set date to Date object
+    response.data = response.data?.map((review) => mapDates(review));
+  }
 
   return getPage(response);
 }

@@ -22,8 +22,10 @@ export async function getVacations(
     },
   });
 
-  // Set fromDate and toDate to Date object
-  response.data = response.data?.map((vacation) => mapDates(vacation));
+  if (response.status == 200) {
+    // Set fromDate and toDate to Date object
+    response.data = response.data?.map((review) => mapDates(review));
+  }
 
   return getPage(response);
 }

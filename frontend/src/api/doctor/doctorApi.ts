@@ -35,10 +35,12 @@ export async function getDoctors(params: DoctorQuery): Promise<Page<Doctor>> {
     },
   });
 
-  // Add health insurances and specialty to each doctor
-  response.data = await Promise.all(
-    response.data?.map(async (doctor) => await mapDoctorDetails(doctor)),
-  );
+  if (response.status == 200) {
+    // Add health insurances and specialty to each doctor
+    response.data = await Promise.all(
+      response.data?.map(async (doctor) => await mapDoctorDetails(doctor)),
+    );
+  }
 
   return getPage(response);
 }
