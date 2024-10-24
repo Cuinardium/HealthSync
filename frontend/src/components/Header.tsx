@@ -14,6 +14,8 @@ import {
   FaCalendarCheck,
   FaCircle,
 } from "react-icons/fa6";
+import { useAuth } from "../context/AuthContext";
+import { useNavigate } from "react-router-dom";
 
 // Define the API URLs or other variables
 const homeUrl = "/";
@@ -24,7 +26,6 @@ const patientRegisterUrl = "/patient-register";
 const doctorProfileUrl = "/doctor-profile";
 const patientProfileUrl = "/patient-profile";
 const loginUrl = "/login";
-const logoutUrl = "/logout";
 
 const Header = ({
   user,
@@ -36,6 +37,14 @@ const Header = ({
   isDoctor: boolean;
 }) => {
   const { t } = useTranslation();
+  const { logout } = useAuth();
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    logout();
+
+    navigate(homeUrl);
+  };
 
   return (
     <header className="horizontalPadding border-bottom">
@@ -113,7 +122,7 @@ const Header = ({
                         </li>
                       )}
                       <li>
-                        <a className="dropdown-item" href={logoutUrl}>
+                        <a className="dropdown-item" onClick={handleLogout}>
                           {t("header.logout")}
                         </a>
                       </li>
