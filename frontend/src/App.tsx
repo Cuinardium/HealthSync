@@ -22,6 +22,7 @@ import { UserProvider } from "./providers/UserProvider";
 import Layout from "./components/Layout";
 import DoctorProfile from "./pages/user/DoctorProfile";
 import DoctorDashboard from "./pages/doctor/DoctorDashboard";
+import { DoctorDetails } from "./pages/doctor/DoctorDetails";
 
 function App() {
   const helmetContext = {};
@@ -46,10 +47,12 @@ function App() {
                     element={<PatientRegister hasError={false} error={false} />}
                   />
                   <Route path="/login" element={<Login />} />
+
                   <Route
                     path="/doctor-dashboard"
                     element={<DoctorDashboard />}
                   />
+                  <Route path="/detailed-doctor/:id" element={<DoctorDetails />} />
 
                   {/* Private both */}
                   <Route element={<AuthenticatedGuard requiredRole={null} />}>

@@ -76,6 +76,7 @@ const DoctorList: React.FC<DoctorListProps> = ({
                 <strong>Rating: {doctor.rating}</strong>
               </div>
             )}
+            <a href={`/detailed-doctor/${doctor.id}`}>View Details</a>
           </li>
         ))}
       </ul>
