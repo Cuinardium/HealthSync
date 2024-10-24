@@ -1,129 +1,193 @@
-import React from 'react';
-import { Button, Card, Form, Container, Row, Col, Image } from 'react-bootstrap';
-import { useTranslation } from 'react-i18next';
+import React from "react";
+import {
+  Button,
+  Card,
+  Form,
+  Container,
+  Row,
+  Col,
+  Image,
+} from "react-bootstrap";
+import { useTranslation } from "react-i18next";
 
-import { FaUserDoctor, FaCalendar, FaLocationDot } from 'react-icons/fa6';
+import { FaUserDoctor, FaCalendar, FaLocationDot } from "react-icons/fa6";
 
-import Header from '../../components/Header';
-import 'bootstrap/dist/css/bootstrap.min.css';
-import '../../css/main.css';
-import '../../css/forms.css';
-import '../../css/profile.css';
-import {Doctor} from "../../api/doctor/Doctor";
+import "bootstrap/dist/css/bootstrap.min.css";
+import "../../css/main.css";
+import "../../css/forms.css";
+import "../../css/profile.css";
 
-const DoctorProfile = ({ doctor, vacationUrl, doctorEditUrl, changePasswordUrl, thirtyMinuteBlocks, days } :
-                           { doctor:Doctor, vacationUrl:string, doctorEditUrl:string, changePasswordUrl:string, thirtyMinuteBlocks:any, days:any }) => {
-    const { t } = useTranslation();
+import { useAuth } from "../../context/AuthContext";
+import { useDoctor } from "../../hooks/doctorHooks";
 
-    // const loggedUserImg = doctor.image.imageId ? `/img/${doctor.image.imageId}` : '/img/doctorDefault.png';
-    const loggedUserImg = '/img/doctorDefault.png';
+import doctorDefault from "../../img/doctorDefault.png";
 
-    return (
-        <div>
-            <Container className="formContainer generalPadding">
-                <h1>{t('profile.profile')}</h1>
-                <Card>
-                    <div className="profileContainer">
-                        <div className="profileImageContainer">
-                            <Image src={loggedUserImg} alt={t('user.alt.loggedUserImg')} width="200" height="200" className="rounded-circle" />
-                        </div>
+const DOCTOR_EDIT_URL = "/";
+const CHANGE_PASSWORD_URL = "/";
+const VACATION_URL = "/";
 
-                        <div className="profileData">
-                            <div className="profileTitle">
-                                <strong>{t('profile.personalInfo')}</strong>
-                                <FaUserDoctor />
-                            </div>
+const DoctorProfile = () => {
+  const { t } = useTranslation();
+  const { id } = useAuth();
 
-                            <Row className="profileRow">
-                                <Col className="profileItem">
-                                    <Form.Label htmlFor="firstName">{t('form.name')}</Form.Label>
-                                    <Form.Control id="firstName" type="text" value={doctor.firstName} disabled />
-                                </Col>
-                                <Col className="profileItem">
-                                    <Form.Label htmlFor="lastName">{t('form.lastname')}</Form.Label>
-                                    <Form.Control id="lastName" type="text" value={doctor.lastName} disabled />
-                                </Col>
-                            </Row>
+  const result = useDoctor(id as string);
+  const doctor = result.data;
+  const isLoading = result.isLoading;
 
-                            <Row className="profileRow">
-                                <Col className="profileItem">
-                                    <Form.Label htmlFor="email">{t('form.email')}</Form.Label>
-                                    <Form.Control id="email" type="text" value={doctor.email} disabled />
-                                </Col>
-                                <Col className="profileItem">
-                                    <Form.Label>{t('form.locale')}</Form.Label>
-                                    <div className="chip">
-                                        {/*{doctor.locale}*/}
-                                    </div>
-                                </Col>
-                            </Row>
-                        </div>
-                    </div>
+  return (
+    <div>
+      <Container className="formContainer generalPadding">
+        <h1>{t("profile.profile")}</h1>
+        <Card>
+          <div className="profileContainer">
+            <div className="profileImageContainer">
+              <Image
+                src={!isLoading && doctor?.image ? doctor.image : doctorDefault}
+                alt={t("user.alt.loggedUserImg")}
+                width="200"
+                height="200"
+                className="rounded-circle"
+              />
+            </div>
 
-                    <hr />
+            <div className="profileData">
+              <div className="profileTitle">
+                <strong>{t("profile.personalInfo")}</strong>
+                <FaUserDoctor />
+              </div>
 
-                    <div className="doctorData">
-                        <div className="profileTitle">
-                            <strong>{t('profile.location')}</strong>
-                            <FaLocationDot />
-                        </div>
+              <Row className="profileRow">
+                <Col className="profileItem">
+                  <Form.Label htmlFor="firstName">{t("form.name")}</Form.Label>
+                  <Form.Control
+                    id="firstName"
+                    type="text"
+                    value={doctor?.firstName}
+                    disabled
+                  />
+                </Col>
+                <Col className="profileItem">
+                  <Form.Label htmlFor="lastName">
+                    {t("form.lastname")}
+                  </Form.Label>
+                  <Form.Control
+                    id="lastName"
+                    type="text"
+                    value={doctor?.lastName}
+                    disabled
+                  />
+                </Col>
+              </Row>
 
-                        <Row className="profileRow">
-                            <Col className="profileItem">
-                                <Form.Label htmlFor="address">{t('form.address')}</Form.Label>
-                                <Form.Control id="address" type="text" value={doctor.address} disabled />
-                            </Col>
-                            <Col className="profileItem">
-                                <Form.Label htmlFor="city">{t('form.city')}</Form.Label>
-                                <Form.Control id="city" type="text" value={doctor.city} disabled />
-                            </Col>
-                        </Row>
+              <Row className="profileRow">
+                <Col className="profileItem">
+                  <Form.Label htmlFor="email">{t("form.email")}</Form.Label>
+                  <Form.Control
+                    id="email"
+                    type="text"
+                    value={doctor?.email}
+                    disabled
+                  />
+                </Col>
+                <Col className="profileItem">
+                  <Form.Label>{t("form.locale")}</Form.Label>
+                  <div className="chip">{doctor?.locale}</div>
+                </Col>
+              </Row>
+            </div>
+          </div>
 
-                        <hr />
+          <hr />
 
-                        <div className="profileTitle">
-                            <strong>{t('profile.workInfo')}</strong>
-                            <FaUserDoctor />
-                        </div>
+          <div className="doctorData">
+            <div className="profileTitle">
+              <strong>{t("profile.location")}</strong>
+              <FaLocationDot />
+            </div>
 
-                        <Row className="profileRow">
-                            <Col className="profileItem">
-                                <Form.Label htmlFor="specialtyCode">{t('form.specialization')}</Form.Label>
-                                {/*<Form.Control id="specialtyCode" type="text" value={t(doctor.specialty.messageID)} disabled />*/}
-                            </Col>
-                            <Col className="profileItem">
-                                <Form.Label>{t('form.healthcare')}</Form.Label>
-                                <div className="chipsContainer">
-                                    {doctor.healthInsurances.map((healthInsurance:any, index:number) => (
-                                        <div key={index} className="chip">
-                                            {t(healthInsurance.messageID)}
-                                        </div>
-                                    ))}
-                                </div>
-                            </Col>
-                        </Row>
+            <Row className="profileRow">
+              <Col className="profileItem">
+                <Form.Label htmlFor="address">{t("form.address")}</Form.Label>
+                <Form.Control
+                  id="address"
+                  type="text"
+                  value={doctor?.address}
+                  disabled
+                />
+              </Col>
+              <Col className="profileItem">
+                <Form.Label htmlFor="city">{t("form.city")}</Form.Label>
+                <Form.Control
+                  id="city"
+                  type="text"
+                  value={doctor?.city}
+                  disabled
+                />
+              </Col>
+            </Row>
 
-                        <hr />
+            <hr />
 
-                        <div className="profileTitle">
-                            <strong>{t('profile.schedule')}</strong>
-                            <FaCalendar />
-                        </div>
+            <div className="profileTitle">
+              <strong>{t("profile.workInfo")}</strong>
+              <FaUserDoctor />
+            </div>
 
-                        <div className="scheduleMargin">
-                            {/* <scheduleViewer/> */}
-                        </div>
-                    </div>
+            <Row className="profileRow">
+              <Col className="profileItem">
+                <Form.Label htmlFor="specialtyCode">
+                  {t("form.specialization")}
+                </Form.Label>
+                {
+                  <Form.Control
+                    id="specialtyCode"
+                    type="text"
+                    value={
+                      !isLoading ? t(`specialty.${doctor?.specialty}`) : ""
+                    }
+                    disabled
+                  />
+                }
+              </Col>
+              <Col className="profileItem">
+                <Form.Label>{t("form.healthcare")}</Form.Label>
+                <div className="chipsContainer">
+                  {doctor?.healthInsurances.map(
+                    (healthInsurance: any, index: number) => (
+                      <div key={index} className="chip">
+                        {t(`healthInsurance.${healthInsurance}`)}
+                      </div>
+                    ),
+                  )}
+                </div>
+              </Col>
+            </Row>
 
-                    <div className="profileButtonContainer">
-                        <Button variant="primary" href={vacationUrl}>{t('profile.viewVacations')}</Button>
-                        <Button variant="primary" href={doctorEditUrl}>{t('profile.edit')}</Button>
-                        <Button variant="primary" href={changePasswordUrl}>{t('profile.changePassword')}</Button>
-                    </div>
-                </Card>
-            </Container>
-        </div>
-    );
+            <hr />
+
+            <div className="profileTitle">
+              <strong>{t("profile.schedule")}</strong>
+              <FaCalendar />
+            </div>
+
+            <div className="scheduleMargin">{/* <scheduleViewer/> */}</div>
+          </div>
+
+          <div className="profileButtonContainer">
+            <Button variant="primary" href={VACATION_URL}>
+              {t("profile.viewVacations")}
+            </Button>
+            <Button variant="primary" href={DOCTOR_EDIT_URL}>
+              {t("profile.edit.title")}
+            </Button>
+            <Button variant="primary" href={CHANGE_PASSWORD_URL}>
+              {t("profile.changePassword")}
+            </Button>
+          </div>
+        </Card>
+      </Container>
+    </div>
+  );
 };
 
 export default DoctorProfile;

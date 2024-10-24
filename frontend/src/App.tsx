@@ -20,6 +20,7 @@ import PatientProfile from "./pages/user/PatientProfile";
 import MyAppointments from "./pages/appointments/MyAppointments";
 import { UserProvider } from "./providers/UserProvider";
 import Layout from "./components/Layout";
+import DoctorProfile from "./pages/user/DoctorProfile";
 
 function App() {
   const helmetContext = {};
@@ -69,7 +70,7 @@ function App() {
                   >
                     <Route
                       path="/doctor-profile"
-                      element={<h1>doctor-profile (WIP)</h1>}
+                      element={<DoctorProfile />}
                     />
                   </Route>
 

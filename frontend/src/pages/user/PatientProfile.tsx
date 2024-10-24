@@ -12,15 +12,12 @@ import { useTranslation } from "react-i18next";
 
 import { FaUser } from "react-icons/fa6";
 
-import Header from "../../components/Header";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "../../css/main.css";
 import "../../css/forms.css";
 import "../../css/profile.css";
 import { usePatient } from "../../hooks/patientHooks";
-import { Patient } from "../../api/patient/Patient";
 import { useAuth } from "../../context/AuthContext";
-import Loader from "../../components/Loader";
 
 import patientDefault from "../../img/patientDefault.png";
 
