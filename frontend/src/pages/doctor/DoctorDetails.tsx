@@ -6,7 +6,7 @@ import doctorDefault from "../../img/doctorDefault.png";
 import ReviewList from "../../components/ReviewList";
 import { useState } from "react";
 
-export const DoctorDetails: React.FC = () => {
+const DoctorDetails: React.FC = () => {
   const { id } = useParams<{ id: string }>(); // get the doctor id from the URL
   const navigate = useNavigate();
 
@@ -74,3 +74,5 @@ export const DoctorDetails: React.FC = () => {
     </div>
   );
 };
+
+export default DoctorDetails;
