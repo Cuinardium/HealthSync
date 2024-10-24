@@ -1,5 +1,10 @@
 import { axios } from "../axios";
-import { Indication, IndicationForm, IndicationQuery } from "./Indication";
+import {
+  Indication,
+  IndicationFile,
+  IndicationForm,
+  IndicationQuery,
+} from "./Indication";
 
 const INDICATION_ENDPOINT = (appointmentId: string) =>
   `/appointments/${appointmentId}/indications`;
@@ -9,7 +14,6 @@ const FILE_ENDPOINT = (appointmentId: string) =>
 
 const INDICATION_CONTENT_TYPE = "application/vnd.indication.v1+json";
 const INDICATION_LIST_CONTENT_TYPE = "application/vnd.indication-list.v1+json";
-
 
 // =========== indications ==============
 
@@ -31,7 +35,6 @@ export async function createIndication(
   appointmentId: string,
   indication: IndicationForm,
 ): Promise<Indication> {
-
   const formData = new FormData();
 
   formData.append("indications", indication.indications);
@@ -40,11 +43,15 @@ export async function createIndication(
     formData.append("file", indication.file);
   }
 
-  const response =await axios.post(INDICATION_ENDPOINT(appointmentId), formData, {
-    headers: {
-      "Content-Type": "multipart/form-data",
+  const response = await axios.post(
+    INDICATION_ENDPOINT(appointmentId),
+    formData,
+    {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
     },
-  });
+  );
 
   const location = response.headers.location;
   const indicationId = location.split("/").pop();
@@ -54,7 +61,10 @@ export async function createIndication(
 
 // =========== indications/id ==============
 
-export async function getIndication(appointmentId: string, id: string): Promise<Indication> {
+export async function getIndication(
+  appointmentId: string,
+  id: string,
+): Promise<Indication> {
   const response = await axios.get<Indication>(
     `${INDICATION_ENDPOINT(appointmentId)}/${id}`,
     {
@@ -66,9 +76,27 @@ export async function getIndication(appointmentId: string, id: string): Promise<
 
 // ============ files/id ==============
 
-export async function getFile(appointmentId: string, id: string): Promise<Blob> {
+export async function getFile(
+  appointmentId: string,
+  id: string,
+): Promise<IndicationFile> {
   const response = await axios.get(`${FILE_ENDPOINT(appointmentId)}/${id}`, {
     responseType: "blob",
   });
-  return response.data;
+
+  const contentDisposition = response.headers["content-disposition"];
+  let fileName;
+
+  if (contentDisposition) {
+    const fileNameMatch = contentDisposition.match(/filename="(.+)"/);
+
+    if (fileNameMatch && fileNameMatch.length > 1) {
+      fileName = fileNameMatch[1];
+    }
+  }
+
+  return {
+    blob: response.data,
+    fileName: fileName,
+  };
 }

@@ -17,3 +17,8 @@ export interface IndicationQuery {
   page?: number;
   pageSize?: number;
 }
+
+export interface IndicationFile {
+  blob: Blob;
+  fileName: string;
+}
