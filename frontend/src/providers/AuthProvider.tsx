@@ -38,9 +38,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   // Log in and load tokens
   const login = async (email: string, password: string): Promise<void> => {
-    setLoading(true);
-
     const credentials = await getTokens(email, password);
+
+    setLoading(true);
 
     setAccessToken(credentials.accessToken);
     setRefreshToken(credentials.refreshToken);
