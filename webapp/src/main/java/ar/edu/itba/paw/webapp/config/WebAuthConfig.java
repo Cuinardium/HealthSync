@@ -149,11 +149,11 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
         .antMatchers(HttpMethod.POST, "/api/doctors/{doctorId:\\d+}/reviews")
         .hasRole(UserRole.ROLE_PATIENT.getRoleNameWithoutPrefix())
 
-        // ------------- Specialities -------
-        .antMatchers(HttpMethod.GET, "/api/specialities")
+        // ------------- Specialties -------
+        .antMatchers(HttpMethod.GET, "/api/specialties")
         .permitAll()
         // specialities/{id}
-        .antMatchers(HttpMethod.GET, "/api/specialities/{specialityId:\\d+}")
+        .antMatchers(HttpMethod.GET, "/api/specialties/{specialtyId:\\d+}")
         .permitAll()
 
         // ------------- Cities -------------
