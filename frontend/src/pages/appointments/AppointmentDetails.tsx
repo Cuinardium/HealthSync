@@ -1,9 +1,14 @@
+import { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import IndicationList from "../../components/IndicationList";
 import { useAppointment } from "../../hooks/appointmentHooks";
 
 const DetailedAppointment: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+
+  const [page, setPage] = useState(1);
+  const pageSize = 3;
 
   const {
     data: appointment,
@@ -52,6 +57,13 @@ const DetailedAppointment: React.FC = () => {
       <p>
         <strong>Description:</strong> {appointment.description}
       </p>
+
+      <IndicationList
+        appointmentId={id}
+        page={page}
+        pageSize={pageSize}
+        onPageChange={setPage}
+      />
     </div>
   );
 };
