@@ -98,7 +98,7 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
         Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
     configuration.addAllowedHeader(CorsConfiguration.ALL);
     configuration.setExposedHeaders(
-        Arrays.asList("Authorization", "Link", "Location", "ETag", "Total-Elements", "X-Jwt", "X-Refresh"));
+        Arrays.asList("Authorization", "Link", "Location", "ETag", "Total-Elements", "X-Jwt", "X-Refresh", "Content-Disposition"));
     UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
     source.registerCorsConfiguration("/**", configuration);
     return source;
