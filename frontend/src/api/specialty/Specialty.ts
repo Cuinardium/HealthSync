@@ -6,8 +6,6 @@ export interface Specialty {
 }
 
 export interface SpecialtyQuery {
-  page?: number;
-  pageSize?: number;
   sort?: 'popularity' | 'standard';
   order?: 'asc' | 'desc';
 }

@@ -8,17 +8,30 @@ const SPECIALTY_LIST_CONTENT_TYPE = "application/vnd.specialty-list.v1+json";
 
 // =========== specialties ==============
 
-export async function getSpecialties(
-  query: SpecialtyQuery = {},
-): Promise<Specialty[]> {
-  const response = await axios.get<Specialty[]>(SPECIALTY_ENDPOINT, {
-    params: query,
-    headers: {
-      Accept: SPECIALTY_LIST_CONTENT_TYPE,
-    },
-  });
+export async function getSpecialties(query: SpecialtyQuery): Promise<Specialty[]> {
+  const allSpecialties: Specialty[] = [];
+  let nextPageUrl: string | null = SPECIALTY_ENDPOINT;
 
-  return response.data;
+  const initialQuery = {
+    pageSize: 100,
+    ...query
+  };
+
+  while (nextPageUrl) {
+    const response = await axios.get<Specialty[]>(nextPageUrl, {
+      params: initialQuery,
+      headers: {
+        Accept: SPECIALTY_LIST_CONTENT_TYPE,
+      },
+    });
+
+    allSpecialties.push(...response.data);
+
+    const linkHeader: string = response.headers.link;
+    nextPageUrl = linkHeader?.match(/<([^>]+)>;\s*rel="next"/)?.[1] || null;
+  }
+
+  return allSpecialties;
 }
 
 // =========== specialties/{id} =======
