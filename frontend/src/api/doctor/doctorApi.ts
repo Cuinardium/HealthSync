@@ -182,7 +182,7 @@ async function mapDoctorDetails(doctor: Doctor): Promise<Doctor> {
     const specialty = await getSpecialty(id as string);
 
     // To map appropiatelly to translation key
-    doctor.specialty = specialty.code.toLowerCase().replace("_", ".");
+    doctor.specialty = specialty.code.toLowerCase().replace(/_/g, ".");
   }
 
   // Fetch health insurances
@@ -193,7 +193,7 @@ async function mapDoctorDetails(doctor: Doctor): Promise<Doctor> {
         const healthInsuranceResp = await getHealthInsurance(id as string);
 
         // To map appropiatelly to translation key
-        return healthInsuranceResp.code.toLowerCase().replace("_", ".");
+        return healthInsuranceResp.code.toLowerCase().replace(/_/g, ".");
       },
     );
     doctor.healthInsurances = await Promise.all(healthInsurances);

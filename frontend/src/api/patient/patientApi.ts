@@ -68,6 +68,6 @@ async function mapPatientDetails(patient: Patient): Promise<Patient> {
   const healthInsurance = await getHealthInsurance(healthInsuranceId as string);
 
   // To map appropiatelly to translation key
-  patient.healthInsurance = healthInsurance.code.toLowerCase().replace("_",".");
+  patient.healthInsurance = healthInsurance.code.toLowerCase().replace(/_/g,".");
   return patient;
 }
