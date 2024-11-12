@@ -79,4 +79,18 @@
         <servlet-name>jersey</servlet-name>
         <url-pattern>/api/*</url-pattern>
     </servlet-mapping>
+
+    <!-- Para el SPA -->
+    <servlet-mapping>
+        <servlet-name>default</servlet-name>
+        <url-pattern>/static/*</url-pattern>
+    </servlet-mapping>
+    <servlet>
+        <servlet-name>index</servlet-name>
+        <jsp-file>/index.html</jsp-file>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>index</servlet-name>
+        <url-pattern>/*</url-pattern>
+    </servlet-mapping>
 </web-app>

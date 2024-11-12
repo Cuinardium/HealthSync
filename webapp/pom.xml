@@ -51,6 +51,12 @@
             <version>${project.version}</version>
             <scope>runtime</scope>
         </dependency>
+        <dependency>
+            <groupId>ar.edu.itba.paw</groupId>
+            <artifactId>frontend</artifactId>
+            <version>${project.version}</version>
+            <type>pom</type>
+        </dependency>
 
         <!-- Spring dependencies -->
         <dependency>
@@ -239,6 +245,11 @@
                     -->
                     <configuration>
                         <packagingExcludes>**/logback-test.xml</packagingExcludes>
+                        <webResources>
+                            <resource>
+                                <directory>../frontend/build</directory>
+                            </resource>
+                        </webResources>
                     </configuration>
                 </plugin>
                 <plugin>

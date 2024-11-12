@@ -41,7 +41,7 @@ function App() {
       <QueryClientProvider client={queryClient}>
         <AuthProvider>
           <UserProvider>
-            <BrowserRouter>
+            <BrowserRouter basename="paw-2023a-02">
               <Layout>
                 <Suspense fallback={<Loader />}>
                   <Routes>
