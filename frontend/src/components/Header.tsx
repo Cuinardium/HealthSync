@@ -53,6 +53,7 @@ const Header: React.FC<HeaderProps> = ({
     navigate(homeUrl);
   };
 
+  // TODO usar componentes de bootstrap
   return (
     <header className="horizontalPadding border-bottom">
       <div className="head">
@@ -120,18 +121,18 @@ const Header: React.FC<HeaderProps> = ({
                     <ul className="dropdown-menu">
                       {isDoctor ? (
                         <li>
-                          <Link
+                          <a
                             className="dropdown-item icon"
-                            to={doctorProfileUrl}
+                            onClick={() => navigate(doctorProfileUrl)}
                           >
                             {t("header.profile")}
-                          </Link>
+                          </a>
                         </li>
                       ) : (
                         <li>
-                          <Link className="dropdown-item" to={patientProfileUrl}>
+                          <a className="dropdown-item" onClick={() => navigate(patientProfileUrl)}>
                             {t("header.profile")}
-                          </Link>
+                          </a>
                         </li>
                       )}
                       <li>
