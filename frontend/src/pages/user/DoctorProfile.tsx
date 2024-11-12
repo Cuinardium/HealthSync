@@ -25,7 +25,7 @@ import { Link } from "react-router-dom";
 
 const DOCTOR_EDIT_URL = "/";
 const CHANGE_PASSWORD_URL = "/";
-const VACATION_URL = "/";
+const VACATION_URL = "/doctor-vacations";
 
 const DoctorProfile = () => {
   const { t } = useTranslation();
