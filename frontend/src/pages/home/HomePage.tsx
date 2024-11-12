@@ -15,6 +15,7 @@ import homeDoctorImg from '../../img/homeDoctor.svg';
 import 'bootstrap/dist/css/bootstrap.css';
 import '../../css/main.css';
 import '../../css/home.css';
+import { Link } from 'react-router-dom';
 
 // Define the API URLs or other variables
 const homeUrl = '/';
@@ -114,10 +115,10 @@ const HomePage = () => {
             </section>
 
             <footer className="foot border-top horizontalPadding">
-                <a className="navbar-brand" href={homeUrl}>
+                <Link className="navbar-brand" to={homeUrl}>
                     <div className="health title">Health</div>
                     <div className="sync title">Sync</div>
-                </a>
+                </Link>
                 <div>
                     <span className="text-body-secondary">&copy; 2023 HealthSync, Inc</span>
                 </div>

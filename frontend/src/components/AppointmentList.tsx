@@ -2,6 +2,7 @@ import React from "react";
 import { useAppointments } from "../hooks/appointmentHooks";
 import { AppointmentQuery } from "../api/appointment/Appointment";
 import Loader from "./Loader";
+import { Link } from "react-router-dom";
 
 interface AppointmentsListProps {
   userId: string;
@@ -76,7 +77,7 @@ const AppointmentList: React.FC<AppointmentsListProps> = ({
                   {appointment.cancelDescription}
                 </div>
               )}
-            <a href={`detailed-appointment/${appointment.id}`}>More details</a>
+            <Link to={`/detailed-appointment/${appointment.id}`}>More details</Link>
           </li>
         ))}
       </ul>

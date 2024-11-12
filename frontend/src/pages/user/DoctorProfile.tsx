@@ -21,6 +21,7 @@ import { useAuth } from "../../context/AuthContext";
 import { useDoctor } from "../../hooks/doctorHooks";
 
 import doctorDefault from "../../img/doctorDefault.png";
+import { Link } from "react-router-dom";
 
 const DOCTOR_EDIT_URL = "/";
 const CHANGE_PASSWORD_URL = "/";
@@ -174,13 +175,13 @@ const DoctorProfile = () => {
           </div>
 
           <div className="profileButtonContainer">
-            <Button variant="primary" href={VACATION_URL}>
+            <Button variant="primary" as={Link as any} to={VACATION_URL}>
               {t("profile.viewVacations")}
             </Button>
-            <Button variant="primary" href={DOCTOR_EDIT_URL}>
+            <Button variant="primary" as={Link as any} to={DOCTOR_EDIT_URL}>
               {t("profile.edit.title")}
             </Button>
-            <Button variant="primary" href={CHANGE_PASSWORD_URL}>
+            <Button variant="primary" as={Link as any} to={CHANGE_PASSWORD_URL}>
               {t("profile.changePassword")}
             </Button>
           </div>

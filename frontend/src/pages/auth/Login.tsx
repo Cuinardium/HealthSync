@@ -15,7 +15,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "../../css/main.css";
 import "../../css/forms.css";
 import { useAuth } from "../../context/AuthContext"
-import { useLocation, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 
 const patientRegisterUrl = "/patient-register";
 
@@ -130,7 +130,7 @@ const Login = () => {
                     <p>
                       <b>{t("login.haveAccount")}&nbsp;</b>
                     </p>
-                    <a href={patientRegisterUrl}>{t("login.register")}</a>
+                    <Link to={patientRegisterUrl}>{t("login.register")}</Link>
                   </div>
                 </Form>
               </Card.Body>

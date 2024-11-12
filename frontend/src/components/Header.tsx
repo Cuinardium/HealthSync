@@ -17,7 +17,7 @@ import {
 import { Patient } from "../api/patient/Patient";
 import { Doctor } from "../api/doctor/Doctor";
 import { useAuth } from "../context/AuthContext";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 import patientDefault from "../img/patientDefault.png";
 import doctorDefault from "../img/doctorDefault.png";
@@ -56,25 +56,25 @@ const Header: React.FC<HeaderProps> = ({
   return (
     <header className="horizontalPadding border-bottom">
       <div className="head">
-        <a
-          href={homeUrl}
+        <Link
+          to={homeUrl}
           className="d-flex align-items-centera title navbar-brand"
         >
           <Image src={logo} alt="HealthSync logo" className="logo" />
           <div className="health title">Health</div>
           <div className="sync title">Sync</div>
-        </a>
+        </Link>
         <div className="buttons">
-          <a href={dashboardUrl} className="headerLink">
+          <Link to={dashboardUrl} className="headerLink">
             {t("home.checkDoctor")}
             <FaUserDoctor />
-          </a>
+          </Link>
           {user && (
             <>
-              <a href={myAppointmentsUrl} className="headerLink">
+              <Link to={myAppointmentsUrl} className="headerLink">
                 {t("home.myAppointments")}
                 <FaCalendarCheck />
-              </a>
+              </Link>
               {hasNotifications && <FaCircle className="notification" />}
             </>
           )}
@@ -120,18 +120,18 @@ const Header: React.FC<HeaderProps> = ({
                     <ul className="dropdown-menu">
                       {isDoctor ? (
                         <li>
-                          <a
+                          <Link
                             className="dropdown-item icon"
-                            href={doctorProfileUrl}
+                            to={doctorProfileUrl}
                           >
                             {t("header.profile")}
-                          </a>
+                          </Link>
                         </li>
                       ) : (
                         <li>
-                          <a className="dropdown-item" href={patientProfileUrl}>
+                          <Link className="dropdown-item" to={patientProfileUrl}>
                             {t("header.profile")}
-                          </a>
+                          </Link>
                         </li>
                       )}
                       <li>
@@ -147,9 +147,9 @@ const Header: React.FC<HeaderProps> = ({
           </nav>
         ) : (
           <div className="buttons">
-            <a href={loginUrl} className="btn btn-primary" role="button">
+            <Link to={loginUrl} className="btn btn-primary" role="button">
               {t("login.title")}
-            </a>
+            </Link>
 
             <nav className="navbar navbar-expand-lg">
               <div className="container-fluid">
@@ -165,17 +165,17 @@ const Header: React.FC<HeaderProps> = ({
                       </button>
                       <ul className="dropdown-menu">
                         <li>
-                          <a className="dropdown-item" href={doctorRegisterUrl}>
+                          <Link className="dropdown-item" to={doctorRegisterUrl}>
                             {t("header.iAmDoctor")}
-                          </a>
+                          </Link>
                         </li>
                         <li>
-                          <a
+                          <Link
                             className="dropdown-item"
-                            href={patientRegisterUrl}
+                            to={patientRegisterUrl}
                           >
                             {t("header.iAmPatient")}
-                          </a>
+                          </Link>
                         </li>
                       </ul>
                     </li>

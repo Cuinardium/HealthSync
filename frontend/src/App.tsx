@@ -41,7 +41,7 @@ function App() {
       <QueryClientProvider client={queryClient}>
         <AuthProvider>
           <UserProvider>
-            <BrowserRouter basename="paw-2023a-02">
+            <BrowserRouter basename="/paw-2023a-02">
               <Layout>
                 <Suspense fallback={<Loader />}>
                   <Routes>
@@ -74,7 +74,7 @@ function App() {
                     {/* Private both */}
                     <Route element={<AuthenticatedGuard requiredRole={null} />}>
                       <Route
-                        path="my-appointments"
+                        path="/my-appointments"
                         element={<MyAppointments />}
                       />
                       <Route

@@ -5,6 +5,7 @@ import { useDoctors } from "../hooks/doctorHooks";
 import Loader from "./Loader";
 
 import doctorDefault from "../img/doctorDefault.png";
+import { Link } from "react-router-dom";
 
 interface DoctorListProps {
   page?: number;
@@ -76,7 +77,7 @@ const DoctorList: React.FC<DoctorListProps> = ({
                 <strong>Rating: {doctor.rating}</strong>
               </div>
             )}
-            <a href={`/detailed-doctor/${doctor.id}`}>View Details</a>
+            <Link to={`/detailed-doctor/${doctor.id}`}>View Details</Link>
           </li>
         ))}
       </ul>
