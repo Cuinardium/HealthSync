@@ -1,4 +1,6 @@
 import { useState } from "react";
+import { Button, Col, Form, Row } from "react-bootstrap";
+import { TIMES } from "../../api/time/Time";
 import { VacationForm } from "../../api/vacation/Vacation";
 import Loader from "../../components/Loader";
 import VacationList from "../../components/VacationList";
@@ -38,68 +40,87 @@ const DoctorVacations: React.FC = () => {
         pageSize={pageSize}
         onPageChange={setPage}
       />
-
-
       {/* Create vacation form */}
       <h2>Create Vacation</h2>
-      <form
+      <Form
         onSubmit={(e) => {
           e.preventDefault();
           handleCreateVacation();
         }}
       >
-        <div>
-          <label>From Date:</label>
-          <input
-            type="date"
-            value={newVacation.fromDate.toISOString().split("T")[0]}
-            onChange={(e) =>
-              setNewVacation((prev) => ({
-                ...prev,
-                fromDate: new Date(e.target.value),
-              }))
-            }
-          />
-        </div>
-        <div>
-          <label>To Date:</label>
-          <input
-            type="date"
-            value={newVacation.toDate.toISOString().split("T")[0]}
-            onChange={(e) =>
-              setNewVacation((prev) => ({
-                ...prev,
-                toDate: new Date(e.target.value),
-              }))
-            }
-          />
-        </div>
-        <div>
-          <label>From Time:</label>
-          <input
-            type="time"
-            value={newVacation.fromTime}
-            onChange={(e) =>
-              setNewVacation((prev) => ({ ...prev, fromTime: e.target.value }))
-            }
-          />
-        </div>
+        <Row className="mb-3">
+          <Form.Group as={Col} controlId="fromDate">
+            <Form.Label>From Date</Form.Label>
+            <Form.Control
+              type="date"
+              value={newVacation.fromDate.toISOString().split("T")[0]}
+              onChange={(e) =>
+                setNewVacation((prev) => ({
+                  ...prev,
+                  fromDate: new Date(e.target.value),
+                }))
+              }
+            />
+          </Form.Group>
+          <Form.Group as={Col} controlId="toDate">
+            <Form.Label>To Date</Form.Label>
+            <Form.Control
+              type="date"
+              value={newVacation.toDate.toISOString().split("T")[0]}
+              onChange={(e) =>
+                setNewVacation((prev) => ({
+                  ...prev,
+                  toDate: new Date(e.target.value),
+                }))
+              }
+            />
+          </Form.Group>
+        </Row>
 
-        <div>
-          <label>To Time:</label>
-          <input
-            type="time"
-            value={newVacation.toTime}
-            onChange={(e) =>
-              setNewVacation((prev) => ({ ...prev, toTime: e.target.value }))
-            }
-          />
-        </div>
+        <Row className="mb-3">
+          <Form.Group as={Col} controlId="fromTime">
+            <Form.Label>From Time</Form.Label>
+            <Form.Control
+              as="select"
+              value={newVacation.fromTime}
+              onChange={(e) =>
+                setNewVacation((prev) => ({
+                  ...prev,
+                  fromTime: e.target.value,
+                }))
+              }
+            >
+              <option value="">from time</option>
+              {TIMES.map((time) => (
+                <option key={time} value={time}>
+                  {time}
+                </option>
+              ))}
+            </Form.Control>
+          </Form.Group>
+          <Form.Group as={Col} controlId="toTime">
+            <Form.Label>To Time</Form.Label>
+            <Form.Control
+              as="select"
+              value={newVacation.toTime}
+              onChange={(e) =>
+                setNewVacation((prev) => ({ ...prev, toTime: e.target.value }))
+              }
+            >
+              <option value="">to time</option>
+              {TIMES.map((time) => (
+                <option key={time} value={time}>
+                  {time}
+                </option>
+              ))}
+            </Form.Control>
+          </Form.Group>
+        </Row>
 
-        <div>
-          <label>Cancel Appointments:</label>
-          <input
+        <Form.Group className="mb-3" controlId="cancelAppointments">
+          <Form.Check
             type="checkbox"
+            label="Cancel Appointments"
             checked={newVacation.cancelAppointments}
             onChange={(e) =>
               setNewVacation((prev) => ({
@@ -108,23 +129,29 @@ const DoctorVacations: React.FC = () => {
               }))
             }
           />
-        </div>
+        </Form.Group>
 
-        <div>
-          <label>Reason:</label>
-          <input
+        <Form.Group className="mb-3" controlId="reason">
+          <Form.Label>Reason</Form.Label>
+          <Form.Control
             type="text"
+            placeholder="Enter reason"
             value={newVacation.cancelReason}
             disabled={!newVacation.cancelAppointments}
             onChange={(e) =>
               setNewVacation((prev) => ({ ...prev, reason: e.target.value }))
             }
           />
-        </div>
-        <button type="submit" disabled={createVacationMutation.isPending}>
+        </Form.Group>
+
+        <Button
+          variant="primary"
+          type="submit"
+          disabled={createVacationMutation.isPending}
+        >
           {createVacationMutation.isPending ? "Creating..." : "Create Vacation"}
-        </button>
-      </form>
+        </Button>
+      </Form>{" "}
     </div>
   );
 };
