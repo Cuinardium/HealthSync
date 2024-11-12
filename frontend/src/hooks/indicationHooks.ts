@@ -29,6 +29,10 @@ export function useIndications(appointmentId: string, query: IndicationQuery) {
       queryFn: async () => {
         const indications = await getIndications(appointmentId, query);
 
+        if (!indications) {
+          return [];
+        }
+
         // Fetch the file data for each indication that has a file URL
         const indicationsWithFiles = await Promise.all(
           indications.map(async (indication) => {
