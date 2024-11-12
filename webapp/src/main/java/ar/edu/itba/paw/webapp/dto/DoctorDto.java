@@ -7,10 +7,11 @@ import java.util.stream.Collectors;
 import javax.ws.rs.core.UriInfo;
 
 public class DoctorDto {
-  // TODO: add fields
+  private Long id;
   private String firstName;
   private String lastName;
   private String email;
+  private String locale;
 
   private URI image;
 
@@ -35,9 +36,11 @@ public class DoctorDto {
   public static DoctorDto fromDoctor(final UriInfo uri, final Doctor doctor) {
     final DoctorDto dto = new DoctorDto();
 
+    dto.id = doctor.getId();
     dto.firstName = doctor.getFirstName();
     dto.lastName = doctor.getLastName();
     dto.email = doctor.getEmail();
+    dto.locale = doctor.getLocale().toString();
 
     if (doctor.getImage() != null) {
       dto.image =
@@ -56,7 +59,9 @@ public class DoctorDto {
     }
 
     dto.healthInsurances =
-        doctor.getHealthInsurances().stream()
+        doctor
+            .getHealthInsurances()
+            .stream()
             .map(
                 hi ->
                     uri.getBaseUriBuilder()
@@ -113,6 +118,14 @@ public class DoctorDto {
 
   public static List<DoctorDto> fromDoctorList(UriInfo uriInfo, List<Doctor> doctorList) {
     return doctorList.stream().map(d -> fromDoctor(uriInfo, d)).collect(Collectors.toList());
+  }
+
+  public Long getId() {
+    return id;
+  }
+
+  public void setId(Long id) {
+    this.id = id;
   }
 
   public String getFirstName() {
@@ -249,5 +262,13 @@ public class DoctorDto {
 
   public void setRatingCount(Integer ratingCount) {
     this.ratingCount = ratingCount;
+  }
+
+  public String getLocale() {
+    return locale;
+  }
+
+  public void setLocale(String locale) {
+    this.locale = locale;
   }
 }

@@ -12,8 +12,8 @@
     <properties>
 
         <!-- Dependency versions -->
-        <spring.version>4.2.5.RELEASE</spring.version>
-        <spring-security.version>4.0.4.RELEASE</spring-security.version>
+        <spring.version>4.3.4.RELEASE</spring.version>
+        <spring-security.version>4.2.0.RELEASE</spring-security.version>
         <servlet-api.version>2.5</servlet-api.version>
         <jstl.version>1.2</jstl.version>
         <javax-mail.version>1.6.2</javax-mail.version>

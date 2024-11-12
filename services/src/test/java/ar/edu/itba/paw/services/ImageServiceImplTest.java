@@ -19,8 +19,9 @@ public class ImageServiceImplTest {
 
   private static final long ID = 0;
   private static final byte[] BYTES = new byte[] {0, 1, 5, 2};
+  private static final String MEDIA_TYPE = "image/jpeg";
 
-  private static final Image IMAGE = new Image.Builder(BYTES).id(ID).build();
+  private static final Image IMAGE = new Image.Builder(BYTES, MEDIA_TYPE).id(ID).build();
 
   @Mock private ImageDao imageDao;
 

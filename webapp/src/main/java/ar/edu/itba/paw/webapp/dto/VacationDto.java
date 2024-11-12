@@ -1,6 +1,5 @@
 package ar.edu.itba.paw.webapp.dto;
 
-import ar.edu.itba.paw.models.ThirtyMinuteBlock;
 import ar.edu.itba.paw.models.Vacation;
 import java.net.URI;
 import java.time.LocalDate;
@@ -8,6 +7,7 @@ import javax.ws.rs.core.UriInfo;
 
 public class VacationDto {
 
+  private Long id;
   private LocalDate fromDate;
   private String fromTime;
   private LocalDate toDate;
@@ -22,6 +22,7 @@ public class VacationDto {
 
     final long doctorId = vacation.getDoctor().getId();
 
+    dto.id = vacation.getId();
     dto.fromDate = vacation.getFromDate();
     dto.toDate = vacation.getToDate();
     dto.fromTime = vacation.getFromTime().getBlockBeginning();
@@ -51,7 +52,7 @@ public class VacationDto {
     return fromTime;
   }
 
-  public void setFromTime(String  fromTime) {
+  public void setFromTime(String fromTime) {
     this.fromTime = fromTime;
   }
 
@@ -85,5 +86,13 @@ public class VacationDto {
 
   public void setSelf(URI self) {
     this.self = self;
+  }
+
+  public Long getId() {
+    return id;
+  }
+
+  public void setId(Long id) {
+    this.id = id;
   }
 }

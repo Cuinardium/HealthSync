@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.security.Key;
+import java.util.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -29,6 +30,9 @@ import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.util.FileCopyUtils;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 @EnableWebSecurity
 @ComponentScan({"ar.edu.itba.paw.webapp.auth"})
@@ -86,79 +90,96 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
     auth.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder());
   }
 
+  @Bean
+  public CorsConfigurationSource corsConfigurationSource() {
+    CorsConfiguration configuration = new CorsConfiguration();
+    configuration.setAllowedOrigins(Collections.singletonList(CorsConfiguration.ALL));
+    configuration.setAllowedMethods(
+        Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
+    configuration.addAllowedHeader(CorsConfiguration.ALL);
+    configuration.setExposedHeaders(
+        Arrays.asList("Authorization", "Link", "Location", "ETag", "Total-Elements", "X-Jwt", "X-Refresh", "Content-Disposition"));
+    UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+    source.registerCorsConfiguration("/**", configuration);
+    return source;
+  }
+
   // TODO: agregar filtros por tipo de autenticacion clase 2 min 45
   @Override
   protected void configure(final HttpSecurity http) throws Exception {
-    http
-      .sessionManagement()
+    http.sessionManagement()
         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
         .and()
-      .authorizeRequests()
+        .authorizeRequests()
 
         // ------------- Tokens -----------
         // verification
         .antMatchers(HttpMethod.POST, "/api/tokens/verification")
-          .anonymous()
-        .antMatchers(HttpMethod.PUT, "/api/tokens/verification/{token}")
-          .anonymous()
-      
+        .anonymous()
+        .antMatchers(HttpMethod.PATCH, "/api/tokens/verification/{token}")
+        .anonymous()
+
         // ------------ Doctors -----------
         .antMatchers(HttpMethod.GET, "/api/doctors")
-          .permitAll()
+        .permitAll()
         .antMatchers(HttpMethod.POST, "/api/doctors")
-          .permitAll()
+        .permitAll()
 
         // doctors/{id}
         .antMatchers(HttpMethod.GET, "/api/doctors/{doctorId:\\d+}")
-          .permitAll()
+        .permitAll()
 
         // doctors/{id}/attendinghours
         .antMatchers(HttpMethod.GET, "/api/doctors/{doctorId:\\d+}/attendinghours")
-          .permitAll()
+        .permitAll()
 
         // doctors/{id}/occupiedhours
         .antMatchers(HttpMethod.GET, "/api/doctors/{doctorId:\\d+}/occupiedhours")
-          .permitAll()
+        .permitAll()
 
         // ------------- Appointments ------
         .antMatchers(HttpMethod.POST, "/api/appointments")
-            .hasRole(UserRole.ROLE_PATIENT.getRoleNameWithoutPrefix())
-
+        .hasRole(UserRole.ROLE_PATIENT.getRoleNameWithoutPrefix())
+        // ------------- Images   ----------
+        .antMatchers(HttpMethod.GET, "/api/images/{id:\\d+}")
+        .permitAll()
         // ------------- Reviews  ----------
         .antMatchers(HttpMethod.GET, "/api/doctors/{doctorId:\\d+}/reviews")
-            .permitAll()
+        .permitAll()
         .antMatchers(HttpMethod.POST, "/api/doctors/{doctorId:\\d+}/reviews")
-            .hasRole(UserRole.ROLE_PATIENT.getRoleNameWithoutPrefix())
+        .hasRole(UserRole.ROLE_PATIENT.getRoleNameWithoutPrefix())
 
-        // ------------- Specialities -------
-        .antMatchers(HttpMethod.GET, "/api/specialities")
-          .permitAll()
+        // ------------- Specialties -------
+        .antMatchers(HttpMethod.GET, "/api/specialties")
+        .permitAll()
         // specialities/{id}
-        .antMatchers(HttpMethod.GET, "/api/specialities/{specialityId:\\d+}")
-          .permitAll()
+        .antMatchers(HttpMethod.GET, "/api/specialties/{specialtyId:\\d+}")
+        .permitAll()
 
         // ------------- Cities -------------
         .antMatchers(HttpMethod.GET, "/api/cities")
-          .permitAll()
+        .permitAll()
 
         // ------------- Health Insurances --
         .antMatchers(HttpMethod.GET, "/api/healthinsurances")
-          .permitAll()
+        .permitAll()
         // health-insurances/{id}
         .antMatchers(HttpMethod.GET, "/api/healthinsurances/{healthInsuranceId:\\d+}")
-          .permitAll()
+        .permitAll()
 
         // Authenticate all other
         .antMatchers("/api/**")
-          .authenticated()
+        .authenticated()
         .and()
-      .exceptionHandling()
-        .authenticationEntryPoint(authenticationEntryPoint())
-        .accessDeniedHandler(accessDeniedHandler())
+          .cors()
         .and()
-      .addFilterBefore(basicAuthFilter, UsernamePasswordAuthenticationFilter.class)
-      .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
-      .csrf().disable();
+          .csrf().disable()
+        .exceptionHandling()
+          .authenticationEntryPoint(authenticationEntryPoint())
+          .accessDeniedHandler(accessDeniedHandler())
+        .and()
+          .addFilterBefore(basicAuthFilter, UsernamePasswordAuthenticationFilter.class)
+          .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
   }
 
   @Override

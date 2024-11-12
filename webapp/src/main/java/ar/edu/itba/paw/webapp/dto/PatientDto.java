@@ -6,9 +6,11 @@ import javax.ws.rs.core.UriInfo;
 
 public class PatientDto {
 
+  private Long id;
   private String firstName;
   private String lastName;
   private String email;
+  private String locale;
 
   private URI image;
 
@@ -21,15 +23,19 @@ public class PatientDto {
   public static PatientDto fromPatient(UriInfo uri, Patient patient) {
     PatientDto dto = new PatientDto();
 
+    dto.id = patient.getId();
     dto.firstName = patient.getFirstName();
     dto.lastName = patient.getLastName();
     dto.email = patient.getEmail();
+    dto.locale = patient.getLocale().toString();
 
-    dto.image =
-        uri.getBaseUriBuilder()
-            .path("/images")
-            .path(String.valueOf(patient.getImage().getImageId()))
-            .build();
+    if (patient.getImage() != null) {
+      dto.image =
+          uri.getBaseUriBuilder()
+              .path("/images")
+              .path(String.valueOf(patient.getImage().getImageId()))
+              .build();
+    }
 
     dto.healthInsurance =
         uri.getBaseUriBuilder()
@@ -114,5 +120,21 @@ public class PatientDto {
 
   public void setImage(URI image) {
     this.image = image;
+  }
+
+  public Long getId() {
+    return id;
+  }
+
+  public void setId(Long id) {
+    this.id = id;
+  }
+
+  public String getLocale() {
+    return locale;
+  }
+
+  public void setLocale(String locale) {
+    this.locale = locale;
   }
 }

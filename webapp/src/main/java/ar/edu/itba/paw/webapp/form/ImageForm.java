@@ -1,6 +1,7 @@
 package ar.edu.itba.paw.webapp.form;
 
 import ar.edu.itba.paw.webapp.annotations.ValidateImage;
+import ar.edu.itba.paw.webapp.utils.FileUtil;
 import javax.validation.constraints.Size;
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.glassfish.jersey.media.multipart.FormDataParam;
@@ -27,6 +28,20 @@ public class ImageForm {
 
   public FormDataContentDisposition getImageDetails() {
     return imageDetails;
+  }
+
+  public String getImageMediaType() {
+    // jpeg, jpg, png
+    String extension = FileUtil.getFileExtension(imageDetails.getFileName());
+
+    switch (extension) {
+      case "png":
+        return "image/png";
+      case "jpeg":
+      case "jpg":
+      default: // TODO: throw excep?
+        return "image/jpeg";
+    }
   }
 
   public boolean hasFile() {
