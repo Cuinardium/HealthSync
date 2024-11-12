@@ -1,0 +1,729 @@
+{
+  "form": {
+    "name": "Nombre",
+    "name_hint": "Ingresar nombre",
+    "lastname": "Apellido",
+    "lastname_hint": "Ingresar apellido",
+    "email": "Correo",
+    "email_hint": "Ingresar correo",
+    "locale": "Lenguaje",
+    "healthcare": "Obra Social",
+    "healthcare_hint": "Ingresar obra social",
+    "date": "Fecha del turno",
+    "desc": "Descripción del turno",
+    "desc_hint": "Ingresar descripción del turno",
+    "password": "Contraseña",
+    "password_hint": "Ingresa contraseña",
+    "cpassword": "Confirmar contraseña",
+    "cpassword_hint": "Ingresa la misma contraseña",
+    "city": "Ciudad",
+    "city_hint": "Ciudad",
+    "address": "Dirección",
+    "address_hint": "Ingresar dirección",
+    "specialization": "Especialidad",
+    "specialization_hint": "Ingresar Especialidad",
+    "hour": "Hora del turno",
+    "noHourAvailable": "No hay turnos disponibles para este día",
+    "add": "Agregar",
+    "time": "Hora",
+    "scheduleSelector": "Seleccionar horario de atención",
+    "showAllTimes": "Mostrar todos los horarios",
+    "showWeekend": "Mostrar fines de semana",
+    "clear": "Limpiar",
+    "passwordContain": "La contraseña debe contener:",
+    "passwordSize": "Al menos 4 caracteres",
+    "passwordContent": "Solo letras y numeros"
+  },
+  "appointment": {
+    "title": "Reserva tu turno",
+    "submit": "Crear Turno",
+    "successfull": {
+      "modal": {
+        "title": "Turno Reservado",
+        "text": [
+          "Tu turno fue reservado exitosamente",
+          "ahora podes verlo dentro de tus turnos"
+        ],
+        "button": "Ir a tus turnos"
+      }
+    },
+    "error": {
+      "modal": {
+        "title": "Turno denegado",
+        "text": "No podes reservar un turno sin descripción",
+        "button": "Cerrar"
+      }
+    }
+  },
+  "register": {
+    "title": "Registrarse",
+    "submit": "Registrarse",
+    "emailInUse": "El email ya esta en uso",
+    "modal": {
+      "title": "Registro Exitoso",
+      "text": [
+        "Has sido registrado exitosamente",
+        "revisa tu email para verificar tu cuenta y empezar a usar HealthSync"
+      ],
+      "button": "Ir al inicio de sesión"
+    }
+  },
+  "renewToken": {
+    "title": "Renovar Token",
+    "unsuccessful": [
+      "El usuario ya estaba verificado",
+      "por lo tanto no se va a renovar el token"
+    ],
+    "successful": [
+      "Se renovó el token de verificación de usuario",
+      "por favor revise su email"
+    ]
+  },
+  "verify": {
+    "title": "Verificar",
+    "tokenInvalid": "El token de verification es inv�lido o ya ha expirado.",
+    "resendMail": "Puede reenviar el mail de verificación haciendo click aqui.",
+    "resendMailButton": "Reenviar",
+    "alreadyVerified": [
+      "El usuario ya ha sido verificado",
+      "iniciar sesion haciendo click aqui."
+    ],
+    "success": "El usuario ha sido verificado correctamente! Iniciar sesion haciendo click aqui."
+  },
+  "edit": {
+    "modal": {
+      "title": "Cambios Guardados",
+      "text": "Tus cambios han sido guardados exitosamente."
+    }
+  },
+  "registerPatient": {
+    "title": "Registrar Paciente"
+  },
+  "registerMedic": {
+    "title": "Registrar Médico",
+    "submit": "Registrarse"
+  },
+  "profile": {
+    "doctor": "Médico",
+    "patient": "Paciente",
+    "profile": "Perfil",
+    "personalInfo": "Informaci\u0026#243n Personal",
+    "location": "Ubicaci\u0026#243n",
+    "workInfo": "Informaci\u0026#243n Laboral",
+    "schedule": "Horarios",
+    "edit": {
+      "title": "Editar Perfil",
+      "modal": {
+        "button": "Ok"
+      }
+    },
+    "emailInUse": {
+      "error": "No se pudo actualizar el Email porque ya esta en uso"
+    },
+    "saveChanges": "Guardar Cambios",
+    "changePassword": "Cambiar Contraseña",
+    "oldPassword": "Contraseña vieja",
+    "oldPasswordDoesNotMatchError": "La contraseña vieja no coincide!",
+    "oldPassword_hint": "Ingresa contraseña vieja",
+    "viewVacations": "Ver Vacaciones"
+  },
+  "vacation": {
+    "title": "Vacaciones",
+    "addSuccessTitle": "Vacaciones Creadas",
+    "addSuccessDescription": "Tus vacaciones han sido creadas exitosamente",
+    "addTitle": "Crear Vacaciones",
+    "date": "Fecha",
+    "time": "Hora",
+    "from": "Desde",
+    "to": "Hasta",
+    "addButton": "Crear",
+    "cancel": "Cancelar",
+    "addInvalidVacation": "Rango de vacaciones inválido",
+    "appointmentsInVacation": "Es posible que usted tenga turnos reservados en sus vacaciones. Decida si deben ser cancelarlos.",
+    "appointmentsInVacationCancelReasonTitle": "Explique la razón de la cancelación",
+    "cancelAppointmentsInVacation": "Quiero cancelar los turnos",
+    "doNotCancelAppointmentsInVacation": "No quiero cancelar los turnos",
+    "noVacations": "Usted no tiene vacaciones todavia",
+    "deleteTitle": "Cancelar vacaciones",
+    "deleteDescription": "�Está usted seguro que quiere cancelar estas vacaciones?",
+    "deleteDeny": "No",
+    "deleteConfirm": "Si"
+  },
+  "ValidateImage": {
+    "patientEditForm": {
+      "image": "La imagen debe ser un png/jpg/jpeg de tamaño menor a 8Mb"
+    },
+    "doctorEditForm": {
+      "image": "La imagen debe ser un png/jpg/jpeg de tamaño menor a 8Mb"
+    }
+  },
+  "Pattern": {
+    "appointmentForm": {
+      "name": "Nombres solo pueden contener letras",
+      "lastname": "Apellidos solo pueden contener letras",
+      "email": "No es un correo válido",
+      "healthcare": "La obra social solo puede contener letras"
+    },
+    "doctorRegisterForm": {
+      "name": "Nombres solo pueden contener letras",
+      "lastname": "Apellidos solo pueden contener letras",
+      "email": "No es un correo válido",
+      "healthcare": "La obra social solo puede contener letras",
+      "password": "La contraseña solo puede contener letras o numeros",
+      "confirmPassword": "La contraseña solo puede contener letras o numeros",
+      "city": "La ciudad solo puede contener letras",
+      "address": "La dirección solo puede contener letras y numeros",
+      "specialization": "La especialidad solo puede contener letras"
+    },
+    "doctorEditForm": {
+      "name": "Nombres solo pueden contener letras",
+      "lastname": "Apellidos solo pueden contener letras",
+      "email": "No es un correo válido",
+      "healthcare": "La obra social solo puede contener letras",
+      "city": "La ciudad solo puede contener letras",
+      "address": "La dirección solo puede contener letras y numeros",
+      "specialization": "La especialidad solo puede contener letras"
+    },
+    "patientRegisterForm": {
+      "name": "Nombres solo pueden contener letras",
+      "lastname": "Apellidos solo pueden contener letras",
+      "email": "No es un correo válido",
+      "healthcare": "La obra social solo puede contener letras",
+      "password": "La contraseña solo puede contener letras o numeros",
+      "confirmPassword": "La contraseña solo puede contener letras o numeros"
+    },
+    "patientEditForm": {
+      "name": "Nombres solo pueden contener letras",
+      "lastname": "Apellidos solo pueden contener letras",
+      "email": "No es un correo válido",
+      "healthcare": "La obra social solo puede contener letras"
+    },
+    "changePasswordForm": {
+      "oldPassword": "La contraseña solo puede contener letras o numeros",
+      "password": "La contraseña solo puede contener letras o numeros",
+      "confirmPassword": "La contraseña solo puede contener letras o numeros"
+    }
+  },
+  "Size": {
+    "changePasswordForm": {
+      "oldPassword": "La contraseña tiene que tener como mínimo {2} caracteres",
+      "password": "La contraseña tiene que tener como mínimo {2} caracteres",
+      "confirmPassword": "La contraseña tiene que tener como mínimo {2} caracteres"
+    },
+    "appointmentForm": {
+      "name": "El nombre no puede estar vacío",
+      "lastname": "El apellido no puede estar vacío",
+      "email": "El correo no puede estar vacío",
+      "healthcare": "la obra social no puede estar vacía",
+      "desc": "La descripcion debe tener entre {2} y {1} caracteres"
+    },
+    "doctorRegisterForm": {
+      "name": "El nombre no puede estar vacío",
+      "lastname": "El apellido no puede estar vacío",
+      "email": "El correo no puede estar vacío",
+      "healthcare": "La obra social no puede estar vacía",
+      "password": "La contraseña tiene que tener como mínimo {2} caracteres",
+      "confirmPassword": "La contraseña tiene que tener como mínimo {2} caracteres",
+      "city": "La ciudad no puede estar vacía",
+      "address": "La dirección no puede estar vacía",
+      "specialization": "La especialidad no puede estar vacía"
+    },
+    "doctorEditForm": {
+      "name": "El nombre no puede estar vacío",
+      "lastname": "El apellido no puede estar vacío",
+      "email": "El correo no puede estar vacío",
+      "healthcare": "La obra social no puede estar vacía",
+      "city": "La ciudad no puede estar vacía",
+      "address": "La dirección no puede estar vacía",
+      "specialization": "La especialidad no puede estar vacía"
+    },
+    "patientRegisterForm": {
+      "name": "El nombre no puede estar vacío",
+      "lastname": "El apellido no puede estar vacío",
+      "email": "El correo no puede estar vacío",
+      "healthcare": "La obra social no puede estar vacía",
+      "password": "La contraseña tiene que tener como mínimo {2} caracteres",
+      "confirmPassword": "La contraseña tiene que tener como mínimo {2} caracteres"
+    },
+    "patientEditForm": {
+      "name": "El nombre no puede estar vacío",
+      "lastname": "El apellido no puede estar vacío",
+      "email": "El correo no puede estar vacío",
+      "healthcare": "La obra social no puede estar vacía"
+    }
+  },
+  "NotEmpty": {
+    "doctorEditForm": {
+      "healthInsuranceCodes": "Debe seleccionar al menos una obra social"
+    },
+    "doctorRegisterForm": {
+      "healthInsuranceCodes": "Debe seleccionar al menos una obra social"
+    }
+  },
+  "ExistsInEnum": {
+    "patientRegisterForm": {
+      "healthInsuranceCode": "Debe seleccionar una obra social"
+    },
+    "doctorRegisterForm": {
+      "specialtyCode": "Debe seleccionar una especialidad",
+      "cityCode": "Debe seleccionar una ciudad"
+    }
+  },
+  "PasswordsMatch": {
+    "changePasswordForm": "Las contraseñas tienen que ser iguales"
+  },
+  "appointmentSent": {
+    "title": "Turno enviado",
+    "contact": "La información del turno fue enviada al correo del doctor.",
+    "contact2": "Se contactará con usted en breve",
+    "home": "Haga clic aquí para volver a la página de inicio"
+  },
+  "appointments": {
+    "title": "Turnos",
+    "noAppointments": "No se encontraron turnos",
+    "today": "Hoy",
+    "upcoming": "Próximos",
+    "cancelled": "Cancelados",
+    "completed": "Completados",
+    "history": "Pasados",
+    "cancel": "Cancelar",
+    "details": "Ver detalles",
+    "from": "Desde",
+    "to": "Hasta",
+    "filter": "Filtrar",
+    "button": {
+      "appointment": "Reserva otro turno"
+    },
+    "modal": {
+      "title": "Cancelar turno",
+      "desc": [
+        "Estas por cancelar el turno",
+        "esta es una acción que no podes deshacer. ¿Está seguro de hacerla?"
+      ],
+      "confirm": "Si",
+      "deny": "No",
+      "cancelDesc": "Razon por la cual estas cancelando el turno:"
+    },
+    "indicationModal": {
+      "title": "Dar indicaciones",
+      "desc": "Escribe algunas indicaciones para tu paciente",
+      "confirm": "Confirmar",
+      "deny": "Cancelar",
+      "indication": "Indicaciones:"
+    },
+    "noIndications": "No hay indicaciones todavia",
+    "indication": {
+      "title": "Indicaciones",
+      "doctor": {
+        "button": "Dar indicaciones"
+      },
+      "patient": {
+        "button": "Responder indicaciones"
+      }
+    }
+  },
+  "detailedAppointment": {
+    "title": "Detalles del turno",
+    "doctor": "Doctor",
+    "patient": "Paciente",
+    "address": "Dirección",
+    "healthInsurance": "Obra Social",
+    "description": "Descripción",
+    "cancelDesc": "Razón de la cancelación",
+    "status": "Estado",
+    "indication": "Indicaciones",
+    "indicationButton": "Dar indicaciones",
+    "me": "Yo"
+  },
+  "header": {
+    "iAmDoctor": "Soy Médico",
+    "iAmPatient": "Soy Paciente",
+    "profile": "Perfil",
+    "logout": "Cerrar Sesión"
+  },
+  "home": {
+    "welcome1": "Nosotros podemos ayudarte a",
+    "welcome2": "Vivir una vida más saludable",
+    "home": "Página Principal",
+    "checkDoctor": "Revisar Médicos",
+    "myAppointments": "Mis Turnos",
+    "circle1": "Mantente Saludable",
+    "circle2": "Turnos En Línea",
+    "circle3": "Todo En Un Solo Lugar",
+    "description1": "Quedarse sin medicación es algo del pasado. HealthSync te permite pedir tus prescripciones en línea en cualquier momento.",
+    "description2": "Con HealthSync, usted puede reservar un turno médico en línea. Nunca mas llamar y esperar. Comunicarse con médicos profesionales nunca fue tan fácil.",
+    "description3": "Nunca más perder tiempo buscando tu historia clínica en distintas plataformas. HealthSync te brindará toda la información que necesitas de manera unificada.",
+    "categories": "Categorías Populares",
+    "alt": {
+      "homeDoctorImg": "Doctor atendiendo a un paciente",
+      "specialistImg": "Especialista en {0}",
+      "circle1": "Corazón con una línea de pulso adentro",
+      "circle2": "Doctor adentro de un monitor",
+      "circle3": "Globo terráqueo con un Caduceo en la esquina inferior derecha"
+    }
+  },
+  "doctorDashboard": {
+    "title": "Revisar médicos",
+    "placeholder": {
+      "search": "Buscar un médico por nombre...",
+      "city": "Ciudad",
+      "specialty": "Especialidad",
+      "insurance": "Obra social",
+      "from": "Desde",
+      "to": "Hasta"
+    },
+    "button": {
+      "book": "Reservar turno"
+    },
+    "no": {
+      "doctors": "No se encontraron doctores"
+    },
+    "modal": {
+      "title": "Obras sociales diferentes",
+      "desc": "La obra social con la que atiende el doctor no es la misma que la suya. ¿Está seguro de reservar un turno?",
+      "confirm": "Si",
+      "deny": "No"
+    }
+  },
+  "review": {
+    "title": "Reseña del Doctor",
+    "description": {
+      "title": "Descripción",
+      "placeholder": "Cuéntanos tu experiencia con el doctor"
+    },
+    "rating": "Calificación",
+    "submit": "Enviar reseña",
+    "modal": {
+      "title": "Reseña Enviada",
+      "text": "Tu reseña se envió exitosamente",
+      "button": "Ir al Doctor"
+    }
+  },
+  "indication": {
+    "title": "Indicación de Turno",
+    "description": {
+      "title": "Indicación",
+      "placeholder": "Escribi Indicación para el turno"
+    },
+    "submit": "Enviar Indicación",
+    "modal": {
+      "title": "Indicación Enviada",
+      "text": "Tu indicación se envió exitosamente",
+      "button": "Ir al turno"
+    },
+    "file": {
+      "title": "Agregar imagen",
+      "alt": "Image of indication"
+    }
+  },
+  "filters": {
+    "title": "Filtros",
+    "clear": "Limpiar",
+    "byAvailability": "Por Disponibilidad",
+    "byRating": "Por Calificación"
+  },
+  "detailedDoctor": {
+    "title": "Detalles del médico",
+    "specialties": "Especialidad",
+    "address": "Dirección:",
+    "insurance": "Obras sociales",
+    "availability": "Disponibilidad",
+    "confirmAppointment": "Confirmar Turno",
+    "reviews": "Reseñas",
+    "noAppointmentsAvailable": "No hay turnos disponibles para la fecha seleccionada",
+    "review": "Opinar",
+    "firstToReview": "Sé el primero en opinar",
+    "contact": "Contacto",
+    "map": "Ver mapa",
+    "modal": {
+      "location": "Ubicación",
+      "close": "Cerrar"
+    }
+  },
+  "doctor": {
+    "noReviews": "Sin reseñas",
+    "alt": {
+      "doctorImg": "Imagen del doctor {0} {1}"
+    }
+  },
+  "patient": {
+    "alt": {
+      "patientImg": "Imagen del paciente {0} {1}"
+    }
+  },
+  "user": {
+    "alt": {
+      "loggedUserImg": "Tu foto de perfil"
+    }
+  },
+  "calendar": {
+    "january": "Ene",
+    "february": "Feb",
+    "march": "Mar",
+    "april": "Abr",
+    "may": "May",
+    "june": "Jun",
+    "july": "Jul",
+    "august": "Ago",
+    "september": "Sep",
+    "october": "Oct",
+    "november": "Nov",
+    "december": "Dic",
+    "monday": "Lun",
+    "tuesday": "Mar",
+    "wednesday": "Mie",
+    "thursday": "Jue",
+    "friday": "Vie",
+    "saturday": "Sab",
+    "sunday": "Dom"
+  },
+  "login": {
+    "title": "Iniciar Sesión",
+    "rememberMe": "Recordarme",
+    "submit": "Iniciar Sesión",
+    "error": "Email o contraseña invalidos",
+    "haveAccount": "¿No tiene una cuenta?",
+    "register": "¡Registrese aqui!"
+  },
+  "editProfile": {
+    "title": "Editar Perfil"
+  },
+  "day": {
+    "monday": "Lunes",
+    "tuesday": "Martes",
+    "wednesday": "Miércoles",
+    "thursday": "Jueves",
+    "friday": "Viernes",
+    "saturday": "Sábado",
+    "sunday": "Domingo"
+  },
+  "specialty": {
+    "allergy": {
+      "and": {
+        "immunology": "ALERGIA E INMUNOLOGÍA"
+      }
+    },
+    "pediatric": {
+      "allergy": {
+        "and": {
+          "immunology": "ALERGIA E INMUNOLOGÍA PEDIÁTRICA"
+        }
+      },
+      "cardiovascular": {
+        "surgery": "CIRUGÍA CARDIOVASCULAR PEDIÁTRICA"
+      },
+      "dermatology": "DERMATOLOGÍA PEDIÁTRICA",
+      "hemato": {
+        "awareness": "HEMATO-ONCOLOGIA PEDIÁTRICA"
+      },
+      "hepatology": "HEPATOLOGÍA PEDIÁTRICA"
+    },
+    "pathological": {
+      "anatomy": "ANATOMÍA PATOLÓGICA"
+    },
+    "anesthesiology": "ANESTESIOLOGÍA",
+    "general": {
+      "angiology": {
+        "and": {
+          "hemodynamics": "ANGIOLOGÍA GENERAL Y HEMODINAMIA"
+        }
+      },
+      "surgery": "CIRUGÍA GENERAL",
+      "medicine": {
+        "and": {
+          "or": {
+            "family": {
+              "medicine": "MEDICINA GENERAL Y/O MEDICINA DE FAMILIA"
+            }
+          }
+        }
+      }
+    },
+    "cardiology": "CARDIOLOGÍA",
+    "childrens": {
+      "cardiologist": "CARDIÓLOGO INFANTIL",
+      "gastroenterologist": "GASTROENTERÓLOGO INFANTIL"
+    },
+    "cardiovascular": {
+      "surgery": "CIRUGÍA CARDIOVASCULAR"
+    },
+    "head": {
+      "and": {
+        "neck": {
+          "surgery": "CIRUGÍA DE CABEZA Y CUELLO"
+        }
+      }
+    },
+    "thorax": {
+      "surgery": "CIRUGÍA DE TÓRAX (CIRUGÍA TORÁCICA)"
+    },
+    "child": {
+      "surgery": "CIRUGÍA INFANTIL (CIRUGÍA PEDIÁTRICA)",
+      "infectologist": "INFECTÓLOGO INFANTIL",
+      "nephrologist": "NEFRÓLOGO INFANTIL",
+      "pneumonologist": "NEUMONOLOGO INFANTIL",
+      "neurologist": "NEURÓLOGO INFANTIL",
+      "and": {
+        "youth": {
+          "psychiatry": "PSIQUIATRÍA INFANTIL Y JUVENIL"
+        }
+      },
+      "rheumatologist": "REUMATÓLOGO INFANTIL"
+    },
+    "plastic": {
+      "and": {
+        "reconstructive": {
+          "surgery": "CIRUGÍA PLÁSTICA Y REPARADORA"
+        }
+      }
+    },
+    "peripheral": {
+      "vascular": {
+        "surgery": "CIRUGÍA VASCULAR PERIFÉRICA"
+      }
+    },
+    "medical": {
+      "clinic": "CLÍNICA MÉDICA",
+      "genetics": "GENÉTICA MÉDICA"
+    },
+    "coloproctology": "COLOPROCTOLOGIA",
+    "dermatology": "DERMATOLOGÍA",
+    "image": {
+      "diagnosis": "DIAGNÓSTICO POR IMÁGENES"
+    },
+    "cardiac": {
+      "electrophysiology": "ELECTROFISIOLOGÍA CARDIACA"
+    },
+    "emergentology": "EMERGENTOLOGIA",
+    "endocrinology": "ENDOCRINOLOGÍA",
+    "infant": {
+      "endocrinologist": "ENDOCRINÓLOGO INFANTIL"
+    },
+    "clinical": {
+      "pharmacology": "FARMACOLOGÍA CLÍNICA"
+    },
+    "physiatria": "FISIATRÍA (MEDICINA FÍSICA Y REHABILITACIÓN)",
+    "gastroenterology": "GASTROENTEROLOGÍA",
+    "geriatrics": "GERIATRÍA",
+    "gynecology": "GINECOLOGÍA",
+    "hematology": "HEMATOLOGÍA",
+    "hemotherapy": {
+      "and": {
+        "immunohematology": "HEMOTERAPIA E INMUNOHEMATOLOGÍA"
+      }
+    },
+    "hepatology": "HEPATOLOGÍA",
+    "infectology": "INFECTOLOGÍA",
+    "sports": {
+      "medicine": "MEDICINA DEL DEPORTE"
+    },
+    "work": {
+      "medicine": "MEDICINA DEL TRABAJO"
+    },
+    "legal": {
+      "medicine": "MEDICINA LEGAL"
+    },
+    "nuclear": {
+      "medicine": "MEDICINA NUCLEAR"
+    },
+    "palitative": {
+      "medicine": "MEDICINA PALITATIVA"
+    },
+    "nephrology": "NEFROLOGÍA",
+    "neonatology": "NEONATOLOGÍA",
+    "pneumonology": "NEUMONOLOGÍA",
+    "neurosurgery": "NEUROCIRUGÍA",
+    "neurology": "NEUROLOGÍA",
+    "nutrition": "NUTRICIÓN",
+    "obstetrics": "OBSTETRICIA",
+    "ophthalmology": "OFTALMOLOGÍA",
+    "oncology": "ONCOLOGÍA",
+    "orthopedics": {
+      "and": {
+        "traumatology": "ORTOPEDIA Y TRAUMATOLOGÍA",
+        "child": {
+          "traumatology": "ORTOPEDIA Y TRAUMATOLOGÍA INFANTIL"
+        }
+      }
+    },
+    "otorhinolaryngology": "OTORRINOLARINGOLOGÍA",
+    "pediatrics": "PEDIATRÍA",
+    "psychiatry": "PSIQUIATRÍA",
+    "radiotherapy": {
+      "or": {
+        "radiation": {
+          "therapy": "RADIOTERAPIA O TERAPIA RADIANTE"
+        }
+      }
+    },
+    "rheumatology": "REUMATOLOGÍA",
+    "intensive": {
+      "therapy": "TERAPIA INTENSIVA",
+      "childrens": {
+        "therapist": "TERAPISTA INTENSIVO INFANTIL"
+      }
+    },
+    "tocoginecology": "TOCOGINECOLOGIA",
+    "toxicology": "TOXICOLOGÍA",
+    "urology": "UROLOGÍA"
+  },
+  "healthInsurance": {
+    "none": "Particular",
+    "omint": "Omint",
+    "osde": "Osde",
+    "swiss": {
+      "medical": "Swiss Medical"
+    },
+    "galeno": "Galeno",
+    "medife": "Medife",
+    "medicus": "Medicus",
+    "accord": "Accord",
+    "hospital": {
+      "italiano": "Hospital Italiano",
+      "aleman": "Hospital Aleman",
+      "britanico": "Hospital Britanico"
+    },
+    "prevencion": {
+      "salud": "Prevencion Salud"
+    },
+    "avalian": "Avalian",
+    "william": {
+      "hope": "William Hope"
+    },
+    "pre": {
+      "medic": "Pre Medic"
+    },
+    "osfe": "Osfe",
+    "ospaca": "Ospaca",
+    "andar": "Andar",
+    "luis": {
+      "pasteur": "Luis Pasteur"
+    },
+    "union": {
+      "personal": "Union Personal"
+    },
+    "jerarquicos": "Jerarquicos",
+    "osdepym": "Osdepym",
+    "ospe": "Ospe",
+    "osplad": "Osplad",
+    "osseg": "Osseg",
+    "sancor": {
+      "salud": "Sancor Salud"
+    }
+  },
+  "appointmentStatus": {
+    "confirmed": "CONFIRMADO",
+    "cancelled": "CANCELADO",
+    "completed": "COMPLETADO"
+  },
+  "error": {
+    "403": "Acceso denegado",
+    "404": "Página no encontrada",
+    "500": "Error interno del servidor",
+    "userNotFound": "Usuario no encontrado",
+    "imageNotFound": "Imágen no encontrada",
+    "appointmentNotFound": "Turno no encontrado",
+    "appointmentForbidden": "No tiene permisos para acceder a este turno",
+    "reviewForbidden": "Usted debe tener un turno completado para poder realizar una reseña"
+  }
+}

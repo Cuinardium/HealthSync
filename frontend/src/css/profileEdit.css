@@ -1,0 +1,30 @@
+.pfpEdit {
+    position: relative;
+    left: 100px;
+    z-index: 1;
+    bottom: 345px;
+    margin-bottom: -170px;
+}
+.pfpEdit input {
+    display: none;
+}
+.doctorPfpEdit{
+    bottom: 300px;
+}
+
+.pfpEdit label i {
+    cursor: pointer;
+}
+
+.fa-circle {
+    color: #0275d8;
+}
+
+.pfpEdit label span i:hover {
+    color: darkgray;
+}
+
+.fa-pen {
+    color: white;
+}
+

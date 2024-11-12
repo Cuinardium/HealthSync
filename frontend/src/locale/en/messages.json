@@ -1,0 +1,734 @@
+{
+  "form": {
+    "name": "First Name",
+    "name_hint": "Enter first name",
+    "lastname": "Last Name",
+    "lastname_hint": "Enter last name",
+    "email": "Email",
+    "email_hint": "Enter email",
+    "locale": "Language",
+    "healthcare": "Health Insurance",
+    "healthcare_hint": "Enter health insurance",
+    "date": "Appointment Date",
+    "desc": "Appointment Description",
+    "desc_hint": "Enter appointment description",
+    "password": "Password",
+    "password_hint": "Enter password",
+    "cpassword": "Confirm Password",
+    "cpassword_hint": "Enter the same password",
+    "city": "City",
+    "city_hint": "City",
+    "address": "Address",
+    "address_hint": "Enter Address",
+    "specialization": "Specialization",
+    "specialization_hint": "Enter specialization",
+    "hour": "Appointment Hour",
+    "noHourAvailable": "No hours available for this date",
+    "add": "Add",
+    "time": "Time",
+    "scheduleSelector": "Select attending hours",
+    "showAllTimes": "Show all hours",
+    "showWeekend": "Show weekend",
+    "clear": "Clear",
+    "passwordContain": "Password must contain:",
+    "passwordSize": "At least 4 characters",
+    "passwordContent": "Only letters and numbers"
+  },
+  "appointment": {
+    "title": "Get your appointment",
+    "submit": "Create Appointment",
+    "successfull": {
+      "modal": {
+        "title": "Appointment Booked",
+        "text": [
+          "Your appointment was booked successfully",
+          "you can now view it in your appointments"
+        ],
+        "button": "Go to your appointments"
+      }
+    },
+    "error": {
+      "modal": {
+        "title": "Appointment Denied",
+        "text": "You cant book an appointment without description",
+        "button": "Close"
+      }
+    }
+  },
+  "register": {
+    "title": "Sign Up",
+    "submit": "Sign Up",
+    "emailInUse": {
+      "error": "Email is already in use"
+    },
+    "modal": {
+      "title": "Register Successful",
+      "text": [
+        "You have been successfully registered",
+        "check your email to verify your account and start using HealthSync"
+      ],
+      "button": "Go to login page"
+    }
+  },
+  "renewToken": {
+    "title": "Renew Token",
+    "unsuccessful": [
+      "User is already verified",
+      "thus no token will be renewed"
+    ],
+    "successful": [
+      "User verification token renewed",
+      "please check your email"
+    ]
+  },
+  "verify": {
+    "title": "Verify",
+    "tokenInvalid": "The verification token is invalid or has expired.",
+    "resendMail": "You can resend the verification mail clicking here.",
+    "resendMailButton": "Resend",
+    "alreadyVerified": [
+      "The user has already been verified",
+      "sign in clicking here."
+    ],
+    "success": "The user has been verified correctly! Sign in clicking here."
+  },
+  "edit": {
+    "modal": {
+      "title": "Saved Changes",
+      "text": "Your changes have been saved successfully."
+    }
+  },
+  "registerPatient": {
+    "title": "Patient Sign-Up"
+  },
+  "registerMedic": {
+    "title": "Doctor Sign-Up",
+    "submit": "Register"
+  },
+  "profile": {
+    "doctor": "Doctor",
+    "patient": "Patient",
+    "profile": "Profile",
+    "personalInfo": "Personal Information",
+    "location": "Location",
+    "workInfo": "Work Information",
+    "schedule": "Schedule",
+    "edit": {
+      "title": "Edit Profile",
+      "emailInUse": {
+        "error": [
+          "Could not update email",
+          "due to email already beeing used"
+        ]
+      },
+      "modal": {
+        "button": "Ok"
+      }
+    },
+    "saveChanges": "Save Changes",
+    "changePassword": "Change Password",
+    "oldPassword": "Old password",
+    "oldPasswordDoesNotMatchError": "Old password does not match!",
+    "oldPassword_hint": "Enter old password",
+    "viewVacations": "View Vacations"
+  },
+  "vacation": {
+    "title": "Vacations",
+    "addSuccessTitle": "Vacation Created",
+    "addSuccessDescription": "Your vacation was created successfully",
+    "addTitle": "Create Vacation",
+    "date": "Date",
+    "time": "Time",
+    "from": "From",
+    "to": "To",
+    "addButton": "Create",
+    "cancel": "Cancel",
+    "addInvalidVacation": "Invalid Vacation Range",
+    "appointmentsInVacation": "You may have confirmed appointments in your vacation. Decide if the appointments should be cancelled.",
+    "appointmentsInVacationCancelReasonTitle": "Explain why the appointments were cancelled",
+    "cancelAppointmentsInVacation": "I want to cancel them",
+    "doNotCancelAppointmentsInVacation": "I do not want to cancel them",
+    "noVacations": "No vacations yet",
+    "deleteTitle": "Cancel Vacation",
+    "deleteDescription": "Are you sure you want to cancel this vacation?",
+    "deleteDeny": "No",
+    "deleteConfirm": "Yes"
+  },
+  "ValidateImage": {
+    "patientEditForm": {
+      "image": "Image file must be a png/jpg/jpeg no bigger than 8Mb"
+    },
+    "doctorEditForm": {
+      "image": "Image file must be a png/jpg/jpeg no bigger than 8Mb"
+    }
+  },
+  "Pattern": {
+    "appointmentForm": {
+      "name": "Names can only contain letters",
+      "lastname": "Last names can only contain letters",
+      "email": "Invalid email",
+      "healthcare": "Health insurance companies can only contain letters"
+    },
+    "doctorRegisterForm": {
+      "name": "Names can only contain letters",
+      "lastname": "Last names can only contain letters",
+      "email": "Invalid email",
+      "healthcare": "Health insurance companies can only contain letters",
+      "password": "Password can only contain letters and numbers",
+      "confirmPassword": "Password can only contain letters and numbers",
+      "city": "City can only contain letters",
+      "address": "Address can only contain letters and numbers",
+      "specialization": "Specialization can only contain letters"
+    },
+    "doctorEditForm": {
+      "name": "Names can only contain letters",
+      "lastname": "Last names can only contain letters",
+      "email": "Invalid email",
+      "healthcare": "Health insurance companies can only contain letters",
+      "city": "City can only contain letters",
+      "address": "Address can only contain letters and numbers",
+      "specialization": "Specialization can only contain letters"
+    },
+    "patientRegisterForm": {
+      "name": "Names can only contain letters",
+      "lastname": "Last names can only contain letters",
+      "email": "Invalid email",
+      "healthcare": "Health insurance companies can only contain letters",
+      "password": "Password can only contain letters and numbers",
+      "confirmPassword": "Password can only contain letters and numbers"
+    },
+    "patientEditForm": {
+      "name": "Names can only contain letters",
+      "lastname": "Last names can only contain letters",
+      "email": "Invalid email",
+      "healthcare": "Health insurance companies can only contain letters"
+    },
+    "changePasswordForm": {
+      "oldPassword": "Password can only contain letters and numbers",
+      "password": "Password can only contain letters and numbers",
+      "confirmPassword": "Password can only contain letters and numbers"
+    }
+  },
+  "Size": {
+    "changePasswordForm": {
+      "oldPassword": "Password must have at least {2} characters",
+      "password": "Password must have at least {2} characters",
+      "confirmPassword": "Password must have at least {2} characters"
+    },
+    "appointmentForm": {
+      "name": "Name field cant be empty",
+      "lastname": "Last name field cant be empty",
+      "email": "Email field cant be empty",
+      "healthcare": "Health insurance field cant be empty",
+      "desc": "The description must be between {2} and {1} characters"
+    },
+    "doctorRegisterForm": {
+      "name": "Name field cant be empty",
+      "lastname": "Last name field cant be empty",
+      "email": "Email field cant be empty",
+      "healthcare": "Health insurance field cant be empty",
+      "password": "Password must have at least {2} characters",
+      "confirmPassword": "Password must have at least {2} characters",
+      "city": "City cant be empty",
+      "address": "Address cant be empty",
+      "specialization": "Specialization cant be empty"
+    },
+    "doctorEditForm": {
+      "name": "Name field cant be empty",
+      "lastname": "Last name field cant be empty",
+      "email": "Email field cant be empty",
+      "healthcare": "Health insurance field cant be empty",
+      "city": "City cant be empty",
+      "address": "Address cant be empty",
+      "specialization": "Specialization cant be empty"
+    },
+    "patientRegisterForm": {
+      "name": "Name field cant be empty",
+      "lastname": "Last name field cant be empty",
+      "email": "Email field cant be empty",
+      "healthcare": "Health insurance field cant be empty",
+      "password": "Password must have at least {2} characters",
+      "confirmPassword": "Password must have at least {2} characters"
+    },
+    "patientEditForm": {
+      "name": "Name field cant be empty",
+      "lastname": "Last name field cant be empty",
+      "email": "Email field cant be empty",
+      "healthcare": "Health insurance field cant be empty"
+    }
+  },
+  "NotEmpty": {
+    "doctorEditForm": {
+      "healthInsuranceCodes": "You must select at least one health insurance company"
+    },
+    "doctorRegisterForm": {
+      "healthInsuranceCodes": "You must select at least one health insurance company"
+    }
+  },
+  "ExistsInEnum": {
+    "patientRegisterForm": {
+      "healthInsuranceCode": "You must select one health insurance"
+    },
+    "doctorRegisterForm": {
+      "specialtyCode": "You must select one specialty",
+      "cityCode": "You must select one city"
+    }
+  },
+  "PasswordsMatch": {
+    "changePasswordForm": "The passwords must be equal"
+  },
+  "appointmentSent": {
+    "title": "Appointment Sent",
+    "contact": "The appointment information was sent to the doctors email.",
+    "contact2": "You will be contacted shortly",
+    "home": "Click here to go back to the home page"
+  },
+  "appointments": {
+    "title": "Appointments",
+    "noAppointments": "No appointments found",
+    "today": "Today",
+    "upcoming": "Upcoming",
+    "cancelled": "Cancelled",
+    "completed": "Completed",
+    "history": "Previous",
+    "cancel": "Cancel",
+    "details": "See details",
+    "from": "From",
+    "to": "To",
+    "filter": "Filter",
+    "button": {
+      "appointment": "Book another appointment"
+    },
+    "modal": {
+      "title": "Cancel appointment",
+      "desc": [
+        "You are going to cancel this appointment",
+        "you cannot undo this. Are you sure?"
+      ],
+      "confirm": "Yes",
+      "deny": "No",
+      "cancelDesc": "Reason for cancelling appointment:"
+    },
+    "indicationModal": {
+      "title": "Give indications",
+      "desc": "Write some indications for your patient",
+      "confirm": "Submit",
+      "deny": "Cancel",
+      "indication": "Indications:"
+    },
+    "noIndications": "No indications yet",
+    "indication": {
+      "title": "Indications",
+      "patient": {
+        "button": "Give Indication"
+      },
+      "doctor": {
+        "button": "Respond Indication"
+      }
+    }
+  },
+  "detailedAppointment": {
+    "title": "Appointment Details",
+    "doctor": "Doctor",
+    "patient": "Patient",
+    "address": "Address",
+    "healthInsurance": "Health Insurance",
+    "description": "Description",
+    "cancelDesc": "Cancel Reason",
+    "status": "Status",
+    "indication": "Indications",
+    "indicationButton": "Give indications",
+    "me": "Me"
+  },
+  "header": {
+    "iAmDoctor": "I\u0027m a Doctor",
+    "iAmPatient": "I\u0027m a Patient",
+    "profile": "Profile",
+    "logout": "Logout"
+  },
+  "home": {
+    "welcome1": "We can help you",
+    "welcome2": "Live a healthier life",
+    "home": "Home",
+    "checkDoctor": "Check Doctors",
+    "myAppointments": "My Appointments",
+    "circle1": "Stay Healthy",
+    "circle2": "Schedule Appointments",
+    "circle3": "All In One Place",
+    "description1": "Running out of meds is a thing of the past. HealthSync allows you to ask for prescriptions online anytime.",
+    "description2": "With HealthSync, you can easily schedule doctors\u0027 appointments. Never calling and waiting again. Contacting your doctor is now easier than ever.",
+    "description3": "Don\u0027t waste your time looking for your medical history in multiple platforms. HealthSync will provide this information for you in a single place.",
+    "categories": "Featured Categories",
+    "alt": {
+      "homeDoctorImg": "Doctor attending an elderly patient",
+      "specialistImg": "{0} specialist",
+      "circle1": "Hearth with a hearth beat line inside it",
+      "circle2": "Doctor inside a computer monitor",
+      "circle3": "World globe with a Caduceus on the bottom right corner"
+    }
+  },
+  "doctorDashboard": {
+    "title": "Doctor Dashboard",
+    "placeholder": {
+      "search": "Search a doctor by name...",
+      "city": "City",
+      "specialty": "Specialty",
+      "insurance": "Health Insurance",
+      "from": "From",
+      "to": "To"
+    },
+    "button": {
+      "book": "Book appointment"
+    },
+    "no": {
+      "doctors": "No doctors where found"
+    },
+    "modal": {
+      "title": "Not matching health insurances",
+      "desc": "The health insurance of the doctor doesnt match with yours. Are you sure you want to make an appointment?",
+      "confirm": "Yes",
+      "deny": "No"
+    }
+  },
+  "review": {
+    "title": "Review Doctor",
+    "description": {
+      "title": "Description",
+      "placeholder": "Describe your experience with the doctor"
+    },
+    "rating": "Rating",
+    "submit": "Submit Review",
+    "modal": {
+      "title": "Review Sent",
+      "text": "Your review was sent successfully",
+      "button": "Go to the doctor"
+    }
+  },
+  "indication": {
+    "title": "Appointment Indication",
+    "description": {
+      "title": "Indication",
+      "placeholder": "Give an indication for the appointment"
+    },
+    "submit": "Submit Indication",
+    "modal": {
+      "title": "Indication Sent",
+      "text": "Your indication was sent successfully",
+      "button": "Go to the appointment"
+    },
+    "file": {
+      "title": "Add Image",
+      "alt": "Image of indication"
+    }
+  },
+  "filters": {
+    "title": "Filters",
+    "clear": "Clear",
+    "byAvailability": "By Availability",
+    "byRating": "By Rating"
+  },
+  "detailedDoctor": {
+    "title": "Doctor Details",
+    "specialties": "Specialty",
+    "address": "Address:",
+    "insurance": "Health Insurances",
+    "availability": "Availability",
+    "confirmAppointment": "Confirm Appointment",
+    "reviews": "Reviews",
+    "noAppointmentsAvailable": "There are no available appintments for the selected date",
+    "review": "Review",
+    "firstToReview": "Be the first to review this doctor",
+    "contact": "Contact",
+    "map": "Show map",
+    "modal": {
+      "location": "Location",
+      "close": "Close"
+    }
+  },
+  "doctor": {
+    "noReviews": "No ratings yet",
+    "alt": {
+      "doctorImg": "Doctor {0} {1} profile picture"
+    }
+  },
+  "patient": {
+    "alt": {
+      "patientImg": "Patient {0} {1} profile picture"
+    }
+  },
+  "user": {
+    "alt": {
+      "loggedUserImg": "Your profile picture"
+    }
+  },
+  "calendar": {
+    "january": "Jan",
+    "february": "Feb",
+    "march": "Mar",
+    "april": "Apr",
+    "may": "May",
+    "june": "Jun",
+    "july": "Jul",
+    "august": "Aug",
+    "september": "Sep",
+    "october": "Oct",
+    "november": "Nov",
+    "december": "Dec",
+    "monday": "Mon",
+    "tuesday": "Tue",
+    "wednesday": "Wed",
+    "thursday": "Thu",
+    "friday": "Fri",
+    "saturday": "Sat",
+    "sunday": "Sun"
+  },
+  "login": {
+    "title": "Login",
+    "rememberMe": "Remember Me",
+    "submit": "Login",
+    "error": "Invalid email or password",
+    "haveAccount": "Don\u0027t have an account?",
+    "register": "Register here!"
+  },
+  "editProfile": {
+    "title": "Edit Profile"
+  },
+  "day": {
+    "monday": "Monday",
+    "tuesday": "Tuesday",
+    "wednesday": "Wednesday",
+    "thursday": "Thursday",
+    "friday": "Friday",
+    "saturday": "Saturday",
+    "sunday": "Sunday"
+  },
+  "specialty": {
+    "allergy": {
+      "and": {
+        "immunology": "ALLERGY AND IMMUNOLOGY"
+      }
+    },
+    "pediatric": {
+      "allergy": {
+        "and": {
+          "immunology": "PEDIATRIC ALLERGY AND IMMUNOLOGY"
+        }
+      },
+      "cardiovascular": {
+        "surgery": "PEDIATRIC CARDIOVASCULAR SURGERY"
+      },
+      "dermatology": "PEDIATRIC DERMATOLOGY",
+      "hemato": {
+        "awareness": "PEDIATRIC HEMATO-AWARENESS"
+      },
+      "hepatology": "PEDIATRIC HEPATOLOGY"
+    },
+    "pathological": {
+      "anatomy": "PATHOLOGICAL ANATOMY"
+    },
+    "anesthesiology": "ANESTHESIOLOGY",
+    "general": {
+      "angiology": {
+        "and": {
+          "hemodynamics": "GENERAL ANGIOLOGY AND HEMODYNAMICS"
+        }
+      },
+      "surgery": "GENERAL SURGERY",
+      "medicine": {
+        "and": {
+          "or": {
+            "family": {
+              "medicine": "GENERAL MEDICINE AND/OR FAMILY MEDICINE"
+            }
+          }
+        }
+      }
+    },
+    "cardiology": "CARDIOLOGY",
+    "childrens": {
+      "cardiologist": "CHILDREN\u0027S CARDIOLOGIST",
+      "gastroenterologist": "CHILDREN\u0027S GASTROENTEROLOGIST"
+    },
+    "cardiovascular": {
+      "surgery": "CARDIOVASCULAR SURGERY"
+    },
+    "head": {
+      "and": {
+        "neck": {
+          "surgery": "HEAD AND NECK SURGERY"
+        }
+      }
+    },
+    "thorax": {
+      "surgery": "THORAX SURGERY (THORACIC SURGERY)"
+    },
+    "child": {
+      "surgery": "CHILD SURGERY (PEDIATRIC SURGERY)",
+      "infectologist": "CHILD INFECTOLOGIST",
+      "nephrologist": "CHILD NEPHROLOGIST",
+      "pneumonologist": "CHILD PNEUMONOLOGIST",
+      "neurologist": "CHILD NEUROLOGIST",
+      "and": {
+        "youth": {
+          "psychiatry": "CHILD AND YOUTH PSYCHIATRY"
+        }
+      },
+      "rheumatologist": "CHILD RHEUMATOLOGIST"
+    },
+    "plastic": {
+      "and": {
+        "reconstructive": {
+          "surgery": "PLASTIC AND RECONSTRUCTIVE SURGERY"
+        }
+      }
+    },
+    "peripheral": {
+      "vascular": {
+        "surgery": "PERIPHERAL VASCULAR SURGERY"
+      }
+    },
+    "medical": {
+      "clinic": "MEDICAL CLINIC",
+      "genetics": "MEDICAL GENETICS"
+    },
+    "coloproctology": "COLOPROCTOLOGY",
+    "dermatology": "DERMATOLOGY",
+    "image": {
+      "diagnosis": "IMAGE DIAGNOSIS"
+    },
+    "cardiac": {
+      "electrophysiology": "CARDIAC ELECTROPHYSIOLOGY"
+    },
+    "emergentology": "EMERGENTOLOGY",
+    "endocrinology": "ENDOCRINOLOGY",
+    "infant": {
+      "endocrinologist": "INFANT ENDOCRINOLOGIST"
+    },
+    "clinical": {
+      "pharmacology": "CLINICAL PHARMACOLOGY"
+    },
+    "physiatria": "PHYSIATRY (PHYSICAL MEDICINE AND REHABILITATION)",
+    "gastroenterology": "GASTROENTEROLOGY",
+    "geriatrics": "GERIATRICS",
+    "gynecology": "GYNECOLOGY",
+    "hematology": "HEMATOLOGY",
+    "hemotherapy": {
+      "and": {
+        "immunohematology": "HEMOTHERAPY AND IMMUNOHEMATOLOGY"
+      }
+    },
+    "hepatology": "HEPATOLOGY",
+    "infectology": "INFECTOLOGY",
+    "sports": {
+      "medicine": "SPORTS MEDICINE"
+    },
+    "work": {
+      "medicine": "WORK MEDICINE"
+    },
+    "legal": {
+      "medicine": "LEGAL MEDICINE"
+    },
+    "nuclear": {
+      "medicine": "NUCLEAR MEDICINE"
+    },
+    "palitative": {
+      "medicine": "PALITATIVE MEDICINE"
+    },
+    "nephrology": "NEPHROLOGY",
+    "neonatology": "NEONATOLOGY",
+    "pneumonology": "PNEUMONOLOGY",
+    "neurosurgery": "NEUROSURGERY",
+    "neurology": "NEUROLOGY",
+    "nutrition": "NUTRITION",
+    "obstetrics": "OBSTETRICS",
+    "ophthalmology": "OPHTHALMOLOGY",
+    "oncology": "ONCOLOGY",
+    "orthopedics": {
+      "and": {
+        "traumatology": "ORTHOPEDICS AND TRAUMATOLOGY",
+        "child": {
+          "traumatology": "ORTHOPEDICS AND CHILD TRAUMATOLOGY"
+        }
+      }
+    },
+    "otorhinolaryngology": "OTORHINOLARYNGOLOGY",
+    "pediatrics": "PEDIATRICS",
+    "psychiatry": "PSYCHIATRY",
+    "radiotherapy": {
+      "or": {
+        "radiation": {
+          "therapy": "RADIOTHERAPY OR RADIATION THERAPY"
+        }
+      }
+    },
+    "rheumatology": "RHEUMATOLOGY",
+    "intensive": {
+      "therapy": "INTENSIVE THERAPY",
+      "childrens": {
+        "therapist": "INTENSIVE CHILDREN\u0027S THERAPIST"
+      }
+    },
+    "tocoginecology": "TOCOGINECOLOGY",
+    "toxicology": "TOXICOLOGY",
+    "urology": "UROLOGY"
+  },
+  "healthInsurance": {
+    "none": "Uninsured",
+    "omint": "Omint",
+    "osde": "Osde",
+    "swiss": {
+      "medical": "Swiss Medical"
+    },
+    "galeno": "Galeno",
+    "medife": "Medife",
+    "medicus": "Medicus",
+    "accord": "Accord",
+    "hospital": {
+      "italiano": "Hospital Italiano",
+      "aleman": "Hospital Aleman",
+      "britanico": "Hospital Britanico"
+    },
+    "prevencion": {
+      "salud": "Prevencion Salud"
+    },
+    "avalian": "Avalian",
+    "william": {
+      "hope": "William Hope"
+    },
+    "pre": {
+      "medic": "Pre Medic"
+    },
+    "osfe": "Osfe",
+    "ospaca": "Ospaca",
+    "andar": "Andar",
+    "luis": {
+      "pasteur": "Luis Pasteur"
+    },
+    "union": {
+      "personal": "Union Personal"
+    },
+    "jerarquicos": "Jerarquicos",
+    "osdepym": "Osdepym",
+    "ospe": "Ospe",
+    "osplad": "Osplad",
+    "osseg": "Osseg",
+    "sancor": {
+      "salud": "Sancor Salud"
+    }
+  },
+  "appointmentStatus": {
+    "confirmed": "CONFIRMED",
+    "cancelled": "CANCELLED",
+    "completed": "COMPLETED"
+  },
+  "error": {
+    "403": "Access Denied",
+    "404": "Page not found",
+    "500": "Internal server error",
+    "userNotFound": "User not found",
+    "imageNotFound": "Image not found",
+    "appointmentNotFound": "Appointment not found",
+    "appointmentForbidden": "Yoy are not allowed to access this appointment",
+    "reviewForbidden": "You must have an appointment with this doctor to review him"
+  }
+}

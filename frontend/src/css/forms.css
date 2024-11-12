@@ -1,0 +1,82 @@
+.card{
+    background-color: #F5F5F5;
+}
+
+.formContainer {
+    display: flex;
+    flex-direction: column;
+}
+
+.formItem {
+    display: flex;
+    flex-direction: column;
+    width: 50%;
+    align-items: center;
+    padding-left: 1%;
+    padding-right: 1%;
+}
+
+.formCol{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.formRow{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+    margin: 0.5rem;
+}
+
+label {
+    padding: 12px 12px 12px 0;
+    display: inline-block;
+}
+
+.error{
+    color:red;
+}
+
+.submitButton{
+    margin: 2rem
+}
+
+select{
+    width: 20rem
+}
+
+h1, .h1{
+    margin-bottom: 1.5rem;
+}
+
+.form-control, .form-select{
+    width: 75%;
+}
+
+.form-check{
+    display: flex;
+    align-items: center;
+}
+
+.form-check-input{
+    margin: 5px;
+}
+
+.formItem > .rounded-circle{
+    margin-top: 2rem;
+}
+
+.loginPadding{
+    padding: 3rem 30%;
+}
+@media(max-width: 1300px){
+    .loginPadding{
+        padding: 3rem 20%;
+    }
+}
+
+.haveAccountRow{
+    display: flex;
+    justify-content: center;
+}
