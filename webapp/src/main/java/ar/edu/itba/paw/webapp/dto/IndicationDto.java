@@ -1,8 +1,12 @@
 package ar.edu.itba.paw.webapp.dto;
 
 import ar.edu.itba.paw.models.Indication;
+import ar.edu.itba.paw.webapp.utils.URIUtil;
 import java.net.URI;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
+import javax.ws.rs.HttpMethod;
 import javax.ws.rs.core.UriInfo;
 
 public class IndicationDto {
@@ -13,10 +17,7 @@ public class IndicationDto {
   private String description;
 
   // Links
-  private URI appointment;
-  private URI creator;
-  private URI file;
-  private URI self;
+  private List<LinkDto> links;
 
   public static IndicationDto fromIndication(final UriInfo uri, final Indication indication) {
     final IndicationDto dto = new IndicationDto();
@@ -33,30 +34,20 @@ public class IndicationDto {
     long fileId = indication.getFile() != null ? indication.getFile().getFileId() : -1;
 
     // Links
-    dto.appointment =
-        uri.getBaseUriBuilder().path("appointments").path(String.valueOf(appointmentId)).build();
-    dto.creator =
-        uri.getBaseUriBuilder()
-            .path(isDoctor ? "doctors" : "patients")
-            .path(String.valueOf(userId))
-            .build();
-    dto.file =
-        fileId != -1
-            ? uri.getBaseUriBuilder()
-                .path("appointments")
-                .path(String.valueOf(appointmentId))
-                .path("files")
-                .path(String.valueOf(fileId))
-                .build()
-            : null;
-    dto.self =
-        uri.getBaseUriBuilder()
-            .path("appointments")
-            .path(String.valueOf(appointmentId))
-            .path("indications")
-            .path(String.valueOf(indicationId))
-            .build();
+    List<LinkDto> links = new ArrayList<>(3);
+    URI creatorURI =
+        isDoctor ? URIUtil.getDoctorURI(uri, userId) : URIUtil.getPatientURI(uri, userId);
+    links.add(LinkDto.fromUri(creatorURI, "creator", HttpMethod.GET));
 
+    if (fileId != -1) {
+      URI fileURI = URIUtil.getFileURI(uri, appointmentId, fileId);
+      links.add(LinkDto.fromUri(fileURI, "file", HttpMethod.GET));
+    }
+
+    URI self = URIUtil.getIndicationURI(uri, appointmentId, indicationId);
+    links.add(LinkDto.fromUri(self, "self", HttpMethod.GET));
+
+    dto.links = links;
     return dto;
   }
 
@@ -84,35 +75,11 @@ public class IndicationDto {
     this.description = description;
   }
 
-  public URI getAppointment() {
-    return appointment;
+  public List<LinkDto> getLinks() {
+    return links;
   }
 
-  public void setAppointment(URI appointment) {
-    this.appointment = appointment;
-  }
-
-  public URI getCreator() {
-    return creator;
-  }
-
-  public void setCreator(URI creator) {
-    this.creator = creator;
-  }
-
-  public URI getFile() {
-    return file;
-  }
-
-  public void setFile(URI file) {
-    this.file = file;
-  }
-
-  public URI getSelf() {
-    return self;
-  }
-
-  public void setSelf(URI self) {
-    this.self = self;
+  public void setLinks(List<LinkDto> links) {
+    this.links = links;
   }
 }

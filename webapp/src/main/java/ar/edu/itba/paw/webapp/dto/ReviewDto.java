@@ -1,8 +1,11 @@
 package ar.edu.itba.paw.webapp.dto;
 
 import ar.edu.itba.paw.models.Review;
+import ar.edu.itba.paw.webapp.utils.URIUtil;
 import java.net.URI;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 import javax.ws.rs.core.UriInfo;
 
 public class ReviewDto {
@@ -14,9 +17,7 @@ public class ReviewDto {
   private Short rating;
 
   // Links
-  private URI doctor;
-  private URI patient;
-  private URI self;
+  private List<LinkDto> links;
 
   public static ReviewDto fromReview(final UriInfo uri, final Review review) {
     final ReviewDto dto = new ReviewDto();
@@ -31,16 +32,18 @@ public class ReviewDto {
     Long patientId = review.getPatient().getId();
 
     // Links
-    dto.doctor = uri.getBaseUriBuilder().path("/doctors").path(String.valueOf(doctorId)).build();
-    dto.patient = uri.getBaseUriBuilder().path("/patients").path(String.valueOf(patientId)).build();
-    dto.self =
-        uri.getBaseUriBuilder().path("/doctors").path(String.valueOf(doctorId)).path("/reviews")
-            .path(String.valueOf(dto.id)).build();
+    List<LinkDto> links = new ArrayList<>(2);
+
+    URI patientURI = URIUtil.getPatientURI(uri, patientId);
+    links.add(LinkDto.fromUri(patientURI, "patient", "GET"));
+
+    URI selfURI = URIUtil.getReviewURI(uri, doctorId, dto.id);
+    links.add(LinkDto.fromUri(selfURI, "self", "GET"));
+
+    dto.links = links;
 
     return dto;
   }
-
-  // Getters
 
   public Long getId() {
     return id;
@@ -70,33 +73,15 @@ public class ReviewDto {
     return rating;
   }
 
-  // Setters
-
   public void setRating(Short rating) {
     this.rating = rating;
   }
 
-  public URI getDoctor() {
-    return doctor;
+  public List<LinkDto> getLinks() {
+    return links;
   }
 
-  public void setDoctor(URI doctor) {
-    this.doctor = doctor;
-  }
-
-  public URI getPatient() {
-    return patient;
-  }
-
-  public void setPatient(URI patient) {
-    this.patient = patient;
-  }
-
-  public URI getSelf() {
-    return self;
-  }
-
-  public void setSelf(URI self) {
-    this.self = self;
+  public void setLinks(List<LinkDto> links) {
+    this.links = links;
   }
 }

@@ -1,7 +1,11 @@
 package ar.edu.itba.paw.webapp.dto;
 
 import ar.edu.itba.paw.models.Notification;
+import ar.edu.itba.paw.webapp.utils.URIUtil;
 import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
+import javax.ws.rs.HttpMethod;
 import javax.ws.rs.core.UriInfo;
 
 public class NotificationDto {
@@ -10,7 +14,7 @@ public class NotificationDto {
   private long userId;
   private long appointmentId;
 
-  private URI self;
+  private List<LinkDto> links;
 
   public static NotificationDto fromNotification(
       final UriInfo uri, final Notification notification) {
@@ -20,7 +24,12 @@ public class NotificationDto {
     dto.userId = notification.getUser().getId();
     dto.appointmentId = notification.getAppointment().getId();
 
-    dto.self = uri.getBaseUriBuilder().path("notifications").path(String.valueOf(dto.id)).build();
+    List<LinkDto> links = new ArrayList<>();
+    URI selfURI = URIUtil.getNotificationURI(uri, notification.getId());
+    links.add(LinkDto.fromUri(selfURI, "self", HttpMethod.GET));
+    links.add(LinkDto.fromUri(selfURI, "delete-self", HttpMethod.DELETE));
+
+    dto.links = links;
 
     return dto;
   }
@@ -49,11 +58,11 @@ public class NotificationDto {
     this.appointmentId = appointmentId;
   }
 
-  public URI getSelf() {
-    return self;
+  public List<LinkDto> getLinks() {
+    return links;
   }
 
-  public void setSelf(URI self) {
-    this.self = self;
+  public void setLinks(List<LinkDto> links) {
+    this.links = links;
   }
 }

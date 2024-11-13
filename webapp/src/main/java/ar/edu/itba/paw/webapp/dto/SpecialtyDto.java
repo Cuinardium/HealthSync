@@ -2,7 +2,11 @@ package ar.edu.itba.paw.webapp.dto;
 
 import ar.edu.itba.paw.models.Specialty;
 import ar.edu.itba.paw.webapp.utils.LocaleUtil;
+import ar.edu.itba.paw.webapp.utils.URIUtil;
 import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
+import javax.ws.rs.HttpMethod;
 import javax.ws.rs.core.UriInfo;
 import org.springframework.context.MessageSource;
 
@@ -12,7 +16,7 @@ public class SpecialtyDto {
   private String code;
   private int popularity;
 
-  private URI self;
+  private List<LinkDto> links;
 
   public static SpecialtyDto fromSpecialty(
       final UriInfo uriInfo,
@@ -30,22 +34,19 @@ public class SpecialtyDto {
 
     dto.popularity = popularity;
 
-    dto.self =
-        uriInfo
-            .getBaseUriBuilder()
-            .path("/specialties")
-            .path(String.valueOf(specialty.ordinal()))
-            .build();
+    URI selfURI = URIUtil.getSpecialtyURI(uriInfo, specialty.ordinal());
+    dto.links = new ArrayList<>(1);
+    dto.links.add(LinkDto.fromUri(selfURI, "self", HttpMethod.GET));
 
     return dto;
   }
 
-  public URI getSelf() {
-    return self;
+  public List<LinkDto> getLinks() {
+    return links;
   }
 
-  public void setSelf(URI self) {
-    this.self = self;
+  public void setLinks(List<LinkDto> links) {
+    this.links = links;
   }
 
   public String getName() {

@@ -49,6 +49,10 @@ public class AppointmentDto {
     links.add(LinkDto.fromUri(selfURI, "self", HttpMethod.GET));
     links.add(LinkDto.fromUri(selfURI, "update-self", HttpMethod.PATCH));
 
+    URI indicationsURI = URIUtil.getIndicationsURI(uri, appointment.getId());
+    links.add(LinkDto.fromUri(indicationsURI, "indications", HttpMethod.GET));
+    links.add(LinkDto.fromUri(indicationsURI, "add-indication", HttpMethod.POST));
+
     dto.links = links;
     return dto;
   }

@@ -1,8 +1,11 @@
 package ar.edu.itba.paw.webapp.dto;
 
 import ar.edu.itba.paw.models.Vacation;
+import ar.edu.itba.paw.webapp.utils.URIUtil;
+
 import java.net.URI;
 import java.time.LocalDate;
+import java.util.List;
 import javax.ws.rs.core.UriInfo;
 
 public class VacationDto {
@@ -13,8 +16,7 @@ public class VacationDto {
   private LocalDate toDate;
   private String toTime;
 
-  private URI doctor;
-  private URI self;
+  private List<LinkDto> links;
 
   public static VacationDto fromVacation(UriInfo uri, Vacation vacation) {
 
@@ -28,14 +30,13 @@ public class VacationDto {
     dto.fromTime = vacation.getFromTime().getBlockBeginning();
     dto.toTime = vacation.getToTime().getBlockEnd();
 
-    dto.doctor = uri.getBaseUriBuilder().path("doctors").path(String.valueOf(doctorId)).build();
-    dto.self =
-        uri.getBaseUriBuilder()
-            .path("doctors")
-            .path(String.valueOf(doctorId))
-            .path("vacations")
-            .path(String.valueOf(vacation.getId()))
-            .build();
+    List<LinkDto> links = new java.util.ArrayList<>(2);
+
+    URI selfURI = URIUtil.getVacationURI(uri, doctorId, vacation.getId());
+    links.add(LinkDto.fromUri(selfURI, "self", "GET"));
+    links.add(LinkDto.fromUri(selfURI, "delete-self", "DELETE"));
+
+    dto.links = links;
 
     return dto;
   }
@@ -72,20 +73,12 @@ public class VacationDto {
     this.toTime = toTime;
   }
 
-  public URI getDoctor() {
-    return doctor;
+  public List<LinkDto> getLinks() {
+    return links;
   }
 
-  public void setDoctor(URI doctor) {
-    this.doctor = doctor;
-  }
-
-  public URI getSelf() {
-    return self;
-  }
-
-  public void setSelf(URI self) {
-    this.self = self;
+  public void setLinks(List<LinkDto> links) {
+    this.links = links;
   }
 
   public Long getId() {
