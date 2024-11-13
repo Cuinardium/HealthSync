@@ -1,7 +1,7 @@
 import React from "react";
-import Loader from "./Loader";
-import { IndicationQuery } from "../api/indication/Indication";
-import { useIndications } from "../hooks/indicationHooks";
+import Loader from "../Loader";
+import { IndicationQuery } from "../../api/indication/Indication";
+import { useIndications } from "../../hooks/indicationHooks";
 
 interface IndicationListProps {
   appointmentId: string;

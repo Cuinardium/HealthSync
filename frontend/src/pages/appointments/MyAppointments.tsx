@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import AppointmentsList from "../../components/AppointmentList";
+import AppointmentsList from "../../components/appointments/AppointmentList";
 import Loader from "../../components/Loader";
 import { useAuth } from "../../context/AuthContext";
 

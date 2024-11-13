@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import DoctorList from "../../components/DoctorList";
+import DoctorList from "../../components/doctors/DoctorList";
 
 const DoctorDashboard: React.FC = () => {
   const [page, setPage] = useState(1);

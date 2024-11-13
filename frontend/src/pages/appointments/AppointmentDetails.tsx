@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import IndicationList from "../../components/IndicationList";
+import IndicationList from "../../components/indications/IndicationList";
 import { useAppointment } from "../../hooks/appointmentHooks";
 
 const DetailedAppointment: React.FC = () => {

@@ -1,7 +1,7 @@
 import React from "react";
-import { useAppointments } from "../hooks/appointmentHooks";
-import { AppointmentQuery } from "../api/appointment/Appointment";
-import Loader from "./Loader";
+import { useAppointments } from "../../hooks/appointmentHooks";
+import { AppointmentQuery } from "../../api/appointment/Appointment";
+import Loader from "../Loader";
 import { Link } from "react-router-dom";
 
 interface AppointmentsListProps {

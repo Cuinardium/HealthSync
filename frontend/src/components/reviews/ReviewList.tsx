@@ -1,7 +1,7 @@
 import React from "react";
-import Loader from "./Loader";
-import { ReviewQuery } from "../api/review/Review";
-import { useReviews } from "../hooks/reviewHooks";
+import Loader from "../Loader";
+import { ReviewQuery } from "../../api/review/Review";
+import { useReviews } from "../../hooks/reviewHooks";
 
 interface ReviewListProps {
   doctorId: string;

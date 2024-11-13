@@ -4,7 +4,7 @@ import { Button, Col, Form, Row } from "react-bootstrap";
 import { TIMES } from "../../api/time/Time";
 import { VacationForm } from "../../api/vacation/Vacation";
 import Loader from "../../components/Loader";
-import VacationList from "../../components/VacationList";
+import VacationList from "../../components/vacations/VacationList";
 import { useAuth } from "../../context/AuthContext";
 import { useCreateVacation } from "../../hooks/vacationHooks";
 

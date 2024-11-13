@@ -1,10 +1,10 @@
 import React from "react";
 import { Image } from "react-bootstrap";
-import { Doctor, DoctorQuery } from "../api/doctor/Doctor";
-import { useDoctors } from "../hooks/doctorHooks";
-import Loader from "./Loader";
+import { Doctor, DoctorQuery } from "../../api/doctor/Doctor";
+import { useDoctors } from "../../hooks/doctorHooks";
+import Loader from "../Loader";
 
-import doctorDefault from "../img/doctorDefault.png";
+import doctorDefault from "../../img/doctorDefault.png";
 import { Link } from "react-router-dom";
 
 interface DoctorListProps {

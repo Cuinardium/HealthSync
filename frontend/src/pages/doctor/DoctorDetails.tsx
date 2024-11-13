@@ -3,7 +3,7 @@ import { Image } from "react-bootstrap";
 import { useDoctor } from "../../hooks/doctorHooks";
 
 import doctorDefault from "../../img/doctorDefault.png";
-import ReviewList from "../../components/ReviewList";
+import ReviewList from "../../components/reviews/ReviewList";
 import { useState } from "react";
 
 const DoctorDetails: React.FC = () => {

@@ -2,7 +2,7 @@ import React from "react";
 import {
   useVacations,
   useDeleteVacation,
-} from "../hooks/vacationHooks";
+} from "../../hooks/vacationHooks";
 
 interface VacationPageProps {
   doctorId: string;
