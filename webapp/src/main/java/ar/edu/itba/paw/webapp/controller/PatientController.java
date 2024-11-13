@@ -5,6 +5,7 @@ import ar.edu.itba.paw.interfaces.services.exceptions.EmailInUseException;
 import ar.edu.itba.paw.interfaces.services.exceptions.PatientNotFoundException;
 import ar.edu.itba.paw.models.Image;
 import ar.edu.itba.paw.models.Patient;
+import ar.edu.itba.paw.webapp.auth.PawAuthUserDetails;
 import ar.edu.itba.paw.webapp.dto.PatientDto;
 import ar.edu.itba.paw.webapp.form.PatientEditForm;
 import ar.edu.itba.paw.webapp.form.PatientRegisterForm;
@@ -75,7 +76,14 @@ public class PatientController {
 
     LOGGER.debug("returning patient with id {}", patientId);
 
-    return Response.ok(PatientDto.fromPatient(uriInfo, patient)).build();
+    PatientDto patientDto = PatientDto.fromPatient(uriInfo, patient);
+    long currentUserId = PawAuthUserDetails.getCurrentUserId();
+
+    if (currentUserId == patientId) {
+      patientDto.addPrivateLinks(uriInfo);
+    }
+
+    return Response.ok(patientDto).build();
   }
 
   @PUT

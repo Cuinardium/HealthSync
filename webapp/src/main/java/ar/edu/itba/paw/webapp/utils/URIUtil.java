@@ -16,6 +16,8 @@ public class URIUtil {
   private static final String VACATION_BASE_PATH = "/vacations";
   private static final String DOCTOR_BASE_PATH = "/doctors";
   private static final String PATIENT_BASE_PATH = "/patients";
+  private static final String FILE_BASE_PATH = "/files";
+  private static final String INDICATION_BASE_PATH = "/indications";
 
   private URIUtil() {
     throw new RuntimeException();
@@ -146,6 +148,35 @@ public class URIUtil {
         .getBaseUriBuilder()
         .path(PATIENT_BASE_PATH)
         .path(String.valueOf(patientId))
+        .build();
+  }
+
+  public static URI getFileURI(UriInfo uriInfo, long appointmentId, long fileId) {
+    return uriInfo
+        .getBaseUriBuilder()
+        .path(APPOINTMENT_BASE_PATH)
+        .path(String.valueOf(appointmentId))
+        .path(FILE_BASE_PATH)
+        .path(String.valueOf(fileId))
+        .build();
+  }
+
+  public static URI getIndicationsURI(UriInfo uriInfo, long appointmentId) {
+    return uriInfo
+        .getBaseUriBuilder()
+        .path(APPOINTMENT_BASE_PATH)
+        .path(String.valueOf(appointmentId))
+        .path(INDICATION_BASE_PATH)
+        .build();
+  }
+
+  public static URI getIndicationURI(UriInfo uriInfo, long appointmentId, long indicationId) {
+    return uriInfo
+        .getBaseUriBuilder()
+        .path(APPOINTMENT_BASE_PATH)
+        .path(String.valueOf(appointmentId))
+        .path(INDICATION_BASE_PATH)
+        .path(String.valueOf(indicationId))
         .build();
   }
 }
