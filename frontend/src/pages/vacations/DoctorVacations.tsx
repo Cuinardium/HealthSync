@@ -1,3 +1,4 @@
+import { AxiosError } from "axios";
 import { useState } from "react";
 import { Button, Col, Form, Row } from "react-bootstrap";
 import { TIMES } from "../../api/time/Time";
@@ -12,7 +13,6 @@ const DoctorVacations: React.FC = () => {
   const [page, setPage] = useState(1);
   const pageSize = 3;
 
-  const createVacationMutation = useCreateVacation(id as any);
 
   const [newVacation, setNewVacation] = useState<VacationForm>({
     fromDate: new Date(),
@@ -23,8 +23,20 @@ const DoctorVacations: React.FC = () => {
     cancelAppointments: false,
   });
 
+  // TODO
+  const onSuccess = () => {
+    alert("Vacation created successfully");
+  }
+
+  const onError = (error: AxiosError) => {
+    alert(`Failed to create vacation: ${error.message}`);
+  }
+
+
+  const createVacationMutation = useCreateVacation(id as any, onSuccess, onError);
+
   const handleCreateVacation = () => {
-    // TODO
+    createVacationMutation.mutate(newVacation)
   };
 
   if (loading) {
@@ -131,6 +143,7 @@ const DoctorVacations: React.FC = () => {
           />
         </Form.Group>
 
+        { newVacation.cancelAppointments &&
         <Form.Group className="mb-3" controlId="reason">
           <Form.Label>Reason</Form.Label>
           <Form.Control
@@ -139,11 +152,11 @@ const DoctorVacations: React.FC = () => {
             value={newVacation.cancelReason}
             disabled={!newVacation.cancelAppointments}
             onChange={(e) =>
-              setNewVacation((prev) => ({ ...prev, reason: e.target.value }))
+              setNewVacation((prev) => ({ ...prev, cancelReason: e.target.value }))
             }
           />
         </Form.Group>
-
+        }
         <Button
           variant="primary"
           type="submit"

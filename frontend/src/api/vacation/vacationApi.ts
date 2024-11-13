@@ -34,12 +34,15 @@ export async function createVacation(
   doctorId: string,
   vacation: VacationForm,
 ): Promise<Vacation> {
-  (vacation as any).fromDate = vacation.fromDate.toISOString().split("T")[0];
-  (vacation as any).toDate = vacation.toDate.toISOString().split("T")[0];
+  const body = {
+    ...vacation,
+    fromDate: vacation.fromDate.toISOString().split("T")[0],
+    toDate: vacation.toDate.toISOString().split("T")[0],
+  };
 
   const response = await axios.post<Vacation>(
     VACATION_ENDPOINT(doctorId),
-    vacation,
+    body,
     {
       headers: {
         "Content-Type": VACATION_FORM_CONTENT_TYPE,
