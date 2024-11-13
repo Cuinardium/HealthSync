@@ -2,10 +2,13 @@ package ar.edu.itba.paw.webapp.dto;
 
 import ar.edu.itba.paw.models.Appointment;
 import ar.edu.itba.paw.models.AppointmentStatus;
+import ar.edu.itba.paw.webapp.utils.URIUtil;
 import java.net.URI;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+import javax.ws.rs.HttpMethod;
 import javax.ws.rs.core.UriInfo;
 
 public class AppointmentDto {
@@ -21,9 +24,7 @@ public class AppointmentDto {
   private String cancelDescription;
 
   // Links
-  private URI doctor;
-  private URI patient;
-  private URI self;
+  private List<LinkDto> links;
 
   public static AppointmentDto fromAppointment(final UriInfo uri, final Appointment appointment) {
     final AppointmentDto dto = new AppointmentDto();
@@ -37,22 +38,18 @@ public class AppointmentDto {
     dto.cancelDescription = appointment.getCancelDesc();
 
     // Links
+    List<LinkDto> links = new ArrayList<>();
+    URI doctorURI = URIUtil.getDoctorURI(uri, appointment.getDoctor().getId());
+    links.add(LinkDto.fromUri(doctorURI, "doctor", HttpMethod.GET));
 
-    dto.doctor =
-        uri.getBaseUriBuilder()
-            .path("/doctors")
-            .path(String.valueOf(appointment.getDoctor().getId()))
-            .build();
-    dto.patient =
-        uri.getBaseUriBuilder()
-            .path("/patients")
-            .path(String.valueOf(appointment.getPatient().getId()))
-            .build();
-    dto.self =
-        uri.getBaseUriBuilder()
-            .path("/appointments")
-            .path(String.valueOf(appointment.getId()))
-            .build();
+    URI patientURI = URIUtil.getPatientURI(uri, appointment.getPatient().getId());
+    links.add(LinkDto.fromUri(patientURI, "patient", HttpMethod.GET));
+
+    URI selfURI = URIUtil.getAppointmentURI(uri, appointment.getId());
+    links.add(LinkDto.fromUri(selfURI, "self", HttpMethod.GET));
+    links.add(LinkDto.fromUri(selfURI, "update-self", HttpMethod.PATCH));
+
+    dto.links = links;
     return dto;
   }
 
@@ -112,28 +109,11 @@ public class AppointmentDto {
   }
 
   // Links
-
-  public URI getSelf() {
-    return self;
+  public List<LinkDto> getLinks() {
+    return links;
   }
 
-  public void setSelf(URI self) {
-    this.self = self;
-  }
-
-  public URI getDoctor() {
-    return doctor;
-  }
-
-  public void setDoctor(URI doctor) {
-    this.doctor = doctor;
-  }
-
-  public URI getPatient() {
-    return patient;
-  }
-
-  public void setPatient(URI patient) {
-    this.patient = patient;
+  public void setLinks(List<LinkDto> links) {
+    this.links = links;
   }
 }
