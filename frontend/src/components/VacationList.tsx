@@ -28,7 +28,7 @@ const VacationList: React.FC<VacationPageProps> = ({
   const deleteVacationMutation = useDeleteVacation(doctorId);
 
   const handleDeleteVacation = (vacationId: string) => {
-    // TODO
+    deleteVacationMutation.mutate(vacationId)
   };
 
   // TODO
@@ -49,7 +49,7 @@ const VacationList: React.FC<VacationPageProps> = ({
                 { " - "}  
               {vacation.toDate.toISOString().split("T")[0]} - {vacation.toTime}
             </span>
-            <button onClick={() => handleDeleteVacation(vacation.id)}>
+            <button disabled={deleteVacationMutation.isPending} onClick={() => handleDeleteVacation(vacation.id)}>
               Delete
             </button>
           </li>
