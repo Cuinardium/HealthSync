@@ -2,11 +2,13 @@ package ar.edu.itba.paw.webapp.controller;
 
 import ar.edu.itba.paw.interfaces.services.AppointmentService;
 import ar.edu.itba.paw.interfaces.services.DoctorService;
+import ar.edu.itba.paw.interfaces.services.ReviewService;
 import ar.edu.itba.paw.interfaces.services.exceptions.DoctorNotFoundException;
 import ar.edu.itba.paw.interfaces.services.exceptions.EmailInUseException;
 import ar.edu.itba.paw.interfaces.services.exceptions.InvalidRangeException;
 import ar.edu.itba.paw.models.*;
 import ar.edu.itba.paw.webapp.annotations.HasAllDays;
+import ar.edu.itba.paw.webapp.auth.PawAuthUserDetails;
 import ar.edu.itba.paw.webapp.dto.AttendingHoursDto;
 import ar.edu.itba.paw.webapp.dto.DoctorDto;
 import ar.edu.itba.paw.webapp.dto.OccupiedHoursDto;
@@ -17,6 +19,7 @@ import ar.edu.itba.paw.webapp.mediaType.VndType;
 import ar.edu.itba.paw.webapp.query.DoctorQuery;
 import ar.edu.itba.paw.webapp.query.OccupiedHoursQuery;
 import ar.edu.itba.paw.webapp.utils.ResponseUtil;
+import ar.edu.itba.paw.webapp.utils.URIUtil;
 import java.net.URI;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
@@ -39,13 +42,17 @@ public class DoctorController {
 
   private final DoctorService doctorService;
   private final AppointmentService appointmentService;
+  private final ReviewService reviewService;
   @Context private UriInfo uriInfo;
 
   @Autowired
   public DoctorController(
-      final DoctorService doctorService, final AppointmentService appointmentService) {
+      final DoctorService doctorService,
+      final AppointmentService appointmentService,
+      final ReviewService reviewService) {
     this.doctorService = doctorService;
     this.appointmentService = appointmentService;
+    this.reviewService = reviewService;
   }
 
   // ================= doctors ========================
@@ -75,9 +82,7 @@ public class DoctorController {
     }
 
     final List<DoctorDto> dtoList =
-        doctors
-            .getContent()
-            .stream()
+        doctors.getContent().stream()
             .map(doctor -> DoctorDto.fromDoctor(uriInfo, doctor))
             .collect(Collectors.toList());
 
@@ -108,8 +113,7 @@ public class DoctorController {
 
     LOGGER.info("Registered {}", doctor);
 
-    URI createdDoctorUri =
-        uriInfo.getBaseUriBuilder().path("/doctors").path(String.valueOf(doctor.getId())).build();
+    URI createdDoctorUri = URIUtil.getDoctorURI(uriInfo, doctor.getId());
 
     return Response.created(createdDoctorUri).build();
   }
@@ -126,7 +130,19 @@ public class DoctorController {
 
     LOGGER.debug("returning doctor with id {}", doctorId);
 
-    return Response.ok(DoctorDto.fromDoctor(uriInfo, doctor)).build();
+    DoctorDto doctorDto = DoctorDto.fromDoctor(uriInfo, doctor);
+
+    long currentUserId = PawAuthUserDetails.getCurrentUserId();
+
+    if (currentUserId == doctorId) {
+      doctorDto.addPrivateLinks(uriInfo);
+    }
+
+    if (reviewService.canReview(doctorId, currentUserId)) {
+      doctorDto.addCreateReviewLink(uriInfo);
+    }
+
+    return Response.ok(doctorDto).build();
   }
 
   @PUT
@@ -204,12 +220,10 @@ public class DoctorController {
 
     // Unwrap (day, List<ThirtyMinuteBlock>) to Set<AttendingHours>
     Set<AttendingHours> attendingHours =
-        attendingHourForms
-            .stream()
+        attendingHourForms.stream()
             .flatMap(
                 dto ->
-                    dto.getHours()
-                        .stream()
+                    dto.getHours().stream()
                         .map(
                             hour ->
                                 new AttendingHours(
@@ -254,9 +268,7 @@ public class DoctorController {
             doctorId, occupiedHoursQuery.getFromDate(), occupiedHoursQuery.getToDate());
 
     List<OccupiedHoursDto> occupiedHoursDtoList =
-        occupiedHours
-            .entrySet()
-            .stream()
+        occupiedHours.entrySet().stream()
             .sorted(Map.Entry.comparingByKey())
             .map(entry -> OccupiedHoursDto.fromOccupiedHours(entry.getKey(), entry.getValue()))
             .collect(Collectors.toList());

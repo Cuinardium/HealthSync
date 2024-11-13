@@ -1,9 +1,12 @@
 package ar.edu.itba.paw.webapp.dto;
 
 import ar.edu.itba.paw.models.Doctor;
+import ar.edu.itba.paw.webapp.utils.URIUtil;
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+import javax.ws.rs.HttpMethod;
 import javax.ws.rs.core.UriInfo;
 
 public class DoctorDto {
@@ -13,25 +16,13 @@ public class DoctorDto {
   private String email;
   private String locale;
 
-  private URI image;
-
   private String address;
   private String city;
 
   private Float rating;
   private Integer ratingCount;
 
-  private List<URI> healthInsurances;
-  private URI appointments;
-  private URI notifications;
-
-  private URI specialty;
-  private URI reviews;
-  private URI attendingHours;
-  private URI occupiedHours;
-  private URI vacations;
-
-  private URI self;
+  private List<LinkDto> links;
 
   public static DoctorDto fromDoctor(final UriInfo uri, final Doctor doctor) {
     final DoctorDto dto = new DoctorDto();
@@ -42,82 +33,79 @@ public class DoctorDto {
     dto.email = doctor.getEmail();
     dto.locale = doctor.getLocale().toString();
 
-    if (doctor.getImage() != null) {
-      dto.image =
-          uri.getBaseUriBuilder()
-              .path("/images")
-              .path(String.valueOf(doctor.getImage().getImageId()))
-              .build();
-    }
-
     dto.address = doctor.getAddress();
     dto.city = doctor.getCity();
-
     if (doctor.getRatingCount() > 0) {
       dto.rating = doctor.getRating();
       dto.ratingCount = doctor.getRatingCount();
     }
 
-    dto.healthInsurances =
-        doctor
-            .getHealthInsurances()
-            .stream()
-            .map(
-                hi ->
-                    uri.getBaseUriBuilder()
-                        .path("/healthinsurances")
-                        .path(String.valueOf(hi.ordinal()))
-                        .build())
-            .collect(Collectors.toList());
+    List<LinkDto> links = new ArrayList<>();
 
-    dto.appointments =
-        uri.getBaseUriBuilder().path("/appointments").queryParam("userId", doctor.getId()).build();
+    if (doctor.getImage() != null) {
+      URI imageURI = URIUtil.getImageURI(uri, doctor.getImage().getImageId());
+      links.add(LinkDto.fromUri(imageURI, "image", HttpMethod.GET));
+    }
 
-    dto.notifications =
-        uri.getBaseUriBuilder().path("/notifications").queryParam("userId", doctor.getId()).build();
+    doctor
+        .getHealthInsurances()
+        .forEach(
+            hi ->
+                links.add(
+                    LinkDto.fromUri(
+                        URIUtil.getHealthInsuranceURI(uri, hi.ordinal()),
+                        "healthinsurance",
+                        HttpMethod.GET)));
 
-    dto.specialty =
-        uri.getBaseUriBuilder()
-            .path("/specialties")
-            .path(String.valueOf(doctor.getSpecialty().ordinal()))
-            .build();
+    URI specialtyURI = URIUtil.getSpecialtyURI(uri, doctor.getSpecialty().ordinal());
+    links.add(LinkDto.fromUri(specialtyURI, "specialty", HttpMethod.GET));
 
-    dto.reviews =
-        uri.getBaseUriBuilder()
-            .path("/doctors")
-            .path(String.valueOf(doctor.getId()))
-            .path("/reviews")
-            .build();
+    URI reviewsURI = URIUtil.getDoctorReviewURI(uri, doctor.getId());
+    links.add(LinkDto.fromUri(reviewsURI, "reviews", HttpMethod.GET));
 
-    dto.attendingHours =
-        uri.getBaseUriBuilder()
-            .path("/doctors")
-            .path(String.valueOf(doctor.getId()))
-            .path("/attendinghours")
-            .build();
+    URI attendingHoursURI = URIUtil.getAttendingHoursURI(uri, doctor.getId());
+    links.add(LinkDto.fromUri(attendingHoursURI, "attendinghours", HttpMethod.GET));
 
-    dto.occupiedHours =
-        uri.getBaseUriBuilder()
-            .path("/doctors")
-            .path(String.valueOf(doctor.getId()))
-            .path("/occupiedhours")
-            .build();
+    URI occupiedHoursURI = URIUtil.getOccupiedHoursURI(uri, doctor.getId());
+    links.add(LinkDto.fromUri(occupiedHoursURI, "occupiedhours", HttpMethod.GET));
 
-    dto.vacations =
-        uri.getBaseUriBuilder()
-            .path("/doctors")
-            .path(String.valueOf(doctor.getId()))
-            .path("/vacations")
-            .build();
+    URI selfURI = URIUtil.getDoctorURI(uri, doctor.getId());
+    links.add(LinkDto.fromUri(selfURI, "self", HttpMethod.GET));
 
-    dto.self =
-        uri.getBaseUriBuilder().path("/doctors").path(String.valueOf(doctor.getId())).build();
+    dto.links = links;
 
     return dto;
   }
 
   public static List<DoctorDto> fromDoctorList(UriInfo uriInfo, List<Doctor> doctorList) {
     return doctorList.stream().map(d -> fromDoctor(uriInfo, d)).collect(Collectors.toList());
+  }
+
+  public void addPrivateLinks(UriInfo uri) {
+
+    URI selfURI = URIUtil.getDoctorURI(uri, id);
+    links.add(LinkDto.fromUri(selfURI, "update-self", HttpMethod.PUT));
+
+    URI appointmentsURI = URIUtil.getUserAppointmentURI(uri, id);
+    links.add(LinkDto.fromUri(appointmentsURI, "appointments", HttpMethod.GET));
+    links.add(
+        LinkDto.fromUri(URIUtil.getAppointmentsURI(uri), "create-appointment", HttpMethod.POST));
+
+    URI notificationsURI = URIUtil.getUserNotificationURI(uri, id);
+    links.add(LinkDto.fromUri(notificationsURI, "notifications", HttpMethod.GET));
+
+    URI attendingHoursURI = URIUtil.getAttendingHoursURI(uri, id);
+    links.add(LinkDto.fromUri(attendingHoursURI, "attendinghours", HttpMethod.GET));
+    links.add(LinkDto.fromUri(attendingHoursURI, "update-attendinghours", HttpMethod.PUT));
+
+    URI vacationsURI = URIUtil.getDoctorVacationURI(uri, id);
+    links.add(LinkDto.fromUri(vacationsURI, "vacations", HttpMethod.GET));
+    links.add(LinkDto.fromUri(vacationsURI, "create-vacation", HttpMethod.POST));
+  }
+
+  public void addCreateReviewLink(UriInfo uri) {
+    URI createReviewURI = URIUtil.getDoctorReviewURI(uri, id);
+    links.add(LinkDto.fromUri(createReviewURI, "create-review", HttpMethod.POST));
   }
 
   public Long getId() {
@@ -136,14 +124,6 @@ public class DoctorDto {
     this.firstName = firstName;
   }
 
-  public URI getSelf() {
-    return self;
-  }
-
-  public void setSelf(URI self) {
-    this.self = self;
-  }
-
   public String getLastName() {
     return lastName;
   }
@@ -160,14 +140,6 @@ public class DoctorDto {
     this.address = address;
   }
 
-  public URI getImage() {
-    return image;
-  }
-
-  public void setImage(URI image) {
-    this.image = image;
-  }
-
   public String getCity() {
     return city;
   }
@@ -176,76 +148,12 @@ public class DoctorDto {
     this.city = city;
   }
 
-  public URI getAppointments() {
-    return appointments;
-  }
-
-  public void setAppointments(URI appointments) {
-    this.appointments = appointments;
-  }
-
-  public URI getReviews() {
-    return reviews;
-  }
-
-  public void setReviews(URI reviews) {
-    this.reviews = reviews;
-  }
-
-  public URI getNotifications() {
-    return notifications;
-  }
-
-  public void setNotifications(URI notifications) {
-    this.notifications = notifications;
-  }
-
   public String getEmail() {
     return email;
   }
 
   public void setEmail(String email) {
     this.email = email;
-  }
-
-  public List<URI> getHealthInsurances() {
-    return healthInsurances;
-  }
-
-  public void setHealthInsurances(List<URI> healthInsurances) {
-    this.healthInsurances = healthInsurances;
-  }
-
-  public URI getSpecialty() {
-    return specialty;
-  }
-
-  public void setSpecialty(URI specialty) {
-    this.specialty = specialty;
-  }
-
-  public URI getAttendingHours() {
-    return attendingHours;
-  }
-
-  public void setAttendingHours(URI attendingHours) {
-    this.attendingHours = attendingHours;
-  }
-
-  public URI getOccupiedHours() {
-    return occupiedHours;
-  }
-
-  public void setOccupiedHours(URI occupiedHours) {
-    this.occupiedHours = occupiedHours;
-  }
-
-  public URI getVacations() {
-    return vacations;
-  }
-
-  public void setVacations(URI vacations) {
-    this.vacations = vacations;
   }
 
   public Float getRating() {
@@ -270,5 +178,13 @@ public class DoctorDto {
 
   public void setLocale(String locale) {
     this.locale = locale;
+  }
+
+  public List<LinkDto> getLinks() {
+    return links;
+  }
+
+  public void setLinks(List<LinkDto> links) {
+    this.links = links;
   }
 }
