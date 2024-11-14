@@ -1,6 +1,6 @@
 import { axios } from "../axios";
 import { getPage, Page } from "../page/Page";
-import { Review, ReviewForm, ReviewQuery } from "./Review";
+import { Review, ReviewForm, ReviewQuery, ReviewResponse } from "./Review";
 
 const REVIEW_ENDPOINT = (doctor_id: string) => `/doctors/${doctor_id}/reviews`;
 
@@ -13,7 +13,7 @@ export async function getReviews(
   doctorId: string,
   reviewQuery: ReviewQuery,
 ): Promise<Page<Review>> {
-  const response = await axios.get<Review[]>(REVIEW_ENDPOINT(doctorId), {
+  const response = await axios.get(REVIEW_ENDPOINT(doctorId), {
     params: reviewQuery,
     headers: {
       Accept: REVIEW_LIST_CONTENT_TYPE,
@@ -22,7 +22,7 @@ export async function getReviews(
 
   if (response.status == 200) {
     // Set date to Date object
-    response.data = response.data?.map((review) => mapDates(review));
+    response.data = response.data?.map((review: ReviewResponse) => mapDetails(review));
   }
 
   return getPage(response);
@@ -47,7 +47,7 @@ export async function createReview(
 // =========== reviews/{id} =======
 
 export async function getReview(doctorId: string, id: string): Promise<Review> {
-  const response = await axios.get<Review>(
+  const response = await axios.get<ReviewResponse>(
     `${REVIEW_ENDPOINT(doctorId)}/${id}`,
     {
       headers: {
@@ -56,12 +56,18 @@ export async function getReview(doctorId: string, id: string): Promise<Review> {
     },
   );
 
-  return mapDates(response.data);
+  return mapDetails(response.data);
 }
 
 // ========== auxiliary functions ==============
 
-function mapDates(review: Review): Review {
-  review.date = new Date(review.date);
-  return review;
+function mapDetails(review: ReviewResponse): Review {
+  const date = new Date(review.date);
+  const patientId = review.links.find((link) => link.rel === "patient")?.href.split("/").pop() as string;
+
+  return {
+    ...review,
+    date,
+    patientId,
+  };
 }

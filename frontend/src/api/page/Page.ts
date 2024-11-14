@@ -18,6 +18,14 @@ export function getPage<T>(response: AxiosResponse): Page<T> {
 
   const currentPage = nextPage ? Number(nextPage) - 1 : lastPage;
 
+  if (response.status != 200) {
+    return {
+      content: [],
+      totalPages: 0,
+      currentPage: 0,
+    };
+  }
+
   return {
     content: response.data,
     totalPages: lastPage,

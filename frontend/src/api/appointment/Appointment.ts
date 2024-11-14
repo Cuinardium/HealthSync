@@ -1,11 +1,12 @@
+import { Link } from "../link/link";
+
 export interface Appointment {
   date: Date;
   description: string;
   cancelDescription: string | null;
-  doctor: string;
+  doctorId: string;
   id: number;
-  patient: string;
-  self: string;
+  patientId: string;
   status: "CONFIRMED" | "CANCELLED" | "COMPLETED";
   timeBlock: string;
 }
@@ -27,4 +28,14 @@ export interface AppointmentQuery {
   page?: number;
   pageSize?: number;
   status?: "CONFIRMED" | "CANCELLED" | "COMPLETED";
+}
+
+export interface AppointmentResponse {
+  date: string;
+  description: string;
+  cancelDescription: string | null;
+  id: number;
+  status: "CONFIRMED" | "CANCELLED" | "COMPLETED";
+  timeBlock: string;
+  links: Link[];
 }

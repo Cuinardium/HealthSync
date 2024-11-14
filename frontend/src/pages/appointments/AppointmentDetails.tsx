@@ -46,10 +46,10 @@ const DetailedAppointment: React.FC = () => {
         <strong>Time:</strong> {appointment.timeBlock}
       </p>
       <p>
-        <strong>Doctor:</strong> Dr. {appointment.doctor}
+        <strong>Doctor:</strong> Dr. {appointment.doctorId}
       </p>
       <p>
-        <strong>Patient:</strong> {appointment.patient}
+        <strong>Patient:</strong> {appointment.patientId}
       </p>
       <p>
         <strong>Status:</strong> {appointment.status}

@@ -12,6 +12,7 @@ import {
   IndicationQuery,
 } from "../api/indication/Indication";
 import { queryClient } from "../api/queryClient";
+import { Page } from "../api/page/Page";
 
 const STALE_TIME = 5 * 60 * 1000;
 
@@ -23,22 +24,23 @@ export interface IndicationWithFileData extends Indication {
 // ========== useIndications ==========
 
 export function useIndications(appointmentId: string, query: IndicationQuery) {
-  return useQuery<IndicationWithFileData[], Error>(
+  return useQuery<Page<IndicationWithFileData>, Error>(
     {
       queryKey: ["indications", appointmentId, query.page],
       queryFn: async () => {
         const indications = await getIndications(appointmentId, query);
 
         if (!indications) {
-          return [];
+          return indications;
         }
+
+        console.log("indications", indications);
 
         // Fetch the file data for each indication that has a file URL
         const indicationsWithFiles = await Promise.all(
-          indications.map(async (indication) => {
-            if (indication.file) {
-              const fileId = indication.file.split("/").pop() as string;
-              const fileData = await getFile(appointmentId, fileId);
+          indications.content.map(async (indication) => {
+            if (indication.fileId) {
+              const fileData = await getFile(appointmentId, indication.fileId);
               return {
                 ...indication,
                 fileData,
@@ -48,7 +50,12 @@ export function useIndications(appointmentId: string, query: IndicationQuery) {
           }),
         );
 
-        return indicationsWithFiles;
+        const page = {
+          ...indications,
+          content: indicationsWithFiles,
+        };
+
+        return page;
       },
       enabled: !!appointmentId,
       staleTime: STALE_TIME,

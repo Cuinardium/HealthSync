@@ -1,11 +1,11 @@
+import { Link } from "../link/link";
+
 export interface Indication {
-  appointment: string;
   creator: string;
-  date: string;
+  date: Date;
   description: string;
-  file: string;
+  fileId?: string;
   id: number;
-  self: string;
 }
 
 export interface IndicationForm {
@@ -21,4 +21,11 @@ export interface IndicationQuery {
 export interface IndicationFile {
   blob: Blob;
   fileName: string;
+}
+
+export interface IndicationResponse {
+  date: string;
+  description: string;
+  id: number;
+  links: Link[];
 }

@@ -3,6 +3,7 @@ import { getReview, getReviews, createReview } from "../api/review/reviewApi";
 import { Review, ReviewForm, ReviewQuery } from "../api/review/Review";
 import { queryClient } from "../api/queryClient";
 import { Page } from "../api/page/Page";
+import { AxiosError } from "axios";
 
 const STALE_TIME = 5 * 60 * 1000;
 
@@ -36,13 +37,19 @@ export function useReview(doctorId: string, reviewId: string) {
 
 // ========== useCreateReview ==========
 
-export function useCreateReview(doctorId: string) {
-  return useMutation<Review, Error, ReviewForm>(
+export function useCreateReview(
+  doctorId: string,
+  onSuccess: () => void,
+  onError: (error: AxiosError) => void,
+) {
+  return useMutation<Review, AxiosError, ReviewForm>(
     {
       mutationFn: (review: ReviewForm) => createReview(doctorId, review),
       onSuccess: () => {
         queryClient.invalidateQueries({ queryKey: ["reviews", doctorId] });
+        onSuccess();
       },
+      onError: (error) => onError(error),
     },
     queryClient,
   );

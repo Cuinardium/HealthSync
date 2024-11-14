@@ -22,7 +22,7 @@ const IndicationList: React.FC<IndicationListProps> = ({
   };
 
   const {
-    data: indications,
+    data: indicationsPage,
     isLoading,
     isError,
     error,
@@ -36,7 +36,7 @@ const IndicationList: React.FC<IndicationListProps> = ({
     return <div>Error fetching Indications: {error?.message}</div>;
   }
 
-  if (!indications || indications.length === 0) {
+  if (!indicationsPage || indicationsPage.content.length === 0) {
     return <div>No indications found</div>;
   }
 
@@ -44,7 +44,7 @@ const IndicationList: React.FC<IndicationListProps> = ({
     <div>
       <h2>Indications</h2>
       <ul>
-        {indications.map((indication) => {
+        {indicationsPage.content.map((indication) => {
           const fileUrl = indication.fileData
             ? URL.createObjectURL(indication.fileData.blob)
             : null;
@@ -88,7 +88,7 @@ const IndicationList: React.FC<IndicationListProps> = ({
         <span style={{ margin: "0 10px" }}>Page {page}</span>
         <button
           onClick={() => onPageChange(page + 1)}
-          disabled={indications.length < pageSize}
+          disabled={indicationsPage.currentPage === indicationsPage.totalPages}
         >
           Next
         </button>

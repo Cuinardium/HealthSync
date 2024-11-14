@@ -64,6 +64,9 @@ const DoctorDetails: React.FC = () => {
           <strong>Rating:</strong> {doctor.rating} / 5
         </p>
       )}
+      <p>
+        <strong>Can Review:</strong> {doctor.canReview ? "True" : "False"}
+      </p>
 
       <ReviewList
         doctorId={id}

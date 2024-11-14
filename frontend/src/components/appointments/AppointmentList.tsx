@@ -65,7 +65,10 @@ const AppointmentList: React.FC<AppointmentsListProps> = ({
               <strong>Status:</strong> {appointment.status}
             </div>
             <div>
-              <strong>Doctor:</strong> {appointment.doctor}
+              <strong>Doctor:</strong> {appointment.doctorId}
+            </div>
+            <div>
+              <strong>Patient:</strong> {appointment.patientId}
             </div>
             <div>
               <strong>Description:</strong> {appointment.description}

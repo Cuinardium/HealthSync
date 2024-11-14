@@ -1,6 +1,11 @@
 import { axios } from "../axios";
 import { getPage, Page } from "../page/Page";
-import { Appointment, AppointmentForm, AppointmentQuery } from "./Appointment";
+import {
+  Appointment,
+  AppointmentForm,
+  AppointmentQuery,
+  AppointmentResponse,
+} from "./Appointment";
 
 const APPOINTMENT_ENDPOINT = "/appointments";
 
@@ -15,14 +20,16 @@ const APPOINTMENT_CANCEL_CONTENT_TYPE =
 export async function getAppointments(
   query: AppointmentQuery,
 ): Promise<Page<Appointment>> {
-  const response = await axios.get<Appointment[]>(APPOINTMENT_ENDPOINT, {
+  const response = await axios.get(APPOINTMENT_ENDPOINT, {
     params: query,
     headers: { Accept: APPOINTMENT_LIST_CONTENT_TYPE },
   });
 
   if (response.status == 200) {
     // Set date to Date object
-    response.data = response.data?.map((review) => mapDates(review));
+    response.data = response.data?.map((review: AppointmentResponse) =>
+      mapDetails(review),
+    );
   }
 
   return getPage(response);
@@ -46,14 +53,14 @@ export async function createAppointment(
 // =========== appointments/id ==============
 
 export async function getAppointment(id: string): Promise<Appointment> {
-  const response = await axios.get<Appointment>(
+  const response = await axios.get<AppointmentResponse>(
     `${APPOINTMENT_ENDPOINT}/${id}`,
     {
       headers: { Accept: APPOINTMENT_CONTENT_TYPE },
     },
   );
 
-  return mapDates(response.data);
+  return mapDetails(response.data);
 }
 
 export async function cancelAppointment(
@@ -78,7 +85,18 @@ export async function cancelAppointment(
 
 // ========= auxiliary functions =========
 
-export function mapDates(appointment: Appointment): Appointment {
-  appointment.date = new Date(appointment.date);
-  return appointment;
+export function mapDetails(appointment: AppointmentResponse): Appointment {
+  const date = new Date(appointment.date);
+
+  const doctor = appointment.links.find((link) => link.rel === "doctor")?.href;
+  const patient = appointment.links.find(
+    (link) => link.rel === "patient",
+  )?.href;
+
+  return {
+    ...appointment,
+    date,
+    doctorId: doctor ? (doctor.split("/").pop() as string) : "",
+    patientId: patient ? (patient.split("/").pop() as string) : "",
+  };
 }

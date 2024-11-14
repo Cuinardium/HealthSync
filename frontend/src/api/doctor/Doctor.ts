@@ -1,3 +1,5 @@
+import { Link } from "../link/link";
+
 export interface Doctor {
   id: number;
   firstName: string;
@@ -5,12 +7,13 @@ export interface Doctor {
   email: string;
   address: string;
   city: string;
-  rating: number;
-  ratingCount: number;
+  rating?: number;
+  ratingCount?: number;
   specialty: string;
   healthInsurances: string[];
-  image: string;
+  image?: string;
   locale: string;
+  canReview: boolean;
 }
 
 export interface OccupiedHours {
@@ -57,4 +60,17 @@ export interface DoctorEditForm {
   specialty: string;
   locale: string;
   image?: File;
+}
+
+export interface DoctorResponse {
+  id: number;
+  firstName: string;
+  lastName: string;
+  email: string;
+  address: string;
+  city: string;
+  rating?: number;
+  ratingCount?: number;
+  locale: string;
+  links: Link[];
 }

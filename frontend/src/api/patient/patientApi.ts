@@ -1,6 +1,6 @@
 import { axios } from "../axios";
 import { getHealthInsurance } from "../health-insurance/healthInsuranceApi";
-import { Patient, PatientRegisterForm, PatientEditForm } from "./Patient";
+import { Patient, PatientRegisterForm, PatientEditForm, PatientResponse } from "./Patient";
 
 const PATIENT_ENDPOINT = "/patients";
 
@@ -24,7 +24,7 @@ export async function createPatient(patient: PatientRegisterForm): Promise<Patie
 // ========== patients/id ==========
 
 export async function getPatient(id: string): Promise<Patient> {
-  const response = await axios.get<Patient>(`${PATIENT_ENDPOINT}/${id}`, {
+  const response = await axios.get<PatientResponse>(`${PATIENT_ENDPOINT}/${id}`, {
     headers: {
       Accept: PATIENT_CONTENT_TYPE,
     },
@@ -63,11 +63,19 @@ export async function updatePatient(
 
 // ========== auxiliary functions ==========
 
-async function mapPatientDetails(patient: Patient): Promise<Patient> {
-  const healthInsuranceId = patient.healthInsurance.split("/").pop();
-  const healthInsurance = await getHealthInsurance(healthInsuranceId as string);
+async function mapPatientDetails(patientResponse: PatientResponse): Promise<Patient> {
+  const healthInsuranceId = patientResponse.links.find((link) => link.rel === "healthinsurance")?.href.split("/").pop();
+  const healthInsuranceResp = await getHealthInsurance(healthInsuranceId as string);
 
   // To map appropiatelly to translation key
-  patient.healthInsurance = healthInsurance.code.toLowerCase().replace(/_/g,".");
-  return patient;
+  const healthInsurance = healthInsuranceResp.code.toLowerCase().replace(/_/g,".");
+
+  const image = patientResponse.links.find((link) => link.rel === "image")?.href;
+
+
+  return {
+    ...patientResponse,
+    healthInsurance,
+    image,
+  };
 }

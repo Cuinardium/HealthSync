@@ -60,7 +60,7 @@ const ReviewList: React.FC<ReviewListProps> = ({
               <strong>Description:</strong> {review.description}
             </div>
             <div>
-              <strong>Patient:</strong> {review.patient}
+              <strong>Patient:</strong> {review.patientId}
             </div>
           </li>
         ))}

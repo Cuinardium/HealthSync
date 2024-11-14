@@ -4,7 +4,6 @@ export interface Vacation {
     fromTime: string;
     toDate: Date;
     toTime: string;
-    doctor: string;
 }
 
 export interface VacationQuery {
