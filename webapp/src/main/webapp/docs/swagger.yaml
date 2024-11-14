@@ -15,6 +15,7 @@ tags:
   - name: cities
   - name: notifications
   - name: tokens
+  - name: images
 
 paths:
   /appointments:
@@ -271,11 +272,11 @@ paths:
                       "popularity": 1
                     },
                     {
-                      "name": "Vicente López",
+                      "name": "Vicente LÃ³pez",
                       "popularity": 1
                     },
                     {
-                      "name": "Zárate",
+                      "name": "ZÃ¡rate",
                       "popularity": 1
                     },
                     {
@@ -1668,6 +1669,43 @@ paths:
               schema:
                 allOf:
                   - $ref: '#/components/schemas/Error'
+  /images/{id}:
+    get:
+      operationId: getImage
+      description: Gets the image by ID
+      tags:
+        - images
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: Returned the image
+          content:
+            image/png:
+              schema:
+                type: string
+                format: byte
+            image/jpeg:
+              schema:
+                type: string
+                format: byte
+            image/jpg:
+              schema:
+                type: string
+                format: byte
+        '404':
+          description: Image not found
+          content:
+            application/vnd.error.v1+json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/Error'
+
 components:
   schemas:
     CancelAppointmentForm:
@@ -1712,19 +1750,19 @@ components:
         name:
           maxLength: 50
           minLength: 1
-          pattern: '[a-zA-Z ñÑáÁéÉíÍóÓúÚ]+'
+          pattern: '[a-zA-Z Ã±Ã‘Ã¡ÃÃ©Ã‰Ã­ÃÃ³Ã“ÃºÃš]+'
           type: string
           example: 'john'
         lastname:
           maxLength: 50
           minLength: 1
-          pattern: '[a-zA-Z ñÑáÁéÉíÍóÓúÚ]+'
+          pattern: '[a-zA-Z Ã±Ã‘Ã¡ÃÃ©Ã‰Ã­ÃÃ³Ã“ÃºÃš]+'
           type: string
           example: 'doe'
         email:
           maxLength: 50
           minLength: 1
-          pattern: '[a-zA-Z0-9.+-ñÑ]+@[a-zA-Z0-9.-]+(.com|.com.ar|.edu.ar)'
+          pattern: '[a-zA-Z0-9.+-Ã±Ã‘]+@[a-zA-Z0-9.-]+(.com|.com.ar|.edu.ar)'
           type: string
           example: 'john@gmail.con'
         healthInsurance:
@@ -1736,13 +1774,13 @@ components:
         city:
           maxLength: 20
           minLength: 1
-          pattern: '[a-zA-Z0-9. ñÑáÁéÉíÍóÓúÚ]+'
+          pattern: '[a-zA-Z0-9. Ã±Ã‘Ã¡ÃÃ©Ã‰Ã­ÃÃ³Ã“ÃºÃš]+'
           type: string
           example: 'CABA'
         address:
           maxLength: 100
           minLength: 1
-          pattern: '[a-zA-Z0-9. ñÑáÁéÉíÍóÓúÚ]+'
+          pattern: '[a-zA-Z0-9. Ã±Ã‘Ã¡ÃÃ©Ã‰Ã­ÃÃ³Ã“ÃºÃš]+'
           type: string
           example: 'San Martin 202'
         specialty:
@@ -1766,19 +1804,19 @@ components:
         name:
           maxLength: 50
           minLength: 1
-          pattern: '[a-zA-Z ñÑáÁéÉíÍóÓúÚ]+'
+          pattern: '[a-zA-Z Ã±Ã‘Ã¡ÃÃ©Ã‰Ã­ÃÃ³Ã“ÃºÃš]+'
           type: string
           example: 'juan'
         lastname:
           maxLength: 50
           minLength: 1
-          pattern: '[a-zA-Z ñÑáÁéÉíÍóÓúÚ]+'
+          pattern: '[a-zA-Z Ã±Ã‘Ã¡ÃÃ©Ã‰Ã­ÃÃ³Ã“ÃºÃš]+'
           type: string
           example: 'doe'
         email:
           maxLength: 50
           minLength: 1
-          pattern: '[a-zA-Z0-9.+-ñÑ]+@[a-zA-Z0-9.-]+(.com|.com.ar|.edu.ar)'
+          pattern: '[a-zA-Z0-9.+-Ã±Ã‘]+@[a-zA-Z0-9.-]+(.com|.com.ar|.edu.ar)'
           type: string
           example: 'juan@gmail.com'
         locale:
@@ -1793,13 +1831,13 @@ components:
         city:
           maxLength: 20
           minLength: 1
-          pattern: '[a-zA-Z0-9. ñÑáÁéÉíÍóÓúÚ]+'
+          pattern: '[a-zA-Z0-9. Ã±Ã‘Ã¡ÃÃ©Ã‰Ã­ÃÃ³Ã“ÃºÃš]+'
           type: string
           example: 'CABA'
         address:
           maxLength: 100
           minLength: 1
-          pattern: '[a-zA-Z0-9. ñÑáÁéÉíÍóÓúÚ]+'
+          pattern: '[a-zA-Z0-9. Ã±Ã‘Ã¡ÃÃ©Ã‰Ã­ÃÃ³Ã“ÃºÃš]+'
           type: string
           example: 'San Martin 202'
         specialty:
@@ -1881,19 +1919,19 @@ components:
           example: 'john'
           maxLength: 50
           minLength: 1
-          pattern: '[a-zA-Z ñÑáÁéÉíÍóÓúÚ]+'
+          pattern: '[a-zA-Z Ã±Ã‘Ã¡ÃÃ©Ã‰Ã­ÃÃ³Ã“ÃºÃš]+'
           type: string
         lastname:
           example: 'doe'
           maxLength: 50
           minLength: 1
-          pattern: '[a-zA-Z ñÑáÁéÉíÍóÓúÚ]+'
+          pattern: '[a-zA-Z Ã±Ã‘Ã¡ÃÃ©Ã‰Ã­ÃÃ³Ã“ÃºÃš]+'
           type: string
         email:
           example: 'john@gmail.com'
           maxLength: 50
           minLength: 1
-          pattern: '[a-zA-Z0-9.+-ñÑ]+@[a-zA-Z0-9.-]+(.com|.com.ar|.edu.ar)'
+          pattern: '[a-zA-Z0-9.+-Ã±Ã‘]+@[a-zA-Z0-9.-]+(.com|.com.ar|.edu.ar)'
           type: string
         healthInsurance:
           allOf:
@@ -1914,19 +1952,19 @@ components:
         name:
           maxLength: 50
           minLength: 1
-          pattern: '[a-zA-Z ñÑáÁéÉíÍóÓúÚ]+'
+          pattern: '[a-zA-Z Ã±Ã‘Ã¡ÃÃ©Ã‰Ã­ÃÃ³Ã“ÃºÃš]+'
           type: string
           example: 'juan'
         lastname:
           maxLength: 50
           minLength: 1
-          pattern: '[a-zA-Z ñÑáÁéÉíÍóÓúÚ]+'
+          pattern: '[a-zA-Z Ã±Ã‘Ã¡ÃÃ©Ã‰Ã­ÃÃ³Ã“ÃºÃš]+'
           type: string
           example: 'doe'
         email:
           maxLength: 50
           minLength: 1
-          pattern: '[a-zA-Z0-9.+-ñÑ]+@[a-zA-Z0-9.-]+(.com|.com.ar|.edu.ar)'
+          pattern: '[a-zA-Z0-9.+-Ã±Ã‘]+@[a-zA-Z0-9.-]+(.com|.com.ar|.edu.ar)'
           type: string
           example: 'juan@gmail.com'
         locale:
@@ -1960,7 +1998,7 @@ components:
           example: "john@gmail.com"
           maxLength: 50
           minLength: 1
-          pattern: '[a-zA-Z0-9.+-ñÑ]+@[a-zA-Z0-9.-]+(.com|.com.ar|.edu.ar)'
+          pattern: '[a-zA-Z0-9.+-Ã±Ã‘]+@[a-zA-Z0-9.-]+(.com|.com.ar|.edu.ar)'
           type: string
     DoctorVacationForm:
       required:
@@ -2009,13 +2047,9 @@ components:
       type: object
       properties:
         id:
-            type: integer
-            format: int32
-            example: 7
-        doctor:
-          type: string
-          format: uri
-          example: "http://old-pawserver.it.itba.edu.ar/paw-2023a-02/api/doctors/20"
+          type: integer
+          format: int32
+          example: 7
         fromDate:
           type: string
           format: date
@@ -2023,10 +2057,6 @@ components:
         fromTime:
           type: string
           example: "08:00"
-        self:
-          type: string
-          format: uri
-          example: "http://old-pawserver.it.itba.edu.ar/paw-2023a-02/api/doctors/20/vacations/7"
         toDate:
           type: string
           format: date
@@ -2034,6 +2064,23 @@ components:
         toTime:
           type: string
           example: "08:30"
+        links:
+          type: array
+          items:
+            $ref: '#/components/schemas/Link'
+          example: [
+            {
+              "href": "http://old-pawserver.it.itba.edu.ar/paw-2023a-02/api/doctors/20/vacations/7",
+              "method": "GET",
+              "rel": "self"
+            },
+            {
+              "href": "http://old-pawserver.it.itba.edu.ar/paw-2023a-02/api/doctors/20/vacations/7",
+              "method": "DELETE",
+              "rel": "delete-self"
+            }
+          ]
+
     Review:
       type: object
       properties:
@@ -2044,37 +2091,56 @@ components:
         description:
           type: string
           example: "Genial! El doctor me arreglo el pie."
-        doctor:
-          type: string
-          format: uri
-          example: "http://old-pawserver.it.itba.edu.ar/paw-2023a-02/api/doctors/20"
         id:
           type: integer
           format: int64
           example: 1
-        patient:
-          type: string
-          format: uri
-          example: "http://old-pawserver.it.itba.edu.ar/paw-2023a-02/api/patients/21"
         rating:
           type: integer
           format: int32
           example: 5
-        self:
+        links:
+          type: array
+          items:
+            $ref: '#/components/schemas/Link'
+          example: [
+            {
+              "href": "http://old-pawserver.it.itba.edu.ar/paw-2023a-02/api/patients/21",
+              "method": "GET",
+              "rel": "patient"
+            },
+            {
+              "href": "http://old-pawserver.it.itba.edu.ar/paw-2023a-02/api/doctors/20/reviews/1",
+              "method": "GET",
+              "rel": "self"
+            }
+          ]
+
+    Link:
+      type: object
+      properties:
+        href:
           type: string
           format: uri
-          example: "http://old-pawserver.it.itba.edu.ar/paw-2023a-02/api/doctors/20/reviews/1"
+          description: URL for the link
+        method:
+          type: string
+          description: HTTP method (e.g., GET, POST)
+          enum: [GET, POST, PUT, PATCH, DELETE]
+        rel:
+          type: string
+          description: Relation type for the link (e.g., self, update-self)
+      required:
+        - href
+        - method
+        - rel
     Patient:
       type: object
       properties:
         id:
-            type: integer
-            format: int32
-            example: 21
-        appointments:
-          type: string
-          format: uri
-          example: "http://old-pawserver.it.itba.edu.ar/paw-2023a-02/api/appointments?userId=21"
+          type: integer
+          format: int32
+          example: 21
         email:
           type: string
           format: email
@@ -2082,25 +2148,48 @@ components:
         firstName:
           type: string
           example: "Santiago"
-        healthInsurance:
-          type: string
-          format: uri
-          example: "http://old-pawserver.it.itba.edu.ar/paw-2023a-02/api/healthinsurances/3"
-        image:
-          type: string
-          format: uri
-          example: "http://old-pawserver.it.itba.edu.ar/paw-2023a-02/api/images/5"
         lastName:
           type: string
           example: "ballerini"
-        notifications:
+        locale:
           type: string
-          format: uri
-          example: "http://old-pawserver.it.itba.edu.ar/paw-2023a-02/api/notifications?userId=21"
-        self:
-          type: string
-          format: uri
-          example: "http://old-pawserver.it.itba.edu.ar/paw-2023a-02/api/patients/21"
+          example: "es"
+        links:
+          type: array
+          items:
+            $ref: '#/components/schemas/Link'
+          example: [
+            {
+              "href": "http://old-pawserver.it.itba.edu.ar/paw-2023a-02/api/images/5",
+              "method": "GET",
+              "rel": "image"
+            },
+            {
+              "href": "http://old-pawserver.it.itba.edu.ar/paw-2023a-02/api/healthinsurances/3",
+              "method": "GET",
+              "rel": "health-insurance"
+            },
+            {
+              "href": "http://old-pawserver.it.itba.edu.ar/paw-2023a-02/api/patients/21",
+              "method": "GET",
+              "rel": "self"
+            },
+            {
+              "href": "http://old-pawserver.it.itba.edu.ar/paw-2023a-02/api/patients/21",
+              "method": "PUT",
+              "rel": "update-self"
+            },
+            {
+              "href": "http://old-pawserver.it.itba.edu.ar/paw-2023a-02/api/appointments?userId=21",
+              "method": "GET",
+              "rel": "appointments"
+            },
+            {
+              "href": "http://old-pawserver.it.itba.edu.ar/paw-2023a-02/api/notifications?userId=21",
+              "method": "GET",
+              "rel": "notifications"
+            }
+          ]
     Notification:
       type: object
       properties:
@@ -2113,27 +2202,30 @@ components:
           type: integer
           format: int64
           example: 6
-        self:
-          type: string
-          format: uri
-          description: The URI for the notification resource.
-          example: "http://old-pawserver.it.itba.edu.ar/paw-2023a-02/api/notifications/6"
         userId:
           type: integer
           format: int64
           example: 20
+        links:
+          type: array
+          items:
+            $ref: '#/components/schemas/Link'
+          example: [
+            {
+              "href": "http://old-pawserver.it.itba.edu.ar/paw-2023a-02/api/notifications/1",
+              "method": "GET",
+              "rel": "self"
+            },
+            {
+              "href": "http://old-pawserver.it.itba.edu.ar/paw-2023a-02/api/notifications/1",
+              "method": "DELETE",
+              "rel": "delete-self"
+            }
+          ]
+
     Indication:
       type: object
       properties:
-        appointment:
-          type: string
-          format: uri
-          description: The URI for the related appointment.
-          example: "http://old-pawserver.it.itba.edu.ar/paw-2023a-02/api/appointments/12"
-        creator:
-          type: string
-          format: uri
-          example: "http://old-pawserver.it.itba.edu.ar/paw-2023a-02/api/doctors/20"
         date:
           type: string
           format: date
@@ -2141,19 +2233,31 @@ components:
         description:
           type: string
           example: "Buen dia, le adjunto el resultado del estudio"
-        file:
-          type: string
-          format: uri
-          description: The URI for the file related to the indication.
-          example: "http://old-pawserver.it.itba.edu.ar/paw-2023a-02/api/appointments/12/files/1"
         id:
           type: integer
           format: int64
           example: 2
-        self:
-          type: string
-          format: uri
-          example: "http://old-pawserver.it.itba.edu.ar/paw-2023a-02/api/appointments/12/indications/2"
+        links:
+          type: array
+          items:
+            $ref: '#/components/schemas/Link'
+          example: [
+            {
+              "href": "http://old-pawserver.it.itba.edu.ar/paw-2023a-02/api/patients/21",
+              "method": "GET",
+              "rel": "creator"
+            },
+            {
+              "href": "http://old-pawserver.it.itba.edu.ar/paw-2023a-02/api/appointments/12/files/2",
+              "method": "GET",
+              "rel": "file"
+            },
+            {
+              "href": "http://old-pawserver.it.itba.edu.ar/paw-2023a-02/api/appointments/12/indications/8",
+              "method": "GET",
+              "rel": "self"
+            }
+          ]
     OccupiedHours:
       type: object
       properties:
@@ -2177,24 +2281,12 @@ components:
       type: object
       properties:
         id:
-            type: integer
-            format: int32
-            example: 20
+          type: integer
+          format: int32
+          example: 20
         address:
           type: string
           example: "San Martin 202"
-        appointments:
-          type: string
-          format: uri
-          example: "http://old-pawserver.it.itba.edu.ar/paw-2023a-02/api/appointments?userId=20"
-        attendingHours:
-          type: string
-          format: uri
-          example: "http://old-pawserver.it.itba.edu.ar/paw-2023a-02/api/doctors/20/attendinghours"
-        occupiedHours:
-          type: string
-          format: uri
-          example: "http://old-pawserver.it.itba.edu.ar/paw-2023a-02/api/doctors/20/occupiedhours"
         city:
           type: string
           example: "CABA"
@@ -2205,24 +2297,12 @@ components:
         firstName:
           type: string
           example: "john"
-        healthInsurances:
-          type: array
-          items:
-            type: string
-            format: uri
-            example: "http://old-pawserver.it.itba.edu.ar/paw-2023a-02/api/healthinsurances/3"
-          example:
-            - "http://old-pawserver.it.itba.edu.ar/paw-2023a-02/api/healthinsurances/3"
-            - "http://old-pawserver.it.itba.edu.ar/paw-2023a-02/api/healthinsurances/2"
-            - "http://old-pawserver.it.itba.edu.ar/paw-2023a-02/api/healthinsurances/1"
-            - "http://old-pawserver.it.itba.edu.ar/paw-2023a-02/api/healthinsurances/0"
         lastName:
           type: string
           example: "doe"
-        notifications:
+        locale:
           type: string
-          format: uri
-          example: "http://old-pawserver.it.itba.edu.ar/paw-2023a-02/api/notifications?userId=20"
+          example: "es"
         rating:
           type: number
           format: float
@@ -2231,22 +2311,102 @@ components:
           type: integer
           format: int32
           example: 8
-        reviews:
-          type: string
-          format: uri
-          example: "http://old-pawserver.it.itba.edu.ar/paw-2023a-02/api/doctors/20/reviews"
-        self:
-          type: string
-          format: uri
-          example: "http://old-pawserver.it.itba.edu.ar/paw-2023a-02/api/doctors/20"
-        specialty:
-          type: string
-          format: uri
-          example: "http://old-pawserver.it.itba.edu.ar/paw-2023a-02/api/specialties/17"
-        vacations:
-          type: string
-          format: uri
-          example: "http://old-pawserver.it.itba.edu.ar/paw-2023a-02/api/doctors/20/vacations"
+        links:
+          type: array
+          items:
+            $ref: '#/components/schemas/Link'
+          example: [
+            {
+              "href": "http://old-pawserver.it.itba.edu.ar/paw-2023a-02/api/healthinsurances/1",
+              "method": "GET",
+              "rel": "healthinsurance"
+            },
+            {
+              "href": "http://old-pawserver.it.itba.edu.ar/paw-2023a-02/api/healthinsurances/3",
+              "method": "GET",
+              "rel": "healthinsurance"
+            },
+            {
+              "href": "http://old-pawserver.it.itba.edu.ar/paw-2023a-02/api/healthinsurances/0",
+              "method": "GET",
+              "rel": "healthinsurance"
+            },
+            {
+              "href": "http://old-pawserver.it.itba.edu.ar/paw-2023a-02/api/healthinsurances/2",
+              "method": "GET",
+              "rel": "healthinsurance"
+            },
+            {
+              "href": "http://old-pawserver.it.itba.edu.ar/paw-2023a-02/api/specialties/17",
+              "method": "GET",
+              "rel": "specialty"
+            },
+            {
+              "href": "http://old-pawserver.it.itba.edu.ar/paw-2023a-02/api/doctors/20/reviews",
+              "method": "GET",
+              "rel": "reviews"
+            },
+            {
+              "href": "http://old-pawserver.it.itba.edu.ar/paw-2023a-02/api/doctors/20/reviews",
+              "method": "POST",
+              "rel": "create-review"
+            },
+            {
+              "href": "http://old-pawserver.it.itba.edu.ar/paw-2023a-02/api/doctors/20/attendinghours",
+              "method": "GET",
+              "rel": "attendinghours"
+            },
+            {
+              "href": "http://old-pawserver.it.itba.edu.ar/paw-2023a-02/api/doctors/20/occupiedhours",
+              "method": "GET",
+              "rel": "occupiedhours"
+            },
+            {
+              "href": "http://old-pawserver.it.itba.edu.ar/paw-2023a-02/api/doctors/20",
+              "method": "GET",
+              "rel": "self"
+            },
+            {
+              "href": "http://old-pawserver.it.itba.edu.ar/paw-2023a-02/api/doctors/20",
+              "method": "PUT",
+              "rel": "update-self"
+            },
+            {
+              "href": "http://old-pawserver.it.itba.edu.ar/paw-2023a-02/api/appointments?userId=20",
+              "method": "GET",
+              "rel": "appointments"
+            },
+            {
+              "href": "http://old-pawserver.it.itba.edu.ar/paw-2023a-02/api/appointments",
+              "method": "POST",
+              "rel": "create-appointment"
+            },
+            {
+              "href": "http://old-pawserver.it.itba.edu.ar/paw-2023a-02/api/notifications?userId=20",
+              "method": "GET",
+              "rel": "notifications"
+            },
+            {
+              "href": "http://old-pawserver.it.itba.edu.ar/paw-2023a-02/api/doctors/20/attendinghours",
+              "method": "GET",
+              "rel": "attendinghours"
+            },
+            {
+              "href": "http://old-pawserver.it.itba.edu.ar/paw-2023a-02/api/doctors/20/attendinghours",
+              "method": "PUT",
+              "rel": "update-attendinghours"
+            },
+            {
+              "href": "http://old-pawserver.it.itba.edu.ar/paw-2023a-02/api/doctors/20/vacations",
+              "method": "GET",
+              "rel": "vacations"
+            },
+            {
+              "href": "http://old-pawserver.it.itba.edu.ar/paw-2023a-02/api/doctors/20/vacations",
+              "method": "POST",
+              "rel": "create-vacation"
+            }
+          ]
     City:
       type: object
       properties:
@@ -2265,16 +2425,23 @@ components:
           example: "TOXICOLOGY"
         name:
           type: string
-          example: "TOXICOLOGÍA"
+          example: "TOXICOLOGIA"
         popularity:
           type: integer
           format: int32
           description: The amount of doctors with the specialty
           example: 10
-        self:
-          type: string
-          format: uri
-          example: "http://old-pawserver.it.itba.edu.ar/paw-2023a-02/api/specialties/68"
+        links:
+          type: array
+          items:
+            $ref: '#/components/schemas/Link'
+          example: [
+            {
+              "href": "http://old-pawserver.it.itba.edu.ar/paw-2023a-02/api/specialties/68",
+              "method": "GET",
+              "rel": "self"
+            }
+          ]
     Appointment:
       type: object
       properties:
@@ -2288,28 +2455,53 @@ components:
         cancelDescription:
           type: string
           example: null
-        doctor:
-          type: string
-          format: uri
-          example: "http://old-pawserver.it.itba.edu.ar/paw-2023a-02/api/doctors/20"
         id:
           type: integer
           format: int64
           example: 12
-        patient:
-          type: string
-          format: uri
-          example: "http://old-pawserver.it.itba.edu.ar/paw-2023a-02/api/patients/21"
-        self:
-          type: string
-          format: uri
-          example: "http://old-pawserver.it.itba.edu.ar/paw-2023a-02/api/appointments/12"
         status:
           type: string
-          example: "COMPLETED"
+          example: "CONFIRMED"
         timeBlock:
           type: string
           example: "10:30"
+        links:
+          type: array
+          items:
+            $ref: '#/components/schemas/Link'
+          example: [
+            {
+              "href": "http://old-pawserver.it.itba.edu.ar/paw-2023a-02/api/doctors/20",
+              "method": "GET",
+              "rel": "doctor"
+            },
+            {
+              "href": "http://old-pawserver.it.itba.edu.ar/paw-2023a-02/api/patients/21",
+              "method": "GET",
+              "rel": "patient"
+            },
+            {
+              "href": "http://old-pawserver.it.itba.edu.ar/paw-2023a-02/api/appointments/12",
+              "method": "GET",
+              "rel": "self"
+            },
+            {
+              "href": "http://old-pawserver.it.itba.edu.ar/paw-2023a-02/api/appointments/12",
+              "method": "PATCH",
+              "rel": "update-self"
+            },
+            {
+              "href": "http://old-pawserver.it.itba.edu.ar/paw-2023a-02/api/appointments/12/indications",
+              "method": "GET",
+              "rel": "indications"
+            },
+            {
+              "href": "http://old-pawserver.it.itba.edu.ar/paw-2023a-02/api/appointments/12/indications",
+              "method": "POST",
+              "rel": "add-indication"
+            }
+          ]
+
     HealthInsuranceResponse:
       type: object
       properties:
@@ -2319,10 +2511,17 @@ components:
         name:
           type: string
           example: "Swiss Medical"
-        self:
-          type: string
-          format: uri
-          example: "http://old-pawserver.it.itba.edu.ar/paw-2023a-02/api/healthinsurances/3"
+        links:
+          type: array
+          items:
+            $ref: '#/components/schemas/Link'
+          example: [
+            {
+              "href": "http://old-pawserver.it.itba.edu.ar/paw-2023a-02/api/healthinsurances/3",
+              "method": "GET",
+              "rel": "self"
+            }
+          ]
     TimeBlock:
       type: string
       enum:
