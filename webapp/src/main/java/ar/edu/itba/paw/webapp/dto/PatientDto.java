@@ -34,7 +34,7 @@ public class PatientDto {
     }
 
     URI healthInsurance = URIUtil.getHealthInsuranceURI(uri, patient.getHealthInsurance().ordinal());
-    links.add(LinkDto.fromUri(healthInsurance, "health-insurance", "GET"));
+    links.add(LinkDto.fromUri(healthInsurance, "healthinsurance", "GET"));
 
     URI self = URIUtil.getPatientURI(uri, patient.getId());
     links.add(LinkDto.fromUri(self, "self", "GET"));
