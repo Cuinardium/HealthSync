@@ -5,6 +5,7 @@ import { useDoctor } from "../../hooks/doctorHooks";
 import doctorDefault from "../../img/doctorDefault.png";
 import ReviewList from "../../components/reviews/ReviewList";
 import { useState } from "react";
+import ReviewForm from "../../components/reviews/ReviewForm";
 
 const DoctorDetails: React.FC = () => {
   const { id } = useParams<{ id: string }>(); // get the doctor id from the URL
@@ -74,6 +75,8 @@ const DoctorDetails: React.FC = () => {
         pageSize={pageSize}
         onPageChange={setPage}
       />
+
+      {doctor.canReview && <ReviewForm doctorId={id} />}
     </div>
   );
 };

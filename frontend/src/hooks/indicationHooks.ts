@@ -13,6 +13,7 @@ import {
 } from "../api/indication/Indication";
 import { queryClient } from "../api/queryClient";
 import { Page } from "../api/page/Page";
+import { AxiosError } from "axios";
 
 const STALE_TIME = 5 * 60 * 1000;
 
@@ -24,7 +25,7 @@ export interface IndicationWithFileData extends Indication {
 // ========== useIndications ==========
 
 export function useIndications(appointmentId: string, query: IndicationQuery) {
-  return useQuery<Page<IndicationWithFileData>, Error>(
+  return useQuery<Page<IndicationWithFileData>, AxiosError>(
     {
       queryKey: ["indications", appointmentId, query.page],
       queryFn: async () => {
@@ -67,7 +68,7 @@ export function useIndications(appointmentId: string, query: IndicationQuery) {
 // ========== useIndication ==========
 
 export function useIndication(appointmentId: string, indicationId: string) {
-  return useQuery<Indication, Error>(
+  return useQuery<Indication, AxiosError>(
     {
       queryKey: ["indication", appointmentId, indicationId],
       queryFn: () => getIndication(appointmentId, indicationId),
@@ -80,8 +81,12 @@ export function useIndication(appointmentId: string, indicationId: string) {
 
 // ========== useCreateIndication ==========
 
-export function useCreateIndication(appointmentId: string) {
-  return useMutation<Indication, Error, IndicationForm>(
+export function useCreateIndication(
+  appointmentId: string,
+  onSuccess: () => void,
+  onError: (error: AxiosError) => void,
+) {
+  return useMutation<Indication, AxiosError, IndicationForm>(
     {
       mutationFn: (indication: IndicationForm) =>
         createIndication(appointmentId, indication),
@@ -89,6 +94,11 @@ export function useCreateIndication(appointmentId: string) {
         queryClient.invalidateQueries({
           queryKey: ["indications", appointmentId],
         });
+
+        onSuccess();
+      },
+      onError: (error) => {
+        onError(error);
       },
     },
     queryClient,
@@ -98,7 +108,7 @@ export function useCreateIndication(appointmentId: string) {
 // ========== useGetFile ==========
 
 export function useGetFile(appointmentId: string, fileId: string) {
-  return useQuery<IndicationFile, Error>(
+  return useQuery<IndicationFile, AxiosError>(
     {
       queryKey: ["file", appointmentId, fileId],
       queryFn: () => getFile(appointmentId, fileId),

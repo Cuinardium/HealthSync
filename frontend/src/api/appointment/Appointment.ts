@@ -9,6 +9,8 @@ export interface Appointment {
   patientId: string;
   status: "CONFIRMED" | "CANCELLED" | "COMPLETED";
   timeBlock: string;
+  canIndicate: boolean,
+  canCancel: boolean,
 }
 
 export interface CancelAppointmentForm {

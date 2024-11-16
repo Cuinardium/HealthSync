@@ -1,5 +1,7 @@
 import { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import CancelAppointmentForm from "../../components/appointments/CancelAppointmentForm";
+import IndicationForm from "../../components/indications/IndicationForm";
 import IndicationList from "../../components/indications/IndicationList";
 import { useAppointment } from "../../hooks/appointmentHooks";
 
@@ -57,6 +59,14 @@ const DetailedAppointment: React.FC = () => {
       <p>
         <strong>Description:</strong> {appointment.description}
       </p>
+
+      {appointment.canCancel && (
+        <CancelAppointmentForm appointmentId={appointment.id.toString()} />
+      )}
+
+      {appointment.canIndicate && (
+        <IndicationForm appointmentId={appointment.id.toString()} />
+      )}
 
       <IndicationList
         appointmentId={id}
