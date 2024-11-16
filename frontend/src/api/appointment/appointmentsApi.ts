@@ -93,9 +93,19 @@ export function mapDetails(appointment: AppointmentResponse): Appointment {
     (link) => link.rel === "patient",
   )?.href;
 
+  const canIndicate = appointment.links.some(
+    (link) => link.rel === "add-indication",
+  );
+
+  const canCancel = appointment.links.some(
+    (link) => link.rel === "update-self",
+  );
+
   return {
     ...appointment,
     date,
+    canIndicate,
+    canCancel,
     doctorId: doctor ? (doctor.split("/").pop() as string) : "",
     patientId: patient ? (patient.split("/").pop() as string) : "",
   };
