@@ -4,21 +4,22 @@ import ar.edu.itba.paw.interfaces.services.exceptions.*;
 import ar.edu.itba.paw.models.File;
 import ar.edu.itba.paw.models.Indication;
 import ar.edu.itba.paw.models.Page;
-
 import java.util.Optional;
 
 public interface IndicationService {
 
-    // =============== Inserts ===============
+  // =============== Inserts ===============
 
-    public Indication createIndication(long appointmentId, long userId, String description, File file)
-            throws UserNotFoundException, AppointmentNotFoundException;
+  public Indication createIndication(long appointmentId, long userId, String description, File file)
+      throws UserNotFoundException,
+          AppointmentNotFoundException,
+          IndicationForbiddenException,
+          NotCompletedException;
 
+  // =============== Queries ===============
 
-    // =============== Queries ===============
+  public Page<Indication> getIndicationsForAppointment(
+      long appointmentId, Integer page, Integer pageSize) throws AppointmentNotFoundException;
 
-    public Page<Indication> getIndicationsForAppointment(long appointmentId, Integer page, Integer pageSize)
-            throws AppointmentNotFoundException;
-
-    public Optional<Indication> getIndication(long indicationId);
+  public Optional<Indication> getIndication(long indicationId);
 }

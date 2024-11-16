@@ -2,6 +2,8 @@ package ar.edu.itba.paw.webapp.controller;
 
 import ar.edu.itba.paw.interfaces.services.IndicationService;
 import ar.edu.itba.paw.interfaces.services.exceptions.AppointmentNotFoundException;
+import ar.edu.itba.paw.interfaces.services.exceptions.IndicationForbiddenException;
+import ar.edu.itba.paw.interfaces.services.exceptions.NotCompletedException;
 import ar.edu.itba.paw.interfaces.services.exceptions.UserNotFoundException;
 import ar.edu.itba.paw.models.File;
 import ar.edu.itba.paw.models.Indication;
@@ -80,7 +82,10 @@ public class IndicationController {
   public Response createIndication(
       @PathParam("appointmentId") final Long appointmentId,
       @Valid @BeanParam final IndicationForm indicationForm)
-      throws AppointmentNotFoundException, UserNotFoundException {
+      throws AppointmentNotFoundException,
+          UserNotFoundException,
+          IndicationForbiddenException,
+          NotCompletedException {
 
     final long userId = PawAuthUserDetails.getCurrentUserId();
 

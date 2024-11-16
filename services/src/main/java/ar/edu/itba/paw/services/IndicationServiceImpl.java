@@ -3,6 +3,8 @@ package ar.edu.itba.paw.services;
 import ar.edu.itba.paw.interfaces.persistence.IndicationDao;
 import ar.edu.itba.paw.interfaces.services.*;
 import ar.edu.itba.paw.interfaces.services.exceptions.AppointmentNotFoundException;
+import ar.edu.itba.paw.interfaces.services.exceptions.IndicationForbiddenException;
+import ar.edu.itba.paw.interfaces.services.exceptions.NotCompletedException;
 import ar.edu.itba.paw.interfaces.services.exceptions.UserNotFoundException;
 import ar.edu.itba.paw.models.*;
 import java.time.LocalDate;
@@ -40,7 +42,10 @@ public class IndicationServiceImpl implements IndicationService {
   @Transactional
   @Override
   public Indication createIndication(long appointmentId, long userId, String description, File file)
-      throws UserNotFoundException, AppointmentNotFoundException {
+      throws UserNotFoundException,
+          AppointmentNotFoundException,
+          IndicationForbiddenException,
+          NotCompletedException {
 
     Optional<Appointment> appointmentOptional =
         appointmentService.getAppointmentById(appointmentId);
@@ -54,14 +59,21 @@ public class IndicationServiceImpl implements IndicationService {
     }
 
     Appointment appointment = appointmentOptional.get();
+
+    if (!appointment.getStatus().equals(AppointmentStatus.COMPLETED)) {
+      throw new NotCompletedException();
+    }
+
     User user = userOptional.get();
 
     // Notify other user
     User otherUser;
     if (appointment.getDoctorId() == user.getId()) {
       otherUser = appointment.getPatient();
-    } else {
+    } else if (appointment.getPatientId() == user.getId()) {
       otherUser = appointment.getDoctor();
+    } else {
+      throw new IndicationForbiddenException();
     }
 
     if (!notificationService
@@ -84,6 +96,13 @@ public class IndicationServiceImpl implements IndicationService {
   @Override
   public Page<Indication> getIndicationsForAppointment(
       long appointmentId, Integer page, Integer pageSize) throws AppointmentNotFoundException {
+
+    Optional<Appointment> appointmentOptional =
+        appointmentService.getAppointmentById(appointmentId);
+    if (!appointmentOptional.isPresent()) {
+      throw new AppointmentNotFoundException();
+    }
+
     return indicationDao.getIndicationsForAppointment(appointmentId, page, pageSize);
   }
 
