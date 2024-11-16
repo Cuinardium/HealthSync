@@ -47,9 +47,12 @@ export function useCreateReview(
       mutationFn: (review: ReviewForm) => createReview(doctorId, review),
       onSuccess: () => {
         queryClient.invalidateQueries({ queryKey: ["reviews", doctorId] });
+        queryClient.invalidateQueries({ queryKey: ["doctor", doctorId] });
         onSuccess();
       },
-      onError: (error) => onError(error),
+      onError: (error) => {
+        onError(error);
+      },
     },
     queryClient,
   );
