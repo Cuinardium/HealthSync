@@ -1,5 +1,6 @@
 package ar.edu.itba.paw.interfaces.services;
 
+import ar.edu.itba.paw.interfaces.services.exceptions.AlreadyReviewedException;
 import ar.edu.itba.paw.interfaces.services.exceptions.DoctorNotFoundException;
 import ar.edu.itba.paw.interfaces.services.exceptions.PatientNotFoundException;
 import ar.edu.itba.paw.interfaces.services.exceptions.ReviewForbiddenException;
@@ -12,7 +13,10 @@ public interface ReviewService {
   // =============== Inserts ===============
 
   public Review createReview(long doctorId, long patientId, int rating, String description)
-      throws DoctorNotFoundException, PatientNotFoundException, ReviewForbiddenException;
+      throws DoctorNotFoundException,
+          PatientNotFoundException,
+          ReviewForbiddenException,
+          AlreadyReviewedException;
 
   // =============== Queries ===============
 

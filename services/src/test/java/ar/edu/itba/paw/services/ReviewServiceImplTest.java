@@ -4,6 +4,7 @@ import ar.edu.itba.paw.interfaces.persistence.ReviewDao;
 import ar.edu.itba.paw.interfaces.services.AppointmentService;
 import ar.edu.itba.paw.interfaces.services.DoctorService;
 import ar.edu.itba.paw.interfaces.services.PatientService;
+import ar.edu.itba.paw.interfaces.services.exceptions.AlreadyReviewedException;
 import ar.edu.itba.paw.interfaces.services.exceptions.DoctorNotFoundException;
 import ar.edu.itba.paw.interfaces.services.exceptions.PatientNotFoundException;
 import ar.edu.itba.paw.interfaces.services.exceptions.ReviewForbiddenException;
@@ -100,13 +101,11 @@ public class ReviewServiceImplTest {
           .isVerified(true)
           .image(IMAGE)
           .build();
-
   private static final short REVIEW_RATING = 3;
   private static final String REVIEW_DESCRIPTION = "review_description";
   private static final LocalDate REVIEW_DATE = LocalDate.now();
   private static final Review REVIEW =
       new Review.Builder(DOCTOR, REVIEW_RATING, REVIEW_DESCRIPTION, REVIEW_DATE, PATIENT).build();
-
   private static final Page<Review> REVIEWS =
       new Page<>(Collections.singletonList(REVIEW), null, null, null);
   // ================== Review Constants ==================
@@ -125,7 +124,7 @@ public class ReviewServiceImplTest {
 
   @Test
   public void testCreateReview()
-      throws DoctorNotFoundException, PatientNotFoundException, ReviewForbiddenException {
+      throws DoctorNotFoundException, PatientNotFoundException, ReviewForbiddenException, AlreadyReviewedException {
 
     // Mock doctorService
     Mockito.when(doctorService.getDoctorById(DOCTOR_ID)).thenReturn(Optional.of(DOCTOR));
@@ -148,7 +147,7 @@ public class ReviewServiceImplTest {
 
   @Test(expected = DoctorNotFoundException.class)
   public void testCreateReviewForUnexistingDoctor()
-      throws DoctorNotFoundException, PatientNotFoundException, ReviewForbiddenException {
+      throws DoctorNotFoundException, PatientNotFoundException, ReviewForbiddenException, AlreadyReviewedException {
     // Mock doctorService
     Mockito.when(doctorService.getDoctorById(DOCTOR_ID)).thenReturn(Optional.empty());
 
@@ -158,7 +157,7 @@ public class ReviewServiceImplTest {
 
   @Test(expected = PatientNotFoundException.class)
   public void testCreateReviewByUnexistingPatient()
-      throws DoctorNotFoundException, PatientNotFoundException, ReviewForbiddenException {
+      throws DoctorNotFoundException, PatientNotFoundException, ReviewForbiddenException, AlreadyReviewedException {
     // Mock doctorService
     Mockito.when(doctorService.getDoctorById(DOCTOR_ID)).thenReturn(Optional.of(DOCTOR));
 
@@ -171,7 +170,7 @@ public class ReviewServiceImplTest {
 
   @Test(expected = ReviewForbiddenException.class)
   public void testCreateReviewByPatientWhoHasNotMetDoctor()
-      throws DoctorNotFoundException, PatientNotFoundException, ReviewForbiddenException {
+      throws DoctorNotFoundException, PatientNotFoundException, ReviewForbiddenException, AlreadyReviewedException {
     // Mock doctorService
     Mockito.when(doctorService.getDoctorById(DOCTOR_ID)).thenReturn(Optional.of(DOCTOR));
 
@@ -184,6 +183,25 @@ public class ReviewServiceImplTest {
     // Call method
     rs.createReview(DOCTOR_ID, PATIENT_ID, REVIEW_RATING, REVIEW_DESCRIPTION);
   }
+
+    @Test(expected = AlreadyReviewedException.class)
+    public void testCreateReviewByPatientWhoHasAlreadyReviewedDoctor()
+        throws DoctorNotFoundException, PatientNotFoundException, ReviewForbiddenException, AlreadyReviewedException {
+        // Mock doctorService
+        Mockito.when(doctorService.getDoctorById(DOCTOR_ID)).thenReturn(Optional.of(DOCTOR));
+
+        // Mock patientService
+        Mockito.when(patientService.getPatientById(PATIENT_ID)).thenReturn(Optional.of(PATIENT));
+
+        // Mock appointmentService
+        Mockito.when(appointmentService.hasPatientMetDoctor(PATIENT_ID, DOCTOR_ID)).thenReturn(true);
+
+        // Mock reviewDao
+        Mockito.when(reviewDao.hasReviewedDoctor(DOCTOR_ID, PATIENT_ID)).thenReturn(true);
+
+        // Call method
+        rs.createReview(DOCTOR_ID, PATIENT_ID, REVIEW_RATING, REVIEW_DESCRIPTION);
+    }
 
   // =================== getReview ===================
 
@@ -306,6 +324,27 @@ public class ReviewServiceImplTest {
 
     // Mock appointmentService
     Mockito.when(appointmentService.hasPatientMetDoctor(PATIENT_ID, DOCTOR_ID)).thenReturn(false);
+
+    // Call method
+    boolean canReview = rs.canReview(DOCTOR_ID, PATIENT_ID);
+
+    // Assert
+    Assert.assertFalse(canReview);
+  }
+
+  @Test
+  public void testCanReviewForPatientWhoHasAlreadyReviewedDoctor() {
+    // Mock doctorService
+    Mockito.when(doctorService.getDoctorById(DOCTOR_ID)).thenReturn(Optional.of(DOCTOR));
+
+    // Mock patientService
+    Mockito.when(patientService.getPatientById(PATIENT_ID)).thenReturn(Optional.of(PATIENT));
+
+    // Mock appointmentService
+    Mockito.when(appointmentService.hasPatientMetDoctor(PATIENT_ID, DOCTOR_ID)).thenReturn(true);
+
+    // Mock reviewDao
+    Mockito.when(reviewDao.hasReviewedDoctor(DOCTOR_ID, PATIENT_ID)).thenReturn(true);
 
     // Call method
     boolean canReview = rs.canReview(DOCTOR_ID, PATIENT_ID);

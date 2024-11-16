@@ -63,4 +63,16 @@ public class ReviewDaoJpa implements ReviewDao {
 
     return new Page<>(content, page, count.intValue(), pageSize);
   }
+
+  @Override
+  public boolean hasReviewedDoctor(long doctorId, long patientId) {
+    final TypedQuery<Review> query =
+        em.createQuery(
+            "from Review  as review where review.doctor.id = :doctorId and review.patient.id = :patientId",
+            Review.class);
+    query.setParameter("doctorId", doctorId);
+    query.setParameter("patientId", patientId);
+
+    return query.getResultList().stream().findFirst().isPresent();
+  }
 }

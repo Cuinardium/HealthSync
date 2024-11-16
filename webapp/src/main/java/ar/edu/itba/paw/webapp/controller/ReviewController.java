@@ -1,6 +1,7 @@
 package ar.edu.itba.paw.webapp.controller;
 
 import ar.edu.itba.paw.interfaces.services.ReviewService;
+import ar.edu.itba.paw.interfaces.services.exceptions.AlreadyReviewedException;
 import ar.edu.itba.paw.interfaces.services.exceptions.DoctorNotFoundException;
 import ar.edu.itba.paw.interfaces.services.exceptions.PatientNotFoundException;
 import ar.edu.itba.paw.interfaces.services.exceptions.ReviewForbiddenException;
@@ -70,7 +71,10 @@ public class ReviewController {
   @Consumes(VndType.APPLICATION_REVIEW)
   public Response createReview(
       @PathParam("doctorId") final Long doctorId, @Valid final ReviewForm reviewForm)
-      throws DoctorNotFoundException, PatientNotFoundException, ReviewForbiddenException {
+      throws DoctorNotFoundException,
+          PatientNotFoundException,
+          ReviewForbiddenException,
+          AlreadyReviewedException {
 
     final int rating = reviewForm.getRating();
     final String description = reviewForm.getDescription();

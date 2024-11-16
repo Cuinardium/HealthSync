@@ -3,6 +3,7 @@ VALUES (2, X'10'); -- por alguna razon '\x10' no le gusta a hsqldb pero esto si?
 
 INSERT INTO users (user_id, email, password, first_name, last_name, profile_picture_id, locale, is_verified)
 VALUES (5, 'patient@email.com', 'patient_password', 'patient_first_name', 'patient_last_name', NULL, 'en', 1),
+       (8, 'patient2@email.com', 'patient2_password', 'patient2_first_name', 'patient2_last_name', NULL, 'en', 1),
        (7, 'doctor@email.com', 'doctor_password', 'doctor_first_name', 'doctor_last_name', NULL, 'en', 1);
 
 INSERT INTO patient (patient_id, health_insurance_code)

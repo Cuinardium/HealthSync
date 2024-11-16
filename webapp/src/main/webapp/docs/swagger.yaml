@@ -1316,6 +1316,13 @@ paths:
               schema:
                 allOf:
                   - $ref: '#/components/schemas/Error'
+        '409':
+          description: Patient has already reviewed doctor
+          content:
+            application/vnd.error.v1+json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/Error'
   /doctors/{doctorId}/reviews/{reviewId}:
     get:
       operationId: getReview

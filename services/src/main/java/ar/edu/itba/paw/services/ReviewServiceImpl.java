@@ -5,6 +5,7 @@ import ar.edu.itba.paw.interfaces.services.AppointmentService;
 import ar.edu.itba.paw.interfaces.services.DoctorService;
 import ar.edu.itba.paw.interfaces.services.PatientService;
 import ar.edu.itba.paw.interfaces.services.ReviewService;
+import ar.edu.itba.paw.interfaces.services.exceptions.AlreadyReviewedException;
 import ar.edu.itba.paw.interfaces.services.exceptions.DoctorNotFoundException;
 import ar.edu.itba.paw.interfaces.services.exceptions.PatientNotFoundException;
 import ar.edu.itba.paw.interfaces.services.exceptions.ReviewForbiddenException;
@@ -44,7 +45,10 @@ public class ReviewServiceImpl implements ReviewService {
   @Transactional
   @Override
   public Review createReview(long doctorId, long patientId, int rating, String description)
-      throws DoctorNotFoundException, PatientNotFoundException, ReviewForbiddenException {
+      throws DoctorNotFoundException,
+          PatientNotFoundException,
+          ReviewForbiddenException,
+          AlreadyReviewedException {
     if (!doctorService.getDoctorById(doctorId).isPresent()) {
       throw new DoctorNotFoundException();
     }
@@ -55,6 +59,10 @@ public class ReviewServiceImpl implements ReviewService {
 
     if (!appointmentService.hasPatientMetDoctor(patientId, doctorId)) {
       throw new ReviewForbiddenException();
+    }
+
+    if (reviewDao.hasReviewedDoctor(doctorId, patientId)) {
+      throw new AlreadyReviewedException();
     }
 
     Doctor doctor = doctorService.getDoctorById(doctorId).get();
@@ -71,7 +79,7 @@ public class ReviewServiceImpl implements ReviewService {
   @Transactional(readOnly = true)
   @Override
   public Optional<Review> getReview(long reviewId) {
-      return reviewDao.getReview(reviewId);
+    return reviewDao.getReview(reviewId);
   }
 
   @Transactional(readOnly = true)
@@ -88,7 +96,12 @@ public class ReviewServiceImpl implements ReviewService {
       return false;
     }
 
-    return appointmentService.hasPatientMetDoctor(patientId, doctorId);
+    boolean hasPatientMetDoctor = appointmentService.hasPatientMetDoctor(patientId, doctorId);
+    if (!hasPatientMetDoctor) {
+      return false;
+    }
+
+    return !reviewDao.hasReviewedDoctor(doctorId, patientId);
   }
 
   @Transactional(readOnly = true)
