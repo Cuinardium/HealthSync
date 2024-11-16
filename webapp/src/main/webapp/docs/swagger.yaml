@@ -933,6 +933,13 @@ paths:
               schema:
                 allOf:
                   - $ref: '#/components/schemas/Error'
+        '409':
+          description: Cannot create indication on a non completed appointment
+          content:
+            application/vnd.error.v1+json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/Error'
   /appointments/{appointmentId}/indications/{indicationId}:
     get:
       operationId: getIndication
