@@ -12,6 +12,7 @@ import {
   AppointmentQuery,
 } from "../api/appointment/Appointment";
 import { Page } from "../api/page/Page";
+import { AxiosError } from "axios";
 
 const STALE_TIME = 5 * 60 * 1000;
 
@@ -46,15 +47,23 @@ export function useAppointment(id: string) {
 
 // ========== useCreateAppointment ==========
 
-export function useCreateAppointment() {
-  return useMutation<Appointment, Error, AppointmentForm>(
+export function useCreateAppointment(
+  onSuccess: () => void,
+  onError: (error: AxiosError) => void,
+) {
+  return useMutation<Appointment, AxiosError, AppointmentForm>(
     {
       mutationFn: (appointment: AppointmentForm) =>
         createAppointment(appointment),
-      onSuccess: (_) => {
+      onSuccess: () => {
         queryClient.invalidateQueries({
           queryKey: ["appointments"],
         });
+
+        onSuccess();
+      },
+      onError: (error) => {
+        onError(error);
       },
     },
     queryClient,
@@ -63,14 +72,27 @@ export function useCreateAppointment() {
 
 // ========== useCancelAppointment ==========
 
-export function useCancelAppointment() {
-  return useMutation<Appointment, Error, { id: string; description: string }>(
+export function useCancelAppointment(
+  appointmentId: string,
+  onSuccess: () => void,
+  onError: (error: AxiosError) => void,
+) {
+  return useMutation<
+    Appointment,
+    AxiosError,
+    string
+  >(
     {
-      mutationFn: ({ id, description }) => cancelAppointment(id, description),
-      onSuccess: (cancelledAppointment) => {
+      mutationFn: (description) => cancelAppointment(appointmentId, description),
+      onSuccess: () => {
         queryClient.invalidateQueries({
-          queryKey: ["appointment", cancelledAppointment.id],
+          queryKey: ["appointment", appointmentId],
         });
+
+        onSuccess();
+      },
+      onError: (error) => {
+        onError(error);
       },
     },
     queryClient,

@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import CancelAppointmentForm from "../../components/appointments/CancelAppointmentForm";
 import IndicationList from "../../components/indications/IndicationList";
 import { useAppointment } from "../../hooks/appointmentHooks";
 
@@ -57,6 +58,10 @@ const DetailedAppointment: React.FC = () => {
       <p>
         <strong>Description:</strong> {appointment.description}
       </p>
+
+      {appointment.status === "CONFIRMED" && (
+        <CancelAppointmentForm appointmentId={appointment.id.toString()} />
+      )}
 
       <IndicationList
         appointmentId={id}
