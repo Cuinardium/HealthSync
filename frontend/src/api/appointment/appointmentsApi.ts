@@ -38,9 +38,12 @@ export async function getAppointments(
 export async function createAppointment(
   appointment: AppointmentForm,
 ): Promise<Appointment> {
-  (appointment as any).date = appointment.date.toISOString().split("T")[0];
+  const body = {
+    ...appointment,
+    date: appointment.date.toISOString().split("T")[0],
+  };
 
-  const response = await axios.post(APPOINTMENT_ENDPOINT, appointment, {
+  const response = await axios.post(APPOINTMENT_ENDPOINT, body, {
     headers: { "Content-Type": APPOINTMENT_CONTENT_TYPE },
   });
 
