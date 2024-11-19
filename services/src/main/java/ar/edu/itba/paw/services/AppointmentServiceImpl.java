@@ -53,7 +53,20 @@ public class AppointmentServiceImpl implements AppointmentService {
       LocalDate date,
       ThirtyMinuteBlock timeBlock,
       String description)
-      throws DoctorNotFoundException, PatientNotFoundException, DoctorNotAvailableException {
+      throws DoctorNotFoundException,
+          PatientNotFoundException,
+          DoctorNotAvailableException,
+          AppointmentInPastException {
+
+    LocalDate today = LocalDate.now();
+    ThirtyMinuteBlock now = ThirtyMinuteBlock.fromTime(LocalTime.now());
+
+    boolean appointmentInPast =
+        date.isBefore(today) || (date.isEqual(today) && !timeBlock.isAfter(now));
+
+    if (appointmentInPast) {
+      throw new AppointmentInPastException();
+    }
 
     Doctor doctor = doctorService.getDoctorById(doctorId).orElseThrow(DoctorNotFoundException::new);
     Patient patient =

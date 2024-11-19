@@ -1,20 +1,17 @@
 package ar.edu.itba.paw.webapp.form;
 
 import ar.edu.itba.paw.models.ThirtyMinuteBlock;
-import ar.edu.itba.paw.webapp.annotations.DateAnnotation;
-
+import ar.edu.itba.paw.webapp.annotations.FutureOrPresent;
+import ar.edu.itba.paw.webapp.annotations.ValidThirtyMinuteBlock;
 import java.time.LocalDate;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-
-import ar.edu.itba.paw.webapp.annotations.FutureOrPresent;
-import ar.edu.itba.paw.webapp.annotations.ValidThirtyMinuteBlock;
 import org.springframework.format.annotation.DateTimeFormat;
 
+@FutureOrPresent(message = "FutureOrPresent.appointmentForm")
 public class AppointmentForm {
 
   @NotNull(message = "NotNull.appointmentForm.date")
-  @FutureOrPresent(message = "FutureOrPresent.appointmentForm.date")
   @DateTimeFormat(pattern = "yyyy-MM-dd")
   private LocalDate date;
 

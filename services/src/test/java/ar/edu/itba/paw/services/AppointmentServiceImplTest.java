@@ -19,6 +19,7 @@ import ar.edu.itba.paw.models.ThirtyMinuteBlock;
 import ar.edu.itba.paw.models.Vacation;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -123,19 +124,33 @@ public class AppointmentServiceImplTest {
           .build();
   private static final long APPOINTMENT_ID = 0;
   private static final LocalDate APPOINTMENT_DATE = LocalDate.now();
+  private static final LocalDate NEW_APPOINTMENT_DATE = LocalDate.now().plusDays(1);
   private static final ThirtyMinuteBlock APPOINTMENT_TIME = ThirtyMinuteBlock.BLOCK_08_00;
   private static final ThirtyMinuteBlock UNAVAILABLE_APPOINTMENT_TIME =
       ThirtyMinuteBlock.BLOCK_00_00;
   private static final String APPOINTMENT_DESCRIPTION = "appointment_description";
   // ================== Appointment Constants ==================
-  private static final Appointment CREATED_APPOINTMENT =
+  private static final Appointment NEW_APPOINTMENT =
       new Appointment.Builder(
-              PATIENT, DOCTOR, APPOINTMENT_DATE, APPOINTMENT_TIME, APPOINTMENT_DESCRIPTION)
+              PATIENT, DOCTOR, NEW_APPOINTMENT_DATE, APPOINTMENT_TIME, APPOINTMENT_DESCRIPTION)
           .id(APPOINTMENT_ID)
           .status(AppointmentStatus.CONFIRMED)
           .build();
+
+  private static final Appointment OTHER_APPOINTMENT =
+          new Appointment.Builder(
+                  PATIENT, DOCTOR, APPOINTMENT_DATE, APPOINTMENT_TIME, APPOINTMENT_DESCRIPTION)
+                  .id(APPOINTMENT_ID)
+                  .status(AppointmentStatus.CONFIRMED)
+                  .build();
   private static final List<Appointment> APPOINTMENTS =
-      Collections.singletonList(CREATED_APPOINTMENT);
+      Collections.singletonList(OTHER_APPOINTMENT);
+  private static final Appointment COMPLETED_APPOINTMENT =
+      new Appointment.Builder(
+              PATIENT, DOCTOR, APPOINTMENT_DATE, APPOINTMENT_TIME, APPOINTMENT_DESCRIPTION)
+          .id(APPOINTMENT_ID)
+          .status(AppointmentStatus.COMPLETED)
+          .build();
   private static final String CANCELLED_APPOINTMENT_DESCRIPTION =
       "cancelled_appointment_description";
   private static final Appointment CANCELLED_APPOINTMENT =
@@ -144,12 +159,6 @@ public class AppointmentServiceImplTest {
           .id(APPOINTMENT_ID)
           .status(AppointmentStatus.CANCELLED)
           .cancelDescription(CANCELLED_APPOINTMENT_DESCRIPTION)
-          .build();
-  private static final Appointment COMPLETED_APPOINTMENT =
-      new Appointment.Builder(
-              PATIENT, DOCTOR, APPOINTMENT_DATE, APPOINTMENT_TIME, APPOINTMENT_DESCRIPTION)
-          .id(APPOINTMENT_ID)
-          .status(AppointmentStatus.COMPLETED)
           .build();
   private static final long FORBIDDEN_USER_ID = 2;
 
@@ -173,7 +182,7 @@ public class AppointmentServiceImplTest {
   @Test
   public void testCreateAppointment()
       throws DoctorNotFoundException, PatientNotFoundException, DoctorNotAvailableException,
-          AppointmentAlreadyExistsException {
+          AppointmentAlreadyExistsException, AppointmentInPastException {
     // 1. Precondiciones
     // Mock doctorService
     Mockito.when(doctorService.getDoctorById(DOCTOR_ID)).thenReturn(Optional.of(DOCTOR));
@@ -184,12 +193,12 @@ public class AppointmentServiceImplTest {
     // Mock appointmentDao
     Mockito.when(
             appointmentDao.createAppointment(
-                PATIENT, DOCTOR, APPOINTMENT_DATE, APPOINTMENT_TIME, APPOINTMENT_DESCRIPTION))
-        .thenReturn(CREATED_APPOINTMENT);
+                PATIENT, DOCTOR, NEW_APPOINTMENT_DATE, APPOINTMENT_TIME, APPOINTMENT_DESCRIPTION))
+        .thenReturn(NEW_APPOINTMENT);
 
     Mockito.when(
             appointmentDao.getFilteredAppointments(
-                DOCTOR_ID, null, APPOINTMENT_DATE, APPOINTMENT_DATE, null, null, false))
+                DOCTOR_ID, null, NEW_APPOINTMENT_DATE, NEW_APPOINTMENT_DATE, null, null, false))
         .thenReturn(new Page<>(Collections.emptyList(), null, null, null));
 
     // Mock mailService
@@ -203,15 +212,35 @@ public class AppointmentServiceImplTest {
     // 2. Ejercitar la class under test
     Appointment appointment =
         as.createAppointment(
-            PATIENT_ID, DOCTOR_ID, APPOINTMENT_DATE, APPOINTMENT_TIME, APPOINTMENT_DESCRIPTION);
+            PATIENT_ID, DOCTOR_ID, NEW_APPOINTMENT_DATE, APPOINTMENT_TIME, APPOINTMENT_DESCRIPTION);
 
     // 3. Meaningful assertions
-    Assert.assertEquals(CREATED_APPOINTMENT, appointment);
+    Assert.assertEquals(NEW_APPOINTMENT, appointment);
   }
+
+  @Test(expected = AppointmentInPastException.class)
+    public void testCreateAppointmentInPastYesterday()
+        throws DoctorNotFoundException, PatientNotFoundException, DoctorNotAvailableException, AppointmentInPastException {
+        // 1. Precondiciones
+
+        // 2. Ejercitar la class under test
+        as.createAppointment(
+            PATIENT_ID, DOCTOR_ID, LocalDate.now().minusDays(1), APPOINTMENT_TIME, APPOINTMENT_DESCRIPTION);
+    }
+
+    @Test(expected = AppointmentInPastException.class)
+    public void testCreateAppointmentInPastToday()
+        throws DoctorNotFoundException, PatientNotFoundException, DoctorNotAvailableException, AppointmentInPastException {
+        // 1. Precondiciones
+
+        // 2. Ejercitar la class under test
+        as.createAppointment(
+            PATIENT_ID, DOCTOR_ID, LocalDate.now(), ThirtyMinuteBlock.fromTime(LocalTime.now()), APPOINTMENT_DESCRIPTION);
+    }
 
   @Test(expected = DoctorNotFoundException.class)
   public void testCreateAppointmentUnexistingDoctor()
-      throws DoctorNotFoundException, PatientNotFoundException, DoctorNotAvailableException {
+      throws DoctorNotFoundException, PatientNotFoundException, DoctorNotAvailableException, AppointmentInPastException {
     // 1. Precondiciones
 
     // Mock doctorService
@@ -219,12 +248,12 @@ public class AppointmentServiceImplTest {
 
     // 2. Ejercitar la class under test
     as.createAppointment(
-        PATIENT_ID, DOCTOR_ID, APPOINTMENT_DATE, APPOINTMENT_TIME, APPOINTMENT_DESCRIPTION);
+        PATIENT_ID, DOCTOR_ID, NEW_APPOINTMENT_DATE, APPOINTMENT_TIME, APPOINTMENT_DESCRIPTION);
   }
 
   @Test(expected = PatientNotFoundException.class)
   public void testCreateAppointmentUnexistingPatient()
-      throws DoctorNotFoundException, PatientNotFoundException, DoctorNotAvailableException {
+      throws DoctorNotFoundException, PatientNotFoundException, DoctorNotAvailableException, AppointmentInPastException {
     // 1. Precondiciones
 
     // Mock doctorService
@@ -235,12 +264,12 @@ public class AppointmentServiceImplTest {
 
     // 2. Ejercitar la class under test
     as.createAppointment(
-        PATIENT_ID, DOCTOR_ID, APPOINTMENT_DATE, APPOINTMENT_TIME, APPOINTMENT_DESCRIPTION);
+        PATIENT_ID, DOCTOR_ID, NEW_APPOINTMENT_DATE, APPOINTMENT_TIME, APPOINTMENT_DESCRIPTION);
   }
 
   @Test(expected = DoctorNotAvailableException.class)
   public void testCreateAppointmentInUnavailableTime()
-      throws DoctorNotFoundException, PatientNotFoundException, DoctorNotAvailableException {
+      throws DoctorNotFoundException, PatientNotFoundException, DoctorNotAvailableException, AppointmentInPastException {
     // 1. Precondiciones
 
     // Mock doctorService
@@ -251,21 +280,21 @@ public class AppointmentServiceImplTest {
 
     Mockito.when(
             appointmentDao.getFilteredAppointments(
-                DOCTOR_ID, null, APPOINTMENT_DATE, APPOINTMENT_DATE, null, null, false))
+                DOCTOR_ID, null, NEW_APPOINTMENT_DATE, NEW_APPOINTMENT_DATE, null, null, false))
         .thenReturn(new Page<>(Collections.emptyList(), null, null, null));
 
     // 2. Ejercitar la class under test
     as.createAppointment(
         PATIENT_ID,
         DOCTOR_ID,
-        APPOINTMENT_DATE,
+        NEW_APPOINTMENT_DATE,
         UNAVAILABLE_APPOINTMENT_TIME,
         APPOINTMENT_DESCRIPTION);
   }
 
   @Test(expected = DoctorNotAvailableException.class)
   public void testCreateAppointmentAlreadyTaken()
-      throws DoctorNotFoundException, PatientNotFoundException, DoctorNotAvailableException {
+      throws DoctorNotFoundException, PatientNotFoundException, DoctorNotAvailableException, AppointmentInPastException {
     // 1. Precondiciones
 
     // Mock doctorService
@@ -277,20 +306,20 @@ public class AppointmentServiceImplTest {
     // Mock appointmentDao
     Mockito.when(
             appointmentDao.getFilteredAppointments(
-                DOCTOR_ID, null, APPOINTMENT_DATE, APPOINTMENT_DATE, null, null, false))
+                DOCTOR_ID, null, NEW_APPOINTMENT_DATE, NEW_APPOINTMENT_DATE, null, null, false))
         .thenReturn(
             new Page<>(
-                new ArrayList<>(Collections.singletonList(CREATED_APPOINTMENT)), null, null, null));
+                new ArrayList<>(Collections.singletonList(NEW_APPOINTMENT)), null, null, null));
 
     // 2. Ejercitar la class under test
     as.createAppointment(
-        PATIENT_ID, DOCTOR_ID, APPOINTMENT_DATE, APPOINTMENT_TIME, APPOINTMENT_DESCRIPTION);
+        PATIENT_ID, DOCTOR_ID, NEW_APPOINTMENT_DATE, APPOINTMENT_TIME, APPOINTMENT_DESCRIPTION);
   }
 
   @Test
   public void testCreateAppointmentAlreadyTakenByCancelledAppointment()
       throws DoctorNotFoundException, PatientNotFoundException, DoctorNotAvailableException,
-          AppointmentAlreadyExistsException {
+          AppointmentAlreadyExistsException, AppointmentInPastException {
     // 1. Precondiciones
 
     // Mock doctorService
@@ -302,7 +331,7 @@ public class AppointmentServiceImplTest {
     // Mock appointmentDao
     Mockito.when(
             appointmentDao.getFilteredAppointments(
-                DOCTOR_ID, null, APPOINTMENT_DATE, APPOINTMENT_DATE, null, null, false))
+                DOCTOR_ID, null, NEW_APPOINTMENT_DATE, NEW_APPOINTMENT_DATE, null, null, false))
         .thenReturn(
             new Page<>(
                 new ArrayList<>(Collections.singletonList(CANCELLED_APPOINTMENT)),
@@ -312,8 +341,8 @@ public class AppointmentServiceImplTest {
 
     Mockito.when(
             appointmentDao.createAppointment(
-                PATIENT, DOCTOR, APPOINTMENT_DATE, APPOINTMENT_TIME, APPOINTMENT_DESCRIPTION))
-        .thenReturn(CREATED_APPOINTMENT);
+                PATIENT, DOCTOR, NEW_APPOINTMENT_DATE, APPOINTMENT_TIME, APPOINTMENT_DESCRIPTION))
+        .thenReturn(NEW_APPOINTMENT);
 
     // Mock mailService
     Mockito.doNothing()
@@ -326,10 +355,10 @@ public class AppointmentServiceImplTest {
     // 2. Ejercitar la class under test
     Appointment appointment =
         as.createAppointment(
-            PATIENT_ID, DOCTOR_ID, APPOINTMENT_DATE, APPOINTMENT_TIME, APPOINTMENT_DESCRIPTION);
+            PATIENT_ID, DOCTOR_ID, NEW_APPOINTMENT_DATE, APPOINTMENT_TIME, APPOINTMENT_DESCRIPTION);
 
     // 3. Meaningful assertions
-    Assert.assertEquals(CREATED_APPOINTMENT, appointment);
+    Assert.assertEquals(NEW_APPOINTMENT, appointment);
   }
 
   // ================== cancelAppointment ==================
@@ -343,7 +372,7 @@ public class AppointmentServiceImplTest {
 
     // Mock appointmentDao
     Mockito.when(appointmentDao.getAppointmentById(APPOINTMENT_ID))
-        .thenReturn(Optional.of(CREATED_APPOINTMENT));
+        .thenReturn(Optional.of(NEW_APPOINTMENT));
 
     Mockito.when(
             appointmentDao.updateAppointment(
@@ -372,7 +401,7 @@ public class AppointmentServiceImplTest {
 
     // Mock appointmentDao
     Mockito.when(appointmentDao.getAppointmentById(APPOINTMENT_ID))
-        .thenReturn(Optional.of(CREATED_APPOINTMENT));
+        .thenReturn(Optional.of(NEW_APPOINTMENT));
 
     Mockito.when(
             appointmentDao.updateAppointment(

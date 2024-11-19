@@ -15,7 +15,10 @@ public interface AppointmentService {
       LocalDate date,
       ThirtyMinuteBlock timeBlock,
       String description)
-      throws DoctorNotFoundException, PatientNotFoundException, DoctorNotAvailableException;
+      throws DoctorNotFoundException,
+          PatientNotFoundException,
+          DoctorNotAvailableException,
+          AppointmentInPastException;
 
   // =============== Updates ===============
 
@@ -51,7 +54,8 @@ public interface AppointmentService {
       long doctorId, LocalDate from, LocalDate to) throws DoctorNotFoundException;
 
   public Map<LocalDate, List<ThirtyMinuteBlock>> getOccupiedHours(
-      long doctorId, LocalDate from, LocalDate to) throws DoctorNotFoundException, InvalidRangeException;
+      long doctorId, LocalDate from, LocalDate to)
+      throws DoctorNotFoundException, InvalidRangeException;
 
   public boolean hasPatientMetDoctor(long patientId, long doctorId);
 

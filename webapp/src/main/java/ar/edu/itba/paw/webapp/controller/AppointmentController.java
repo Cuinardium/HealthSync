@@ -86,7 +86,10 @@ public class AppointmentController {
   @POST
   @Consumes(VndType.APPLICATION_APPOINTMENT)
   public Response createAppointment(@Valid final AppointmentForm appointmentForm)
-      throws DoctorNotAvailableException, DoctorNotFoundException, PatientNotFoundException {
+      throws DoctorNotAvailableException,
+          DoctorNotFoundException,
+          PatientNotFoundException,
+          AppointmentInPastException {
 
     LOGGER.debug("Creating appointment: {}", appointmentForm);
 
