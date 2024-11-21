@@ -5,6 +5,7 @@ import ar.edu.itba.paw.webapp.utils.URIUtil;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
+import javax.ws.rs.HttpMethod;
 import javax.ws.rs.core.UriInfo;
 
 public class PatientDto {
@@ -30,14 +31,14 @@ public class PatientDto {
 
     if (patient.getImage() != null) {
       URI image = URIUtil.getImageURI(uri, patient.getImage().getImageId());
-      links.add(LinkDto.fromUri(image, "image", "GET"));
+      links.add(LinkDto.fromUri(image, "image", HttpMethod.GET));
     }
 
     URI healthInsurance = URIUtil.getHealthInsuranceURI(uri, patient.getHealthInsurance().ordinal());
-    links.add(LinkDto.fromUri(healthInsurance, "healthinsurance", "GET"));
+    links.add(LinkDto.fromUri(healthInsurance, "healthinsurance", HttpMethod.GET));
 
     URI self = URIUtil.getPatientURI(uri, patient.getId());
-    links.add(LinkDto.fromUri(self, "self", "GET"));
+    links.add(LinkDto.fromUri(self, "self", HttpMethod.GET));
 
     dto.links = links;
 
@@ -47,13 +48,14 @@ public class PatientDto {
   public void addPrivateLinks(UriInfo uri) {
 
     URI self = URIUtil.getPatientURI(uri, id);
-    links.add(LinkDto.fromUri(self, "update-self", "PUT"));
+    links.add(LinkDto.fromUri(self, "update-self", HttpMethod.PUT));
+    links.add(LinkDto.fromUri(self, "update-password", HttpMethod.PATCH));
 
     URI appointments = URIUtil.getUserAppointmentURI(uri, id);
-    links.add(LinkDto.fromUri(appointments, "appointments", "GET"));
+    links.add(LinkDto.fromUri(appointments, "appointments", HttpMethod.GET));
 
     URI notifications = URIUtil.getUserNotificationURI(uri, id);
-    links.add(LinkDto.fromUri(notifications, "notifications", "GET"));
+    links.add(LinkDto.fromUri(notifications, "notifications", HttpMethod.GET));
 
   }
 

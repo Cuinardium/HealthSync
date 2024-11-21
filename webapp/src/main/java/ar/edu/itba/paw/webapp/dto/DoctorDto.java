@@ -85,6 +85,7 @@ public class DoctorDto {
 
     URI selfURI = URIUtil.getDoctorURI(uri, id);
     links.add(LinkDto.fromUri(selfURI, "update-self", HttpMethod.PUT));
+    links.add(LinkDto.fromUri(selfURI, "update-password", HttpMethod.PATCH));
 
     URI appointmentsURI = URIUtil.getUserAppointmentURI(uri, id);
     links.add(LinkDto.fromUri(appointmentsURI, "appointments", HttpMethod.GET));

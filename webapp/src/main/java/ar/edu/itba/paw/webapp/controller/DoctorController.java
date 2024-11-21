@@ -3,16 +3,20 @@ package ar.edu.itba.paw.webapp.controller;
 import ar.edu.itba.paw.interfaces.services.AppointmentService;
 import ar.edu.itba.paw.interfaces.services.DoctorService;
 import ar.edu.itba.paw.interfaces.services.ReviewService;
+import ar.edu.itba.paw.interfaces.services.UserService;
 import ar.edu.itba.paw.interfaces.services.exceptions.DoctorNotFoundException;
 import ar.edu.itba.paw.interfaces.services.exceptions.EmailInUseException;
 import ar.edu.itba.paw.interfaces.services.exceptions.InvalidRangeException;
+import ar.edu.itba.paw.interfaces.services.exceptions.UserNotFoundException;
 import ar.edu.itba.paw.models.*;
 import ar.edu.itba.paw.webapp.annotations.HasAllDays;
 import ar.edu.itba.paw.webapp.auth.PawAuthUserDetails;
 import ar.edu.itba.paw.webapp.dto.AttendingHoursDto;
 import ar.edu.itba.paw.webapp.dto.DoctorDto;
 import ar.edu.itba.paw.webapp.dto.OccupiedHoursDto;
+import ar.edu.itba.paw.webapp.exceptions.InvalidPasswordException;
 import ar.edu.itba.paw.webapp.form.AttendingHoursForm;
+import ar.edu.itba.paw.webapp.form.ChangePasswordForm;
 import ar.edu.itba.paw.webapp.form.DoctorEditForm;
 import ar.edu.itba.paw.webapp.form.DoctorRegisterForm;
 import ar.edu.itba.paw.webapp.mediaType.VndType;
@@ -43,16 +47,20 @@ public class DoctorController {
   private final DoctorService doctorService;
   private final AppointmentService appointmentService;
   private final ReviewService reviewService;
+  private final UserService userService;
+
   @Context private UriInfo uriInfo;
 
   @Autowired
   public DoctorController(
       final DoctorService doctorService,
       final AppointmentService appointmentService,
-      final ReviewService reviewService) {
+      final ReviewService reviewService,
+      final UserService userService) {
     this.doctorService = doctorService;
     this.appointmentService = appointmentService;
     this.reviewService = reviewService;
+    this.userService = userService;
   }
 
   // ================= doctors ========================
@@ -181,6 +189,27 @@ public class DoctorController {
             doctorEditForm.getLocale());
 
     LOGGER.debug("Updated doctor {}", doctor);
+
+    return Response.noContent().build();
+  }
+
+  @PATCH
+  @Path("{doctorId:\\d+}")
+  @Consumes(VndType.APPLICATION_PASSWORD)
+  @PreAuthorize("@authorizationFunctions.isUser(authentication, #doctorId)")
+  public Response updatePassword(
+      @PathParam("doctorId") final long doctorId, @Valid final ChangePasswordForm passwordForm)
+      throws UserNotFoundException, InvalidPasswordException {
+
+    boolean updated =
+        userService.updatePassword(
+            doctorId, passwordForm.getOldPassword(), passwordForm.getPassword());
+
+    if (!updated) {
+      throw new InvalidPasswordException();
+    }
+
+    LOGGER.debug("updated password for doctor {}", doctorId);
 
     return Response.noContent().build();
   }

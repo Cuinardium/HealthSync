@@ -1,12 +1,16 @@
 package ar.edu.itba.paw.webapp.controller;
 
 import ar.edu.itba.paw.interfaces.services.PatientService;
+import ar.edu.itba.paw.interfaces.services.UserService;
 import ar.edu.itba.paw.interfaces.services.exceptions.EmailInUseException;
 import ar.edu.itba.paw.interfaces.services.exceptions.PatientNotFoundException;
+import ar.edu.itba.paw.interfaces.services.exceptions.UserNotFoundException;
 import ar.edu.itba.paw.models.Image;
 import ar.edu.itba.paw.models.Patient;
 import ar.edu.itba.paw.webapp.auth.PawAuthUserDetails;
 import ar.edu.itba.paw.webapp.dto.PatientDto;
+import ar.edu.itba.paw.webapp.exceptions.InvalidPasswordException;
+import ar.edu.itba.paw.webapp.form.ChangePasswordForm;
 import ar.edu.itba.paw.webapp.form.PatientEditForm;
 import ar.edu.itba.paw.webapp.form.PatientRegisterForm;
 import ar.edu.itba.paw.webapp.mediaType.VndType;
@@ -30,12 +34,14 @@ public class PatientController {
   private static final Logger LOGGER = LoggerFactory.getLogger(PatientController.class);
 
   private final PatientService patientService;
+  private final UserService userService;
 
   @Context private UriInfo uriInfo;
 
   @Autowired
-  public PatientController(final PatientService patientService) {
+  public PatientController(final PatientService patientService, final UserService userService) {
     this.patientService = patientService;
+    this.userService = userService;
   }
 
   @POST
@@ -113,6 +119,28 @@ public class PatientController {
             patientEditForm.getLocale());
 
     LOGGER.debug("updated patient {}", patient);
+
+    return Response.noContent().build();
+  }
+
+  @PATCH
+  @Path("{patientId:\\d+}")
+  @Consumes(VndType.APPLICATION_PASSWORD)
+  @PreAuthorize("@authorizationFunctions.isUser(authentication, #patientId)")
+  public Response updatePassword(
+      @PathParam("patientId") final long patientId,
+      @Valid final ChangePasswordForm passwordForm)
+      throws UserNotFoundException, InvalidPasswordException {
+
+    boolean updated =
+        userService.updatePassword(
+            patientId, passwordForm.getOldPassword(), passwordForm.getPassword());
+
+    if (!updated) {
+      throw new InvalidPasswordException();
+    }
+
+    LOGGER.debug("updated password for patient {}", patientId);
 
     return Response.noContent().build();
   }

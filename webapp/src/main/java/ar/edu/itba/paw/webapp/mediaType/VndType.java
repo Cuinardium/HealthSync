@@ -5,6 +5,9 @@ public enum VndType {;
     // ----- Email --------------
     public static final String APPLICATION_EMAIL = "application/vnd.email.v1+json";
 
+    // ----- Password -----------
+    public static final String APPLICATION_PASSWORD = "application/vnd.password.v1+json";
+
     // ----- Doctor -------------
     public static final String APPLICATION_DOCTOR = "application/vnd.doctor.v1+json";
     public static final String APPLICATION_DOCTOR_LIST = "application/vnd.doctor-list.v1+json";
