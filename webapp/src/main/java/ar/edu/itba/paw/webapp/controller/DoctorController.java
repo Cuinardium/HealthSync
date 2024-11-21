@@ -173,11 +173,11 @@ public class DoctorController {
               .build();
     }
 
-    // TODO: delete attending hours from method signature
+    // TODO: delete attending hours and email from method signature
     doctor =
         doctorService.updateDoctor(
             doctorId,
-            doctorEditForm.getEmail(),
+            doctor.getEmail(),
             doctorEditForm.getName(),
             doctorEditForm.getLastname(),
             doctorEditForm.getSpecialtyEnum(),

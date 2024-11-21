@@ -490,6 +490,45 @@ paths:
               schema:
                 allOf:
                   - $ref: '#/components/schemas/Error'
+    patch:
+      operationId: updateDoctorPassword
+      description: Updates doctors password
+      tags:
+        - doctors
+      parameters:
+        - name: doctorId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/vnd.password.v1+json:
+            schema:
+              $ref: '#/components/schemas/PasswordForm'
+      responses:
+        '204':
+          description: Password changed
+        '400':
+          description: Invalid request or incorrect old password
+          content:
+            application/vnd.validation-error-list.v1+json:
+              schema:
+                type: array
+                items:
+                  allOf:
+                    - $ref: '#/components/schemas/ValidationError'
+            application/vnd.error.v1+json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/Error'
+        '403':
+          description: Only the doctor can update its password
+          content:
+            application/vnd.error.v1+json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/Error'
   /doctors/{doctorId}/attendinghours:
     get:
       operationId: getAttendingHours
@@ -1234,6 +1273,45 @@ paths:
               schema:
                 allOf:
                   - $ref: '#/components/schemas/Error'
+    patch:
+      operationId: updatePatientPassword
+      description: Updates patients password
+      tags:
+        - patients
+      parameters:
+        - name: patientId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/vnd.password.v1+json:
+            schema:
+              $ref: '#/components/schemas/PasswordForm'
+      responses:
+        '204':
+          description: Password changed
+        '400':
+          description: Invalid request or incorrect old password
+          content:
+            application/vnd.validation-error-list.v1+json:
+              schema:
+                type: array
+                items:
+                  allOf:
+                    - $ref: '#/components/schemas/ValidationError'
+            application/vnd.error.v1+json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/Error'
+        '403':
+          description: Only the patient can update its password
+          content:
+            application/vnd.error.v1+json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/Error'
   /doctors/{doctorId}/reviews:
     get:
       operationId: listReviews
@@ -1510,6 +1588,7 @@ paths:
               schema:
                 allOf:
                   - $ref: '#/components/schemas/Error'
+
   /doctors/{doctorId}/vacations:
     get:
       operationId: listVacations
@@ -1802,7 +1881,6 @@ components:
             - $ref: '#/components/schemas/Specialty'
     DoctorEditForm:
       required:
-        - email
         - healthInsurance
         - lastname
         - locale
@@ -1827,12 +1905,6 @@ components:
           pattern: '[a-zA-Z Ã±Ã‘Ã¡ÃÃ©Ã‰Ã­ÃÃ³Ã“ÃºÃš]+'
           type: string
           example: 'doe'
-        email:
-          maxLength: 50
-          minLength: 1
-          pattern: '[a-zA-Z0-9.+-Ã±Ã‘]+@[a-zA-Z0-9.-]+(.com|.com.ar|.edu.ar)'
-          type: string
-          example: 'juan@gmail.com'
         locale:
           type: string
           example: 'es'
@@ -1953,7 +2025,6 @@ components:
           example: 'OSDE'
     PatientEditForm:
       required:
-        - email
         - healthInsurance
         - lastname
         - locale
@@ -1975,12 +2046,6 @@ components:
           pattern: '[a-zA-Z Ã±Ã‘Ã¡ÃÃ©Ã‰Ã­ÃÃ³Ã“ÃºÃš]+'
           type: string
           example: 'doe'
-        email:
-          maxLength: 50
-          minLength: 1
-          pattern: '[a-zA-Z0-9.+-Ã±Ã‘]+@[a-zA-Z0-9.-]+(.com|.com.ar|.edu.ar)'
-          type: string
-          example: 'juan@gmail.com'
         locale:
           type: string
           example: 'es'
@@ -2194,6 +2259,11 @@ components:
               "rel": "update-self"
             },
             {
+              "href": "http://old-pawserver.it.itba.edu.ar/paw-2023a-02/api/patients/21",
+              "method": "PATCH",
+              "rel": "update-password"
+            },
+            {
               "href": "http://old-pawserver.it.itba.edu.ar/paw-2023a-02/api/appointments?userId=21",
               "method": "GET",
               "rel": "appointments"
@@ -2386,6 +2456,11 @@ components:
               "rel": "update-self"
             },
             {
+              "href": "http://old-pawserver.it.itba.edu.ar/paw-2023a-02/api/doctors/20",
+              "method": "PATCH",
+              "rel": "update-password"
+            },
+            {
               "href": "http://old-pawserver.it.itba.edu.ar/paw-2023a-02/api/appointments?userId=20",
               "method": "GET",
               "rel": "appointments"
@@ -2536,6 +2611,19 @@ components:
               "rel": "self"
             }
           ]
+    PasswordForm:
+      type: object
+      properties:
+        password:
+          type: string
+          example: "newjohndoesecret1234"
+        confirmPassword:
+          type: string
+          example: "newjohndoesecret1234"
+        oldPassword:
+          type: string
+          example: "johndoesecret1234"
+
     TimeBlock:
       type: string
       enum:

@@ -109,14 +109,17 @@ public class PatientController {
     }
 
     Patient patient =
-        patientService.updatePatient(
-            patientId,
-            patientEditForm.getEmail(),
-            patientEditForm.getName(),
-            patientEditForm.getLastname(),
-            patientEditForm.getHealthInsuranceEnum(),
-            image,
-            patientEditForm.getLocale());
+        patientService.getPatientById(patientId).orElseThrow(PatientNotFoundException::new);
+
+    // TODO: Delete email from method signature
+    patientService.updatePatient(
+        patientId,
+        patient.getEmail(),
+        patientEditForm.getName(),
+        patientEditForm.getLastname(),
+        patientEditForm.getHealthInsuranceEnum(),
+        image,
+        patientEditForm.getLocale());
 
     LOGGER.debug("updated patient {}", patient);
 
@@ -128,8 +131,7 @@ public class PatientController {
   @Consumes(VndType.APPLICATION_PASSWORD)
   @PreAuthorize("@authorizationFunctions.isUser(authentication, #patientId)")
   public Response updatePassword(
-      @PathParam("patientId") final long patientId,
-      @Valid final ChangePasswordForm passwordForm)
+      @PathParam("patientId") final long patientId, @Valid final ChangePasswordForm passwordForm)
       throws UserNotFoundException, InvalidPasswordException {
 
     boolean updated =
