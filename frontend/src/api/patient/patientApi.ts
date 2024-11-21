@@ -42,7 +42,6 @@ export async function updatePatient(
   // Patient data
   formData.append("name", patient.name);
   formData.append("lastname", patient.lastname);
-  formData.append("email", patient.email);
   formData.append("locale", patient.locale);
 
   formData.append("healthInsurance", patient.healthInsurance);

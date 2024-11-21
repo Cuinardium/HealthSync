@@ -54,7 +54,6 @@ export interface DoctorRegisterForm {
 export interface DoctorEditForm {
   name: string;
   lastname: string;
-  email: string;
   healthInsurances: string[];
   city: string;
   specialty: string;

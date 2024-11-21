@@ -22,7 +22,6 @@ export interface PatientRegisterForm {
 export interface PatientEditForm {
   name: string;
   lastname: string;
-  email: string;
   healthInsurance: string;
   locale: string;
   image?: File;

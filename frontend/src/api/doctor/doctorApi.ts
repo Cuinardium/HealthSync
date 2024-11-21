@@ -89,7 +89,6 @@ export async function updateDoctor(
   // Doctor data
   formData.append("name", doctor.name);
   formData.append("lastname", doctor.lastname);
-  formData.append("email", doctor.email);
   formData.append("locale", doctor.locale);
 
   doctor.healthInsurances.forEach((healthInsurance) =>
