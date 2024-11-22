@@ -19,7 +19,7 @@ const STALE_TIME = 5 * 60 * 1000;
 // ========== useAppointments ==========
 
 export function useAppointments(query: AppointmentQuery) {
-  return useQuery<Page<Appointment>, Error>(
+  return useQuery<Page<Appointment>, AxiosError>(
     {
       queryKey: ["appointments", query],
       queryFn: () => getAppointments(query),
@@ -34,7 +34,7 @@ export function useAppointments(query: AppointmentQuery) {
 // ========== useAppointment ==========
 
 export function useAppointment(id: string) {
-  return useQuery<Appointment, Error>(
+  return useQuery<Appointment, AxiosError>(
     {
       queryKey: ["appointment", id],
       queryFn: () => getAppointment(id),

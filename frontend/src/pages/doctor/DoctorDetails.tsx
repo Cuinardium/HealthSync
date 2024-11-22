@@ -6,6 +6,8 @@ import doctorDefault from "../../img/doctorDefault.png";
 import ReviewList from "../../components/reviews/ReviewList";
 import { useState } from "react";
 import ReviewForm from "../../components/reviews/ReviewForm";
+import { useUser } from "../../context/UserContext";
+import AppointmentForm from "../../components/appointments/AppointmentForm";
 
 const DoctorDetails: React.FC = () => {
   const { id } = useParams<{ id: string }>(); // get the doctor id from the URL
@@ -15,6 +17,8 @@ const DoctorDetails: React.FC = () => {
   const pageSize = 3;
 
   const { data: doctor, isLoading, isError, error } = useDoctor(id as string);
+
+  const { user, isDoctor, loading } = useUser();
 
   if (!id || isNaN(+Number(id)) || Number(id) < 0) {
     navigate("/404");
@@ -60,14 +64,14 @@ const DoctorDetails: React.FC = () => {
       <p>
         <strong>Address:</strong> {doctor.address}
       </p>
+      <p>
+        <strong>Mail:</strong> {doctor.email}
+      </p>
       {doctor.rating && (
         <p>
           <strong>Rating:</strong> {doctor.rating} / 5
         </p>
       )}
-      <p>
-        <strong>Can Review:</strong> {doctor.canReview ? "True" : "False"}
-      </p>
 
       <ReviewList
         doctorId={id}
@@ -77,6 +81,7 @@ const DoctorDetails: React.FC = () => {
       />
 
       {doctor.canReview && <ReviewForm doctorId={id} />}
+      {!loading && user && !isDoctor && <AppointmentForm doctorId={id} />}
     </div>
   );
 };
