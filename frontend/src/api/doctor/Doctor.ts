@@ -1,4 +1,5 @@
 import { Link } from "../link/link";
+import { Day, Time } from "../time/Time";
 
 export interface Doctor {
   id: number;
@@ -22,8 +23,8 @@ export interface OccupiedHours {
 }
 
 export interface AttendingHours {
-  day: string;
-  hours: string[];
+  day: Day;
+  hours: Time[];
 }
 
 export interface DoctorQuery {

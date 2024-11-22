@@ -22,6 +22,7 @@ import { useDoctor } from "../../hooks/doctorHooks";
 
 import doctorDefault from "../../img/doctorDefault.png";
 import { Link } from "react-router-dom";
+import ScheduleViewer from "../../components/doctors/ScheduleViewer";
 
 const DOCTOR_EDIT_URL = "/";
 const CHANGE_PASSWORD_URL = "/change-password";
@@ -171,7 +172,7 @@ const DoctorProfile = () => {
               <FaCalendar />
             </div>
 
-            <div className="scheduleMargin">{/* <scheduleViewer/> */}</div>
+            <div className="scheduleMargin">{doctor && <ScheduleViewer doctorId={String(doctor.id)}/>}</div>
           </div>
 
           <div className="profileButtonContainer">
@@ -192,3 +193,5 @@ const DoctorProfile = () => {
 };
 
 export default DoctorProfile;
+
+

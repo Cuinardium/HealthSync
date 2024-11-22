@@ -2,10 +2,12 @@ import { useQuery, useMutation, useQueryClient, keepPreviousData } from "@tansta
 import {
   getDoctors,
   getDoctorById,
+  getDoctorAttendingHours,
 } from "../api/doctor/doctorApi";
 import {
   DoctorQuery,
   Doctor,
+  AttendingHours,
 } from "../api/doctor/Doctor";
 
 import { queryClient } from "../api/queryClient";
@@ -26,13 +28,28 @@ export function useDoctors(query: DoctorQuery) {
   );
 }
 
-/* // =========== useDoctor =========== */
+// =========== useDoctor ===========
 
 export function useDoctor(doctorId: string) {
   return useQuery<Doctor, Error>(
     {
       queryKey: ["doctor", doctorId],
       queryFn: () => getDoctorById(doctorId),
+      enabled: !!doctorId,
+      staleTime: STALE_TIME,
+    },
+    queryClient,
+  );
+}
+
+
+// =========== useAttendingHours ===========
+
+export function useAttendingHours(doctorId: string) {
+  return useQuery<AttendingHours[], Error>(
+    {
+      queryKey: ["attendingHours", doctorId],
+      queryFn: () => getDoctorAttendingHours(doctorId),
       enabled: !!doctorId,
       staleTime: STALE_TIME,
     },
