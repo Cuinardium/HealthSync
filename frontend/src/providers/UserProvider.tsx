@@ -10,34 +10,34 @@ interface UserProviderProps {
   children: ReactNode;
 }
 
+
 export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
-  const [user, setUser] = useState<Doctor | Patient | null>(null);
-  const [isDoctor, setIsDoctor] = useState<boolean | null>(null);
   const { authenticated, role, id, loading: authLoading } = useAuth();
 
   const { data: doctorData, isLoading: isLoadingDoctor } = useDoctor(
-    (id && role === "ROLE_DOCTOR" ? id : null) as string,
+    (role === "ROLE_DOCTOR" ? id : null) as string
   );
   const { data: patientData, isLoading: isLoadingPatient } = usePatient(
-    (id && role === "ROLE_PATIENT" ? id : null) as string,
+    (role === "ROLE_PATIENT" ? id : null) as string
   );
 
-  const loading = authLoading || (authenticated && (isLoadingDoctor || isLoadingPatient));
+  const data =
+    authenticated && role === "ROLE_DOCTOR"
+      ? doctorData
+      : authenticated && role === "ROLE_PATIENT"
+      ? patientData
+      : null;
 
-  useEffect(() => {
-    if (authenticated) {
-      if (role === "ROLE_DOCTOR" && doctorData) {
-        setUser(doctorData);
-        setIsDoctor(true);
-      } else if (role === "ROLE_PATIENT" && patientData) {
-        setUser(patientData);
-        setIsDoctor(false);
-      }
-    } else {
-      setUser(null)
-      setIsDoctor(null)
-    }
-  }, [authenticated, role, id, isLoadingDoctor, isLoadingPatient]);
+  const user = data ? data : null
+
+  const isDoctor =
+    authenticated && role === "ROLE_DOCTOR"
+      ? true
+      : authenticated && role === "ROLE_PATIENT"
+      ? false
+      : null;
+
+  const loading = authLoading || isLoadingDoctor || isLoadingPatient;
 
   return (
     <UserContext.Provider value={{ user, isDoctor, loading }}>
@@ -45,3 +45,4 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
     </UserContext.Provider>
   );
 };
+
