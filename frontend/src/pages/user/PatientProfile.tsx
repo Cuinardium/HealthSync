@@ -23,7 +23,7 @@ import patientDefault from "../../img/patientDefault.png";
 import { Link } from "react-router-dom";
 
 const PATIENT_EDIT_URL = "/patient-edit";
-const CHANGE_PASSWORD_URL = "/";
+const CHANGE_PASSWORD_URL = "/change-password";
 
 
 const PatientProfile = () => {
