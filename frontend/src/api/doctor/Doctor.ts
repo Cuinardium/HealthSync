@@ -57,6 +57,7 @@ export interface DoctorEditForm {
   lastname: string;
   healthInsurances: string[];
   city: string;
+  address: string;
   specialty: string;
   locale: string;
   image?: File;

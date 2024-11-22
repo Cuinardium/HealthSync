@@ -24,7 +24,7 @@ import doctorDefault from "../../img/doctorDefault.png";
 import { Link } from "react-router-dom";
 import ScheduleViewer from "../../components/doctors/ScheduleViewer";
 
-const DOCTOR_EDIT_URL = "/";
+const DOCTOR_EDIT_URL = "/doctor-edit";
 const CHANGE_PASSWORD_URL = "/change-password";
 const VACATION_URL = "/doctor-vacations";
 

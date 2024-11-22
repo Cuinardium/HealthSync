@@ -1,44 +1,50 @@
 import React, { useEffect, useState } from "react";
-import {
-  Button,
-  Card,
-  Form,
-  Container,
-  Row,
-  Col,
-} from "react-bootstrap";
+import { Button, Card, Form, Container, Row, Col } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import { useUpdatePatient } from "../../hooks/patientHooks";
 import "../../css/main.css";
 import "../../css/forms.css";
 import "../../css/profile.css";
 import { AxiosError } from "axios";
-import { Patient, PatientEditForm } from "../../api/patient/Patient";
 import { useUser } from "../../context/UserContext";
 import { useHealthInsurances } from "../../hooks/healthInsuranceHooks";
 import { t } from "i18next";
+import { Doctor, DoctorEditForm } from "../../api/doctor/Doctor";
+import { useUpdateDoctor } from "../../hooks/doctorHooks";
+import { useSpecialties } from "../../hooks/specialtyHooks";
 
 const PatientEdit = () => {
   const navigate = useNavigate();
   const { user, loading, isDoctor } = useUser();
   const { data: healthInsurances, isLoading: isLoadingHealhInsurances } =
     useHealthInsurances();
-  const [formData, setFormData] = useState<PatientEditForm>({
+  const { data: specialties, isLoading: isLoadingSpecialties } = useSpecialties(
+    { sort: "standard", order: "asc" },
+  );
+  const [formData, setFormData] = useState<DoctorEditForm>({
     name: "",
     lastname: "",
-    healthInsurance: "",
+    healthInsurances: [],
+    city: "",
+    address: "",
+    specialty: "",
     locale: "",
     image: undefined,
   });
 
   useEffect(() => {
-    if (!loading && user && !isDoctor) {
-      const patient = user as Patient;
+    if (!loading && user && isDoctor) {
+      const doctor = user as Doctor;
       setFormData({
-        name: patient.firstName,
-        lastname: patient.lastName,
-        healthInsurance:  patient.healthInsurance.replace(/\./g, "_").toUpperCase(),
-        locale: patient.locale,
+        name: doctor.firstName,
+        lastname: doctor.lastName,
+        healthInsurances: doctor.healthInsurances.map((healthInsurance) =>
+          healthInsurance.replace(/\./g, "_").toUpperCase(),
+        ),
+        city: doctor.city,
+        address: doctor.address,
+        specialty: doctor.specialty.replace(/\./g, "_").toUpperCase(),
+        locale: doctor.locale,
       });
     }
   }, [user, loading]);
@@ -49,24 +55,24 @@ const PatientEdit = () => {
   };
 
   const onError = (error: AxiosError) => {
-    const body = JSON.stringify(error.response?.data)
+    const body = JSON.stringify(error.response?.data);
     alert(`Failed to update profile: ${error.message}, ${body}`);
   };
 
-  const id = loading || isDoctor ? "" : String(user!.id);
+  const id = loading || !isDoctor ? "" : String(user!.id);
 
-  const updatePatientMutation = useUpdatePatient(id, onSuccess, onError);
+  const updateDoctorMutation = useUpdateDoctor(id, onSuccess, onError);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    const { name, lastname, healthInsurance, locale } = formData;
+    const { name, lastname, healthInsurances, locale } = formData;
 
-    if (!name || !lastname || !healthInsurance || !locale) {
+    if (!name || !lastname || !healthInsurances || !locale) {
       alert("Please fill in all required fields.");
       return;
     }
 
-    updatePatientMutation.mutate(formData);
+    updateDoctorMutation.mutate(formData);
   };
 
   if (isLoadingHealhInsurances) {
@@ -113,6 +119,39 @@ const PatientEdit = () => {
 
           <Row className="profileRow">
             <Col className="profileItem">
+              <Form.Label htmlFor="name">City</Form.Label>
+              <Form.Control
+                id="city"
+                name="city"
+                type="text"
+                value={formData.city}
+                onChange={(e) => {
+                  setFormData((prev) => ({
+                    ...prev,
+                    city: e.target.value,
+                  }));
+                }}
+              />
+            </Col>
+            <Col className="profileItem">
+              <Form.Label htmlFor="address">Address</Form.Label>
+              <Form.Control
+                id="address"
+                name="address"
+                type="text"
+                value={formData.address}
+                onChange={(e) => {
+                  setFormData((prev) => ({
+                    ...prev,
+                    address: e.target.value,
+                  }));
+                }}
+              />
+            </Col>
+          </Row>
+
+          <Row className="profileRow">
+            <Col className="profileItem">
               <Form.Label htmlFor="healthInsurance">
                 Health Insurance
               </Form.Label>
@@ -120,26 +159,58 @@ const PatientEdit = () => {
                 id="healthInsurance"
                 name="healthInsurance"
                 as="select"
-                value={formData.healthInsurance}
+                multiple
+                value={formData.healthInsurances}
                 onChange={(e) => {
+                  const newHealthInsurances =
+                    formData.healthInsurances.includes(e.target.value)
+                      ? formData.healthInsurances.filter(
+                          (insurance) => insurance !== e.target.value,
+                        )
+                      : [...formData.healthInsurances, e.target.value];
+
                   setFormData((prev) => ({
                     ...prev,
-                    healthInsurance: e.target.value,
+                    healthInsurances: newHealthInsurances,
                   }));
                 }}
               >
-                  {(
-                  healthInsurances?.map((healthinsurance) => (
-                    <option
-                      key={healthinsurance.code}
-                      value={healthinsurance.code}
-                    >
-                      {t(
-                        `healthInsurance.${healthinsurance.code.replace(/_/g, ".").toLowerCase()}`,
-                      )}
-                    </option>
-                  ))
-                )}
+                {healthInsurances?.map((healthinsurance) => (
+                  <option
+                    key={healthinsurance.code}
+                    value={healthinsurance.code}
+                  >
+                    {t(
+                      `healthInsurance.${healthinsurance.code.replace(/_/g, ".").toLowerCase()}`,
+                    )}
+                  </option>
+                ))}
+              </Form.Control>
+            </Col>
+          </Row>
+
+          <Row className="profileRow">
+            <Col className="profileItem">
+              <Form.Label htmlFor="specialty">Specialty</Form.Label>
+              <Form.Control
+                id="specialty"
+                name="specialty"
+                as="select"
+                value={formData.specialty}
+                onChange={(e) => {
+                  setFormData((prev) => ({
+                    ...prev,
+                    specialty: e.target.value,
+                  }));
+                }}
+              >
+                {specialties?.map((specialty) => (
+                  <option key={specialty.code} value={specialty.code}>
+                    {t(
+                      `specialty.${specialty.code.replace(/_/g, ".").toLowerCase()}`,
+                    )}
+                  </option>
+                ))}
               </Form.Control>
             </Col>
           </Row>
@@ -181,11 +252,14 @@ const PatientEdit = () => {
             <Button
               variant="primary"
               type="submit"
-              disabled={updatePatientMutation.isPending}
+              disabled={updateDoctorMutation.isPending}
             >
               Save Changes
             </Button>
-            <Button variant="secondary" onClick={() => navigate("/patient-profile")}>
+            <Button
+              variant="secondary"
+              onClick={() => navigate("/doctor-profile")}
+            >
               Cancel
             </Button>
           </div>

@@ -3,14 +3,17 @@ import {
   getDoctors,
   getDoctorById,
   getDoctorAttendingHours,
+  updateDoctor,
 } from "../api/doctor/doctorApi";
 import {
   DoctorQuery,
   Doctor,
   AttendingHours,
+  DoctorEditForm,
 } from "../api/doctor/Doctor";
 
 import { queryClient } from "../api/queryClient";
+import { AxiosError } from "axios";
 
 const STALE_TIME = 5 * 60 * 1000;
 
@@ -37,6 +40,30 @@ export function useDoctor(doctorId: string) {
       queryFn: () => getDoctorById(doctorId),
       enabled: !!doctorId,
       staleTime: STALE_TIME,
+    },
+    queryClient,
+  );
+}
+
+// ========== useUpdateDoctor ==========
+
+export function useUpdateDoctor(
+  id: string,
+  onSuccess: () => void,
+  onError: (error: AxiosError) => void,
+) {
+  return useMutation<DoctorEditForm, AxiosError, DoctorEditForm>(
+    {
+      mutationFn: (doctor: DoctorEditForm) => updateDoctor(id, doctor),
+      onSuccess: () => {
+        queryClient.invalidateQueries({
+          queryKey: ["doctor", id],
+        });
+        onSuccess();
+      },
+      onError: (error) => {
+        onError(error);
+      },
     },
     queryClient,
   );

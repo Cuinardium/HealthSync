@@ -22,6 +22,7 @@ const Error500 = lazy(() => import("./pages/errors/500"));
 const Login = lazy(() => import("./pages/auth/Login"));
 const PatientRegister = lazy(() => import("./pages/auth/PatientRegister"));
 const DoctorRegister = lazy(() => import("./pages/auth/DoctorRegister"));
+const DoctorEdit = lazy(() => import("./pages/user/DoctorEdit"));
 const PatientProfile = lazy(() => import("./pages/user/PatientProfile"));
 const PatientEdit = lazy(() => import("./pages/user/PatientEdit"));
 const ChangePassword = lazy(() => import("./pages/user/ChangePassword"));
@@ -117,6 +118,7 @@ function App() {
                         path="/doctor-vacations"
                         element={<DoctorVacations />}
                       />
+                      <Route path="/doctor-edit" element={<DoctorEdit />} />
                     </Route>
 
                     {/* Error Pages */}
@@ -136,3 +138,5 @@ function App() {
 }
 
 export default App;
+
+

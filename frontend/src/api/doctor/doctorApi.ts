@@ -96,6 +96,7 @@ export async function updateDoctor(
   );
 
   formData.append("city", doctor.city);
+  formData.append("address", doctor.address);
   formData.append("specialty", doctor.specialty);
 
   // Profile picture
