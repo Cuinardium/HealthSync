@@ -22,7 +22,7 @@ import { useAuth } from "../../context/AuthContext";
 import patientDefault from "../../img/patientDefault.png";
 import { Link } from "react-router-dom";
 
-const PATIENT_EDIT_URL = "/";
+const PATIENT_EDIT_URL = "/patient-edit";
 const CHANGE_PASSWORD_URL = "/";
 
 

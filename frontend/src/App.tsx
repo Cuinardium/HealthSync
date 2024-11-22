@@ -23,6 +23,7 @@ const Login = lazy(() => import("./pages/auth/Login"));
 const PatientRegister = lazy(() => import("./pages/auth/PatientRegister"));
 const DoctorRegister = lazy(() => import("./pages/auth/DoctorRegister"));
 const PatientProfile = lazy(() => import("./pages/user/PatientProfile"));
+const PatientEdit = lazy(() => import("./pages/user/PatientEdit"));
 const MyAppointments = lazy(
   () => import("./pages/appointments/MyAppointments"),
 );
@@ -93,6 +94,10 @@ function App() {
                       <Route
                         path="/patient-profile"
                         element={<PatientProfile />}
+                      />
+                      <Route
+                        path="/patient-edit"
+                        element={<PatientEdit />}
                       />
                     </Route>
 
