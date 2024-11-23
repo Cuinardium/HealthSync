@@ -3,9 +3,3 @@ export interface Notification {
   userId: number,
   appointmentId: number,
 }
-
-export interface NotificationQuery {
-  userId: number;
-  page?: number;
-  pageSize?: number;
-}

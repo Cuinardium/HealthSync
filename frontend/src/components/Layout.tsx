@@ -3,6 +3,7 @@ import { Helmet } from "react-helmet-async";
 import { useTranslation } from "react-i18next";
 import { useLocation } from "react-router-dom";
 import { useUser } from "../context/UserContext";
+import { useNotifications } from "../hooks/notificationHooks";
 import Header from "./Header";
 import Loader from "./Loader";
 
@@ -17,6 +18,8 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
   const { t } = useTranslation();
 
   const { user, isDoctor, loading } = useUser();
+  const id = user ? String(user.id) : "";
+  const { data: notifications, isLoading } = useNotifications(id);
 
   const shouldShowHeader = useCallback(() => {
     return (
@@ -89,7 +92,13 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
         <title>{t(title)}</title>
       </Helmet>
       {showHeader && (
-        <Header user={user} isDoctor={isDoctor} hasNotifications={false} />
+        <Header
+          user={user}
+          isDoctor={isDoctor}
+          hasNotifications={
+            !isLoading && !!notifications && notifications.length > 0
+          }
+        />
       )}
 
       <main>{children}</main>

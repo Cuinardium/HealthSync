@@ -1,25 +1,49 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import CancelAppointmentForm from "../../components/appointments/CancelAppointmentForm";
 import IndicationForm from "../../components/indications/IndicationForm";
 import IndicationList from "../../components/indications/IndicationList";
+import { useAuth } from "../../context/AuthContext";
 import { useAppointment } from "../../hooks/appointmentHooks";
+import { useDeleteNotification, useNotifications } from "../../hooks/notificationHooks";
 
 const DetailedAppointment: React.FC = () => {
-  const { id } = useParams<{ id: string }>();
+  const { id: appointmentId } = useParams<{ id: string }>();
   const navigate = useNavigate();
 
   const [page, setPage] = useState(1);
   const pageSize = 3;
 
   const {
+    id
+  } = useAuth()
+
+  const {
     data: appointment,
     isLoading,
     isError,
     error,
-  } = useAppointment(id as string);
+  } = useAppointment(appointmentId as string);
 
-  if (!id || isNaN(+Number(id)) || Number(id) < 0) {
+  const {
+    data: notifications
+  } = useNotifications(id as string);
+
+  const deleteNotificationMutation = useDeleteNotification(() => {}, (_) => {})
+
+  useEffect(() => {
+
+    if (notifications && appointment) {
+      const appointmentNotification = notifications.find((notification) => notification.appointmentId === appointment.id);
+
+      if (appointmentNotification) {
+        const id = String(appointmentNotification.id)
+        deleteNotificationMutation.mutate(id);
+      }
+    }
+  }, [notifications, appointment])
+
+  if (!appointmentId || isNaN(+Number(appointmentId)) || Number(appointmentId) < 0) {
     navigate("/404");
     return null;
   }
@@ -69,7 +93,7 @@ const DetailedAppointment: React.FC = () => {
       )}
 
       <IndicationList
-        appointmentId={id}
+        appointmentId={appointmentId}
         page={page}
         pageSize={pageSize}
         onPageChange={setPage}

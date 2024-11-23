@@ -5,6 +5,7 @@ import { axios } from "../api/axios";
 import { getTokens, renewAccessToken } from "../api/auth/authApi";
 
 import { AuthContext } from "../context/AuthContext";
+import { queryClient } from "../api/queryClient";
 
 const REFRESH_TOKEN_KEY = "healthsync-refresh-token";
 
@@ -54,6 +55,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     setRefreshToken(null);
     setId(null);
     setRole(null);
+
+    // Invalidate cache of react query
+    queryClient.clear()
 
     localStorage.removeItem(REFRESH_TOKEN_KEY);
   };

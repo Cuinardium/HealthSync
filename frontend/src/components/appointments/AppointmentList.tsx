@@ -3,6 +3,10 @@ import { useAppointments } from "../../hooks/appointmentHooks";
 import { AppointmentQuery } from "../../api/appointment/Appointment";
 import Loader from "../Loader";
 import { Link } from "react-router-dom";
+import { useNotifications } from "../../hooks/notificationHooks";
+
+import "../../css/header.css";
+import { FaCircle } from "react-icons/fa6";
 
 interface AppointmentsListProps {
   userId: string;
@@ -32,6 +36,9 @@ const AppointmentList: React.FC<AppointmentsListProps> = ({
     isError,
     error,
   } = useAppointments(query);
+
+  const { data: notifications, isLoading: isLoadingNotifications } =
+    useNotifications(userId);
 
   if (isLoading) {
     // TODO
@@ -80,7 +87,14 @@ const AppointmentList: React.FC<AppointmentsListProps> = ({
                   {appointment.cancelDescription}
                 </div>
               )}
-            <Link to={`/detailed-appointment/${appointment.id}`}>More details</Link>
+            <div>
+              <Link to={`/detailed-appointment/${appointment.id}`}>
+                More details
+              </Link>
+              {notifications?.some(
+                (notification) => notification.appointmentId === appointment.id,
+              ) && <FaCircle className="notification" />}
+            </div>
           </li>
         ))}
       </ul>
