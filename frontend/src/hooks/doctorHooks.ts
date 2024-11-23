@@ -4,6 +4,7 @@ import {
   getDoctorById,
   getDoctorAttendingHours,
   updateDoctor,
+  updateDoctorAttendingHours,
 } from "../api/doctor/doctorApi";
 import {
   DoctorQuery,
@@ -79,6 +80,32 @@ export function useAttendingHours(doctorId: string) {
       queryFn: () => getDoctorAttendingHours(doctorId),
       enabled: !!doctorId,
       staleTime: STALE_TIME,
+    },
+    queryClient,
+  );
+}
+
+
+// =========== useUpdateAttendingHours ===========
+
+export function useUpdateAttendingHours(
+  doctorId: string,
+  onSuccess: () => void,
+  onError: (error: AxiosError) => void,
+) {
+  return useMutation<AttendingHours[], AxiosError, AttendingHours[]>(
+    {
+      mutationFn: (attendingHours: AttendingHours[]) =>
+        updateDoctorAttendingHours(doctorId, attendingHours),
+      onSuccess: () => {
+        queryClient.invalidateQueries({
+          queryKey: ["attendingHours", doctorId],
+        });
+        onSuccess();
+      },
+      onError: (error) => {
+        onError(error);
+      },
     },
     queryClient,
   );

@@ -25,6 +25,7 @@ import { Link } from "react-router-dom";
 import ScheduleViewer from "../../components/doctors/ScheduleViewer";
 
 const DOCTOR_EDIT_URL = "/doctor-edit";
+const CHANGE_SCHEDULE_URL = "/change-schedule";
 const CHANGE_PASSWORD_URL = "/change-password";
 const VACATION_URL = "/doctor-vacations";
 
@@ -181,6 +182,9 @@ const DoctorProfile = () => {
             </Button>
             <Button variant="primary" as={Link as any} to={DOCTOR_EDIT_URL}>
               {t("profile.edit.title")}
+            </Button>
+            <Button variant="primary" as={Link as any} to={CHANGE_SCHEDULE_URL}>
+              Change Schedule
             </Button>
             <Button variant="primary" as={Link as any} to={CHANGE_PASSWORD_URL}>
               {t("profile.changePassword")}
