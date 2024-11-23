@@ -34,11 +34,10 @@ export function useCreatePatient(
   onSuccess: () => void,
   onError: (error: AxiosError) => void,
 ) {
-  return useMutation<Patient, AxiosError, PatientRegisterForm>(
+  return useMutation<void, AxiosError, PatientRegisterForm>(
     {
       mutationFn: (patient: PatientRegisterForm) => createPatient(patient),
-      onSuccess: (newPatient) => {
-        queryClient.invalidateQueries({ queryKey: ["patient", newPatient.id] });
+      onSuccess: () => {
         onSuccess();
       },
       onError: (error) => {

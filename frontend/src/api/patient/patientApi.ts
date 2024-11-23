@@ -8,17 +8,12 @@ const PATIENT_CONTENT_TYPE = "application/vnd.patient.v1+json";
 
 // ========== patients ==============
 
-export async function createPatient(patient: PatientRegisterForm): Promise<Patient> {
-  const response = await axios.post<Patient>(PATIENT_ENDPOINT, patient, {
+export async function createPatient(patient: PatientRegisterForm): Promise<void> {
+  await axios.post<Patient>(PATIENT_ENDPOINT, patient, {
     headers: {
       "Content-Type": PATIENT_CONTENT_TYPE,
     },
   });
-
-  const location = response.headers.location;
-  const patientId = location?.split("/").pop();
-
-  return await getPatient(patientId as string);
 }
 
 // ========== patients/id ==========
