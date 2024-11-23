@@ -6,7 +6,9 @@ import ar.edu.itba.paw.interfaces.services.exceptions.TokenInvalidException;
 import ar.edu.itba.paw.interfaces.services.exceptions.TokenNotFoundException;
 import ar.edu.itba.paw.interfaces.services.exceptions.UserNotFoundException;
 import ar.edu.itba.paw.models.User;
+import ar.edu.itba.paw.webapp.auth.JwtUtil;
 import ar.edu.itba.paw.webapp.form.EmailForm;
+
 import javax.validation.Valid;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Response;
@@ -26,10 +28,13 @@ public class TokenController {
   private final UserService userService;
   private final TokenService tokenService;
 
+  private final JwtUtil jwtUtil;
+
   @Autowired
-  public TokenController(final UserService userService, final TokenService tokenService) {
+  public TokenController(final UserService userService, final TokenService tokenService, final JwtUtil jwtUtil) {
     this.userService = userService;
     this.tokenService = tokenService;
+    this.jwtUtil = jwtUtil;
   }
 
   // ================== verification ===============
@@ -65,6 +70,9 @@ public class TokenController {
         userService.getUserByEmail(emailForm.getEmail()).orElseThrow(UserNotFoundException::new);
     userService.confirmUser(user.getId(), token);
 
-    return Response.noContent().build();
+    String accessToken = jwtUtil.generateAccessToken(user, "a");
+    String refreshToken = jwtUtil.generateRefreshToken(user);
+
+    return Response.noContent().header("X-Refresh", refreshToken).header("X-JWT", accessToken).build();
   }
 }

@@ -6,6 +6,7 @@ import { getTokens, renewAccessToken } from "../api/auth/authApi";
 
 import { AuthContext } from "../context/AuthContext";
 import { queryClient } from "../api/queryClient";
+import { verifyUser } from "../api/token/tokenApi";
 
 const REFRESH_TOKEN_KEY = "healthsync-refresh-token";
 
@@ -49,6 +50,17 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     localStorage.setItem(REFRESH_TOKEN_KEY, credentials.refreshToken);
   };
 
+  const verify = async (email: string, token: string): Promise<void> => {
+    const credentials = await verifyUser(email, token);
+
+    setLoading(true);
+
+    setAccessToken(credentials.accessToken);
+    setRefreshToken(credentials.refreshToken);
+
+    localStorage.setItem(REFRESH_TOKEN_KEY, credentials.refreshToken);
+  };
+
   // Log out and clear tokens
   const logout = (): void => {
     setAccessToken(null);
@@ -57,7 +69,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     setRole(null);
 
     // Invalidate cache of react query
-    queryClient.clear()
+    queryClient.clear();
 
     localStorage.removeItem(REFRESH_TOKEN_KEY);
   };
@@ -158,7 +170,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   return (
     <AuthContext.Provider
-      value={{ login, logout, accessToken, id, role, authenticated, loading }}
+      value={{ login, logout, verify, accessToken, id, role, authenticated, loading }}
     >
       {children}
     </AuthContext.Provider>

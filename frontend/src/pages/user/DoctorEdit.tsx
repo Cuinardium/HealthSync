@@ -13,7 +13,7 @@ import { Doctor, DoctorEditForm } from "../../api/doctor/Doctor";
 import { useUpdateDoctor } from "../../hooks/doctorHooks";
 import { useSpecialties } from "../../hooks/specialtyHooks";
 
-const PatientEdit = () => {
+const DoctorEdit = () => {
   const navigate = useNavigate();
   const { user, loading, isDoctor } = useUser();
   const { data: healthInsurances, isLoading: isLoadingHealhInsurances } =
@@ -269,4 +269,4 @@ const PatientEdit = () => {
   );
 };
 
-export default PatientEdit;
+export default DoctorEdit;

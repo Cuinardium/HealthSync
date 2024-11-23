@@ -285,7 +285,7 @@ public class MailServiceImpl implements MailService {
     // Load model
     templateModel.put("baseUrl", baseUrl);
     templateModel.put("confirmationUrl", confirmationUrl);
-    templateModel.put("id", user.getId());
+    templateModel.put("email", user.getEmail());
     templateModel.put("token", token.getToken());
 
     templateModel.put("userName", name);

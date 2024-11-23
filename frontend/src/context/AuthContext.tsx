@@ -4,6 +4,7 @@ import { createContext, useContext } from "react";
 interface AuthContextType {
   login: (email: string, password: string) => Promise<void>;
   logout: () => void;
+  verify: (email: string, token: string) => Promise<void>;
   accessToken: string | null;
   id: string | null;
   role: "ROLE_DOCTOR" | "ROLE_PATIENT" | null;
