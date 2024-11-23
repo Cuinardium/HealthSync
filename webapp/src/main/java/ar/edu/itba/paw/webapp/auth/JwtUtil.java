@@ -12,6 +12,9 @@ import org.springframework.stereotype.Component;
 @Component
 public class JwtUtil {
 
+  public static final String TOKEN_HEADER = "X-JWT";
+  public static final String REFRESH_TOKEN_HEADER = "X-Refresh";
+
   private static final long accessTokenValidity = 24 * 60 * 60 * 1000; // 24 hours in milliseconds
   private static final long refreshTokenValidity =
       30 * accessTokenValidity; // 30 days in milliseconds
@@ -20,16 +23,6 @@ public class JwtUtil {
   @Autowired private Key jwtPK;
 
   public JwtUtil() {}
-
-  public String generateAccessToken(User user) {
-    return Jwts.builder()
-        .setSubject(user.getEmail())
-        .setIssuer("paw-2023a-02")
-        .setIssuedAt(new Date())
-        .setExpiration(new Date(System.currentTimeMillis() + accessTokenValidity))
-        .signWith(jwtPK, SignatureAlgorithm.HS256)
-        .compact();
-  }
 
   /** jws: Json Web Signature (https://datatracker.ietf.org/doc/html/rfc7515) */
   public UserDetails parseToken(String jws) {
@@ -49,7 +42,7 @@ public class JwtUtil {
     }
   }
 
-  public String generateAccessToken(User user, String baseUrl) {
+  public String generateAccessToken(User user) {
     Claims claims = Jwts.claims();
     claims.setSubject(user.getEmail());
 

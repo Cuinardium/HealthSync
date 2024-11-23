@@ -8,12 +8,10 @@ import ar.edu.itba.paw.interfaces.services.exceptions.UserNotFoundException;
 import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.webapp.auth.JwtUtil;
 import ar.edu.itba.paw.webapp.form.EmailForm;
-
+import ar.edu.itba.paw.webapp.mediaType.VndType;
 import javax.validation.Valid;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Response;
-
-import ar.edu.itba.paw.webapp.mediaType.VndType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,7 +29,8 @@ public class TokenController {
   private final JwtUtil jwtUtil;
 
   @Autowired
-  public TokenController(final UserService userService, final TokenService tokenService, final JwtUtil jwtUtil) {
+  public TokenController(
+      final UserService userService, final TokenService tokenService, final JwtUtil jwtUtil) {
     this.userService = userService;
     this.tokenService = tokenService;
     this.jwtUtil = jwtUtil;
@@ -55,8 +54,6 @@ public class TokenController {
     return Response.accepted().build();
   }
 
-  // TODO: Ver si esto va aca
-  //  o seguimos usando el del basic filter
   @PATCH
   @Path("/verification/{token}")
   @Consumes(VndType.APPLICATION_EMAIL)
@@ -70,9 +67,12 @@ public class TokenController {
         userService.getUserByEmail(emailForm.getEmail()).orElseThrow(UserNotFoundException::new);
     userService.confirmUser(user.getId(), token);
 
-    String accessToken = jwtUtil.generateAccessToken(user, "a");
+    String accessToken = jwtUtil.generateAccessToken(user);
     String refreshToken = jwtUtil.generateRefreshToken(user);
 
-    return Response.noContent().header("X-Refresh", refreshToken).header("X-JWT", accessToken).build();
+    return Response.noContent()
+        .header(JwtUtil.REFRESH_TOKEN_HEADER, refreshToken)
+        .header(JwtUtil.TOKEN_HEADER, accessToken)
+        .build();
   }
 }
