@@ -25,7 +25,10 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
     return (
       location.pathname !== "/login" &&
       location.pathname !== "/doctor-register" &&
-      location.pathname !== "/patient-register"
+      location.pathname !== "/patient-register" &&
+      location.pathname !== "/register-successful" &&
+      location.pathname !== "/verify" &&
+      location.pathname !== "/resend-token"
     );
   }, [location.pathname]);
 
@@ -107,3 +110,5 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
 };
 
 export default Layout;
+
+
