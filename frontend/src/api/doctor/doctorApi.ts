@@ -53,16 +53,12 @@ export async function getDoctors(params: DoctorQuery): Promise<Page<Doctor>> {
 
 export async function createDoctor(
   doctor: DoctorRegisterForm,
-): Promise<Doctor> {
-  const response = await axios.post<Doctor>(DOCTOR_ENDPOINT, doctor, {
+): Promise<void> {
+  await axios.post<Doctor>(DOCTOR_ENDPOINT, doctor, {
     headers: {
       "Content-Type": DOCTOR_CONTENT_TYPE,
     },
   });
-
-  const location = response.headers.location;
-  const doctorId = location?.split("/").pop();
-  return await getDoctorById(doctorId as string);
 }
 
 // ========== doctors/id ==========

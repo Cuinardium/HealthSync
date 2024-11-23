@@ -78,7 +78,7 @@ export function useCreateDoctor(
   onSuccess: () => void,
   onError: (error: AxiosError) => void,
 ) {
-  return useMutation<Doctor, AxiosError, DoctorRegisterForm>(
+  return useMutation<void, AxiosError, DoctorRegisterForm>(
     {
       mutationFn: (doctor: DoctorRegisterForm) => createDoctor(doctor),
       onSuccess: () => {
