@@ -15,6 +15,11 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "../../css/main.css";
 import "../../css/forms.css";
 import { useSpecialties } from "../../hooks/specialtyHooks";
+import { useHealthInsurances } from "../../hooks/healthInsuranceHooks";
+import { AxiosError } from "axios";
+import { useCreateDoctor } from "../../hooks/doctorHooks";
+import { DoctorRegisterForm } from "../../api/doctor/Doctor";
+import { useNavigate } from "react-router-dom";
 
 const patientRegisterUrl = "/patient-register";
 
@@ -26,16 +31,17 @@ const DoctorRegister = ({
   error: any;
 }) => {
   const { t } = useTranslation();
-  const [form, setForm] = useState({
+  const navigate = useNavigate();
+  const [form, setForm] = useState<DoctorRegisterForm>({
     name: "",
-    lastName: "",
+    lastname: "",
     email: "",
     password: "",
     confirmPassword: "",
     address: "",
     city: "",
     specialty: "",
-    healthInsurances: [] as number[], // Add health insurance state
+    healthInsurances: [] as string[], // Add health insurance state
   });
   const [errors, setErrors] = useState({
     name: "",
@@ -54,6 +60,7 @@ const DoctorRegister = ({
     isLoading,
     isError,
   } = useSpecialties({ sort: "standard", order: "asc" });
+  const { data: healthInsurances } = useHealthInsurances();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, checked, type } = e.target;
@@ -63,16 +70,22 @@ const DoctorRegister = ({
     });
   };
 
-  const handleHealthInsuranceChange = (selectedCodes: number[]) => {
-    setForm((prevForm) => ({
-      ...prevForm,
-      healthInsurances: selectedCodes,
-    }));
+  const onSuccess = () => {
+    alert("Doctor registered successfully");
+    navigate("/register-successful");
   };
+
+  const onError = (error: AxiosError) => {
+    const body = JSON.stringify(error.response?.data);
+    alert(`Error: ${body}`);
+  };
+
+  const createDoctorMutation = useCreateDoctor(onSuccess, onError);
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     // TODO: handle form submission
+    createDoctorMutation.mutate(form);
   };
 
   return (
@@ -120,8 +133,8 @@ const DoctorRegister = ({
                       <Form.Control
                         className="form-input"
                         type="text"
-                        name="lastName" // Fix the name here to match state
-                        value={form.lastName}
+                        name="lastname" // Fix the name here to match state
+                        value={form.lastname}
                         onChange={handleChange}
                         placeholder={t("form.lastname_hint")}
                         isInvalid={!!errors.lastName}
@@ -233,7 +246,6 @@ const DoctorRegister = ({
                     </div>
                   </Form.Group>
 
-
                   <Form.Group className="formRow" controlId="formSpecialty">
                     <div className="form-check">
                       <Form.Label className="label">
@@ -255,9 +267,9 @@ const DoctorRegister = ({
                           <option>{t("form.error_loading_specialties")}</option>
                         ) : (
                           specialties?.map((specialty) => (
-                            <option key={specialty.name} value={specialty.name}>
+                            <option key={specialty.code} value={specialty.code}>
                               {t(
-                                `specialty.${specialty.code.replace(/_/g, '.').toLowerCase()}`,
+                                `specialty.${specialty.code.replace(/_/g, ".").toLowerCase()}`,
                               )}
                             </option>
                           ))
@@ -268,6 +280,45 @@ const DoctorRegister = ({
                       </Form.Control.Feedback>
                     </div>
                   </Form.Group>
+
+                  <Row className="profileRow">
+                    <Col className="profileItem">
+                      <Form.Label htmlFor="healthInsurance">
+                        Health Insurance
+                      </Form.Label>
+                      <Form.Control
+                        id="healthInsurance"
+                        name="healthInsurance"
+                        as="select"
+                        multiple
+                        value={form.healthInsurances}
+                        onChange={(e) => {
+                          const newHealthInsurances =
+                            form.healthInsurances.includes(e.target.value)
+                              ? form.healthInsurances.filter(
+                                  (insurance) => insurance !== e.target.value,
+                                )
+                              : [...form.healthInsurances, e.target.value];
+
+                          setForm((prev) => ({
+                            ...prev,
+                            healthInsurances: newHealthInsurances,
+                          }));
+                        }}
+                      >
+                        {healthInsurances?.map((healthinsurance) => (
+                          <option
+                            key={healthinsurance.code}
+                            value={healthinsurance.code}
+                          >
+                            {t(
+                              `healthInsurance.${healthinsurance.code.replace(/_/g, ".").toLowerCase()}`,
+                            )}
+                          </option>
+                        ))}
+                      </Form.Control>
+                    </Col>
+                  </Row>
 
                   <div className="d-grid gap-2">
                     <Button

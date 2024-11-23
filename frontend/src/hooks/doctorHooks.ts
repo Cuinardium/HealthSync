@@ -5,12 +5,14 @@ import {
   getDoctorAttendingHours,
   updateDoctor,
   updateDoctorAttendingHours,
+  createDoctor,
 } from "../api/doctor/doctorApi";
 import {
   DoctorQuery,
   Doctor,
   AttendingHours,
   DoctorEditForm,
+  DoctorRegisterForm,
 } from "../api/doctor/Doctor";
 
 import { queryClient } from "../api/queryClient";
@@ -59,6 +61,29 @@ export function useUpdateDoctor(
       onSuccess: () => {
         queryClient.invalidateQueries({
           queryKey: ["doctor", id],
+        });
+        onSuccess();
+      },
+      onError: (error) => {
+        onError(error);
+      },
+    },
+    queryClient,
+  );
+}
+
+// ========== useCreateDoctor ==========
+
+export function useCreateDoctor(
+  onSuccess: () => void,
+  onError: (error: AxiosError) => void,
+) {
+  return useMutation<Doctor, AxiosError, DoctorRegisterForm>(
+    {
+      mutationFn: (doctor: DoctorRegisterForm) => createDoctor(doctor),
+      onSuccess: () => {
+        queryClient.invalidateQueries({
+          queryKey: ["doctors"],
         });
         onSuccess();
       },
