@@ -13,7 +13,7 @@
     "desc": "Descripción del turno",
     "desc_hint": "Ingresar descripción del turno",
     "password": "Contraseña",
-    "password_hint": "Ingresa contraseña",
+    "password_hint": "Ingresar contraseña",
     "cpassword": "Confirmar contraseña",
     "cpassword_hint": "Ingresa la misma contraseña",
     "city": "Ciudad",
