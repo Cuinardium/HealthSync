@@ -44,7 +44,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
 
     switch (location.pathname) {
       case "/login":
-        return "login.login";
+        return "login.title";
       case "/doctor-register":
         return "register.title";
       case "/patient-register":
