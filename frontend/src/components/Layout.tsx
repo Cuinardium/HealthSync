@@ -23,9 +23,6 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
 
   const shouldShowHeader = useCallback(() => {
     return (
-      location.pathname !== "/login" &&
-      location.pathname !== "/doctor-register" &&
-      location.pathname !== "/patient-register" &&
       location.pathname !== "/register-successful" &&
       location.pathname !== "/verify" &&
       location.pathname !== "/resend-token"
@@ -101,6 +98,11 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
           hasNotifications={
             !isLoading && !!notifications && notifications.length > 0
           }
+          isLogin={location.pathname === "/login"}
+          isRegister={
+            location.pathname === "/patient-register" ||
+            location.pathname === "/doctor-register"
+          }
         />
       )}
 
@@ -110,5 +112,3 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
 };
 
 export default Layout;
-
-

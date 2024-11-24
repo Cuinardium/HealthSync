@@ -481,7 +481,10 @@
     "title": "Iniciar Sesión",
     "rememberMe": "Recordarme",
     "submit": "Iniciar Sesión",
+    "loading": "Iniciando Sesión...",
     "error": "Email o contraseña invalidos",
+    "verify": "Cuenta no verificada",
+    "verifyLink": "Reenviar token de verificación",
     "haveAccount": "¿No tiene una cuenta?",
     "register": "¡Registrese aqui!"
   },

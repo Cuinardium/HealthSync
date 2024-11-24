@@ -38,9 +38,6 @@ label {
     color:red;
 }
 
-.submitButton{
-    margin: 2rem
-}
 
 select{
     width: 20rem
@@ -50,9 +47,6 @@ h1, .h1{
     margin-bottom: 1.5rem;
 }
 
-.form-control, .form-select{
-    width: 75%;
-}
 
 .form-check{
     display: flex;

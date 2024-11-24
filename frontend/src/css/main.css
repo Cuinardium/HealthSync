@@ -43,11 +43,6 @@
     align-items: center;
 }
 
-input, textarea {
-    width: 18rem;
-    border: black;
-    border-bottom: 2px solid blue;
-}
 
 .search{
     margin-left: 8px;
@@ -57,9 +52,6 @@ input, textarea {
     display: flex;
 }
 
-.form-control, .form-select{
-    border-bottom: 2px solid blue;
-}
 
 .card-img-top{
     object-fit: cover;

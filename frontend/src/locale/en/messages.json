@@ -487,6 +487,8 @@
     "rememberMe": "Remember Me",
     "submit": "Login",
     "error": "Invalid email or password",
+    "verify": "Account is not verified",
+    "verifyLink": "Resend verification token",
     "haveAccount": "Don\u0027t have an account?",
     "register": "Register here!"
   },

@@ -1,147 +1,145 @@
-import React, { FormEvent, useState } from "react";
+import React, {useState} from "react";
 import {
-  Form,
-  Button,
-  Container,
-  Card,
-  Alert,
-  Row,
-  Col,
+    Form,
+    Button,
+    Container,
+    Alert,
+    Row,
+    Col,
+    ButtonGroup,
 } from "react-bootstrap";
-import { useTranslation } from "react-i18next";
+import {useTranslation} from "react-i18next";
 
-import Header from "../../components/Header";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "../../css/main.css";
 import "../../css/forms.css";
-import { useAuth } from "../../context/AuthContext"
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import {useAuth} from "../../context/AuthContext";
+import {Link, useLocation, useNavigate} from "react-router-dom";
+import {SubmitHandler, useForm} from "react-hook-form";
+import {UserNotVerifiedError} from "../../api/auth/auth";
 
-const patientRegisterUrl = "/patient-register";
+const RESEND_TOKEN_URL = "/resend-token"
+const PATIENT_REGISTER_URL = "/patient-register";
+
+interface LoginForm {
+    email: string,
+    password: string,
+    rememberMe: boolean
+}
 
 const Login = () => {
-  const { t } = useTranslation();
-  const [form, setForm] = useState({
-    email: "",
-    password: "",
-    rememberMe: false,
-  });
-  const [error, setError] = useState(false);
-  const { login } = useAuth();
+    const {t} = useTranslation();
+    const {register, watch, formState: {isSubmitting, errors}, handleSubmit, setError} = useForm<LoginForm>();
+    const [isVerifiedError, setIsVerifiedError] = useState<boolean>();
+    const email = watch("email");
+    const password = watch("password");
+    const {login} = useAuth();
 
     const navigate = useNavigate();
     const location = useLocation();
     const from = location.state?.from?.pathname || "/";
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value, checked, type } = e.target;
-    setForm({
-      ...form,
-      [name]: type === "checkbox" ? checked : value,
-    });
-  };
 
-  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    setError(false);
+    const onSubmit: SubmitHandler<LoginForm> = async (data) => {
 
-    try {
-      // Call login function with provided username and password
-      const {email, password, rememberMe } = form;
-      
-      await login(email, password, rememberMe);
+        try {
+            // Call login function with provided username and password
+            const {email, password, rememberMe} = data;
 
-      navigate(from, { replace: true });
+            await login(email, password, rememberMe);
 
-    } catch (err) {
-      setError(true)
-    }
-  };
-  return (
-    <>
-      <Container className="formContainer">
-        <Row className="formRow">
-          <Col className="formCol">
-            <h1 className="text-center">{t("login.title")}</h1>
-            <Card>
-              <Card.Body>
-                <Form onSubmit={handleSubmit}>
+            navigate(from, {replace: true});
+        } catch (err) {
+            setError('root', {
+                message: "",
+            })
+            const a = err instanceof UserNotVerifiedError
+            console.log(a)
+            setIsVerifiedError(err instanceof UserNotVerifiedError);
+        }
+    };
+    return (
+        <>
+            <Container className="justify-content-center mt-5">
+                <Col md={6} lg={6}>
+                    <h1>{t("login.title")}</h1>
+                    <Form noValidate onSubmit={handleSubmit(onSubmit)}>
+                        <Form.Group className="mb-3" controlId="formEmail">
+                            <Form.Label>{t("form.email")}</Form.Label>
+                            <Form.Control
+                                {...register("email")}
+                                size="lg"
+                                type="email"
+                                name="email"
+                                placeholder={t("form.email_hint")}
+                            />
+                        </Form.Group>
 
-                  <Form.Group className="formRow" controlId="formEmail">
-                    <div className="form-check">
-                      <Form.Label className="label">
-                        {t("form.email")}
-                      </Form.Label>
-                      <Form.Control
-                        className="form-input"
-                        type="text"
-                        name="email"
-                        value={form.email}
-                        onChange={handleChange}
-                        placeholder={t("form.email_hint")}
-                      />
-                    </div>
-                  </Form.Group>
+                        <Form.Group className="mb-3" controlId="formPassword">
+                            <Form.Label>{t("form.password")}</Form.Label>
+                            <Form.Control
+                                {...register("password")}
+                                size="lg"
+                                type="password"
+                                name="password"
+                                placeholder={t("form.password_hint")}
+                            />
+                        </Form.Group>
 
-                  <Form.Group className="formRow" controlId="formPassword">
-                    <div className="form-check">
-                      <Form.Label className="label">
-                        {t("form.password")}
-                      </Form.Label>
-                      <Form.Control
-                        className="form-input"
-                        type="password"
-                        name="password"
-                        value={form.password}
-                        onChange={handleChange}
-                        placeholder={t("form.password_hint")}
-                      />
-                    </div>
-                  </Form.Group>
+                        <Form.Group className="mb-3" controlId="formRememberMe">
+                            <Form.Check
+                                {...register("rememberMe")}
+                                type="checkbox"
+                                name="rememberMe"
+                                label={t("login.rememberMe")}
+                            />
+                        </Form.Group>
 
-                  {error && (
-                    <Alert variant="danger">
-                      <p>{t("login.error")}</p>
-                    </Alert>
-                  )}
+                        {errors.root &&
+                            (<Alert variant="danger" className="text-center">
+                                {
+                                    isVerifiedError ? (
+                                            <Row className="justify-content-center">
+                                                <Col md="auto" lg="auto" className="justify-content-center">
 
-                  <Form.Group className="formRow" controlId="formRememberMe">
-                    <Form.Check
-                      type="checkbox"
-                      name="rememberMe"
-                      checked={form.rememberMe}
-                      onChange={handleChange}
-                      label={t("login.rememberMe")}
-                    />
-                  </Form.Group>
+                                                        {t("login.verify")}
 
+                                                </Col>
+                                                <Col md="auto" lg="auto" className="align-content-center">
+                                                    <Link to={RESEND_TOKEN_URL}>{t("login.verifyLink")}</Link>
+                                                </Col>
+                                            </Row>)
+                                        : t("login.error")
+                                }
 
-                  <div className="d-grid gap-2">
-                    <Button
-                      variant="primary"
-                      type="submit"
-                      className="submitButton"
-                    >
-                      {t("login.submit")}
-                    </Button>
-                  </div>
+                            </Alert>)}
 
-                  <div className="haveAccountRow mt-3 text-center">
-                    <p>
-                      <b>{t("login.haveAccount")}&nbsp;</b>
-                    </p>
-                    <Link to={patientRegisterUrl}>{t("login.register")}</Link>
-                  </div>
-                </Form>
-              </Card.Body>
-            </Card>
-          </Col>
-        </Row>
-      </Container>
-    </>
-  );
+                        <ButtonGroup className="d-flex">
+                            <Button
+                                variant="primary"
+                                type="submit"
+                                className="pt-2 pb-2"
+                                disabled={isSubmitting || !email || !password}
+                            >
+                                {isSubmitting ? t("login.loading") : t("login.submit")}
+                            </Button>
+                        </ButtonGroup>
+
+                        <Row className="mt-3 justify-content-center">
+                            <Col md="auto" lg="auto">
+                                <p>
+                                    <b>{t("login.haveAccount")}&nbsp;</b>
+                                </p>
+                            </Col>
+                            <Col md="auto" lg="auto">
+                                <Link to={PATIENT_REGISTER_URL}>{t("login.register")}</Link>
+                            </Col>
+                        </Row>
+                    </Form>
+                </Col>
+            </Container>
+        </>
+    );
 };
 
 export default Login;
-
-
