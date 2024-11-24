@@ -20,6 +20,7 @@ import {UserNotVerifiedError} from "../../api/auth/auth";
 
 const RESEND_TOKEN_URL = "/resend-token"
 const PATIENT_REGISTER_URL = "/patient-register";
+const DOCTOR_REGISTER_URL = "/doctor-register"
 
 interface LoginForm {
     email: string,
@@ -102,7 +103,7 @@ const Login = () => {
                                             <Row className="justify-content-center">
                                                 <Col md="auto" lg="auto" className="justify-content-center">
 
-                                                        {t("login.verify")}
+                                                    {t("login.verify")}
 
                                                 </Col>
                                                 <Col md="auto" lg="auto" className="align-content-center">
@@ -128,11 +129,18 @@ const Login = () => {
                         <Row className="mt-3 justify-content-center">
                             <Col md="auto" lg="auto">
                                 <p>
-                                    <b>{t("login.haveAccount")}&nbsp;</b>
+                                    <b>{t("login.haveAccount") + " " + t("login.register")}&nbsp;</b>
                                 </p>
                             </Col>
                             <Col md="auto" lg="auto">
-                                <Link to={PATIENT_REGISTER_URL}>{t("login.register")}</Link>
+                                <Row>
+                                    <Col md="auto" lg="auto">
+                                        <Link to={PATIENT_REGISTER_URL}>{t("header.iAmPatient")}</Link>
+                                    </Col>
+                                    <Col md="auto" lg="auto">
+                                        <Link to={DOCTOR_REGISTER_URL}>{t("header.iAmDoctor")}</Link>
+                                    </Col>
+                                </Row>
                             </Col>
                         </Row>
                     </Form>
