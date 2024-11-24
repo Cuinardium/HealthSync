@@ -7,6 +7,7 @@ import { getTokens, renewAccessToken } from "../api/auth/authApi";
 import { AuthContext } from "../context/AuthContext";
 import { queryClient } from "../api/queryClient";
 import { verifyUser } from "../api/token/tokenApi";
+import useLocale from "../hooks/useLocale";
 
 const REFRESH_TOKEN_KEY = "healthsync-refresh-token";
 
@@ -35,6 +36,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [loading, setLoading] = useState<boolean>(() =>
     localStorage.hasOwnProperty(REFRESH_TOKEN_KEY),
   );
+
+  const { clearLocale } = useLocale();
 
   const authenticated = !!accessToken;
 
@@ -70,6 +73,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
     // Invalidate cache of react query
     queryClient.clear();
+
+    clearLocale();
 
     localStorage.removeItem(REFRESH_TOKEN_KEY);
   };
@@ -170,7 +175,16 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   return (
     <AuthContext.Provider
-      value={{ login, logout, verify, accessToken, id, role, authenticated, loading }}
+      value={{
+        login,
+        logout,
+        verify,
+        accessToken,
+        id,
+        role,
+        authenticated,
+        loading,
+      }}
     >
       {children}
     </AuthContext.Provider>

@@ -1,3 +1,4 @@
+import i18next from "i18next";
 import { ReactNode, useEffect, useState } from "react";
 import { Doctor } from "../api/doctor/Doctor";
 import { Patient } from "../api/patient/Patient";
@@ -5,6 +6,7 @@ import { useAuth } from "../context/AuthContext";
 import { UserContext } from "../context/UserContext";
 import { useDoctor } from "../hooks/doctorHooks";
 import { usePatient } from "../hooks/patientHooks";
+import useLocale from "../hooks/useLocale";
 
 interface UserProviderProps {
   children: ReactNode;
@@ -20,6 +22,8 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
   const { data: patientData, isLoading: isLoadingPatient } = usePatient(
     (role === "ROLE_PATIENT" ? id : null) as string
   );
+
+  const { setLocale } = useLocale();
 
   const data =
     authenticated && role === "ROLE_DOCTOR"
@@ -38,6 +42,13 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
       : null;
 
   const loading = authLoading || isLoadingDoctor || isLoadingPatient;
+
+  useEffect(() => {
+    if (user?.locale) {
+      setLocale(user.locale);
+      i18next.changeLanguage(user.locale);
+    }
+  }, [user, setLocale]);
 
   return (
     <UserContext.Provider value={{ user, isDoctor, loading }}>
