@@ -29,12 +29,21 @@ interface AuthProviderProps {
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [accessToken, setAccessToken] = useState<string | null>(null);
   const [refreshToken, setRefreshToken] = useState<string | null>(() =>
-    localStorage.getItem(REFRESH_TOKEN_KEY),
+    {
+      if (localStorage.hasOwnProperty(REFRESH_TOKEN_KEY)) {
+        return localStorage.getItem(REFRESH_TOKEN_KEY);
+      }
+      if (sessionStorage.hasOwnProperty(REFRESH_TOKEN_KEY)) {
+        return sessionStorage.getItem(REFRESH_TOKEN_KEY);
+      }
+      return null;
+    }
   );
+
   const [id, setId] = useState<string | null>(null);
   const [role, setRole] = useState<"ROLE_DOCTOR" | "ROLE_PATIENT" | null>(null);
   const [loading, setLoading] = useState<boolean>(() =>
-    localStorage.hasOwnProperty(REFRESH_TOKEN_KEY),
+    localStorage.hasOwnProperty(REFRESH_TOKEN_KEY) || sessionStorage.hasOwnProperty(REFRESH_TOKEN_KEY),
   );
 
   const { clearLocale } = useLocale();
@@ -42,7 +51,11 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const authenticated = !!accessToken;
 
   // Log in and load tokens
-  const login = async (email: string, password: string): Promise<void> => {
+  const login = async (
+    email: string,
+    password: string,
+    persistLogin: boolean,
+  ): Promise<void> => {
     const credentials = await getTokens(email, password);
 
     setLoading(true);
@@ -50,7 +63,11 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     setAccessToken(credentials.accessToken);
     setRefreshToken(credentials.refreshToken);
 
-    localStorage.setItem(REFRESH_TOKEN_KEY, credentials.refreshToken);
+    if (persistLogin) {
+      localStorage.setItem(REFRESH_TOKEN_KEY, credentials.refreshToken);
+    }
+
+    sessionStorage.setItem(REFRESH_TOKEN_KEY, credentials.refreshToken);
   };
 
   const verify = async (email: string, token: string): Promise<void> => {
@@ -62,6 +79,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     setRefreshToken(credentials.refreshToken);
 
     localStorage.setItem(REFRESH_TOKEN_KEY, credentials.refreshToken);
+    sessionStorage.setItem(REFRESH_TOKEN_KEY, credentials.refreshToken);
   };
 
   // Log out and clear tokens
@@ -77,6 +95,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     clearLocale();
 
     localStorage.removeItem(REFRESH_TOKEN_KEY);
+    sessionStorage.removeItem(REFRESH_TOKEN_KEY);
   };
 
   // Function to refresh the access token

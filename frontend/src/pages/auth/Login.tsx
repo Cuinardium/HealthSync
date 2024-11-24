@@ -47,9 +47,9 @@ const Login = () => {
 
     try {
       // Call login function with provided username and password
-      const email = form.email;
-      const password = form.password;
-      await login(email, password);
+      const {email, password, rememberMe } = form;
+      
+      await login(email, password, rememberMe);
 
       navigate(from, { replace: true });
 

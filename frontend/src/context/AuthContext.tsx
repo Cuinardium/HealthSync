@@ -2,7 +2,7 @@ import { createContext, useContext } from "react";
 
 // Define types for AuthContext
 interface AuthContextType {
-  login: (email: string, password: string) => Promise<void>;
+  login: (email: string, password: string, persistLogin: boolean) => Promise<void>;
   logout: () => void;
   verify: (email: string, token: string) => Promise<void>;
   accessToken: string | null;
