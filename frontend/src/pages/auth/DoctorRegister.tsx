@@ -40,16 +40,15 @@ const DoctorRegister = () => {
   const {
     register,
     handleSubmit,
-    formState: { errors },
+    formState: { isSubmitting, errors },
     setError,
     control,
   } = useForm<DoctorRegisterForm>();
 
-  const {
-    data: specialties,
-    isLoading,
-    isError,
-  } = useSpecialties({ sort: "standard", order: "asc" });
+  const { data: specialties } = useSpecialties({
+    sort: "standard",
+    order: "asc",
+  });
   const { data: healthInsurances } = useHealthInsurances();
 
   const onSuccess = () => {
@@ -84,7 +83,7 @@ const DoctorRegister = () => {
 
   return (
     <>
-      <Container className="justify-content-center mt-5">
+      <Container className="justify-content-center mt-3">
         <Col md={8} lg={8}>
           <h1>{t("registerMedic.title")}</h1>
           <h5 className="text-muted mb-4 mt-4">
@@ -252,19 +251,13 @@ const DoctorRegister = () => {
                     isInvalid={!!errors.specialty}
                   >
                     <option key="hint">{t("form.specialization_hint")}</option>
-                    {isLoading ? (
-                      <option>{t("form.loading")}</option>
-                    ) : isError ? (
-                      <option>{t("form.error_loading_specialties")}</option>
-                    ) : (
-                      specialties?.map((specialty) => (
-                        <option key={specialty.code} value={specialty.code}>
-                          {t(
-                            `specialty.${specialty.code.replace(/_/g, ".").toLowerCase()}`,
-                          )}
-                        </option>
-                      ))
-                    )}
+                    {specialties?.map((specialty) => (
+                      <option key={specialty.code} value={specialty.code}>
+                        {t(
+                          `specialty.${specialty.code.replace(/_/g, ".").toLowerCase()}`,
+                        )}
+                      </option>
+                    ))}
                   </Form.Select>
                   <Form.Control.Feedback type="invalid">
                     {errors.specialty && t(errors.specialty.message ?? "")}
@@ -288,8 +281,13 @@ const DoctorRegister = () => {
             )}
 
             <ButtonGroup className="d-flex mt-4">
-              <Button variant="primary" type="submit" className="submitButton">
-                {t("register.submit")}
+              <Button
+                variant="primary"
+                type="submit"
+                className="submitButton"
+                disabled={isSubmitting}
+              >
+                {isSubmitting ? t("register.loading") : t("register.submit")}
               </Button>
             </ButtonGroup>
           </Form>

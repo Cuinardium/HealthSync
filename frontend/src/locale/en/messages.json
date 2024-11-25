@@ -58,6 +58,7 @@
   "register": {
     "title": "Sign Up",
     "submit": "Sign Up",
+    "loading": "Signing up...",
     "emailInUse": "Email is already in use",
     "error": "An error occurred",
     "haveAccount": "Already have an account?",

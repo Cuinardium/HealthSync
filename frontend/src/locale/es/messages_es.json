@@ -58,6 +58,7 @@
   "register": {
     "title": "Registrarse",
     "submit": "Registrarse",
+    "loading": "Registrando...",
     "emailInUse": "El email ya esta en uso",
     "error": "Hubo un error al registrarse",
     "haveAccount": "¿Ya tienes una cuenta?",

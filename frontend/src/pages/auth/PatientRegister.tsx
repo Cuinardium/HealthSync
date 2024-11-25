@@ -35,7 +35,7 @@ const PatientRegister = () => {
   const {
     register,
     handleSubmit,
-    formState: { errors },
+    formState: { isSubmitting, errors },
     setError,
   } = useForm<PatientRegisterForm>();
 
@@ -217,8 +217,8 @@ const PatientRegister = () => {
             )}
 
             <ButtonGroup className="d-flex mt-4">
-              <Button variant="primary" type="submit" className="submitButton">
-                {t("register.submit")}
+              <Button variant="primary" type="submit" className="submitButton" disabled={isSubmitting}>
+                {isSubmitting ? t("register.loading") : t("register.submit")}
               </Button>
             </ButtonGroup>
           </Form>
