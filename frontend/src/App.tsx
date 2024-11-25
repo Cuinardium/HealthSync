@@ -65,7 +65,7 @@ function App() {
                     <Route
                       path="/patient-register"
                       element={
-                        <PatientRegister hasError={false} error={false} />
+                        <PatientRegister />
                       }
                     />
                     <Route path="/login" element={<Login />} />

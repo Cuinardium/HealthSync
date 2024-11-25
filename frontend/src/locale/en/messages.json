@@ -58,17 +58,10 @@
   "register": {
     "title": "Sign Up",
     "submit": "Sign Up",
-    "emailInUse": {
-      "error": "Email is already in use"
-    },
-    "modal": {
-      "title": "Register Successful",
-      "text": [
-        "You have been successfully registered",
-        "check your email to verify your account and start using HealthSync"
-      ],
-      "button": "Go to login page"
-    }
+    "emailInUse": "Email is already in use",
+    "error": "An error occurred",
+    "haveAccount": "Already have an account?",
+    "login": "Login here!"
   },
   "renewToken": {
     "title": "Renew Token",
@@ -99,7 +92,8 @@
     }
   },
   "registerPatient": {
-    "title": "Patient Sign-Up"
+    "title": "Patient Sign-Up",
+    "description": "You will be able to book and manage appointments with doctors, as well as receive indications."
   },
   "registerMedic": {
     "title": "Doctor Sign-Up",
@@ -153,129 +147,6 @@
     "deleteDescription": "Are you sure you want to cancel this vacation?",
     "deleteDeny": "No",
     "deleteConfirm": "Yes"
-  },
-  "ValidateImage": {
-    "patientEditForm": {
-      "image": "Image file must be a png/jpg/jpeg no bigger than 8Mb"
-    },
-    "doctorEditForm": {
-      "image": "Image file must be a png/jpg/jpeg no bigger than 8Mb"
-    }
-  },
-  "Pattern": {
-    "appointmentForm": {
-      "name": "Names can only contain letters",
-      "lastname": "Last names can only contain letters",
-      "email": "Invalid email",
-      "healthcare": "Health insurance companies can only contain letters"
-    },
-    "doctorRegisterForm": {
-      "name": "Names can only contain letters",
-      "lastname": "Last names can only contain letters",
-      "email": "Invalid email",
-      "healthcare": "Health insurance companies can only contain letters",
-      "password": "Password can only contain letters and numbers",
-      "confirmPassword": "Password can only contain letters and numbers",
-      "city": "City can only contain letters",
-      "address": "Address can only contain letters and numbers",
-      "specialization": "Specialization can only contain letters"
-    },
-    "doctorEditForm": {
-      "name": "Names can only contain letters",
-      "lastname": "Last names can only contain letters",
-      "email": "Invalid email",
-      "healthcare": "Health insurance companies can only contain letters",
-      "city": "City can only contain letters",
-      "address": "Address can only contain letters and numbers",
-      "specialization": "Specialization can only contain letters"
-    },
-    "patientRegisterForm": {
-      "name": "Names can only contain letters",
-      "lastname": "Last names can only contain letters",
-      "email": "Invalid email",
-      "healthcare": "Health insurance companies can only contain letters",
-      "password": "Password can only contain letters and numbers",
-      "confirmPassword": "Password can only contain letters and numbers"
-    },
-    "patientEditForm": {
-      "name": "Names can only contain letters",
-      "lastname": "Last names can only contain letters",
-      "email": "Invalid email",
-      "healthcare": "Health insurance companies can only contain letters"
-    },
-    "changePasswordForm": {
-      "oldPassword": "Password can only contain letters and numbers",
-      "password": "Password can only contain letters and numbers",
-      "confirmPassword": "Password can only contain letters and numbers"
-    }
-  },
-  "Size": {
-    "changePasswordForm": {
-      "oldPassword": "Password must have at least {2} characters",
-      "password": "Password must have at least {2} characters",
-      "confirmPassword": "Password must have at least {2} characters"
-    },
-    "appointmentForm": {
-      "name": "Name field cant be empty",
-      "lastname": "Last name field cant be empty",
-      "email": "Email field cant be empty",
-      "healthcare": "Health insurance field cant be empty",
-      "desc": "The description must be between {2} and {1} characters"
-    },
-    "doctorRegisterForm": {
-      "name": "Name field cant be empty",
-      "lastname": "Last name field cant be empty",
-      "email": "Email field cant be empty",
-      "healthcare": "Health insurance field cant be empty",
-      "password": "Password must have at least {2} characters",
-      "confirmPassword": "Password must have at least {2} characters",
-      "city": "City cant be empty",
-      "address": "Address cant be empty",
-      "specialization": "Specialization cant be empty"
-    },
-    "doctorEditForm": {
-      "name": "Name field cant be empty",
-      "lastname": "Last name field cant be empty",
-      "email": "Email field cant be empty",
-      "healthcare": "Health insurance field cant be empty",
-      "city": "City cant be empty",
-      "address": "Address cant be empty",
-      "specialization": "Specialization cant be empty"
-    },
-    "patientRegisterForm": {
-      "name": "Name field cant be empty",
-      "lastname": "Last name field cant be empty",
-      "email": "Email field cant be empty",
-      "healthcare": "Health insurance field cant be empty",
-      "password": "Password must have at least {2} characters",
-      "confirmPassword": "Password must have at least {2} characters"
-    },
-    "patientEditForm": {
-      "name": "Name field cant be empty",
-      "lastname": "Last name field cant be empty",
-      "email": "Email field cant be empty",
-      "healthcare": "Health insurance field cant be empty"
-    }
-  },
-  "NotEmpty": {
-    "doctorEditForm": {
-      "healthInsuranceCodes": "You must select at least one health insurance company"
-    },
-    "doctorRegisterForm": {
-      "healthInsuranceCodes": "You must select at least one health insurance company"
-    }
-  },
-  "ExistsInEnum": {
-    "patientRegisterForm": {
-      "healthInsuranceCode": "You must select one health insurance"
-    },
-    "doctorRegisterForm": {
-      "specialtyCode": "You must select one specialty",
-      "cityCode": "You must select one city"
-    }
-  },
-  "PasswordsMatch": {
-    "changePasswordForm": "The passwords must be equal"
   },
   "appointmentSent": {
     "title": "Appointment Sent",
@@ -756,5 +627,35 @@
     "appointmentNotFound": "Appointment not found",
     "appointmentForbidden": "Yoy are not allowed to access this appointment",
     "reviewForbidden": "You must have an appointment with this doctor to review him"
+  },
+  "validation": {
+    "name": {
+      "required": "Name is required.",
+      "size": "Name must be between 1 and 50 characters.",
+      "pattern": "Name can only contain letters, spaces, and accented characters."
+    },
+    "lastname": {
+      "required": "Lastname is required.",
+      "size": "Lastname must be between 1 and 50 characters.",
+      "pattern": "Lastname can only contain letters, spaces, and accented characters."
+    },
+    "email": {
+      "required": "Email is required.",
+      "size": "Email must be between 1 and 50 characters.",
+      "pattern": "Email must be in a valid format (e.g., example@domain.com)."
+    },
+    "password": {
+      "required": "Password is required.",
+      "size": "Password must be between 4 and 50 characters.",
+      "pattern": "Password can only contain alphanumeric characters."
+    },
+    "confirmPassword": {
+      "required": "Confirm password is required.",
+      "match": "Passwords must match."
+    },
+    "healthInsurance": {
+      "required": "Health insurance is required.",
+      "invalid": "Invalid health insurance type. Please choose a valid option."
+    }
   }
 }
