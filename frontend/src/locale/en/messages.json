@@ -484,6 +484,7 @@
   },
   "login": {
     "title": "Login",
+    "welcome": "Welcome back!",
     "rememberMe": "Remember Me",
     "submit": "Login",
     "loading": "Logging in...",

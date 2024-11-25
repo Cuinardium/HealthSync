@@ -479,6 +479,7 @@
   },
   "login": {
     "title": "Iniciar Sesión",
+    "welcome": "¡Bienvenido de vuelta!",
     "rememberMe": "Recordarme",
     "submit": "Iniciar Sesión",
     "loading": "Iniciando Sesión...",

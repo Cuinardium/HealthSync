@@ -68,96 +68,91 @@ const Login = () => {
       <Container className="justify-content-center mt-5">
         <Col md={6} lg={6}>
           <h1>{t("login.title")}</h1>
-            <Form noValidate onSubmit={handleSubmit(onSubmit)}>
-              <Form.Group className="mb-3" controlId="formEmail">
-                <Form.Label>{t("form.email")}</Form.Label>
-                <Form.Control
-                  {...register("email")}
-                  size="lg"
-                  type="email"
-                  name="email"
-                  placeholder={t("form.email_hint")}
-                />
-              </Form.Group>
+          <h5 className="text-muted mb-4">{t("login.welcome")}</h5>
+          <Form noValidate onSubmit={handleSubmit(onSubmit)}>
+            <Form.Group className="mb-3" controlId="formEmail">
+              <Form.Label>{t("form.email")}</Form.Label>
+              <Form.Control
+                {...register("email")}
+                size="lg"
+                type="email"
+                name="email"
+                placeholder={t("form.email_hint")}
+              />
+            </Form.Group>
 
-              <Form.Group className="mb-3" controlId="formPassword">
-                <Form.Label>{t("form.password")}</Form.Label>
-                <Form.Control
-                  {...register("password")}
-                  size="lg"
-                  type="password"
-                  name="password"
-                  placeholder={t("form.password_hint")}
-                />
-              </Form.Group>
+            <Form.Group className="mb-3" controlId="formPassword">
+              <Form.Label>{t("form.password")}</Form.Label>
+              <Form.Control
+                {...register("password")}
+                size="lg"
+                type="password"
+                name="password"
+                placeholder={t("form.password_hint")}
+              />
+            </Form.Group>
 
-              <Form.Group className="mb-3" controlId="formRememberMe">
-                <Form.Check
-                  {...register("rememberMe")}
-                  type="checkbox"
-                  name="rememberMe"
-                  label={t("login.rememberMe")}
-                />
-              </Form.Group>
+            <Form.Group className="mb-3" controlId="formRememberMe">
+              <Form.Check
+                {...register("rememberMe")}
+                type="checkbox"
+                name="rememberMe"
+                label={t("login.rememberMe")}
+              />
+            </Form.Group>
 
-              {errors.root && (
-                <Alert variant="danger" className="text-center">
-                  {isVerifiedError ? (
-                    <Row className="justify-content-center">
-                      <Col
-                        md="auto"
-                        lg="auto"
-                        className="justify-content-center"
-                      >
-                        {t("login.verify")}
-                      </Col>
-                      <Col md="auto" lg="auto" className="align-content-center">
-                        <Link to={RESEND_TOKEN_URL}>
-                          {t("login.verifyLink")}
-                        </Link>
-                      </Col>
-                    </Row>
-                  ) : (
-                    t("login.error")
-                  )}
-                </Alert>
-              )}
-
-              <ButtonGroup className="d-flex">
-                <Button
-                  variant="primary"
-                  type="submit"
-                  className="pt-2 pb-2"
-                  disabled={isSubmitting || !email || !password}
-                >
-                  {isSubmitting ? t("login.loading") : t("login.submit")}
-                </Button>
-              </ButtonGroup>
-
-              <Row className="mt-3 justify-content-center">
-                <Col md="auto" lg="auto">
-                  <p>
-                    <b>
-                      {t("login.haveAccount") + " " + t("login.register")}&nbsp;
-                    </b>
-                  </p>
-                </Col>
-                <Col md="auto" lg="auto">
-                  <Row>
-                    <Col md="auto" lg="auto">
-                      <Link to={PATIENT_REGISTER_URL}>
-                        {t("header.iAmPatient")}
-                      </Link>
+            {errors.root && (
+              <Alert variant="danger" className="text-center">
+                {isVerifiedError ? (
+                  <Row className="justify-content-center">
+                    <Col md="auto" lg="auto" className="justify-content-center">
+                      {t("login.verify")}
                     </Col>
-                    <Col md="auto" lg="auto">
-                      <Link to={DOCTOR_REGISTER_URL}>
-                        {t("header.iAmDoctor")}
-                      </Link>
+                    <Col md="auto" lg="auto" className="align-content-center">
+                      <Link to={RESEND_TOKEN_URL}>{t("login.verifyLink")}</Link>
                     </Col>
                   </Row>
-                </Col>
-              </Row>
-            </Form>
+                ) : (
+                  t("login.error")
+                )}
+              </Alert>
+            )}
+
+            <ButtonGroup className="d-flex">
+              <Button
+                variant="primary"
+                type="submit"
+                className="pt-2 pb-2"
+                disabled={isSubmitting || !email || !password}
+              >
+                {isSubmitting ? t("login.loading") : t("login.submit")}
+              </Button>
+            </ButtonGroup>
+
+            <Row className="mt-3 justify-content-center">
+              <Col md="auto" lg="auto">
+                <p>
+                  <b>
+                    {t("login.haveAccount") + " " + t("login.register")}&nbsp;
+                  </b>
+                </p>
+              </Col>
+              <Col md="auto" lg="auto">
+                <Row>
+                  <Col md="auto" lg="auto">
+                    <Link to={PATIENT_REGISTER_URL}>
+                      {t("header.iAmPatient")}
+                    </Link>
+                  </Col>
+                  <Col md="auto" lg="auto">
+                    <Link to={DOCTOR_REGISTER_URL}>
+                      {t("header.iAmDoctor")}
+                    </Link>
+                  </Col>
+                </Row>
+              </Col>
+            </Row>
+          </Form>
         </Col>
       </Container>
     </>
