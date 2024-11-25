@@ -1,9 +1,8 @@
-import React, { FormEvent, useState } from "react";
+import React from "react";
 import {
   Form,
   Button,
   Container,
-  Card,
   Alert,
   Row,
   Col,
@@ -29,8 +28,6 @@ import {
   validatePassword,
 } from "../../api/validation/validations";
 
-const patientRegisterUrl = "/patient-register";
-
 const PatientRegister = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
@@ -40,7 +37,6 @@ const PatientRegister = () => {
     handleSubmit,
     formState: { errors },
     setError,
-    getValues,
   } = useForm<PatientRegisterForm>();
 
   const { data: healthInsurances } = useHealthInsurances();

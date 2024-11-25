@@ -77,7 +77,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
       case "/register-successful":
         return "register_success.header";
       case "/doctor-register":
-        return "registerDoctor.title";
+        return "registerMedic.title";
       case "/patient-register":
         return "registerPatient.title";
       case "/doctor-profile":

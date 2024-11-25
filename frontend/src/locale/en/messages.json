@@ -97,7 +97,7 @@
   },
   "registerMedic": {
     "title": "Doctor Sign-Up",
-    "submit": "Register"
+    "description": "You will be able to manage your appointments, vacations, and patients."
   },
   "profile": {
     "doctor": "Doctor",
@@ -504,7 +504,7 @@
     "clinical": {
       "pharmacology": "CLINICAL PHARMACOLOGY"
     },
-    "physiatria": "PHYSIATRY (PHYSICAL MEDICINE AND REHABILITATION)",
+    "physiatry": "PHYSIATRY (PHYSICAL MEDICINE AND REHABILITATION)",
     "gastroenterology": "GASTROENTEROLOGY",
     "geriatrics": "GERIATRICS",
     "gynecology": "GYNECOLOGY",
@@ -655,7 +655,25 @@
     },
     "healthInsurance": {
       "required": "Health insurance is required.",
-      "invalid": "Invalid health insurance type. Please choose a valid option."
+      "invalid": "Invalid health insurance. Please choose a valid option."
+    },
+    "healthInsurances": {
+      "required": "At least one health insurance must be selected.",
+      "invalid": "Invalid health insurance selected."
+    },
+    "city": {
+      "required": "City is required.",
+      "invalidLength": "City must be between 1 and 20 characters long.",
+      "invalidFormat": "City can only contain letters, numbers, spaces, and dots."
+    },
+    "address": {
+      "required": "Address is required.",
+      "invalidLength": "Address must be between 1 and 100 characters long.",
+      "invalidFormat": "Address can only contain letters, numbers, spaces, and dots."
+    },
+    "specialty": {
+      "required": "Specialty is required.",
+      "invalid": "Invalid specialty selected."
     }
   }
 }

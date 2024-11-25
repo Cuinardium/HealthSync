@@ -1,4 +1,5 @@
 import { HealthInsurance } from "../health-insurance/HealthInsurance";
+import {Specialty} from "../specialty/Specialty";
 
 export function validateName(name: string | null): string | boolean {
   const validationMessages = {
@@ -86,6 +87,60 @@ export function validateHealthInsurance(
   }
   if (!healthInsurances?.some((hi) => hi.code === healthInsurance)) {
     return "validation.healthInsurance.invalid";
+  }
+  return true;
+}
+
+export function validateHealthInsurances(
+  healthInsurancesField: string[] | null,
+  healthInsurances: HealthInsurance[] | undefined,
+): string | true {
+  if (!healthInsurancesField || healthInsurancesField.length === 0) {
+    return "validation.healthInsurances.required";
+  }
+  for (const insurance of healthInsurancesField) {
+    if (!healthInsurances?.some((hi) => hi.code === insurance)) {
+      return "validation.healthInsurances.invalid";
+    }
+  }
+  return true;
+}
+
+
+export function validateCity(city: string | null): string | true {
+  if (!city || city.trim() === "") {
+    return "validation.city.required";
+  }
+  if (city.length < 1 || city.length > 20) {
+    return "validation.city.invalidLength";
+  }
+  if (!/^[a-zA-Z0-9. ñÑáÁéÉíÍóÓúÚ]+$/.test(city)) {
+    return "validation.city.invalidFormat";
+  }
+  return true;
+}
+
+
+export function validateAddress(address: string | null): string | true {
+  if (!address || address.trim() === "") {
+    return "validation.address.required";
+  }
+  if (address.length < 1 || address.length > 100) {
+    return "validation.address.invalidLength";
+  }
+  if (!/^[a-zA-Z0-9. ñÑáÁéÉíÍóÓúÚ]+$/.test(address)) {
+    return "validation.address.invalidFormat";
+  }
+  return true;
+}
+
+
+export function validateSpecialty(specialty: string | null, specialties: Specialty[] | undefined): string | true {
+  if (!specialty || specialty.trim() === "") {
+    return "validation.specialty.required";
+  }
+  if (!specialties?.some((sp) => sp.code === specialty)) {
+    return "validation.specialty.invalid";
   }
   return true;
 }

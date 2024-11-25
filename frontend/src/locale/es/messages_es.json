@@ -97,15 +97,15 @@
   },
   "registerMedic": {
     "title": "Registrar Médico",
-    "submit": "Registrarse"
+    "description": "Podrás manejar tus turnos y pacientes de manera eficiente, además de poder recibir reseñas y dar indicaciones a tus pacientes."
   },
   "profile": {
     "doctor": "Médico",
     "patient": "Paciente",
     "profile": "Perfil",
-    "personalInfo": "Informaci\u0026#243n Personal",
-    "location": "Ubicaci\u0026#243n",
-    "workInfo": "Informaci\u0026#243n Laboral",
+    "personalInfo": "Información Personal",
+    "location": "Ubicación",
+    "workInfo": "Información Laboral",
     "schedule": "Horarios",
     "edit": {
       "title": "Editar Perfil",
@@ -501,7 +501,7 @@
     "clinical": {
       "pharmacology": "FARMACOLOGÍA CLÍNICA"
     },
-    "physiatria": "FISIATRÍA (MEDICINA FÍSICA Y REHABILITACIÓN)",
+    "physiatry": "FISIATRÍA (MEDICINA FÍSICA Y REHABILITACIÓN)",
     "gastroenterology": "GASTROENTEROLOGÍA",
     "geriatrics": "GERIATRÍA",
     "gynecology": "GINECOLOGÍA",
@@ -653,6 +653,24 @@
     "healthInsurance": {
       "required": "La obra social es obligatoria.",
       "invalid": "Obra social inválida. Por favor, elija una opción válida."
+    },
+    "healthInsurances": {
+      "required": "Debe seleccionar al menos una obra social.",
+      "invalid": "Obra social seleccionada inválida."
+    },
+    "city": {
+      "required": "La ciudad es obligatoria.",
+      "invalidLength": "La ciudad debe tener entre 1 y 20 caracteres.",
+      "invalidFormat": "La ciudad solo puede contener letras, números, espacios y puntos."
+    },
+    "address": {
+      "required": "La dirección es obligatoria.",
+      "invalidLength": "La dirección debe tener entre 1 y 100 caracteres.",
+      "invalidFormat": "La dirección solo puede contener letras, números, espacios y puntos."
+    },
+    "specialty": {
+      "required": "La especialidad es obligatoria.",
+      "invalid": "La especialidad seleccionada no es válida."
     }
   }
 }

@@ -59,7 +59,7 @@ function App() {
                     <Route
                       path="/doctor-register"
                       element={
-                        <DoctorRegister hasError={false} error={false} />
+                        <DoctorRegister />
                       }
                     />
                     <Route
