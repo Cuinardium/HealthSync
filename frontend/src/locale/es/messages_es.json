@@ -484,9 +484,23 @@
     "loading": "Iniciando Sesión...",
     "error": "Email o contraseña invalidos",
     "verify": "Cuenta no verificada",
-    "verifyLink": "Reenviar token de verificación",
+    "verifyLink": "Reenviar mail de verificación",
     "haveAccount": "¿No tiene una cuenta?",
     "register": "¡Registrese aqui!"
+  },
+  "resend": {
+    "header": "Reenviar Verificación",
+    "title": "Reenviar Correo de Verificación",
+    "description": "Por favor, ingrese la dirección de correo electrónico asociada con tu cuenta. Te enviaremos un nuevo enlace de verificación en breve.",
+    "success": "Se ha enviado un nuevo correo de verificación. Por favor, revisa tu bandeja de entrada.",
+    "error": "Es posible que el correo no exista o que la cuenta ya esté verificada.",
+    "button": "Reenviar Correo",
+    "submitting": "Reenviando correo...",
+    "modal": {
+      "title": "Token Expirado",
+      "body": "Su token es inválido o ha expirado. Puede reenviar el correo de verificación desde esta página.",
+      "close_button": "Cerrar"
+    }
   },
   "editProfile": {
     "title": "Editar Perfil"

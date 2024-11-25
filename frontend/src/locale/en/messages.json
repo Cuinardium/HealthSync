@@ -486,11 +486,26 @@
     "title": "Login",
     "rememberMe": "Remember Me",
     "submit": "Login",
+    "loading": "Logging in...",
     "error": "Invalid email or password",
     "verify": "Account is not verified",
-    "verifyLink": "Resend verification token",
+    "verifyLink": "Resend verification mail",
     "haveAccount": "Don\u0027t have an account?",
     "register": "Register here!"
+  },
+  "resend": {
+    "header": "Resend Verification",
+    "title": "Resend Verification Email",
+    "description": "Please enter the email address associated with your account. We’ll send you a new verification link shortly.",
+    "success": "A new verification email has been sent. Please check your inbox.",
+    "error": "The email may not exist or the account is already verified.",
+    "button": "Resend Email",
+    "submitting": "Sending email...",
+    "modal": {
+      "title": "Token Expired",
+      "body": "Your token is invalid or has expired. You can resend the verification email from this page.",
+      "close_button": "Close"
+    }
   },
   "editProfile": {
     "title": "Edit Profile"

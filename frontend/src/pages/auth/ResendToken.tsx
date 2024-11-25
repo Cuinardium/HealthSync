@@ -1,51 +1,102 @@
-import { AxiosError } from "axios";
 import { t } from "i18next";
-import { useState } from "react";
-import { Button, Card, Container, Form } from "react-bootstrap";
+import {
+  Alert,
+  Button,
+  ButtonGroup,
+  Col,
+  Container,
+  FloatingLabel,
+  Form,
+  Modal,
+} from "react-bootstrap";
 import { resendVerificationToken } from "../../api/token/tokenApi";
 
-const ResendToken = () => {
-  const [email, setEmail] = useState<string>("");
+import "../../css/main.css";
+import "../../css/forms.css";
+import { SubmitHandler, useForm } from "react-hook-form";
+import { useTranslation } from "react-i18next";
+import React, { useEffect, useState } from "react";
+import { useLocation } from "react-router-dom";
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
+interface MailForm {
+  email: string;
+}
+
+const ResendToken = () => {
+  const { t } = useTranslation();
+  const location = useLocation();
+  const verificationError = location.state?.verificationError ?? false;
+  const [showModal, setShowModal] = useState<boolean>(verificationError);
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting, isSubmitSuccessful },
+    watch,
+    setError,
+  } = useForm<MailForm>();
+
+  const email = watch("email");
+
+  const onSubmit: SubmitHandler<MailForm> = async (data: MailForm) => {
     try {
-      await resendVerificationToken(email);
-      alert("verfication to email sent");
+      await resendVerificationToken(data.email);
     } catch (error) {
-      if (error instanceof AxiosError) {
-        const body = JSON.stringify(error.response?.data);
-        alert(`Error: ${body}`);
-      }
+      setError("root", {
+        message: t("resend.error"),
+      });
     }
   };
 
   return (
-    <Container>
-      <h1>Resend Token</h1>
-      <Card>
-        <Card.Body>
-          <Form onSubmit={handleSubmit}>
-            <Form.Group className="formRow" controlId="formEmail">
-              <div className="form-check">
-                <Form.Label className="label">{t("form.email")}</Form.Label>
-                <Form.Control
-                  className="form-input"
-                  type="text"
-                  name="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder={t("form.email_hint")}
-                />
-              </div>
-            </Form.Group>
+    <Container className="justify-content-center mt-5">
+      <Modal show={showModal} onHide={() => setShowModal(false)}>
+        <Modal.Header closeButton onHide={() => setShowModal(false)}>
+          <Modal.Title>{t("resend.modal.title")}</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Alert variant="danger">{t("resend.modal.body")}</Alert>
+        </Modal.Body>
+      </Modal>
 
-            <Button variant="primary" type="submit">
-              Resend token
+      <Col md={6} lg={6} className="align-items-center">
+        <h1>{t("resend.title")}</h1>
+        <h5 className="text-muted">{t("resend.description")}</h5>
+        <Form noValidate onSubmit={handleSubmit(onSubmit)}>
+          <Form.Group className="mt-4 mb-3" controlId="formEmail">
+            <FloatingLabel label={t("form.email")}>
+              <Form.Control
+                {...register("email")}
+                type="text"
+                name="email"
+                placeholder={t("form.email_hint")}
+              />
+            </FloatingLabel>
+          </Form.Group>
+
+          {isSubmitSuccessful && (
+            <Alert variant="primary" dismissible className="text-center">
+              {t("resend.success")}
+            </Alert>
+          )}
+
+          {errors.root && (
+            <Alert variant="danger" className="text-center">
+              {errors.root.message}
+            </Alert>
+          )}
+
+          <ButtonGroup className="d-flex">
+            <Button
+              variant="primary"
+              type="submit"
+              className="pt-2 pb-2"
+              disabled={isSubmitting || !email}
+            >
+              {isSubmitting ? t("resend.submitting") : t("resend.button")}
             </Button>
-          </Form>
-        </Card.Body>
-      </Card>
+          </ButtonGroup>
+        </Form>
+      </Col>
     </Container>
   );
 };

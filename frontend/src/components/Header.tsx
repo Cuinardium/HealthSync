@@ -36,16 +36,16 @@ interface HeaderProps {
   user: Doctor | Patient | null;
   hasNotifications: boolean | null;
   isDoctor: boolean | null;
-  isLogin: boolean;
-  isRegister: boolean;
+  showCheckDoctor: boolean;
+  showAuth: boolean;
 }
 
 const Header: React.FC<HeaderProps> = ({
   user,
   hasNotifications,
   isDoctor,
-  isLogin,
-  isRegister,
+  showCheckDoctor,
+  showAuth,
 }) => {
   const { t } = useTranslation();
   const { logout } = useAuth();
@@ -70,7 +70,7 @@ const Header: React.FC<HeaderProps> = ({
           <div className="sync title">Sync</div>
         </Link>
         <div className="buttons">
-          {!isLogin && !isRegister && (
+          {showCheckDoctor && (
             <Link to={dashboardUrl} className="headerLink">
               {t("home.checkDoctor")}
               <FaUserDoctor />
@@ -157,7 +157,7 @@ const Header: React.FC<HeaderProps> = ({
           </nav>
         ) : (
           <div>
-            {!isLogin && !isRegister && (
+            {showAuth && (
               <div className="buttons">
                 <Link to={loginUrl} className="btn btn-primary" role="button">
                   {t("login.title")}

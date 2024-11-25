@@ -14,6 +14,8 @@ interface LayoutProps {
 const Layout: React.FC<LayoutProps> = ({ children }) => {
   const location = useLocation();
   const [showHeader, setShowHeader] = useState(true);
+  const [showCheckDoctor, setShowCheckDoctor] = useState(true);
+  const [showAuth, setShowAuth] = useState(true);
   const [title, setTitle] = useState("home.home");
   const { t } = useTranslation();
 
@@ -24,14 +26,42 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
   const shouldShowHeader = useCallback(() => {
     return (
       location.pathname !== "/register-successful" &&
-      location.pathname !== "/verify" &&
-      location.pathname !== "/resend-token"
+      location.pathname !== "/verify"
+    );
+  }, [location.pathname]);
+
+  const shouldShowCheckDoctor = useCallback(() => {
+    return (
+      location.pathname !== "/login" &&
+      location.pathname !== "/patient-register" &&
+      location.pathname !== "/doctor-register" &&
+      location.pathname !== "/resend-token" &&
+      location.pathname !== "/register-successful" &&
+      location.pathname !== "/verify"
+    );
+  }, [location.pathname]);
+
+  const shouldShowAuth = useCallback(() => {
+    return (
+      location.pathname !== "/login" &&
+      location.pathname !== "/patient-register" &&
+      location.pathname !== "/doctor-register" &&
+      location.pathname !== "/register-successful" &&
+      location.pathname !== "/verify"
     );
   }, [location.pathname]);
 
   useEffect(() => {
     setShowHeader(shouldShowHeader());
   }, [shouldShowHeader]);
+
+  useEffect(() => {
+    setShowCheckDoctor(shouldShowCheckDoctor());
+  }, [shouldShowCheckDoctor]);
+
+  useEffect(() => {
+    setShowAuth(shouldShowAuth());
+  }, [shouldShowAuth]);
 
   const getTitle = useCallback(() => {
     if (location.pathname.includes("/detailed-doctor")) {
@@ -45,6 +75,8 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
     switch (location.pathname) {
       case "/login":
         return "login.title";
+      case "/resend-token":
+        return "resend.header";
       case "/doctor-register":
         return "register.title";
       case "/patient-register":
@@ -98,11 +130,8 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
           hasNotifications={
             !isLoading && !!notifications && notifications.length > 0
           }
-          isLogin={location.pathname === "/login"}
-          isRegister={
-            location.pathname === "/patient-register" ||
-            location.pathname === "/doctor-register"
-          }
+          showCheckDoctor={showCheckDoctor}
+          showAuth={showAuth}
         />
       )}
 

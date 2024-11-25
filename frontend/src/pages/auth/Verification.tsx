@@ -22,8 +22,7 @@ const Verification = () => {
         await verify(email, token);
         navigate(SUCCESSFUL_ROUTE);
       } catch (e) {
-        console.error(e);
-        navigate(FAILED_ROUTE);
+        navigate(FAILED_ROUTE, { state: { verificationError: true } });
       }
     },
     [verify, navigate],
