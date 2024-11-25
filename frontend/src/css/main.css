@@ -8,6 +8,21 @@
     color: #223E6A;
 }
 
+.backGroundRoundIcon {
+    border-radius: 50%;
+    background-color: #223E6A;
+    color: #f1f1f1;
+    padding: 15px;
+}
+
+
+.backGroundSquareIcon {
+    border-radius: 20%;
+    background-color: #223E6A;
+    color: #f1f1f1;
+    padding: 15px;
+}
+
 .sync{
     color: black;
 }

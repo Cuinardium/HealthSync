@@ -24,10 +24,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
   const { data: notifications, isLoading } = useNotifications(id);
 
   const shouldShowHeader = useCallback(() => {
-    return (
-      location.pathname !== "/register-successful" &&
-      location.pathname !== "/verify"
-    );
+    return location.pathname !== "/verify";
   }, [location.pathname]);
 
   const shouldShowCheckDoctor = useCallback(() => {
@@ -77,6 +74,8 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
         return "login.title";
       case "/resend-token":
         return "resend.header";
+      case "/register-successful":
+        return "register_success.header";
       case "/doctor-register":
         return "register.title";
       case "/patient-register":

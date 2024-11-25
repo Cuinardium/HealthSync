@@ -493,6 +493,14 @@
     "haveAccount": "Don\u0027t have an account?",
     "register": "Register here!"
   },
+  "register_success": {
+    "header": "Registration Successful",
+    "title": "Registration Successful!",
+    "verify_account": "Verify Your Account",
+    "description": "Welcome to HealthSync! To get started, we need to verify your email address. A verification link has been sent to your inbox. Please check your email to confirm your account.",
+    "didnt_get_mail": "Didn't receive the email?",
+    "resend_mail": "Send it again"
+  },
   "resend": {
     "header": "Resend Verification",
     "title": "Resend Verification Email",

@@ -488,6 +488,14 @@
     "haveAccount": "¿No tiene una cuenta?",
     "register": "¡Registrese aqui!"
   },
+  "register_success": {
+    "header": "Registro Exitoso",
+    "title": "¡Registro exitoso!",
+    "verify_account": "Verifica tu cuenta",
+    "description": "¡Bienvenido a HealthSync! Para comenzar, necesitamos verificar tu dirección de correo electrónico. Hemos enviado un enlace de verificación a tu bandeja de entrada. Por favor, revisa tu correo para confirmar tu cuenta.",
+    "didnt_get_mail": "¿No recibiste el correo?",
+    "resend_mail": "Enviarlo de nuevo"
+  },
   "resend": {
     "header": "Reenviar Verificación",
     "title": "Reenviar Correo de Verificación",
