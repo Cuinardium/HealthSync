@@ -14,6 +14,6 @@ public class FileUtil {
         if (index == -1) {
             return null;
         }
-        return fileName.substring(index + 1);
+        return fileName.substring(index + 1).toLowerCase();
     }
 }
