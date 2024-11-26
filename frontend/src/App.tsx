@@ -14,6 +14,7 @@ import AuthenticatedGuard from "./components/AuthenticatedGuard";
 import { UserProvider } from "./providers/UserProvider";
 import Layout from "./components/Layout";
 import Loader from "./components/Loader";
+import UnauthenticatedGuard from "./components/UnauthenticatedGuard";
 
 const HomePage = lazy(() => import("./pages/home/HomePage"));
 const Error403 = lazy(() => import("./pages/errors/403"));
@@ -22,9 +23,11 @@ const Error500 = lazy(() => import("./pages/errors/500"));
 const Login = lazy(() => import("./pages/auth/Login"));
 const PatientRegister = lazy(() => import("./pages/auth/PatientRegister"));
 const DoctorRegister = lazy(() => import("./pages/auth/DoctorRegister"));
-const Verification = lazy(() => import("./pages/auth/Verification"))
+const Verification = lazy(() => import("./pages/auth/Verification"));
 const ResendToken = lazy(() => import("./pages/auth/ResendToken"));
-const RegisterSuccessful = lazy(() => import("./pages/auth/RegisterSuccessful"));
+const RegisterSuccessful = lazy(
+  () => import("./pages/auth/RegisterSuccessful"),
+);
 const DoctorEdit = lazy(() => import("./pages/user/DoctorEdit"));
 const ChangeSchedule = lazy(() => import("./pages/user/ChangeSchedule"));
 const PatientProfile = lazy(() => import("./pages/user/PatientProfile"));
@@ -57,27 +60,6 @@ function App() {
 
                     {/* Public */}
                     <Route
-                      path="/doctor-register"
-                      element={
-                        <DoctorRegister />
-                      }
-                    />
-                    <Route
-                      path="/patient-register"
-                      element={
-                        <PatientRegister />
-                      }
-                    />
-                    <Route path="/login" element={<Login />} />
-
-                    <Route path="/register-successful" element={<RegisterSuccessful />} />
-
-                    <Route path="/verify" element={<Verification />} />
-                    <Route path="/resend-token" element={<ResendToken />} />
-
-                    {/* Private both */}
-
-                    <Route
                       path="/doctor-dashboard"
                       element={<DoctorDashboard />}
                     />
@@ -85,6 +67,27 @@ function App() {
                       path="/detailed-doctor/:id"
                       element={<DoctorDetails />}
                     />
+
+                    {/* Only unauthenticated */}
+                    <Route element={<UnauthenticatedGuard />}>
+                      <Route
+                        path="/doctor-register"
+                        element={<DoctorRegister />}
+                      />
+                      <Route
+                        path="/patient-register"
+                        element={<PatientRegister />}
+                      />
+                      <Route path="/login" element={<Login />} />
+
+                      <Route
+                        path="/register-successful"
+                        element={<RegisterSuccessful />}
+                      />
+
+                      <Route path="/verify" element={<Verification />} />
+                      <Route path="/resend-token" element={<ResendToken />} />
+                    </Route>
 
                     {/* Private both */}
                     <Route element={<AuthenticatedGuard requiredRole={null} />}>
