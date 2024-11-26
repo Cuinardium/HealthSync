@@ -115,11 +115,23 @@
     "cancel": "Cancel",
     "error": "An error occurred",
     "success": "Changes saved successfully",
-    "changePassword": "Change Password",
-    "oldPassword": "Old password",
-    "oldPasswordDoesNotMatchError": "Old password does not match!",
-    "oldPassword_hint": "Enter old password",
     "viewVacations": "View Vacations"
+  },
+  "changePassword" : {
+    "title": "Change Password",
+    "description": "Please enter your old password and your desired new password.",
+    "submit": "Change Password",
+    "cancel": "Cancel",
+    "loading": "Changing password...",
+    "success": "Password changed successfully",
+    "error": "An error occurred",
+    "oldPassword": "Old password",
+    "invalidOldPassword": "Incorrect password",
+    "newPassword": "New password",
+    "confirmPassword": "Confirm new password",
+    "oldPassword_hint": "Enter old password",
+    "newPassword_hint": "Enter new password",
+    "confirmPassword_hint": "Confirm new password"
   },
   "vacation": {
     "title": "Vacations",

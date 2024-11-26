@@ -121,6 +121,22 @@
     "oldPassword_hint": "Ingresa contraseña vieja",
     "viewVacations": "Ver Vacaciones"
   },
+  "changePassword": {
+    "title": "Cambiar Contraseña",
+    "description": "Por favor, ingrese su contraseña actual y la nueva contraseña.",
+    "submit": "Cambiar Contraseña",
+    "cancel": "Cancelar",
+    "loading": "Cambiando Contraseña...",
+    "success": "Contraseña cambiada exitosamente",
+    "error": "Hubo un error al cambiar la contraseña",
+    "oldPassword": "Contraseña vieja",
+    "invalidOldPassword": "La contraseña es incorrecta",
+    "oldPassword_hint": "Ingresa contraseña vieja",
+    "newPassword": "Contraseña nueva",
+    "newPassword_hint": "Ingresa contraseña nueva",
+    "confirmPassword": "Confirmar contraseña",
+    "confirmPassword_hint": "Ingresa la misma contraseña"
+  },
   "vacation": {
     "title": "Vacaciones",
     "addSuccessTitle": "Vacaciones Creadas",
