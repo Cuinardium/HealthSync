@@ -7,6 +7,7 @@
     "email": "Correo",
     "email_hint": "Ingresar correo",
     "locale": "Lenguaje",
+    "locale_hint": "Seleccionar lenguaje",
     "healthcare": "Obra Social",
     "healthcare_hint": "Ingresar obra social",
     "date": "Fecha del turno",
@@ -32,7 +33,8 @@
     "clear": "Limpiar",
     "passwordContain": "La contraseña debe contener:",
     "passwordSize": "Al menos 4 caracteres",
-    "passwordContent": "Solo letras y numeros"
+    "passwordContent": "Solo letras y numeros",
+    "image": "Cambiar imagen"
   },
   "appointment": {
     "title": "Reserva tu turno",
@@ -108,16 +110,11 @@
     "location": "Ubicación",
     "workInfo": "Información Laboral",
     "schedule": "Horarios",
-    "edit": {
-      "title": "Editar Perfil",
-      "modal": {
-        "button": "Ok"
-      }
-    },
-    "emailInUse": {
-      "error": "No se pudo actualizar el Email porque ya esta en uso"
-    },
     "saveChanges": "Guardar Cambios",
+    "loading": "Guardando Cambios...",
+    "cancel": "Cancelar",
+    "error": "Hubo un error al guardar los cambios",
+    "success": "Cambios guardados exitosamente",
     "changePassword": "Cambiar Contraseña",
     "oldPassword": "Contraseña vieja",
     "oldPasswordDoesNotMatchError": "La contraseña vieja no coincide!",
@@ -611,6 +608,10 @@
       "salud": "Sancor Salud"
     }
   },
+  "locale": {
+    "es": "Español",
+    "en": "Inglés"
+  },
   "appointmentStatus": {
     "confirmed": "CONFIRMADO",
     "cancelled": "CANCELADO",
@@ -672,6 +673,10 @@
     "specialty": {
       "required": "La especialidad es obligatoria.",
       "invalid": "La especialidad seleccionada no es válida."
+    },
+    "locale": {
+      "required": "El lenguaje es obligatorio.",
+      "invalid": "El lenguaje seleccionado no es válido."
     }
   }
 }

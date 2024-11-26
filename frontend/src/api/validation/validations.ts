@@ -1,5 +1,6 @@
 import { HealthInsurance } from "../health-insurance/HealthInsurance";
-import {Specialty} from "../specialty/Specialty";
+import { Specialty } from "../specialty/Specialty";
+import { LOCALES } from "../locale/locale";
 
 export function validateName(name: string | null): string | boolean {
   const validationMessages = {
@@ -106,7 +107,6 @@ export function validateHealthInsurances(
   return true;
 }
 
-
 export function validateCity(city: string | null): string | true {
   if (!city || city.trim() === "") {
     return "validation.city.required";
@@ -119,7 +119,6 @@ export function validateCity(city: string | null): string | true {
   }
   return true;
 }
-
 
 export function validateAddress(address: string | null): string | true {
   if (!address || address.trim() === "") {
@@ -134,13 +133,48 @@ export function validateAddress(address: string | null): string | true {
   return true;
 }
 
-
-export function validateSpecialty(specialty: string | null, specialties: Specialty[] | undefined): string | true {
+export function validateSpecialty(
+  specialty: string | null,
+  specialties: Specialty[] | undefined,
+): string | true {
   if (!specialty || specialty.trim() === "") {
     return "validation.specialty.required";
   }
   if (!specialties?.some((sp) => sp.code === specialty)) {
     return "validation.specialty.invalid";
   }
+  return true;
+}
+
+export function validateLocale(locale: string | null): string | true {
+  if (!locale || locale.trim() === "") {
+    return "validation.locale.required";
+  }
+  if (!LOCALES.includes(locale as any)) {
+    return "validation.locale.invalid";
+  }
+  return true;
+}
+
+export function validateImage(file: File | undefined): string | true {
+  if (!file) {
+    return true;
+  }
+
+  const MAX_IMAGE_SIZE = 2 * 1024 * 1024; // 2MB
+
+  const SUPPORTED_TYPES = ["png", "jpg", "jpeg"];
+
+  // Validate file type
+  const fileExtension = file.name.split(".").pop()?.toLowerCase();
+  if (fileExtension && !SUPPORTED_TYPES.includes(fileExtension.toLowerCase())) {
+    return "validation.image.type";
+  }
+
+  // Validate file size
+  if (file.size > MAX_IMAGE_SIZE) {
+    return "validation.image.size";
+  }
+
   return true;
 }

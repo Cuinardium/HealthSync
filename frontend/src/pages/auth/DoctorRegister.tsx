@@ -250,7 +250,7 @@ const DoctorRegister = () => {
                     name="specialty"
                     isInvalid={!!errors.specialty}
                   >
-                    <option key="hint">{t("form.specialization_hint")}</option>
+                    <option key="hint" disabled>{t("form.specialization_hint")}</option>
                     {specialties?.map((specialty) => (
                       <option key={specialty.code} value={specialty.code}>
                         {t(

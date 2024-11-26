@@ -148,7 +148,7 @@ const PatientRegister = () => {
                     name="healthInsurance"
                     isInvalid={!!errors.healthInsurance}
                   >
-                    <option key="hint">{t("form.healthcare_hint")}</option>
+                    <option key="hint" disabled>{t("form.healthcare_hint")}</option>
                     {healthInsurances?.map((healthinsurance) => (
                       <option
                         key={healthinsurance.code}

@@ -7,6 +7,7 @@
     "email": "Email",
     "email_hint": "Enter email",
     "locale": "Language",
+    "locale_hint": "Select language",
     "healthcare": "Health Insurance",
     "healthcare_hint": "Enter health insurance",
     "date": "Appointment Date",
@@ -32,7 +33,8 @@
     "clear": "Clear",
     "passwordContain": "Password must contain:",
     "passwordSize": "At least 4 characters",
-    "passwordContent": "Only letters and numbers"
+    "passwordContent": "Only letters and numbers",
+    "image": "Change Image"
   },
   "appointment": {
     "title": "Get your appointment",
@@ -108,19 +110,11 @@
     "location": "Location",
     "workInfo": "Work Information",
     "schedule": "Schedule",
-    "edit": {
-      "title": "Edit Profile",
-      "emailInUse": {
-        "error": [
-          "Could not update email",
-          "due to email already beeing used"
-        ]
-      },
-      "modal": {
-        "button": "Ok"
-      }
-    },
     "saveChanges": "Save Changes",
+    "loading": "Saving changes...",
+    "cancel": "Cancel",
+    "error": "An error occurred",
+    "success": "Changes saved successfully",
     "changePassword": "Change Password",
     "oldPassword": "Old password",
     "oldPasswordDoesNotMatchError": "Old password does not match!",
@@ -614,6 +608,10 @@
       "salud": "Sancor Salud"
     }
   },
+  "locale": {
+    "en": "English",
+    "es": "Spanish"
+  },
   "appointmentStatus": {
     "confirmed": "CONFIRMED",
     "cancelled": "CANCELLED",
@@ -675,6 +673,10 @@
     "specialty": {
       "required": "Specialty is required.",
       "invalid": "Invalid specialty selected."
+    },
+    "locale": {
+      "required": "Language is required.",
+      "invalid": "Invalid language selected."
     }
   }
 }
