@@ -7,6 +7,7 @@ import {
   Row,
   Col,
   ButtonGroup,
+  Spinner,
 } from "react-bootstrap";
 import { useTranslation } from "react-i18next";
 
@@ -125,7 +126,20 @@ const Login = () => {
                 className="pt-2 pb-2"
                 disabled={isSubmitting || !email || !password}
               >
-                {isSubmitting ? t("login.loading") : t("login.submit")}
+                {isSubmitting ? (
+                  <>
+                    <Spinner
+                      as="span"
+                      animation="border"
+                      size="sm"
+                      role="status"
+                      aria-hidden="true"
+                    />{" "}
+                    {t("login.loading")}
+                  </>
+                ) : (
+                  t("login.submit")
+                )}
               </Button>
             </ButtonGroup>
 

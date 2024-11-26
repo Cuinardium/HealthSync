@@ -1,4 +1,3 @@
-import { t } from "i18next";
 import {
   Alert,
   Button,
@@ -8,6 +7,7 @@ import {
   FloatingLabel,
   Form,
   Modal,
+  Spinner,
 } from "react-bootstrap";
 import { resendVerificationToken } from "../../api/token/tokenApi";
 
@@ -15,7 +15,7 @@ import "../../css/main.css";
 import "../../css/forms.css";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useLocation } from "react-router-dom";
 
 interface MailForm {
@@ -92,7 +92,20 @@ const ResendToken = () => {
               className="pt-2 pb-2"
               disabled={isSubmitting || !email}
             >
-              {isSubmitting ? t("resend.submitting") : t("resend.button")}
+              {isSubmitting ? (
+                <>
+                  <Spinner
+                    as="span"
+                    animation="border"
+                    size="sm"
+                    role="status"
+                    aria-hidden="true"
+                  />{" "}
+                  {t("resend.submitting")}
+                </>
+              ) : (
+                t("resend.button")
+              )}
             </Button>
           </ButtonGroup>
         </Form>

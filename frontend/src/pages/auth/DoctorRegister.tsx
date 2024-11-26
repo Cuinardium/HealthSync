@@ -7,6 +7,7 @@ import {
   Row,
   Col,
   ButtonGroup,
+  Spinner,
 } from "react-bootstrap";
 import { useTranslation } from "react-i18next";
 
@@ -40,10 +41,14 @@ const DoctorRegister = () => {
   const {
     register,
     handleSubmit,
-    formState: { isSubmitting, errors },
+    formState: { errors },
     setError,
     control,
-  } = useForm<DoctorRegisterForm>();
+  } = useForm<DoctorRegisterForm>({
+    defaultValues: {
+      specialty: "",
+    },
+  });
 
   const { data: specialties } = useSpecialties({
     sort: "standard",
@@ -250,7 +255,9 @@ const DoctorRegister = () => {
                     name="specialty"
                     isInvalid={!!errors.specialty}
                   >
-                    <option key="hint" disabled>{t("form.specialization_hint")}</option>
+                    <option key="hint" value="" disabled>
+                      {t("form.specialization_hint")}
+                    </option>
                     {specialties?.map((specialty) => (
                       <option key={specialty.code} value={specialty.code}>
                         {t(
@@ -285,9 +292,22 @@ const DoctorRegister = () => {
                 variant="primary"
                 type="submit"
                 className="submitButton"
-                disabled={isSubmitting}
+                disabled={createDoctorMutation.isPending}
               >
-                {isSubmitting ? t("register.loading") : t("register.submit")}
+                {createDoctorMutation.isPending ? (
+                  <>
+                    <Spinner
+                      as="span"
+                      animation="border"
+                      size="sm"
+                      role="status"
+                      aria-hidden="true"
+                    />{" "}
+                    {t("register.loading")}
+                  </>
+                ) : (
+                  t("register.submit")
+                )}
               </Button>
             </ButtonGroup>
           </Form>

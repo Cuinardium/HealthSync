@@ -1,15 +1,15 @@
 import { AxiosError } from "axios";
-import { useState } from "react";
+import React, { useState } from "react";
 import {
   Alert,
   Breadcrumb,
   Button,
-  ButtonGroup,
   Card,
   Col,
   Container,
   Form,
   Row,
+  Spinner,
 } from "react-bootstrap";
 import { PasswordForm } from "../../api/password/Password";
 import { useUser } from "../../context/UserContext";
@@ -97,7 +97,9 @@ const ChangePassword = () => {
         <h1>{t("changePassword.title")}</h1>
         <Card>
           <Card.Body>
-            <h5 className="text-muted mt-3 mb-4">{t("changePassword.description")}</h5>
+            <h5 className="text-muted mt-3 mb-4">
+              {t("changePassword.description")}
+            </h5>
             <Form onSubmit={handleSubmit(onSubmit)}>
               <Row className="mb-3 mt-3">
                 <Col>
@@ -160,7 +162,12 @@ const ChangePassword = () => {
               </Row>
 
               {showSuccess && (
-                <Alert variant="primary" dismissible onClose={() => setShowSuccess(false)} className="mt-3 text-center">
+                <Alert
+                  variant="primary"
+                  dismissible
+                  onClose={() => setShowSuccess(false)}
+                  className="mt-3 text-center"
+                >
                   {t("changePassword.success")}
                 </Alert>
               )}
@@ -172,17 +179,28 @@ const ChangePassword = () => {
                   className="submitButton"
                   disabled={updatePasswordMutation.isPending}
                 >
-                  {updatePasswordMutation.isPending
-                    ? t("changePassword.loading")
-                    : t("changePassword.submit")}
+                  {updatePasswordMutation.isPending ? (
+                    <>
+                      <Spinner
+                        as="span"
+                        animation="border"
+                        size="sm"
+                        role="status"
+                        aria-hidden="true"
+                      />{" "}
+                      {t("changePassword.loading")}
+                    </>
+                  ) : (
+                    t("changePassword.submit")
+                  )}
                 </Button>
                 <Button
-                    variant="secondary"
-                    as={Link as any}
-                    to={isDoctor ? "/doctor-profile" : "/patient-profile"}
-                    className="cancelButton"
+                  variant="secondary"
+                  as={Link as any}
+                  to={isDoctor ? "/doctor-profile" : "/patient-profile"}
+                  className="cancelButton"
                 >
-                    {t("changePassword.cancel")}
+                  {t("changePassword.cancel")}
                 </Button>
               </Col>
             </Form>

@@ -9,6 +9,7 @@ import {
   Image,
   Breadcrumb,
   Alert,
+  Spinner,
 } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
 import { useUpdatePatient } from "../../hooks/patientHooks";
@@ -59,7 +60,6 @@ const PatientEdit = () => {
     setError,
   } = useForm<PatientEditForm>();
 
-
   const name = watch("name");
   const lastname = watch("lastname");
   const healthInsurance = watch("healthInsurance");
@@ -91,7 +91,7 @@ const PatientEdit = () => {
     );
   }, [imageUrl, user, name, lastname, healthInsurance, locale]);
 
-  const onError = (error: AxiosError) => {
+  const onError = (_: AxiosError) => {
     setError("root", {
       message: "profile.error",
     });
@@ -99,7 +99,7 @@ const PatientEdit = () => {
 
   const onSuccess = () => {
     setShowSuccess(true);
-  }
+  };
 
   const id = loading || isDoctor ? "" : String(user!.id);
 
@@ -206,7 +206,7 @@ const PatientEdit = () => {
                           isInvalid={!!errors.healthInsurance}
                         >
                           {loading && (
-                            <option key="hint" disabled>
+                            <option key="hint" value="" disabled>
                               {t("form.healthcare_hint")}
                             </option>
                           )}
@@ -325,9 +325,20 @@ const PatientEdit = () => {
                     type="submit"
                     disabled={updatePatientMutation.isPending || !hasChanged()}
                   >
-                    {updatePatientMutation.isPending
-                      ? t("profile.loading")
-                      : t("profile.saveChanges")}
+                    {updatePatientMutation.isPending ? (
+                      <>
+                        <Spinner
+                          as="span"
+                          animation="border"
+                          size="sm"
+                          role="status"
+                          aria-hidden="true"
+                        />{" "}
+                        {t("profile.loading")}
+                      </>
+                    ) : (
+                      t("profile.saveChanges")
+                    )}
                   </Button>
                   <Button
                     variant="secondary"

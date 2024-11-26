@@ -7,6 +7,7 @@ import {
   Row,
   Col,
   ButtonGroup,
+  Spinner,
 } from "react-bootstrap";
 import { useTranslation } from "react-i18next";
 
@@ -27,6 +28,7 @@ import {
   validateName,
   validatePassword,
 } from "../../api/validation/validations";
+import { t } from "i18next";
 
 const PatientRegister = () => {
   const { t } = useTranslation();
@@ -35,9 +37,13 @@ const PatientRegister = () => {
   const {
     register,
     handleSubmit,
-    formState: { isSubmitting, errors },
+    formState: { errors },
     setError,
-  } = useForm<PatientRegisterForm>();
+  } = useForm<PatientRegisterForm>({
+    defaultValues: {
+      healthInsurance: "",
+    },
+  });
 
   const { data: healthInsurances } = useHealthInsurances();
 
@@ -148,7 +154,9 @@ const PatientRegister = () => {
                     name="healthInsurance"
                     isInvalid={!!errors.healthInsurance}
                   >
-                    <option key="hint" disabled>{t("form.healthcare_hint")}</option>
+                    <option key="hint" value="" disabled>
+                      {t("form.healthcare_hint")}
+                    </option>
                     {healthInsurances?.map((healthinsurance) => (
                       <option
                         key={healthinsurance.code}
@@ -217,8 +225,26 @@ const PatientRegister = () => {
             )}
 
             <ButtonGroup className="d-flex mt-4">
-              <Button variant="primary" type="submit" className="submitButton" disabled={isSubmitting}>
-                {isSubmitting ? t("register.loading") : t("register.submit")}
+              <Button
+                variant="primary"
+                type="submit"
+                className="submitButton"
+                disabled={createPatientMutation.isPending}
+              >
+                {createPatientMutation.isPending ? (
+                  <>
+                    <Spinner
+                      as="span"
+                      animation="border"
+                      size="sm"
+                      role="status"
+                      aria-hidden="true"
+                    />{" "}
+                    {t("register.loading")}
+                  </>
+                ) : (
+                  t("register.submit")
+                )}
               </Button>
             </ButtonGroup>
           </Form>
