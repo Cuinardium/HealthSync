@@ -116,7 +116,20 @@
     "error": "An error occurred",
     "success": "Changes saved successfully",
     "changePassword": "Change Password",
+    "changeSchedule": "Change Schedule",
     "viewVacations": "View Vacations"
+  },
+  "changeSchedule": {
+    "title": "Change Schedule",
+    "description": "Select the hours you will be available for appointments.",
+    "submit": "Save Schedule",
+    "clear": "Clear",
+    "loading": "Saving schedule...",
+    "success": "Schedule saved successfully",
+    "error": "An error occurred",
+    "showAllTimes": "Show all hours",
+    "showWeekend": "Show weekend",
+    "cancel": "Cancel"
   },
   "changePassword" : {
     "title": "Change Password",

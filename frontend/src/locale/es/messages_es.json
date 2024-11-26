@@ -116,7 +116,20 @@
     "error": "Hubo un error al guardar los cambios",
     "success": "Cambios guardados exitosamente",
     "changePassword": "Cambiar Contraseña",
+    "changeSchedule": "Cambiar Horarios",
     "viewVacations": "Ver Vacaciones"
+  },
+  "changeSchedule": {
+    "title": "Cambiar Horarios",
+    "description": "Seleccione los horarios en los que estará disponible para turnos.",
+    "submit": "Guardar Horarios",
+    "clear": "Limpiar",
+    "loading": "Guardando Horarios...",
+    "success": "Horarios guardados exitosamente",
+    "error": "Hubo un error al guardar los horarios",
+    "showAllTimes": "Mostrar todos los horarios",
+    "showWeekend": "Mostrar fines de semana",
+    "cancel": "Cancelar"
   },
   "changePassword": {
     "title": "Cambiar Contraseña",

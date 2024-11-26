@@ -1,5 +1,9 @@
-import React, { useState, useMemo, useRef, useEffect } from "react";
-import { Button, ButtonGroup } from "react-bootstrap";
+import React, { useState, useRef, useEffect } from "react";
+import {
+  Button,
+  Container,
+  Form,
+} from "react-bootstrap";
 import {
   Day,
   DAYS,
@@ -27,19 +31,61 @@ const ScheduleSelector: React.FC<ScheduleSelectorProps> = ({
     [key: string]: Set<number>;
   }>({});
 
+  const [showWeekends, setShowWeekends] = useState(false);
+  const [minAttendingHour, setMinAttendingHour] = useState(16);
+  const [maxAttendingHour, setMaxAttendingHour] = useState(35);
+
   useEffect(() => {
     if (attendingHours) {
-      setSelectedHours(
-        attendingHours.reduce(
-          (acc, attendingHour) => {
-            acc[attendingHour.day] = new Set(
-              attendingHour.hours.map((hour) => getTimeOrder(hour)),
-            );
-            return acc;
-          },
-          {} as { [key: string]: Set<number> },
-        ),
+      const newHours: { [key: string]: Set<number> } = attendingHours.reduce(
+        (acc, attendingHour) => {
+          acc[attendingHour.day] = new Set(
+            attendingHour.hours.map((hour) => getTimeOrder(hour)),
+          );
+          return acc;
+        },
+        {} as { [key: string]: Set<number> },
       );
+      setSelectedHours(newHours);
+
+      const newAttendingHours: AttendingHours[] = Object.keys(newHours).map(
+        (dayKey) => ({
+          day: dayKey as Day,
+          hours: Array.from(newHours[dayKey]).map((timeIdx) => TIMES[timeIdx]),
+        }),
+      );
+
+      const isWeekendEmpty = !newAttendingHours.some(
+        (attendingHour) =>
+          attendingHour.hours.length > 0 &&
+          (getDayOrder(attendingHour.day) === 5 ||
+            getDayOrder(attendingHour.day) === 6),
+      );
+
+      const [min, max] = [
+        Math.min(
+          ...newAttendingHours.map((attendingHour) =>
+            Math.min(...attendingHour.hours.map(getTimeOrder)),
+          ),
+        ),
+        Math.max(
+          ...newAttendingHours.map((attendingHour) =>
+            Math.max(...attendingHour.hours.map(getTimeOrder)),
+          ),
+        ),
+      ];
+
+      setShowWeekends(!isWeekendEmpty);
+
+      if (min < 16) {
+        setMinAttendingHour(min);
+      }
+
+      if (max > 35) {
+        setMaxAttendingHour(max);
+      }
+
+      onScheduleChange(newAttendingHours);
     }
   }, [attendingHours]);
 
@@ -47,64 +93,58 @@ const ScheduleSelector: React.FC<ScheduleSelectorProps> = ({
   const [isSelecting, setIsSelecting] = useState(false);
   const scheduleContainerRef = useRef<HTMLDivElement | null>(null);
 
-  const [showWeekends, setShowWeekends] = useState(false);
-
-  const [minAttendingHour, maxAttendingHour] = useMemo(() => {
-    let min = 16;
-    let max = 35;
-
-    attendingHours?.forEach((attendingHour) =>
-      attendingHour.hours.forEach((hour) => {
-        const hourOrdinal = getTimeOrder(hour);
-        min = Math.min(min, hourOrdinal);
-        max = Math.max(max, hourOrdinal);
-      }),
-    );
-
-    return [min, max];
-  }, [attendingHours]);
-
   const doesDoctorAttend = (dayIndex: number, timeIndex: number): boolean =>
     selectedHours[DAYS[dayIndex]]?.has(timeIndex) ?? false;
 
-const updateSelectedHours = (
-  dayIndex: number,
-  timeIndex: number,
-  shouldSelect: boolean,
-) => {
-  const day = DAYS[dayIndex];
+  const updateSelectedHours = (
+    dayIndex: number,
+    timeIndex: number,
+    shouldSelect: boolean,
+  ) => {
+    const day = DAYS[dayIndex];
 
-  const updatedSelectedHours = { ...selectedHours };
-  if (!updatedSelectedHours[day]) {
-    updatedSelectedHours[day] = new Set();
-  }
+    const updatedSelectedHours = { ...selectedHours };
+    if (!updatedSelectedHours[day]) {
+      updatedSelectedHours[day] = new Set();
+    }
 
-  if (shouldSelect) {
-    updatedSelectedHours[day].add(timeIndex);
-  } else {
-    updatedSelectedHours[day].delete(timeIndex);
-  }
+    if (shouldSelect) {
+      updatedSelectedHours[day].add(timeIndex);
+    } else {
+      updatedSelectedHours[day].delete(timeIndex);
+    }
 
-  setSelectedHours(updatedSelectedHours);
+    setSelectedHours(updatedSelectedHours);
 
-  // Para el callback
-  const newAttendingHours: AttendingHours[] = Object.keys(updatedSelectedHours).map(
-    (dayKey) => ({
+    // Para el callback
+    const newAttendingHours: AttendingHours[] = Object.keys(
+      updatedSelectedHours,
+    ).map((dayKey) => ({
       day: dayKey as Day,
       hours: Array.from(updatedSelectedHours[dayKey]).map(
         (timeIdx) => TIMES[timeIdx],
       ),
-    }),
-  );
+    }));
 
-  DAYS.forEach((day) => {
-    if (!newAttendingHours.some((attendingHour) => attendingHour.day === day)) {
-      newAttendingHours.push({ day, hours: [] });
-    }
-  });
+    DAYS.forEach((day) => {
+      if (
+        !newAttendingHours.some((attendingHour) => attendingHour.day === day)
+      ) {
+        newAttendingHours.push({ day, hours: [] });
+      }
+    });
 
-  onScheduleChange(newAttendingHours);
-};
+    onScheduleChange(newAttendingHours);
+  };
+
+  const handleClear = () => {
+    setSelectedHours({});
+    const emptyAttendingHours: AttendingHours[] = DAYS.map((day) => ({
+      day,
+      hours: [],
+    }));
+    onScheduleChange(emptyAttendingHours);
+  };
 
   const handleMouseDown = (
     event: React.MouseEvent,
@@ -196,21 +236,33 @@ const updateSelectedHours = (
         })}
       </div>
 
-      <ButtonGroup className="mb-3">
-        <Button
-          variant={showWeekends ? "primary" : "outline-primary"}
-          onClick={() => setShowWeekends((prev) => !prev)}
-        >
-          {t("form.showWeekend")}
+      <Container className="mt-3 d-flex flex-row justify-content-center align-items-center">
+        <Form.Switch
+          id="showWeekend"
+          checked={showWeekends}
+          onChange={() => setShowWeekends(!showWeekends)}
+          label={t("changeSchedule.showWeekend")}
+          className={"me-3"}
+        />
+        <Form.Switch
+          id="showAllTimes"
+          checked={minAttendingHour === 0 && maxAttendingHour === 47}
+          onChange={() => {
+            if (minAttendingHour === 0 && maxAttendingHour === 47) {
+              setMinAttendingHour(16);
+              setMaxAttendingHour(35);
+            } else {
+              setMinAttendingHour(0);
+              setMaxAttendingHour(47);
+            }
+          }}
+          label={t("changeSchedule.showAllTimes")}
+          className={"me-3"}
+        />
+        <Button variant="danger" id="clear-button" onClick={handleClear}>
+          {t("changeSchedule.clear")}
         </Button>
-        <Button
-          variant="danger"
-          id="clear-button"
-          onClick={() => setSelectedHours({})}
-        >
-          {t("form.clear")}
-        </Button>
-      </ButtonGroup>
+      </Container>
     </div>
   );
 };
