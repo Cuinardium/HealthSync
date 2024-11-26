@@ -116,9 +116,6 @@
     "error": "Hubo un error al guardar los cambios",
     "success": "Cambios guardados exitosamente",
     "changePassword": "Cambiar Contraseña",
-    "oldPassword": "Contraseña vieja",
-    "oldPasswordDoesNotMatchError": "La contraseña vieja no coincide!",
-    "oldPassword_hint": "Ingresa contraseña vieja",
     "viewVacations": "Ver Vacaciones"
   },
   "changePassword": {

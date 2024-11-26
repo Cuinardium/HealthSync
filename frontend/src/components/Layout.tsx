@@ -84,6 +84,8 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
         return "profile.profile";
       case "/patient-profile":
         return "profile.profile";
+      case "/change-password":
+        return "changePassword.title";
       case "/doctor-dashboard":
         return "doctorDashboard.title";
       case "/my-appointments":

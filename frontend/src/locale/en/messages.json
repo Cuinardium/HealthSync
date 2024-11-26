@@ -115,6 +115,7 @@
     "cancel": "Cancel",
     "error": "An error occurred",
     "success": "Changes saved successfully",
+    "changePassword": "Change Password",
     "viewVacations": "View Vacations"
   },
   "changePassword" : {
