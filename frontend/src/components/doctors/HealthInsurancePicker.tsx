@@ -1,4 +1,4 @@
-import { Control, Controller, FieldError, FieldErrors } from "react-hook-form";
+import { Control, Controller, FieldErrors } from "react-hook-form";
 import { HealthInsurance } from "../../api/health-insurance/HealthInsurance";
 import React from "react";
 import { useTranslation } from "react-i18next";

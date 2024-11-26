@@ -1,7 +1,17 @@
-import React, { useEffect, useState } from "react";
-import { Button, Card, Form, Container, Row, Col } from "react-bootstrap";
+import React, { useCallback, useEffect, useRef, useState } from "react";
+import {
+  Button,
+  Card,
+  Form,
+  Container,
+  Row,
+  Col,
+  Breadcrumb,
+  Image,
+  Alert,
+  Spinner,
+} from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
-import { useUpdatePatient } from "../../hooks/patientHooks";
 import "../../css/main.css";
 import "../../css/forms.css";
 import "../../css/profile.css";
@@ -12,259 +22,416 @@ import { t } from "i18next";
 import { Doctor, DoctorEditForm } from "../../api/doctor/Doctor";
 import { useUpdateDoctor } from "../../hooks/doctorHooks";
 import { useSpecialties } from "../../hooks/specialtyHooks";
+import { SubmitHandler, useForm } from "react-hook-form";
+import doctorDefault from "../../img/doctorDefault.png";
+import { FaLocationDot, FaUser, FaUserDoctor } from "react-icons/fa6";
+import {
+  validateAddress,
+  validateCity,
+  validateImage,
+  validateLastname,
+  validateLocale,
+  validateName,
+  validateSpecialty,
+} from "../../api/validation/validations";
+import HealthInsurancePicker from "../../components/doctors/HealthInsurancePicker";
 
 const DoctorEdit = () => {
   const navigate = useNavigate();
   const { user, loading, isDoctor } = useUser();
-  const { data: healthInsurances, isLoading: isLoadingHealhInsurances } =
-    useHealthInsurances();
-  const { data: specialties, isLoading: isLoadingSpecialties } = useSpecialties(
-    { sort: "standard", order: "asc" },
-  );
-  const [formData, setFormData] = useState<DoctorEditForm>({
-    name: "",
-    lastname: "",
-    healthInsurances: [],
-    city: "",
-    address: "",
-    specialty: "",
-    locale: "",
-    image: undefined,
+  const { data: healthInsurances } = useHealthInsurances();
+  const { data: specialties } = useSpecialties({
+    sort: "standard",
+    order: "asc",
   });
+
+  const [imageURL, setImageURL] = useState<string>(doctorDefault);
+  const [showSuccess, setShowSuccess] = useState<boolean>(false);
+
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
+
+  const handleButtonClick = () => {
+    if (fileInputRef.current) {
+      fileInputRef.current.click();
+    }
+  };
+
+  const {
+    register,
+    formState: { errors },
+    setValue,
+    handleSubmit,
+    watch,
+    setError,
+    control,
+  } = useForm<DoctorEditForm>();
+
+  const name = watch("name");
+  const lastname = watch("lastname");
+  const city = watch("city");
+  const address = watch("address");
+  const specialty = watch("specialty");
+  const locale = watch("locale");
+  const doctorHealthInsurances = watch("healthInsurances");
+
+  const hasChanged = useCallback(() => {
+    const oldHealthInsurances = (user as Doctor)?.healthInsurances.map(
+      (healthInsurance) => {
+        return healthInsurance.replace(/\./g, "_").toUpperCase();
+      },
+    );
+
+
+    const healthInsurancesChanged = doctorHealthInsurances?.sort().join(",") !== oldHealthInsurances?.sort().join(",");
+    return (
+      name !== user?.firstName ||
+      lastname !== user?.lastName ||
+      locale !== user?.locale ||
+      imageURL !== (user?.image ?? doctorDefault) ||
+      city !== (user as Doctor)?.city ||
+      address !== (user as Doctor)?.address ||
+      specialty !==
+        (user as Doctor)?.specialty.replace(/\./g, "_").toUpperCase() ||
+      healthInsurancesChanged
+    );
+  }, [
+    imageURL,
+    name,
+    lastname,
+    city,
+    address,
+    specialty,
+    locale,
+    doctorHealthInsurances,
+    user,
+  ]);
 
   useEffect(() => {
     if (!loading && user && isDoctor) {
       const doctor = user as Doctor;
-      setFormData({
-        name: doctor.firstName,
-        lastname: doctor.lastName,
-        healthInsurances: doctor.healthInsurances.map((healthInsurance) =>
+
+      setValue("name", doctor.firstName);
+      setValue("lastname", doctor.lastName);
+      setValue("city", doctor.city);
+      setValue("address", doctor.address);
+      setValue("specialty", doctor.specialty.replace(/\./g, "_").toUpperCase());
+      setValue("locale", doctor.locale);
+      setValue(
+        "healthInsurances",
+        doctor.healthInsurances.map((healthInsurance) =>
           healthInsurance.replace(/\./g, "_").toUpperCase(),
         ),
-        city: doctor.city,
-        address: doctor.address,
-        specialty: doctor.specialty.replace(/\./g, "_").toUpperCase(),
-        locale: doctor.locale,
-      });
-    }
-  }, [user, loading]);
+      );
 
-  // TODO
+      setImageURL(doctor.image ? doctor.image : doctorDefault);
+    }
+  }, [user, loading, isDoctor, setValue]);
+
   const onSuccess = () => {
-    alert("Profile updated successfully");
+    setShowSuccess(true);
   };
 
   const onError = (error: AxiosError) => {
-    const body = JSON.stringify(error.response?.data);
-    alert(`Failed to update profile: ${error.message}, ${body}`);
+    setError("root", {
+      message: "profile.error",
+    });
   };
 
   const id = loading || !isDoctor ? "" : String(user!.id);
 
   const updateDoctorMutation = useUpdateDoctor(id, onSuccess, onError);
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    const { name, lastname, healthInsurances, locale } = formData;
-
-    if (!name || !lastname || !healthInsurances || !locale) {
-      alert("Please fill in all required fields.");
-      return;
+  const onSubmit: SubmitHandler<DoctorEditForm> = (data: DoctorEditForm) => {
+    const image = data.image;
+    if (!(image instanceof File)) {
+      data.image = undefined;
     }
 
-    updateDoctorMutation.mutate(formData);
+    updateDoctorMutation.mutate(data);
   };
 
-  if (isLoadingHealhInsurances) {
-    return <p>Loading...</p>;
-  }
-
   return (
-    <Container className="generalPadding">
-      <h1>Edit Profile</h1>
-      <Card>
-        <Form onSubmit={handleSubmit}>
-          <Row className="profileRow">
-            <Col className="profileItem">
-              <Form.Label htmlFor="name">First Name</Form.Label>
-              <Form.Control
-                id="name"
-                name="name"
-                type="text"
-                value={formData.name}
-                onChange={(e) => {
-                  setFormData((prev) => ({
-                    ...prev,
-                    name: e.target.value,
-                  }));
-                }}
-              />
-            </Col>
-            <Col className="profileItem">
-              <Form.Label htmlFor="lastname">Last Name</Form.Label>
-              <Form.Control
-                id="lastname"
-                name="lastname"
-                type="text"
-                value={formData.lastname}
-                onChange={(e) => {
-                  setFormData((prev) => ({
-                    ...prev,
-                    lastname: e.target.value,
-                  }));
-                }}
-              />
-            </Col>
-          </Row>
+    <Container className="justify-content-center mt-5">
+      <Col md={8} lg={9}>
+        <Breadcrumb>
+          <Breadcrumb.Item href="/doctor-profile">
+            {t("profile.profile")}
+          </Breadcrumb.Item>
+          <Breadcrumb.Item active>{t("editProfile.title")}</Breadcrumb.Item>
+        </Breadcrumb>
+        <h1>{t("editProfile.title")}</h1>
 
-          <Row className="profileRow">
-            <Col className="profileItem">
-              <Form.Label htmlFor="name">City</Form.Label>
-              <Form.Control
-                id="city"
-                name="city"
-                type="text"
-                value={formData.city}
-                onChange={(e) => {
-                  setFormData((prev) => ({
-                    ...prev,
-                    city: e.target.value,
-                  }));
-                }}
-              />
-            </Col>
-            <Col className="profileItem">
-              <Form.Label htmlFor="address">Address</Form.Label>
-              <Form.Control
-                id="address"
-                name="address"
-                type="text"
-                value={formData.address}
-                onChange={(e) => {
-                  setFormData((prev) => ({
-                    ...prev,
-                    address: e.target.value,
-                  }));
-                }}
-              />
-            </Col>
-          </Row>
-
-          <Row className="profileRow">
-            <Col className="profileItem">
-              <Form.Label htmlFor="healthInsurance">
-                Health Insurance
-              </Form.Label>
-              <Form.Control
-                id="healthInsurance"
-                name="healthInsurance"
-                as="select"
-                multiple
-                value={formData.healthInsurances}
-                onChange={(e) => {
-                  const newHealthInsurances =
-                    formData.healthInsurances.includes(e.target.value)
-                      ? formData.healthInsurances.filter(
-                          (insurance) => insurance !== e.target.value,
-                        )
-                      : [...formData.healthInsurances, e.target.value];
-
-                  setFormData((prev) => ({
-                    ...prev,
-                    healthInsurances: newHealthInsurances,
-                  }));
-                }}
-              >
-                {healthInsurances?.map((healthinsurance) => (
-                  <option
-                    key={healthinsurance.code}
-                    value={healthinsurance.code}
+        <Card className="mw-100">
+          <Card.Body>
+            <Form onSubmit={handleSubmit(onSubmit)}>
+              <Row>
+                <Col className="d-flex flex-column justify-content-center align-items-center">
+                  <div
+                    style={{
+                      width: "75%",
+                      aspectRatio: "1",
+                      overflow: "hidden",
+                      borderRadius: "50%",
+                    }}
                   >
-                    {t(
-                      `healthInsurance.${healthinsurance.code.replace(/_/g, ".").toLowerCase()}`,
+                    <Image
+                      src={imageURL}
+                      alt={t("user.alt.loggedUserImg")}
+                      style={{
+                        width: "100%",
+                        height: "100%",
+                        objectFit: "cover",
+                      }}
+                    />
+                  </div>
+                  <div className="mt-5">
+                    <Form.Group>
+                      {/* Hidden File Input */}
+                      <Form.Control
+                        {...register("image", {
+                          validate: (value: File | undefined) => {
+                            const file =
+                              value instanceof File ? value : undefined;
+                            return validateImage(file);
+                          },
+                        })}
+                        type="file"
+                        accept="image/png, image/jpeg, image/jpg"
+                        ref={(e: HTMLInputElement | null) => {
+                          register("image").ref(e);
+                          fileInputRef.current = e;
+                        }}
+                        style={{ display: "none" }}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                          const file = e.target.files?.[0];
+                          if (file) {
+                            setImageURL(URL.createObjectURL(file));
+                            setValue("image", file);
+                          }
+                        }}
+                      />
+                      {/* Trigger Button */}
+                      <Button variant="primary" onClick={handleButtonClick}>
+                        {t("form.image")}
+                      </Button>
+                      {/* Error Feedback */}
+                      {errors.image && (
+                        <Form.Control.Feedback
+                          type="invalid"
+                          style={{ display: "block" }}
+                        >
+                          {errors.image.message}
+                        </Form.Control.Feedback>
+                      )}
+                    </Form.Group>
+                  </div>
+                </Col>
+                <Col>
+                  <div className="d-flex flex-row align-items-center justify-content-center mt-3">
+                    <h5 className="d-flex flex-row align-items-center">
+                      {t("profile.personalInfo")} <FaUser className="ms-2" />
+                    </h5>
+                  </div>
+                  <Row className="mb-3">
+                    <Col>
+                      <Form.Group>
+                        <Form.Label>{t("form.name")}</Form.Label>
+                        <Form.Control
+                          {...register("name", {
+                            validate: validateName,
+                          })}
+                          id="name"
+                          name="name"
+                          type="text"
+                          placeholder={t("form.name_hint")}
+                          isInvalid={!!errors.name}
+                        />
+                        <Form.Control.Feedback type="invalid">
+                          {errors.name && t(errors.name.message ?? "")}
+                        </Form.Control.Feedback>
+                      </Form.Group>
+                    </Col>
+                    <Col>
+                      <Form.Group>
+                        <Form.Label>{t("form.lastname")}</Form.Label>
+                        <Form.Control
+                          {...register("lastname", {
+                            validate: validateLastname,
+                          })}
+                          id="lastname"
+                          name="lastname"
+                          type="text"
+                          placeholder={t("form.lastname_hint")}
+                          isInvalid={!!errors.lastname}
+                        />
+                        <Form.Control.Feedback type="invalid">
+                          {errors.lastname && t(errors.lastname.message ?? "")}
+                        </Form.Control.Feedback>
+                      </Form.Group>
+                    </Col>
+                    <Col>
+                      <Form.Group>
+                        <Form.Label htmlFor="locale">
+                          {t("form.locale")}
+                        </Form.Label>
+                        <Form.Select
+                          {...register("locale", {
+                            validate: validateLocale,
+                          })}
+                          id="locale"
+                          name="locale"
+                          isInvalid={!!errors.locale}
+                        >
+                          <option key="en" value="en">
+                            {t("locale.en")}
+                          </option>
+                          <option key="es" value="es">
+                            {t("locale.es")}
+                          </option>
+                        </Form.Select>
+                        <Form.Control.Feedback type="invalid">
+                          {errors.locale && t(errors.locale.message ?? "")}
+                        </Form.Control.Feedback>
+                      </Form.Group>
+                    </Col>
+                  </Row>
+
+                  <div className="d-flex flex-row align-items-center justify-content-center mt-4">
+                    <h5 className="d-flex flex-row align-items-center">
+                      {t("profile.location")} <FaLocationDot className="ms-2" />
+                    </h5>
+                  </div>
+                  <Row>
+                    <Col>
+                      <Form.Group>
+                        <Form.Label>{t("form.address")}</Form.Label>
+                        <Form.Control
+                          {...register("address", {
+                            validate: validateAddress,
+                          })}
+                          id="address"
+                          name="address"
+                          type="text"
+                          placeholder={t("form.address_hint")}
+                          isInvalid={!!errors.address}
+                        />
+                        <Form.Control.Feedback type="invalid">
+                          {errors.address && t(errors.address.message ?? "")}
+                        </Form.Control.Feedback>
+                      </Form.Group>
+                    </Col>
+                    <Col>
+                      <Form.Group>
+                        <Form.Label>{t("form.city")}</Form.Label>
+                        <Form.Control
+                          {...register("city", {
+                            validate: validateCity,
+                          })}
+                          id="city"
+                          name="city"
+                          type="text"
+                          placeholder={t("form.city_hint")}
+                          isInvalid={!!errors.city}
+                        />
+                        <Form.Control.Feedback type="invalid">
+                          {errors.city && t(errors.city.message ?? "")}
+                        </Form.Control.Feedback>
+                      </Form.Group>
+                    </Col>
+                  </Row>
+
+                  <div className="d-flex flex-row align-items-center justify-content-center mt-4">
+                    <h5 className="d-flex flex-row align-items-center">
+                      {t("profile.workInfo")} <FaUserDoctor className="ms-2" />
+                    </h5>
+                  </div>
+                  <Row>
+                    <Form.Group controlId="formSpecialty">
+                      <Form.Label>{t("form.specialization")}</Form.Label>
+                      <Form.Select
+                        {...register("specialty", {
+                          validate: (value) =>
+                            validateSpecialty(value, specialties),
+                        })}
+                        id="specialty"
+                        name="specialty"
+                        isInvalid={!!errors.specialty}
+                      >
+                        <option key="hint" value="" disabled>
+                          {t("form.specialization_hint")}
+                        </option>
+                        {specialties?.map((specialty) => (
+                          <option key={specialty.code} value={specialty.code}>
+                            {t(
+                              `specialty.${specialty.code.replace(/_/g, ".").toLowerCase()}`,
+                            )}
+                          </option>
+                        ))}
+                      </Form.Select>
+                      <Form.Control.Feedback type="invalid">
+                        {errors.specialty && t(errors.specialty.message ?? "")}
+                      </Form.Control.Feedback>
+                    </Form.Group>
+                  </Row>
+
+                  <Row>
+                    <HealthInsurancePicker
+                      healthInsurances={healthInsurances ?? []}
+                      control={control}
+                      errors={errors}
+                    />
+                  </Row>
+                  <Row className="ms-2 mt-3 me-2">
+                    {showSuccess && (
+                      <Alert
+                        variant="primary"
+                        dismissible
+                        onClose={() => setShowSuccess(false)}
+                      >
+                        {t("profile.success")}
+                      </Alert>
                     )}
-                  </option>
-                ))}
-              </Form.Control>
-            </Col>
-          </Row>
-
-          <Row className="profileRow">
-            <Col className="profileItem">
-              <Form.Label htmlFor="specialty">Specialty</Form.Label>
-              <Form.Control
-                id="specialty"
-                name="specialty"
-                as="select"
-                value={formData.specialty}
-                onChange={(e) => {
-                  setFormData((prev) => ({
-                    ...prev,
-                    specialty: e.target.value,
-                  }));
-                }}
-              >
-                {specialties?.map((specialty) => (
-                  <option key={specialty.code} value={specialty.code}>
-                    {t(
-                      `specialty.${specialty.code.replace(/_/g, ".").toLowerCase()}`,
+                    {errors.root && (
+                      <div className="alert alert-danger" role="alert">
+                        {t(errors.root.message ?? "")}
+                      </div>
                     )}
-                  </option>
-                ))}
-              </Form.Control>
-            </Col>
-          </Row>
+                  </Row>
+                </Col>
 
-          <Row className="profileRow">
-            <Col className="profileItem">
-              <Form.Label htmlFor="locale">Locale</Form.Label>
-              <Form.Control
-                id="locale"
-                name="locale"
-                type="text"
-                value={formData.locale}
-                onChange={(e) => {
-                  setFormData((prev) => ({
-                    ...prev,
-                    locale: e.target.value,
-                  }));
-                }}
-              />
-            </Col>
-            <Col className="profileItem">
-              <Form.Label>Profile picture</Form.Label>
-              <Form.Control
-                type="file"
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                  const selectedFile = e.target.files?.[0];
-                  if (selectedFile) {
-                    setFormData((prev) => ({
-                      ...prev,
-                      image: selectedFile,
-                    }));
-                  }
-                }}
-              />
-            </Col>
-          </Row>
-
-          <div className="profileButtonContainer">
-            <Button
-              variant="primary"
-              type="submit"
-              disabled={updateDoctorMutation.isPending}
-            >
-              Save Changes
-            </Button>
-            <Button
-              variant="secondary"
-              onClick={() => navigate("/doctor-profile")}
-            >
-              Cancel
-            </Button>
-          </div>
-        </Form>
-      </Card>
+                <div className="profileButtonContainer mt-2">
+                  <Button
+                    variant="primary"
+                    type="submit"
+                    disabled={updateDoctorMutation.isPending || !hasChanged()}
+                  >
+                    {updateDoctorMutation.isPending ? (
+                      <>
+                        <Spinner
+                          as="span"
+                          animation="border"
+                          size="sm"
+                          role="status"
+                          aria-hidden="true"
+                        />{" "}
+                        {t("profile.loading")}
+                      </>
+                    ) : (
+                      t("profile.saveChanges")
+                    )}
+                  </Button>
+                  <Button
+                    variant="secondary"
+                    onClick={() => navigate("/doctor-profile")}
+                  >
+                    {t("profile.cancel")}
+                  </Button>
+                </div>
+              </Row>
+            </Form>
+          </Card.Body>
+        </Card>
+      </Col>
     </Container>
   );
 };

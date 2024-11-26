@@ -181,10 +181,10 @@ const DoctorProfile = () => {
               {t("profile.viewVacations")}
             </Button>
             <Button variant="primary" as={Link as any} to={DOCTOR_EDIT_URL}>
-              {t("profile.edit.title")}
+              {t("editProfile.title")}
             </Button>
             <Button variant="primary" as={Link as any} to={CHANGE_SCHEDULE_URL}>
-              Change Schedule
+                {t("changeSchedule.title")}
             </Button>
             <Button variant="primary" as={Link as any} to={CHANGE_PASSWORD_URL}>
               {t("profile.changePassword")}
