@@ -1,7 +1,7 @@
-import React from "react";
+import React, {useCallback, useState} from "react";
 import { useVacations, useDeleteVacation } from "../../hooks/vacationHooks";
 import VacationCard from "./VacationCard";
-import { Alert, Button, Spinner, Stack } from "react-bootstrap";
+import {Alert, Button, Modal, Spinner, Stack} from "react-bootstrap";
 import { useTranslation } from "react-i18next";
 import VacationCardPlaceholder from "./VacationCardPlaceholder";
 
@@ -22,11 +22,20 @@ const VacationList: React.FC<VacationPageProps> = ({ doctorId, pageSize }) => {
 
   const { t } = useTranslation();
 
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [vacationIdToDelete, setVacationIdToDelete] = useState<string | null>(null);
+
+
   const deleteVacationMutation = useDeleteVacation(doctorId);
 
   const handleDeleteVacation = (vacationId: string) => {
-    deleteVacationMutation.mutate(vacationId);
+    setVacationIdToDelete(vacationId);
+    setShowDeleteModal(true);
   };
+
+  const selected = useCallback((id: string) => {
+    return id === vacationIdToDelete;
+  }, [vacationIdToDelete]);
 
   if (isLoading) {
     return <Stack direction="vertical" gap={3}>
@@ -59,7 +68,7 @@ const VacationList: React.FC<VacationPageProps> = ({ doctorId, pageSize }) => {
       </div>
     );
   }
-  // TODO
+
   return (
     <div>
       {/* List of vacations */}
@@ -71,6 +80,7 @@ const VacationList: React.FC<VacationPageProps> = ({ doctorId, pageSize }) => {
                 key={vacation.id}
                 vacation={vacation}
                 onDelete={handleDeleteVacation}
+                selected={selected(vacation.id)}
               />
             ))}
           </React.Fragment>
@@ -102,6 +112,52 @@ const VacationList: React.FC<VacationPageProps> = ({ doctorId, pageSize }) => {
           </Button>
         )}
       </div>
+
+        {/* Delete modal */}
+      <Modal
+        show={showDeleteModal}
+        onHide={() => {setShowDeleteModal(false); setVacationIdToDelete(null)}}
+        backdrop="static"
+        keyboard={false}
+        >
+        <Modal.Header>
+          <Modal.Title>{t("vacation.deleteTitle")}</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <div className="text-muted">{t("vacation.deleteDescription")}</div>
+        </Modal.Body>
+        <Modal.Footer>
+            <Button
+                variant="secondary"
+                onClick={() => {setShowDeleteModal(false); setVacationIdToDelete(null)}}
+            >
+                {t("vacation.deleteDeny")}
+            </Button>
+            <Button
+                variant="danger"
+                onClick={() => {
+                deleteVacationMutation.mutate(vacationIdToDelete as string);
+                setShowDeleteModal(false);
+                setVacationIdToDelete(null);
+                }}
+                disabled={deleteVacationMutation.isPending}
+            >
+                {deleteVacationMutation.isPending ? (
+                <>
+                    <Spinner
+                    as="span"
+                    animation="border"
+                    size="sm"
+                    role="status"
+                    aria-hidden="true"
+                    />
+                </>
+                ) : (
+                t("vacation.deleteConfirm")
+                )}
+            </Button>
+        </Modal.Footer>
+        </Modal>
     </div>
   );
 };

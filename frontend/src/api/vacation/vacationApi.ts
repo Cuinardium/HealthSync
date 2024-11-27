@@ -1,7 +1,13 @@
 import { axios } from "../axios";
 import { getPage, Page } from "../page/Page";
-import {Vacation, VacationForm, VacationQuery, VacationResponse} from "./Vacation";
-import {parseLocalDate} from "../util/dateUtils";
+import {
+  Vacation,
+  VacationForm,
+  VacationQuery,
+  VacationResponse,
+} from "./Vacation";
+import { parseLocalDate } from "../util/dateUtils";
+import {Time, TIMES} from "../time/Time";
 
 const VACATION_ENDPOINT = (doctor_id: string) =>
   `/doctors/${doctor_id}/vacations`;
@@ -25,7 +31,9 @@ export async function getVacations(
 
   if (response.status === 200) {
     // Set fromDate and toDate to Date object
-    response.data = response.data?.map((vacation: VacationResponse) => mapDates(vacation));
+    response.data = response.data?.map((vacation: VacationResponse) =>
+      mapValues(vacation),
+    );
   }
 
   return getPage(response);
@@ -72,7 +80,7 @@ export async function getVacation(
     },
   );
 
-  return mapDates(response.data);
+  return mapValues(response.data);
 }
 
 export async function deleteVacation(
@@ -84,12 +92,51 @@ export async function deleteVacation(
 
 // ======== auxiliary functions =========
 
-function mapDates(vacation: VacationResponse): Vacation {
+function isHappening(
+  fromDate: Date,
+  toDate: Date,
+  fromTime: string,
+  toTime: string,
+): boolean {
+  const today = new Date();
+  const currentTimeIndex =
+    today.getHours() * 2 + Math.floor(today.getMinutes() / 30);
+  const fromTimeIndex = TIMES.indexOf(fromTime as Time);
+  const toTimeIndex = TIMES.indexOf(toTime as Time);
+
+  // If today is between non-inclusive fromDate and toDate
+  if (today >= fromDate && today < toDate) {
+    return true;
+  }
+
+  // If today is the fromDate and current time is after fromTime
+  if (today === fromDate && currentTimeIndex >= fromTimeIndex) {
+    return true;
+  }
+
+  // If today is the toDate and current time is before toTime
+  return today === toDate && currentTimeIndex <= toTimeIndex;
+}
+
+function isPast(fromDate: Date, fromTime: string): boolean {
+  const today = new Date();
+  const currentTimeIndex =
+    today.getHours() * 2 + Math.floor(today.getMinutes() / 30);
+  const fromTimeIndex = TIMES.indexOf(fromTime as Time);
+
+  return today > fromDate || (today === fromDate && currentTimeIndex > fromTimeIndex);
+}
+
+function mapValues(vacation: VacationResponse): Vacation {
   const fromDate = parseLocalDate(vacation.fromDate);
   const toDate = parseLocalDate(vacation.toDate);
+  const isVacationHappening = isHappening(fromDate, toDate, vacation.fromTime, vacation.toTime);
+    const isVacationPast = isPast(fromDate, vacation.fromTime);
   return {
     ...vacation,
     fromDate,
-    toDate
-  }
+    toDate,
+    isHappening: isVacationHappening,
+    isPast: !isVacationHappening && isVacationPast,
+  };
 }

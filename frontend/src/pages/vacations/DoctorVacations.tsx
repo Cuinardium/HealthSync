@@ -8,7 +8,8 @@ import {
   Button,
   Col,
   Container,
-  Modal, Spinner,
+  Modal,
+  Spinner,
   Stack,
 } from "react-bootstrap";
 import { useTranslation } from "react-i18next";
@@ -24,11 +25,10 @@ const DoctorVacations: React.FC = () => {
 
   if (loading) {
     return (
-        <Container className="d-flex justify-content-center align-items-center mt-5">
-            <Spinner animation="border" role="status" variant="primary">
-            </Spinner>
-        </Container>
-    )
+      <Container className="d-flex justify-content-center align-items-center mt-5">
+        <Spinner animation="border" role="status" variant="primary"></Spinner>
+      </Container>
+    );
   }
 
   return (
@@ -53,14 +53,11 @@ const DoctorVacations: React.FC = () => {
           </Button>
         </Stack>
         {/* Vacation list */}
-        <VacationList
-          doctorId={id as any}
-          pageSize={pageSize}
-        />
+        <VacationList doctorId={id as any} pageSize={pageSize} />
       </Col>
 
       <Modal
-          size="lg"
+        size="lg"
         show={showCreateForm}
         onHide={() => setShowCreateForm(false)}
         backdrop="static"

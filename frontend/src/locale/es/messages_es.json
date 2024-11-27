@@ -177,12 +177,16 @@
     "doNotCancelAppointmentsInVacation": "No quiero cancelar los turnos",
     "noVacations": "Usted no tiene vacaciones todavia",
     "deleteTitle": "Cancelar vacaciones",
-    "deleteDescription": "�Está usted seguro que quiere cancelar estas vacaciones?",
+    "deleteDescription": "Estas por cancelar tus vacaciones. ¿Estás seguro de hacerlo?",
     "deleteDeny": "No",
     "deleteConfirm": "Si",
+    "deleting": "Cancelando...",
     "loadMore": "Cargar más",
     "loadingMore": "Cargando...",
-    "errorLoading": "Hubo un error al cargar las vacaciones"
+    "errorLoading": "Hubo un error al cargar las vacaciones",
+    "happening": "En Curso",
+    "future": "Futuras",
+    "past": "Pasadas"
   },
   "appointmentSent": {
     "title": "Turno enviado",

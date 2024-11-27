@@ -4,6 +4,8 @@ export interface Vacation {
     fromTime: string;
     toDate: Date;
     toTime: string;
+    isHappening: boolean;
+    isPast: boolean;
 }
 
 export interface VacationResponse {

@@ -179,9 +179,13 @@
     "deleteDescription": "Are you sure you want to cancel this vacation?",
     "deleteDeny": "No",
     "deleteConfirm": "Yes",
+    "deleting" : "Cancelling...",
     "loadMore": "Load more",
     "loadingMore": "Loading...",
-    "errorLoading": "An error occurred while loading vacations"
+    "errorLoading": "An error occurred while loading vacations",
+    "happening": "Ongoing",
+    "future": "Upcoming",
+    "past": "Past"
   },
   "appointmentSent": {
     "title": "Appointment Sent",

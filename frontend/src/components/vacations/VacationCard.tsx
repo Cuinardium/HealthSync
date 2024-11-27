@@ -6,9 +6,10 @@ import {FaArrowRight} from "react-icons/fa";
 interface VacationCardProps {
     vacation: Vacation;
     onDelete: (vacationId: string) => void;
+    selected: boolean;
 }
 
-const VacationCard: React.FC<VacationCardProps> = ({ vacation, onDelete }) => {
+const VacationCard: React.FC<VacationCardProps> = ({ vacation, onDelete, selected }) => {
     const { t } = useTranslation();
 
     // Format date to dd/mm/yyyy
@@ -24,18 +25,36 @@ const VacationCard: React.FC<VacationCardProps> = ({ vacation, onDelete }) => {
     const toDate = formatDate(vacation.toDate);
 
     return (
-        <Card className="shadow-sm">
+        <Card className="shadow-sm" border={vacation.isHappening ? "success": "light"}>
             <Card.Body>
                 <Row className="align-items-center">
-                    <Col md={6}>
-                        <div>
-                            <strong>{fromDate}</strong> ({vacation.fromTime})
-                            <FaArrowRight className="mx-2 text-primary" />
-                            <strong>{toDate}</strong> ({vacation.toTime})
-                        </div>
+                    <Col md={2} sm={2}>
+                        {vacation.isHappening ? (
+                                <div className="text-success text-center">{t("vacation.happening")}</div>
+                        ) : vacation.isPast ?
+                                <div className="text-secondary text-center">{t("vacation.past")}</div>
+                            :(
+                                <div className="text-primary text-center">{t("vacation.future")}</div>
+                        )}
+
                     </Col>
-                    <Col md={6} className="text-end">
-                        <Button variant="danger" onClick={() => onDelete(vacation.id)}>
+                    <Col md={2} sm={3}>
+                        <h5 className="text-center">
+                            {fromDate}
+                        </h5>
+                        <div className="text-center text-muted"> {vacation.fromTime}</div>
+                    </Col>
+                    <Col md={1} sm={1}>
+                        <FaArrowRight className="mx-2 text-primary" />
+                    </Col>
+                    <Col md={2} sm={3}>
+                        <h5 className="text-center">
+                            {toDate}
+                        </h5>
+                        <div className="text-center text-muted">{vacation.toTime}</div>
+                    </Col>
+                    <Col md={5} sm={3} className="text-end">
+                        <Button variant="danger" onClick={() => onDelete(vacation.id)} disabled={selected}>
                             {t("vacation.cancel")}
                         </Button>
                     </Col>
