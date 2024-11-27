@@ -149,18 +149,29 @@
   },
   "vacation": {
     "title": "Vacations",
+    "description": "You can create vacations to block your availability for appointments.",
     "addSuccessTitle": "Vacation Created",
     "addSuccessDescription": "Your vacation was created successfully",
     "addTitle": "Create Vacation",
+    "add": "Create",
     "date": "Date",
     "time": "Time",
     "from": "From",
+    "fromDate": "From Date",
+    "toDate": "To Date",
+    "fromTime": "From Time",
+    "fromTime_hint": "Select from time",
+    "toTime": "To Time",
+    "toTime_hint": "Select to time",
     "to": "To",
     "addButton": "Create",
+    "loading": "Creating...",
     "cancel": "Cancel",
-    "addInvalidVacation": "Invalid Vacation Range",
-    "appointmentsInVacation": "You may have confirmed appointments in your vacation. Decide if the appointments should be cancelled.",
+    "vacationOverlaps": "The vacation overlaps with another vacation",
+    "error": "An error occurred while creating the vacation",
+    "appointmentsInVacation": "You may have confirmed appointments in your vacation. Decide if these should be cancelled.",
     "appointmentsInVacationCancelReasonTitle": "Explain why the appointments were cancelled",
+    "reason": "Reason",
     "cancelAppointmentsInVacation": "I want to cancel them",
     "doNotCancelAppointmentsInVacation": "I do not want to cancel them",
     "noVacations": "No vacations yet",
@@ -703,6 +714,21 @@
     "locale": {
       "required": "Language is required.",
       "invalid": "Invalid language selected."
+    },
+    "vacation": {
+      "date": {
+        "required": "Date is required.",
+        "invalid": "Date cannot be in the past."
+      },
+      "time": {
+        "required": "Time is required.",
+        "invalid": "Time cannot be in the past.",
+        "notInEnum": "Invalid time selected."
+      },
+      "cancelReason": {
+        "required": "Cancel reason is required if you want to cancel the appointments."
+      },
+      "invalid": "The vacation start date and time must be before the end date and time."
     }
   }
 }

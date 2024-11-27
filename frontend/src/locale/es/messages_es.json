@@ -149,18 +149,30 @@
   },
   "vacation": {
     "title": "Vacaciones",
+    "description": "Puedes crear vacaciones para que tus pacientes no puedan reservar turnos en esos días.",
     "addSuccessTitle": "Vacaciones Creadas",
     "addSuccessDescription": "Tus vacaciones han sido creadas exitosamente",
     "addTitle": "Crear Vacaciones",
+    "add": "Crear",
     "date": "Fecha",
     "time": "Hora",
     "from": "Desde",
+    "fromDate": "Fecha Inicial",
+    "toDate": "Fecha Final",
+    "fromTime": "Hora Inicial",
+    "fromTime_hint": "Seleccionar hora inicial",
+    "toTime": "Hora Final",
+    "toTime_hint": "Seleccionar hora final",
     "to": "Hasta",
     "addButton": "Crear",
+    "loading": "Creando...",
     "cancel": "Cancelar",
+    "vacationOverlaps": "Estas vacaciones se superponen con otras vacaciones",
+    "error": "Hubo un error al crear las vacaciones",
     "addInvalidVacation": "Rango de vacaciones inválido",
-    "appointmentsInVacation": "Es posible que usted tenga turnos reservados en sus vacaciones. Decida si deben ser cancelarlos.",
+    "appointmentsInVacation": "Es posible que tenga turnos reservados en sus vacaciones. Decida si deben ser cancelarlos.",
     "appointmentsInVacationCancelReasonTitle": "Explique la razón de la cancelación",
+    "reason": "Razón",
     "cancelAppointmentsInVacation": "Quiero cancelar los turnos",
     "doNotCancelAppointmentsInVacation": "No quiero cancelar los turnos",
     "noVacations": "Usted no tiene vacaciones todavia",
@@ -703,6 +715,21 @@
     "locale": {
       "required": "El lenguaje es obligatorio.",
       "invalid": "El lenguaje seleccionado no es válido."
+    },
+    "vacation": {
+      "date": {
+        "required": "La fecha es obligatoria.",
+        "invalid": "La fecha no puede ser en el pasado."
+      },
+      "time": {
+        "required": "La hora es obligatoria.",
+        "invalid": "La hora no puede ser en el pasado.",
+        "notInEnum": "La hora seleccionada no es válida."
+      },
+      "cancelReason": {
+        "required": "La razón de la cancelación es obligatoria si desea cancelar los turnos."
+      },
+      "invalid": "El inicio de las vacaciones no puede ser después del fin de las mismas."
     }
   }
 }

@@ -1,6 +1,8 @@
 import { HealthInsurance } from "../health-insurance/HealthInsurance";
 import { Specialty } from "../specialty/Specialty";
 import { LOCALES } from "../locale/locale";
+import { VacationForm } from "../vacation/Vacation";
+import { Time, TIMES } from "../time/Time";
 
 export function validateName(name: string | null): string | boolean {
   const validationMessages = {
@@ -174,6 +176,66 @@ export function validateImage(file: File | undefined): string | true {
   // Validate file size
   if (file.size > MAX_IMAGE_SIZE) {
     return "validation.image.size";
+  }
+
+  return true;
+}
+
+export function validateVacation(vacation: VacationForm): string | true {
+  const fromDate = vacation.fromDate;
+  const toDate = vacation.toDate;
+
+  const fromTime = TIMES.indexOf(vacation.fromTime as Time);
+  const toTime = TIMES.indexOf(vacation.toTime as Time);
+
+  if (fromDate > toDate) {
+    return "validation.vacation.invalid";
+  }
+
+  if (fromDate === toDate && fromTime >= toTime) {
+    return "validation.vacation.invalid";
+  }
+
+  return true;
+}
+
+export function validateVacationDate(date: Date | string | null): string | true {
+  if (!date) {
+    return "validation.vacation.date.required";
+  }
+
+  date = typeof date === "string" ? new Date(date) : date
+
+  const today = new Date();
+
+  if (date < today) {
+    return "validation.vacation.date.invalid";
+  }
+
+  return true;
+}
+
+export function validateVacationTime(time: string | null, fromDate: Date | string | null): string | true {
+  fromDate = typeof fromDate === "string" ? new Date(fromDate) : fromDate;
+  if (!time) {
+    return "validation.vacation.time.required";
+  }
+
+  if (!TIMES.includes(time as Time)) {
+    return "validation.vacation.time.notInEnum";
+  }
+
+  if (fromDate) {
+    const today = new Date();
+
+    // Times are blocks of 30 minutes, so we need to check if the time is in the past
+    const currentTime = today.getHours() * 2 + Math.floor(today.getMinutes() / 30);
+
+    const selectedTime = TIMES.indexOf(time as Time);
+
+    if (fromDate.getDate() === today.getDate() && selectedTime <= currentTime) {
+      return "validation.vacation.time.invalid";
+    }
   }
 
   return true;
