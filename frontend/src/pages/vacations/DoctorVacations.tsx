@@ -67,7 +67,7 @@ const DoctorVacations: React.FC = () => {
           <Modal.Title>{t("vacation.addTitle")}</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <VacationForm doctorId={id as any} onCloseClicked={() => setShowCreateForm(false)} />
+          <VacationForm doctorId={id as any} />
         </Modal.Body>
       </Modal>
     </Container>

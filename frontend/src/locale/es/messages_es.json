@@ -170,7 +170,7 @@
     "vacationOverlaps": "Estas vacaciones se superponen con otras vacaciones",
     "error": "Hubo un error al crear las vacaciones",
     "addInvalidVacation": "Rango de vacaciones inválido",
-    "appointmentsInVacation": "Es posible que tenga turnos reservados en sus vacaciones. Decida si deben ser cancelarlos.",
+    "appointmentsInVacation": "Es posible que tenga turnos reservados en sus vacaciones. Decida si deben ser cancelados.",
     "appointmentsInVacationCancelReasonTitle": "Explique la razón de la cancelación",
     "reason": "Razón",
     "cancelAppointmentsInVacation": "Quiero cancelar los turnos",

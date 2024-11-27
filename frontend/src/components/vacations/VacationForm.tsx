@@ -14,10 +14,11 @@ import {
 
 interface VacationFormProps {
   doctorId: string;
-  onCloseClicked: () => void;
 }
 
-const VacationForm: React.FC<VacationFormProps> = ({ doctorId, onCloseClicked}) => {
+const VacationForm: React.FC<VacationFormProps> = ({
+  doctorId,
+}) => {
   const { t } = useTranslation();
 
   const {
@@ -26,6 +27,7 @@ const VacationForm: React.FC<VacationFormProps> = ({ doctorId, onCloseClicked}) 
     formState: { errors },
     setError,
     watch,
+    reset,
   } = useForm<VacationFormType>({
     defaultValues: {
       cancelAppointments: false,
@@ -42,10 +44,12 @@ const VacationForm: React.FC<VacationFormProps> = ({ doctorId, onCloseClicked}) 
 
   const onSuccess = () => {
     setShowSuccess(true);
+
+    reset();
   };
 
   const onError = (error: AxiosError) => {
-    console.log(error)
+    console.log(error);
     if (error?.response?.status === 409) {
       setError("root", {
         message: "vacation.vacationOverlaps",
@@ -75,8 +79,12 @@ const VacationForm: React.FC<VacationFormProps> = ({ doctorId, onCloseClicked}) 
     }
 
     // If dates are strings, convert them to Date objects
-    data.fromDate = typeof data.fromDate === "string" ? new Date(data.fromDate) : data.fromDate;
-    data.toDate = typeof data.toDate === "string" ? new Date(data.toDate) : data.toDate;
+    data.fromDate =
+      typeof data.fromDate === "string"
+        ? new Date(data.fromDate)
+        : data.fromDate;
+    data.toDate =
+      typeof data.toDate === "string" ? new Date(data.toDate) : data.toDate;
 
     createVacationMutation.mutate(data);
   };
@@ -155,6 +163,10 @@ const VacationForm: React.FC<VacationFormProps> = ({ doctorId, onCloseClicked}) 
         </Form.Group>
       </Row>
 
+      <div className="mb-3 text-muted">
+        {t("vacation.appointmentsInVacation")}
+      </div>
+
       <Form.Group className="mb-3" controlId="cancelAppointments">
         <Form.Check
           type="checkbox"
@@ -192,7 +204,7 @@ const VacationForm: React.FC<VacationFormProps> = ({ doctorId, onCloseClicked}) 
         </Alert>
       )}
       {showSuccess && (
-        <Alert variant="success" dismissible className="mb-3">
+        <Alert variant="primary" dismissible className="mb-3">
           {t("vacation.addSuccessDescription")}
         </Alert>
       )}
@@ -218,9 +230,6 @@ const VacationForm: React.FC<VacationFormProps> = ({ doctorId, onCloseClicked}) 
           ) : (
             t("vacation.addButton")
           )}
-        </Button>
-        <Button variant="secondary" onClick={onCloseClicked}>
-          {t("vacation.cancel")}
         </Button>
       </Stack>
     </Form>
