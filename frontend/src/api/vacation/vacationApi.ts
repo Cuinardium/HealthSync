@@ -1,6 +1,7 @@
 import { axios } from "../axios";
 import { getPage, Page } from "../page/Page";
-import { Vacation, VacationForm, VacationQuery } from "./Vacation";
+import {Vacation, VacationForm, VacationQuery, VacationResponse} from "./Vacation";
+import {parseLocalDate} from "../util/dateUtils";
 
 const VACATION_ENDPOINT = (doctor_id: string) =>
   `/doctors/${doctor_id}/vacations`;
@@ -15,16 +16,16 @@ export async function getVacations(
   doctorId: string,
   query: VacationQuery,
 ): Promise<Page<Vacation>> {
-  const response = await axios.get<Vacation[]>(VACATION_ENDPOINT(doctorId), {
+  const response = await axios.get(VACATION_ENDPOINT(doctorId), {
     params: query,
     headers: {
       Accept: VACATION_LIST_CONTENT_TYPE,
     },
   });
 
-  if (response.status == 200) {
+  if (response.status === 200) {
     // Set fromDate and toDate to Date object
-    response.data = response.data?.map((review) => mapDates(review));
+    response.data = response.data?.map((vacation: VacationResponse) => mapDates(vacation));
   }
 
   return getPage(response);
@@ -62,7 +63,7 @@ export async function getVacation(
   doctorId: string,
   id: string,
 ): Promise<Vacation> {
-  const response = await axios.get<Vacation>(
+  const response = await axios.get<VacationResponse>(
     `${VACATION_ENDPOINT(doctorId)}/${id}`,
     {
       headers: {
@@ -83,8 +84,12 @@ export async function deleteVacation(
 
 // ======== auxiliary functions =========
 
-function mapDates(vacation: Vacation): Vacation {
-  vacation.fromDate = new Date(vacation.fromDate);
-  vacation.toDate = new Date(vacation.toDate);
-  return vacation;
+function mapDates(vacation: VacationResponse): Vacation {
+  const fromDate = parseLocalDate(vacation.fromDate);
+  const toDate = parseLocalDate(vacation.toDate);
+  return {
+    ...vacation,
+    fromDate,
+    toDate
+  }
 }

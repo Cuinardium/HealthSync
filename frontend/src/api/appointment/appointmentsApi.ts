@@ -6,6 +6,7 @@ import {
   AppointmentQuery,
   AppointmentResponse,
 } from "./Appointment";
+import {parseLocalDate} from "../util/dateUtils";
 
 const APPOINTMENT_ENDPOINT = "/appointments";
 
@@ -89,7 +90,7 @@ export async function cancelAppointment(
 // ========= auxiliary functions =========
 
 export function mapDetails(appointment: AppointmentResponse): Appointment {
-  const date = new Date(appointment.date);
+  const date = parseLocalDate(appointment.date);
 
   const doctor = appointment.links.find((link) => link.rel === "doctor")?.href;
   const patient = appointment.links.find(

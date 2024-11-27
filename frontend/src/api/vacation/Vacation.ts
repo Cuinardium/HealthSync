@@ -6,6 +6,14 @@ export interface Vacation {
     toTime: string;
 }
 
+export interface VacationResponse {
+    id: string;
+    fromDate: string;
+    fromTime: string;
+    toDate: string;
+    toTime: string;
+}
+
 export interface VacationQuery {
     page?: number;
     pageSize?: number;

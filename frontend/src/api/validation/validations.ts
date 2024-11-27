@@ -3,6 +3,7 @@ import { Specialty } from "../specialty/Specialty";
 import { LOCALES } from "../locale/locale";
 import { VacationForm } from "../vacation/Vacation";
 import { Time, TIMES } from "../time/Time";
+import {parseLocalDate} from "../util/dateUtils";
 
 export function validateName(name: string | null): string | boolean {
   const validationMessages = {
@@ -199,14 +200,17 @@ export function validateVacation(vacation: VacationForm): string | true {
   return true;
 }
 
-export function validateVacationDate(date: Date | string | null): string | true {
+export function validateVacationDate(
+  date: Date | string | null,
+): string | true {
   if (!date) {
     return "validation.vacation.date.required";
   }
 
-  date = typeof date === "string" ? new Date(date) : date
+  date = typeof date === "string" ? parseLocalDate(date) : date;
 
   const today = new Date();
+  today.setHours(0, 0, 0, 0);
 
   if (date < today) {
     return "validation.vacation.date.invalid";
@@ -215,8 +219,11 @@ export function validateVacationDate(date: Date | string | null): string | true 
   return true;
 }
 
-export function validateVacationTime(time: string | null, fromDate: Date | string | null): string | true {
-  fromDate = typeof fromDate === "string" ? new Date(fromDate) : fromDate;
+export function validateVacationTime(
+  time: string | null,
+  fromDate: Date | string | null,
+): string | true {
+  fromDate = typeof fromDate === "string" ? parseLocalDate(fromDate) : fromDate;
   if (!time) {
     return "validation.vacation.time.required";
   }
@@ -229,7 +236,8 @@ export function validateVacationTime(time: string | null, fromDate: Date | strin
     const today = new Date();
 
     // Times are blocks of 30 minutes, so we need to check if the time is in the past
-    const currentTime = today.getHours() * 2 + Math.floor(today.getMinutes() / 30);
+    const currentTime =
+      today.getHours() * 2 + Math.floor(today.getMinutes() / 30);
 
     const selectedTime = TIMES.indexOf(time as Time);
 

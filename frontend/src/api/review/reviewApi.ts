@@ -1,6 +1,7 @@
 import { axios } from "../axios";
 import { getPage, Page } from "../page/Page";
 import { Review, ReviewForm, ReviewQuery, ReviewResponse } from "./Review";
+import {parseLocalDate} from "../util/dateUtils";
 
 const REVIEW_ENDPOINT = (doctor_id: string) => `/doctors/${doctor_id}/reviews`;
 
@@ -20,7 +21,7 @@ export async function getReviews(
     },
   });
 
-  if (response.status == 200) {
+  if (response.status === 200) {
     // Set date to Date object
     response.data = response.data?.map((review: ReviewResponse) => mapDetails(review));
   }
@@ -62,7 +63,7 @@ export async function getReview(doctorId: string, id: string): Promise<Review> {
 // ========== auxiliary functions ==============
 
 function mapDetails(review: ReviewResponse): Review {
-  const date = new Date(review.date);
+  const date = parseLocalDate(review.date);
   const patientId = review.links.find((link) => link.rel === "patient")?.href.split("/").pop() as string;
 
   return {
