@@ -368,12 +368,12 @@ public class AppointmentServiceImpl implements AppointmentService {
     // Get actual thirty minute block
     ThirtyMinuteBlock timeBlock = ThirtyMinuteBlock.fromTime(LocalTime.now());
 
-    // Complete all appointments for yesterday
-    appointmentDao.completeAppointmentsInDateBlock(yesterday, timeBlock);
-
     // Get all appointments for yesterday
     List<Appointment> yesterdayAppointments =
         appointmentDao.getAllConfirmedAppointmentsInDateBlock(yesterday, timeBlock);
+
+    // Complete all appointments for yesterday
+    appointmentDao.completeAppointmentsInDateBlock(yesterday, timeBlock);
 
     // Send email to patient
     for (Appointment appointment : yesterdayAppointments) {
