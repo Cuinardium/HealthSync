@@ -182,6 +182,7 @@ const VacationForm: React.FC<VacationFormProps> = ({
           </Form.Label>
           <Form.Control
             as="textarea"
+            rows={5}
             placeholder={t("vacation.reason")}
             {...register("cancelReason", {
               validate: (value) => {

@@ -8,8 +8,7 @@ import {
   Button,
   Col,
   Container,
-  Modal,
-  Row,
+  Modal, Spinner,
   Stack,
 } from "react-bootstrap";
 import { useTranslation } from "react-i18next";
@@ -18,18 +17,22 @@ import { Link } from "react-router-dom";
 const DoctorVacations: React.FC = () => {
   const { t } = useTranslation();
   const { loading, id } = useAuth();
-  const [page, setPage] = useState(1);
 
   const [showCreateForm, setShowCreateForm] = useState(false);
 
-  const pageSize = 3;
+  const pageSize = 10;
 
   if (loading) {
-    return <Loader />;
+    return (
+        <Container className="d-flex justify-content-center align-items-center mt-5">
+            <Spinner animation="border" role="status" variant="primary">
+            </Spinner>
+        </Container>
+    )
   }
 
   return (
-    <Container className="justify-content-center mt-5">
+    <Container className="justify-content-center mt-5 mb-5">
       <Col md={8} lg={9}>
         <Breadcrumb>
           <Breadcrumb.Item linkAs={Link} linkProps={{ to: "/doctor-profile" }}>
@@ -42,6 +45,7 @@ const DoctorVacations: React.FC = () => {
           <h5 className="text-muted">{t("vacation.description")}</h5>
           <Button
             variant="outline-primary"
+            className="ms-auto"
             onClick={() => setShowCreateForm(true)}
             active={showCreateForm}
           >
@@ -51,9 +55,7 @@ const DoctorVacations: React.FC = () => {
         {/* Vacation list */}
         <VacationList
           doctorId={id as any}
-          page={page}
           pageSize={pageSize}
-          onPageChange={setPage}
         />
       </Col>
 

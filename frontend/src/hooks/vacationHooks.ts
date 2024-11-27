@@ -1,4 +1,4 @@
-import { useQuery, useMutation } from "@tanstack/react-query";
+import { useQuery, useMutation, useInfiniteQuery } from "@tanstack/react-query";
 import {
   getVacations,
   getVacation,
@@ -8,23 +8,27 @@ import {
 import {
   Vacation,
   VacationForm,
-  VacationQuery,
 } from "../api/vacation/Vacation";
 import { queryClient } from "../api/queryClient";
-import { Page } from "../api/page/Page";
 import { AxiosError } from "axios";
 
 const STALE_TIME = 5 * 60 * 1000;
 
 // ========== useVacations ==========
 
-export function useVacations(doctorId: string, query: VacationQuery) {
-  return useQuery<Page<Vacation>, AxiosError>(
+export function useVacations(doctorId: string, pageSize: number) {
+  return useInfiniteQuery(
     {
-      queryKey: ["vacations", doctorId, query.page],
-      queryFn: () => getVacations(doctorId, query),
+      queryKey: ["vacations", doctorId],
+      queryFn: ({ pageParam = 1 }) =>
+        getVacations(doctorId, { page: pageParam, pageSize }),
       enabled: !!doctorId,
+      getNextPageParam: (lastPage) =>
+        lastPage.currentPage < lastPage.totalPages
+          ? lastPage.currentPage + 1
+          : undefined,
       staleTime: STALE_TIME,
+      initialPageParam: 1,
     },
     queryClient,
   );
@@ -46,7 +50,11 @@ export function useVacation(doctorId: string, vacationId: string) {
 
 // ========== useCreateVacation ==========
 
-export function useCreateVacation(doctorId: string, onSuccess: () => void, onError: (error: AxiosError) => void) {
+export function useCreateVacation(
+  doctorId: string,
+  onSuccess: () => void,
+  onError: (error: AxiosError) => void,
+) {
   return useMutation<Vacation, AxiosError, VacationForm>(
     {
       mutationFn: (vacation: VacationForm) =>
@@ -57,7 +65,7 @@ export function useCreateVacation(doctorId: string, onSuccess: () => void, onErr
       },
       onError: (error) => {
         onError(error);
-      }
+      },
     },
     queryClient,
   );

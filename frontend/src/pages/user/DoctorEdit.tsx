@@ -11,7 +11,7 @@ import {
   Alert,
   Spinner,
 } from "react-bootstrap";
-import { useNavigate } from "react-router-dom";
+import {Link, useNavigate} from "react-router-dom";
 import "../../css/main.css";
 import "../../css/forms.css";
 import "../../css/profile.css";
@@ -154,7 +154,7 @@ const DoctorEdit = () => {
     <Container className="justify-content-center mt-5">
       <Col md={8} lg={9}>
         <Breadcrumb>
-          <Breadcrumb.Item href="/doctor-profile">
+          <Breadcrumb.Item linkAs={Link} linkProps={{ to: "/doctor-profile" }}>
             {t("profile.profile")}
           </Breadcrumb.Item>
           <Breadcrumb.Item active>{t("editProfile.title")}</Breadcrumb.Item>

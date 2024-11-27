@@ -179,7 +179,10 @@
     "deleteTitle": "Cancelar vacaciones",
     "deleteDescription": "�Está usted seguro que quiere cancelar estas vacaciones?",
     "deleteDeny": "No",
-    "deleteConfirm": "Si"
+    "deleteConfirm": "Si",
+    "loadMore": "Cargar más",
+    "loadingMore": "Cargando...",
+    "errorLoading": "Hubo un error al cargar las vacaciones"
   },
   "appointmentSent": {
     "title": "Turno enviado",

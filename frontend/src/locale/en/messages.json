@@ -178,7 +178,10 @@
     "deleteTitle": "Cancel Vacation",
     "deleteDescription": "Are you sure you want to cancel this vacation?",
     "deleteDeny": "No",
-    "deleteConfirm": "Yes"
+    "deleteConfirm": "Yes",
+    "loadMore": "Load more",
+    "loadingMore": "Loading...",
+    "errorLoading": "An error occurred while loading vacations"
   },
   "appointmentSent": {
     "title": "Appointment Sent",

@@ -1,75 +1,107 @@
 import React from "react";
-import {
-  useVacations,
-  useDeleteVacation,
-} from "../../hooks/vacationHooks";
+import { useVacations, useDeleteVacation } from "../../hooks/vacationHooks";
+import VacationCard from "./VacationCard";
+import { Alert, Button, Spinner, Stack } from "react-bootstrap";
+import { useTranslation } from "react-i18next";
+import VacationCardPlaceholder from "./VacationCardPlaceholder";
 
 interface VacationPageProps {
   doctorId: string;
-  page: number;
   pageSize: number;
-  onPageChange: (page: number) => void;
 }
 
-const VacationList: React.FC<VacationPageProps> = ({
-  doctorId,
-  page,
-  pageSize,
-  onPageChange,
-}) => {
-
-
+const VacationList: React.FC<VacationPageProps> = ({ doctorId, pageSize }) => {
   const {
     data: vacations,
     isLoading,
     error,
-  } = useVacations(doctorId, { page, pageSize });
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+  } = useVacations(doctorId, pageSize);
+
+  const { t } = useTranslation();
 
   const deleteVacationMutation = useDeleteVacation(doctorId);
 
   const handleDeleteVacation = (vacationId: string) => {
-    deleteVacationMutation.mutate(vacationId)
+    deleteVacationMutation.mutate(vacationId);
   };
 
-  // TODO
-  if (isLoading) return <div>Loading vacations...</div>;
-  if (error) return <div>Error loading vacations: {error.message}</div>;
+  if (isLoading) {
+    return <Stack direction="vertical" gap={3}>
+      {[...Array(pageSize)].map((_, index) => (
+        <VacationCardPlaceholder key={index} />
+      ))}
+    </Stack>;
+  }
 
-  if (!vacations || !vacations.content) return <div>No vacations found</div>;
+  if (error) {
+    return (
+      <div
+        className={"text-center d-flex flex-row justify-content-center mt-5"}
+      >
+        <Alert variant="danger">{t("vacation.errorLoading")}</Alert>
+      </div>
+    );
+  }
 
+  if (
+    !vacations ||
+    vacations.pages.length === 0 ||
+    vacations.pages[0].content.length === 0
+  ) {
+    return (
+      <div
+        className={"text-center d-flex flex-row justify-content-center mt-5"}
+      >
+        <Alert variant="info">{t("vacation.noVacations")}</Alert>
+      </div>
+    );
+  }
   // TODO
   return (
     <div>
       {/* List of vacations */}
-      <ul>
-        {vacations.content.map((vacation) => (
-          <li key={vacation.id}>
-            <span>
-              {vacation.fromDate.toISOString().split("T")[0]} - {vacation.fromTime}
-                { " - "}  
-              {vacation.toDate.toISOString().split("T")[0]} - {vacation.toTime}
-            </span>
-            <button disabled={deleteVacationMutation.isPending} onClick={() => handleDeleteVacation(vacation.id)}>
-              Delete
-            </button>
-          </li>
+      <Stack direction="vertical" gap={3}>
+        {vacations.pages.map((page, index) => (
+          <React.Fragment key={index}>
+            {page.content.map((vacation) => (
+              <VacationCard
+                key={vacation.id}
+                vacation={vacation}
+                onDelete={handleDeleteVacation}
+              />
+            ))}
+          </React.Fragment>
         ))}
-      </ul>
+      </Stack>
 
-      {/* Pagination controls */}
-      <div style={{ marginTop: "20px" }}>
-        <button disabled={page === 1} onClick={() => onPageChange(page - 1)}>
-          Previous
-        </button>
-        <span style={{ margin: "0 10px" }}>Page {page}</span>
-        <button
-          onClick={() => onPageChange(page + 1)}
-          disabled={vacations.currentPage === vacations.totalPages}
-        >
-          Next
-        </button>
+      {/* Load more */}
+      <div style={{ marginTop: "20px", textAlign: "center" }}>
+        {hasNextPage && (
+          <Button
+            variant="outline-primary"
+            onClick={() => fetchNextPage()}
+            disabled={isFetchingNextPage}
+          >
+            {isFetchingNextPage ? (
+              <>
+                <Spinner
+                  as="span"
+                  animation="border"
+                  size="sm"
+                  role="status"
+                  aria-hidden="true"
+                />{" "}
+                {t("vacation.loadingMore")}
+              </>
+            ) : (
+              t("vacation.loadMore")
+            )}
+          </Button>
+        )}
       </div>
-
     </div>
   );
 };
