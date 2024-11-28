@@ -198,7 +198,7 @@ public class AppointmentServiceImplTest {
 
     Mockito.when(
             appointmentDao.getFilteredAppointments(
-                DOCTOR_ID, null, NEW_APPOINTMENT_DATE, NEW_APPOINTMENT_DATE, null, null, false))
+                DOCTOR_ID, null, NEW_APPOINTMENT_DATE, NEW_APPOINTMENT_DATE, null, null, true, false))
         .thenReturn(new Page<>(Collections.emptyList(), null, null, null));
 
     // Mock mailService
@@ -280,7 +280,7 @@ public class AppointmentServiceImplTest {
 
     Mockito.when(
             appointmentDao.getFilteredAppointments(
-                DOCTOR_ID, null, NEW_APPOINTMENT_DATE, NEW_APPOINTMENT_DATE, null, null, false))
+                DOCTOR_ID, null, NEW_APPOINTMENT_DATE, NEW_APPOINTMENT_DATE, null, null, true, false))
         .thenReturn(new Page<>(Collections.emptyList(), null, null, null));
 
     // 2. Ejercitar la class under test
@@ -306,7 +306,7 @@ public class AppointmentServiceImplTest {
     // Mock appointmentDao
     Mockito.when(
             appointmentDao.getFilteredAppointments(
-                DOCTOR_ID, null, NEW_APPOINTMENT_DATE, NEW_APPOINTMENT_DATE, null, null, false))
+                DOCTOR_ID, null, NEW_APPOINTMENT_DATE, NEW_APPOINTMENT_DATE, null, null, true, false))
         .thenReturn(
             new Page<>(
                 new ArrayList<>(Collections.singletonList(NEW_APPOINTMENT)), null, null, null));
@@ -331,7 +331,7 @@ public class AppointmentServiceImplTest {
     // Mock appointmentDao
     Mockito.when(
             appointmentDao.getFilteredAppointments(
-                DOCTOR_ID, null, NEW_APPOINTMENT_DATE, NEW_APPOINTMENT_DATE, null, null, false))
+                DOCTOR_ID, null, NEW_APPOINTMENT_DATE, NEW_APPOINTMENT_DATE, null, null, true, false))
         .thenReturn(
             new Page<>(
                 new ArrayList<>(Collections.singletonList(CANCELLED_APPOINTMENT)),
@@ -512,7 +512,7 @@ public class AppointmentServiceImplTest {
     // Mock appointmentDao
     Mockito.when(
             appointmentDao.getFilteredAppointments(
-                DOCTOR_ID, null, RANGE_FROM, RANGE_TO, null, null, false))
+                DOCTOR_ID, null, RANGE_FROM, RANGE_TO, null, null, true, false))
         .thenReturn(new Page<>(APPOINTMENTS, null, null, null));
 
     // 2. Ejercitar la class under test
@@ -587,6 +587,7 @@ public class AppointmentServiceImplTest {
                 APPOINTMENT_DATE.plusDays(3),
                 null,
                 null,
+                true,
                 false))
         .thenReturn(new Page<>(APPOINTMENTS, null, null, null));
 

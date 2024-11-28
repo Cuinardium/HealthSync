@@ -32,15 +32,13 @@ public class AppointmentController {
   private static final Logger LOGGER = LoggerFactory.getLogger(AppointmentController.class);
 
   private final AppointmentService appointmentService;
-  private final PatientService patientService;
 
   @Context private UriInfo uriInfo;
 
   @Autowired
   public AppointmentController(
-      final AppointmentService appointmentService, PatientService patientService) {
+      final AppointmentService appointmentService) {
     this.appointmentService = appointmentService;
-    this.patientService = patientService;
   }
 
   // ================= appointments ========================
@@ -61,11 +59,10 @@ public class AppointmentController {
         appointmentService.getFilteredAppointments(
             userId,
             appointmentQuery.getAppointmentStatus(),
+            null, // TODO: Add date support
             pageQuery.getPage(),
             pageQuery.getPageSize(),
-            patientService
-                .getPatientById(userId)
-                .isPresent() // TODO: remove argument, appointment service should handle it
+            true // TODO: Add sort direction support
             );
 
     List<Appointment> appointmentList = appointmentsPage.getContent();

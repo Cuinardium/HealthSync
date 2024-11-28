@@ -152,7 +152,7 @@ public class AppointmentServiceImpl implements AppointmentService {
     List<Appointment> appointmentsInDateRange =
         appointmentDao
             .getFilteredAppointments(
-                doctorId, AppointmentStatus.CONFIRMED, fromDate, toDate, null, null, false)
+                doctorId, AppointmentStatus.CONFIRMED, fromDate, toDate, null, null, true, false)
             .getContent();
     try {
       for (Appointment appointment : appointmentsInDateRange) {
@@ -205,7 +205,7 @@ public class AppointmentServiceImpl implements AppointmentService {
     // Get doctor appointments for range
     List<Appointment> appointments =
         appointmentDao
-            .getFilteredAppointments(doctorId, null, from, to, null, null, false)
+            .getFilteredAppointments(doctorId, null, from, to, null, null, true, false)
             .getContent();
 
     // Populate map from each date for range to available hours in date
@@ -300,7 +300,7 @@ public class AppointmentServiceImpl implements AppointmentService {
     List<Appointment> confirmedAppointments =
         appointmentDao
             .getFilteredAppointments(
-                doctorId, AppointmentStatus.CONFIRMED, from, to, null, null, false)
+                doctorId, AppointmentStatus.CONFIRMED, from, to, null, null, true, false)
             .getContent();
 
     // Add appointments to occupied hours
@@ -316,9 +316,19 @@ public class AppointmentServiceImpl implements AppointmentService {
   @Transactional(readOnly = true)
   @Override
   public Page<Appointment> getFilteredAppointments(
-      long userId, AppointmentStatus status, Integer page, Integer pageSize, boolean isPatient) {
+      long userId,
+      AppointmentStatus status,
+      LocalDate date,
+      Integer page,
+      Integer pageSize,
+      Boolean sortAsc) {
+
+    boolean isPatient = patientService.getPatientById(userId).isPresent();
+
+    LocalDate to = date != null ? date.plusDays(1) : null;
+
     return appointmentDao.getFilteredAppointments(
-        userId, status, null, null, page, pageSize, isPatient);
+        userId, status, date, to, page, pageSize, sortAsc, isPatient);
   }
 
   @Transactional(readOnly = true)

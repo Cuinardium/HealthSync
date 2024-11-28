@@ -133,6 +133,7 @@ public class AppointmentDaoJpa implements AppointmentDao {
       LocalDate to,
       Integer page,
       Integer pageSize,
+      Boolean sortAsc,
       Boolean isPatient) {
 
     QueryBuilder nativeQueryBuilder =
@@ -168,9 +169,7 @@ public class AppointmentDaoJpa implements AppointmentDao {
     @SuppressWarnings("unchecked")
     final List<Long> idList =
         (List<Long>)
-            nativeQuery
-                .getResultList()
-                .stream()
+            nativeQuery.getResultList().stream()
                 .map(o -> ((Number) o).longValue())
                 .collect(Collectors.toList());
 
@@ -178,9 +177,14 @@ public class AppointmentDaoJpa implements AppointmentDao {
       return new Page<>(Collections.emptyList(), page, 0, pageSize);
     }
     // JPA Query Language (JQL) / Hibernate Query Language (HQL)
+    String queryStr =
+        sortAsc
+            ? "from Appointment where id in :idList order by date ASC, timeBlock ASC"
+            : "from Appointment where id in :idList order by date DESC, timeBlock DESC";
+
     final TypedQuery<Appointment> query =
         em.createQuery(
-            "from Appointment where id in :idList order by date ASC, timeBlock ASC",
+            queryStr,
             Appointment.class);
     query.setParameter("idList", idList);
 

@@ -281,7 +281,7 @@ public class AppointmentDaoImplTest {
     // 2. Ejercitar la class under test
     Page<Appointment> appointments =
         appointmentDao.getFilteredAppointments(
-            PATIENT_5.getId(), null, null, null, null, null, true);
+            PATIENT_5.getId(), null, null, null, null, null, true, true);
     // 3. Meaninful assertions
     Assert.assertNull(appointments.getTotalPages());
     Assert.assertNull(appointments.getCurrentPage());
@@ -295,7 +295,7 @@ public class AppointmentDaoImplTest {
     // 2. Ejercitar la class under test
     Page<Appointment> appointments =
         appointmentDao.getFilteredAppointments(
-            DOCTOR_7.getId(), null, null, null, null, null, false);
+            DOCTOR_7.getId(), null, null, null, null, null, true, false);
     // 3. Meaninful assertions
     Assert.assertNull(appointments.getTotalPages());
     Assert.assertNull(appointments.getCurrentPage());
