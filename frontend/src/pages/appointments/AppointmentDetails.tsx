@@ -5,18 +5,20 @@ import IndicationForm from "../../components/indications/IndicationForm";
 import IndicationList from "../../components/indications/IndicationList";
 import { useAuth } from "../../context/AuthContext";
 import { useAppointment } from "../../hooks/appointmentHooks";
-import { useDeleteNotification, useNotifications } from "../../hooks/notificationHooks";
+import {
+  useDeleteNotification,
+  useNotifications,
+} from "../../hooks/notificationHooks";
 
 const DetailedAppointment: React.FC = () => {
   const { id: appointmentId } = useParams<{ id: string }>();
   const navigate = useNavigate();
 
   const [page, setPage] = useState(1);
+  const [deleteCalled, setDeleteCalled] = useState(false);
   const pageSize = 3;
 
-  const {
-    id
-  } = useAuth()
+  const { id } = useAuth();
 
   const {
     data: appointment,
@@ -25,25 +27,35 @@ const DetailedAppointment: React.FC = () => {
     error,
   } = useAppointment(appointmentId as string);
 
-  const {
-    data: notifications
-  } = useNotifications(id as string);
+  const { data: notifications } = useNotifications(id as string);
 
-  const deleteNotificationMutation = useDeleteNotification(() => {}, (_) => {})
+  const deleteNotificationMutation = useDeleteNotification(
+    () => {},
+    (_) => {},
+  );
 
   useEffect(() => {
+    if (!deleteCalled) {
+      if (notifications && appointment) {
+        const appointmentNotification = notifications.find(
+          (notification) => notification.appointmentId === appointment.id,
+        );
 
-    if (notifications && appointment) {
-      const appointmentNotification = notifications.find((notification) => notification.appointmentId === appointment.id);
+        if (appointmentNotification) {
+          const id = String(appointmentNotification.id);
+          deleteNotificationMutation.mutate(id);
+        }
 
-      if (appointmentNotification) {
-        const id = String(appointmentNotification.id)
-        deleteNotificationMutation.mutate(id);
+        setDeleteCalled(true);
       }
     }
-  }, [notifications, appointment])
+  }, [notifications, appointment, deleteNotificationMutation, deleteCalled]);
 
-  if (!appointmentId || isNaN(+Number(appointmentId)) || Number(appointmentId) < 0) {
+  if (
+    !appointmentId ||
+    isNaN(+Number(appointmentId)) ||
+    Number(appointmentId) < 0
+  ) {
     navigate("/404");
     return null;
   }

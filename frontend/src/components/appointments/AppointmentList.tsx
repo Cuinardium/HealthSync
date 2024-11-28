@@ -2,117 +2,116 @@ import React from "react";
 import { useAppointments } from "../../hooks/appointmentHooks";
 import { AppointmentQuery } from "../../api/appointment/Appointment";
 import Loader from "../Loader";
-import { Link } from "react-router-dom";
 import { useNotifications } from "../../hooks/notificationHooks";
 
 import "../../css/header.css";
-import { FaCircle } from "react-icons/fa6";
+import { useTranslation } from "react-i18next";
+import { Alert, Button, Spinner, Stack } from "react-bootstrap";
+import AppointmentCard from "./AppointmentCard";
 
 interface AppointmentsListProps {
   userId: string;
-  page?: number;
   pageSize?: number;
   status?: "CONFIRMED" | "CANCELLED" | "COMPLETED";
-  onPageChange: (page: number) => void;
 }
 
 const AppointmentList: React.FC<AppointmentsListProps> = ({
   userId,
-  page = 1,
   pageSize = 10,
   status,
-  onPageChange,
 }) => {
   const query: AppointmentQuery = {
     userId,
-    page,
     pageSize,
     status,
   };
 
   const {
-    data: appointmentsPage,
+    data: appointments,
     isLoading,
-    isError,
     error,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
   } = useAppointments(query);
 
-  const { data: notifications, isLoading: isLoadingNotifications } =
-    useNotifications(userId);
+  const { data: notifications } = useNotifications(userId);
+
+  const { t } = useTranslation();
 
   if (isLoading) {
     // TODO
     return <Loader />;
   }
 
-  if (isError) {
-    // TODO
-    return <div>Error fetching appointments: {error?.message}</div>;
+  if (error) {
+    return (
+      <div
+        className={"text-center d-flex flex-row justify-content-center mt-5"}
+      >
+        <Alert variant="danger">{t("appointment.error")}</Alert>
+      </div>
+    );
   }
 
-  if (!appointmentsPage || appointmentsPage.content.length === 0) {
-    // TODO
-    return <div>No appointments found</div>;
+  if (
+    !appointments ||
+    appointments.pages.length === 0 ||
+    appointments.pages[0].content.length === 0
+  ) {
+    return (
+      <div
+        className={"text-center d-flex flex-row justify-content-center mt-5"}
+      >
+        <Alert variant="info">{t("appointments.noAppointments")}</Alert>
+      </div>
+    );
   }
 
-  // TODO: Hacerlo bien
   return (
     <div>
-      <h2>Appointments</h2>
-      <ul>
-        {appointmentsPage.content.map((appointment) => (
-          <li key={appointment.id}>
-            <div>
-              <strong>Date:</strong> {appointment.date.toLocaleDateString()}
-            </div>
-            <div>
-              <strong>Time Block:</strong> {appointment.timeBlock}
-            </div>
-            <div>
-              <strong>Status:</strong> {appointment.status}
-            </div>
-            <div>
-              <strong>Doctor:</strong> {appointment.doctorId}
-            </div>
-            <div>
-              <strong>Patient:</strong> {appointment.patientId}
-            </div>
-            <div>
-              <strong>Description:</strong> {appointment.description}
-            </div>
-            {appointment.status === "CANCELLED" &&
-              appointment.cancelDescription && (
-                <div>
-                  <strong>Cancel Reason:</strong>{" "}
-                  {appointment.cancelDescription}
-                </div>
-              )}
-            <div>
-              <Link to={`/detailed-appointment/${appointment.id}`}>
-                More details
-              </Link>
-              {notifications?.some(
-                (notification) => notification.appointmentId === appointment.id,
-              ) && <FaCircle className="notification" />}
-            </div>
-          </li>
+      <Stack direction="vertical" gap={3}>
+        {appointments.pages.map((page, index) => (
+          <React.Fragment key={index}>
+            {page.content.map((appointment) => (
+              <AppointmentCard
+                appointment={appointment}
+                hasNotification={
+                  notifications?.some(
+                    (n) => n.appointmentId === appointment.id,
+                  ) ?? false
+                }
+              />
+            ))}
+          </React.Fragment>
         ))}
-      </ul>
+      </Stack>
 
       {/* Pagination Controls */}
-      <div style={{ marginTop: "20px" }}>
-        <button disabled={page === 1} onClick={() => onPageChange(page - 1)}>
-          Previous
-        </button>
-        <span style={{ margin: "0 10px" }}>Page {page}</span>
-        <button
-          onClick={() => onPageChange(page + 1)}
-          disabled={
-            appointmentsPage.currentPage === appointmentsPage.totalPages
-          }
-        >
-          Next
-        </button>
+      {/* Load more */}
+      <div style={{ marginTop: "20px", textAlign: "center" }}>
+        {hasNextPage && (
+          <Button
+            variant="outline-primary"
+            onClick={() => fetchNextPage()}
+            disabled={isFetchingNextPage}
+          >
+            {isFetchingNextPage ? (
+              <>
+                <Spinner
+                  as="span"
+                  animation="border"
+                  size="sm"
+                  role="status"
+                  aria-hidden="true"
+                />{" "}
+                {t("appointments.loadingMore")}
+              </>
+            ) : (
+              t("appointments.loadMore")
+            )}
+          </Button>
+        )}
       </div>
     </div>
   );

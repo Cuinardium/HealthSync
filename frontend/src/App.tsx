@@ -15,6 +15,7 @@ import { UserProvider } from "./providers/UserProvider";
 import Layout from "./components/Layout";
 import Loader from "./components/Loader";
 import UnauthenticatedGuard from "./components/UnauthenticatedGuard";
+import {SelectedTabProvider} from "./providers/SelectedTabProvider";
 
 const HomePage = lazy(() => import("./pages/home/HomePage"));
 const Error403 = lazy(() => import("./pages/errors/403"));
@@ -52,6 +53,7 @@ function App() {
       <QueryClientProvider client={queryClient}>
         <AuthProvider>
           <UserProvider>
+            <SelectedTabProvider>
             <BrowserRouter basename="/paw-2023a-02">
               <Layout>
                 <Suspense fallback={<Loader />}>
@@ -148,6 +150,7 @@ function App() {
                 </Suspense>
               </Layout>
             </BrowserRouter>
+            </SelectedTabProvider>
           </UserProvider>
         </AuthProvider>
       </QueryClientProvider>
