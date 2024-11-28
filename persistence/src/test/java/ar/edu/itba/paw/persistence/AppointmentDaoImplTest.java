@@ -32,6 +32,9 @@ import org.springframework.transaction.annotation.Transactional;
 public class AppointmentDaoImplTest {
 
   private static final Long INSERTED_PATIENT_ID = 5L;
+  private static final Long PATIENT_WITH_ONLY_CONFIRMED = 8L;
+  private static final Long PATIENT_WITH_ONLY_CANCELLED = 9L;
+  private static final Long PATIENT_WITH_ONLY_COMPLETED = 10L;
   private static final String INSERTED_PATIENT_EMAIL = "patient@email.com";
   private static final String INSERTED_PATIENT_PASSWORD = "patient_password";
   private static final String INSERTED_PATIENT_FIRST_NAME = "patient_first_name";
@@ -172,7 +175,7 @@ public class AppointmentDaoImplTest {
     assertEquals(AUX_TIME, appointment.getTimeBlock());
     assertEquals(AUX_DESC, appointment.getDescription());
 
-    Assert.assertEquals(3, JdbcTestUtils.countRowsInTable(jdbcTemplate, "appointment"));
+    Assert.assertEquals(6, JdbcTestUtils.countRowsInTable(jdbcTemplate, "appointment"));
   }
 
   @Test
@@ -188,7 +191,7 @@ public class AppointmentDaoImplTest {
 
     em.flush();
 
-    Assert.assertEquals(2, JdbcTestUtils.countRowsInTable(jdbcTemplate, "appointment"));
+    Assert.assertEquals(5, JdbcTestUtils.countRowsInTable(jdbcTemplate, "appointment"));
   }
 
   @Test
@@ -267,7 +270,7 @@ public class AppointmentDaoImplTest {
     // 2. Ejercitar la class under test
     List<Appointment> appointments = appointmentDao.getAppointments(DOCTOR_7.getId(), false);
     // 3. Meaninful assertions
-    Assert.assertEquals(2, appointments.size());
+    Assert.assertEquals(5, appointments.size());
     Assert.assertEquals(APPOINTMENT_1, appointments.get(0));
     // Assert.assertEquals(APPOINTMENT_2, appointments.get(1));
   }
@@ -298,5 +301,52 @@ public class AppointmentDaoImplTest {
     Assert.assertNull(appointments.getCurrentPage());
     Assert.assertEquals(APPOINTMENT_1, appointments.getContent().get(0));
     // Assert.assertEquals(APPOINTMENT_2, appointments.getContent().get(1));
+  }
+
+  @Test
+  public void testHasPatientMetDoctorConfirmed() {
+    boolean hasMet = appointmentDao.hasPatientMetDoctor(PATIENT_WITH_ONLY_CONFIRMED, DOCTOR_7.getId());
+
+    Assert.assertFalse(hasMet);
+  }
+
+  @Test
+  public void testHasPatientMetDoctorCancelled() {
+    boolean hasMet =
+        appointmentDao.hasPatientMetDoctor(PATIENT_WITH_ONLY_CANCELLED, DOCTOR_7.getId());
+
+    Assert.assertFalse(hasMet);
+  }
+
+  @Test
+  public void testHasPatientMetDoctorCompleted() {
+    boolean hasMet =
+        appointmentDao.hasPatientMetDoctor(PATIENT_WITH_ONLY_COMPLETED, DOCTOR_7.getId());
+
+    Assert.assertTrue(hasMet);
+  }
+
+  @Test
+  public void testHasAppointmentWithPatientConfirmed() {
+    boolean hasAppointment =
+        appointmentDao.hasAppointmentWithPatient(DOCTOR_7.getId(), PATIENT_WITH_ONLY_CONFIRMED);
+
+    Assert.assertTrue(hasAppointment);
+  }
+
+  @Test
+  public void testHasAppointmentWithPatientCancelled() {
+    boolean hasAppointment =
+        appointmentDao.hasAppointmentWithPatient(DOCTOR_7.getId(), PATIENT_WITH_ONLY_CANCELLED);
+
+    Assert.assertTrue(hasAppointment);
+  }
+
+  @Test
+  public void testHasAppointmentWithPatientCompleted() {
+    boolean hasAppointment =
+        appointmentDao.hasAppointmentWithPatient(DOCTOR_7.getId(), PATIENT_WITH_ONLY_COMPLETED);
+
+    Assert.assertTrue(hasAppointment);
   }
 }

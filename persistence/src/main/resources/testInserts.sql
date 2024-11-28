@@ -4,10 +4,15 @@ VALUES (2, X'10'); -- por alguna razon '\x10' no le gusta a hsqldb pero esto si?
 INSERT INTO users (user_id, email, password, first_name, last_name, profile_picture_id, locale, is_verified)
 VALUES (5, 'patient@email.com', 'patient_password', 'patient_first_name', 'patient_last_name', NULL, 'en', 1),
        (8, 'patient2@email.com', 'patient2_password', 'patient2_first_name', 'patient2_last_name', NULL, 'en', 1),
+       (9, 'patient3@email.com', 'patient3_password', 'patient3_first_name', 'patient3_last_name', NULL, 'en', 1),
+       (10,'patient4@email.com', 'patient4_password', 'patient4_first_name', 'patient4_last_name', NULL, 'en', 1),
        (7, 'doctor@email.com', 'doctor_password', 'doctor_first_name', 'doctor_last_name', NULL, 'en', 1);
 
 INSERT INTO patient (patient_id, health_insurance_code)
-VALUES (5, 1);
+VALUES (5, 1),
+       (8, 1),
+       (9, 1),
+       (10, 1);
 
 INSERT INTO doctor (doctor_id, specialty_code, city, address)
 VALUES (7, 1, 'Adolfo Gonzalez Chaves', 'doctor_address');
@@ -24,7 +29,10 @@ VALUES (7, 1), (7, 2);
 
 INSERT INTO appointment (appointment_id, patient_id, doctor_id, appointment_date, appointment_time, status_code, appointment_description, cancel_description)
 VALUES (3, 5, 7, '2023-05-17', 1, 0, 'Me duele la cabeza', NULL),
-       (4, 5, 7, '2023-05-17', 2, 0, 'Hola', NULL);
+       (4, 5, 7, '2023-05-17', 2, 0, 'Hola', NULL),
+       (6, 8, 7, '2023-05-17', 1, 0, 'Confirmed', NULL),
+       (7, 9, 7, '2023-05-17', 1, 1, 'Cancelled', 'cancelled'),
+       (8, 10, 7, '2023-05-17', 1, 2, 'Completed', NULL);
 
 INSERT INTO review (review_id, patient_id, doctor_id, review_date, review_description, rating)
 VALUES (7, 5, 7, '2023-05-17', 'Muy buen doctor', 5),

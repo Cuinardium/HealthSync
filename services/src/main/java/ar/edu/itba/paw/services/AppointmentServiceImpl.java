@@ -178,12 +178,6 @@ public class AppointmentServiceImpl implements AppointmentService {
 
   @Transactional(readOnly = true)
   @Override
-  public List<Appointment> getAppointments(long userId, boolean isPatient) {
-    return appointmentDao.getAppointments(userId, isPatient);
-  }
-
-  @Transactional(readOnly = true)
-  @Override
   public Optional<Appointment> getAppointmentById(long appointmentId) {
     return appointmentDao.getAppointmentById(appointmentId);
   }
@@ -320,16 +314,14 @@ public class AppointmentServiceImpl implements AppointmentService {
 
   @Transactional(readOnly = true)
   @Override
-  public Page<Appointment> getTodayAppointments(
-      long userId, AppointmentStatus status, Integer page, Integer pageSize, boolean isPatient) {
-    return appointmentDao.getFilteredAppointments(
-        userId, status, LocalDate.now(), LocalDate.now().plusDays(1), page, pageSize, isPatient);
+  public boolean hasPatientMetDoctor(long patientId, long doctorId) {
+    return appointmentDao.hasPatientMetDoctor(patientId, doctorId);
   }
 
   @Transactional(readOnly = true)
   @Override
-  public boolean hasPatientMetDoctor(long patientId, long doctorId) {
-    return appointmentDao.hasPatientMetDoctor(patientId, doctorId);
+  public boolean hasAppointmentWithPatient(long doctorId, long patientId) {
+    return appointmentDao.hasAppointmentWithPatient(doctorId, patientId);
   }
 
   // ======================================== TASKS ========================================

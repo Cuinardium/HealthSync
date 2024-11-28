@@ -205,6 +205,18 @@ public class AppointmentDaoJpa implements AppointmentDao {
   }
 
   @Override
+  public boolean hasAppointmentWithPatient(long doctorId, long patientId) {
+    final TypedQuery<Appointment> query =
+        em.createQuery(
+            "from Appointment as app where app.doctor.id = :doctorId and app.patient.id = :patientId",
+            Appointment.class);
+    query.setParameter("doctorId", doctorId);
+    query.setParameter("patientId", patientId);
+
+    return query.getResultList().stream().findFirst().isPresent();
+  }
+
+  @Override
   public List<Appointment> getAllConfirmedAppointmentsInDateBlock(
       LocalDate date, ThirtyMinuteBlock timeBlock) {
     // JPA Query Language (JQL) / Hibernate Query Language (HQL)

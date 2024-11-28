@@ -107,7 +107,7 @@ public class PatientDaoImplTest {
     Assert.assertEquals(AUX_PATIENT_HEALTH_INSURANCE, patient.getHealthInsurance());
     Assert.assertEquals(AUX_PATIENT_LOCALE, patient.getLocale());
 
-    Assert.assertEquals(2, JdbcTestUtils.countRowsInTable(jdbcTemplate, "patient"));
+    Assert.assertEquals(5, JdbcTestUtils.countRowsInTable(jdbcTemplate, "patient"));
   }
 
   @Test

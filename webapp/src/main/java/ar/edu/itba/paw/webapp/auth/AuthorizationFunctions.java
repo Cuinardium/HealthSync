@@ -55,7 +55,7 @@ public class AuthorizationFunctions {
       return false; // Other functions will handle this
     }
 
-    return appointmentService.hasPatientMetDoctor(patientId, doctor.getId());
+    return appointmentService.hasAppointmentWithPatient(doctor.getId(), patientId);
   }
 
   // ================= Appointment =================

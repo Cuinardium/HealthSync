@@ -39,12 +39,7 @@ public interface AppointmentService {
 
   public Optional<Appointment> getAppointmentById(long appointmentId);
 
-  public List<Appointment> getAppointments(long userId, boolean isPatient);
-
   public Page<Appointment> getFilteredAppointments(
-      long userId, AppointmentStatus status, Integer page, Integer pageSize, boolean isPatient);
-
-  public Page<Appointment> getTodayAppointments(
       long userId, AppointmentStatus status, Integer page, Integer pageSize, boolean isPatient);
 
   public List<ThirtyMinuteBlock> getAvailableHoursForDoctorOnDate(long doctorId, LocalDate date)
@@ -58,6 +53,8 @@ public interface AppointmentService {
       throws DoctorNotFoundException, InvalidRangeException;
 
   public boolean hasPatientMetDoctor(long patientId, long doctorId);
+
+  public boolean hasAppointmentWithPatient(long doctorId, long patientId);
 
   // ================ Tasks ================
   public void sendAppointmentReminders();

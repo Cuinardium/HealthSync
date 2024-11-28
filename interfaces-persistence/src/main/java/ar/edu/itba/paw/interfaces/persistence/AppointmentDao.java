@@ -53,6 +53,8 @@ public interface AppointmentDao {
 
   public boolean hasPatientMetDoctor(long patientId, long doctorId);
 
+  public boolean hasAppointmentWithPatient(long doctorId, long patientId);
+
   public List<Appointment> getAllConfirmedAppointmentsInDateBlock(
       LocalDate date, ThirtyMinuteBlock block);
 }
