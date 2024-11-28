@@ -18,14 +18,14 @@ export async function createPatient(patient: PatientRegisterForm): Promise<void>
 
 // ========== patients/id ==========
 
-export async function getPatient(id: string): Promise<Patient> {
+export async function getPatient(id: string): Promise<PatientResponse> {
   const response = await axios.get<PatientResponse>(`${PATIENT_ENDPOINT}/${id}`, {
     headers: {
       Accept: PATIENT_CONTENT_TYPE,
     },
   });
 
-  return await mapPatientDetails(response.data);
+  return response.data;
 }
 
 export async function updatePatient(
@@ -53,23 +53,4 @@ export async function updatePatient(
   });
 
   return patient;
-}
-
-// ========== auxiliary functions ==========
-
-async function mapPatientDetails(patientResponse: PatientResponse): Promise<Patient> {
-  const healthInsuranceId = patientResponse.links.find((link) => link.rel === "healthinsurance")?.href.split("/").pop();
-  const healthInsuranceResp = await getHealthInsurance(healthInsuranceId as string);
-
-  // To map appropiatelly to translation key
-  const healthInsurance = healthInsuranceResp.code.toLowerCase().replace(/_/g,".");
-
-  const image = patientResponse.links.find((link) => link.rel === "image")?.href;
-
-
-  return {
-    ...patientResponse,
-    healthInsurance,
-    image,
-  };
 }

@@ -1,22 +1,27 @@
-import { useQuery, useMutation, useQueryClient, keepPreviousData } from "@tanstack/react-query";
+import { keepPreviousData, useMutation, useQuery } from "@tanstack/react-query";
 import {
-  getDoctors,
-  getDoctorById,
+  createDoctor,
   getDoctorAttendingHours,
+  getDoctorById,
+  getDoctors,
   updateDoctor,
   updateDoctorAttendingHours,
-  createDoctor,
 } from "../api/doctor/doctorApi";
 import {
-  DoctorQuery,
-  Doctor,
   AttendingHours,
+  Doctor,
   DoctorEditForm,
+  DoctorQuery,
   DoctorRegisterForm,
+  DoctorResponse,
 } from "../api/doctor/Doctor";
 
 import { queryClient } from "../api/queryClient";
 import { AxiosError } from "axios";
+import { getHealthInsurance } from "../api/health-insurance/healthInsuranceApi";
+import { getSpecialty } from "../api/specialty/specialtyApi";
+import { HealthInsurance } from "../api/health-insurance/HealthInsurance";
+import { Specialty } from "../api/specialty/Specialty";
 
 const STALE_TIME = 5 * 60 * 1000;
 
@@ -26,7 +31,21 @@ export function useDoctors(query: DoctorQuery) {
   return useQuery(
     {
       queryKey: ["doctors", query],
-      queryFn: () => getDoctors(query),
+      queryFn: async () => {
+        const doctorResponsePage = await getDoctors(query);
+
+        // Add health insurances and specialty to each doctor
+        const doctors = await Promise.all(
+          doctorResponsePage.content.map(async (doctor) =>
+            mapDoctorDetails(doctor),
+          ),
+        );
+
+        return {
+          ...doctorResponsePage,
+          content: doctors,
+        };
+      },
       placeholderData: keepPreviousData,
       staleTime: STALE_TIME,
     },
@@ -40,7 +59,10 @@ export function useDoctor(doctorId: string) {
   return useQuery<Doctor, Error>(
     {
       queryKey: ["doctor", doctorId],
-      queryFn: () => getDoctorById(doctorId),
+      queryFn: async () => {
+        const doctorResp = await getDoctorById(doctorId);
+        return mapDoctorDetails(doctorResp);
+      },
       enabled: !!doctorId,
       staleTime: STALE_TIME,
     },
@@ -95,7 +117,6 @@ export function useCreateDoctor(
   );
 }
 
-
 // =========== useAttendingHours ===========
 
 export function useAttendingHours(doctorId: string) {
@@ -109,7 +130,6 @@ export function useAttendingHours(doctorId: string) {
     queryClient,
   );
 }
-
 
 // =========== useUpdateAttendingHours ===========
 
@@ -134,4 +154,71 @@ export function useUpdateAttendingHours(
     },
     queryClient,
   );
+}
+
+// ========= Utility Functions =========
+
+async function mapDoctorDetails(doctorResp: DoctorResponse): Promise<Doctor> {
+  // Fetch specialty
+  const specialtyLink = doctorResp.links.find(
+    (link) => link.rel === "specialty",
+  );
+  if (!specialtyLink) {
+    throw new Error("Specialty link not found");
+  }
+  const specialtyId = specialtyLink.href.split("/").pop();
+  let specialtyResp: Specialty;
+  const specialtyCacheKey = ["specialty", specialtyId];
+
+  if (queryClient.getQueryData(specialtyCacheKey)) {
+    specialtyResp = queryClient.getQueryData(specialtyCacheKey) as Specialty;
+  } else {
+    specialtyResp = await getSpecialty(specialtyId as string);
+    queryClient.setQueryData(specialtyCacheKey, specialtyResp);
+  }
+
+  const specialty = specialtyResp.code.toLowerCase().replace(/_/g, ".");
+
+  // Fetch health insurances
+  const healthInsuranceLinks = doctorResp.links.filter(
+    (link) => link.rel === "healthinsurance",
+  );
+
+  const healthInsurances = await Promise.all(
+    healthInsuranceLinks.map(async (link) => {
+      const healthInsuranceId = link.href.split("/").pop();
+      const healthInsuranceCacheKey = ["healthInsurance", healthInsuranceId];
+
+      let healthInsuranceResp: HealthInsurance;
+
+      if (queryClient.getQueryData(healthInsuranceCacheKey)) {
+        healthInsuranceResp = queryClient.getQueryData(
+          healthInsuranceCacheKey,
+        ) as HealthInsurance;
+      } else {
+        healthInsuranceResp = await getHealthInsurance(
+          healthInsuranceId as string,
+        );
+        queryClient.setQueryData(healthInsuranceCacheKey, healthInsuranceResp);
+      }
+
+      return healthInsuranceResp.code.toLowerCase().replace(/_/g, ".");
+    }),
+  );
+
+  // Check if doctor can be reviewed
+  const canReview = doctorResp.links.some(
+    (link) => link.rel === "create-review",
+  );
+
+  // Get doctor's image
+  const image = doctorResp.links.find((link) => link.rel === "image")?.href;
+
+  return {
+    ...doctorResp,
+    specialty,
+    healthInsurances,
+    canReview,
+    image,
+  };
 }

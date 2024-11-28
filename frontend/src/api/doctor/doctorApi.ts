@@ -1,15 +1,13 @@
 import { axios } from "../axios";
-import { getHealthInsurance } from "../health-insurance/healthInsuranceApi";
 import { getPage, Page } from "../page/Page";
-import { getSpecialty } from "../specialty/specialtyApi";
 import {
+  AttendingHours,
   Doctor,
+  DoctorEditForm,
   DoctorQuery,
   DoctorRegisterForm,
-  OccupiedHours,
-  AttendingHours,
-  DoctorEditForm,
   DoctorResponse,
+  OccupiedHours,
 } from "./Doctor";
 
 const DOCTOR_ENDPOINT = "/doctors";
@@ -25,35 +23,24 @@ const OCCUPIED_HOURS_CONTENT_TYPE =
 
 // ========== doctors ==============
 
-export async function getDoctors(params: DoctorQuery): Promise<Page<Doctor>> {
+export async function getDoctors(
+  params: DoctorQuery,
+): Promise<Page<DoctorResponse>> {
   const paramsCopy = {
     ...params,
     date: params.date?.toISOString().split("T")[0],
   };
 
-  const response = await axios.get(
-    DOCTOR_ENDPOINT,
-    {
-      params: paramsCopy,
-      headers: {
-        Accept: DOCTOR_LIST_CONTENT_TYPE,
-      },
+  const response = await axios.get(DOCTOR_ENDPOINT, {
+    params: paramsCopy,
+    headers: {
+      Accept: DOCTOR_LIST_CONTENT_TYPE,
     },
-  );
-
-  if (response.status == 200) {
-    // Add health insurances and specialty to each doctor
-    response.data = await Promise.all(
-      response.data?.map(async (doctor: DoctorResponse) => await mapDoctorDetails(doctor)),
-    );
-  }
-
+  });
   return getPage(response);
 }
 
-export async function createDoctor(
-  doctor: DoctorRegisterForm,
-): Promise<void> {
+export async function createDoctor(doctor: DoctorRegisterForm): Promise<void> {
   await axios.post<Doctor>(DOCTOR_ENDPOINT, doctor, {
     headers: {
       "Content-Type": DOCTOR_CONTENT_TYPE,
@@ -63,16 +50,14 @@ export async function createDoctor(
 
 // ========== doctors/id ==========
 
-export async function getDoctorById(id: String): Promise<Doctor> {
+export async function getDoctorById(id: String): Promise<DoctorResponse> {
   const doctorResp = await axios.get(DOCTOR_ENDPOINT + "/" + id, {
     headers: {
       Accept: DOCTOR_CONTENT_TYPE,
     },
   });
 
-  // Add health insurances and specialty to doctor
-  const doctor = doctorResp.data as DoctorResponse;
-  return await mapDoctorDetails(doctor);
+  return doctorResp.data as DoctorResponse;
 }
 
 export async function updateDoctor(
@@ -173,54 +158,4 @@ export async function getDoctorOccupiedHours(
   }
 
   return results;
-}
-
-// ========== Utility functions ===========
-
-async function mapDoctorDetails(doctorResp: DoctorResponse): Promise<Doctor> {
-  let specialty;
-  const specialtyLink = doctorResp.links.find(
-    (link) => link.rel === "specialty",
-  );
-
-  if (!specialtyLink) {
-    throw new Error("Specialty link not found");
-  }
-
-  const id = specialtyLink.href.split("/").pop();
-  const specialtyResp = await getSpecialty(id as string);
-
-  // To map appropiatelly to translation key
-  specialty = specialtyResp.code.toLowerCase().replace(/_/g, ".");
-
-  // Fetch health insurances
-  let healthInsurances;
-  const healthInsuranceLinks = doctorResp.links.filter(
-    (link) => link.rel === "healthinsurance",
-  );
-
-  healthInsurances = await Promise.all(
-    healthInsuranceLinks.map(async (link) => {
-      const id = link.href.split("/").pop();
-      const healthInsuranceResp = await getHealthInsurance(id as string);
-
-      // To map appropiatelly to translation key
-      return healthInsuranceResp.code.toLowerCase().replace(/_/g, ".");
-    }),
-  );
-
-  // Can review if the link is present
-  const canReview = doctorResp.links.some(
-    (link) => link.rel === "create-review",
-  );
-
-  const image = doctorResp.links.find((link) => link.rel === "image")?.href;
-
-  return {
-    ...doctorResp,
-    specialty: specialty,
-    healthInsurances: healthInsurances,
-    canReview: canReview,
-    image: image,
-  };
 }
