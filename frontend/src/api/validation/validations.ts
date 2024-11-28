@@ -248,3 +248,17 @@ export function validateVacationTime(
 
   return true;
 }
+
+export function validateCancelDescription(
+  description: string | undefined,
+): string | true {
+  if (!description || description.trim() === "") {
+    return "validation.cancelDescription.required";
+  }
+
+  if (description.length < 1 || description.length > 1000) {
+    return "validation.cancelDescription.size";
+  }
+
+  return true;
+}

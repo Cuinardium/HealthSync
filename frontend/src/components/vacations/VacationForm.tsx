@@ -7,6 +7,7 @@ import { useCreateVacation } from "../../hooks/vacationHooks";
 import { useTranslation } from "react-i18next";
 import { SubmitHandler, useForm } from "react-hook-form";
 import {
+  validateCancelDescription,
   validateVacation,
   validateVacationDate,
   validateVacationTime,
@@ -49,7 +50,6 @@ const VacationForm: React.FC<VacationFormProps> = ({
   };
 
   const onError = (error: AxiosError) => {
-    console.log(error);
     if (error?.response?.status === 409) {
       setError("root", {
         message: "vacation.vacationOverlaps",
@@ -186,8 +186,8 @@ const VacationForm: React.FC<VacationFormProps> = ({
             placeholder={t("vacation.reason")}
             {...register("cancelReason", {
               validate: (value) => {
-                if (cancelAppointments && (!value || value.trim() === "")) {
-                  return "validation.vacation.cancelReason.required";
+                if (cancelAppointments) {
+                  return validateCancelDescription(value);
                 }
               },
             })}

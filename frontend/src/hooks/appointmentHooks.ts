@@ -99,6 +99,10 @@ export function useCancelAppointment(
           queryKey: ["appointment", appointmentId],
         });
 
+        queryClient.invalidateQueries({
+            queryKey: ["appointments"],
+        });
+
         onSuccess();
       },
       onError: (error) => {

@@ -1,22 +1,71 @@
 import { AxiosError } from "axios";
-import { useState } from "react";
-import { Button, Col, Form, Row } from "react-bootstrap";
+import React, { useState } from "react";
+import {
+  Alert,
+  Button,
+  Col,
+  FloatingLabel,
+  Form,
+  Modal,
+  Row,
+  Spinner,
+} from "react-bootstrap";
 import { useCancelAppointment } from "../../hooks/appointmentHooks";
+import { useTranslation } from "react-i18next";
+import { SubmitHandler, useForm } from "react-hook-form";
+import { validateCancelDescription } from "../../api/validation/validations";
 
 interface CancelAppointmentFormProps {
   appointmentId: string;
+  showCancelModal: boolean;
+  onHide: () => void;
 }
 
-const CancelAppointmentForm: React.FC<CancelAppointmentFormProps> = ({ appointmentId }) => {
-  const [cancelDescription, setCancelDescription] = useState<string>("");
+interface CancelFormType {
+  cancelDescription: string;
+}
 
-  //TODO
+const CancelAppointmentForm: React.FC<CancelAppointmentFormProps> = ({
+  appointmentId,
+  showCancelModal,
+  onHide,
+}) => {
+  const { t } = useTranslation();
+
+  const [showSuccess, setShowSuccess] = useState<boolean>(false);
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    setError,
+    reset,
+  } = useForm<CancelFormType>();
+
+  const handleHide = () => {
+    reset();
+    setShowSuccess(false);
+    onHide();
+  };
+
   const onSuccess = () => {
-    alert("Appointment cancelled succesfully");
+    setShowSuccess(true);
+
+    // Call onHide after 2 seconds
+    setTimeout(() => {
+      handleHide();
+    }, 2000);
   };
 
   const onError = (error: AxiosError) => {
-    alert(`failed to cancel appointment: ${error.message}`);
+    setError("root", {
+      message: "appointments.cancelModal.error",
+    });
+
+    // Call onHide after 2 seconds
+    setTimeout(() => {
+      handleHide();
+    }, 2000);
   };
 
   const cancelAppointmentMutation = useCancelAppointment(
@@ -25,39 +74,80 @@ const CancelAppointmentForm: React.FC<CancelAppointmentFormProps> = ({ appointme
     onError,
   );
 
-  const handleCancelReview = () => {
-    cancelAppointmentMutation.mutate(cancelDescription);
+  const handleCancelReview: SubmitHandler<CancelFormType> = (
+    data: CancelFormType,
+  ) => {
+    cancelAppointmentMutation.mutate(data.cancelDescription);
   };
 
   return (
-    <Form
-      onSubmit={(e) => {
-        e.preventDefault();
-        handleCancelReview();
-      }}
-    >
-      <Row className="mb-3">
-        <Form.Group as={Col} controlId="description">
-          <Form.Label>Reason</Form.Label>
-          <Form.Control
-            type="textarea"
-            value={cancelDescription}
-            onChange={(e) => setCancelDescription(e.target.value)}
-          />
-        </Form.Group>
-      </Row>
-      <Button
-        variant="primary"
-        type="submit"
-        disabled={
-          cancelDescription.length === 0 || cancelAppointmentMutation.isPending
-        }
-      >
-        {cancelAppointmentMutation.isPending
-          ? "Cancelling..."
-          : "Cancel appointment"}
-      </Button>
-    </Form>
+    <div>
+      {/* Cancel Appointment Modal */}
+      <Modal show={showCancelModal} onHide={handleHide}>
+        <Modal.Header closeButton>
+          <Modal.Title>{t("appointments.cancelModal.title")}</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Form onSubmit={handleSubmit(handleCancelReview)}>
+            <h5 className="text-muted mb-3">
+              {t("appointments.cancelModal.desc")}
+            </h5>
+            <Form.Group as={Col} controlId="description" className="mb-3">
+              <Form.Label>
+                {t("appointments.cancelModal.cancelDesc")}
+              </Form.Label>
+              <Form.Control
+                {...register("cancelDescription", {
+                  validate: validateCancelDescription,
+                })}
+                as="textarea"
+                name="cancelDescription"
+                rows={5}
+                isInvalid={!!errors.cancelDescription}
+              />
+              <Form.Control.Feedback type="invalid">
+                {errors.cancelDescription &&
+                  t(errors.cancelDescription?.message ?? "")}
+              </Form.Control.Feedback>
+            </Form.Group>
+
+            {errors.root && (
+              <Alert variant="danger" className="mb-3">
+                {t(errors.root?.message ?? "")}
+              </Alert>
+            )}
+            {showSuccess && (
+              <Alert variant="primary" dismissible className="mb-3">
+                {t("appointments.cancelModal.success")}
+              </Alert>
+            )}
+
+            <div className="d-flex flex-row justify-content-end align-items-center">
+              <Button
+                variant="danger"
+                type="submit"
+                disabled={cancelAppointmentMutation.isPending || showSuccess}
+              >
+                {cancelAppointmentMutation.isPending ? (
+                  <>
+                    <Spinner
+                      as="span"
+                      animation="border"
+                      size="sm"
+                      role="status"
+                      aria-hidden="true"
+                    />{" "}
+                    {t("appointments.cancelModal.cancelling")}
+                  </>
+                ) : (
+                  t("appointments.cancelModal.confirm")
+                )}
+              </Button>
+            </div>
+          </Form>
+        </Modal.Body>
+      </Modal>
+    </div>
   );
 };
 

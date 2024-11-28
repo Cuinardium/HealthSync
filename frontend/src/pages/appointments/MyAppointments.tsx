@@ -1,17 +1,17 @@
 import React, { useState } from "react";
 import AppointmentsList from "../../components/appointments/AppointmentList";
-import { useAuth } from "../../context/AuthContext";
 import { Col, Container, Row, Spinner, Tab, Tabs } from "react-bootstrap";
 import { useTranslation } from "react-i18next";
 import {useSelectedTabContext} from "../../context/SelectedTabContext";
 import AppointmentWithNotificationsList from "../../components/appointments/AppointmentWithNotificationsList";
+import {useUser} from "../../context/UserContext";
 
 const MyAppointments: React.FC = () => {
-  const { loading, id } = useAuth();
+  const { loading, user, isDoctor } = useUser();
   const { t } = useTranslation();
 
   const {selectedTab, setSelectedTab} = useSelectedTabContext();
-  const pageSize = 3;
+  const pageSize = 10
 
 
   if (loading) {
@@ -34,7 +34,8 @@ const MyAppointments: React.FC = () => {
               {/* Today Tab */}
               <Tab eventKey="today" title={t("appointments.today")}>
                 <AppointmentsList
-                    userId={id as any}
+                    userId={user?.id as any}
+                    isDoctor={isDoctor ?? false}
                     pageSize={pageSize}
                     status="CONFIRMED"
                 />
@@ -43,7 +44,8 @@ const MyAppointments: React.FC = () => {
               {/* Upcoming Tab */}
               <Tab eventKey="upcoming" title={t("appointments.upcoming")}>
                 <AppointmentsList
-                    userId={id as any}
+                    userId={user?.id as any}
+                    isDoctor={isDoctor ?? false}
                     pageSize={pageSize}
                     status="CONFIRMED"
                 />
@@ -52,7 +54,8 @@ const MyAppointments: React.FC = () => {
               {/* Cancelled Tab */}
               <Tab eventKey="cancelled" title={t("appointments.cancelled")}>
                 <AppointmentsList
-                    userId={id as any}
+                    userId={user?.id as any}
+                    isDoctor={isDoctor ?? false}
                     pageSize={pageSize}
                     status="CANCELLED"
                 />
@@ -61,7 +64,8 @@ const MyAppointments: React.FC = () => {
               {/* Completed Tab */}
               <Tab eventKey="completed" title={t("appointments.completed")}>
                 <AppointmentsList
-                    userId={id as any}
+                    userId={user?.id as any}
+                    isDoctor={isDoctor ?? false}
                     pageSize={pageSize}
                     status="COMPLETED"
                 />
@@ -69,7 +73,7 @@ const MyAppointments: React.FC = () => {
 
               {/* Notifications Tab */}
               <Tab eventKey="notifications" title={t("appointments.notification")}>
-                <AppointmentWithNotificationsList userId={id as any} />
+                <AppointmentWithNotificationsList userId={user?.id as any} isDoctor={isDoctor ?? false} />
               </Tab>
             </Tabs>
           </Col>

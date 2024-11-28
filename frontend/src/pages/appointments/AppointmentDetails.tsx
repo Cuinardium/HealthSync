@@ -97,7 +97,7 @@ const DetailedAppointment: React.FC = () => {
       </p>
 
       {appointment.canCancel && (
-        <CancelAppointmentForm appointmentId={appointment.id.toString()} />
+        <CancelAppointmentForm appointmentId={appointment.id.toString()} showCancelModal={true} onHide={() => {}} />
       )}
 
       {appointment.canIndicate && (

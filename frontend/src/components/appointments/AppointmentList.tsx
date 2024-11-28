@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useCallback, useState } from "react";
 import { useAppointments } from "../../hooks/appointmentHooks";
 import { AppointmentQuery } from "../../api/appointment/Appointment";
 import Loader from "../Loader";
@@ -6,11 +6,14 @@ import { useNotifications } from "../../hooks/notificationHooks";
 
 import "../../css/header.css";
 import { useTranslation } from "react-i18next";
-import { Alert, Button, Spinner, Stack } from "react-bootstrap";
+import { Alert, Button, Modal, Spinner, Stack } from "react-bootstrap";
 import AppointmentCard from "./AppointmentCard";
+import CancelAppointmentForm from "./CancelAppointmentForm";
+import AppointmentCardPlaceholder from "./AppointmentCardPlaceholder";
 
 interface AppointmentsListProps {
   userId: string;
+  isDoctor: boolean;
   pageSize?: number;
   status?: "CONFIRMED" | "CANCELLED" | "COMPLETED";
 }
@@ -19,6 +22,7 @@ const AppointmentList: React.FC<AppointmentsListProps> = ({
   userId,
   pageSize = 10,
   status,
+  isDoctor,
 }) => {
   const query: AppointmentQuery = {
     userId,
@@ -39,9 +43,30 @@ const AppointmentList: React.FC<AppointmentsListProps> = ({
 
   const { t } = useTranslation();
 
+  const [showCancelModal, setShowCancelModal] = useState(false);
+  const [appointmentIdToCancel, setAppointmentIdToCancel] = useState<
+    number | null
+  >(null);
+
+  const selected = useCallback(
+    (id: number) => {
+      return id === appointmentIdToCancel;
+    },
+    [appointmentIdToCancel],
+  );
+
   if (isLoading) {
-    // TODO
-    return <Loader />;
+    return (
+      <Stack direction="vertical" gap={3}>
+        {[...Array(pageSize)].map((_, index) => (
+          <AppointmentCardPlaceholder
+            key={index}
+            isDoctor={isDoctor}
+            status={status ?? "CONFIRMED"}
+          />
+        ))}
+      </Stack>
+    );
   }
 
   if (error) {
@@ -81,6 +106,11 @@ const AppointmentList: React.FC<AppointmentsListProps> = ({
                     (n) => n.appointmentId === appointment.id,
                   ) ?? false
                 }
+                onCancelClick={(appointmentId) => {
+                  setAppointmentIdToCancel(appointmentId);
+                  setShowCancelModal(true);
+                }}
+                selected={selected(appointment.id)}
               />
             ))}
           </React.Fragment>
@@ -113,6 +143,16 @@ const AppointmentList: React.FC<AppointmentsListProps> = ({
           </Button>
         )}
       </div>
+
+      {/* Cancel Appointment Modal */}
+      <CancelAppointmentForm
+        appointmentId={String(appointmentIdToCancel)}
+        showCancelModal={showCancelModal}
+        onHide={() => {
+          setAppointmentIdToCancel(null);
+          setShowCancelModal(false);
+        }}
+      />
     </div>
   );
 };
