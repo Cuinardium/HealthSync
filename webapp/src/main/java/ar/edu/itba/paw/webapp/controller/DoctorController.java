@@ -136,6 +136,12 @@ public class DoctorController {
 
     Doctor doctor = doctorService.getDoctorById(doctorId).orElseThrow(DoctorNotFoundException::new);
 
+    if (!doctor.getIsVerified()) {
+      LOGGER.debug("Doctor with id {} is not verified", doctorId);
+
+      throw new DoctorNotFoundException();
+    }
+
     LOGGER.debug("returning doctor with id {}", doctorId);
 
     DoctorDto doctorDto = DoctorDto.fromDoctor(uriInfo, doctor);
@@ -223,6 +229,12 @@ public class DoctorController {
       throws DoctorNotFoundException {
 
     Doctor doctor = doctorService.getDoctorById(doctorId).orElseThrow(DoctorNotFoundException::new);
+
+    if (!doctor.getIsVerified()) {
+      LOGGER.debug("Doctor with id {} is not verified", doctorId);
+
+      throw new DoctorNotFoundException();
+    }
 
     Set<AttendingHours> attendingHours = doctor.getAttendingHours();
 

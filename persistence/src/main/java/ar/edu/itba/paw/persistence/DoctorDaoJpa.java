@@ -141,6 +141,9 @@ public class DoctorDaoJpa implements DoctorDao {
         new QueryBuilder().select("doctor.doctor_id").from("doctor").groupBy("doctor.doctor_id");
     QueryBuilder qtyQueryBuilder = new QueryBuilder().select("count(*)").from("doctor");
 
+    // Ignore doctors that are not verified (is_verified in yser table)
+    nativeQueryBuilder.where("doctor.doctor_id IN (SELECT user_id FROM users WHERE is_verified = true)");
+
     // Add the filters to the query, if it is the first filter, don't add AND
     if (name != null && !name.isEmpty()) {
       String nameQuery =

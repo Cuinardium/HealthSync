@@ -69,6 +69,11 @@ public class AppointmentServiceImpl implements AppointmentService {
     }
 
     Doctor doctor = doctorService.getDoctorById(doctorId).orElseThrow(DoctorNotFoundException::new);
+
+    if (!doctor.getIsVerified()) {
+      throw new DoctorNotFoundException();
+    }
+
     Patient patient =
         patientService.getPatientById(patientId).orElseThrow(PatientNotFoundException::new);
 
@@ -271,6 +276,10 @@ public class AppointmentServiceImpl implements AppointmentService {
     }
 
     Doctor doctor = doctorService.getDoctorById(doctorId).orElseThrow(DoctorNotFoundException::new);
+
+    if (!doctor.getIsVerified()) {
+      throw new DoctorNotFoundException();
+    }
 
     Map<LocalDate, List<ThirtyMinuteBlock>> occupiedHours = new HashMap<>();
 

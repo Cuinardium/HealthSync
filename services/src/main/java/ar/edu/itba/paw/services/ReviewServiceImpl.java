@@ -49,7 +49,10 @@ public class ReviewServiceImpl implements ReviewService {
           PatientNotFoundException,
           ReviewForbiddenException,
           AlreadyReviewedException {
-    if (!doctorService.getDoctorById(doctorId).isPresent()) {
+
+    Doctor doctor = doctorService.getDoctorById(doctorId).orElseThrow(DoctorNotFoundException::new);
+
+    if (!doctor.getIsVerified()) {
       throw new DoctorNotFoundException();
     }
 
@@ -65,7 +68,6 @@ public class ReviewServiceImpl implements ReviewService {
       throw new AlreadyReviewedException();
     }
 
-    Doctor doctor = doctorService.getDoctorById(doctorId).get();
     Patient patient = patientService.getPatientById(patientId).get();
 
     Review review =
@@ -108,7 +110,9 @@ public class ReviewServiceImpl implements ReviewService {
   @Override
   public Page<Review> getReviewsForDoctor(long doctorId, Integer page, Integer pageSize)
       throws DoctorNotFoundException {
-    if (!doctorService.getDoctorById(doctorId).isPresent()) {
+    Doctor doctor = doctorService.getDoctorById(doctorId).orElseThrow(DoctorNotFoundException::new);
+
+    if (!doctor.getIsVerified()) {
       throw new DoctorNotFoundException();
     }
 
