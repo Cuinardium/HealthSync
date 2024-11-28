@@ -55,7 +55,17 @@
         "text": "You cant book an appointment without description",
         "button": "Close"
       }
-    }
+    },
+    "cancel": "Cancel",
+    "doctor": "Doctor",
+    "patient": "Patient",
+    "address": "Address",
+    "healthInsurance": "Health Insurance",
+    "description": "Description",
+    "cancelDesc": "Cancel Reason",
+    "status": "Status",
+    "indication": "Indications",
+    "details": "See details"
   },
   "register": {
     "title": "Sign Up",
@@ -203,6 +213,7 @@
     "completed": "Completed",
     "history": "Previous",
     "notification": "Notifications",
+    "noNotifications": "No appointments with notifications",
     "cancel": "Cancel",
     "details": "See details",
     "loadMore": "Load more",
@@ -213,14 +224,13 @@
     "button": {
       "appointment": "Book another appointment"
     },
-    "modal": {
+    "cancelModal": {
       "title": "Cancel appointment",
-      "desc": [
-        "You are going to cancel this appointment",
-        "you cannot undo this. Are you sure?"
-      ],
-      "confirm": "Yes",
-      "deny": "No",
+      "desc": "Are you sure you want to cancel this appointment? This action cannot be undone.",
+      "confirm": "Cancel",
+      "cancelling": "Cancelling...",
+      "success": "Appointment cancelled successfully",
+      "error": "An error occurred while cancelling the appointment",
       "cancelDesc": "Reason for cancelling appointment:"
     },
     "indicationModal": {
@@ -736,10 +746,11 @@
         "invalid": "Time cannot be in the past.",
         "notInEnum": "Invalid time selected."
       },
-      "cancelReason": {
-        "required": "Cancel reason is required if you want to cancel the appointments."
-      },
       "invalid": "The vacation start date and time must be before the end date and time."
+    },
+    "cancelDescription": {
+      "required": "Cancel reason is required.",
+      "size": "Cancel reason must be between 1 and 1000 characters."
     }
   }
 }

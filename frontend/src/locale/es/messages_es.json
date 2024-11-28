@@ -55,7 +55,17 @@
         "text": "No podes reservar un turno sin descripción",
         "button": "Cerrar"
       }
-    }
+    },
+    "cancel": "Cancelar",
+    "doctor": "Doctor",
+    "patient": "Paciente",
+    "address": "Dirección",
+    "healthInsurance": "Obra Social",
+    "description": "Descripción",
+    "cancelDesc": "Razón de la cancelación",
+    "status": "Estado",
+    "indication": "Indicaciones",
+    "details": "Ver detalles"
   },
   "register": {
     "title": "Registrarse",
@@ -204,6 +214,7 @@
     "completed": "Completados",
     "history": "Pasados",
     "notification": "Notificaciones",
+    "noNotifications": "No hay turnos con notificaciones",
     "cancel": "Cancelar",
     "details": "Ver detalles",
     "loadMore": "Cargar más",
@@ -214,14 +225,13 @@
     "button": {
       "appointment": "Reserva otro turno"
     },
-    "modal": {
+    "cancelModal": {
       "title": "Cancelar turno",
-      "desc": [
-        "Estas por cancelar el turno",
-        "esta es una acción que no podes deshacer. ¿Está seguro de hacerla?"
-      ],
-      "confirm": "Si",
-      "deny": "No",
+      "desc": "Estas seguro que deseas cancelar el turno? Esta acción no se puede deshacer.",
+      "confirm": "Cancelar",
+      "cancelling": "Cancelando...",
+      "success": "Turno cancelado exitosamente",
+      "error": "Hubo un error al cancelar el turno",
       "cancelDesc": "Razon por la cual estas cancelando el turno:"
     },
     "indicationModal": {
@@ -737,10 +747,11 @@
         "invalid": "La hora no puede ser en el pasado.",
         "notInEnum": "La hora seleccionada no es válida."
       },
-      "cancelReason": {
-        "required": "La razón de la cancelación es obligatoria si desea cancelar los turnos."
-      },
       "invalid": "El inicio de las vacaciones no puede ser después del fin de las mismas."
+    },
+    "cancelDescription": {
+      "required": "La razón de la cancelación es obligatoria.",
+      "size": "La razón de la cancelación debe tener entre 1 y 1000 caracteres."
     }
   }
 }
