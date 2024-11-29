@@ -65,7 +65,11 @@
     "cancelDesc": "Razón de la cancelación",
     "status": "Estado",
     "indication": "Indicaciones",
-    "details": "Ver detalles"
+    "noIndications": "No hay indicaciones todavia",
+    "moreIndications": "Ver más",
+    "giveIndication": "Dar indicaciones",
+    "details": "Ver detalles",
+    "doctorDetails": "Ver doctor"
   },
   "register": {
     "title": "Registrarse",
@@ -752,6 +756,14 @@
     "cancelDescription": {
       "required": "La razón de la cancelación es obligatoria.",
       "size": "La razón de la cancelación debe tener entre 1 y 1000 caracteres."
+    },
+    "indications": {
+      "required": "La indicación es obligatoria.",
+      "size": "La indicación debe tener entre 1 y 1000 caracteres."
+    },
+    "file": {
+      "type": "El archivo seleccionado debe ser png, jpg, jpeg o pdf.",
+      "size": "El archivo seleccionado es demasiado grande. El tamaño máximo permitido es de 10MB."
     }
   }
 }

@@ -1,4 +1,4 @@
-import { useMutation, useQuery } from "@tanstack/react-query";
+import {useInfiniteQuery, useMutation, useQuery} from "@tanstack/react-query";
 import {
   getIndications,
   getIndication,
@@ -25,18 +25,18 @@ export interface IndicationWithFileData extends Indication {
 // ========== useIndications ==========
 
 export function useIndications(appointmentId: string, query: IndicationQuery) {
-  return useQuery<Page<IndicationWithFileData>, AxiosError>(
+  return useInfiniteQuery(
     {
-      queryKey: ["indications", appointmentId, query.page],
-      queryFn: async () => {
-        const indications = await getIndications(appointmentId, query);
+      queryKey: ["indications", appointmentId],
+      queryFn: async ({pageParam = 1}) => {
+        const indications = await getIndications(appointmentId, {...query, page: pageParam});
 
         if (!indications) {
           return indications;
         }
 
         // Fetch the file data for each indication that has a file URL
-        const indicationsWithFiles = await Promise.all(
+        const indicationsWithFiles: IndicationWithFileData[] = await Promise.all(
           indications.content.map(async (indication) => {
             if (indication.fileId) {
               const fileData = await getFile(appointmentId, indication.fileId);
@@ -58,6 +58,11 @@ export function useIndications(appointmentId: string, query: IndicationQuery) {
       },
       enabled: !!appointmentId,
       staleTime: STALE_TIME,
+        getNextPageParam: (lastPage: Page<Indication>) =>
+            lastPage.currentPage < lastPage.totalPages
+            ? lastPage.currentPage + 1
+            : undefined,
+        initialPageParam: 1,
     },
     queryClient,
   );

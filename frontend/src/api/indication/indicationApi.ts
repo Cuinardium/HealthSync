@@ -113,7 +113,7 @@ export function mapDetails(indicationResp: IndicationResponse): Indication {
   const date = new Date(indicationResp.date);
 
   return {
-    creator: indicationResp.links.find((link) => link.rel === "creator")?.href as string,
+    creatorId: indicationResp.links.find((link) => link.rel === "creator")?.href.split("/").pop() as string,
     date: date,
     description: indicationResp.description,
     fileId: indicationResp.links.find((link) => link.rel === "file")?.href.split("/").pop() as string,

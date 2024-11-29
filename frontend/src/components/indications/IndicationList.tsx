@@ -1,99 +1,133 @@
-import React from "react";
+import React, { useEffect } from "react";
 import Loader from "../Loader";
 import { IndicationQuery } from "../../api/indication/Indication";
 import { useIndications } from "../../hooks/indicationHooks";
+import { Alert, Card, Spinner, Stack } from "react-bootstrap";
+import { useTranslation } from "react-i18next";
+import IndicationCard from "./IndicationCard";
+
+import { useAuth } from "../../context/AuthContext";
+import IndicationForm from "./IndicationForm";
 
 interface IndicationListProps {
   appointmentId: string;
-  page?: number;
   pageSize?: number;
-  onPageChange: (page: number) => void;
 }
 
 const IndicationList: React.FC<IndicationListProps> = ({
   appointmentId,
-  page = 1,
   pageSize = 10,
-  onPageChange,
 }) => {
   const query: IndicationQuery = {
-    page,
     pageSize,
   };
 
+  const { t } = useTranslation();
+
+  const { id, loading } = useAuth();
+
+  const chatRef = React.useRef<HTMLDivElement>(null);
+
   const {
-    data: indicationsPage,
+    data: indications,
     isLoading,
-    isError,
+    isSuccess,
     error,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
   } = useIndications(appointmentId, query);
 
-  if (isLoading) {
-    return <Loader />;
-  }
+  const scrollToBottom = () => {
+    if (chatRef.current) {
+      chatRef.current.scrollTop = chatRef.current.scrollHeight;
+    }
+  };
 
-  if (isError) {
+  useEffect(() => {
+    scrollToBottom();
+  }, [chatRef, isSuccess]);
+
+  if (error) {
     return <div>Error fetching Indications: {error?.message}</div>;
   }
 
-  if (!indicationsPage || indicationsPage.content.length === 0) {
-    return <div>No indications found</div>;
-  }
+  const reversedIndications = indications?.pages.flatMap((page) =>
+    page.content.reverse(),
+  );
 
   return (
-    <div>
-      <h2>Indications</h2>
-      <ul>
-        {indicationsPage.content.map((indication) => {
-          const fileUrl = indication.fileData
-            ? URL.createObjectURL(indication.fileData.blob)
-            : null;
+    <Card>
+      <Card.Body>
+        <div ref={chatRef} style={{ maxHeight: "700px", minHeight: "700px", overflowY: "auto" }}>
+          {/* Load More */}
+          {hasNextPage && (
+            <div className="text-center mt-3">
+              <button
+                className="btn btn-primary"
+                onClick={() => fetchNextPage()}
+                disabled={isFetchingNextPage}
+              >
+                {isFetchingNextPage ? (
+                  <Spinner
+                    as="span"
+                    animation="border"
+                    size="sm"
+                    role="status"
+                    aria-hidden="true"
+                  />
+                ) : (
+                  t("appointment.moreIndications")
+                )}
+              </button>
+            </div>
+          )}
 
-          return (
-            <li key={indication.id}>
-              <div>
-                <strong>Indication:</strong> {indication.description}
+          <Stack
+            direction="vertical"
+            gap={3}
+            style={{ minHeight: "700px" }}
+            className="d-flex flex-column-reverse"
+          >
+            {isLoading && (
+              <div className="text-center mt-5">
+                <Spinner animation="border" variant="primary" />
               </div>
-              {fileUrl && (
-                <div>
-                  <strong>File:</strong>{" "}
-                  <a
-                    href={fileUrl}
-                    download={indication.fileData?.fileName}
-                    onClick={() => {
-                      // Revoke the object URL after the file is downloaded
-                      setTimeout(() => {
-                        URL.revokeObjectURL(fileUrl);
-                      }, 100);
-                    }}
-                  >
-                    Download File
-                  </a>
+            )}
+            {!isLoading &&
+              (!indications ||
+                indications.pages.length === 0 ||
+                indications.pages[0].content.length === 0) && (
+                <div
+                  className={
+                    "text-center d-flex flex-row justify-content-center mt-5"
+                  }
+                >
+                  <Alert variant="info">{t("appointment.noIndications")}</Alert>
                 </div>
               )}
-              <div>
-                <strong>Date:</strong>{" "}
-                {new Date(indication.date).toLocaleDateString()}
+            {reversedIndications?.map((indication) => (
+              <div
+                key={indication.id}
+                className={`d-flex ${indication.creatorId === id ? "justify-content-end" : "justify-content-start"}`}
+              >
+                <IndicationCard
+                  indication={indication}
+                  isCreator={indication.creatorId === id}
+                />
               </div>
-            </li>
-          );
-        })}
-      </ul>
+            ))}
+          </Stack>
+        </div>
 
-      {/* Pagination Controls */}
-      <div style={{ marginTop: "20px" }}>
-        <button disabled={page === 1} onClick={() => onPageChange(page - 1)}>
-          Previous
-        </button>
-        <span style={{ margin: "0 10px" }}>Page {page}</span>
-        <button
-          onClick={() => onPageChange(page + 1)}
-          disabled={indicationsPage.currentPage === indicationsPage.totalPages}
-        >
-          Next
-        </button>
-      </div>
-    </div>
+        <hr className="mt-5" />
+
+        <IndicationForm
+          appointmentId={appointmentId}
+          onSuccess={scrollToBottom}
+        />
+      </Card.Body>
+    </Card>
   );
 };
 

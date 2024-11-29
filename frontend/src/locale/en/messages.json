@@ -65,7 +65,11 @@
     "cancelDesc": "Cancel Reason",
     "status": "Status",
     "indication": "Indications",
-    "details": "See details"
+    "noIndications": "No indications yet",
+    "moreIndications": "Load more",
+    "addIndication": "Give Indication",
+    "details": "See details",
+    "doctorDetails": "See doctor"
   },
   "register": {
     "title": "Sign Up",
@@ -751,6 +755,14 @@
     "cancelDescription": {
       "required": "Cancel reason is required.",
       "size": "Cancel reason must be between 1 and 1000 characters."
+    },
+    "indications": {
+      "required": "Indications are required.",
+      "size": "Indications must be between 1 and 1000 characters."
+    },
+    "file": {
+      "size": "File size must be less than 10MB.",
+      "type": "File type must be png, jpg, jpeg, or pdf."
     }
   }
 }

@@ -1,7 +1,7 @@
 import { Link } from "../link/link";
 
 export interface Indication {
-  creator: string;
+  creatorId: string;
   date: Date;
   description: string;
   fileId?: string;

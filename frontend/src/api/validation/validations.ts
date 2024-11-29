@@ -262,3 +262,44 @@ export function validateCancelDescription(
 
   return true;
 }
+
+export function validateIndications(indications: string | null): string | boolean {
+  const validationMessages = {
+    required: "validation.indications.required",
+    size: "validation.indications.size",
+  };
+
+  // Check for null or empty string
+  if (indications === null || indications.trim() === "") {
+    return validationMessages.required;
+  }
+
+  // Check size constraints (1 to 1000 characters)
+  if (indications.length < 1 || indications.length > 1000) {
+    return validationMessages.size;
+  }
+
+  return true;
+}
+
+export function validateFile(file: File | undefined): string | true {
+  if (!file) {
+    return true;
+  }
+
+  const SUPPORTED_TYPES = ["png", "jpg", "jpeg", "pdf"];
+  const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB (adjust as needed)
+
+  // Validate file type
+  const fileExtension = file.name.split(".").pop()?.toLowerCase();
+  if (fileExtension && !SUPPORTED_TYPES.includes(fileExtension.toLowerCase())) {
+    return "validation.file.type";
+  }
+
+  // Validate file size
+  if (file.size > MAX_FILE_SIZE) {
+    return "validation.file.size";
+  }
+
+  return true;
+}
