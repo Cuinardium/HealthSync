@@ -19,6 +19,7 @@ import {
   validateFile,
   validateIndications,
 } from "../../api/validation/validations";
+import { FaX } from "react-icons/fa6";
 
 interface CreateIndicationFormProps {
   appointmentId: string;
@@ -78,6 +79,11 @@ const IndicationForm: React.FC<CreateIndicationFormProps> = ({
     }
   };
 
+  const deleteFile = () => {
+    setFileName(null);
+    setValue("file", undefined);
+  };
+
   const triggerFileInput = () => {
     if (fileInputRef.current) {
       fileInputRef.current.click();
@@ -106,13 +112,23 @@ const IndicationForm: React.FC<CreateIndicationFormProps> = ({
             render={({ field }) => (
               <Form.Control
                 {...field}
+                as={"textarea"}
                 placeholder={t("appointment.addIndication")}
                 isInvalid={!!errors.indications}
               />
             )}
           />
           {/* File Trigger */}
-          {fileName && <InputGroup.Text>{fileName}</InputGroup.Text>}
+          {fileName && (
+            <>
+
+              <InputGroup.Text>{fileName}</InputGroup.Text>
+
+              <Button variant="danger" onClick={deleteFile}>
+                <FaX />
+              </Button>
+            </>
+          )}
           <Button variant="outline-secondary" onClick={triggerFileInput}>
             <FaPaperclip />
           </Button>
