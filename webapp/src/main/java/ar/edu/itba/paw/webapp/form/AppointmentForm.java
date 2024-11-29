@@ -20,7 +20,7 @@ public class AppointmentForm {
   private String timeBlock;
 
   @NotNull(message = "NotNull.appointmentForm.description")
-  @Size(min = 1, max = 100, message = "Size.appointmentForm.description")
+  @Size(min = 1, max = 1000, message = "Size.appointmentForm.description")
   private String description;
 
   @NotNull(message = "NotNull.appointmentForm.docId")
