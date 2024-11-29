@@ -6,7 +6,7 @@ import {
   VacationQuery,
   VacationResponse,
 } from "./Vacation";
-import { parseLocalDate } from "../util/dateUtils";
+import { formatDate, parseLocalDate } from "../util/dateUtils";
 import {Time, TIMES} from "../time/Time";
 
 const VACATION_ENDPOINT = (doctor_id: string) =>
@@ -45,8 +45,8 @@ export async function createVacation(
 ): Promise<Vacation> {
   const body = {
     ...vacation,
-    fromDate: vacation.fromDate.toISOString().split("T")[0],
-    toDate: vacation.toDate.toISOString().split("T")[0],
+    fromDate: formatDate(vacation.fromDate),
+    toDate: formatDate(vacation.toDate),
   };
 
   const response = await axios.post<Vacation>(

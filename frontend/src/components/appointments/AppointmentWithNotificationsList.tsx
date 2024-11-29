@@ -56,7 +56,7 @@ const AppointmentWithNotificationsList: React.FC<
     <div>
       <Stack direction="vertical" gap={3}>
         {appointments.map((appointment) => (
-          <AppointmentCard appointment={appointment} hasNotification={true} />
+          <AppointmentCard key={appointment.id} appointment={appointment} hasNotification={true} />
         ))}
       </Stack>
     </div>

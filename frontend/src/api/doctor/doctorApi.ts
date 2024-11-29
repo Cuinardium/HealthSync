@@ -1,5 +1,6 @@
 import { axios } from "../axios";
 import { getPage, Page } from "../page/Page";
+import { formatDate } from "../util/dateUtils";
 import {
   AttendingHours,
   Doctor,
@@ -26,9 +27,15 @@ const OCCUPIED_HOURS_CONTENT_TYPE =
 export async function getDoctors(
   params: DoctorQuery,
 ): Promise<Page<DoctorResponse>> {
+
+  let dateStr
+  if (params.date) {
+    dateStr = formatDate(params.date)
+  }
+
   const paramsCopy = {
     ...params,
-    date: params.date?.toISOString().split("T")[0],
+    date: dateStr,
   };
 
   const response = await axios.get(DOCTOR_ENDPOINT, {
@@ -138,14 +145,23 @@ export async function getDoctorOccupiedHours(
   let results: OccupiedHours[] = [];
   let nextPageUrl = DOCTOR_ENDPOINT + "/" + doctorId + OCCUPIED_HOURS_ENDPOINT;
 
+  let fromStr
+  if (from) {
+    fromStr = formatDate(from)
+  }
+  let toStr
+  if (to) {
+    toStr = formatDate(to)
+  }
+
   while (nextPageUrl) {
     const occupiedHoursResp = await axios.get<OccupiedHours[]>(nextPageUrl, {
       headers: {
         Accept: OCCUPIED_HOURS_CONTENT_TYPE,
       },
       params: {
-        from: from?.toISOString().split("T")[0],
-        to: to?.toISOString().split("T")[0],
+        from: fromStr,
+        to: toStr,
         pageSize: 365,
       },
     });

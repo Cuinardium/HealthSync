@@ -1,7 +1,6 @@
 import React, { useCallback, useState } from "react";
 import { useAppointments } from "../../hooks/appointmentHooks";
 import { AppointmentQuery } from "../../api/appointment/Appointment";
-import Loader from "../Loader";
 import { useNotifications } from "../../hooks/notificationHooks";
 
 import "../../css/header.css";
@@ -10,12 +9,15 @@ import { Alert, Button, Modal, Spinner, Stack } from "react-bootstrap";
 import AppointmentCard from "./AppointmentCard";
 import CancelAppointmentForm from "./CancelAppointmentForm";
 import AppointmentCardPlaceholder from "./AppointmentCardPlaceholder";
+import { formatDate } from "../../api/util/dateUtils";
 
 interface AppointmentsListProps {
   userId: string;
   isDoctor: boolean;
   pageSize?: number;
   status?: "CONFIRMED" | "CANCELLED" | "COMPLETED";
+  order?: "asc" | "desc",
+  date?: Date;
 }
 
 const AppointmentList: React.FC<AppointmentsListProps> = ({
@@ -23,11 +25,16 @@ const AppointmentList: React.FC<AppointmentsListProps> = ({
   pageSize = 10,
   status,
   isDoctor,
+  order,
+  date
 }) => {
+
   const query: AppointmentQuery = {
     userId,
     pageSize,
     status,
+    order,
+    date,
   };
 
   const {
@@ -74,7 +81,7 @@ const AppointmentList: React.FC<AppointmentsListProps> = ({
       <div
         className={"text-center d-flex flex-row justify-content-center mt-5"}
       >
-        <Alert variant="danger">{t("appointment.error")}</Alert>
+        <Alert variant="danger">{t("appointments.error")}</Alert>
       </div>
     );
   }
@@ -100,6 +107,7 @@ const AppointmentList: React.FC<AppointmentsListProps> = ({
           <React.Fragment key={index}>
             {page.content.map((appointment) => (
               <AppointmentCard
+                key={appointment.id}
                 appointment={appointment}
                 hasNotification={
                   notifications?.some(

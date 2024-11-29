@@ -6,7 +6,7 @@ import {
   AppointmentQuery,
   AppointmentResponse,
 } from "./Appointment";
-import {parseLocalDate} from "../util/dateUtils";
+import {formatDate, parseLocalDate} from "../util/dateUtils";
 
 const APPOINTMENT_ENDPOINT = "/appointments";
 
@@ -21,8 +21,21 @@ const APPOINTMENT_CANCEL_CONTENT_TYPE =
 export async function getAppointments(
   query: AppointmentQuery,
 ): Promise<Page<Appointment>> {
+
+
+  let dateStr
+  if (query.date) {
+    dateStr = formatDate(query.date)
+  }
+  
+  const queryCopy = {
+    ...query,
+    date: dateStr,
+  };
+
+
   const response = await axios.get(APPOINTMENT_ENDPOINT, {
-    params: query,
+    params: queryCopy,
     headers: { Accept: APPOINTMENT_LIST_CONTENT_TYPE },
   });
 
@@ -41,7 +54,7 @@ export async function createAppointment(
 ): Promise<Appointment> {
   const body = {
     ...appointment,
-    date: appointment.date.toISOString().split("T")[0],
+    date: formatDate(appointment.date),
   };
 
   const response = await axios.post(APPOINTMENT_ENDPOINT, body, {

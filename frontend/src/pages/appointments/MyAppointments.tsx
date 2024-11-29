@@ -37,7 +37,7 @@ const MyAppointments: React.FC = () => {
                     userId={user?.id as any}
                     isDoctor={isDoctor ?? false}
                     pageSize={pageSize}
-                    status="CONFIRMED"
+                    date={new Date()}
                 />
               </Tab>
 
@@ -48,6 +48,7 @@ const MyAppointments: React.FC = () => {
                     isDoctor={isDoctor ?? false}
                     pageSize={pageSize}
                     status="CONFIRMED"
+                    order="asc"
                 />
               </Tab>
 
@@ -58,6 +59,7 @@ const MyAppointments: React.FC = () => {
                     isDoctor={isDoctor ?? false}
                     pageSize={pageSize}
                     status="CANCELLED"
+                    order="desc"
                 />
               </Tab>
 
@@ -68,6 +70,7 @@ const MyAppointments: React.FC = () => {
                     isDoctor={isDoctor ?? false}
                     pageSize={pageSize}
                     status="COMPLETED"
+                    order="desc"
                 />
               </Tab>
 
