@@ -59,10 +59,10 @@ public class AppointmentController {
         appointmentService.getFilteredAppointments(
             userId,
             appointmentQuery.getAppointmentStatus(),
-            null, // TODO: Add date support
+            appointmentQuery.getLocalDate(),
             pageQuery.getPage(),
             pageQuery.getPageSize(),
-            true // TODO: Add sort direction support
+            appointmentQuery.sortAsc()
             );
 
     List<Appointment> appointmentList = appointmentsPage.getContent();

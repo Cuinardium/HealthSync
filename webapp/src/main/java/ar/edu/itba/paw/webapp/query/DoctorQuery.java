@@ -24,7 +24,7 @@ public class DoctorQuery extends PageQuery {
   private String name;
 
   @FutureOrPresent(message = "FutureOrPresent.doctorQuery.date")
-  @Pattern(regexp = DateUtil.DATE_REGEX, message = "Pattern.doctorQuery.date")
+  @Pattern(regexp = DateUtil.DATE_REGEX, message = "Pattern.query.date")
   @QueryParam("date")
   private String date;
 

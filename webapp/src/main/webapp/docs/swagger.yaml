@@ -38,6 +38,18 @@ paths:
             type: string
             enum: [CONFIRMED, CANCELLED, COMPLETED]
           example: COMPLETED
+        - name: date
+          in: query
+          schema:
+            format: date
+            type: string
+            example: 2024-07-25
+        - name: order
+          in: query
+          schema:
+            enum: [asc, desc]
+            type: string
+            default: asc
         - name: page
           in: query
           schema:
