@@ -89,7 +89,7 @@ const IndicationList: React.FC<IndicationListProps> = ({
             style={{ minHeight: "700px" }}
             className="d-flex flex-column-reverse"
           >
-            {isLoading && (
+            {(isLoading || loading) && (
               <div className="text-center mt-5">
                 <Spinner animation="border" variant="primary" />
               </div>

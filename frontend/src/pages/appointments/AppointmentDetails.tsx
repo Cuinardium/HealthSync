@@ -23,7 +23,7 @@ const DetailedAppointment: React.FC = () => {
   const [showCancelModal, setShowCancelModal] = useState(false);
   const pageSize = 10;
 
-  const { id } = useAuth();
+  const { id, loading } = useAuth();
 
   const {
     data: appointment,
@@ -66,7 +66,13 @@ const DetailedAppointment: React.FC = () => {
   }
 
   if (isError) {
-    return <div>{error?.message}</div>;
+    if (error?.response?.status === 404 || error?.response?.status === 403) {
+      navigate("/404");
+      return null;
+    } else {
+      console.error(error);
+      return <div>Error: {error?.message}</div>;
+    }
   }
 
   return (
@@ -83,7 +89,7 @@ const DetailedAppointment: React.FC = () => {
         <h1 className="mb-3">{t("detailedAppointment.title")}</h1>
 
         <div className="mb-3">
-          {!isLoading && appointment && (
+          {!isLoading && !loading && appointment && (
             <DetailedAppointmentCard
               appointment={appointment}
               hasNotification={false}
@@ -91,7 +97,7 @@ const DetailedAppointment: React.FC = () => {
               selected={showCancelModal}
             />
           )}
-          {isLoading && (
+          {(isLoading || loading) && (
             <AppointmentCardPlaceholder isDoctor={false} showButtons={false} />
           )}
         </div>
@@ -100,10 +106,7 @@ const DetailedAppointment: React.FC = () => {
           <>
             <h2 className="mb-3">{t("appointment.indication")}</h2>
 
-            <IndicationList
-              appointmentId={appointmentId}
-              pageSize={pageSize}
-            />
+            <IndicationList appointmentId={appointmentId} pageSize={pageSize} />
           </>
         )}
       </Col>
