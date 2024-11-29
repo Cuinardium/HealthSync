@@ -137,7 +137,10 @@ public class AppointmentDaoJpa implements AppointmentDao {
       Boolean isPatient) {
 
     QueryBuilder nativeQueryBuilder =
-        new QueryBuilder().select("appointment_id").distinct().from("appointment");
+        new QueryBuilder()
+            .select("appointment_id", "appointment_date", "appointment_time")
+            .distinct()
+            .from("appointment");
 
     if (isPatient != null && userId != null) {
       String userField = isPatient ? "appointment.patient_id" : "appointment.doctor_id";
@@ -156,6 +159,12 @@ public class AppointmentDaoJpa implements AppointmentDao {
       nativeQueryBuilder.where("appointment_date <= '" + Date.valueOf(to) + "'");
     }
 
+    if (sortAsc) {
+      nativeQueryBuilder.orderByAsc("appointment_date").orderByAsc("appointment_time");
+    } else {
+      nativeQueryBuilder.orderByDesc("appointment_date").orderByDesc("appointment_time");
+    }
+
     String builtQuery = nativeQueryBuilder.build();
 
     Query nativeQuery = em.createNativeQuery(builtQuery);
@@ -170,22 +179,20 @@ public class AppointmentDaoJpa implements AppointmentDao {
     final List<Long> idList =
         (List<Long>)
             nativeQuery.getResultList().stream()
-                .map(o -> ((Number) o).longValue())
+                .map(row -> ((Number) ((Object[]) row)[0]).longValue()) // Extract the ID
                 .collect(Collectors.toList());
 
     if (idList.isEmpty()) {
       return new Page<>(Collections.emptyList(), page, 0, pageSize);
     }
-    // JPA Query Language (JQL) / Hibernate Query Language (HQL)
-    String queryStr =
+
+    String queryString =
         sortAsc
-            ? "from Appointment where id in :idList order by date ASC, timeBlock ASC"
-            : "from Appointment where id in :idList order by date DESC, timeBlock DESC";
+            ? "from Appointment where id in :idList order by date asc, timeBlock asc"
+            : "from Appointment where id in :idList order by date desc, timeBlock desc";
 
     final TypedQuery<Appointment> query =
-        em.createQuery(
-            queryStr,
-            Appointment.class);
+        em.createQuery(queryString, Appointment.class);
     query.setParameter("idList", idList);
 
     List<Appointment> content = query.getResultList();
