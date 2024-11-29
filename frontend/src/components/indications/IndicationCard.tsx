@@ -1,7 +1,6 @@
 import React from "react";
 import { Card } from "react-bootstrap";
 import { IndicationWithFileData } from "../../hooks/indicationHooks";
-import { formatDate } from "../../api/util/dateUtils";
 
 interface IndicationCardProps {
   indication: IndicationWithFileData;
@@ -16,7 +15,7 @@ const IndicationCard: React.FC<IndicationCardProps> = ({
   const fileUrl = fileData ? URL.createObjectURL(fileData.blob) : null;
 
   return (
-    <div className="d-flex flex-column">
+    <div className="d-flex flex-column" style={{ maxWidth: "50%" }}>
       <Card
         className={`mb-3 shadow-sm ${isCreator ? "bg-primary text-light" : ""}`}
       >
