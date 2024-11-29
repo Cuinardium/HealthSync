@@ -32,6 +32,7 @@ const IndicationList: React.FC<IndicationListProps> = ({
     data: indications,
     isLoading,
     isSuccess,
+      isRefetching,
     error,
     fetchNextPage,
     hasNextPage,
@@ -45,8 +46,10 @@ const IndicationList: React.FC<IndicationListProps> = ({
   };
 
   useEffect(() => {
-    scrollToBottom();
-  }, [chatRef, isSuccess]);
+    if (isSuccess || isRefetching) {
+      scrollToBottom();
+    }
+  }, [chatRef, isSuccess, isRefetching]);
 
   if (error) {
     return <div>Error fetching Indications: {error?.message}</div>;
