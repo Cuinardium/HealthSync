@@ -28,7 +28,6 @@ import {
   validateName,
   validatePassword,
 } from "../../api/validation/validations";
-import { t } from "i18next";
 
 const PatientRegister = () => {
   const { t } = useTranslation();
@@ -45,7 +44,10 @@ const PatientRegister = () => {
     },
   });
 
-  const { data: healthInsurances } = useHealthInsurances();
+  const { data: healthInsurances } = useHealthInsurances({
+    sort: "standard",
+    order: "asc"
+  });
 
   const onSuccess = () => {
     navigate("/register-successful");

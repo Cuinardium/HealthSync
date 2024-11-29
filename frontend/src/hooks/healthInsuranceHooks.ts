@@ -1,17 +1,17 @@
 import { useQuery } from "@tanstack/react-query";
 import { getHealthInsurances, getHealthInsurance } from "../api/health-insurance/healthInsuranceApi";
-import { HealthInsurance } from "../api/health-insurance/HealthInsurance";
+import { HealthInsurance, HealthInsuranceQuery } from "../api/health-insurance/HealthInsurance";
 import { queryClient } from "../api/queryClient";
 
 const STALE_TIME = 30 * 60 * 1000;
 
 // ========== useHealthInsurances ==========
 
-export function useHealthInsurances() {
+export function useHealthInsurances(healthInsuranceQuery: HealthInsuranceQuery) {
   return useQuery<HealthInsurance[], Error>(
     {
       queryKey: ["healthInsurances"],
-      queryFn: () => getHealthInsurances(),
+      queryFn: () => getHealthInsurances(healthInsuranceQuery),
       staleTime: STALE_TIME,
     },
     queryClient,

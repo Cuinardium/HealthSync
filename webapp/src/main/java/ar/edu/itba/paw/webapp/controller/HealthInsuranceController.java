@@ -1,15 +1,18 @@
 package ar.edu.itba.paw.webapp.controller;
 
+import ar.edu.itba.paw.interfaces.services.DoctorService;
 import ar.edu.itba.paw.models.HealthInsurance;
 import ar.edu.itba.paw.models.Page;
 import ar.edu.itba.paw.webapp.dto.ErrorDto;
 import ar.edu.itba.paw.webapp.dto.HealthInsuranceDto;
 import ar.edu.itba.paw.webapp.mediaType.VndType;
-import ar.edu.itba.paw.webapp.query.PageQuery;
+import ar.edu.itba.paw.webapp.query.HealthInsuranceQuery;
 import ar.edu.itba.paw.webapp.utils.LocaleUtil;
 import ar.edu.itba.paw.webapp.utils.ResponseUtil;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import javax.validation.Valid;
 import javax.ws.rs.*;
@@ -25,39 +28,62 @@ import org.springframework.stereotype.Component;
 public class HealthInsuranceController {
   private static final Logger LOGGER = LoggerFactory.getLogger(HealthInsuranceController.class);
 
+  private final DoctorService doctorService;
+
   private final MessageSource messageSource;
 
   @Context private UriInfo uriInfo;
 
   @Autowired
-  public HealthInsuranceController(final MessageSource messageSource) {
+  public HealthInsuranceController(
+      final DoctorService doctorService, final MessageSource messageSource) {
+    this.doctorService = doctorService;
     this.messageSource = messageSource;
   }
 
   @GET
   @Produces(VndType.APPLICATION_HEALTH_INSURANCE_LIST)
-  public Response listHealthInsurances(@Valid @BeanParam PageQuery pageQuery) {
+  public Response listHealthInsurances(
+      @Valid @BeanParam HealthInsuranceQuery healthInsuranceQuery) {
 
-    LOGGER.debug("Listing health insurances, page: {}", pageQuery.getPage());
+    LOGGER.debug("Listing health insurances, page: {}", healthInsuranceQuery.getPage());
 
     List<HealthInsurance> healthInsuranceList = Arrays.asList(HealthInsurance.values());
+    Map<HealthInsurance, Integer> healthInsurancePopularity =
+        doctorService.getUsedHealthInsurances();
 
-    Page<HealthInsurance> healthInsurancePage =
-        new Page<>(healthInsuranceList, pageQuery.getPage(), pageQuery.getPageSize());
+
+    // Compare by ordinal or by popularity
+    Comparator<HealthInsuranceDto> comparator =
+        healthInsuranceQuery.sortByPopularity()
+            ? Comparator.comparingInt(HealthInsuranceDto::getPopularity)
+            : Comparator.comparingInt(s -> HealthInsurance.valueOf(s.getCode()).ordinal());
+
+    if (healthInsuranceQuery.reversed()) {
+      comparator = comparator.reversed();
+    }
+
+    healthInsuranceList.forEach(
+        healthInsurance -> healthInsurancePopularity.putIfAbsent(healthInsurance, 0));
+
+    final List<HealthInsuranceDto> dtoList =
+        healthInsurancePopularity.entrySet().stream()
+            .map(
+                entry ->
+                    HealthInsuranceDto.fromHealthInsurance(
+                        uriInfo, messageSource, entry.getKey(), entry.getValue()))
+            .sorted(comparator)
+            .collect(Collectors.toList());
+
+    Page<HealthInsuranceDto> healthInsurancePage =
+        new Page<>(dtoList, healthInsuranceQuery.getPage(), healthInsuranceQuery.getPageSize());
 
     if (healthInsurancePage.getContent().isEmpty()) {
       return Response.noContent().build();
     }
 
-    final List<HealthInsuranceDto> dtoList =
-        healthInsurancePage.getContent().stream()
-            .map(
-                healthInsurance ->
-                    HealthInsuranceDto.fromHealthInsurance(uriInfo, messageSource, healthInsurance))
-            .collect(Collectors.toList());
-
     return ResponseUtil.setPaginationLinks(
-            Response.ok(new GenericEntity<List<HealthInsuranceDto>>(dtoList) {}),
+            Response.ok(new GenericEntity<List<HealthInsuranceDto>>(healthInsurancePage.getContent()) {}),
             uriInfo,
             healthInsurancePage)
         .build();
@@ -80,11 +106,13 @@ public class HealthInsuranceController {
     }
 
     HealthInsurance healthInsurance = healthInsurances[id];
+    int popularity = doctorService.getUsedHealthInsurances().getOrDefault(healthInsurance, 0);
 
     LOGGER.debug("returning healthInsurance with id {}", id);
 
     return Response.ok(
-            HealthInsuranceDto.fromHealthInsurance(uriInfo, messageSource, healthInsurance))
+            HealthInsuranceDto.fromHealthInsurance(
+                uriInfo, messageSource, healthInsurance, popularity))
         .build();
   }
 }

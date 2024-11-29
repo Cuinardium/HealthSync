@@ -2,24 +2,26 @@ package ar.edu.itba.paw.webapp.dto;
 
 import ar.edu.itba.paw.models.HealthInsurance;
 import ar.edu.itba.paw.webapp.utils.LocaleUtil;
-
+import ar.edu.itba.paw.webapp.utils.URIUtil;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import javax.ws.rs.core.UriInfo;
-
-import ar.edu.itba.paw.webapp.utils.URIUtil;
 import org.springframework.context.MessageSource;
 
 public class HealthInsuranceDto {
 
   private String name;
   private String code;
+  private int popularity;
 
   private List<LinkDto> links;
 
   public static HealthInsuranceDto fromHealthInsurance(
-      final UriInfo uri, final MessageSource messageSource, final HealthInsurance healthInsurance) {
+      final UriInfo uri,
+      final MessageSource messageSource,
+      final HealthInsurance healthInsurance,
+      final int popularity) {
 
     final HealthInsuranceDto dto = new HealthInsuranceDto();
 
@@ -28,6 +30,8 @@ public class HealthInsuranceDto {
     dto.name =
         messageSource.getMessage(
             healthInsurance.getMessageID(), null, LocaleUtil.getCurrentRequestLocale());
+
+    dto.popularity = popularity;
 
     URI selfURI = URIUtil.getHealthInsuranceURI(uri, healthInsurance.ordinal());
 
@@ -51,6 +55,14 @@ public class HealthInsuranceDto {
 
   public void setCode(String code) {
     this.code = code;
+  }
+
+  public int getPopularity() {
+    return popularity;
+  }
+
+  public void setPopularity(int popularity) {
+    this.popularity = popularity;
   }
 
   public List<LinkDto> getLinks() {

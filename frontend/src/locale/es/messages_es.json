@@ -67,7 +67,7 @@
     "indication": "Indicaciones",
     "noIndications": "No hay indicaciones todavia",
     "moreIndications": "Ver más",
-    "giveIndication": "Dar indicaciones",
+    "addIndication": "Dar indicaciones",
     "details": "Ver detalles",
     "doctorDetails": "Ver doctor",
     "error": "Hubo un error al cargar los turnos"

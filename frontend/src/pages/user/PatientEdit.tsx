@@ -39,7 +39,10 @@ import {
 const PatientEdit = () => {
   const navigate = useNavigate();
   const { user, loading, isDoctor } = useUser();
-  const { data: healthInsurances } = useHealthInsurances();
+  const { data: healthInsurances } = useHealthInsurances({
+    sort: "standard",
+    order: "asc"
+  });
   const [imageUrl, setImageUrl] = useState<string>(patientDefault);
   const [showSuccess, setShowSuccess] = useState<boolean>(false);
 

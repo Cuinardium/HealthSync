@@ -39,7 +39,10 @@ import HealthInsurancePicker from "../../components/doctors/HealthInsurancePicke
 const DoctorEdit = () => {
   const navigate = useNavigate();
   const { user, loading, isDoctor } = useUser();
-  const { data: healthInsurances } = useHealthInsurances();
+  const { data: healthInsurances } = useHealthInsurances({
+    sort: "standard",
+    order: "asc"
+  });
   const { data: specialties } = useSpecialties({
     sort: "standard",
     order: "asc",

@@ -54,7 +54,10 @@ const DoctorRegister = () => {
     sort: "standard",
     order: "asc",
   });
-  const { data: healthInsurances } = useHealthInsurances();
+  const { data: healthInsurances } = useHealthInsurances({
+    sort: "standard",
+    order: "asc",
+  });
 
   const onSuccess = () => {
     navigate("/register-successful");

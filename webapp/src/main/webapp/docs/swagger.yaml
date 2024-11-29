@@ -873,6 +873,18 @@ paths:
             type: integer
             format: int32
             default: 10
+        - name: sort
+          in: query
+          schema:
+            enum: [popularity, standard]
+            type: string
+            default: standard
+        - name: order
+          in: query
+          schema:
+            enum: [asc, desc]
+            type: string
+            default: desc
       responses:
         '200':
           description: Returned health insurance page
@@ -2612,6 +2624,9 @@ components:
         name:
           type: string
           example: "Swiss Medical"
+        popularity:
+          type: number
+          example: 10
         links:
           type: array
           items:

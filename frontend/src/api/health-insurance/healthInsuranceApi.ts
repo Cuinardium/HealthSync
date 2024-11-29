@@ -1,5 +1,5 @@
 import { axios } from "../axios";
-import { HealthInsurance } from "./HealthInsurance";
+import { HealthInsurance, HealthInsuranceQuery } from "./HealthInsurance";
 
 const HEALTH_INSURANCE_ENDPOINT = "healthinsurances";
 
@@ -8,12 +8,13 @@ const HEALTH_INSURANCE_LIST_CONTENT_TYPE = "application/vnd.health-insurance-lis
 
 // =========== healthinsurances ==============
 
-export async function getHealthInsurances(): Promise<HealthInsurance[]> {
+export async function getHealthInsurances(query: HealthInsuranceQuery): Promise<HealthInsurance[]> {
   const allHealthInsurances: HealthInsurance[] = [];
   let nextPageUrl: string | null = HEALTH_INSURANCE_ENDPOINT;
 
   const initialQuery = {
     pageSize: 50,
+    ...query
   };
 
   while (nextPageUrl) {
