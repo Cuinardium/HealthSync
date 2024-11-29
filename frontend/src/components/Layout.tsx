@@ -98,6 +98,8 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
         return "doctorDashboard.title";
       case "/my-appointments":
         return "home.myAppointments";
+      case "/detailed-appointment":
+        return "detailedAppointment.title";
       case "/403":
         return "error.403";
       case "/404":

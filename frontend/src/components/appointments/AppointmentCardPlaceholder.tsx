@@ -2,16 +2,19 @@ import React from "react";
 import { Card, Stack, Placeholder, Button, Badge, Col } from "react-bootstrap";
 
 interface AppointmentCardPlaceholderProps {
-  status: "CONFIRMED" | "CANCELLED" | "COMPLETED";
+  status?: "CONFIRMED" | "CANCELLED" | "COMPLETED";
   isDoctor: boolean;
+  showButtons?: boolean;
 }
 
 const AppointmentCardPlaceholder: React.FC<AppointmentCardPlaceholderProps> = ({
   status,
   isDoctor,
+  showButtons = true,
 }) => {
-  const color =
-    status === "CANCELLED"
+  const color = !status
+    ? "secondary"
+    : status === "CANCELLED"
       ? "danger"
       : status === "COMPLETED"
         ? "success"
@@ -64,16 +67,18 @@ const AppointmentCardPlaceholder: React.FC<AppointmentCardPlaceholderProps> = ({
           )}
 
           {/* Placeholder for Buttons */}
-          <div className="d-flex flex-row justify-content-between align-items-center">
-            <Placeholder as={Col} xs={10} animation="wave">
-              <Placeholder.Button variant="outline-primary" xs={1} />
-            </Placeholder>
-            {status === "CONFIRMED" && (
-              <Placeholder as={Col} xs={1} animation="wave">
-                <Placeholder.Button variant="danger" xs={12} />
+          {showButtons && (
+            <div className="d-flex flex-row justify-content-between align-items-center">
+              <Placeholder as={Col} xs={10} animation="wave">
+                <Placeholder.Button variant="outline-primary" xs={1} />
               </Placeholder>
-            )}
-          </div>
+              {status === "CONFIRMED" && (
+                <Placeholder as={Col} xs={1} animation="wave">
+                  <Placeholder.Button variant="danger" xs={12} />
+                </Placeholder>
+              )}
+            </div>
+          )}
         </Stack>
       </Card.Body>
     </Card>
