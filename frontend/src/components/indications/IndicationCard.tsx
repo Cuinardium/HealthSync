@@ -11,8 +11,9 @@ const IndicationCard: React.FC<IndicationCardProps> = ({
   indication,
   isCreator,
 }) => {
-  const { description, fileData, date } = indication;
+  const {  fileData, date } = indication;
   const fileUrl = fileData ? URL.createObjectURL(fileData.blob) : null;
+  const descriptionLines = indication.description.split("\n");
 
   return (
     <div className="d-flex flex-column" style={{ maxWidth: "50%" }}>
@@ -21,7 +22,9 @@ const IndicationCard: React.FC<IndicationCardProps> = ({
       >
         <Card.Body>
           <Card.Text>
-            {description}{" "}
+            {descriptionLines.map((line, index) => (
+                <div key={index}>{line}</div>
+                ))}
             {fileUrl && (
               <a
                 href={fileUrl}
