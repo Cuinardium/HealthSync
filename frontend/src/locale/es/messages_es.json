@@ -69,7 +69,8 @@
     "moreIndications": "Ver más",
     "giveIndication": "Dar indicaciones",
     "details": "Ver detalles",
-    "doctorDetails": "Ver doctor"
+    "doctorDetails": "Ver doctor",
+    "error": "Hubo un error al cargar los turnos"
   },
   "register": {
     "title": "Registrarse",

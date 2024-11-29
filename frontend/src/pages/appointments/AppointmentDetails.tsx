@@ -9,7 +9,7 @@ import {
   useDeleteNotification,
   useNotifications,
 } from "../../hooks/notificationHooks";
-import { Breadcrumb, Col, Container } from "react-bootstrap";
+import { Alert, Breadcrumb, Col, Container } from "react-bootstrap";
 import { useTranslation } from "react-i18next";
 import DetailedAppointmentCard from "../../components/appointments/DetailedAppointmentCard";
 import AppointmentCardPlaceholder from "../../components/appointments/AppointmentCardPlaceholder";
@@ -69,9 +69,6 @@ const DetailedAppointment: React.FC = () => {
     if (error?.response?.status === 404 || error?.response?.status === 403) {
       navigate("/404");
       return null;
-    } else {
-      console.error(error);
-      return <div>Error: {error?.message}</div>;
     }
   }
 
@@ -100,6 +97,7 @@ const DetailedAppointment: React.FC = () => {
           {(isLoading || loading) && (
             <AppointmentCardPlaceholder isDoctor={false} showButtons={false} />
           )}
+          {error && <Alert variant="danger">{t("appointment.error")}</Alert>}
         </div>
 
         {appointment?.canIndicate && (
@@ -110,6 +108,14 @@ const DetailedAppointment: React.FC = () => {
           </>
         )}
       </Col>
+
+      {appointment?.canCancel && (
+        <CancelAppointmentForm
+          appointmentId={appointmentId}
+          showCancelModal={showCancelModal}
+          onHide={() => setShowCancelModal(false)}
+        />
+      )}
     </Container>
   );
 };

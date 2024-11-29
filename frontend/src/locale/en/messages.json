@@ -69,7 +69,8 @@
     "moreIndications": "Load more",
     "addIndication": "Give Indication",
     "details": "See details",
-    "doctorDetails": "See doctor"
+    "doctorDetails": "See doctor",
+    "error": "An error occurred while loading the appointment"
   },
   "register": {
     "title": "Sign Up",
