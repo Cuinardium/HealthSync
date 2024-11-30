@@ -1,4 +1,9 @@
-import { keepPreviousData, useMutation, useQuery } from "@tanstack/react-query";
+import {
+  keepPreviousData,
+  useInfiniteQuery,
+  useMutation,
+  useQuery,
+} from "@tanstack/react-query";
 import {
   createDoctor,
   getDoctorAttendingHours,
@@ -28,11 +33,11 @@ const STALE_TIME = 5 * 60 * 1000;
 // =========== useDoctors ===========
 
 export function useDoctors(query: DoctorQuery) {
-  return useQuery(
+  return useInfiniteQuery(
     {
       queryKey: ["doctors", query],
-      queryFn: async () => {
-        const doctorResponsePage = await getDoctors(query);
+      queryFn: async ({ pageParam = 1 }) => {
+        const doctorResponsePage = await getDoctors({...query, page: pageParam});
 
         // Add health insurances and specialty to each doctor
         const doctors = await Promise.all(
@@ -46,8 +51,12 @@ export function useDoctors(query: DoctorQuery) {
           content: doctors,
         };
       },
-      placeholderData: keepPreviousData,
       staleTime: STALE_TIME,
+      getNextPageParam: (lastPage) =>
+        lastPage.currentPage < lastPage.totalPages
+          ? lastPage.currentPage + 1
+          : undefined,
+      initialPageParam: 1,
     },
     queryClient,
   );

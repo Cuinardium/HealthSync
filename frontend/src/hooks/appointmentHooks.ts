@@ -1,9 +1,7 @@
 import {
   useQuery,
   useMutation,
-  keepPreviousData,
   useInfiniteQuery,
-  UseQueryResult,
   useQueries,
 } from "@tanstack/react-query";
 import { queryClient } from "../api/queryClient"; // Custom QueryClient instance
