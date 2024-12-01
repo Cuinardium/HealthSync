@@ -330,7 +330,7 @@ public class DoctorDaoJpa implements DoctorDao {
   @Override
   public Map<Specialty, Integer> getUsedSpecialties() {
     List<Specialty> sList =
-        em.createQuery("select specialty from Doctor", Specialty.class).getResultList();
+        em.createQuery("select specialty from Doctor where isVerified = true ", Specialty.class).getResultList();
 
     Map<Specialty, Integer> map = new HashMap<>();
 
@@ -343,7 +343,7 @@ public class DoctorDaoJpa implements DoctorDao {
 
   @Override
   public Map<String, Integer> getUsedCities() {
-    List<String> lList = em.createQuery("select city from Doctor", String.class).getResultList();
+    List<String> lList = em.createQuery("select city from Doctor where isVerified = true ", String.class).getResultList();
 
     Map<String, Integer> map = new HashMap<>();
 
@@ -364,7 +364,7 @@ public class DoctorDaoJpa implements DoctorDao {
   public List<Specialty> getPopularSpecialties() {
     final TypedQuery<Specialty> query =
         em.createQuery(
-            "select doc.specialty from Doctor as doc group by doc.specialty order by count(*) desc",
+            "select doc.specialty from Doctor as doc where doc.isVerified = true group by doc.specialty order by count(*) desc",
             Specialty.class);
 
       return query.getResultList();
