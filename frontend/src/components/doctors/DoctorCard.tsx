@@ -1,11 +1,14 @@
 import React from "react";
 import { Badge, Button, Card, Image, Stack } from "react-bootstrap";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Doctor } from "../../api/doctor/Doctor";
 
 import doctorDefault from "../../img/doctorDefault.png";
 import { useTranslation } from "react-i18next";
 import Rating from "./Rating";
+import { useDoctorQueryContext } from "../../context/DoctorQueryContext";
+
+import "./doctorCard.css";
 
 interface DoctorCardProps {
   doctor: Doctor;
@@ -13,6 +16,16 @@ interface DoctorCardProps {
 
 const DoctorCard: React.FC<DoctorCardProps> = ({ doctor }) => {
   const { t } = useTranslation();
+
+  const { addSpecialty, addHealthInsurance } = useDoctorQueryContext();
+
+  const handleSpecialtyClick = (specialty: string) => {
+    addSpecialty(specialty.toUpperCase().replace(/\./g, "_"));
+  };
+
+  const handleHealthInsuranceClick = (healthInsurance: string) => {
+    addHealthInsurance(healthInsurance.toUpperCase().replace(/\./g, "_"));
+  };
 
   return (
     <Card className="mb-3 shadow-sm">
@@ -45,21 +58,38 @@ const DoctorCard: React.FC<DoctorCardProps> = ({ doctor }) => {
               :
             </strong>{" "}
             {doctor.healthInsurances.map((healthInsurance) => (
-              <Badge key={healthInsurance} pill bg="primary" className="chip">
+              <div
+                key={healthInsurance}
+                className="chip badge rounded-pill"
+                style={{
+                  cursor: "pointer",
+                }}
+                onClick={() => handleHealthInsuranceClick(healthInsurance)}
+              >
                 {t(`healthInsurance.${healthInsurance}`)}
-              </Badge>
+              </div>
             ))}
           </Stack>
         </div>
         <div className="mb-3">
           <Stack direction="horizontal" gap={3}>
-            <strong>{t("detailedDoctor.specialties")}:</strong> <Badge pill bg="primary"> {t(`specialty.${doctor.specialty}`)}</Badge>
+            <strong>{t("detailedDoctor.specialties")}:</strong>{" "}
+            <div
+              className="chip badge rounded-pill"
+              style={{
+                cursor: "pointer",
+              }}
+              onClick={() => handleSpecialtyClick(doctor.specialty)}
+            >
+              {" "}
+              {t(`specialty.${doctor.specialty}`)}
+            </div>
           </Stack>
         </div>
-        {(doctor.rating && doctor.ratingCount) ? (
-          <Rating rating={doctor.rating} count={doctor.ratingCount}/>
-        ): (
-            <div className="text-muted">{t("doctor.noReviews")}</div>
+        {doctor.rating && doctor.ratingCount ? (
+          <Rating rating={doctor.rating} count={doctor.ratingCount} />
+        ) : (
+          <div className="text-muted">{t("doctor.noReviews")}</div>
         )}
         <Stack direction="horizontal">
           <Button
