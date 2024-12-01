@@ -313,6 +313,7 @@
     "no": {
       "doctors": "No se encontraron doctores"
     },
+    "error": "Hubo un error al cargar los doctores",
     "modal": {
       "title": "Obras sociales diferentes",
       "desc": "La obra social con la que atiende el doctor no es la misma que la suya. ¿Está seguro de reservar un turno?",
@@ -355,7 +356,8 @@
     "title": "Filtros",
     "clear": "Limpiar",
     "byAvailability": "Por Disponibilidad",
-    "byRating": "Por Calificación"
+    "byRating": "Por Calificación",
+    "pastDate": "La fecha no puede ser en el pasado"
   },
   "detailedDoctor": {
     "title": "Detalles del médico",

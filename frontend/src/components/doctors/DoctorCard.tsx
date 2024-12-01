@@ -34,7 +34,7 @@ const DoctorCard: React.FC<DoctorCardProps> = ({ doctor }) => {
             </Card.Subtitle>
           </div>
         </div>
-        <Card.Text>
+        <div className="mb-3">
           <Stack direction="horizontal" gap={3}>
             <strong>
               {t(
@@ -45,17 +45,17 @@ const DoctorCard: React.FC<DoctorCardProps> = ({ doctor }) => {
               :
             </strong>{" "}
             {doctor.healthInsurances.map((healthInsurance) => (
-              <Badge pill bg="primary" className="chip">
+              <Badge key={healthInsurance} pill bg="primary" className="chip">
                 {t(`healthInsurance.${healthInsurance}`)}
               </Badge>
             ))}
           </Stack>
-        </Card.Text>
-        <Card.Text>
+        </div>
+        <div className="mb-3">
           <Stack direction="horizontal" gap={3}>
             <strong>{t("detailedDoctor.specialties")}:</strong> <Badge pill bg="primary"> {t(`specialty.${doctor.specialty}`)}</Badge>
           </Stack>
-        </Card.Text>
+        </div>
         {(doctor.rating && doctor.ratingCount) ? (
           <Rating rating={doctor.rating} count={doctor.ratingCount}/>
         ): (

@@ -1,5 +1,5 @@
 import React from "react";
-import { FaStar, FaRegStar, FaStarHalfStroke } from "react-icons/fa6";
+import { FaStar, FaStarHalfStroke } from "react-icons/fa6";
 
 interface RatingProps {
     rating: number;

@@ -312,6 +312,7 @@
     "no": {
       "doctors": "No doctors where found"
     },
+    "error": "Error loading doctors",
     "modal": {
       "title": "Not matching health insurances",
       "desc": "The health insurance of the doctor doesnt match with yours. Are you sure you want to make an appointment?",
@@ -354,7 +355,8 @@
     "title": "Filters",
     "clear": "Clear",
     "byAvailability": "By Availability",
-    "byRating": "By Rating"
+    "byRating": "By Rating",
+    "pastDate": "Date cannot be in the past"
   },
   "detailedDoctor": {
     "title": "Doctor Details",

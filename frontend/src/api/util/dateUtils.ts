@@ -7,3 +7,10 @@ export function parseLocalDate(dateString: string): Date {
 export function formatDate(date: Date): string {
     return date.toLocaleDateString('en-CA');
 }
+
+export function isSameDay(date1: Date | undefined, date2: Date | undefined): boolean {
+    if (!date1 || !date2) {
+        return false;
+    }
+    return formatDate(date1) === formatDate(date2);
+}

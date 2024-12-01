@@ -103,7 +103,7 @@ public class DoctorQuery extends PageQuery {
   }
 
   public ThirtyMinuteBlock getToTimeEnum() {
-    return ThirtyMinuteBlock.fromBeginning(toTime);
+    return ThirtyMinuteBlock.fromEnd(toTime);
   }
 
   public Set<String> getCities() {

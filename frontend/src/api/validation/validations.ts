@@ -201,7 +201,7 @@ export function validateVacation(vacation: VacationForm): string | true {
 }
 
 export function validateVacationDate(
-  date: Date | string | null,
+  date: Date | string | null | undefined,
 ): string | true {
   if (!date) {
     return "validation.vacation.date.required";
@@ -220,8 +220,8 @@ export function validateVacationDate(
 }
 
 export function validateVacationTime(
-  time: string | null,
-  fromDate: Date | string | null,
+  time: string | null | undefined,
+  fromDate: Date | string | null | undefined,
 ): string | true {
   fromDate = typeof fromDate === "string" ? parseLocalDate(fromDate) : fromDate;
   if (!time) {
