@@ -1,91 +1,111 @@
 import React, { useEffect, useState } from "react";
-import { Controller, UseFormReturn, useWatch } from "react-hook-form";
-import { Form, Card, Col, Row, Button, Stack } from "react-bootstrap";
+import { Card, Col, Row, Button, Stack, Form } from "react-bootstrap";
 import Select from "react-select";
 import makeAnimated from "react-select/animated";
 import { useTranslation } from "react-i18next";
-import { DoctorQuery } from "../../api/doctor/Doctor";
-import ClickableRating from "./ClickableRating";
 import { Time, TIMES, TIMES_WITH_BLOCK_END } from "../../api/time/Time";
 import { parseLocalDate } from "../../api/util/dateUtils";
+import { useDoctorQueryContext } from "../../context/DoctorQueryContext";
+import ClickableRating from "./ClickableRating";
+import { useHealthInsurances } from "../../hooks/healthInsuranceHooks";
+import { useSpecialties } from "../../hooks/specialtyHooks";
+import { useCities } from "../../hooks/cityHooks";
 
 const animatedHealthInsuranceComponents = makeAnimated();
 const animatedSpecialtyComponents = makeAnimated();
 const animatedCityComponents = makeAnimated();
 
 type DoctorFiltersProps = {
-  cityOptions: { value: string; label: string }[];
-  healthInsuranceOptions: { value: string; label: string }[];
-  specialtyOptions: { value: string; label: string }[];
-  handleFilterChange: (field: keyof DoctorQuery, values: any[] | any) => void;
-  reset: () => void;
-  form: UseFormReturn<DoctorQuery>;
+  onReset?: () => void;
 };
 
 const DoctorFilters: React.FC<DoctorFiltersProps> = ({
-  cityOptions,
-  healthInsuranceOptions,
-  specialtyOptions,
-  handleFilterChange,
-  reset,
-  form,
+  onReset = () => {},
 }) => {
   const { t } = useTranslation();
-  const { control, register } = form;
+  const {
+    query,
+    setCity,
+    setSpecialty,
+    setHealthInsurance,
+    setMinRating,
+    setDate,
+    setFromTime,
+    setToTime,
+    resetQuery,
+  } = useDoctorQueryContext();
 
-  const [date, setDate] = useState<Date | undefined>(undefined);
+  const { data: healthInsurances } = useHealthInsurances({
+    sort: "popularity",
+    order: "desc",
+  });
+  const { data: specialties } = useSpecialties({
+    sort: "popularity",
+    order: "desc",
+  });
+  const { data: cities } = useCities();
+
+  const healthInsuranceOptions =
+    healthInsurances
+      ?.filter((healthInsurance) => healthInsurance.popularity > 0)
+      .map((healthInsurance) => ({
+        value: healthInsurance.code,
+        label:
+          t(
+            `healthInsurance.${healthInsurance.code.replace(/_/g, ".").toLowerCase()}`,
+          ) +
+          " (" +
+          healthInsurance.popularity +
+          ")",
+      })) || [];
+
+  const specialtyOptions =
+    specialties
+      ?.filter((specialty) => specialty.popularity > 0)
+      .map((specialty) => ({
+        value: specialty.code,
+        label:
+          t(`specialty.${specialty.code.replace(/_/g, ".").toLowerCase()}`) +
+          " (" +
+          specialty.popularity +
+          ")",
+      })) || [];
+
+  const cityOptions =
+    cities
+      ?.filter((city) => city.popularity > 0)
+      .map((city) => ({
+        value: city.name,
+        label: city.name + " (" + city.popularity + ")",
+      })) || [];
   const [toTimes, setToTimes] = useState<string[]>(TIMES_WITH_BLOCK_END);
   const [error, setShowError] = useState(false);
 
-  const [selectedFromTime, setSelectedFromTime] = useState<Time | null>(
-    "08:00",
-  );
-  const [selectedToTime, setSelectedToTime] = useState<Time | null>("18:00");
+  const handleReset = () => {
+    resetQuery();
+    setShowError(false);
+    onReset();
+  };
 
   useEffect(() => {
-    let fromTime = selectedFromTime;
-    let toTime = selectedToTime;
-    if (selectedFromTime) {
-      let selectedToTimeIndex =
-        (TIMES.indexOf(selectedToTime as Time) - 1) % TIMES.length;
-      selectedToTimeIndex =
-        selectedToTimeIndex < 0 ? TIMES.length - 1 : selectedToTimeIndex;
+    const handleTimeChange = () => {
+      const fromTime = query.fromTime;
+      const fromIndex = TIMES.indexOf(fromTime as Time);
 
-      const selectedFromTimeIndex = TIMES.indexOf(selectedFromTime as Time);
+      if (fromTime) {
+        const availableToTimes = TIMES_WITH_BLOCK_END.filter(
+          (time) => TIMES.indexOf(time) > fromIndex,
+        );
 
-      if (selectedToTimeIndex < selectedFromTimeIndex) {
-        toTime = TIMES_WITH_BLOCK_END[selectedFromTimeIndex];
+        if (!availableToTimes.includes("00:00")) {
+          availableToTimes.push("00:00");
+        }
 
-        form.setValue("toTime", toTime);
-        setSelectedToTime(toTime);
+        setToTimes(availableToTimes);
       }
-
-      const newToTimes = TIMES_WITH_BLOCK_END.filter(
-        (time) => TIMES.indexOf(time) > TIMES.indexOf(selectedFromTime as Time),
-      );
-
-      if (!newToTimes.includes("00:00")) {
-        newToTimes.push("00:00");
-      }
-
-      setToTimes(newToTimes);
-    }
-
-    if (date) {
-      handleFilterChange("fromTime", fromTime);
-      handleFilterChange("toTime", toTime);
-    }
-  }, [selectedFromTime, selectedToTime]);
-
-  const handleReset = () => {
-    setDate(undefined);
-    setShowError(false);
-    setSelectedFromTime("08:00");
-    setSelectedToTime("18:00");
-    form.setValue("date", undefined);
-    form.setValue("minRating", undefined);
-    reset();
-  };
+    };
+    handleTimeChange();
+  }, [query.fromTime]);
 
   return (
     <Card>
@@ -105,76 +125,46 @@ const DoctorFilters: React.FC<DoctorFiltersProps> = ({
 
         <Form.Group className="mb-3">
           <Form.Label>{t("form.city")}</Form.Label>
-          <Controller
-            name="city"
-            control={control}
-            render={({ field: { onChange, value } }) => (
-              <Select
-                isMulti
-                components={animatedCityComponents}
-                name="cities"
-                options={cityOptions}
-                onChange={(option) => {
-                  const values = option ? option.map((o) => o.value) : [];
-                  onChange(values);
-                  handleFilterChange("city", values);
-                }}
-                value={cityOptions.filter((option) =>
-                  value?.includes(option.value),
-                )}
-                placeholder={t("form.city_hint")}
-              />
+          <Select
+            isMulti
+            components={animatedCityComponents}
+            options={cityOptions}
+            value={cityOptions.filter((option) =>
+              query.city?.includes(option.value),
             )}
+            onChange={(selected) =>
+              setCity(selected ? selected.map((s) => s.value) : [])
+            }
           />
         </Form.Group>
 
         <Form.Group className="mb-3">
           <Form.Label>{t("form.healthcare")}</Form.Label>
-          <Controller
-            name="healthInsurance"
-            control={control}
-            render={({ field: { onChange, value } }) => (
-              <Select
-                isMulti
-                components={animatedHealthInsuranceComponents}
-                name="healthInsurances"
-                options={healthInsuranceOptions}
-                onChange={(option) => {
-                  const values = option ? option.map((o) => o.value) : [];
-                  onChange(values);
-                  handleFilterChange("healthInsurance", values);
-                }}
-                value={healthInsuranceOptions.filter((option) =>
-                  value?.includes(option.value),
-                )}
-                placeholder={t("form.healthcare_hint")}
-              />
+          <Select
+            isMulti
+            components={animatedHealthInsuranceComponents}
+            options={healthInsuranceOptions}
+            value={healthInsuranceOptions.filter((option) =>
+              query.healthInsurance?.includes(option.value),
             )}
+            onChange={(selected) =>
+              setHealthInsurance(selected ? selected.map((s) => s.value) : [])
+            }
           />
         </Form.Group>
 
         <Form.Group className="mb-3">
           <Form.Label>{t("form.specialization")}</Form.Label>
-          <Controller
-            name="specialty"
-            control={control}
-            render={({ field: { onChange, value } }) => (
-              <Select
-                isMulti
-                components={animatedSpecialtyComponents}
-                name="specialties"
-                options={specialtyOptions}
-                onChange={(option) => {
-                  const values = option ? option.map((o) => o.value) : [];
-                  onChange(values);
-                  handleFilterChange("specialty", values);
-                }}
-                value={specialtyOptions.filter((option) =>
-                  value?.includes(option.value),
-                )}
-                placeholder={t("form.specialization_hint")}
-              />
+          <Select
+            isMulti
+            components={animatedSpecialtyComponents}
+            options={specialtyOptions}
+            value={specialtyOptions.filter((option) =>
+              query.specialty?.includes(option.value),
             )}
+            onChange={(selected) =>
+              setSpecialty(selected ? selected.map((s) => s.value) : [])
+            }
           />
         </Form.Group>
 
@@ -182,19 +172,11 @@ const DoctorFilters: React.FC<DoctorFiltersProps> = ({
         <Card.Subtitle className="mt-3 mb-3">
           {t("filters.byRating")}
         </Card.Subtitle>
+
         <Form.Group className="mb-3">
-          <Controller
-            render={({ field: { onChange, value } }) => (
-              <ClickableRating
-                onClick={(rating) => {
-                  onChange(rating);
-                  handleFilterChange("minRating", rating);
-                }}
-                initialRating={value}
-              />
-            )}
-            name="minRating"
-            control={control}
+          <ClickableRating
+            initialRating={query.minRating}
+            onClick={(rating) => setMinRating(rating)}
           />
         </Form.Group>
 
@@ -208,7 +190,7 @@ const DoctorFilters: React.FC<DoctorFiltersProps> = ({
           <Form.Label>{t("vacation.date")}</Form.Label>
           <Form.Control
             type="date"
-            {...register("date")}
+            value={query.date ? query.date.toISOString().split("T")[0] : ""}
             onChange={(e) => {
               const date = parseLocalDate(e.target.value);
               const today = new Date();
@@ -216,11 +198,12 @@ const DoctorFilters: React.FC<DoctorFiltersProps> = ({
 
               if (date && date >= today) {
                 setShowError(false);
+
                 setDate(date);
-                handleFilterChange("date", date);
-              } else {
-                setDate(undefined);
+              } else if (date < today) {
                 setShowError(true);
+                setDate(undefined);
+                return;
               }
             }}
             isInvalid={error}
@@ -232,60 +215,43 @@ const DoctorFilters: React.FC<DoctorFiltersProps> = ({
           )}
         </Form.Group>
 
-        {date && (
+        {query.date && (
           <>
             <Row className="mb-3">
-              <Form.Group as={Col}>
+              <Col>
                 <Form.Label>{t("vacation.fromTime")}</Form.Label>
-                <Form.Control
-                  {...register("fromTime")}
-                  as="select"
-                  onChange={(e) => {
-                    setSelectedFromTime(e.target.value as Time);
-                  }}
+                <Form.Select
+                  value={query.fromTime || ""}
+                  onChange={(e) => setFromTime(e.target.value as Time)}
                 >
-                  <option value="" disabled>
-                    {t("vacation.fromTime_hint")}
-                  </option>
                   {TIMES.map((time) => (
                     <option key={time} value={time}>
                       {time}
                     </option>
                   ))}
-                </Form.Control>
-              </Form.Group>
-              <Form.Group as={Col}>
+                </Form.Select>
+              </Col>
+              <Col>
                 <Form.Label>{t("vacation.toTime")}</Form.Label>
-                <Form.Control
-                  {...register("toTime")}
-                  as="select"
-                  onChange={(e) => {
-                    setSelectedToTime(e.target.value as Time);
-                  }}
+                <Form.Select
+                  value={query.toTime || ""}
+                  onChange={(e) => setToTime(e.target.value as Time)}
                 >
-                  <option value="" disabled>
-                    {t("vacation.toTime_hint")}
-                  </option>
                   {toTimes.map((time) => (
                     <option key={time} value={time}>
                       {time === "00:00" ? "24:00" : time}
                     </option>
                   ))}
-                </Form.Control>
-              </Form.Group>
+                </Form.Select>
+              </Col>
             </Row>
-
             <Button
               variant="link"
               onClick={() => {
                 setDate(undefined);
-                form.setValue("date", undefined);
                 setShowError(false);
-                setSelectedFromTime("08:00");
-                setSelectedToTime("18:00");
-                handleFilterChange("date", undefined);
-                handleFilterChange("fromTime", undefined);
-                handleFilterChange("toTime", undefined);
+                setToTime(undefined);
+                setFromTime(undefined);
               }}
             >
               {t("filters.clear")}

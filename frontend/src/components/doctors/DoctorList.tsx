@@ -9,10 +9,9 @@ import DoctorCardPlaceholder from "./DoctorCardPlaceholder";
 
 interface DoctorListProps {
   query: DoctorQuery;
-  onPageChange: (page: number) => void;
 }
 
-const DoctorList: React.FC<DoctorListProps> = ({ query, onPageChange }) => {
+const DoctorList: React.FC<DoctorListProps> = ({ query }) => {
   const { t } = useTranslation();
 
   const {

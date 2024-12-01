@@ -15,7 +15,8 @@ import { UserProvider } from "./providers/UserProvider";
 import Layout from "./components/Layout";
 import Loader from "./components/Loader";
 import UnauthenticatedGuard from "./components/UnauthenticatedGuard";
-import {SelectedTabProvider} from "./providers/SelectedTabProvider";
+import { SelectedTabProvider } from "./providers/SelectedTabProvider";
+import { DoctorQueryProvider } from "./providers/DoctorQueryProvider";
 
 const HomePage = lazy(() => import("./pages/home/HomePage"));
 const Error403 = lazy(() => import("./pages/errors/403"));
@@ -54,102 +55,112 @@ function App() {
         <AuthProvider>
           <UserProvider>
             <SelectedTabProvider>
-            <BrowserRouter basename="/paw-2023a-02">
-              <Layout>
-                <Suspense fallback={<Loader />}>
-                  <Routes>
-                    <Route path="/" element={<HomePage />} />
+              <DoctorQueryProvider>
+                <BrowserRouter basename="/paw-2023a-02">
+                  <Layout>
+                    <Suspense fallback={<Loader />}>
+                      <Routes>
+                        <Route path="/" element={<HomePage />} />
 
-                    {/* Public */}
-                    <Route
-                      path="/doctor-dashboard"
-                      element={<DoctorDashboard />}
-                    />
-                    <Route
-                      path="/detailed-doctor/:id"
-                      element={<DoctorDetails />}
-                    />
+                        {/* Public */}
+                        <Route
+                          path="/doctor-dashboard"
+                          element={<DoctorDashboard />}
+                        />
+                        <Route
+                          path="/detailed-doctor/:id"
+                          element={<DoctorDetails />}
+                        />
 
-                    {/* Only unauthenticated */}
-                    <Route element={<UnauthenticatedGuard />}>
-                      <Route
-                        path="/doctor-register"
-                        element={<DoctorRegister />}
-                      />
-                      <Route
-                        path="/patient-register"
-                        element={<PatientRegister />}
-                      />
-                      <Route path="/login" element={<Login />} />
+                        {/* Only unauthenticated */}
+                        <Route element={<UnauthenticatedGuard />}>
+                          <Route
+                            path="/doctor-register"
+                            element={<DoctorRegister />}
+                          />
+                          <Route
+                            path="/patient-register"
+                            element={<PatientRegister />}
+                          />
+                          <Route path="/login" element={<Login />} />
 
-                      <Route
-                        path="/register-successful"
-                        element={<RegisterSuccessful />}
-                      />
+                          <Route
+                            path="/register-successful"
+                            element={<RegisterSuccessful />}
+                          />
 
-                      <Route path="/verify" element={<Verification />} />
-                      <Route path="/resend-token" element={<ResendToken />} />
-                    </Route>
+                          <Route path="/verify" element={<Verification />} />
+                          <Route
+                            path="/resend-token"
+                            element={<ResendToken />}
+                          />
+                        </Route>
 
-                    {/* Private both */}
-                    <Route element={<AuthenticatedGuard requiredRole={null} />}>
-                      <Route
-                        path="/my-appointments"
-                        element={<MyAppointments />}
-                      />
-                      <Route
-                        path="/detailed-appointment/:id"
-                        element={<DetailedAppointment />}
-                      />
-                      <Route
-                        path="/change-password"
-                        element={<ChangePassword />}
-                      />
-                    </Route>
+                        {/* Private both */}
+                        <Route
+                          element={<AuthenticatedGuard requiredRole={null} />}
+                        >
+                          <Route
+                            path="/my-appointments"
+                            element={<MyAppointments />}
+                          />
+                          <Route
+                            path="/detailed-appointment/:id"
+                            element={<DetailedAppointment />}
+                          />
+                          <Route
+                            path="/change-password"
+                            element={<ChangePassword />}
+                          />
+                        </Route>
 
-                    {/* Only Patient */}
-                    <Route
-                      element={
-                        <AuthenticatedGuard requiredRole="ROLE_PATIENT" />
-                      }
-                    >
-                      <Route
-                        path="/patient-profile"
-                        element={<PatientProfile />}
-                      />
-                      <Route path="/patient-edit" element={<PatientEdit />} />
-                    </Route>
+                        {/* Only Patient */}
+                        <Route
+                          element={
+                            <AuthenticatedGuard requiredRole="ROLE_PATIENT" />
+                          }
+                        >
+                          <Route
+                            path="/patient-profile"
+                            element={<PatientProfile />}
+                          />
+                          <Route
+                            path="/patient-edit"
+                            element={<PatientEdit />}
+                          />
+                        </Route>
 
-                    {/* Only Doctor */}
-                    <Route
-                      element={
-                        <AuthenticatedGuard requiredRole="ROLE_DOCTOR" />
-                      }
-                    >
-                      <Route
-                        path="/doctor-profile"
-                        element={<DoctorProfile />}
-                      />
-                      <Route
-                        path="/doctor-vacations"
-                        element={<DoctorVacations />}
-                      />
-                      <Route path="/doctor-edit" element={<DoctorEdit />} />
-                      <Route
-                        path="/change-schedule"
-                        element={<ChangeSchedule />}
-                      />
-                    </Route>
+                        {/* Only Doctor */}
+                        <Route
+                          element={
+                            <AuthenticatedGuard requiredRole="ROLE_DOCTOR" />
+                          }
+                        >
+                          <Route
+                            path="/doctor-profile"
+                            element={<DoctorProfile />}
+                          />
+                          <Route
+                            path="/doctor-vacations"
+                            element={<DoctorVacations />}
+                          />
+                          <Route path="/doctor-edit" element={<DoctorEdit />} />
+                          <Route
+                            path="/change-schedule"
+                            element={<ChangeSchedule />}
+                          />
+                        </Route>
 
-                    {/* Error Pages */}
-                    <Route path="*" element={<Error404 />} />
-                    <Route path="/404" element={<Error404 />} />
-                    <Route path="/500" element={<Error500 />} />
-                    <Route path="/403" element={<Error403 />} />
-                  </Routes>
-                </Suspense>
-              </Layout>
-            </BrowserRouter>
+                        {/* Error Pages */}
+                        <Route path="*" element={<Error404 />} />
+                        <Route path="/404" element={<Error404 />} />
+                        <Route path="/500" element={<Error500 />} />
+                        <Route path="/403" element={<Error403 />} />
+                      </Routes>
+                    </Suspense>
+                  </Layout>
+                </BrowserRouter>
+              </DoctorQueryProvider>
             </SelectedTabProvider>
           </UserProvider>
         </AuthProvider>
