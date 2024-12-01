@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Alert, Button, Col, Form, Row, Spinner, Stack } from "react-bootstrap";
-import { TIMES } from "../../api/time/Time";
+import { Time, TIMES } from "../../api/time/Time";
 import { VacationForm as VacationFormType } from "../../api/vacation/Vacation";
 import { AxiosError } from "axios";
 import { useCreateVacation } from "../../hooks/vacationHooks";
@@ -12,14 +12,13 @@ import {
   validateVacationDate,
   validateVacationTime,
 } from "../../api/validation/validations";
+import { parseLocalDate } from "../../api/util/dateUtils";
 
 interface VacationFormProps {
   doctorId: string;
 }
 
-const VacationForm: React.FC<VacationFormProps> = ({
-  doctorId,
-}) => {
+const VacationForm: React.FC<VacationFormProps> = ({ doctorId }) => {
   const { t } = useTranslation();
 
   const {
@@ -27,6 +26,7 @@ const VacationForm: React.FC<VacationFormProps> = ({
     handleSubmit,
     formState: { errors },
     setError,
+    setValue,
     watch,
     reset,
   } = useForm<VacationFormType>({
@@ -40,6 +40,7 @@ const VacationForm: React.FC<VacationFormProps> = ({
   const cancelAppointments = watch("cancelAppointments");
   const fromDate = watch("fromDate");
   const toDate = watch("toDate");
+  const fromTime = watch("fromTime");
 
   const [showSuccess, setShowSuccess] = useState<boolean>(false);
 
@@ -81,10 +82,12 @@ const VacationForm: React.FC<VacationFormProps> = ({
     // If dates are strings, convert them to Date objects
     data.fromDate =
       typeof data.fromDate === "string"
-        ? new Date(data.fromDate)
+        ? parseLocalDate(data.fromDate)
         : data.fromDate;
     data.toDate =
-      typeof data.toDate === "string" ? new Date(data.toDate) : data.toDate;
+      typeof data.toDate === "string"
+        ? parseLocalDate(data.toDate)
+        : data.toDate;
 
     createVacationMutation.mutate(data);
   };
@@ -151,7 +154,13 @@ const VacationForm: React.FC<VacationFormProps> = ({
             <option value="" disabled>
               {t("vacation.toTime_hint")}
             </option>
-            {TIMES.map((time) => (
+            {TIMES.filter(
+              (time) =>
+                !fromDate ||
+                !toDate ||
+                fromDate !== toDate ||
+                TIMES.indexOf(time) > TIMES.indexOf(fromTime as Time),
+            ).map((time) => (
               <option key={time} value={time}>
                 {time}
               </option>

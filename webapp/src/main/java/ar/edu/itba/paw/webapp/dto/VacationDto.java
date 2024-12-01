@@ -1,8 +1,8 @@
 package ar.edu.itba.paw.webapp.dto;
 
+import ar.edu.itba.paw.models.ThirtyMinuteBlock;
 import ar.edu.itba.paw.models.Vacation;
 import ar.edu.itba.paw.webapp.utils.URIUtil;
-
 import java.net.URI;
 import java.time.LocalDate;
 import java.util.List;
@@ -26,9 +26,13 @@ public class VacationDto {
 
     dto.id = vacation.getId();
     dto.fromDate = vacation.getFromDate();
-    dto.toDate = vacation.getToDate();
     dto.fromTime = vacation.getFromTime().getBlockBeginning();
     dto.toTime = vacation.getToTime().getBlockEnd();
+
+    dto.toDate =
+        vacation.getToTime() == ThirtyMinuteBlock.BLOCK_23_30
+            ? vacation.getToDate().plusDays(1)
+            : vacation.getToDate();
 
     List<LinkDto> links = new java.util.ArrayList<>(2);
 

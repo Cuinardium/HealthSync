@@ -99,6 +99,8 @@ export const TIMES: Time[] = [
   "23:30",
 ];
 
+export const TIMES_WITH_BLOCK_END =
+    TIMES.slice(1).concat(TIMES[0]);
 
 export function getTimeOrder(time: Time): number {
   return TIMES.indexOf(time);

@@ -49,6 +49,11 @@ public class DoctorVacationForm {
   }
 
   public LocalDate getToDate() {
+
+    if (ThirtyMinuteBlock.fromBeginning(toTime) == ThirtyMinuteBlock.BLOCK_00_00) {
+      return toDate.minusDays(1);
+    }
+
     return toDate;
   }
 
