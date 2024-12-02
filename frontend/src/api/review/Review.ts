@@ -5,7 +5,8 @@ export interface Review {
     date: Date;
     description: string;
     rating: number;
-    patientId: string;
+    patientName: string;
+    patientImage?: string;
 }
 
 export interface ReviewForm {
@@ -23,5 +24,6 @@ export interface ReviewResponse {
     description: string;
     id: number;
     rating: number;
+    patientName: string;
     links: Link[];
 }

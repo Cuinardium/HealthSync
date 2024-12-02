@@ -64,11 +64,11 @@ export async function getReview(doctorId: string, id: string): Promise<Review> {
 
 function mapDetails(review: ReviewResponse): Review {
   const date = parseLocalDate(review.date);
-  const patientId = review.links.find((link) => link.rel === "patient")?.href.split("/").pop() as string;
+  const patientImage = review.links.find((link) => link.rel === "patient-image")?.href ?? undefined;
 
   return {
     ...review,
     date,
-    patientId,
+    patientImage,
   };
 }

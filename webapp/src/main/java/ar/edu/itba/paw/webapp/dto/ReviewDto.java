@@ -1,11 +1,13 @@
 package ar.edu.itba.paw.webapp.dto;
 
+import ar.edu.itba.paw.models.Patient;
 import ar.edu.itba.paw.models.Review;
 import ar.edu.itba.paw.webapp.utils.URIUtil;
 import java.net.URI;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import javax.ws.rs.HttpMethod;
 import javax.ws.rs.core.UriInfo;
 
 public class ReviewDto {
@@ -15,6 +17,7 @@ public class ReviewDto {
   private LocalDate date;
   private String description;
   private Short rating;
+  private String patientName;
 
   // Links
   private List<LinkDto> links;
@@ -28,17 +31,26 @@ public class ReviewDto {
     dto.description = review.getDescription();
     dto.rating = review.getRating();
 
+    Patient patient = review.getPatient();
+
+    dto.patientName = patient.getFirstName() + " " + patient.getLastName();
+
     Long doctorId = review.getDoctor().getId();
-    Long patientId = review.getPatient().getId();
+    Long patientId = patient.getId();
 
     // Links
     List<LinkDto> links = new ArrayList<>(2);
 
     URI patientURI = URIUtil.getPatientURI(uri, patientId);
-    links.add(LinkDto.fromUri(patientURI, "patient", "GET"));
+    links.add(LinkDto.fromUri(patientURI, "patient", HttpMethod.GET));
+
+    if (patient.getImage() != null) {
+      URI imageURI = URIUtil.getImageURI(uri, patient.getImage().getImageId());
+      links.add(LinkDto.fromUri(imageURI, "patient-image", HttpMethod.GET));
+    }
 
     URI selfURI = URIUtil.getReviewURI(uri, doctorId, dto.id);
-    links.add(LinkDto.fromUri(selfURI, "self", "GET"));
+    links.add(LinkDto.fromUri(selfURI, "self", HttpMethod.GET));
 
     dto.links = links;
 
@@ -75,6 +87,14 @@ public class ReviewDto {
 
   public void setRating(Short rating) {
     this.rating = rating;
+  }
+
+  public String getPatientName() {
+    return patientName;
+  }
+
+  public void setPatientName(String patientName) {
+    this.patientName = patientName;
   }
 
   public List<LinkDto> getLinks() {

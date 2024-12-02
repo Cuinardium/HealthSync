@@ -2202,6 +2202,9 @@ components:
           type: integer
           format: int32
           example: 5
+        patientName:
+          type: string
+          example: "John Doe"
         links:
           type: array
           items:
@@ -2211,6 +2214,11 @@ components:
               "href": "http://old-pawserver.it.itba.edu.ar/paw-2023a-02/api/patients/21",
               "method": "GET",
               "rel": "patient"
+            },
+            {
+              "href": "http://old-pawserver.it.itba.edu.ar/paw-2023a-02/api/images/5",
+              "method": "GET",
+              "rel": "patient-image"
             },
             {
               "href": "http://old-pawserver.it.itba.edu.ar/paw-2023a-02/api/doctors/20/reviews/1",
