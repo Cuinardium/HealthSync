@@ -332,7 +332,10 @@
       "title": "Review Sent",
       "text": "Your review was sent successfully",
       "button": "Go to the doctor"
-    }
+    },
+    "loadMore": "Load more",
+    "loadingMore": "Loading...",
+    "noReviews": "No reviews yet"
   },
   "indication": {
     "title": "Appointment Indication",

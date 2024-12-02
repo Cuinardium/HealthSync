@@ -2,31 +2,28 @@ import React from "react";
 import Loader from "../Loader";
 import { ReviewQuery } from "../../api/review/Review";
 import { useReviews } from "../../hooks/reviewHooks";
+import { useTranslation } from "react-i18next";
+import { Alert, Button, Spinner, Stack } from "react-bootstrap";
+import ReviewCard from "./ReviewCard";
 
 interface ReviewListProps {
   doctorId: string;
-  page?: number;
-  pageSize?: number;
-  onPageChange: (page: number) => void;
+  canReview: boolean;
 }
 
-const ReviewList: React.FC<ReviewListProps> = ({
-  doctorId,
-  page = 1,
-  pageSize = 10,
-  onPageChange,
-}) => {
-  const query: ReviewQuery = {
-    page,
-    pageSize,
-  };
+const ReviewList: React.FC<ReviewListProps> = ({ doctorId, canReview }) => {
+  const { t } = useTranslation();
+
+  const pageSize = 2;
 
   const {
     data: reviewPage,
     isLoading,
     isError,
-    error,
-  } = useReviews(doctorId, query);
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+  } = useReviews(doctorId, pageSize);
 
   if (isLoading) {
     // TODO
@@ -34,50 +31,70 @@ const ReviewList: React.FC<ReviewListProps> = ({
   }
 
   if (isError) {
-    // TODO
-    return <div>Error fetching Reviews: {error?.message}</div>;
+    return <Alert variant="danger">{t("review.error")}</Alert>;
   }
 
-  if (!reviewPage || reviewPage.content.length === 0) {
-    // TODO
-    return <div>No reviews found</div>;
+  if (
+    !reviewPage ||
+    reviewPage.pages.length === 0 ||
+    reviewPage.pages[0].content.length === 0
+  ) {
+    return (
+        <Stack direction="horizontal">
+            <h5 className="text-muted">{t("review.noReviews")}</h5>
+            {canReview && (
+                <Button variant="outline-primary" className="ms-auto">
+                    {t("detailedDoctor.firstToReview")}
+                </Button>
+            )}
+        </Stack>
+    );
   }
+
+  const reviews = reviewPage.pages.flatMap((page) => page.content) ?? [];
 
   // TODO: Hacerlo bien
   return (
     <div>
-      <h2>Reviews</h2>
-      <ul>
-        {reviewPage.content.map((review) => (
-          <li key={review.id}>
-            <div>
-              <strong>Date:</strong> {review.date.toLocaleDateString()}
-            </div>
-            <div>
-              <strong>Rating:</strong> {review.rating} / 5
-            </div>
-            <div>
-              <strong>Description:</strong> {review.description}
-            </div>
-            <div>
-              <strong>Patient:</strong> {review.patientId}
-            </div>
-          </li>
-        ))}
-      </ul>
+      <Stack direction="horizontal">
+        <h2>{t("detailedDoctor.reviews")}</h2>
+        {canReview && (
+          <Button variant="outline-primary" className="ms-auto">
+            {t("detailedDoctor.review")}
+          </Button>
+        )}
+      </Stack>
 
-      {/* Pagination Controls */}
-      <div style={{ marginTop: "20px" }}>
-        <button disabled={page === 1} onClick={() => onPageChange(page - 1)}>
-          Previous
-        </button>
-        <span style={{ margin: "0 10px" }}>Page {page}</span>
-        <button
-          onClick={() => onPageChange(page + 1)}
-          disabled={reviewPage.currentPage === reviewPage.totalPages}
-        >
-          Next
-        </button>
+      <Stack direction="vertical" gap={3}>
+        {reviews.map((review) => (
+          <ReviewCard review={review} key={review.id} />
+        ))}
+      </Stack>
+
+      {/* Load more */}
+      <div style={{ marginTop: "20px", textAlign: "center" }}>
+        {hasNextPage && (
+          <Button
+            variant="outline-primary"
+            onClick={() => fetchNextPage()}
+            disabled={isFetchingNextPage}
+          >
+            {isFetchingNextPage ? (
+              <>
+                <Spinner
+                  as="span"
+                  animation="border"
+                  size="sm"
+                  role="status"
+                  aria-hidden="true"
+                />{" "}
+                {t("review.loadingMore")}
+              </>
+            ) : (
+              t("review.loadMore")
+            )}
+          </Button>
+        )}
       </div>
     </div>
   );

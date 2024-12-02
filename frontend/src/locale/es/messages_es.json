@@ -333,7 +333,10 @@
       "title": "Reseña Enviada",
       "text": "Tu reseña se envió exitosamente",
       "button": "Ir al Doctor"
-    }
+    },
+    "loadMore": "Cargar más",
+    "loadingMore": "Cargando...",
+    "noReviews": "No hay reseñas todavía"
   },
   "indication": {
     "title": "Indicación de Turno",

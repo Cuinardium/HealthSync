@@ -16,9 +16,6 @@ const DoctorDetails: React.FC = () => {
   const navigate = useNavigate();
   const { t } = useTranslation();
 
-  const [page, setPage] = useState(1);
-  const pageSize = 3;
-
   const {
     data: doctor,
     isLoading,
@@ -76,13 +73,7 @@ const DoctorDetails: React.FC = () => {
             </Card.Body>
           </Card>
         )}
-        <ReviewList
-          doctorId={doctorId}
-          page={page}
-          pageSize={pageSize}
-          onPageChange={setPage}
-        />
-        )
+        <ReviewList doctorId={doctorId} canReview={doctor.canReview} />
       </Col>
     </Container>
   );

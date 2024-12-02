@@ -1,21 +1,26 @@
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useInfiniteQuery, useMutation, useQuery } from "@tanstack/react-query";
 import { getReview, getReviews, createReview } from "../api/review/reviewApi";
-import { Review, ReviewForm, ReviewQuery } from "../api/review/Review";
+import { Review, ReviewForm } from "../api/review/Review";
 import { queryClient } from "../api/queryClient";
-import { Page } from "../api/page/Page";
 import { AxiosError } from "axios";
 
 const STALE_TIME = 5 * 60 * 1000;
 
 // ========== useReviews ==========
 
-export function useReviews(doctorId: string, reviewQuery: ReviewQuery) {
-  return useQuery<Page<Review>, Error>(
+export function useReviews(doctorId: string, pageSize: number) {
+  return useInfiniteQuery(
     {
-      queryKey: ["reviews", doctorId, reviewQuery],
-      queryFn: () => getReviews(doctorId, reviewQuery),
+      queryKey: ["reviews", doctorId],
+      queryFn: ({ pageParam = 1 }) =>
+        getReviews(doctorId, { pageSize, page: pageParam }),
       enabled: !!doctorId,
       staleTime: STALE_TIME,
+      getNextPageParam: (lastPage) =>
+        lastPage.currentPage < lastPage.totalPages
+          ? lastPage.currentPage + 1
+          : undefined,
+      initialPageParam: 1,
     },
     queryClient,
   );
