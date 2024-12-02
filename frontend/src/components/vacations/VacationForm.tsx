@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, {useEffect, useState} from "react";
 import { Alert, Button, Col, Form, Row, Spinner, Stack } from "react-bootstrap";
 import { Time, TIMES } from "../../api/time/Time";
 import { VacationForm as VacationFormType } from "../../api/vacation/Vacation";
@@ -28,6 +28,8 @@ const VacationForm: React.FC<VacationFormProps> = ({ doctorId }) => {
     setError,
     watch,
     reset,
+    setValue,
+    resetField,
   } = useForm<VacationFormType>({
     defaultValues: {
       cancelAppointments: false,
@@ -40,6 +42,7 @@ const VacationForm: React.FC<VacationFormProps> = ({ doctorId }) => {
   const fromDate = watch("fromDate");
   const toDate = watch("toDate");
   const fromTime = watch("fromTime");
+  const toTime = watch("toTime");
 
   const [showSuccess, setShowSuccess] = useState<boolean>(false);
 
@@ -91,6 +94,25 @@ const VacationForm: React.FC<VacationFormProps> = ({ doctorId }) => {
     createVacationMutation.mutate(data);
   };
 
+  useEffect(() => {
+    if (toDate && fromDate && new Date(toDate) < new Date(fromDate)) {
+      resetField("toDate");
+    }
+  }, [fromDate, toDate, setValue]);
+
+  useEffect(() => {
+    if (
+        fromDate &&
+        toDate &&
+        fromDate === toDate &&
+        toTime &&
+        fromTime &&
+        TIMES.indexOf(toTime as Time) <= TIMES.indexOf(fromTime as Time)
+    ) {
+      setValue("toTime", "");
+    }
+  }, [fromTime, toTime, fromDate, toDate, setValue]);
+
   return (
     <Form onSubmit={handleSubmit(onSubmit)}>
       <Row className="mb-3">
@@ -98,8 +120,10 @@ const VacationForm: React.FC<VacationFormProps> = ({ doctorId }) => {
           <Form.Label>{t("vacation.fromDate")}</Form.Label>
           <Form.Control
             type="date"
+            min={new Date().toISOString().split("T")[0]}
             {...register("fromDate", { validate: validateVacationDate })}
             isInvalid={!!errors.fromDate}
+
           />
           <Form.Control.Feedback type="invalid">
             {errors.fromDate && t(errors.fromDate?.message ?? "")}
@@ -109,6 +133,10 @@ const VacationForm: React.FC<VacationFormProps> = ({ doctorId }) => {
           <Form.Label>{t("vacation.toDate")}</Form.Label>
           <Form.Control
             type="date"
+            min={
+              fromDate?.toString().split("T")[0] ??
+              new Date().toISOString().split("T")[0]
+            }
             {...register("toDate", { validate: validateVacationDate })}
             isInvalid={!!errors.toDate}
           />

@@ -199,6 +199,7 @@ const DoctorFilters: React.FC<DoctorFiltersProps> = ({
           <Form.Label>{t("vacation.date")}</Form.Label>
           <Form.Control
             type="date"
+            min={new Date().toISOString().split("T")[0]}
             value={query.date ? query.date.toISOString().split("T")[0] : ""}
             onChange={(e) => {
               const date = parseLocalDate(e.target.value);
