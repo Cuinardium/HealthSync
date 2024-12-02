@@ -100,6 +100,8 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
         return "home.myAppointments";
       case "/detailed-appointment":
         return "detailedAppointment.title";
+      case "/detailed-doctor":
+        return "detailedDoctor.title";
       case "/403":
         return "error.403";
       case "/404":

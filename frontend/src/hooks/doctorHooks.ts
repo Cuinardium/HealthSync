@@ -65,7 +65,7 @@ export function useDoctors(query: DoctorQuery) {
 // =========== useDoctor ===========
 
 export function useDoctor(doctorId: string) {
-  return useQuery<Doctor, Error>(
+  return useQuery<Doctor, AxiosError>(
     {
       queryKey: ["doctor", doctorId],
       queryFn: async () => {
