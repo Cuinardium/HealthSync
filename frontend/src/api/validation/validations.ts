@@ -303,3 +303,29 @@ export function validateFile(file: File | undefined): string | true {
 
   return true;
 }
+
+export function validateReviewDescription(
+  description: string | null | undefined,
+): string | true {
+  if (!description || description.trim() === "") {
+    return "validation.review.description.required";
+  }
+
+  if (description.length < 1 || description.length > 1000) {
+    return "validation.review.description.size";
+  }
+
+  return true;
+}
+
+export function validateReviewRating(rating: number | null): string | true {
+  if (!rating) {
+    return "validation.review.rating.required";
+  }
+
+  if (rating < 1 || rating > 5) {
+    return "validation.review.rating.invalid";
+  }
+
+  return true;
+}

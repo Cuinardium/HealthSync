@@ -8,8 +8,14 @@ import doctorDefault from "../../img/doctorDefault.png";
 
 import "./doctorCard.css";
 import { useDoctorQueryContext } from "../../context/DoctorQueryContext";
-import {FaAddressBook, FaCity, FaLocationDot, FaMapLocationDot, FaMapPin} from "react-icons/fa6";
-import {FaEnvelope} from "react-icons/fa";
+import {
+  FaAddressBook,
+  FaCity,
+  FaLocationDot,
+  FaMapLocationDot,
+  FaMapPin,
+} from "react-icons/fa6";
+import { FaEnvelope } from "react-icons/fa";
 
 interface DoctorCardProps {
   doctor: Doctor;
@@ -88,9 +94,8 @@ const DoctorCard: React.FC<DoctorCardProps> = ({ doctor }) => {
                 <Stack direction="horizontal" gap={2} className="mb-2">
                   <Row>
                     {doctor.healthInsurances.map((insurance) => (
-                      <Col>
+                      <Col key={insurance}>
                         <div
-                          key={insurance}
                           className="chip badge rounded-pill"
                           style={{
                             cursor: "pointer",
@@ -111,21 +116,21 @@ const DoctorCard: React.FC<DoctorCardProps> = ({ doctor }) => {
                 </h5>
 
                 <Card.Subtitle className="text-muted mb-2">
-                  <FaLocationDot/> {doctor.address}
+                  <FaLocationDot /> {doctor.address}
                 </Card.Subtitle>
 
                 <Card.Subtitle className="text-muted mb-2">
-                    <FaCity/> {doctor.city}
+                  <FaCity /> {doctor.city}
                 </Card.Subtitle>
 
                 {/* Email */}
                 <h5 className="d-flex flex-row align-items-center mt-3 mb-2">
-                    {t("detailedDoctor.contact")}
-                    <FaAddressBook className="ms-1" />
+                  {t("detailedDoctor.contact")}
+                  <FaAddressBook className="ms-1" />
                 </h5>
 
                 <Card.Subtitle className="text-muted mb-2">
-                    <FaEnvelope/> {doctor.email}
+                  <FaEnvelope /> {doctor.email}
                 </Card.Subtitle>
               </div>
             </div>

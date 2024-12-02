@@ -26,7 +26,6 @@ const VacationForm: React.FC<VacationFormProps> = ({ doctorId }) => {
     handleSubmit,
     formState: { errors },
     setError,
-    setValue,
     watch,
     reset,
   } = useForm<VacationFormType>({

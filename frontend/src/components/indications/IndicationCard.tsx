@@ -21,7 +21,7 @@ const IndicationCard: React.FC<IndicationCardProps> = ({
         className={`mb-3 shadow-sm ${isCreator ? "bg-primary text-light" : ""}`}
       >
         <Card.Body>
-          <Card.Text>
+          <div>
             {descriptionLines.map((line, index) => (
                 <div key={index}>{line}</div>
                 ))}
@@ -37,7 +37,7 @@ const IndicationCard: React.FC<IndicationCardProps> = ({
                 <b>{fileData?.fileName}</b>
               </a>
             )}
-          </Card.Text>
+          </div>
         </Card.Body>
       </Card>
       <div

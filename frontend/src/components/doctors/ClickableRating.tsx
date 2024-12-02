@@ -5,9 +5,10 @@ import { useTranslation } from "react-i18next";
 interface RatingProps {
   onClick: (rating?: number) => void;
   initialRating?: number;
+  showClear?: boolean;
 }
 
-const ClickableRating: React.FC<RatingProps> = ({ onClick, initialRating }) => {
+const ClickableRating: React.FC<RatingProps> = ({ onClick, initialRating, showClear = true }) => {
   const maxStars = 5;
   const { t } = useTranslation();
 
@@ -49,7 +50,7 @@ const ClickableRating: React.FC<RatingProps> = ({ onClick, initialRating }) => {
   return (
     <div className="d-flex align-items-center">
       <div className="d-flex">{renderStars()} </div>
-      {rating > 0 && (
+      {rating > 0 && showClear && (
         <a
           className="ms-2"
           href="/"

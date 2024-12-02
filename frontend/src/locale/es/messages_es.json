@@ -329,6 +329,8 @@
     },
     "rating": "Calificación",
     "submit": "Enviar reseña",
+    "submitting": "Enviando...",
+    "error": "Hubo un error al enviar la reseña",
     "modal": {
       "title": "Reseña Enviada",
       "text": "Tu reseña se envió exitosamente",
@@ -771,6 +773,16 @@
     "file": {
       "type": "El archivo seleccionado debe ser png, jpg, jpeg o pdf.",
       "size": "El archivo seleccionado es demasiado grande. El tamaño máximo permitido es de 10MB."
+    },
+    "review": {
+      "description": {
+        "required": "La descripción es obligatoria.",
+        "size": "La descripción debe tener entre 1 y 1000 caracteres."
+      },
+      "rating": {
+        "required": "La calificación es obligatoria.",
+        "invalid": "La descripción debe tener entre 1 y 5 estrellas."
+      }
     }
   }
 }

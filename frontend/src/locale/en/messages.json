@@ -328,6 +328,7 @@
     },
     "rating": "Rating",
     "submit": "Submit Review",
+    "submitting": "Submitting...",
     "modal": {
       "title": "Review Sent",
       "text": "Your review was sent successfully",
@@ -770,6 +771,16 @@
     "file": {
       "size": "File size must be less than 10MB.",
       "type": "File type must be png, jpg, jpeg, or pdf."
+    },
+    "review": {
+      "description": {
+        "required": "Description is required.",
+        "size": "Description must be between 1 and 1000 characters."
+      },
+      "rating": {
+        "required": "Rating is required.",
+        "invalid": "Rating must be between 1 and 5."
+      }
     }
   }
 }
