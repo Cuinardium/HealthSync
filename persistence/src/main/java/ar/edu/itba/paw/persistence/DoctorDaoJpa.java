@@ -311,7 +311,7 @@ public class DoctorDaoJpa implements DoctorDao {
   @Override
   public Map<HealthInsurance, Integer> getUsedHealthInsurances() {
     List<Set<HealthInsurance>> hList =
-        em.createQuery("from Doctor", Doctor.class)
+        em.createQuery("from Doctor where isVerified = true", Doctor.class)
             .getResultList()
             .stream()
             .map(Doctor::getHealthInsurances)
