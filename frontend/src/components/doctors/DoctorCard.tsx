@@ -1,6 +1,6 @@
-import React from "react";
-import { Badge, Button, Card, Image, Stack } from "react-bootstrap";
-import { Link, useNavigate } from "react-router-dom";
+import React, { useEffect, useRef, useState } from "react";
+import { Button, Card, Image, Stack } from "react-bootstrap";
+import { Link } from "react-router-dom";
 import { Doctor } from "../../api/doctor/Doctor";
 
 import doctorDefault from "../../img/doctorDefault.png";
@@ -19,6 +19,10 @@ const DoctorCard: React.FC<DoctorCardProps> = ({ doctor }) => {
 
   const { addSpecialty, addHealthInsurance } = useDoctorQueryContext();
 
+  const stackRef = useRef<HTMLDivElement>(null);
+  const [isOverflowingLeft, setIsOverflowingLeft] = useState(false);
+  const [isOverflowingRight, setIsOverflowingRight] = useState(false);
+
   const handleSpecialtyClick = (specialty: string) => {
     addSpecialty(specialty.toUpperCase().replace(/\./g, "_"));
   };
@@ -27,8 +31,48 @@ const DoctorCard: React.FC<DoctorCardProps> = ({ doctor }) => {
     addHealthInsurance(healthInsurance.toUpperCase().replace(/\./g, "_"));
   };
 
+  const handleScrollLeft = () => {
+    if (stackRef.current) {
+      stackRef.current.scrollBy({ left: -200, behavior: "smooth" });
+    }
+  };
+
+  const handleScrollRight = () => {
+    if (stackRef.current) {
+      stackRef.current.scrollBy({ left: 200, behavior: "smooth" });
+    }
+  };
+
+  useEffect(() => {
+    const checkOverflow = () => {
+      if (stackRef.current) {
+        const { scrollLeft, scrollWidth, clientWidth } = stackRef.current;
+
+        setIsOverflowingLeft(scrollLeft > 0);
+
+        setIsOverflowingRight(scrollWidth > clientWidth + scrollLeft);
+      }
+    };
+
+    checkOverflow();
+    window.addEventListener("resize", checkOverflow);
+
+    const stack = stackRef.current;
+
+    if (stack) {
+      stack.addEventListener("scroll", checkOverflow);
+    }
+
+    return () => {
+      window.removeEventListener("resize", checkOverflow);
+      if (stack) {
+        stack.removeEventListener("scroll", checkOverflow);
+      }
+    };
+  }, []);
+
   return (
-    <Card className="mb-3 shadow-sm">
+    <Card className="mb-3">
       <Card.Body>
         <div className="d-flex align-items-center mb-3">
           <Image
@@ -47,16 +91,35 @@ const DoctorCard: React.FC<DoctorCardProps> = ({ doctor }) => {
             </Card.Subtitle>
           </div>
         </div>
-        <div className="mb-3">
-          <Stack direction="horizontal" gap={3}>
-            <strong>
-              {t(
-                doctor.healthInsurances.length > 1
-                  ? "detailedDoctor.insurances"
-                  : "detailedDoctor.insurance",
-              )}
-              :
-            </strong>{" "}
+        <div className="mb-3 w-auto d-flex flex-row align-items-center">
+          <strong className="me-2">
+            {t(
+              doctor.healthInsurances.length > 1
+                ? "detailedDoctor.insurances"
+                : "detailedDoctor.insurance",
+            )}
+            :
+          </strong>
+
+          {/* Left Scroll Control */}
+          {isOverflowingLeft && (
+            <span
+              className="scroll-left"
+              onClick={handleScrollLeft}
+              style={{
+                cursor: "pointer",
+              }}
+            >
+              &lt;
+            </span>
+          )}
+
+          <Stack
+            className="scrollable-stack"
+            direction="horizontal"
+            gap={3}
+            ref={stackRef}
+          >
             {doctor.healthInsurances.map((healthInsurance) => (
               <div
                 key={healthInsurance}
@@ -70,6 +133,18 @@ const DoctorCard: React.FC<DoctorCardProps> = ({ doctor }) => {
               </div>
             ))}
           </Stack>
+          {/* Right Scroll Control */}
+          {isOverflowingRight && (
+            <span
+              className="scroll-right"
+              onClick={handleScrollRight}
+              style={{
+                cursor: "pointer",
+              }}
+            >
+              &gt;
+            </span>
+          )}
         </div>
         <div className="mb-3">
           <Stack direction="horizontal" gap={3}>

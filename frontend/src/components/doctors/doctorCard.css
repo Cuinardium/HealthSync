@@ -9,3 +9,28 @@
     color: #0d6efd;
     border: 1px solid #0d6efd;
 }
+
+.scrollable-stack {
+    overflow-x: auto;
+    max-width: 100%;
+    white-space: nowrap;
+}
+
+.scroll-left,
+.scroll-right {
+    font-size: 18px;
+    color: #007bff;
+    font-weight: bold;
+    cursor: pointer;
+    padding: 0 8px;
+}
+
+
+.scroll-left:hover,
+.scroll-right:hover {
+    text-decoration: underline;
+}
+
+.scrollable-stack::-webkit-scrollbar {
+    display: none;
+}
