@@ -36,14 +36,23 @@ const DoctorFilters: React.FC<DoctorFiltersProps> = ({
   } = useDoctorQueryContext();
 
   const { data: healthInsurances } = useHealthInsurances({
+    ...query,
+    healthInsurance: undefined,
     sort: "popularity",
     order: "desc",
   });
   const { data: specialties } = useSpecialties({
+    ...query,
+    specialty: undefined,
     sort: "popularity",
     order: "desc",
   });
-  const { data: cities } = useCities();
+  const { data: cities } = useCities({
+    ...query,
+    city: undefined,
+    sort: "popularity",
+    order: "desc",
+  });
 
   const healthInsuranceOptions =
     healthInsurances

@@ -146,17 +146,30 @@ public class DoctorQuery extends PageQuery {
     this.minRating = minRating;
   }
 
+  public boolean hasFilters() {
+    return name != null
+        || date != null
+        || fromTime != null
+        || toTime != null
+        || (specialties != null && !specialties.isEmpty())
+        || (cities != null && !cities.isEmpty())
+        || (healthInsurances != null && !healthInsurances.isEmpty())
+        || minRating != null;
+  }
+
   @Override
   public String toString() {
-    return "{" +
-            (name != null ? "name='" + name + "'," : "") +
-            (date != null ? "date='" + date + "'," : "") +
-            (fromTime != null ? "fromTime='" + fromTime + "'," : "") +
-            (toTime != null ? "toTime='" + toTime + "'," : "") +
-            (specialties != null && !specialties.isEmpty() ? "specialties=" + specialties + "," : "") +
-            (cities != null && !cities.isEmpty() ? "cities=" + cities + "," : "") +
-            (healthInsurances != null && !healthInsurances.isEmpty() ? "healthInsurances=" + healthInsurances + "," : "") +
-            (minRating != null ? "minRating=" + minRating + "," : "") +
-            '}';
+    return "{"
+        + (name != null ? "name='" + name + "'," : "")
+        + (date != null ? "date='" + date + "'," : "")
+        + (fromTime != null ? "fromTime='" + fromTime + "'," : "")
+        + (toTime != null ? "toTime='" + toTime + "'," : "")
+        + (specialties != null && !specialties.isEmpty() ? "specialties=" + specialties + "," : "")
+        + (cities != null && !cities.isEmpty() ? "cities=" + cities + "," : "")
+        + (healthInsurances != null && !healthInsurances.isEmpty()
+            ? "healthInsurances=" + healthInsurances + ","
+            : "")
+        + (minRating != null ? "minRating=" + minRating + "," : "")
+        + '}';
   }
 }

@@ -102,6 +102,7 @@ public class DoctorDaoJpa implements DoctorDao {
     query.setParameter("now", now);
     query.executeUpdate();
   }
+
   // =============== Queries ===============
 
   @Override
@@ -129,8 +130,7 @@ public class DoctorDaoJpa implements DoctorDao {
 
     List<Integer> healthInsuranceCodes =
         healthInsurance != null
-            ? healthInsurance
-                .stream()
+            ? healthInsurance.stream()
                 .mapToInt(HealthInsurance::ordinal)
                 .boxed()
                 .collect(Collectors.toList())
@@ -142,7 +142,8 @@ public class DoctorDaoJpa implements DoctorDao {
     QueryBuilder qtyQueryBuilder = new QueryBuilder().select("count(*)").from("doctor");
 
     // Ignore doctors that are not verified (is_verified in yser table)
-    nativeQueryBuilder.where("doctor.doctor_id IN (SELECT user_id FROM users WHERE is_verified = true)");
+    nativeQueryBuilder.where(
+        "doctor.doctor_id IN (SELECT user_id FROM users WHERE is_verified = true)");
 
     // Add the filters to the query, if it is the first filter, don't add AND
     if (name != null && !name.isEmpty()) {
@@ -284,9 +285,7 @@ public class DoctorDaoJpa implements DoctorDao {
     @SuppressWarnings("unchecked")
     final List<Long> idList =
         (List<Long>)
-            nativeQuery
-                .getResultList()
-                .stream()
+            nativeQuery.getResultList().stream()
                 .map(o -> ((Number) o).longValue())
                 .collect(Collectors.toList());
 
@@ -304,15 +303,28 @@ public class DoctorDaoJpa implements DoctorDao {
   }
 
   @Override
-  public List<Doctor> getDoctors() {
-    return em.createQuery("from Doctor", Doctor.class).getResultList();
-  }
-
-  @Override
-  public Map<HealthInsurance, Integer> getUsedHealthInsurances() {
+  public Map<HealthInsurance, Integer> getUsedHealthInsurances(
+      String name,
+      LocalDate date,
+      ThirtyMinuteBlock fromTime,
+      ThirtyMinuteBlock toTime,
+      Set<Specialty> specialties,
+      Set<String> cities,
+      Set<HealthInsurance> healthInsurance,
+      Integer minRating) {
     List<Set<HealthInsurance>> hList =
-        em.createQuery("from Doctor where isVerified = true", Doctor.class)
-            .getResultList()
+        getFilteredDoctors(
+                name,
+                date,
+                fromTime,
+                toTime,
+                specialties,
+                cities,
+                healthInsurance,
+                minRating,
+                null,
+                null)
+            .getContent()
             .stream()
             .map(Doctor::getHealthInsurances)
             .collect(Collectors.toCollection(ArrayList::new));
@@ -328,9 +340,31 @@ public class DoctorDaoJpa implements DoctorDao {
   }
 
   @Override
-  public Map<Specialty, Integer> getUsedSpecialties() {
+  public Map<Specialty, Integer> getUsedSpecialties(
+      String name,
+      LocalDate date,
+      ThirtyMinuteBlock fromTime,
+      ThirtyMinuteBlock toTime,
+      Set<Specialty> specialties,
+      Set<String> cities,
+      Set<HealthInsurance> healthInsurance,
+      Integer minRating) {
     List<Specialty> sList =
-        em.createQuery("select specialty from Doctor where isVerified = true ", Specialty.class).getResultList();
+        getFilteredDoctors(
+                name,
+                date,
+                fromTime,
+                toTime,
+                specialties,
+                cities,
+                healthInsurance,
+                minRating,
+                null,
+                null)
+            .getContent()
+            .stream()
+            .map(Doctor::getSpecialty)
+            .collect(Collectors.toCollection(ArrayList::new));
 
     Map<Specialty, Integer> map = new HashMap<>();
 
@@ -342,8 +376,31 @@ public class DoctorDaoJpa implements DoctorDao {
   }
 
   @Override
-  public Map<String, Integer> getUsedCities() {
-    List<String> lList = em.createQuery("select city from Doctor where isVerified = true ", String.class).getResultList();
+  public Map<String, Integer> getUsedCities(
+      String name,
+      LocalDate date,
+      ThirtyMinuteBlock fromTime,
+      ThirtyMinuteBlock toTime,
+      Set<Specialty> specialties,
+      Set<String> cities,
+      Set<HealthInsurance> healthInsurance,
+      Integer minRating) {
+    List<String> lList =
+        getFilteredDoctors(
+                name,
+                date,
+                fromTime,
+                toTime,
+                specialties,
+                cities,
+                healthInsurance,
+                minRating,
+                null,
+                null)
+            .getContent()
+            .stream()
+            .map(Doctor::getCity)
+            .collect(Collectors.toCollection(ArrayList::new));
 
     Map<String, Integer> map = new HashMap<>();
 
@@ -358,15 +415,5 @@ public class DoctorDaoJpa implements DoctorDao {
     for (AttendingHours att : doctor.getAttendingHours()) {
       att.setDoctor(doctor);
     }
-  }
-
-  @Override
-  public List<Specialty> getPopularSpecialties() {
-    final TypedQuery<Specialty> query =
-        em.createQuery(
-            "select doc.specialty from Doctor as doc where doc.isVerified = true group by doc.specialty order by count(*) desc",
-            Specialty.class);
-
-      return query.getResultList();
   }
 }

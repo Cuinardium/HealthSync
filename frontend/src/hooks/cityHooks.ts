@@ -8,11 +8,11 @@ const STALE_TIME = 1000 * 60 * 30;
 
 
 // ========== useCities ==========
-export function useCities() {
+export function useCities(query: CityQuery) {
   return useQuery<City[], Error>(
     {
-      queryKey: ["cities"],
-      queryFn: () => getCities(),
+      queryKey: ["cities", query],
+      queryFn: () => getCities(query),
       staleTime: STALE_TIME,
     },
     queryClient,

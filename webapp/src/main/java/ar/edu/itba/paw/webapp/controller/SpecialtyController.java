@@ -49,7 +49,16 @@ public class SpecialtyController {
     LOGGER.debug("Listing specialties, page: {}", specialtyQuery.getPage());
 
     List<Specialty> specialties = Arrays.asList(Specialty.values());
-    Map<Specialty, Integer> specialtiesPopularity = doctorService.getUsedSpecialties();
+    Map<Specialty, Integer> specialtiesPopularity = doctorService.getUsedSpecialties(
+        specialtyQuery.getName(),
+        specialtyQuery.getLocalDate(),
+        specialtyQuery.getFromTimeEnum(),
+        specialtyQuery.getToTimeEnum(),
+        specialtyQuery.getSpecialtiesEnum(),
+        specialtyQuery.getCities(),
+        specialtyQuery.getHealthInsurancesEnum(),
+        specialtyQuery.getMinRating()
+    );
 
     // Compare by ordinal or by popularity
     Comparator<SpecialtyDto> comparator =
@@ -62,7 +71,9 @@ public class SpecialtyController {
     }
 
     // Merge both collections to the map, missing specialties will have a popularity of 0
-    specialties.forEach(specialty -> specialtiesPopularity.putIfAbsent(specialty, 0));
+    if (!specialtyQuery.hasFilters()) {
+      specialties.forEach(specialty -> specialtiesPopularity.putIfAbsent(specialty, 0));
+    }
 
     List<SpecialtyDto> specialtyDtoList =
         specialtiesPopularity.entrySet().stream()
@@ -106,7 +117,10 @@ public class SpecialtyController {
     }
 
     Specialty specialty = specialties[id];
-    int popularity = doctorService.getUsedSpecialties().getOrDefault(specialty, 0);
+    int popularity =
+        doctorService
+            .getUsedSpecialties(null, null, null, null, null, null, null, null)
+            .getOrDefault(specialty, 0);
 
     LOGGER.debug("returning specialty with id {}", id);
 

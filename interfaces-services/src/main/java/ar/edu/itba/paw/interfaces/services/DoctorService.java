@@ -6,7 +6,6 @@ import ar.edu.itba.paw.interfaces.services.exceptions.VacationInvalidException;
 import ar.edu.itba.paw.interfaces.services.exceptions.VacationNotFoundException;
 import ar.edu.itba.paw.models.*;
 import java.time.LocalDate;
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
@@ -45,7 +44,8 @@ public interface DoctorService {
       Locale locale)
       throws DoctorNotFoundException, EmailInUseException;
 
-  public Vacation addVacation(long doctorId, Vacation vacation) throws DoctorNotFoundException, VacationInvalidException;
+  public Vacation addVacation(long doctorId, Vacation vacation)
+      throws DoctorNotFoundException, VacationInvalidException;
 
   public Doctor removeVacation(long doctorId, Vacation vacation)
       throws DoctorNotFoundException, VacationNotFoundException;
@@ -66,20 +66,40 @@ public interface DoctorService {
       Integer page,
       Integer pageSize);
 
-  public List<Doctor> getDoctors();
-
   // Get all Specialties and health insurances that are used by doctors
-  public Map<Specialty, Integer> getUsedSpecialties();
+  public Map<Specialty, Integer> getUsedSpecialties(
+      String name,
+      LocalDate date,
+      ThirtyMinuteBlock fromTime,
+      ThirtyMinuteBlock toTime,
+      Set<Specialty> specialties,
+      Set<String> cities,
+      Set<HealthInsurance> healthInsurance,
+      Integer minRating);
 
-  public List<Specialty> getPopularSpecialties();
-
-  public Map<HealthInsurance, Integer> getUsedHealthInsurances();
+  public Map<HealthInsurance, Integer> getUsedHealthInsurances(
+      String name,
+      LocalDate date,
+      ThirtyMinuteBlock fromTime,
+      ThirtyMinuteBlock toTime,
+      Set<Specialty> specialties,
+      Set<String> cities,
+      Set<HealthInsurance> healthInsurance,
+      Integer minRating);
 
   // Gets all cities used by doctors & qty of appearences
-  public Map<String, Integer> getUsedCities();
+  public Map<String, Integer> getUsedCities(
+      String name,
+      LocalDate date,
+      ThirtyMinuteBlock fromTime,
+      ThirtyMinuteBlock toTime,
+      Set<Specialty> specialties,
+      Set<String> cities,
+      Set<HealthInsurance> healthInsurance,
+      Integer minRating);
 
   // ================= Tasks =================
-  
+
   // Deletes all vacations that have ended
   public void deleteOldVacations();
 }

@@ -200,35 +200,53 @@ public class DoctorServiceImpl implements DoctorService {
         pageSize);
   }
 
-  @Transactional(readOnly = true)
-  @Override
-  public List<Doctor> getDoctors() {
-    return doctorDao.getDoctors();
-  }
-
   // Get all Specialties and health insurances that are used by doctors
   @Transactional(readOnly = true)
   @Override
-  public Map<HealthInsurance, Integer> getUsedHealthInsurances() {
-    return doctorDao.getUsedHealthInsurances();
+  public Map<HealthInsurance, Integer> getUsedHealthInsurances(
+      String name,
+      LocalDate date,
+      ThirtyMinuteBlock fromTime,
+      ThirtyMinuteBlock toTime,
+      Set<Specialty> specialties,
+      Set<String> cities,
+      Set<HealthInsurance> healthInsurance,
+      Integer minRating) {
+    return doctorDao.getUsedHealthInsurances(
+        name, date, fromTime, toTime, specialties, cities, healthInsurance, minRating
+    );
   }
 
   @Transactional(readOnly = true)
   @Override
-  public Map<Specialty, Integer> getUsedSpecialties() {
-    return doctorDao.getUsedSpecialties();
+  public Map<Specialty, Integer> getUsedSpecialties(
+      String name,
+      LocalDate date,
+      ThirtyMinuteBlock fromTime,
+      ThirtyMinuteBlock toTime,
+      Set<Specialty> specialties,
+      Set<String> cities,
+      Set<HealthInsurance> healthInsurance,
+      Integer minRating) {
+    return doctorDao.getUsedSpecialties(
+        name, date, fromTime, toTime, specialties, cities, healthInsurance, minRating
+    );
   }
 
   @Transactional(readOnly = true)
   @Override
-  public Map<String, Integer> getUsedCities() {
-    return doctorDao.getUsedCities();
-  }
-
-  @Transactional(readOnly = true)
-  @Override
-  public List<Specialty> getPopularSpecialties() {
-    return doctorDao.getPopularSpecialties();
+  public Map<String, Integer> getUsedCities(
+      String name,
+      LocalDate date,
+      ThirtyMinuteBlock fromTime,
+      ThirtyMinuteBlock toTime,
+      Set<Specialty> specialties,
+      Set<String> cities,
+      Set<HealthInsurance> healthInsurance,
+      Integer minRating) {
+    return doctorDao.getUsedCities(
+        name, date, fromTime, toTime, specialties, cities, healthInsurance, minRating
+    );
   }
 
   // ================= Tasks =================

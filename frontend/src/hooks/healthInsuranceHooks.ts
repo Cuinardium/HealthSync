@@ -10,7 +10,7 @@ const STALE_TIME = 30 * 60 * 1000;
 export function useHealthInsurances(healthInsuranceQuery: HealthInsuranceQuery) {
   return useQuery<HealthInsurance[], Error>(
     {
-      queryKey: ["healthInsurances"],
+      queryKey: ["healthInsurances", healthInsuranceQuery],
       queryFn: () => getHealthInsurances(healthInsuranceQuery),
       staleTime: STALE_TIME,
     },

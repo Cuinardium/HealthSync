@@ -6,7 +6,9 @@ VALUES (5, 'patient@email.com', 'patient_password', 'patient_first_name', 'patie
        (8, 'patient2@email.com', 'patient2_password', 'patient2_first_name', 'patient2_last_name', NULL, 'en', 1),
        (9, 'patient3@email.com', 'patient3_password', 'patient3_first_name', 'patient3_last_name', NULL, 'en', 1),
        (10,'patient4@email.com', 'patient4_password', 'patient4_first_name', 'patient4_last_name', NULL, 'en', 1),
-       (7, 'doctor@email.com', 'doctor_password', 'doctor_first_name', 'doctor_last_name', NULL, 'en', 1);
+       (7, 'doctor@email.com', 'doctor_password', 'doctor_first_name', 'doctor_last_name', NULL, 'en', 1),
+       (11, 'doctor2@email.com', 'doctor2_password', 'doctor2_first_name', 'doctor2_last_name', NULL, 'en', 1),
+       (12, 'doctor3@email.com', 'doctor3_password', 'doctor3_first_name', 'doctor3_last_name', NULL, 'en', 1);
 
 INSERT INTO patient (patient_id, health_insurance_code)
 VALUES (5, 1),
@@ -15,7 +17,9 @@ VALUES (5, 1),
        (10, 1);
 
 INSERT INTO doctor (doctor_id, specialty_code, city, address)
-VALUES (7, 1, 'Adolfo Gonzalez Chaves', 'doctor_address');
+VALUES (7, 1, 'Adolfo Gonzalez Chaves', 'doctor_address'),
+       (11, 2, 'CABA', 'doctor2_address'),
+       (12, 3, 'Cordoba', 'doctor3_address');
 
 INSERT INTO doctor_attending_hours (doctor_id, day, hour_block)
 VALUES (7,0,0), (7,1,0), (7,2,0), (7,3,0), (7,4,0);
@@ -25,7 +29,7 @@ VALUES (2, 7, '2020-01-01', 0, '2020-01-10', 0),
        (3, 7, '2020-02-01', 0, '2020-02-10', 0);
 
 INSERT INTO health_insurance_accepted_by_doctor (doctor_id, health_insurance_code)
-VALUES (7, 1), (7, 2);
+VALUES (7, 1), (7, 2), (11, 3), (12, 4);
 
 INSERT INTO appointment (appointment_id, patient_id, doctor_id, appointment_date, appointment_time, status_code, appointment_description, cancel_description)
 VALUES (3, 5, 7, '2023-05-17', 1, 0, 'Me duele la cabeza', NULL),

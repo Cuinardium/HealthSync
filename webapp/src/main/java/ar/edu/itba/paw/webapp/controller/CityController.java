@@ -43,7 +43,16 @@ public class CityController {
   public Response listCities(@Valid @BeanParam final CityQuery cityQuery) {
     LOGGER.debug("Listing cities");
 
-    Map<String, Integer> citiesPopularity = doctorService.getUsedCities();
+    Map<String, Integer> citiesPopularity =
+        doctorService.getUsedCities(
+            cityQuery.getName(),
+            cityQuery.getLocalDate(),
+            cityQuery.getFromTimeEnum(),
+            cityQuery.getToTimeEnum(),
+            cityQuery.getSpecialtiesEnum(),
+            cityQuery.getCities(),
+            cityQuery.getHealthInsurancesEnum(),
+            cityQuery.getMinRating());
 
     // Compare by alphabetical or by popularity
     Comparator<CityDto> comparator =

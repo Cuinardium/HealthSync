@@ -1,5 +1,5 @@
 import { axios } from "../axios";
-import { City } from "./City";
+import {City, CityQuery} from "./City";
 
 const CITY_ENDPOINT = "/cities";
 
@@ -8,13 +8,12 @@ const CITY_LIST_CONTENT_TYPE = "application/vnd.city-list.v1+json";
 
 // =============== cities ==========
 
-export async function getCities(): Promise<City[]> {
+export async function getCities(query: CityQuery): Promise<City[]> {
   const allCities: City[] = [];
   let nextPageUrl: string | null = CITY_ENDPOINT;
   const initialQuery = { 
     pageSize: 50,
-    sort: "popularity",
-    order: "desc"
+    ...query,
   };
 
   while (nextPageUrl) {

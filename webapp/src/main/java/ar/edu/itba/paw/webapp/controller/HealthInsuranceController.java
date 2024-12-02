@@ -50,8 +50,15 @@ public class HealthInsuranceController {
 
     List<HealthInsurance> healthInsuranceList = Arrays.asList(HealthInsurance.values());
     Map<HealthInsurance, Integer> healthInsurancePopularity =
-        doctorService.getUsedHealthInsurances();
-
+        doctorService.getUsedHealthInsurances(
+            healthInsuranceQuery.getName(),
+            healthInsuranceQuery.getLocalDate(),
+            healthInsuranceQuery.getFromTimeEnum(),
+            healthInsuranceQuery.getToTimeEnum(),
+            healthInsuranceQuery.getSpecialtiesEnum(),
+            healthInsuranceQuery.getCities(),
+            healthInsuranceQuery.getHealthInsurancesEnum(),
+            healthInsuranceQuery.getMinRating());
 
     // Compare by ordinal or by popularity
     Comparator<HealthInsuranceDto> comparator =
@@ -63,8 +70,10 @@ public class HealthInsuranceController {
       comparator = comparator.reversed();
     }
 
-    healthInsuranceList.forEach(
-        healthInsurance -> healthInsurancePopularity.putIfAbsent(healthInsurance, 0));
+    if (!healthInsuranceQuery.hasFilters()) {
+      healthInsuranceList.forEach(
+          healthInsurance -> healthInsurancePopularity.putIfAbsent(healthInsurance, 0));
+    }
 
     final List<HealthInsuranceDto> dtoList =
         healthInsurancePopularity.entrySet().stream()
@@ -83,7 +92,8 @@ public class HealthInsuranceController {
     }
 
     return ResponseUtil.setPaginationLinks(
-            Response.ok(new GenericEntity<List<HealthInsuranceDto>>(healthInsurancePage.getContent()) {}),
+            Response.ok(
+                new GenericEntity<List<HealthInsuranceDto>>(healthInsurancePage.getContent()) {}),
             uriInfo,
             healthInsurancePage)
         .build();
@@ -106,7 +116,9 @@ public class HealthInsuranceController {
     }
 
     HealthInsurance healthInsurance = healthInsurances[id];
-    int popularity = doctorService.getUsedHealthInsurances().getOrDefault(healthInsurance, 0);
+    int popularity = doctorService.getUsedHealthInsurances(
+        null, null, null, null, null, null, null, null
+    ).getOrDefault(healthInsurance, 0);
 
     LOGGER.debug("returning healthInsurance with id {}", id);
 

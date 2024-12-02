@@ -4,7 +4,7 @@ import javax.validation.constraints.Pattern;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.QueryParam;
 
-public class CityQuery extends PageQuery {
+public class CityQuery extends DoctorQuery{
 
   @Pattern(regexp = "^(popularity|alphabetical)$", message = "Pattern.cityQuery.sort")
   @DefaultValue("popularity")

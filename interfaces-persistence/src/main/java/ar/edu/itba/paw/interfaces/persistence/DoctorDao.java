@@ -6,7 +6,6 @@ import ar.edu.itba.paw.interfaces.persistence.exceptions.VacationCollisionExcept
 import ar.edu.itba.paw.interfaces.persistence.exceptions.VacationNotFoundException;
 import ar.edu.itba.paw.models.*;
 import java.time.LocalDate;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -52,15 +51,35 @@ public interface DoctorDao {
       Integer page,
       Integer pageSize);
 
-  public List<Doctor> getDoctors();
-
   // Get used specialties and health insurances
-  public Map<HealthInsurance, Integer> getUsedHealthInsurances();
+  public Map<HealthInsurance, Integer> getUsedHealthInsurances(
+      String name,
+      LocalDate date,
+      ThirtyMinuteBlock fromTime,
+      ThirtyMinuteBlock toTime,
+      Set<Specialty> specialties,
+      Set<String> cities,
+      Set<HealthInsurance> healthInsurance,
+      Integer minRating);
 
-  public Map<Specialty, Integer> getUsedSpecialties();
+  public Map<Specialty, Integer> getUsedSpecialties(
+      String name,
+      LocalDate date,
+      ThirtyMinuteBlock fromTime,
+      ThirtyMinuteBlock toTime,
+      Set<Specialty> specialties,
+      Set<String> cities,
+      Set<HealthInsurance> healthInsurance,
+      Integer minRating);
 
   // Get all city present in the database & qty of appearences
-  public Map<String, Integer> getUsedCities();
-
-  public List<Specialty> getPopularSpecialties();
+  public Map<String, Integer> getUsedCities(
+      String name,
+      LocalDate date,
+      ThirtyMinuteBlock fromTime,
+      ThirtyMinuteBlock toTime,
+      Set<Specialty> specialties,
+      Set<String> cities,
+      Set<HealthInsurance> healthInsurance,
+      Integer minRating);
 }

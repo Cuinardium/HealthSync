@@ -88,7 +88,6 @@ public class DoctorDaoImplTest {
                           .id(3L)
                           .build())
       );
-
   private static final Image INSERTED_DOCTOR_IMAGE = null;
   private static final Locale INSERTED_LOCALE = new Locale("en");
   private static final Float INSERTED_DOCTOR_RATING = 3f;
@@ -195,7 +194,7 @@ public class DoctorDaoImplTest {
     Assert.assertEquals(AUX_DOCTOR_ATTENDING_HOURS, doctor.getAttendingHours());
     Assert.assertEquals(AUX_LOCALE, doctor.getLocale());
 
-    Assert.assertEquals(2, JdbcTestUtils.countRowsInTable(jdbcTemplate, "doctor"));
+    Assert.assertEquals(4, JdbcTestUtils.countRowsInTable(jdbcTemplate, "doctor"));
   }
 
   @Test
@@ -386,8 +385,13 @@ public class DoctorDaoImplTest {
     // 3. Meaningful assertions
     Assert.assertNull(doctors.getTotalPages());
     Assert.assertNull(doctors.getCurrentPage());
-    Assert.assertEquals(1, doctors.getContent().size());
-    Assert.assertEquals(expectedDoctor, doctors.getContent().get(0));
+    Assert.assertEquals(3, doctors.getContent().size());
+    Assert.assertEquals(
+        expectedDoctor,
+        doctors.getContent().stream()
+            .filter(doctor -> Objects.equals(doctor.getId(), expectedDoctor.getId()))
+            .findFirst()
+            .get());
   }
 
   @Test
@@ -443,36 +447,31 @@ public class DoctorDaoImplTest {
     Assert.assertEquals(0, doctors.getContent().size());
   }
 
-  // ============================== getDoctors ==============================
-
-  @Test
-  public void testGetDoctors() {
-    // 1.Precondiciones
-    // 2. Ejercitar la class under test
-    List<Doctor> doctors = doctorDao.getDoctors();
-    // 3. Meaningful assertions
-    Assert.assertEquals(1, doctors.size());
-    Assert.assertEquals(INSERTED_DOCTOR_ID, doctors.get(0).getId());
-    Assert.assertEquals(INSERTED_DOCTOR_EMAIL, doctors.get(0).getEmail());
-    Assert.assertEquals(INSERTED_DOCTOR_PASSWORD, doctors.get(0).getPassword());
-    Assert.assertEquals(INSERTED_DOCTOR_FIRST_NAME, doctors.get(0).getFirstName());
-    Assert.assertEquals(INSERTED_DOCTOR_LAST_NAME, doctors.get(0).getLastName());
-    Assert.assertEquals(INSERTED_DOCTOR_IMAGE, doctors.get(0).getImage());
-    Assert.assertEquals(INSERTED_DOCTOR_INSURANCES, doctors.get(0).getHealthInsurances());
-    Assert.assertEquals(INSERTED_DOCTOR_ADDRESS, doctors.get(0).getAddress());
-    Assert.assertEquals(INSERTED_DOCTOR_CITY, doctors.get(0).getCity());
-    Assert.assertEquals(INSERTED_DOCTOR_SPECIALTY, doctors.get(0).getSpecialty());
-    Assert.assertEquals(INSERTED_DOCTOR_ATTENDING_HOURS, doctors.get(0).getAttendingHours());
-    Assert.assertEquals(INSERTED_LOCALE, doctors.get(0).getLocale());
-  }
-
   // ============================== getUsedHealthInsurances ==============================
 
   @Test
   public void testGetUsedHealthInsurances() {
     // 1.Precondiciones
     // 2. Ejercitar la class under test
-    Map<HealthInsurance, Integer> healthInsurances = doctorDao.getUsedHealthInsurances();
+    Map<HealthInsurance, Integer> healthInsurances = doctorDao.getUsedHealthInsurances(
+        null, null, null, null, null, null, null, null);
+
+    // 3. Meaningful assertions
+    Assert.assertEquals(4, healthInsurances.size());
+    Assert.assertEquals((Integer) 1, healthInsurances.get(HealthInsurance.OSDE));
+    Assert.assertEquals((Integer) 1, healthInsurances.get(HealthInsurance.OMINT));
+    Assert.assertEquals((Integer) 1, healthInsurances.get(HealthInsurance.SWISS_MEDICAL));
+    Assert.assertEquals((Integer) 1, healthInsurances.get(HealthInsurance.GALENO));
+
+  }
+
+  @Test
+  public void testGetUsedHealthInsuranceWithSpecialtyFilter() {
+    // 1.Precondiciones
+    // 2. Ejercitar la class under test
+    Map<HealthInsurance, Integer> healthInsurances = doctorDao.getUsedHealthInsurances(
+        null, null, null, null, Collections.singleton(Specialty.PEDIATRIC_ALLERGY_AND_IMMUNOLOGY), null, null, null
+    );
     // 3. Meaningful assertions
     Assert.assertEquals(2, healthInsurances.size());
     Assert.assertEquals((Integer) 1, healthInsurances.get(HealthInsurance.OSDE));
@@ -485,7 +484,24 @@ public class DoctorDaoImplTest {
   public void testGetUsedSpecialties() {
     // 1.Precondiciones
     // 2. Ejercitar la class under test
-    Map<Specialty, Integer> specialties = doctorDao.getUsedSpecialties();
+    Map<Specialty, Integer> specialties = doctorDao.getUsedSpecialties(
+        null, null, null, null, null, null, null, null
+    );
+    // 3. Meaningful assertions
+    Assert.assertEquals(3, specialties.size());
+    Assert.assertEquals((Integer) 1, specialties.get(Specialty.PEDIATRIC_ALLERGY_AND_IMMUNOLOGY));
+    Assert.assertEquals((Integer) 1, specialties.get(Specialty.PATHOLOGICAL_ANATOMY));
+    Assert.assertEquals((Integer) 1, specialties.get(Specialty.ANESTHESIOLOGY));
+
+  }
+
+  @Test
+  public void testGetUsedSpecialtiesWithHealthInsuranceFilter() {
+    // 1.Precondiciones
+    // 2. Ejercitar la class under test
+    Map<Specialty, Integer> specialties =
+        doctorDao.getUsedSpecialties(
+            null, null, null, null, null, null, Collections.singleton(HealthInsurance.OSDE), null);
     // 3. Meaningful assertions
     Assert.assertEquals(1, specialties.size());
     Assert.assertEquals((Integer) 1, specialties.get(Specialty.PEDIATRIC_ALLERGY_AND_IMMUNOLOGY));
@@ -497,19 +513,32 @@ public class DoctorDaoImplTest {
   public void testGetUsedCities() {
     // 1.Precondiciones
     // 2. Ejercitar la class under test
-    Map<String, Integer> cities = doctorDao.getUsedCities();
+    Map<String, Integer> cities = doctorDao.getUsedCities(
+        null, null, null, null, null, null, null, null
+    );
     // 3. Meaningful assertions
-    Assert.assertEquals(1, cities.size());
+    Assert.assertEquals(3, cities.size());
     Assert.assertEquals((Integer) 1, cities.get("Adolfo Gonzalez Chaves"));
+    Assert.assertEquals((Integer) 1, cities.get("CABA"));
+    Assert.assertEquals((Integer) 1, cities.get("Cordoba"));
   }
 
   @Test
-  public void testGetPopularSpecialties() {
+  public void testGetUsedCitiesWithSpecialtyFilter() {
     // 1.Precondiciones
     // 2. Ejercitar la class under test
-    List<Specialty> specialties = doctorDao.getPopularSpecialties();
+    Map<String, Integer> cities =
+        doctorDao.getUsedCities(
+            null,
+            null,
+            null,
+            null,
+            Collections.singleton(Specialty.PEDIATRIC_ALLERGY_AND_IMMUNOLOGY),
+            null,
+            null,
+            null);
     // 3. Meaningful assertions
-    Assert.assertEquals(1, specialties.size());
-    Assert.assertEquals(Specialty.PEDIATRIC_ALLERGY_AND_IMMUNOLOGY, specialties.get(0));
+    Assert.assertEquals(1, cities.size());
+    Assert.assertEquals((Integer) 1, cities.get("Adolfo Gonzalez Chaves"));
   }
 }
