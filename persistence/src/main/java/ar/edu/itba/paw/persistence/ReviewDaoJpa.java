@@ -33,10 +33,13 @@ public class ReviewDaoJpa implements ReviewDao {
   @Override
   public Page<Review> getReviewsForDoctor(long doctorId, Integer page, Integer pageSize) {
     Query nativeQuery =
-        em.createNativeQuery("SELECT review_id FROM review WHERE doctor_id = " + doctorId);
+        em.createNativeQuery(
+            "SELECT review_id FROM review WHERE doctor_id = :doctorId ORDER BY review_date DESC, review_id DESC");
+    nativeQuery.setParameter("doctorId", doctorId);
 
     Query countQuery =
-        em.createNativeQuery("SELECT COUNT(*) FROM review WHERE doctor_id = " + doctorId);
+        em.createNativeQuery("SELECT COUNT(*) FROM review WHERE doctor_id = :doctorId");
+    countQuery.setParameter("doctorId", doctorId);
 
     if (page != null && page >= 0 && pageSize != null && pageSize > 0) {
       nativeQuery.setMaxResults(pageSize);
@@ -55,7 +58,8 @@ public class ReviewDaoJpa implements ReviewDao {
     }
 
     final TypedQuery<Review> query =
-        em.createQuery("from Review where id in :idList", Review.class);
+        em.createQuery(
+            "FROM Review WHERE id IN :idList ORDER BY date DESC, id DESC", Review.class);
     query.setParameter("idList", idList);
 
     List<Review> content = query.getResultList();
