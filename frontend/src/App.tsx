@@ -52,10 +52,10 @@ function App() {
   return (
     <HelmetProvider context={helmetContext}>
       <QueryClientProvider client={queryClient}>
-        <AuthProvider>
-          <UserProvider>
-            <SelectedTabProvider>
-              <DoctorQueryProvider>
+        <DoctorQueryProvider>
+          <AuthProvider>
+            <UserProvider>
+              <SelectedTabProvider>
                 <BrowserRouter basename="/paw-2023a-02">
                   <Layout>
                     <Suspense fallback={<Loader />}>
@@ -160,10 +160,10 @@ function App() {
                     </Suspense>
                   </Layout>
                 </BrowserRouter>
-              </DoctorQueryProvider>
-            </SelectedTabProvider>
-          </UserProvider>
-        </AuthProvider>
+              </SelectedTabProvider>
+            </UserProvider>
+          </AuthProvider>
+        </DoctorQueryProvider>
       </QueryClientProvider>
     </HelmetProvider>
   );

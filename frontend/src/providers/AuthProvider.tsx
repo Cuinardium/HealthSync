@@ -8,6 +8,7 @@ import { AuthContext } from "../context/AuthContext";
 import { queryClient } from "../api/queryClient";
 import { verifyUser } from "../api/token/tokenApi";
 import useLocale from "../hooks/useLocale";
+import {useDoctorQueryContext} from "../context/DoctorQueryContext";
 
 const REFRESH_TOKEN_KEY = "healthsync-refresh-token";
 
@@ -47,6 +48,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   );
 
   const { clearLocale } = useLocale();
+  const {resetQuery} = useDoctorQueryContext();
 
   const authenticated = !!accessToken;
 
@@ -93,6 +95,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     queryClient.clear();
 
     clearLocale();
+    resetQuery();
 
     localStorage.removeItem(REFRESH_TOKEN_KEY);
     sessionStorage.removeItem(REFRESH_TOKEN_KEY);

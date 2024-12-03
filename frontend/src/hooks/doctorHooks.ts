@@ -3,11 +3,13 @@ import {
   useInfiniteQuery,
   useMutation,
   useQuery,
+  useQueryClient,
 } from "@tanstack/react-query";
 import {
   createDoctor,
   getDoctorAttendingHours,
   getDoctorById,
+  getDoctorOccupiedHours,
   getDoctors,
   updateDoctor,
   updateDoctorAttendingHours,
@@ -19,6 +21,7 @@ import {
   DoctorQuery,
   DoctorRegisterForm,
   DoctorResponse,
+  OccupiedHours,
 } from "../api/doctor/Doctor";
 
 import { queryClient } from "../api/queryClient";
@@ -27,6 +30,9 @@ import { getHealthInsurance } from "../api/health-insurance/healthInsuranceApi";
 import { getSpecialty } from "../api/specialty/specialtyApi";
 import { HealthInsurance } from "../api/health-insurance/HealthInsurance";
 import { Specialty } from "../api/specialty/Specialty";
+import { useMemo } from "react";
+import { Day, DAYS, Time, TIMES } from "../api/time/Time";
+import { formatDate, parseLocalDate } from "../api/util/dateUtils";
 
 const STALE_TIME = 5 * 60 * 1000;
 
@@ -37,7 +43,10 @@ export function useDoctors(query: DoctorQuery) {
     {
       queryKey: ["doctors", query],
       queryFn: async ({ pageParam = 1 }) => {
-        const doctorResponsePage = await getDoctors({...query, page: pageParam});
+        const doctorResponsePage = await getDoctors({
+          ...query,
+          page: pageParam,
+        });
 
         // Add health insurances and specialty to each doctor
         const doctors = await Promise.all(
@@ -165,7 +174,110 @@ export function useUpdateAttendingHours(
   );
 }
 
-// ========= Utility Functions =========
+// =========== useOccupiedHours ===========
+
+export function useOccupiedHours(doctorId: string, from: Date, to: Date) {
+  return useQuery<OccupiedHours[], Error>(
+    {
+      queryKey: ["occupiedHours", doctorId, from, to],
+      queryFn: () => getDoctorOccupiedHours(doctorId, from, to),
+      enabled: !!doctorId,
+      staleTime: STALE_TIME,
+    },
+    queryClient,
+  );
+}
+
+// =========== useAvailableHours ===========
+
+type AvailableHoursMap = Record<string, string[]>;
+
+const generateDateRange = (start: Date, end: Date): Date[] => {
+  const dates: Date[] = [];
+  let current = new Date(start);
+  while (current <= end) {
+    dates.push(new Date(current));
+    current.setDate(current.getDate() + 1);
+  }
+  return dates;
+};
+
+async function fetchAvailableHours(
+  doctorId: string,
+  from: Date,
+  to: Date,
+): Promise<AvailableHoursMap> {
+  let attendingHours = queryClient.getQueryData<AttendingHours[]>([
+    "attendingHours",
+    doctorId,
+  ]);
+  if (!attendingHours) {
+    attendingHours = await getDoctorAttendingHours(doctorId);
+    queryClient.setQueryData(["attendingHours", doctorId], attendingHours);
+  }
+
+  const occupiedHours = await getDoctorOccupiedHours(doctorId, from, to);
+
+  const attendingMap: Record<Day, string[]> = attendingHours.reduce(
+    (map, entry) => {
+      map[entry.day] = entry.hours;
+      return map;
+    },
+    {} as Record<Day, string[]>,
+  );
+
+  const availableHoursMap: AvailableHoursMap = {};
+
+  const datesInRange = generateDateRange(from, to);
+
+  datesInRange.forEach((date) => {
+    let dayIndex = (date.getDay() - 1) % DAYS.length;
+    if (dayIndex < 0) {
+      dayIndex = DAYS.length - 1;
+    }
+    const dayOfWeek = DAYS[dayIndex]; // Get day name
+    const attendingHoursForDay = attendingMap[dayOfWeek] || [];
+
+    const dateKey = formatDate(date);
+
+    // Agrego las horas disponibles default
+    availableHoursMap[dateKey] = [...attendingHoursForDay];
+  });
+
+  // Saco las horas ocupadas por vacaciones o turnos
+  occupiedHours.forEach((entry) => {
+    const dateKey = formatDate(entry.date);
+    if (availableHoursMap[dateKey]) {
+      availableHoursMap[dateKey] = availableHoursMap[dateKey].filter(
+        (hour) => !entry.hours.includes(hour),
+      );
+    }
+  });
+
+  // Saco las horas que ya pasaron
+  const today = new Date();
+  const currentTime =
+    today.getHours() * 2 + Math.floor(today.getMinutes() / 30);
+  const todayKey = formatDate(today);
+
+  if (availableHoursMap[todayKey]) {
+    availableHoursMap[todayKey] = availableHoursMap[todayKey].filter((hour) => {
+      const hourIndex = TIMES.indexOf(hour as Time);
+      return hourIndex > currentTime;
+    });
+  }
+
+  return availableHoursMap;
+}
+
+export function useAvailableHours(doctorId: string, from: Date, to: Date) {
+  return useQuery<AvailableHoursMap, Error>({
+    queryKey: ["availableHours", doctorId, from, to],
+    queryFn: () => fetchAvailableHours(doctorId, from, to),
+    enabled: !!doctorId,
+    staleTime: 1000 * 60 * 5,
+  });
+} // ========= Utility Functions =========
 
 async function mapDoctorDetails(doctorResp: DoctorResponse): Promise<Doctor> {
   // Fetch specialty

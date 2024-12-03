@@ -59,19 +59,27 @@ export function useAppointment(id: string) {
 // ========== useCreateAppointment ==========
 
 export function useCreateAppointment(
-  onSuccess: () => void,
+  onSuccess: (appointmentId: number) => void,
   onError: (error: AxiosError) => void,
 ) {
   return useMutation<Appointment, AxiosError, AppointmentForm>(
     {
       mutationFn: (appointment: AppointmentForm) =>
         createAppointment(appointment),
-      onSuccess: () => {
+      onSuccess: (data) => {
         queryClient.invalidateQueries({
           queryKey: ["appointments"],
         });
 
-        onSuccess();
+        queryClient.invalidateQueries({
+          queryKey: ["occupiedHours", data.doctorId],
+        });
+
+        queryClient.invalidateQueries({
+          queryKey: ["availableHours", data.doctorId],
+        });
+
+        onSuccess(data.id);
       },
       onError: (error) => {
         onError(error);
@@ -98,7 +106,7 @@ export function useCancelAppointment(
         });
 
         queryClient.invalidateQueries({
-            queryKey: ["appointments"],
+          queryKey: ["appointments"],
         });
 
         onSuccess();

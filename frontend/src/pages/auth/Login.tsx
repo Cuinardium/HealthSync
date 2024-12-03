@@ -54,7 +54,9 @@ const Login = () => {
 
       await login(email, password, rememberMe);
 
-      navigate(from, { replace: true });
+      const prevState = location.state;
+
+      navigate(from, { replace: true, state: prevState });
     } catch (err) {
       setError("root", {
         message: "",

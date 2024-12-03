@@ -22,6 +22,11 @@ export interface OccupiedHours {
   hours: string[];
 }
 
+export interface OccupiedHoursResponse {
+  date: string;
+  hours: string[];
+}
+
 export interface AttendingHours {
   day: Day;
   hours: Time[];

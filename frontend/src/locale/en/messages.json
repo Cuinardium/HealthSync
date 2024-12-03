@@ -39,23 +39,16 @@
   "appointment": {
     "title": "Get your appointment",
     "submit": "Create Appointment",
+    "submitting": "Creating...",
     "successfull": {
       "modal": {
         "title": "Appointment Booked",
-        "text": [
-          "Your appointment was booked successfully",
-          "you can now view it in your appointments"
-        ],
-        "button": "Go to your appointments"
+        "text": "Your appointment was booked successfully, you can now view it in your appointments",
+        "button": "Go to appointment"
       }
     },
-    "error": {
-      "modal": {
-        "title": "Appointment Denied",
-        "text": "You cant book an appointment without description",
-        "button": "Close"
-      }
-    },
+    "doctorNotAvailable": "The doctor is not available at the selected time",
+    "submitError": "An error occurred while booking the appointment",
     "cancel": "Cancel",
     "doctor": "Doctor",
     "patient": "Patient",
@@ -329,6 +322,7 @@
     "rating": "Rating",
     "submit": "Submit Review",
     "submitting": "Submitting...",
+    "error": "An error occurred",
     "modal": {
       "title": "Review Sent",
       "text": "Your review was sent successfully",
@@ -368,7 +362,7 @@
     "address": "Address:",
     "insurances": "Health Insurances",
     "insurance": "Health Insurance",
-    "availability": "Availability",
+    "availability": "Available Appointments",
     "confirmAppointment": "Confirm Appointment",
     "reviews": "Reviews",
     "noAppointmentsAvailable": "There are no available appintments for the selected date",
@@ -780,6 +774,12 @@
       "rating": {
         "required": "Rating is required.",
         "invalid": "Rating must be between 1 and 5."
+      }
+    },
+    "appointment": {
+      "description": {
+        "required": "Description is required.",
+        "size": "Description must be between 1 and 1000 characters."
       }
     }
   }

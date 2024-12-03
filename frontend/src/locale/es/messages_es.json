@@ -39,23 +39,16 @@
   "appointment": {
     "title": "Reserva tu turno",
     "submit": "Crear Turno",
+    "submitting": "Creando...",
     "successfull": {
       "modal": {
         "title": "Turno Reservado",
-        "text": [
-          "Tu turno fue reservado exitosamente",
-          "ahora podes verlo dentro de tus turnos"
-        ],
-        "button": "Ir a tus turnos"
+        "text": "Tu turno fue reservado exitosamente, ahora podes verlo dentro de tus turnos",
+        "button": "Ir al turno"
       }
     },
-    "error": {
-      "modal": {
-        "title": "Turno denegado",
-        "text": "No podes reservar un turno sin descripción",
-        "button": "Cerrar"
-      }
-    },
+    "doctorNotAvailable": "El doctor no está disponible en ese horario",
+    "submitError": "Hubo un error al reservar el turno",
     "cancel": "Cancelar",
     "doctor": "Doctor",
     "patient": "Paciente",
@@ -370,7 +363,7 @@
     "address": "Dirección:",
     "insurances": "Obras sociales",
     "insurance": "Obra social",
-    "availability": "Disponibilidad",
+    "availability": "Turnos Disponibles",
     "confirmAppointment": "Confirmar Turno",
     "reviews": "Reseñas",
     "noAppointmentsAvailable": "No hay turnos disponibles para la fecha seleccionada",
@@ -782,6 +775,12 @@
       "rating": {
         "required": "La calificación es obligatoria.",
         "invalid": "La descripción debe tener entre 1 y 5 estrellas."
+      }
+    },
+    "appointment": {
+      "description": {
+        "required": "La descripción es obligatoria.",
+        "size": "La descripción debe tener entre 1 y 1000 caracteres."
       }
     }
   }

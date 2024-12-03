@@ -1,107 +1,235 @@
 import { AxiosError } from "axios";
-import { useState } from "react";
+import React, { useState } from "react";
 import { useCreateAppointment } from "../../hooks/appointmentHooks";
 import { AppointmentForm as AppointmentFormType } from "../../api/appointment/Appointment";
-import { TIMES } from "../../api/time/Time";
-import { Button, Col, Form, Row } from "react-bootstrap";
+import {
+  Alert,
+  Button,
+  Col,
+  Form,
+  Modal,
+  Row,
+  Spinner,
+  Stack,
+} from "react-bootstrap";
+import { SubmitHandler, useForm } from "react-hook-form";
+import { useTranslation } from "react-i18next";
+import { formatDatePretty } from "../../api/util/dateUtils";
+import { Link } from "react-router-dom";
+import { validateAppointmentDescription } from "../../api/validation/validations";
+import { Doctor } from "../../api/doctor/Doctor";
+import { Patient } from "../../api/patient/Patient";
 
 interface AppointmentFormProps {
-  doctorId: string;
+  doctor: Doctor;
+  user?: Patient;
+  date: Date;
+  time: string;
+  show: boolean;
+  onHide: () => void;
 }
 
-const AppointmentForm: React.FC<AppointmentFormProps> = ({ doctorId }) => {
-  const [newAppointment, setNewAppointment] = useState<AppointmentFormType>({
-    date: new Date(),
-    timeBlock: "",
-    description: "",
-    doctorId: Number(doctorId),
+const AppointmentForm: React.FC<AppointmentFormProps> = ({
+  doctor,
+  user,
+  date,
+  time,
+  show,
+  onHide,
+}) => {
+  const { t } = useTranslation();
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    setError,
+    reset,
+    setValue,
+  } = useForm<AppointmentFormType>({
+    defaultValues: {
+      description: "",
+    },
   });
 
-  // TODO
-  const onSuccess = () => {
-    alert("Appointment created succesfully");
+  const [showSuccess, setShowSuccess] = useState<boolean>(false);
+  const [appointmentId, setAppointmentId] = useState<number>();
+
+  const [showAreYouSure, setShowAreYouSure] = useState<boolean>(() => {
+    if (!user) {
+      return false;
+    }
+
+    const hasSameHealthInsurance = doctor.healthInsurances.some(
+      (hi) => hi === user.healthInsurance,
+    );
+    return !hasSameHealthInsurance;
+  });
+
+  const onSuccess = (appointmentId: number) => {
+    handleHide();
+    setShowSuccess(true);
+    setAppointmentId(appointmentId);
   };
 
   const onError = (error: AxiosError) => {
-    alert(
-      `Error creating appointment: ${error.message}, ${JSON.stringify(error.response?.data)}`,
-    );
+    if (error.response?.status === 409) {
+      setError("root", {
+        message: "appointment.doctorNotAvailable",
+      });
+    } else {
+      setError("root", {
+        message: "appointment.submitError",
+      });
+    }
+    // Call onHide after 2 seconds
+    setTimeout(() => {
+      handleHide();
+    }, 2000);
   };
 
   const appointmentMutation = useCreateAppointment(onSuccess, onError);
 
-  const handleCreateAppointment = () => {
-    appointmentMutation.mutate(newAppointment);
+  const handleCreateAppointment: SubmitHandler<AppointmentFormType> = (
+    data: AppointmentFormType,
+  ) => {
+    data.date = date;
+    data.timeBlock = time;
+    data.doctorId = doctor.id;
+
+    appointmentMutation.mutate(data);
+  };
+
+  const handleHide = () => {
+    setValue("description", "");
+    reset();
+    onHide();
   };
 
   return (
-    <Form
-      onSubmit={(e) => {
-        e.preventDefault();
-        handleCreateAppointment();
-      }}
-    >
-      <Row className="mb-3">
-        <Form.Group as={Col} controlId="date">
-          <Form.Label>Date</Form.Label>
-          <Form.Control
-            type="date"
-            value={newAppointment.date.toISOString().split("T")[0]}
-            onChange={(e) =>
-              setNewAppointment((prev) => ({
-                ...prev,
-                date: new Date(e.target.value),
-              }))
-            }
-          />
-        </Form.Group>
-      </Row>
+    <div>
+      <Modal show={show} onHide={handleHide}>
+        {showAreYouSure && (
+          <>
+            <Modal.Header closeButton>
+              <Modal.Title>{t("doctorDashboard.modal.title")}</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+              <h5 className="text-muted mb-3">
+                {t("doctorDashboard.modal.desc")}
+              </h5>
+              <Stack direction="horizontal">
+                <Button
+                  variant="primary"
+                  onClick={() => setShowAreYouSure(false)}
+                  className="ms-auto me-2"
+                >
+                  {t("doctorDashboard.modal.confirm")}
+                </Button>
+                <Button variant="secondary" onClick={handleHide}>
+                  {t("doctorDashboard.modal.deny")}
+                </Button>
+              </Stack>
+            </Modal.Body>
+          </>
+        )}
+        {!showAreYouSure && (
+          <>
+            <Modal.Header closeButton>
+              <Modal.Title>{t("appointment.title")}</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+              <Form onSubmit={handleSubmit(handleCreateAppointment)}>
+                <Row>
+                  <Col>
+                    <Form.Group className="mb-3" controlId="date">
+                      <Form.Label>{t("form.date")}</Form.Label>
+                      <Form.Control
+                        type="text"
+                        placeholder={formatDatePretty(date)}
+                        disabled
+                      />
+                    </Form.Group>
+                  </Col>
+                  <Col>
+                    <Form.Group className="mb-3" controlId="timeBlock">
+                      <Form.Label>{t("form.hour")}</Form.Label>
+                      <Form.Control type="text" placeholder={time} disabled />
+                    </Form.Group>
+                  </Col>
+                </Row>
+                <Form.Group className="mb-3" controlId="description">
+                  <Form.Label>{t("form.desc")}</Form.Label>
+                  <Form.Control
+                    as="textarea"
+                    cols={5}
+                    placeholder={t("form.desc_hint")}
+                    {...register("description", {
+                      validate: validateAppointmentDescription,
+                    })}
+                    isInvalid={!!errors.description}
+                  />
+                  <Form.Control.Feedback type="invalid">
+                    {errors.description && t(errors.description?.message ?? "")}
+                  </Form.Control.Feedback>
+                </Form.Group>
 
-      <Row className="mb-3">
-        <Form.Group as={Col} controlId="time">
-          <Form.Label>Time</Form.Label>
-          <Form.Control
-            as="select"
-            value={newAppointment.timeBlock}
-            onChange={(e) =>
-              setNewAppointment((prev) => ({
-                ...prev,
-                timeBlock: e.target.value,
-              }))
-            }
+                {errors.root && (
+                  <Alert variant="danger" className="mb-3">
+                    {t(errors.root?.message ?? "")}
+                  </Alert>
+                )}
+
+                <Stack direction="horizontal">
+                  <Button
+                    variant="primary"
+                    type="submit"
+                    disabled={appointmentMutation.isPending}
+                    className="ms-auto"
+                  >
+                    {appointmentMutation.isPending ? (
+                      <>
+                        <Spinner
+                          as="span"
+                          animation="border"
+                          size="sm"
+                          role="status"
+                          aria-hidden="true"
+                        />{" "}
+                        {t("appointment.submitting")}
+                      </>
+                    ) : (
+                      t("appointment.submit")
+                    )}
+                  </Button>
+                </Stack>
+              </Form>
+            </Modal.Body>
+          </>
+        )}
+      </Modal>
+
+      <Modal show={showSuccess} onHide={handleHide}>
+        <Modal.Header closeButton>
+          <Modal.Title>{t("appointment.successfull.modal.title")}</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <h5 className="text-muted">
+            {t("appointment.successfull.modal.text")}
+          </h5>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button
+            as={Link as any}
+            variant="outline-primary"
+            to={`/detailed-appointment/${appointmentId}`}
+            disabled={!appointmentId}
           >
-            <option value="">Time</option>
-            {TIMES.map((time) => (
-              <option key={time} value={time}>
-                {time}
-              </option>
-            ))}
-          </Form.Control>
-        </Form.Group>
-      </Row>
-
-      <Form.Group className="mb-3" controlId="description">
-        <Form.Label>Description</Form.Label>
-        <Form.Control
-          type="text"
-          placeholder="Enter reason"
-          value={newAppointment.description}
-          onChange={(e) =>
-            setNewAppointment((prev) => ({
-              ...prev,
-              description: e.target.value,
-            }))
-          }
-        />
-      </Form.Group>
-      <Button
-        variant="primary"
-        type="submit"
-        disabled={appointmentMutation.isPending}
-      >
-        {appointmentMutation.isPending ? "Creating..." : "Create Appointment"}
-      </Button>
-    </Form>
+            {t("appointment.successfull.modal.button")}
+          </Button>
+        </Modal.Footer>
+      </Modal>
+    </div>
   );
 };
 

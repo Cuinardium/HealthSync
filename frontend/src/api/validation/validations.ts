@@ -329,3 +329,18 @@ export function validateReviewRating(rating: number | null): string | true {
 
   return true;
 }
+
+export function validateAppointmentDescription(
+    description: string | null | undefined,
+): string | true {
+  if (!description || description.trim() === "") {
+    return "validation.appointment.description.required";
+  }
+
+  if (description.length < 1 || description.length > 1000) {
+    return "validation.appointment.description.size";
+  }
+
+  return true;
+}
+

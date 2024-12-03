@@ -1,20 +1,29 @@
-import { Link, useNavigate, useParams } from "react-router-dom";
-import { Breadcrumb, Card, Col, Container, Image } from "react-bootstrap";
+import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
+import { Breadcrumb, Col, Container } from "react-bootstrap";
 import { useDoctor } from "../../hooks/doctorHooks";
 
-import doctorDefault from "../../img/doctorDefault.png";
 import ReviewList from "../../components/reviews/ReviewList";
 import { useState } from "react";
-import ReviewForm from "../../components/reviews/ReviewForm";
 import { useUser } from "../../context/UserContext";
 import AppointmentForm from "../../components/appointments/AppointmentForm";
 import { useTranslation } from "react-i18next";
 import DetailedDoctorCard from "../../components/doctors/DetailedDoctorCard";
+import DoctorCalendar from "../../components/doctors/DoctorCalendar";
+import {Patient} from "../../api/patient/Patient";
+
+interface LocationState {
+  from: Location;
+  selectedDate: Date;
+  selectedTime: string;
+  doctorId: string;
+}
 
 const DoctorDetails: React.FC = () => {
   const { id: doctorId } = useParams<{ id: string }>(); // get the doctor id from the URL
   const navigate = useNavigate();
   const { t } = useTranslation();
+
+  const location = useLocation();
 
   const {
     data: doctor,
@@ -24,6 +33,43 @@ const DoctorDetails: React.FC = () => {
   } = useDoctor(doctorId as string);
 
   const { user, isDoctor, loading } = useUser();
+
+  const [selectedDate, setSelectedDate] = useState<Date | null>(() => {
+    const state = location.state as LocationState;
+
+    if (state && state.selectedDate && state.doctorId === doctorId) {
+      return state.selectedDate;
+    }
+
+    return null;
+  });
+  const [selectedTime, setSelectedTime] = useState<string | null>(() => {
+    const state = location.state as LocationState;
+
+    if (state && state.selectedTime && state.doctorId === doctorId) {
+      return state.selectedTime;
+    }
+
+    return null;
+  });
+
+  const [showAppointmentForm, setShowAppointmentForm] = useState<boolean>(
+    () => {
+      const state = location.state as LocationState;
+
+      console.log(state);
+      console.log(user);
+      console.log(isDoctor);
+
+      return !!(
+        state &&
+        state.selectedDate &&
+        state.doctorId === doctorId &&
+        user &&
+        !isDoctor
+      );
+    },
+  );
 
   if (
     !doctor ||
@@ -66,13 +112,47 @@ const DoctorDetails: React.FC = () => {
         </Breadcrumb>
         <h1>{t("detailedDoctor.title")}</h1>
         <DetailedDoctorCard doctor={doctor} />
-        {user && !isDoctor && (
-          <Card className="mb-3">
-            <Card.Body>
-              <AppointmentForm doctorId={doctorId} />
-            </Card.Body>
-          </Card>
+
+        {(!user || !isDoctor) && (
+          <>
+            {selectedDate && selectedTime && (
+              <AppointmentForm
+                doctor={doctor}
+                user={user as Patient ?? undefined}
+                date={selectedDate}
+                time={selectedTime}
+                show={showAppointmentForm}
+                onHide={() => setShowAppointmentForm(false)}
+              />
+            )}
+
+            <div className="mt-3 mb-3">
+              <h2 className="mb-3">{t("detailedDoctor.availability")}</h2>
+              <DoctorCalendar
+                doctorId={doctorId}
+                initialDate={selectedDate ?? undefined}
+                onSelected={(date, time) => {
+                  setSelectedDate(date);
+                  setSelectedTime(time);
+
+                  if (user && !isDoctor) {
+                    setShowAppointmentForm(true);
+                  } else if (!user) {
+                    navigate("/login", {
+                      state: {
+                        from: location,
+                        selectedDate: date,
+                        selectedTime: time,
+                        doctorId: doctorId,
+                      },
+                    });
+                  }
+                }}
+              />
+            </div>
+          </>
         )}
+
         <ReviewList doctorId={doctorId} canReview={doctor.canReview} />
       </Col>
     </Container>
