@@ -89,15 +89,6 @@ const Header: React.FC<HeaderProps> = ({
         {user ? (
           <nav className="navbar navbar-expand-lg">
             <div className="container-fluid">
-              {isDoctor ? (
-                <>
-                  <FaUserNurse className="iconIdentifier" />
-                </>
-              ) : (
-                <>
-                  <FaUser className="iconIdentifier" />
-                </>
-              )}
               <div id="profileDropdown">
                 <ul className="navbar-nav">
                   <li className="nav-item dropdown">
