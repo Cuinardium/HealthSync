@@ -3,8 +3,6 @@ import {
   Card,
   Placeholder,
   Stack,
-  Badge,
-  Button,
   Col,
   Row,
 } from "react-bootstrap";

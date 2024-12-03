@@ -10,6 +10,7 @@ import { useTranslation } from "react-i18next";
 import DetailedDoctorCard from "../../components/doctors/DetailedDoctorCard";
 import DoctorCalendar from "../../components/doctors/DoctorCalendar";
 import { Patient } from "../../api/patient/Patient";
+import DetailedDoctorCardPlaceholder from "../../components/doctors/DetailedDoctorCardPlaceholder";
 
 interface LocationState {
   from: Location;
@@ -82,11 +83,6 @@ const DoctorDetails: React.FC = () => {
     }
   }, [isError, error, navigate]);
 
-  if (isLoading || loading || !doctor) {
-    // TODO
-    return <div>Loading...</div>;
-  }
-
   return (
     <Container className="d-flex justify-content-center align-items-center mt-5 mb-5">
       <Col md={9} lg={9}>
@@ -100,7 +96,7 @@ const DoctorDetails: React.FC = () => {
           <Breadcrumb.Item active>{t("detailedDoctor.title")}</Breadcrumb.Item>
         </Breadcrumb>
         <h1>{t("detailedDoctor.title")}</h1>
-        <DetailedDoctorCard doctor={doctor} />
+        {(isLoading || loading || !doctor) ? <DetailedDoctorCardPlaceholder/>  : <DetailedDoctorCard doctor={doctor} />}
 
         {doctor && doctorId && (
           <>

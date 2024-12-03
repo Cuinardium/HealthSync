@@ -1,6 +1,6 @@
 import React from "react";
-import { Button, Card, Image, Stack, Badge, Row, Col } from "react-bootstrap";
-import { Link, useNavigate } from "react-router-dom";
+import { Card, Image, Stack, Row, Col } from "react-bootstrap";
+import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import Rating from "./Rating";
 import { Doctor } from "../../api/doctor/Doctor";
@@ -13,7 +13,6 @@ import {
   FaCity,
   FaLocationDot,
   FaMapLocationDot,
-  FaMapPin,
 } from "react-icons/fa6";
 import { FaEnvelope } from "react-icons/fa";
 
