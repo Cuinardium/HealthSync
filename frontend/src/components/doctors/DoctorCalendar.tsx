@@ -2,10 +2,9 @@ import { Time } from "../../api/time/Time";
 import Calendar, { OnArgs, TileDisabledFunc } from "react-calendar";
 import "react-calendar/dist/Calendar.css";
 import { useTranslation } from "react-i18next";
-import { useUser } from "../../context/UserContext";
 import { useAvailableHours } from "../../hooks/doctorHooks";
-import {formatDate, formatDatePretty, formatDatePrettyLong} from "../../api/util/dateUtils";
-import { useState } from "react";
+import {formatDate, formatDatePrettyLong} from "../../api/util/dateUtils";
+import React, { useState } from "react";
 import { Alert, Card, Col, Row } from "react-bootstrap";
 import { useDoctorQueryContext } from "../../context/DoctorQueryContext";
 import useLocale from "../../hooks/useLocale";
@@ -21,8 +20,6 @@ const DoctorCalendar: React.FC<DoctorCalendarProps> = ({
   onSelected,
   initialDate,
 }) => {
-  const { user } = useUser();
-
   const { t } = useTranslation();
 
   const { query } = useDoctorQueryContext();

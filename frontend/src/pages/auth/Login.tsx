@@ -61,8 +61,6 @@ const Login = () => {
       setError("root", {
         message: "",
       });
-      const a = err instanceof UserNotVerifiedError;
-      console.log(a);
       setIsVerifiedError(err instanceof UserNotVerifiedError);
     }
   };

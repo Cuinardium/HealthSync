@@ -57,10 +57,6 @@ const DoctorDetails: React.FC = () => {
     () => {
       const state = location.state as LocationState;
 
-      console.log(state);
-      console.log(user);
-      console.log(isDoctor);
-
       return !!(
         state &&
         state.selectedDate &&

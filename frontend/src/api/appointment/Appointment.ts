@@ -43,3 +43,17 @@ export interface AppointmentResponse {
   timeBlock: string;
   links: Link[];
 }
+
+export class PatientNotAvailable extends Error {
+  constructor() {
+    super("Patient is not available for the selected date and time.");
+    this.name = "PatientNotAvailable";
+  }
+}
+
+export class DoctorNotAvailable extends Error {
+  constructor() {
+    super("Doctor is not available for the selected date and time.");
+    this.name = "DoctorNotAvailable";
+  }
+}

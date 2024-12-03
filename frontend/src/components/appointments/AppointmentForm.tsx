@@ -1,7 +1,11 @@
 import { AxiosError } from "axios";
 import React, { useState } from "react";
 import { useCreateAppointment } from "../../hooks/appointmentHooks";
-import { AppointmentForm as AppointmentFormType } from "../../api/appointment/Appointment";
+import {
+  AppointmentForm as AppointmentFormType,
+  DoctorNotAvailable,
+  PatientNotAvailable,
+} from "../../api/appointment/Appointment";
 import {
   Alert,
   Button,
@@ -72,10 +76,15 @@ const AppointmentForm: React.FC<AppointmentFormProps> = ({
     setAppointmentId(appointmentId);
   };
 
-  const onError = (error: AxiosError) => {
-    if (error.response?.status === 409) {
+  const onError = (error: Error) => {
+    console.log(error)
+    if (error instanceof DoctorNotAvailable) {
       setError("root", {
         message: "appointment.doctorNotAvailable",
+      });
+    } else if (error instanceof PatientNotAvailable) {
+      setError("root", {
+        message: "appointment.patientNotAvailable",
       });
     } else {
       setError("root", {

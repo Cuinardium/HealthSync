@@ -4,7 +4,7 @@ import {
   Appointment,
   AppointmentForm,
   AppointmentQuery,
-  AppointmentResponse,
+  AppointmentResponse, DoctorNotAvailable, PatientNotAvailable,
 } from "./Appointment";
 import {formatDate, parseLocalDate} from "../util/dateUtils";
 
@@ -39,7 +39,7 @@ export async function getAppointments(
     headers: { Accept: APPOINTMENT_LIST_CONTENT_TYPE },
   });
 
-  if (response.status == 200) {
+  if (response.status === 200) {
     // Set date to Date object
     response.data = response.data?.map((review: AppointmentResponse) =>
       mapDetails(review),
@@ -57,14 +57,31 @@ export async function createAppointment(
     date: formatDate(appointment.date),
   };
 
-  const response = await axios.post(APPOINTMENT_ENDPOINT, body, {
-    headers: { "Content-Type": APPOINTMENT_CONTENT_TYPE },
-  });
+  try {
 
-  const location = response.headers.location;
-  const appointmentId = location?.split("/").pop();
+    const response = await axios.post(APPOINTMENT_ENDPOINT, body, {
+      headers: { "Content-Type": APPOINTMENT_CONTENT_TYPE },
+    });
 
-  return await getAppointment(appointmentId as string);
+    const location = response.headers.location;
+    const appointmentId = location?.split("/").pop();
+    return await getAppointment(appointmentId as string);
+
+  } catch (error: any) {
+
+    if (error.response?.status === 409) {
+      console.log(error)
+      if (error.response.data?.message.toLowerCase().includes("doctor")) {
+        console.log("DoctorNotAvailable")
+        throw new DoctorNotAvailable();
+      } else {
+        console.log("PatientNotAvailable")
+        throw new PatientNotAvailable();
+      }
+    }
+
+    throw error;
+  }
 }
 
 // =========== appointments/id ==============

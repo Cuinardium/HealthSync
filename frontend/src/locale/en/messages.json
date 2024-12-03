@@ -48,6 +48,7 @@
       }
     },
     "doctorNotAvailable": "The doctor is not available at the selected time",
+    "patientNotAvailable": "You already have an appointment at the selected time",
     "submitError": "An error occurred while booking the appointment",
     "cancel": "Cancel",
     "doctor": "Doctor",

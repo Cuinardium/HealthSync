@@ -60,9 +60,9 @@ export function useAppointment(id: string) {
 
 export function useCreateAppointment(
   onSuccess: (appointmentId: number) => void,
-  onError: (error: AxiosError) => void,
+  onError: (error: Error) => void,
 ) {
-  return useMutation<Appointment, AxiosError, AppointmentForm>(
+  return useMutation<Appointment, Error, AppointmentForm>(
     {
       mutationFn: (appointment: AppointmentForm) =>
         createAppointment(appointment),

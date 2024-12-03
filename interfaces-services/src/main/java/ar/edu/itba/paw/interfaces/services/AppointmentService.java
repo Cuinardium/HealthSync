@@ -18,6 +18,7 @@ public interface AppointmentService {
       throws DoctorNotFoundException,
           PatientNotFoundException,
           DoctorNotAvailableException,
+          PatientNotAvailableException,
           AppointmentInPastException;
 
   // =============== Updates ===============

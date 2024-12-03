@@ -48,6 +48,7 @@
       }
     },
     "doctorNotAvailable": "El doctor no está disponible en ese horario",
+    "patientNotAvailable": "Usted ya tiene un turno reservado en ese horario",
     "submitError": "Hubo un error al reservar el turno",
     "cancel": "Cancelar",
     "doctor": "Doctor",

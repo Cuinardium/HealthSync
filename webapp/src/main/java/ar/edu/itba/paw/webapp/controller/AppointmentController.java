@@ -86,6 +86,7 @@ public class AppointmentController {
       throws DoctorNotAvailableException,
           DoctorNotFoundException,
           PatientNotFoundException,
+          PatientNotAvailableException,
           AppointmentInPastException {
 
     LOGGER.debug("Creating appointment: {}", appointmentForm);

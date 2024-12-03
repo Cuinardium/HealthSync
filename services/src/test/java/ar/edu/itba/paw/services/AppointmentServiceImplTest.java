@@ -182,7 +182,7 @@ public class AppointmentServiceImplTest {
   @Test
   public void testCreateAppointment()
       throws DoctorNotFoundException, PatientNotFoundException, DoctorNotAvailableException,
-          AppointmentAlreadyExistsException, AppointmentInPastException {
+          AppointmentAlreadyExistsException, AppointmentInPastException, PatientNotAvailableException {
     // 1. Precondiciones
     // Mock doctorService
     Mockito.when(doctorService.getDoctorById(DOCTOR_ID)).thenReturn(Optional.of(DOCTOR));
@@ -220,7 +220,7 @@ public class AppointmentServiceImplTest {
 
   @Test(expected = AppointmentInPastException.class)
     public void testCreateAppointmentInPastYesterday()
-        throws DoctorNotFoundException, PatientNotFoundException, DoctorNotAvailableException, AppointmentInPastException {
+        throws DoctorNotFoundException, PatientNotFoundException, DoctorNotAvailableException, AppointmentInPastException, PatientNotAvailableException {
         // 1. Precondiciones
 
         // 2. Ejercitar la class under test
@@ -230,7 +230,7 @@ public class AppointmentServiceImplTest {
 
     @Test(expected = AppointmentInPastException.class)
     public void testCreateAppointmentInPastToday()
-        throws DoctorNotFoundException, PatientNotFoundException, DoctorNotAvailableException, AppointmentInPastException {
+        throws DoctorNotFoundException, PatientNotFoundException, DoctorNotAvailableException, AppointmentInPastException, PatientNotAvailableException {
         // 1. Precondiciones
 
         // 2. Ejercitar la class under test
@@ -240,7 +240,7 @@ public class AppointmentServiceImplTest {
 
   @Test(expected = DoctorNotFoundException.class)
   public void testCreateAppointmentUnexistingDoctor()
-      throws DoctorNotFoundException, PatientNotFoundException, DoctorNotAvailableException, AppointmentInPastException {
+      throws DoctorNotFoundException, PatientNotFoundException, DoctorNotAvailableException, AppointmentInPastException, PatientNotAvailableException {
     // 1. Precondiciones
 
     // Mock doctorService
@@ -253,7 +253,7 @@ public class AppointmentServiceImplTest {
 
   @Test(expected = PatientNotFoundException.class)
   public void testCreateAppointmentUnexistingPatient()
-      throws DoctorNotFoundException, PatientNotFoundException, DoctorNotAvailableException, AppointmentInPastException {
+      throws DoctorNotFoundException, PatientNotFoundException, DoctorNotAvailableException, AppointmentInPastException, PatientNotAvailableException {
     // 1. Precondiciones
 
     // Mock doctorService
@@ -269,7 +269,7 @@ public class AppointmentServiceImplTest {
 
   @Test(expected = DoctorNotAvailableException.class)
   public void testCreateAppointmentInUnavailableTime()
-      throws DoctorNotFoundException, PatientNotFoundException, DoctorNotAvailableException, AppointmentInPastException {
+      throws DoctorNotFoundException, PatientNotFoundException, DoctorNotAvailableException, AppointmentInPastException, PatientNotAvailableException {
     // 1. Precondiciones
 
     // Mock doctorService
@@ -294,7 +294,7 @@ public class AppointmentServiceImplTest {
 
   @Test(expected = DoctorNotAvailableException.class)
   public void testCreateAppointmentAlreadyTaken()
-      throws DoctorNotFoundException, PatientNotFoundException, DoctorNotAvailableException, AppointmentInPastException {
+      throws DoctorNotFoundException, PatientNotFoundException, DoctorNotAvailableException, AppointmentInPastException, PatientNotAvailableException {
     // 1. Precondiciones
 
     // Mock doctorService
@@ -319,7 +319,7 @@ public class AppointmentServiceImplTest {
   @Test
   public void testCreateAppointmentAlreadyTakenByCancelledAppointment()
       throws DoctorNotFoundException, PatientNotFoundException, DoctorNotAvailableException,
-          AppointmentAlreadyExistsException, AppointmentInPastException {
+          AppointmentAlreadyExistsException, AppointmentInPastException, PatientNotAvailableException {
     // 1. Precondiciones
 
     // Mock doctorService

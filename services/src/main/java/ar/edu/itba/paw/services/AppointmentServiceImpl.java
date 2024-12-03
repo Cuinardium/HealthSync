@@ -56,6 +56,7 @@ public class AppointmentServiceImpl implements AppointmentService {
       throws DoctorNotFoundException,
           PatientNotFoundException,
           DoctorNotAvailableException,
+          PatientNotAvailableException,
           AppointmentInPastException {
 
     LocalDate today = LocalDate.now();
@@ -77,6 +78,20 @@ public class AppointmentServiceImpl implements AppointmentService {
     Patient patient =
         patientService.getPatientById(patientId).orElseThrow(PatientNotFoundException::new);
 
+    List<Appointment> patientAppointmentsInDate =
+        appointmentDao
+            .getFilteredAppointments(
+                patientId, AppointmentStatus.CONFIRMED, date, date, null, null, true, true)
+            .getContent();
+
+    boolean isPatientOccupied =
+        patientAppointmentsInDate.stream()
+            .anyMatch(appointment -> appointment.getTimeBlock().equals(timeBlock));
+
+    if (isPatientOccupied) {
+      throw new PatientNotAvailableException();
+    }
+
     if (!getAvailableHoursForDoctorOnDate(doctorId, date).contains(timeBlock)) {
       throw new DoctorNotAvailableException();
     }
@@ -86,7 +101,6 @@ public class AppointmentServiceImpl implements AppointmentService {
       Appointment appointment =
           appointmentDao.createAppointment(patient, doctor, date, timeBlock, description);
 
-      // TODO: locale should be determined by the user's language
       mailService.sendAppointmentRequestMail(appointment);
       mailService.sendAppointmentReminderMail(appointment);
 
