@@ -9,6 +9,7 @@ import { useAuth } from "../../context/AuthContext";
 import { useUser } from "../../context/UserContext";
 import { useTranslation } from "react-i18next";
 import AppointmentCardPlaceholder from "./AppointmentCardPlaceholder";
+import {formatDatePretty} from "../../api/util/dateUtils";
 
 interface AppointmentProps {
   appointment: Appointment;
@@ -52,7 +53,7 @@ const AppointmentCard: React.FC<AppointmentProps> = ({
           {/* Date and Time */}
           <div className={"d-flex flex-row align-items-center"}>
             <h5 className="mb-0">
-              {appointment.date.toLocaleDateString("en-GB")}{" "}
+              {formatDatePretty(appointment.date)}{" "}
               <Badge className="ms-1" bg="primary">
                 {appointment.timeBlock}
               </Badge>

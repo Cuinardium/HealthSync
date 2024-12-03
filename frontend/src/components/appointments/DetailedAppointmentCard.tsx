@@ -9,6 +9,8 @@ import { useUser } from "../../context/UserContext";
 import { useTranslation } from "react-i18next";
 import AppointmentCardPlaceholder from "./AppointmentCardPlaceholder";
 import { FaFileLines, FaUser } from "react-icons/fa6";
+import useLocale from "../../hooks/useLocale";
+import {formatDatePrettyLong} from "../../api/util/dateUtils";
 
 interface AppointmentProps {
   appointment: Appointment;
@@ -23,6 +25,7 @@ const DetailedAppointmentCard: React.FC<AppointmentProps> = ({
   selected = false,
 }) => {
   const { t } = useTranslation();
+  const { locale } = useLocale();
 
   const color =
     appointment.status === "CANCELLED"
@@ -57,7 +60,7 @@ const DetailedAppointmentCard: React.FC<AppointmentProps> = ({
           {/* Date and Time */}
           <div className={"d-flex flex-row align-items-center"}>
             <h5 className="mb-0">
-              {appointment.date.toLocaleDateString("en-GB")}{" "}
+              {formatDatePrettyLong(appointment.date, locale)}{" "}
               <Badge className="ms-1" bg="primary">
                 {appointment.timeBlock}
               </Badge>

@@ -98,7 +98,7 @@ const VacationForm: React.FC<VacationFormProps> = ({ doctorId }) => {
     if (toDate && fromDate && new Date(toDate) < new Date(fromDate)) {
       resetField("toDate");
     }
-  }, [fromDate, toDate, setValue]);
+  }, [resetField, fromDate, toDate, setValue]);
 
   useEffect(() => {
     if (

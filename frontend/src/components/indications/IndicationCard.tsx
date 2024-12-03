@@ -1,6 +1,7 @@
 import React from "react";
 import { Card } from "react-bootstrap";
 import { IndicationWithFileData } from "../../hooks/indicationHooks";
+import {formatDatePretty} from "../../api/util/dateUtils";
 
 interface IndicationCardProps {
   indication: IndicationWithFileData;
@@ -43,7 +44,7 @@ const IndicationCard: React.FC<IndicationCardProps> = ({
       <div
         className={isCreator ? "text-muted text-end" : "text-muted text-start"}
       >
-        {date.toLocaleDateString("en-GB")}
+        {formatDatePretty(date)}
       </div>
     </div>
   );

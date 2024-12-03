@@ -1,7 +1,7 @@
 import { Review } from "../../api/review/Review";
 import { Card, Image } from "react-bootstrap";
 import Rating from "../doctors/Rating";
-import { formatDate } from "../../api/util/dateUtils";
+import {formatDatePretty} from "../../api/util/dateUtils";
 
 import patientDefault from "../../img/patientDefault.png";
 
@@ -28,7 +28,7 @@ const ReviewCard: React.FC<ReviewCardProps> = ({ review }) => {
           <div>
             <Card.Subtitle>{review.patientName}</Card.Subtitle>
             <Card.Subtitle className="text-muted mt-2">
-              {formatDate(review.date)}
+              {formatDatePretty(review.date)}
             </Card.Subtitle>
           </div>
         </div>
