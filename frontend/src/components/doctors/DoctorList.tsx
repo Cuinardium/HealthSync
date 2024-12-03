@@ -28,7 +28,7 @@ const DoctorList: React.FC<DoctorListProps> = ({ query }) => {
       <div>
         <Row>
           {[...Array(query.pageSize ?? 10)].map((_, index) => (
-            <Col xs={6} key={index}>
+            <Col xs={12} key={index}>
               <DoctorCardPlaceholder />
             </Col>
           ))}
@@ -55,7 +55,7 @@ const DoctorList: React.FC<DoctorListProps> = ({ query }) => {
         {doctors.pages.map((page, index) => (
           <React.Fragment key={index}>
             {page.content.map((doctor: Doctor) => (
-              <Col key={doctor.id} xs={6}>
+              <Col key={doctor.id} xs={12} sm={12} md={12} lg={6}>
                 <DoctorCard doctor={doctor} />
               </Col>
             ))}
