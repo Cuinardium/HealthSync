@@ -33,6 +33,8 @@ import { Specialty } from "../api/specialty/Specialty";
 import { useMemo } from "react";
 import { Day, DAYS, Time, TIMES } from "../api/time/Time";
 import { formatDate, parseLocalDate } from "../api/util/dateUtils";
+import { Appointment } from "../api/appointment/Appointment";
+import { getAllConfirmedAppointmentsInRange } from "../api/appointment/appointmentsApi";
 
 const STALE_TIME = 5 * 60 * 1000;
 
@@ -206,7 +208,17 @@ async function fetchAvailableHours(
   doctorId: string,
   from: Date,
   to: Date,
+  patientId?: string,
 ): Promise<AvailableHoursMap> {
+  let patientAppointments: Appointment[] = [];
+  if (patientId) {
+    patientAppointments = await getAllConfirmedAppointmentsInRange(
+      from,
+      to,
+      patientId,
+    );
+  }
+
   let attendingHours = queryClient.getQueryData<AttendingHours[]>([
     "attendingHours",
     doctorId,
@@ -254,6 +266,16 @@ async function fetchAvailableHours(
     }
   });
 
+  // Saco las horas ocupadas por el paciente
+  patientAppointments.forEach((appointment) => {
+    const dateKey = formatDate(appointment.date);
+    if (availableHoursMap[dateKey]) {
+      availableHoursMap[dateKey] = availableHoursMap[dateKey].filter(
+        (hour) => appointment.timeBlock !== hour,
+      );
+    }
+  });
+
   // Saco las horas que ya pasaron
   const today = new Date();
   const currentTime =
@@ -270,10 +292,15 @@ async function fetchAvailableHours(
   return availableHoursMap;
 }
 
-export function useAvailableHours(doctorId: string, from: Date, to: Date) {
+export function useAvailableHours(
+  doctorId: string,
+  from: Date,
+  to: Date,
+  patientId?: string,
+) {
   return useQuery<AvailableHoursMap, Error>({
-    queryKey: ["availableHours", doctorId, from, to],
-    queryFn: () => fetchAvailableHours(doctorId, from, to),
+    queryKey: ["availableHours", doctorId, from, to, patientId ?? "anonymous"],
+    queryFn: () => fetchAvailableHours(doctorId, from, to, patientId),
     enabled: !!doctorId,
     staleTime: 1000 * 60 * 5,
   });

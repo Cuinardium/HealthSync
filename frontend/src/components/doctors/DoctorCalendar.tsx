@@ -3,7 +3,7 @@ import Calendar, { OnArgs, TileDisabledFunc } from "react-calendar";
 import "react-calendar/dist/Calendar.css";
 import { useTranslation } from "react-i18next";
 import { useAvailableHours } from "../../hooks/doctorHooks";
-import {formatDate, formatDatePrettyLong} from "../../api/util/dateUtils";
+import { formatDate, formatDatePrettyLong } from "../../api/util/dateUtils";
 import React, { useState } from "react";
 import { Alert, Card, Col, Row } from "react-bootstrap";
 import { useDoctorQueryContext } from "../../context/DoctorQueryContext";
@@ -13,17 +13,19 @@ interface DoctorCalendarProps {
   doctorId: string;
   onSelected: (date: Date, time: Time) => void;
   initialDate?: Date;
+  userId?: number;
 }
 
 const DoctorCalendar: React.FC<DoctorCalendarProps> = ({
   doctorId,
   onSelected,
   initialDate,
+  userId,
 }) => {
   const { t } = useTranslation();
 
   const { query } = useDoctorQueryContext();
-  const {locale} = useLocale();
+  const { locale } = useLocale();
 
   const [selectedDate, setSelectedDate] = useState<Date>(() => {
     if (initialDate) {
@@ -50,7 +52,12 @@ const DoctorCalendar: React.FC<DoctorCalendarProps> = ({
     return to;
   });
 
-  const { data: availableHours } = useAvailableHours(doctorId, from, to);
+  const { data: availableHours } = useAvailableHours(
+    doctorId,
+    from,
+    to,
+    userId ? String(userId) : undefined,
+  );
 
   const isDateDisabled: TileDisabledFunc = ({ date, view }) => {
     if (!!selectedDate && formatDate(date) === formatDate(selectedDate)) {
@@ -93,7 +100,7 @@ const DoctorCalendar: React.FC<DoctorCalendarProps> = ({
   return (
     <div className="d-flex flex-row justify-content-center">
       <Calendar
-          className="card shadow-sm"
+        className="card shadow-sm"
         minDate={new Date()}
         locale={locale}
         tileDisabled={isDateDisabled}
@@ -112,7 +119,9 @@ const DoctorCalendar: React.FC<DoctorCalendarProps> = ({
       />
       <Card className="ms-3 shadow-sm w-50">
         <Card.Body>
-          <Card.Title className="text-center">{formatDatePrettyLong(selectedDate, locale)}</Card.Title>
+          <Card.Title className="text-center">
+            {formatDatePrettyLong(selectedDate, locale)}
+          </Card.Title>
           <Row className="mt-3 d-flex flex-row justify-content-center">
             {availableHours &&
               availableHours[formatDate(selectedDate)]?.map((time) => (

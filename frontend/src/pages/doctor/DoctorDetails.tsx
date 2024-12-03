@@ -126,6 +126,7 @@ const DoctorDetails: React.FC = () => {
               <h2 className="mb-3">{t("detailedDoctor.availability")}</h2>
               <DoctorCalendar
                 doctorId={doctorId}
+                userId={user?.id}
                 initialDate={selectedDate ?? undefined}
                 onSelected={(date, time) => {
                   setSelectedDate(date);

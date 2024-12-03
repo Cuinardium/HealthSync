@@ -31,7 +31,8 @@ export interface AppointmentQuery {
   pageSize?: number;
   status?: "CONFIRMED" | "CANCELLED" | "COMPLETED";
   order?: "asc" | "desc";
-  date?: Date;
+  from?: Date;
+  to?: Date;
 }
 
 export interface AppointmentResponse {

@@ -4,9 +4,11 @@ import {
   Appointment,
   AppointmentForm,
   AppointmentQuery,
-  AppointmentResponse, DoctorNotAvailable, PatientNotAvailable,
+  AppointmentResponse,
+  DoctorNotAvailable,
+  PatientNotAvailable,
 } from "./Appointment";
-import {formatDate, parseLocalDate} from "../util/dateUtils";
+import { formatDate, parseLocalDate } from "../util/dateUtils";
 
 const APPOINTMENT_ENDPOINT = "/appointments";
 
@@ -21,18 +23,21 @@ const APPOINTMENT_CANCEL_CONTENT_TYPE =
 export async function getAppointments(
   query: AppointmentQuery,
 ): Promise<Page<Appointment>> {
-
-
-  let dateStr
-  if (query.date) {
-    dateStr = formatDate(query.date)
+  let fromDateStr;
+  if (query.from) {
+    fromDateStr = formatDate(query.from);
   }
-  
+
+  let toDateStr;
+  if (query.to) {
+    toDateStr = formatDate(query.to);
+  }
+
   const queryCopy = {
     ...query,
-    date: dateStr,
+    from: fromDateStr,
+    to: toDateStr,
   };
-
 
   const response = await axios.get(APPOINTMENT_ENDPOINT, {
     params: queryCopy,
@@ -41,12 +46,54 @@ export async function getAppointments(
 
   if (response.status === 200) {
     // Set date to Date object
-    response.data = response.data?.map((review: AppointmentResponse) =>
-      mapDetails(review),
+    response.data = response.data?.map((appointment: AppointmentResponse) =>
+      mapDetails(appointment),
     );
   }
 
   return getPage(response);
+}
+
+export async function getAllConfirmedAppointmentsInRange(
+  from: Date | null,
+  to: Date | null,
+  userId: string,
+): Promise<Appointment[]> {
+  let results: Appointment[] = [];
+  let nextPageUrl = APPOINTMENT_ENDPOINT;
+
+  let fromDateStr = from ? formatDate(from) : undefined;
+  let toDateStr = to ? formatDate(to) : undefined;
+
+  const query = {
+    from: fromDateStr,
+    to: toDateStr,
+    userId,
+    status: "CONFIRMED",
+    pageSize: 100,
+  };
+
+  while (nextPageUrl) {
+    const response = await axios.get<AppointmentResponse[]>(nextPageUrl, {
+      params: query,
+      headers: { Accept: APPOINTMENT_LIST_CONTENT_TYPE },
+    });
+
+    if (!response.data || response.status !== 200) {
+      break;
+    }
+
+    results.push(
+      ...response.data.map((appointment) => mapDetails(appointment)),
+    );
+
+    const linkHeader = response.headers.link;
+
+    // Get next page URL, parses using RFC 5988 link format
+    nextPageUrl = linkHeader?.match(/<([^>]+)>;\s*rel="next"/)?.[1] || null;
+  }
+
+  return results;
 }
 
 export async function createAppointment(
@@ -58,7 +105,6 @@ export async function createAppointment(
   };
 
   try {
-
     const response = await axios.post(APPOINTMENT_ENDPOINT, body, {
       headers: { "Content-Type": APPOINTMENT_CONTENT_TYPE },
     });
@@ -66,16 +112,14 @@ export async function createAppointment(
     const location = response.headers.location;
     const appointmentId = location?.split("/").pop();
     return await getAppointment(appointmentId as string);
-
   } catch (error: any) {
-
     if (error.response?.status === 409) {
-      console.log(error)
+      console.log(error);
       if (error.response.data?.message.toLowerCase().includes("doctor")) {
-        console.log("DoctorNotAvailable")
+        console.log("DoctorNotAvailable");
         throw new DoctorNotAvailable();
       } else {
-        console.log("PatientNotAvailable")
+        console.log("PatientNotAvailable");
         throw new PatientNotAvailable();
       }
     }

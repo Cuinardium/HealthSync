@@ -5,11 +5,10 @@ import { useNotifications } from "../../hooks/notificationHooks";
 
 import "../../css/header.css";
 import { useTranslation } from "react-i18next";
-import { Alert, Button, Modal, Spinner, Stack } from "react-bootstrap";
+import { Alert, Button, Spinner, Stack } from "react-bootstrap";
 import AppointmentCard from "./AppointmentCard";
 import CancelAppointmentForm from "./CancelAppointmentForm";
 import AppointmentCardPlaceholder from "./AppointmentCardPlaceholder";
-import { formatDate } from "../../api/util/dateUtils";
 
 interface AppointmentsListProps {
   userId: string;
@@ -34,7 +33,8 @@ const AppointmentList: React.FC<AppointmentsListProps> = ({
     pageSize,
     status,
     order,
-    date,
+    from: date,
+    to: date,
   };
 
   const {
