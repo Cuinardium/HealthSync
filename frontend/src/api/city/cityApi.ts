@@ -1,5 +1,6 @@
 import { axios } from "../axios";
 import {City, CityQuery} from "./City";
+import {formatDate} from "../util/dateUtils";
 
 const CITY_ENDPOINT = "/cities";
 
@@ -11,9 +12,16 @@ const CITY_LIST_CONTENT_TYPE = "application/vnd.city-list.v1+json";
 export async function getCities(query: CityQuery): Promise<City[]> {
   const allCities: City[] = [];
   let nextPageUrl: string | null = CITY_ENDPOINT;
-  const initialQuery = { 
+
+  let dateStr;
+  if (query.date) {
+    dateStr = formatDate(query.date);
+  }
+
+  const initialQuery = {
     pageSize: 50,
-    ...query,
+    date: dateStr,
+    ...query
   };
 
   while (nextPageUrl) {

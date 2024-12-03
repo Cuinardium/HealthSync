@@ -1,5 +1,6 @@
 import { axios } from "../axios";
 import { HealthInsurance, HealthInsuranceQuery } from "./HealthInsurance";
+import {formatDate} from "../util/dateUtils";
 
 const HEALTH_INSURANCE_ENDPOINT = "healthinsurances";
 
@@ -12,8 +13,14 @@ export async function getHealthInsurances(query: HealthInsuranceQuery): Promise<
   const allHealthInsurances: HealthInsurance[] = [];
   let nextPageUrl: string | null = HEALTH_INSURANCE_ENDPOINT;
 
+  let dateStr;
+  if (query.date) {
+    dateStr = formatDate(query.date);
+  }
+
   const initialQuery = {
     pageSize: 50,
+    date: dateStr,
     ...query
   };
 

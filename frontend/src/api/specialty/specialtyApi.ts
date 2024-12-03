@@ -1,5 +1,6 @@
 import { axios } from "../axios";
 import { Specialty, SpecialtyQuery } from "./Specialty";
+import { formatDate } from "../util/dateUtils";
 
 const SPECIALTY_ENDPOINT = "specialties";
 
@@ -8,15 +9,22 @@ const SPECIALTY_LIST_CONTENT_TYPE = "application/vnd.specialty-list.v1+json";
 
 // =========== specialties ==============
 
-export async function getSpecialties(query: SpecialtyQuery): Promise<Specialty[]> {
+export async function getSpecialties(
+  query: SpecialtyQuery,
+): Promise<Specialty[]> {
   const allSpecialties: Specialty[] = [];
   let nextPageUrl: string | null = SPECIALTY_ENDPOINT;
 
-  const initialQuery = {
-    pageSize: 100,
-    ...query
-  };
+  let dateStr;
+  if (query.date) {
+    dateStr = formatDate(query.date);
+  }
 
+  const initialQuery = {
+    pageSize: 50,
+    date: dateStr,
+    ...query,
+  };
   while (nextPageUrl) {
     const response = await axios.get<Specialty[]>(nextPageUrl, {
       params: initialQuery,

@@ -1,6 +1,6 @@
 import { axios } from "../axios";
 import { getPage, Page } from "../page/Page";
-import { formatDate } from "../util/dateUtils";
+import { formatDate, parseLocalDate } from "../util/dateUtils";
 import {
   AttendingHours,
   Doctor,
@@ -9,6 +9,7 @@ import {
   DoctorRegisterForm,
   DoctorResponse,
   OccupiedHours,
+  OccupiedHoursResponse,
 } from "./Doctor";
 
 const DOCTOR_ENDPOINT = "/doctors";
@@ -27,10 +28,9 @@ const OCCUPIED_HOURS_CONTENT_TYPE =
 export async function getDoctors(
   params: DoctorQuery,
 ): Promise<Page<DoctorResponse>> {
-
-  let dateStr
+  let dateStr;
   if (params.date) {
-    dateStr = formatDate(params.date)
+    dateStr = formatDate(params.date);
   }
 
   const paramsCopy = {
@@ -145,27 +145,40 @@ export async function getDoctorOccupiedHours(
   let results: OccupiedHours[] = [];
   let nextPageUrl = DOCTOR_ENDPOINT + "/" + doctorId + OCCUPIED_HOURS_ENDPOINT;
 
-  let fromStr
+  let fromStr;
   if (from) {
-    fromStr = formatDate(from)
+    fromStr = formatDate(from);
   }
-  let toStr
+  let toStr;
   if (to) {
-    toStr = formatDate(to)
+    toStr = formatDate(to);
   }
 
   while (nextPageUrl) {
-    const occupiedHoursResp = await axios.get<OccupiedHours[]>(nextPageUrl, {
-      headers: {
-        Accept: OCCUPIED_HOURS_CONTENT_TYPE,
+    const occupiedHoursResp = await axios.get<OccupiedHoursResponse[]>(
+      nextPageUrl,
+      {
+        headers: {
+          Accept: OCCUPIED_HOURS_CONTENT_TYPE,
+        },
+        params: {
+          from: fromStr,
+          to: toStr,
+          pageSize: 365,
+        },
       },
-      params: {
-        from: fromStr,
-        to: toStr,
-        pageSize: 365,
-      },
-    });
-    results.push(...occupiedHoursResp.data);
+    );
+
+    if (!occupiedHoursResp.data) {
+        break
+    }
+
+    results.push(
+      ...occupiedHoursResp.data.map((occupiedHours) => ({
+        date: parseLocalDate(occupiedHours.date),
+        hours: occupiedHours.hours,
+      })),
+    );
 
     const linkHeader = occupiedHoursResp.headers.link;
 
