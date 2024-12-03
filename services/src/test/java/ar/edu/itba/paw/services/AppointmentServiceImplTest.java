@@ -94,7 +94,7 @@ public class AppointmentServiceImplTest {
               ATTENDING_HOURS,
               DOCTOR_LOCALE)
           .id(DOCTOR_ID)
-          .vacations(new HashSet<>(Arrays.asList(DOCTOR_VACATION)))
+          .vacations(new HashSet<>(Collections.singletonList(DOCTOR_VACATION)))
           .rating(RATING)
           .ratingCount(RATING_COUNT)
           .isVerified(true)
@@ -209,10 +209,23 @@ public class AppointmentServiceImplTest {
         .when(mailService)
         .sendAppointmentReminderMail(Mockito.any(Appointment.class));
 
+    Mockito.when(
+            appointmentDao.getFilteredAppointments(
+                PATIENT_ID,
+                AppointmentStatus.CONFIRMED,
+                NEW_APPOINTMENT_DATE,
+                NEW_APPOINTMENT_DATE,
+                null,
+                null,
+                true,
+                true))
+        .thenReturn(new Page<>(new ArrayList<>(), null, null, null));
+
     // 2. Ejercitar la class under test
     Appointment appointment =
         as.createAppointment(
             PATIENT_ID, DOCTOR_ID, NEW_APPOINTMENT_DATE, APPOINTMENT_TIME, APPOINTMENT_DESCRIPTION);
+
 
     // 3. Meaningful assertions
     Assert.assertEquals(NEW_APPOINTMENT, appointment);
@@ -282,6 +295,17 @@ public class AppointmentServiceImplTest {
             appointmentDao.getFilteredAppointments(
                 DOCTOR_ID, null, NEW_APPOINTMENT_DATE, NEW_APPOINTMENT_DATE, null, null, true, false))
         .thenReturn(new Page<>(Collections.emptyList(), null, null, null));
+    Mockito.when(
+            appointmentDao.getFilteredAppointments(
+                PATIENT_ID,
+                AppointmentStatus.CONFIRMED,
+                NEW_APPOINTMENT_DATE,
+                NEW_APPOINTMENT_DATE,
+                null,
+                null,
+                true,
+                true))
+        .thenReturn(new Page<>(new ArrayList<>(), null, null, null));
 
     // 2. Ejercitar la class under test
     as.createAppointment(
@@ -310,6 +334,17 @@ public class AppointmentServiceImplTest {
         .thenReturn(
             new Page<>(
                 new ArrayList<>(Collections.singletonList(NEW_APPOINTMENT)), null, null, null));
+    Mockito.when(
+            appointmentDao.getFilteredAppointments(
+                PATIENT_ID,
+                AppointmentStatus.CONFIRMED,
+                NEW_APPOINTMENT_DATE,
+                NEW_APPOINTMENT_DATE,
+                null,
+                null,
+                true,
+                true))
+        .thenReturn(new Page<>(new ArrayList<>(), null, null, null));
 
     // 2. Ejercitar la class under test
     as.createAppointment(
@@ -338,6 +373,17 @@ public class AppointmentServiceImplTest {
                 null,
                 null,
                 null));
+    Mockito.when(
+            appointmentDao.getFilteredAppointments(
+                PATIENT_ID,
+                AppointmentStatus.CONFIRMED,
+                NEW_APPOINTMENT_DATE,
+                NEW_APPOINTMENT_DATE,
+                null,
+                null,
+                true,
+                true))
+        .thenReturn(new Page<>(new ArrayList<>(), null, null, null));
 
     Mockito.when(
             appointmentDao.createAppointment(
@@ -360,6 +406,35 @@ public class AppointmentServiceImplTest {
     // 3. Meaningful assertions
     Assert.assertEquals(NEW_APPOINTMENT, appointment);
   }
+
+  @Test(expected = PatientNotAvailableException.class)
+    public void testCreateAppointmentPatientNotAvailable()
+        throws DoctorNotFoundException, PatientNotFoundException, DoctorNotAvailableException, AppointmentInPastException, PatientNotAvailableException {
+        // 1. Precondiciones
+
+        // Mock doctorService
+        Mockito.when(doctorService.getDoctorById(DOCTOR_ID)).thenReturn(Optional.of(DOCTOR));
+
+        // Mock patientService
+        Mockito.when(patientService.getPatientById(PATIENT_ID)).thenReturn(Optional.of(PATIENT));
+
+        // Mock appointmentDao
+        Mockito.when(
+                appointmentDao.getFilteredAppointments(
+                    PATIENT_ID,
+                    AppointmentStatus.CONFIRMED,
+                    NEW_APPOINTMENT_DATE,
+                    NEW_APPOINTMENT_DATE,
+                    null,
+                    null,
+                    true,
+                    true))
+            .thenReturn(new Page<>(new ArrayList<>(Collections.singletonList(OTHER_APPOINTMENT)), null, null, null));
+
+        // 2. Ejercitar la class under test
+        as.createAppointment(
+            PATIENT_ID, DOCTOR_ID, NEW_APPOINTMENT_DATE, APPOINTMENT_TIME, APPOINTMENT_DESCRIPTION);
+    }
 
   // ================== cancelAppointment ==================
 
