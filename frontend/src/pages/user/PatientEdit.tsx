@@ -41,7 +41,7 @@ const PatientEdit = () => {
   const { user, loading, isDoctor } = useUser();
   const { data: healthInsurances } = useHealthInsurances({
     sort: "standard",
-    order: "asc"
+    order: "asc",
   });
   const [imageUrl, setImageUrl] = useState<string>(patientDefault);
   const [showSuccess, setShowSuccess] = useState<boolean>(false);
@@ -81,7 +81,7 @@ const PatientEdit = () => {
 
       setImageUrl(patient.image ? patient.image : patientDefault);
     }
-  }, [user, loading, isDoctor, setValue]);
+  }, [user, loading, isDoctor, setValue, healthInsurances]);
 
   const hasChanged = useCallback(() => {
     return (
