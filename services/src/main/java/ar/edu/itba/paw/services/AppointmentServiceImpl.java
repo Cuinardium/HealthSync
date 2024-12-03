@@ -243,14 +243,19 @@ public class AppointmentServiceImpl implements AppointmentService {
           continue;
         }
 
-        if (date.equals(fromDate)) {
+        if (date.equals(fromDate) && !date.equals(toDate)) {
           Collection<ThirtyMinuteBlock> unavailableHours =
               ThirtyMinuteBlock.fromRange(vacation.getFromTime(), ThirtyMinuteBlock.BLOCK_23_30);
           availableHoursOnVacationDate.removeAll(unavailableHours);
 
-        } else if (date.equals(toDate)) {
+        } else if (date.equals(toDate) && !date.equals(fromDate)) {
           Collection<ThirtyMinuteBlock> unavailableHours =
               ThirtyMinuteBlock.fromRange(ThirtyMinuteBlock.BLOCK_00_00, vacation.getToTime());
+          availableHoursOnVacationDate.removeAll(unavailableHours);
+
+        } else if (date.equals(fromDate) && date.equals(toDate)) {
+          Collection<ThirtyMinuteBlock> unavailableHours =
+              ThirtyMinuteBlock.fromRange(vacation.getFromTime(), vacation.getToTime());
           availableHoursOnVacationDate.removeAll(unavailableHours);
 
         } else {
