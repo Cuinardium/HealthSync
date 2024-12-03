@@ -54,14 +54,13 @@ const IndicationList: React.FC<IndicationListProps> = ({
     return <div>Error fetching Indications: {error?.message}</div>;
   }
 
-  const reversedIndications = indications?.pages.flatMap((page) =>
-    page.content.reverse(),
-  );
-
   return (
     <Card>
       <Card.Body>
-        <div ref={chatRef} style={{ maxHeight: "700px", minHeight: "700px", overflowY: "auto" }}>
+        <div
+          ref={chatRef}
+          style={{ maxHeight: "700px", minHeight: "700px", overflowY: "auto" }}
+        >
           {/* Load More */}
           {hasNextPage && (
             <div className="text-center mt-3">
@@ -108,17 +107,24 @@ const IndicationList: React.FC<IndicationListProps> = ({
                   <Alert variant="info">{t("appointment.noIndications")}</Alert>
                 </div>
               )}
-            {reversedIndications?.map((indication) => (
-              <div
-                key={indication.id}
-                className={`d-flex ${indication.creatorId === id ? "justify-content-end" : "justify-content-start"}`}
-              >
-                <IndicationCard
-                  indication={indication}
-                  isCreator={indication.creatorId === id}
-                />
-              </div>
-            ))}
+            {indications?.pages
+              .flatMap((page) => page.content)
+              .slice()
+              .map((indication) => (
+                <div
+                  key={indication.id}
+                  className={`d-flex ${
+                    indication.creatorId === id
+                      ? "justify-content-end"
+                      : "justify-content-start"
+                  }`}
+                >
+                  <IndicationCard
+                    indication={indication}
+                    isCreator={indication.creatorId === id}
+                  />
+                </div>
+              ))}
           </Stack>
         </div>
 
