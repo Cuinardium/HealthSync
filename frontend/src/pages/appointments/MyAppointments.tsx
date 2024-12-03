@@ -28,18 +28,9 @@ const MyAppointments: React.FC = () => {
         <Tabs
           id="appointments-tabs"
           activeKey={selectedTab}
-          onSelect={(k) => setSelectedTab(k || "today")}
+          onSelect={(k) => setSelectedTab(k || "upcoming")}
           className="mb-3"
         >
-          {/* Today Tab */}
-          <Tab eventKey="today" title={t("appointments.today")}>
-            <AppointmentsList
-              userId={user?.id as any}
-              isDoctor={isDoctor ?? false}
-              pageSize={pageSize}
-              date={today}
-            />
-          </Tab>
 
           {/* Upcoming Tab */}
           <Tab eventKey="upcoming" title={t("appointments.upcoming")}>

@@ -8,7 +8,7 @@ interface TabProviderProps {
 export const SelectedTabProvider: React.FC<TabProviderProps> = ({
   children,
 }) => {
-  const [selectedTab, setSelectedTab] = useState<string>("today");
+  const [selectedTab, setSelectedTab] = useState<string>("upcoming");
 
   return (
     <SelectedTabContext.Provider value={{ selectedTab, setSelectedTab }}>
