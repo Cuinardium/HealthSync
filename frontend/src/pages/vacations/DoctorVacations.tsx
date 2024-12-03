@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import Loader from "../../components/Loader";
 import VacationList from "../../components/vacations/VacationList";
 import { useAuth } from "../../context/AuthContext";
 import VacationForm from "../../components/vacations/VacationForm";

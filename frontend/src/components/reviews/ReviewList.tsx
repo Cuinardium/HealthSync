@@ -1,6 +1,4 @@
 import React, { useState } from "react";
-import Loader from "../Loader";
-import { ReviewQuery } from "../../api/review/Review";
 import { useReviews } from "../../hooks/reviewHooks";
 import { useTranslation } from "react-i18next";
 import { Alert, Button, Spinner, Stack } from "react-bootstrap";

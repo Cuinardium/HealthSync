@@ -1,5 +1,4 @@
 import React, { useEffect } from "react";
-import Loader from "../Loader";
 import { IndicationQuery } from "../../api/indication/Indication";
 import { useIndications } from "../../hooks/indicationHooks";
 import { Alert, Card, Spinner, Stack } from "react-bootstrap";
