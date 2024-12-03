@@ -2,12 +2,14 @@ package ar.edu.itba.paw.webapp.query;
 
 import ar.edu.itba.paw.models.AppointmentStatus;
 import ar.edu.itba.paw.webapp.annotations.ExistsInEnumString;
+import ar.edu.itba.paw.webapp.annotations.ValidRange;
 import ar.edu.itba.paw.webapp.utils.DateUtil;
 import java.time.LocalDate;
 import javax.validation.constraints.Pattern;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.QueryParam;
 
+@ValidRange(message = "ValidRange.appointmentQuery")
 public class AppointmentQuery {
 
   @QueryParam("status")
@@ -17,8 +19,12 @@ public class AppointmentQuery {
   private String status;
 
   @Pattern(regexp = DateUtil.DATE_REGEX, message = "Pattern.query.date")
-  @QueryParam("date")
-  private String date;
+  @QueryParam("from")
+  private String from;
+
+  @Pattern(regexp = DateUtil.DATE_REGEX, message = "Pattern.query.date")
+  @QueryParam("to")
+  private String to;
 
   @Pattern(regexp = "^(asc|desc)$", message = "Pattern.query.order")
   @DefaultValue("asc")
@@ -40,16 +46,28 @@ public class AppointmentQuery {
     return AppointmentStatus.valueOf(status);
   }
 
-  public String getDate() {
-    return date;
+  public String getFrom() {
+    return from;
   }
 
-  public void setDate(String date) {
-    this.date = date;
+  public void setFrom(String from) {
+    this.from = from;
   }
 
-  public LocalDate getLocalDate() {
-    return DateUtil.parseDate(date);
+  public LocalDate getFromDate() {
+    return DateUtil.parseDate(from);
+  }
+
+  public String getTo() {
+    return to;
+  }
+
+  public void setTo(String to) {
+    this.to = to;
+  }
+
+  public LocalDate getToDate() {
+    return DateUtil.parseDate(to);
   }
 
   public String getOrder() {
@@ -66,6 +84,6 @@ public class AppointmentQuery {
 
   @Override
   public String toString() {
-    return "AppointmentQuery [status=" + status + "]";
+    return "{" + "from='" + getFromDate() + '\'' + ", to='" + getToDate() + '\'' + '}';
   }
 }

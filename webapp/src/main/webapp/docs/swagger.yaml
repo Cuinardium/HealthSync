@@ -38,12 +38,18 @@ paths:
             type: string
             enum: [CONFIRMED, CANCELLED, COMPLETED]
           example: COMPLETED
-        - name: date
+        - name: from
           in: query
           schema:
             format: date
             type: string
             example: 2024-07-25
+        - name: to
+          in: query
+          schema:
+            format: date
+            type: string
+            example: 2024-07-29
         - name: order
           in: query
           schema:
@@ -251,6 +257,57 @@ paths:
             type: integer
             format: int32
             default: 10
+        - name: name
+          in: query
+          schema:
+            type: string
+            example: John Doe
+        - name: date
+          in: query
+          schema:
+            format: date
+            type: string
+            example: 2024-07-25
+        - name: fromTime
+          in: query
+          schema:
+            allOf:
+              - $ref : '#/components/schemas/TimeBlock'
+        - name: toTime
+          in: query
+          schema:
+            allOf:
+              - $ref : '#/components/schemas/TimeBlock'
+        - name: specialty
+          in: query
+          schema:
+            uniqueItems: true
+            type: array
+            items:
+              allOf:
+                - $ref : '#/components/schemas/Specialty'
+        - name: city
+          in: query
+          schema:
+            uniqueItems: true
+            type: array
+            items:
+              type: string
+        - name: healthInsurance
+          in: query
+          schema:
+            uniqueItems: true
+            type: array
+            items:
+              allOf:
+                - $ref : '#/components/schemas/HealthInsurance'
+        - name: minRating
+          in: query
+          schema:
+            minimum: 1
+            maximum: 5
+            type: integer
+            format: int32
         - name: sort
           in: query
           schema:
@@ -873,6 +930,57 @@ paths:
             type: integer
             format: int32
             default: 10
+        - name: name
+          in: query
+          schema:
+            type: string
+            example: John Doe
+        - name: date
+          in: query
+          schema:
+            format: date
+            type: string
+            example: 2024-07-25
+        - name: fromTime
+          in: query
+          schema:
+            allOf:
+              - $ref : '#/components/schemas/TimeBlock'
+        - name: toTime
+          in: query
+          schema:
+            allOf:
+              - $ref : '#/components/schemas/TimeBlock'
+        - name: specialty
+          in: query
+          schema:
+            uniqueItems: true
+            type: array
+            items:
+              allOf:
+                - $ref : '#/components/schemas/Specialty'
+        - name: city
+          in: query
+          schema:
+            uniqueItems: true
+            type: array
+            items:
+              type: string
+        - name: healthInsurance
+          in: query
+          schema:
+            uniqueItems: true
+            type: array
+            items:
+              allOf:
+                - $ref : '#/components/schemas/HealthInsurance'
+        - name: minRating
+          in: query
+          schema:
+            minimum: 1
+            maximum: 5
+            type: integer
+            format: int32
         - name: sort
           in: query
           schema:
@@ -1515,6 +1623,57 @@ paths:
             type: integer
             format: int32
             default: 10
+        - name: name
+          in: query
+          schema:
+            type: string
+            example: John Doe
+        - name: date
+          in: query
+          schema:
+            format: date
+            type: string
+            example: 2024-07-25
+        - name: fromTime
+          in: query
+          schema:
+            allOf:
+              - $ref : '#/components/schemas/TimeBlock'
+        - name: toTime
+          in: query
+          schema:
+            allOf:
+              - $ref : '#/components/schemas/TimeBlock'
+        - name: specialty
+          in: query
+          schema:
+            uniqueItems: true
+            type: array
+            items:
+              allOf:
+                - $ref : '#/components/schemas/Specialty'
+        - name: city
+          in: query
+          schema:
+            uniqueItems: true
+            type: array
+            items:
+              type: string
+        - name: healthInsurance
+          in: query
+          schema:
+            uniqueItems: true
+            type: array
+            items:
+              allOf:
+                - $ref : '#/components/schemas/HealthInsurance'
+        - name: minRating
+          in: query
+          schema:
+            minimum: 1
+            maximum: 5
+            type: integer
+            format: int32
         - name: sort
           in: query
           schema:

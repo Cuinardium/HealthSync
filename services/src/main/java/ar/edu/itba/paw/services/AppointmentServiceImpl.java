@@ -337,17 +337,16 @@ public class AppointmentServiceImpl implements AppointmentService {
   public Page<Appointment> getFilteredAppointments(
       long userId,
       AppointmentStatus status,
-      LocalDate date,
+      LocalDate from,
+      LocalDate to,
       Integer page,
       Integer pageSize,
       Boolean sortAsc) {
 
     boolean isPatient = patientService.getPatientById(userId).isPresent();
 
-    LocalDate to = date != null ? date.plusDays(1) : null;
-
     return appointmentDao.getFilteredAppointments(
-        userId, status, date, to, page, pageSize, sortAsc, isPatient);
+        userId, status, from, to, page, pageSize, sortAsc, isPatient);
   }
 
   @Transactional(readOnly = true)

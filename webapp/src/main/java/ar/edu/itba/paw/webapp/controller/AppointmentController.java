@@ -59,7 +59,8 @@ public class AppointmentController {
         appointmentService.getFilteredAppointments(
             userId,
             appointmentQuery.getAppointmentStatus(),
-            appointmentQuery.getLocalDate(),
+            appointmentQuery.getFromDate(),
+            appointmentQuery.getToDate(),
             pageQuery.getPage(),
             pageQuery.getPageSize(),
             appointmentQuery.sortAsc()

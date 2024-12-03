@@ -1,5 +1,6 @@
 package ar.edu.itba.paw.webapp.annotations;
 
+import ar.edu.itba.paw.webapp.validators.ValidAppointmentQueryRangeValidator;
 import ar.edu.itba.paw.webapp.validators.ValidDoctorQueryRangeValidator;
 import ar.edu.itba.paw.webapp.validators.ValidOccupiedHoursQueryRangeValidator;
 import ar.edu.itba.paw.webapp.validators.ValidVacationFormRangeValidator;
@@ -16,7 +17,8 @@ import javax.validation.Payload;
     validatedBy = {
       ValidVacationFormRangeValidator.class,
       ValidDoctorQueryRangeValidator.class,
-      ValidOccupiedHoursQueryRangeValidator.class
+      ValidOccupiedHoursQueryRangeValidator.class,
+      ValidAppointmentQueryRangeValidator.class,
     })
 public @interface ValidRange {
 
