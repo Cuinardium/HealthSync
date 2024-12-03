@@ -3,13 +3,13 @@ import { Breadcrumb, Col, Container } from "react-bootstrap";
 import { useDoctor } from "../../hooks/doctorHooks";
 
 import ReviewList from "../../components/reviews/ReviewList";
-import { useState } from "react";
+import React, {useEffect, useState} from "react";
 import { useUser } from "../../context/UserContext";
 import AppointmentForm from "../../components/appointments/AppointmentForm";
 import { useTranslation } from "react-i18next";
 import DetailedDoctorCard from "../../components/doctors/DetailedDoctorCard";
 import DoctorCalendar from "../../components/doctors/DoctorCalendar";
-import {Patient} from "../../api/patient/Patient";
+import { Patient } from "../../api/patient/Patient";
 
 interface LocationState {
   from: Location;
@@ -67,31 +67,24 @@ const DoctorDetails: React.FC = () => {
     },
   );
 
-  if (
-    !doctor ||
-    !doctorId ||
-    isNaN(+Number(doctorId)) ||
-    Number(doctorId) < 0
-  ) {
-    navigate("/404");
-    return null;
-  }
+  useEffect(() => {
+    if (!doctorId || isNaN(+Number(doctorId)) || Number(doctorId) < 0) {
+      navigate("/404", { replace: true });
+    }
+  }, [doctorId, navigate]);
 
-  if (isLoading || loading) {
+  useEffect(() => {
+    if (isError) {
+      const status = error?.response?.status;
+      if (status === 404) {
+        navigate("/404", { replace: true });
+      }
+    }
+  }, [isError, error, navigate]);
+
+  if (isLoading || loading || !doctor) {
     // TODO
     return <div>Loading...</div>;
-  }
-
-  if (isError) {
-    if (error?.response?.status === 404) {
-      navigate("/404");
-      return null;
-    }
-  }
-
-  if (!doctor) {
-    navigate("/404");
-    return null;
   }
 
   return (
@@ -109,48 +102,52 @@ const DoctorDetails: React.FC = () => {
         <h1>{t("detailedDoctor.title")}</h1>
         <DetailedDoctorCard doctor={doctor} />
 
-        {(!user || !isDoctor) && (
+        {doctor && doctorId && (
           <>
-            {selectedDate && selectedTime && (
-              <AppointmentForm
-                doctor={doctor}
-                user={user as Patient ?? undefined}
-                date={selectedDate}
-                time={selectedTime}
-                show={showAppointmentForm}
-                onHide={() => setShowAppointmentForm(false)}
-              />
+            {(!user || !isDoctor) && (
+              <>
+                {selectedDate && selectedTime && (
+                  <AppointmentForm
+                    doctor={doctor}
+                    user={(user as Patient) ?? undefined}
+                    date={selectedDate}
+                    time={selectedTime}
+                    show={showAppointmentForm}
+                    onHide={() => setShowAppointmentForm(false)}
+                  />
+                )}
+
+                <div className="mt-3 mb-3">
+                  <h2 className="mb-3">{t("detailedDoctor.availability")}</h2>
+                  <DoctorCalendar
+                    doctorId={doctorId}
+                    userId={user?.id}
+                    initialDate={selectedDate ?? undefined}
+                    onSelected={(date, time) => {
+                      setSelectedDate(date);
+                      setSelectedTime(time);
+
+                      if (user && !isDoctor) {
+                        setShowAppointmentForm(true);
+                      } else if (!user) {
+                        navigate("/login", {
+                          state: {
+                            from: location,
+                            selectedDate: date,
+                            selectedTime: time,
+                            doctorId: doctorId,
+                          },
+                        });
+                      }
+                    }}
+                  />
+                </div>
+              </>
             )}
 
-            <div className="mt-3 mb-3">
-              <h2 className="mb-3">{t("detailedDoctor.availability")}</h2>
-              <DoctorCalendar
-                doctorId={doctorId}
-                userId={user?.id}
-                initialDate={selectedDate ?? undefined}
-                onSelected={(date, time) => {
-                  setSelectedDate(date);
-                  setSelectedTime(time);
-
-                  if (user && !isDoctor) {
-                    setShowAppointmentForm(true);
-                  } else if (!user) {
-                    navigate("/login", {
-                      state: {
-                        from: location,
-                        selectedDate: date,
-                        selectedTime: time,
-                        doctorId: doctorId,
-                      },
-                    });
-                  }
-                }}
-              />
-            </div>
+            <ReviewList doctorId={doctorId} canReview={doctor.canReview} />
           </>
         )}
-
-        <ReviewList doctorId={doctorId} canReview={doctor.canReview} />
       </Col>
     </Container>
   );

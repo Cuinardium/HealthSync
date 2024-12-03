@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import CancelAppointmentForm from "../../components/appointments/CancelAppointmentForm";
-import IndicationForm from "../../components/indications/IndicationForm";
 import IndicationList from "../../components/indications/IndicationList";
 import { useAuth } from "../../context/AuthContext";
 import { useAppointment } from "../../hooks/appointmentHooks";
@@ -56,21 +55,19 @@ const DetailedAppointment: React.FC = () => {
     }
   }, [notifications, appointment, deleteNotificationMutation, deleteCalled]);
 
-  if (
-    !appointmentId ||
-    isNaN(+Number(appointmentId)) ||
-    Number(appointmentId) < 0
-  ) {
-    navigate("/404");
-    return null;
-  }
-
-  if (isError) {
-    if (error?.response?.status === 404 || error?.response?.status === 403) {
-      navigate("/404");
-      return null;
+  useEffect(() => {
+    if (!appointmentId || isNaN(Number(appointmentId)) || Number(appointmentId) < 0) {
+      navigate("/404", { replace: true });
+      return;
     }
-  }
+
+    if (isError) {
+      const status = error?.response?.status;
+      if (status === 404 || status === 403) {
+        navigate("/404", { replace: true });
+      }
+    }
+  }, [appointmentId, isError, error, navigate]);
 
   return (
     <Container className="d-flex justify-content-center align-items-center mt-5 mb-5">
@@ -100,7 +97,7 @@ const DetailedAppointment: React.FC = () => {
           {error && <Alert variant="danger">{t("appointment.error")}</Alert>}
         </div>
 
-        {appointment?.canIndicate && (
+        {appointment?.canIndicate && appointmentId && (
           <>
             <h2 className="mb-3">{t("appointment.indication")}</h2>
 
@@ -109,7 +106,7 @@ const DetailedAppointment: React.FC = () => {
         )}
       </Col>
 
-      {appointment?.canCancel && (
+      {appointment?.canCancel && appointmentId && (
         <CancelAppointmentForm
           appointmentId={appointmentId}
           showCancelModal={showCancelModal}
