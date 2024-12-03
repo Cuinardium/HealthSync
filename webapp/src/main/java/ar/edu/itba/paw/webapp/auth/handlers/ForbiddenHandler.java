@@ -32,8 +32,8 @@ public class ForbiddenHandler implements AccessDeniedHandler {
     httpServletResponse.setHeader("X-Refresh", null);
 
     // Cors
-    //httpServletResponse.setHeader("Access-Control-Allow-Origin", "*");
-    //httpServletResponse.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, PATCH, OPTIONS");
+    httpServletResponse.setHeader("Access-Control-Allow-Origin", "*");
+    httpServletResponse.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, PATCH, OPTIONS");
 
     httpServletResponse.getWriter().write("{\"message\": \"forbidden, access denied\"}");
   }
