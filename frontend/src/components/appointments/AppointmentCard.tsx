@@ -98,19 +98,6 @@ const AppointmentCard: React.FC<AppointmentProps> = ({
             </div>
           )}
 
-          {/* Description */}
-          <div>
-            <strong>{t("appointment.description")}:</strong>{" "}
-            {appointment.description}
-          </div>
-
-          {/* Cancel Reason */}
-          {appointment.status === "CANCELLED" &&
-            appointment.cancelDescription && (
-              <div>
-                <strong>{t("appointment.cancelDesc")}:</strong> {appointment.cancelDescription}
-              </div>
-            )}
 
           {/* Action Links */}
           <div className="d-flex flex-row justify-content-between align-items-center">
