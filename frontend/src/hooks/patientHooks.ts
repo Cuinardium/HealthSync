@@ -9,11 +9,12 @@ import {
   PatientEditForm,
   PatientRegisterForm,
   PatientResponse,
-} from "../api//patient/Patient";
+} from "../api/patient/Patient";
 import { queryClient } from "../api/queryClient";
 import { AxiosError } from "axios";
 import { getHealthInsurance } from "../api/health-insurance/healthInsuranceApi";
 import { HealthInsurance } from "../api/health-insurance/HealthInsurance";
+import {parseLocale} from "../api/locale/locale";
 
 const STALE_TIME = 5 * 60 * 1000;
 
@@ -109,9 +110,12 @@ async function mapPatientDetails(
     (link) => link.rel === "image",
   )?.href;
 
+  let locale = parseLocale(patientResponse.locale);
+
   return {
     ...patientResponse,
     healthInsurance,
     image,
+    locale
   };
 }

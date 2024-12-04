@@ -35,6 +35,7 @@ import { Day, DAYS, Time, TIMES } from "../api/time/Time";
 import { formatDate, parseLocalDate } from "../api/util/dateUtils";
 import { Appointment } from "../api/appointment/Appointment";
 import { getAllConfirmedAppointmentsInRange } from "../api/appointment/appointmentsApi";
+import {parseLocale} from "../api/locale/locale";
 
 const STALE_TIME = 5 * 60 * 1000;
 
@@ -362,11 +363,15 @@ async function mapDoctorDetails(doctorResp: DoctorResponse): Promise<Doctor> {
   // Get doctor's image
   const image = doctorResp.links.find((link) => link.rel === "image")?.href;
 
+  // Parse locale for only the language
+  const locale = parseLocale(doctorResp.locale);
+
   return {
     ...doctorResp,
     specialty,
     healthInsurances,
     canReview,
     image,
+    locale,
   };
 }
