@@ -12,7 +12,6 @@ import java.io.IOException;
 public class HealthSyncAuthenticationEntryPoint implements AuthenticationEntryPoint {
     @Override
     public void commence(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, AuthenticationException e) throws IOException, ServletException {
-        httpServletResponse.addHeader("WWW-Authenticate", "Basic realm=\"User Visible Realm\"");
         httpServletResponse.setContentType(MediaType.APPLICATION_JSON);
         httpServletResponse.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         httpServletResponse.getWriter().write(String.format("{\n \"message\": \"%s\"\n}", e.getMessage()));
