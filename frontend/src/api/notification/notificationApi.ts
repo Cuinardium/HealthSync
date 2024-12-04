@@ -1,5 +1,6 @@
 import { axios } from "../axios";
 import { Notification } from "./Notification";
+import { fetchAllPaginatedData } from "../page/Page";
 
 const NOTIFICATION_ENDPOINT = "notifications";
 
@@ -12,29 +13,16 @@ const NOTIFICATION_LIST_CONTENT_TYPE =
 export async function getNotifications(
   userId: string,
 ): Promise<Notification[]> {
-  const allNotifications: Notification[] = [];
-  let nextPageUrl: string | null = NOTIFICATION_ENDPOINT;
-
-  const inititalQuery = {
+  const initialQuery = {
     userId,
-    pageSize: 100,
+    pageSize: 50,
   };
 
-  while (nextPageUrl) {
-    const response = await axios.get<Notification[]>(NOTIFICATION_ENDPOINT, {
-      params: inititalQuery,
-      headers: {
-        Accept: NOTIFICATION_LIST_CONTENT_TYPE,
-      },
-    });
-
-    allNotifications.push(...response.data);
-
-    const linkHeader: string = response.headers.link;
-    nextPageUrl = linkHeader?.match(/<([^>]+)>;\s*rel="next"/)?.[1] || null;
-  }
-
-  return allNotifications;
+  return fetchAllPaginatedData<Notification>(
+    NOTIFICATION_ENDPOINT,
+    initialQuery,
+    { Accept: NOTIFICATION_LIST_CONTENT_TYPE },
+  );
 }
 
 // =========== notifications/{id} =======

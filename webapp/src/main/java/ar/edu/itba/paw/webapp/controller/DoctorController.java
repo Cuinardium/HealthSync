@@ -22,6 +22,7 @@ import ar.edu.itba.paw.webapp.form.DoctorRegisterForm;
 import ar.edu.itba.paw.webapp.mediaType.VndType;
 import ar.edu.itba.paw.webapp.query.DoctorQuery;
 import ar.edu.itba.paw.webapp.query.OccupiedHoursQuery;
+import ar.edu.itba.paw.webapp.utils.LocaleUtil;
 import ar.edu.itba.paw.webapp.utils.ResponseUtil;
 import ar.edu.itba.paw.webapp.utils.URIUtil;
 import java.net.URI;
@@ -35,7 +36,6 @@ import javax.ws.rs.core.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Component;
 
@@ -117,7 +117,7 @@ public class DoctorController {
             doctorRegisterForm.getAddress(),
             doctorRegisterForm.getHealthInsurancesEnum(),
             DoctorRegisterForm.getDefaultAttendingHours(),
-            LocaleContextHolder.getLocale());
+            LocaleUtil.getCurrentRequestLocale());
 
     LOGGER.info("Registered {}", doctor);
 

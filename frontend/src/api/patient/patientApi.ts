@@ -1,5 +1,4 @@
 import { axios } from "../axios";
-import { getHealthInsurance } from "../health-insurance/healthInsuranceApi";
 import { Patient, PatientRegisterForm, PatientEditForm, PatientResponse } from "./Patient";
 
 const PATIENT_ENDPOINT = "/patients";

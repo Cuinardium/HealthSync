@@ -9,6 +9,7 @@ import ar.edu.itba.paw.models.*;
 import ar.edu.itba.paw.persistence.utils.QueryBuilder;
 import java.sql.Date;
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.*;
 import java.util.stream.Collectors;
 import javax.persistence.EntityManager;
@@ -217,6 +218,20 @@ public class DoctorDaoJpa implements DoctorDao {
                       + " <= doctor_vacation.to_time))")
               .build();
 
+      ThirtyMinuteBlock fromTimeBlock = fromTime;
+
+      // If date is today, from time is now
+      if (date.equals(LocalDate.now())) {
+        ThirtyMinuteBlock now = ThirtyMinuteBlock.fromTime(LocalTime.now());
+        if (fromTime.ordinal() < now.ordinal()) {
+          int nextBlockIndex =
+              (now.ordinal() + 1) >= ThirtyMinuteBlock.values().length
+                  ? now.ordinal()
+                  : now.ordinal() + 1;
+          fromTimeBlock = ThirtyMinuteBlock.values()[nextBlockIndex];
+        }
+      }
+
       String attendingHoursQuery =
           new QueryBuilder()
               .select("doctor_attending_hours.doctor_id")
@@ -225,7 +240,7 @@ public class DoctorDaoJpa implements DoctorDao {
               .where("doctor_attending_hours.day = " + date.getDayOfWeek().ordinal())
               .where(
                   "doctor_attending_hours.hour_block BETWEEN "
-                      + fromTime.ordinal()
+                      + fromTimeBlock.ordinal()
                       + " AND "
                       + toTime.ordinal())
               .where("doctor_attending_hours.hour_block NOT IN (" + appointmentQuery + ")")

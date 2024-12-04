@@ -11,7 +11,7 @@ import {
   Alert,
   Spinner,
 } from "react-bootstrap";
-import {Link, useNavigate} from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import "../../css/main.css";
 import "../../css/forms.css";
 import "../../css/profile.css";
@@ -41,7 +41,7 @@ const DoctorEdit = () => {
   const { user, loading, isDoctor } = useUser();
   const { data: healthInsurances } = useHealthInsurances({
     sort: "standard",
-    order: "asc"
+    order: "asc",
   });
   const { data: specialties } = useSpecialties({
     sort: "standard",
@@ -84,8 +84,9 @@ const DoctorEdit = () => {
       },
     );
 
-
-    const healthInsurancesChanged = doctorHealthInsurances?.sort().join(",") !== oldHealthInsurances?.sort().join(",");
+    const healthInsurancesChanged =
+      doctorHealthInsurances?.sort().join(",") !==
+      oldHealthInsurances?.sort().join(",");
     return (
       name !== user?.firstName ||
       lastname !== user?.lastName ||
@@ -128,7 +129,7 @@ const DoctorEdit = () => {
 
       setImageURL(doctor.image ? doctor.image : doctorDefault);
     }
-  }, [user, loading, isDoctor, setValue]);
+  }, [user, loading, isDoctor, setValue, healthInsurances, specialties]);
 
   const onSuccess = () => {
     setShowSuccess(true);

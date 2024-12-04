@@ -1,6 +1,7 @@
 import { axios } from "../axios";
 import { HealthInsurance, HealthInsuranceQuery } from "./HealthInsurance";
 import {formatDate} from "../util/dateUtils";
+import {fetchAllPaginatedData} from "../page/Page";
 
 const HEALTH_INSURANCE_ENDPOINT = "healthinsurances";
 
@@ -10,36 +11,21 @@ const HEALTH_INSURANCE_LIST_CONTENT_TYPE = "application/vnd.health-insurance-lis
 // =========== healthinsurances ==============
 
 export async function getHealthInsurances(query: HealthInsuranceQuery): Promise<HealthInsurance[]> {
-  const allHealthInsurances: HealthInsurance[] = [];
-  let nextPageUrl: string | null = HEALTH_INSURANCE_ENDPOINT;
-
-  let dateStr;
-  if (query.date) {
-    dateStr = formatDate(query.date);
-  }
+  const dateStr = query.date ? formatDate(query.date) : undefined;
 
   const initialQuery = {
+    ...query,
     pageSize: 50,
     date: dateStr,
-    ...query
   };
 
-  while (nextPageUrl) {
-    const response = await axios.get<HealthInsurance[]>(nextPageUrl, {
-      params: initialQuery,
-      headers: {
-        Accept: HEALTH_INSURANCE_LIST_CONTENT_TYPE,
-      },
-    });
-
-    allHealthInsurances.push(...response.data);
-
-    const linkHeader: string = response.headers.link;
-    nextPageUrl = linkHeader?.match(/<([^>]+)>;\s*rel="next"/)?.[1] || null;
-  }
-
-  return allHealthInsurances;
+  return fetchAllPaginatedData<HealthInsurance>(
+      HEALTH_INSURANCE_ENDPOINT,
+      initialQuery,
+      { Accept: HEALTH_INSURANCE_LIST_CONTENT_TYPE },
+  );
 }
+
 
 // =========== healthinsurances/{id} =======
 

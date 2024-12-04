@@ -54,17 +54,6 @@ const AppointmentCardPlaceholder: React.FC<AppointmentCardPlaceholderProps> = ({
             <Placeholder xs={6} />
           </Placeholder>
 
-          {/* Placeholder for Description */}
-          <Placeholder animation="wave" className="w-100">
-            <Placeholder xs={10} />
-          </Placeholder>
-
-          {/* Placeholder for Cancel Reason */}
-          {status === "CANCELLED" && (
-            <Placeholder animation="wave" className="w-100">
-              <Placeholder xs={8} />
-            </Placeholder>
-          )}
 
           {/* Placeholder for Buttons */}
           {showButtons && (

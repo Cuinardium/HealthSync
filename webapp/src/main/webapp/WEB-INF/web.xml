@@ -56,6 +56,7 @@
                 ar.edu.itba.paw.webapp.config,
                 ar.edu.itba.paw.webapp.controller,
                 ar.edu.itba.paw.webapp.mapper,
+                ar.edu.itba.paw.webapp.filter,
             </param-value>
         </init-param>
         <!-- Que le mande al default servlet cuando no sabe que hacer -->

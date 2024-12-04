@@ -1,5 +1,5 @@
 import { axios } from "../axios";
-import { getPage, Page } from "../page/Page";
+import {fetchAllPaginatedData, getPage, Page} from "../page/Page";
 import { formatDate, parseLocalDate } from "../util/dateUtils";
 import {
   AttendingHours,
@@ -138,53 +138,28 @@ export async function updateDoctorAttendingHours(
 // ========= doctors/id/occupiedhours ==========
 
 export async function getDoctorOccupiedHours(
-  doctorId: string,
-  from: Date | null,
-  to: Date | null,
+    doctorId: string,
+    from: Date | null,
+    to: Date | null,
 ): Promise<OccupiedHours[]> {
-  let results: OccupiedHours[] = [];
-  let nextPageUrl = DOCTOR_ENDPOINT + "/" + doctorId + OCCUPIED_HOURS_ENDPOINT;
+  const fromStr = from ? formatDate(from) : undefined;
+  const toStr = to ? formatDate(to) : undefined;
 
-  let fromStr;
-  if (from) {
-    fromStr = formatDate(from);
-  }
-  let toStr;
-  if (to) {
-    toStr = formatDate(to);
-  }
+  const initialQuery = {
+    from: fromStr,
+    to: toStr,
+    pageSize: 365,
+  };
 
-  while (nextPageUrl) {
-    const occupiedHoursResp = await axios.get<OccupiedHoursResponse[]>(
-      nextPageUrl,
-      {
-        headers: {
-          Accept: OCCUPIED_HOURS_CONTENT_TYPE,
-        },
-        params: {
-          from: fromStr,
-          to: toStr,
-          pageSize: 365,
-        },
-      },
-    );
+  const rawResults = await fetchAllPaginatedData<OccupiedHoursResponse>(
+      `${DOCTOR_ENDPOINT}/${doctorId}${OCCUPIED_HOURS_ENDPOINT}`,
+      initialQuery,
+      { Accept: OCCUPIED_HOURS_CONTENT_TYPE },
+  );
 
-    if (!occupiedHoursResp.data) {
-        break
-    }
-
-    results.push(
-      ...occupiedHoursResp.data.map((occupiedHours) => ({
-        date: parseLocalDate(occupiedHours.date),
-        hours: occupiedHours.hours,
-      })),
-    );
-
-    const linkHeader = occupiedHoursResp.headers.link;
-
-    // Get next page URL, parses using RFC 5988 link format
-    nextPageUrl = linkHeader?.match(/<([^>]+)>;\s*rel="next"/)?.[1] || null;
-  }
-
-  return results;
+  return rawResults.map((entry) => ({
+    date: parseLocalDate(entry.date),
+    hours: entry.hours,
+  }));
 }
+

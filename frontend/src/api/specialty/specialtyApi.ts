@@ -1,6 +1,7 @@
 import { axios } from "../axios";
 import { Specialty, SpecialtyQuery } from "./Specialty";
 import { formatDate } from "../util/dateUtils";
+import {fetchAllPaginatedData} from "../page/Page";
 
 const SPECIALTY_ENDPOINT = "specialties";
 
@@ -9,38 +10,22 @@ const SPECIALTY_LIST_CONTENT_TYPE = "application/vnd.specialty-list.v1+json";
 
 // =========== specialties ==============
 
-export async function getSpecialties(
-  query: SpecialtyQuery,
-): Promise<Specialty[]> {
-  const allSpecialties: Specialty[] = [];
-  let nextPageUrl: string | null = SPECIALTY_ENDPOINT;
-
-  let dateStr;
-  if (query.date) {
-    dateStr = formatDate(query.date);
-  }
+export async function getSpecialties(query: SpecialtyQuery): Promise<Specialty[]> {
+  const dateStr = query.date ? formatDate(query.date) : undefined;
 
   const initialQuery = {
-    pageSize: 50,
-    date: dateStr,
     ...query,
+    pageSize: 100,
+    date: dateStr,
   };
-  while (nextPageUrl) {
-    const response = await axios.get<Specialty[]>(nextPageUrl, {
-      params: initialQuery,
-      headers: {
-        Accept: SPECIALTY_LIST_CONTENT_TYPE,
-      },
-    });
 
-    allSpecialties.push(...response.data);
-
-    const linkHeader: string = response.headers.link;
-    nextPageUrl = linkHeader?.match(/<([^>]+)>;\s*rel="next"/)?.[1] || null;
-  }
-
-  return allSpecialties;
+  return fetchAllPaginatedData<Specialty>(
+      SPECIALTY_ENDPOINT,
+      initialQuery,
+      { Accept: SPECIALTY_LIST_CONTENT_TYPE },
+  );
 }
+
 
 // =========== specialties/{id} =======
 
