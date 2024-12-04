@@ -46,6 +46,8 @@ const DetailedAppointment = lazy(
   () => import("./pages/appointments/AppointmentDetails"),
 );
 
+const BASE_NAME = process.env.REACT_APP_BASE_NAME
+
 function App() {
   const helmetContext = {};
 
@@ -56,7 +58,7 @@ function App() {
           <AuthProvider>
             <UserProvider>
               <SelectedTabProvider>
-                <BrowserRouter basename="/paw-2023a-02">
+                <BrowserRouter basename={BASE_NAME}>
                   <Layout>
                     <Suspense fallback={<Loader />}>
                       <Routes>
