@@ -28,7 +28,7 @@ export async function getIndications(
     headers: { Accept: INDICATION_LIST_CONTENT_TYPE },
   });
 
-  if (response.status == 200) {
+  if (response.status === 200) {
     response.data = response.data?.map((indication: IndicationResponse) =>
       mapDetails(indication),
     );

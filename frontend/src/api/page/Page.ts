@@ -1,4 +1,5 @@
 import { AxiosResponse } from "axios";
+import { axios } from "../axios";
 
 export interface Page<T> {
   content: T[];
@@ -31,4 +32,36 @@ export function getPage<T>(response: AxiosResponse): Page<T> {
     totalPages: lastPage,
     currentPage: currentPage,
   };
+}
+
+export async function fetchAllPaginatedData<T>(
+    endpoint: string,
+    query: Record<string, any>,
+    headers: Record<string, string>,
+): Promise<T[]> {
+  const allData: T[] = [];
+  let nextPageUrl: string | null = endpoint;
+  let isFirstRequest = true;
+
+  while (nextPageUrl) {
+    const response = await axios.get<T[]>(nextPageUrl, {
+      params: isFirstRequest ? query : {},
+      headers,
+    });
+
+    isFirstRequest = false;
+
+    if (!response.data || response.status !== 200) {
+      break;
+    }
+
+    allData.push(...response.data);
+
+    const linkHeader: string = response.headers.link;
+
+    // Parse RFC 5988 Link header
+    nextPageUrl = linkHeader?.match(/<([^>]+)>;\s*rel="next"/)?.[1] || null;
+  }
+
+  return allData;
 }

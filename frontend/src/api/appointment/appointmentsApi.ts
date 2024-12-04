@@ -1,5 +1,5 @@
 import { axios } from "../axios";
-import { getPage, Page } from "../page/Page";
+import { fetchAllPaginatedData, getPage, Page } from "../page/Page";
 import {
   Appointment,
   AppointmentForm,
@@ -59,11 +59,8 @@ export async function getAllConfirmedAppointmentsInRange(
   to: Date | null,
   userId: string,
 ): Promise<Appointment[]> {
-  let results: Appointment[] = [];
-  let nextPageUrl = APPOINTMENT_ENDPOINT;
-
-  let fromDateStr = from ? formatDate(from) : undefined;
-  let toDateStr = to ? formatDate(to) : undefined;
+  const fromDateStr = from ? formatDate(from) : undefined;
+  const toDateStr = to ? formatDate(to) : undefined;
 
   const query = {
     from: fromDateStr,
@@ -73,27 +70,13 @@ export async function getAllConfirmedAppointmentsInRange(
     pageSize: 100,
   };
 
-  while (nextPageUrl) {
-    const response = await axios.get<AppointmentResponse[]>(nextPageUrl, {
-      params: query,
-      headers: { Accept: APPOINTMENT_LIST_CONTENT_TYPE },
-    });
+  const rawAppointments = await fetchAllPaginatedData<AppointmentResponse>(
+    APPOINTMENT_ENDPOINT,
+    query,
+    { Accept: APPOINTMENT_LIST_CONTENT_TYPE },
+  );
 
-    if (!response.data || response.status !== 200) {
-      break;
-    }
-
-    results.push(
-      ...response.data.map((appointment) => mapDetails(appointment)),
-    );
-
-    const linkHeader = response.headers.link;
-
-    // Get next page URL, parses using RFC 5988 link format
-    nextPageUrl = linkHeader?.match(/<([^>]+)>;\s*rel="next"/)?.[1] || null;
-  }
-
-  return results;
+  return rawAppointments.map((appointment) => mapDetails(appointment));
 }
 
 export async function createAppointment(
