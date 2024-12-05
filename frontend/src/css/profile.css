@@ -106,4 +106,5 @@
 
 .scheduleMargin{
     margin-bottom: 3rem;
+    overflow-x: auto;
 }
