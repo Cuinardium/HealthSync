@@ -7,6 +7,7 @@ import {
   FaMapLocationDot,
   FaEnvelope,
 } from "react-icons/fa6";
+import {Link} from "react-router-dom";
 
 const DetailedDoctorCardPlaceholder: React.FC = () => {
   return (
@@ -65,7 +66,8 @@ const DetailedDoctorCardPlaceholder: React.FC = () => {
                 <Placeholder animation="wave">
                   <h5 className="d-flex flex-row align-items-center mb-2">
                     <Placeholder xs={4} />
-                    <FaMapLocationDot className="ms-1" />
+                    <FaMapLocationDot className="ms-1 me-1" />
+                    <Placeholder xs={3} as={Link} />
                   </h5>
                 </Placeholder>
 
