@@ -1,5 +1,5 @@
 import React from "react";
-import { Navbar, Nav, NavDropdown, Button, Image } from "react-bootstrap";
+import {Button, Image} from "react-bootstrap";
 import { useTranslation } from "react-i18next";
 
 import "bootstrap/dist/css/bootstrap.css";
@@ -8,8 +8,6 @@ import "../css/header.css";
 
 import logo from "../img/logo.svg";
 import {
-  FaUser,
-  FaUserNurse,
   FaUserDoctor,
   FaCalendarCheck,
   FaCircle,
@@ -57,7 +55,6 @@ const Header: React.FC<HeaderProps> = ({
     navigate(homeUrl);
   };
 
-  // TODO usar componentes de bootstrap
   return (
     <header className="horizontalPadding border-bottom">
       <div className="head">
@@ -92,7 +89,7 @@ const Header: React.FC<HeaderProps> = ({
               <div id="profileDropdown">
                 <ul className="navbar-nav">
                   <li className="nav-item dropdown">
-                    <a
+                    <div
                       className="nav-link dropdown-toggle"
                       role="button"
                       data-bs-toggle="dropdown"
@@ -114,31 +111,31 @@ const Header: React.FC<HeaderProps> = ({
                         height="40"
                         className="rounded-circle"
                       />
-                    </a>
+                    </div>
                     <ul className="dropdown-menu">
                       {isDoctor ? (
                         <li>
-                          <a
+                          <Link
+                              to={doctorProfileUrl}
                             className="dropdown-item icon"
-                            onClick={() => navigate(doctorProfileUrl)}
                           >
                             {t("header.profile")}
-                          </a>
+                          </Link>
                         </li>
                       ) : (
                         <li>
-                          <a
+                          <Link
+                            to={patientProfileUrl}
                             className="dropdown-item"
-                            onClick={() => navigate(patientProfileUrl)}
                           >
                             {t("header.profile")}
-                          </a>
+                          </Link>
                         </li>
                       )}
                       <li>
-                        <a className="dropdown-item" onClick={handleLogout}>
+                        <Button className="dropdown-item" onClick={handleLogout}>
                           {t("header.logout")}
-                        </a>
+                        </Button>
                       </li>
                     </ul>
                   </li>
