@@ -1,5 +1,5 @@
 import React from "react";
-import { Alert, Button, Col, Row, Spinner, Stack } from "react-bootstrap";
+import { Alert, Button, Col, Row, Spinner } from "react-bootstrap";
 import { Doctor, DoctorQuery } from "../../api/doctor/Doctor";
 import { useDoctors } from "../../hooks/doctorHooks";
 

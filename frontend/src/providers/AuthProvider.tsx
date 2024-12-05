@@ -1,4 +1,4 @@
-import React, { useState, useEffect, ReactNode } from "react";
+import React, { useState, useEffect, ReactNode, useCallback } from "react";
 import { AxiosError, InternalAxiosRequestConfig } from "axios";
 
 import { axios } from "../api/axios";
@@ -8,7 +8,7 @@ import { AuthContext } from "../context/AuthContext";
 import { queryClient } from "../api/queryClient";
 import { verifyUser } from "../api/token/tokenApi";
 import useLocale from "../hooks/useLocale";
-import {useDoctorQueryContext} from "../context/DoctorQueryContext";
+import { useDoctorQueryContext } from "../context/DoctorQueryContext";
 
 const REFRESH_TOKEN_KEY = "healthsync-refresh-token";
 
@@ -29,26 +29,26 @@ interface AuthProviderProps {
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [accessToken, setAccessToken] = useState<string | null>(null);
-  const [refreshToken, setRefreshToken] = useState<string | null>(() =>
-    {
-      if (localStorage.hasOwnProperty(REFRESH_TOKEN_KEY)) {
-        return localStorage.getItem(REFRESH_TOKEN_KEY);
-      }
-      if (sessionStorage.hasOwnProperty(REFRESH_TOKEN_KEY)) {
-        return sessionStorage.getItem(REFRESH_TOKEN_KEY);
-      }
-      return null;
+  const [refreshToken, setRefreshToken] = useState<string | null>(() => {
+    if (localStorage.hasOwnProperty(REFRESH_TOKEN_KEY)) {
+      return localStorage.getItem(REFRESH_TOKEN_KEY);
     }
-  );
+    if (sessionStorage.hasOwnProperty(REFRESH_TOKEN_KEY)) {
+      return sessionStorage.getItem(REFRESH_TOKEN_KEY);
+    }
+    return null;
+  });
 
   const [id, setId] = useState<string | null>(null);
   const [role, setRole] = useState<"ROLE_DOCTOR" | "ROLE_PATIENT" | null>(null);
-  const [loading, setLoading] = useState<boolean>(() =>
-    localStorage.hasOwnProperty(REFRESH_TOKEN_KEY) || sessionStorage.hasOwnProperty(REFRESH_TOKEN_KEY),
+  const [loading, setLoading] = useState<boolean>(
+    () =>
+      localStorage.hasOwnProperty(REFRESH_TOKEN_KEY) ||
+      sessionStorage.hasOwnProperty(REFRESH_TOKEN_KEY),
   );
 
   const { clearLocale } = useLocale();
-  const {resetQuery} = useDoctorQueryContext();
+  const { resetQuery } = useDoctorQueryContext();
 
   const authenticated = !!accessToken;
 
@@ -85,7 +85,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   };
 
   // Log out and clear tokens
-  const logout = (): void => {
+  const logout = useCallback((): void => {
     setAccessToken(null);
     setRefreshToken(null);
     setId(null);
@@ -99,10 +99,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
     localStorage.removeItem(REFRESH_TOKEN_KEY);
     sessionStorage.removeItem(REFRESH_TOKEN_KEY);
-  };
+  }, [clearLocale, resetQuery]);
 
   // Function to refresh the access token
-  const refreshAccessToken = async (): Promise<string | null> => {
+  const refreshAccessToken = useCallback(async (): Promise<string | null> => {
     if (!refreshToken) return null;
 
     try {
@@ -120,7 +120,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       logout();
       return null;
     }
-  };
+  }, [refreshToken, logout]);
 
   useEffect(() => {
     const initializeAuth = async () => {
@@ -130,7 +130,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     };
 
     initializeAuth();
-  }, []);
+  }, [refreshAccessToken, refreshToken]);
 
   useEffect(() => {
     if (accessToken) {
@@ -193,7 +193,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       axios.interceptors.request.eject(requestInterceptor);
       axios.interceptors.response.eject(responseInterceptor);
     };
-  }, [accessToken, refreshToken]);
+  }, [refreshAccessToken, accessToken, refreshToken]);
 
   return (
     <AuthContext.Provider

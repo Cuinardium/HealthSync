@@ -1,7 +1,5 @@
 import i18next from "i18next";
-import { ReactNode, useEffect, useState } from "react";
-import { Doctor } from "../api/doctor/Doctor";
-import { Patient } from "../api/patient/Patient";
+import React, { ReactNode, useEffect } from "react";
 import { useAuth } from "../context/AuthContext";
 import { UserContext } from "../context/UserContext";
 import { useDoctor } from "../hooks/doctorHooks";

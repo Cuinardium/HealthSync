@@ -4,10 +4,8 @@ import {
   Alert,
   Button,
   Col,
-  FloatingLabel,
   Form,
   Modal,
-  Row,
   Spinner,
 } from "react-bootstrap";
 import { useCancelAppointment } from "../../hooks/appointmentHooks";
@@ -57,7 +55,7 @@ const CancelAppointmentForm: React.FC<CancelAppointmentFormProps> = ({
     }, 2000);
   };
 
-  const onError = (error: AxiosError) => {
+  const onError = (_: AxiosError) => {
     setError("root", {
       message: "appointments.cancelModal.error",
     });

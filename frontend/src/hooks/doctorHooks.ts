@@ -1,9 +1,7 @@
 import {
-  keepPreviousData,
   useInfiniteQuery,
   useMutation,
   useQuery,
-  useQueryClient,
 } from "@tanstack/react-query";
 import {
   createDoctor,
@@ -28,11 +26,8 @@ import { queryClient } from "../api/queryClient";
 import { AxiosError } from "axios";
 import { getHealthInsurance } from "../api/health-insurance/healthInsuranceApi";
 import { getSpecialty } from "../api/specialty/specialtyApi";
-import { HealthInsurance } from "../api/health-insurance/HealthInsurance";
-import { Specialty } from "../api/specialty/Specialty";
-import { useMemo } from "react";
 import { Day, DAYS, Time, TIMES } from "../api/time/Time";
-import { formatDate, parseLocalDate } from "../api/util/dateUtils";
+import { formatDate } from "../api/util/dateUtils";
 import { Appointment } from "../api/appointment/Appointment";
 import { getAllConfirmedAppointmentsInRange } from "../api/appointment/appointmentsApi";
 import {parseLocale} from "../api/locale/locale";

@@ -1,7 +1,7 @@
 import React from "react";
 import { Card, Stack, Badge, Button, Col, Row, Form } from "react-bootstrap";
-import {Link, useNavigate} from "react-router-dom";
-import {FaArrowUpRightFromSquare, FaCircle, FaFileExcel} from "react-icons/fa6";
+import { Link } from "react-router-dom";
+import { FaArrowUpRightFromSquare, FaFileExcel } from "react-icons/fa6";
 import { Appointment } from "../../api/appointment/Appointment";
 import { usePatient } from "../../hooks/patientHooks";
 import { useDoctor } from "../../hooks/doctorHooks";
@@ -10,7 +10,7 @@ import { useTranslation } from "react-i18next";
 import AppointmentCardPlaceholder from "./AppointmentCardPlaceholder";
 import { FaFileLines, FaUser } from "react-icons/fa6";
 import useLocale from "../../hooks/useLocale";
-import {formatDatePrettyLong} from "../../api/util/dateUtils";
+import { formatDatePrettyLong } from "../../api/util/dateUtils";
 
 interface AppointmentProps {
   appointment: Appointment;
@@ -136,7 +136,10 @@ const DetailedAppointmentCard: React.FC<AppointmentProps> = ({
               {!isDoctor && (
                 <>
                   <h5 className="text-center">
-                    {t("appointment.doctor")} <Link to={`/detailed-doctor/${doctor?.id}`} ><FaArrowUpRightFromSquare className="text-primary"/></Link>
+                    {t("appointment.doctor")}{" "}
+                    <Link to={`/detailed-doctor/${doctor?.id}`}>
+                      <FaArrowUpRightFromSquare className="text-primary" />
+                    </Link>
                   </h5>
                   <div className="d-flex flex-row justify-content-center">
                     <strong className="me-1">{t("form.name")}:</strong>{" "}

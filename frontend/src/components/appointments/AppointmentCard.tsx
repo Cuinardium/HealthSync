@@ -1,11 +1,10 @@
 import React from "react";
-import { Card, Stack, Badge, Button, Col, Row } from "react-bootstrap";
+import { Card, Stack, Badge, Button } from "react-bootstrap";
 import { Link } from "react-router-dom";
-import { FaBell, FaCircle } from "react-icons/fa";
+import { FaCircle } from "react-icons/fa";
 import { Appointment } from "../../api/appointment/Appointment";
 import { usePatient } from "../../hooks/patientHooks";
 import { useDoctor } from "../../hooks/doctorHooks";
-import { useAuth } from "../../context/AuthContext";
 import { useUser } from "../../context/UserContext";
 import { useTranslation } from "react-i18next";
 import AppointmentCardPlaceholder from "./AppointmentCardPlaceholder";

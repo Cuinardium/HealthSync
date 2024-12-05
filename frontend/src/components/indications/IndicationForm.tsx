@@ -1,14 +1,5 @@
 import React, { useRef, useState } from "react";
-import {
-  Button,
-  Col,
-  FloatingLabel,
-  Form,
-  InputGroup,
-  Row,
-  Spinner,
-  Stack,
-} from "react-bootstrap";
+import { Button, Form, InputGroup, Spinner, Stack } from "react-bootstrap";
 import { useCreateIndication } from "../../hooks/indicationHooks";
 import { AxiosError } from "axios";
 import { useTranslation } from "react-i18next";
@@ -121,7 +112,6 @@ const IndicationForm: React.FC<CreateIndicationFormProps> = ({
           {/* File Trigger */}
           {fileName && (
             <>
-
               <InputGroup.Text>{fileName}</InputGroup.Text>
 
               <Button variant="danger" onClick={deleteFile}>

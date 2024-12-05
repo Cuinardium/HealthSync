@@ -1,7 +1,7 @@
 import { useTranslation } from "react-i18next";
 import { Card, Col, Container, Row } from "react-bootstrap";
 import { Link } from "react-router-dom";
-import { FaCheck, FaEnvelope } from "react-icons/fa";
+import { FaCheck } from "react-icons/fa";
 
 const RegisterSuccessful = () => {
   const { t } = useTranslation();

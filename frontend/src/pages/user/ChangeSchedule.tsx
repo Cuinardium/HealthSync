@@ -17,7 +17,7 @@ import { useAuth } from "../../context/AuthContext";
 import { useUpdateAttendingHours } from "../../hooks/doctorHooks";
 import { useForm, Controller } from "react-hook-form";
 import { Link } from "react-router-dom";
-import React, { useState } from "react";
+import React, {useCallback, useState} from "react";
 
 interface FormValues {
   attendingHours: AttendingHours[] | undefined;
@@ -34,6 +34,14 @@ const ChangeSchedule = () => {
   const [showSuccess, setShowSuccess] = useState<boolean>(false);
   const [showError, setShowError] = useState<boolean>(false);
   const [changes, setChanges] = useState<number>(0);
+
+  const onScheduleChange = useCallback(
+    (newAttendingHours: AttendingHours[]) => {
+      setValue("attendingHours", newAttendingHours);
+      setChanges((prev) => prev + 1);
+    },
+    [setValue],
+  );
 
   const onSuccess = () => {
     setShowSuccess(true);
@@ -81,10 +89,7 @@ const ChangeSchedule = () => {
                   render={({ field }) => (
                     <ScheduleSelector
                       doctorId={String(id)}
-                      onScheduleChange={(newAttendingHours) => {
-                        setValue("attendingHours", newAttendingHours);
-                        setChanges((prev) => prev + 1);
-                      }}
+                      onScheduleChange={onScheduleChange}
                     />
                   )}
                 />

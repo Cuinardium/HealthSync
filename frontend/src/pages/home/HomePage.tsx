@@ -1,12 +1,10 @@
-import React, {useEffect, useState} from 'react';
+import React from 'react';
 import {Helmet} from "react-helmet-async";
 import Image from 'react-bootstrap/Image';
 
-import Header from '../../components/Header';
-// import Favicon from '../components/Favicon';
 
 import {useTranslation} from 'react-i18next';
-//import categoriesCarouselJs from '../ts/categoriesCarousel.js';
+
 import circle1 from '../../img/circle1.svg';
 import circle2 from '../../img/circle2.svg';
 import circle3 from '../../img/circle3.svg';
@@ -17,9 +15,7 @@ import '../../css/main.css';
 import '../../css/home.css';
 import { Link } from 'react-router-dom';
 
-// Define the API URLs or other variables
 const homeUrl = '/';
-const doctorDashboardFilteredUrl = '/doctor-dashboard?specialtyCodes=';
 
 const HomePage = () => {
     const {t} = useTranslation();
@@ -37,12 +33,6 @@ const HomePage = () => {
     const altCircle1 = t('home.alt.circle1');
     const altCircle2 = t('home.alt.circle2');
     const altCircle3 = t('home.alt.circle3');
-
-    const [categories, setCategories] = useState([]);
-
-    useEffect(() => {
-        setCategories([]);  // Fetch categories data
-    }, []);
 
     return (
         <div>
@@ -123,7 +113,6 @@ const HomePage = () => {
                     <span className="text-body-secondary">&copy; 2023 HealthSync, Inc</span>
                 </div>
             </footer>
-            {/*<script src={categoriesCarouselJs}></script>*/}
         </div>
     );
 };

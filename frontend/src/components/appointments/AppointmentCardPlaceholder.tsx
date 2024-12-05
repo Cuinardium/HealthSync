@@ -1,5 +1,5 @@
 import React from "react";
-import { Card, Stack, Placeholder, Button, Badge, Col } from "react-bootstrap";
+import { Card, Stack, Placeholder, Col } from "react-bootstrap";
 
 interface AppointmentCardPlaceholderProps {
   status?: "CONFIRMED" | "CANCELLED" | "COMPLETED";

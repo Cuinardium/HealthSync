@@ -1,4 +1,3 @@
-import { AxiosError } from "axios";
 import React, { useState } from "react";
 import { useCreateAppointment } from "../../hooks/appointmentHooks";
 import {

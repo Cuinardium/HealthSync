@@ -1,5 +1,5 @@
 import React from "react";
-import { Card, Placeholder, Stack, Image, Col, Row } from "react-bootstrap";
+import { Card, Placeholder, Stack, Col, Row } from "react-bootstrap";
 
 const ReviewCardPlaceholder: React.FC = () => {
   return (
@@ -7,7 +7,11 @@ const ReviewCardPlaceholder: React.FC = () => {
       <Card.Body>
         {/* Placeholder for Rating */}
         <Placeholder as="div" animation="wave">
-          <Placeholder xs={2} style={{ height: "15px", color: "gold" }} className="mb-3" />
+          <Placeholder
+            xs={2}
+            style={{ height: "15px", color: "gold" }}
+            className="mb-3"
+          />
         </Placeholder>
 
         {/* Placeholder for Description */}

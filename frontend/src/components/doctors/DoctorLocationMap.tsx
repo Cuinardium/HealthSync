@@ -33,6 +33,7 @@ const DoctorLocationMap: React.FC<DoctorLocationMapProps> = ({
         <Modal.Body>
           <iframe
             className="map"
+            sandbox="allow-scripts"
             style={{ border: 0, width: "100%", height: "800px" }}
             referrerPolicy="no-referrer-when-downgrade"
             src={mapSrc}

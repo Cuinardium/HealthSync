@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+import React from "react";
 import AppointmentsList from "../../components/appointments/AppointmentList";
-import { Col, Container, Row, Spinner, Tab, Tabs } from "react-bootstrap";
+import { Col, Container, Spinner, Tab, Tabs } from "react-bootstrap";
 import { useTranslation } from "react-i18next";
 import { useSelectedTabContext } from "../../context/SelectedTabContext";
 import AppointmentWithNotificationsList from "../../components/appointments/AppointmentWithNotificationsList";
@@ -12,7 +12,6 @@ const MyAppointments: React.FC = () => {
 
   const { selectedTab, setSelectedTab } = useSelectedTabContext();
   const pageSize = 10;
-  const [today, _] = useState<Date>(new Date());
 
   if (loading) {
     return (

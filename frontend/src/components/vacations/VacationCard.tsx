@@ -1,7 +1,8 @@
 import { Vacation } from "../../api/vacation/Vacation";
-import { Button, Card, Stack, Row, Col } from "react-bootstrap";
+import { Button, Card, Row, Col } from "react-bootstrap";
 import { useTranslation } from "react-i18next";
 import { FaArrowRight } from "react-icons/fa";
+import React from "react";
 
 interface VacationCardProps {
   vacation: Vacation;

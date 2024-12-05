@@ -1,5 +1,5 @@
 import React from "react";
-import { Card, Placeholder, Image, Stack, Row, Col } from "react-bootstrap";
+import { Card, Placeholder, Stack, Row, Col } from "react-bootstrap";
 import {
   FaAddressBook,
   FaCity,

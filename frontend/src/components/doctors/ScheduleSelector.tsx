@@ -87,7 +87,7 @@ const ScheduleSelector: React.FC<ScheduleSelectorProps> = ({
 
       onScheduleChange(newAttendingHours);
     }
-  }, [attendingHours]);
+  }, [attendingHours, onScheduleChange]);
 
   const [isDragging, setIsDragging] = useState(false);
   const [isSelecting, setIsSelecting] = useState(false);
