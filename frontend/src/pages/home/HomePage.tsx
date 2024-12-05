@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {Helmet} from "react-helmet-async";
 import Image from 'react-bootstrap/Image';
 
@@ -13,12 +13,17 @@ import homeDoctorImg from '../../img/homeDoctor.svg';
 import 'bootstrap/dist/css/bootstrap.css';
 import '../../css/main.css';
 import '../../css/home.css';
-import { Link } from 'react-router-dom';
+import {Link, useNavigate} from 'react-router-dom';
+import {Button, Form, Stack} from "react-bootstrap";
+import {FaMagnifyingGlass} from "react-icons/fa6";
+import {useDoctorQueryContext} from "../../context/DoctorQueryContext";
 
 const homeUrl = '/';
 
 const HomePage = () => {
     const {t} = useTranslation();
+
+    const navigate = useNavigate();
 
     const title = t('home.home');
     const welcome1 = t('home.welcome1');
@@ -34,6 +39,19 @@ const HomePage = () => {
     const altCircle2 = t('home.alt.circle2');
     const altCircle3 = t('home.alt.circle3');
 
+    const { setName } = useDoctorQueryContext();
+
+    const [searchName, setSearchName] = useState<string | undefined>("");
+
+    const applyName = () => {
+        const name = searchName && searchName.length > 0 ? searchName : undefined;
+        if (name) {
+            setName(name);
+        }
+
+        navigate('/doctor-dashboard');
+    };
+
     return (
         <div>
             <Helmet>
@@ -46,11 +64,21 @@ const HomePage = () => {
                 <div className="welcome1Container">
                     <div className="sloganSmall">{welcome1}</div>
                     <h1 className="sloganBig"><span className="text-gradient">{welcome2}</span></h1>
+                    <Stack direction="horizontal" className="mb-3" gap={2}>
+                        <Form.Control
+                            type="text"
+                            placeholder={t("doctorDashboard.placeholder.search")}
+                            value={searchName}
+                            onChange={(e) => setSearchName(e.target.value)}
+                        />
+                        <Button onClick={applyName} variant="primary">
+                            <FaMagnifyingGlass />
+                        </Button>
+                    </Stack>
                 </div>
                 <div className="profile">
                     <Image src={homeDoctorImg} alt={altHomeDoctorImg} className="profile-img"/>
                 </div>
-
             </div>
 
 
