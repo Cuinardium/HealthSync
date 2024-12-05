@@ -6,6 +6,7 @@ import { useDoctors } from "../../hooks/doctorHooks";
 import DoctorCard from "./DoctorCard";
 import { useTranslation } from "react-i18next";
 import DoctorCardPlaceholder from "./DoctorCardPlaceholder";
+import {useUser} from "../../context/UserContext";
 
 interface DoctorListProps {
   query: DoctorQuery;
@@ -13,6 +14,8 @@ interface DoctorListProps {
 
 const DoctorList: React.FC<DoctorListProps> = ({ query }) => {
   const { t } = useTranslation();
+
+  const { isDoctor } = useUser();
 
   const {
     data: doctors,
@@ -56,7 +59,7 @@ const DoctorList: React.FC<DoctorListProps> = ({ query }) => {
           <React.Fragment key={index}>
             {page.content.map((doctor: Doctor) => (
               <Col key={doctor.id} xs={12} sm={12} md={12} lg={6}>
-                <DoctorCard doctor={doctor} />
+                <DoctorCard doctor={doctor} isDoctor={isDoctor ?? false} />
               </Col>
             ))}
           </React.Fragment>

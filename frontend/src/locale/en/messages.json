@@ -301,7 +301,8 @@
       "to": "To"
     },
     "button": {
-      "book": "Book appointment"
+      "book": "Book appointment",
+      "details": "See details"
     },
     "no": {
       "doctors": "No doctors where found"

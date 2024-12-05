@@ -302,7 +302,8 @@
       "to": "Hasta"
     },
     "button": {
-      "book": "Reservar turno"
+      "book": "Reservar turno",
+      "details": "Ver detalles"
     },
     "no": {
       "doctors": "No se encontraron doctores"

@@ -12,9 +12,10 @@ import "./doctorCard.css";
 
 interface DoctorCardProps {
   doctor: Doctor;
+  isDoctor?: boolean;
 }
 
-const DoctorCard: React.FC<DoctorCardProps> = ({ doctor }) => {
+const DoctorCard: React.FC<DoctorCardProps> = ({ doctor, isDoctor }) => {
   const { t } = useTranslation();
 
   const { addSpecialty, addHealthInsurance } = useDoctorQueryContext();
@@ -173,7 +174,9 @@ const DoctorCard: React.FC<DoctorCardProps> = ({ doctor }) => {
             className="ms-auto"
             variant="outline-primary"
           >
-            {t("doctorDashboard.button.book")}
+            {isDoctor
+              ? t("doctorDashboard.button.details")
+              : t("doctorDashboard.button.book")}
           </Button>
         </Stack>
       </Card.Body>
