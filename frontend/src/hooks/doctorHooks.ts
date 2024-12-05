@@ -315,16 +315,14 @@ async function mapDoctorDetails(doctorResp: DoctorResponse): Promise<Doctor> {
   if (!specialtyLink) {
     throw new Error("Specialty link not found");
   }
-  const specialtyId = specialtyLink.href.split("/").pop();
-  let specialtyResp: Specialty;
-  const specialtyCacheKey = ["specialty", specialtyId];
-
-  if (queryClient.getQueryData(specialtyCacheKey)) {
-    specialtyResp = queryClient.getQueryData(specialtyCacheKey) as Specialty;
-  } else {
-    specialtyResp = await getSpecialty(specialtyId as string);
-    queryClient.setQueryData(specialtyCacheKey, specialtyResp);
-  }
+  const specialtyId = specialtyLink.href.split("/").pop() as string;
+  const specialtyResp = await queryClient.ensureQueryData(
+    {
+      queryKey: ["specialty", specialtyId],
+      queryFn: () => getSpecialty(specialtyId),
+      staleTime: STALE_TIME,
+    },
+  );
 
   const specialty = specialtyResp.code.toLowerCase().replace(/_/g, ".");
 
@@ -335,22 +333,14 @@ async function mapDoctorDetails(doctorResp: DoctorResponse): Promise<Doctor> {
 
   const healthInsurances = await Promise.all(
     healthInsuranceLinks.map(async (link) => {
-      const healthInsuranceId = link.href.split("/").pop();
-      const healthInsuranceCacheKey = ["healthInsurance", healthInsuranceId];
-
-      let healthInsuranceResp: HealthInsurance;
-
-      if (queryClient.getQueryData(healthInsuranceCacheKey)) {
-        healthInsuranceResp = queryClient.getQueryData(
-          healthInsuranceCacheKey,
-        ) as HealthInsurance;
-      } else {
-        healthInsuranceResp = await getHealthInsurance(
-          healthInsuranceId as string,
-        );
-        queryClient.setQueryData(healthInsuranceCacheKey, healthInsuranceResp);
-      }
-
+      const healthInsuranceId = link.href.split("/").pop() as string;
+      const healthInsuranceResp = await queryClient.ensureQueryData(
+        {
+          queryKey: ["healthInsurance", healthInsuranceId],
+          queryFn: () => getHealthInsurance(healthInsuranceId),
+          staleTime: STALE_TIME,
+        },
+      );
       return healthInsuranceResp.code.toLowerCase().replace(/_/g, ".");
     }),
   );
@@ -375,3 +365,4 @@ async function mapDoctorDetails(doctorResp: DoctorResponse): Promise<Doctor> {
     locale,
   };
 }
+
