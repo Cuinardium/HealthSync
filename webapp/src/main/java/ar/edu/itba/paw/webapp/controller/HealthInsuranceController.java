@@ -9,8 +9,6 @@ import ar.edu.itba.paw.webapp.mediaType.VndType;
 import ar.edu.itba.paw.webapp.query.HealthInsuranceQuery;
 import ar.edu.itba.paw.webapp.utils.LocaleUtil;
 import ar.edu.itba.paw.webapp.utils.ResponseUtil;
-import java.util.Arrays;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -48,7 +46,6 @@ public class HealthInsuranceController {
 
     LOGGER.debug("Listing health insurances, page: {}", healthInsuranceQuery.getPage());
 
-    List<HealthInsurance> healthInsuranceList = Arrays.asList(HealthInsurance.values());
     Map<HealthInsurance, Integer> healthInsurancePopularity =
         doctorService.getUsedHealthInsurances(
             healthInsuranceQuery.getName(),
@@ -58,22 +55,9 @@ public class HealthInsuranceController {
             healthInsuranceQuery.getSpecialtiesEnum(),
             healthInsuranceQuery.getCities(),
             healthInsuranceQuery.getHealthInsurancesEnum(),
-            healthInsuranceQuery.getMinRating());
-
-    // Compare by ordinal or by popularity
-    Comparator<HealthInsuranceDto> comparator =
-        healthInsuranceQuery.sortByPopularity()
-            ? Comparator.comparingInt(HealthInsuranceDto::getPopularity)
-            : Comparator.comparingInt(s -> HealthInsurance.valueOf(s.getCode()).ordinal());
-
-    if (healthInsuranceQuery.reversed()) {
-      comparator = comparator.reversed();
-    }
-
-    if (!healthInsuranceQuery.hasFilters()) {
-      healthInsuranceList.forEach(
-          healthInsurance -> healthInsurancePopularity.putIfAbsent(healthInsurance, 0));
-    }
+            healthInsuranceQuery.getMinRating(),
+            healthInsuranceQuery.sortByPopularity(),
+            healthInsuranceQuery.reversed());
 
     final List<HealthInsuranceDto> dtoList =
         healthInsurancePopularity.entrySet().stream()
@@ -81,7 +65,6 @@ public class HealthInsuranceController {
                 entry ->
                     HealthInsuranceDto.fromHealthInsurance(
                         uriInfo, messageSource, entry.getKey(), entry.getValue()))
-            .sorted(comparator)
             .collect(Collectors.toList());
 
     Page<HealthInsuranceDto> healthInsurancePage =
@@ -116,9 +99,10 @@ public class HealthInsuranceController {
     }
 
     HealthInsurance healthInsurance = healthInsurances[id];
-    int popularity = doctorService.getUsedHealthInsurances(
-        null, null, null, null, null, null, null, null
-    ).getOrDefault(healthInsurance, 0);
+    int popularity =
+        doctorService
+            .getUsedHealthInsurances(null, null, null, null, null, null, null, null, null, null)
+            .getOrDefault(healthInsurance, 0);
 
     LOGGER.debug("returning healthInsurance with id {}", id);
 

@@ -9,8 +9,6 @@ import ar.edu.itba.paw.webapp.mediaType.VndType;
 import ar.edu.itba.paw.webapp.query.SpecialtyQuery;
 import ar.edu.itba.paw.webapp.utils.LocaleUtil;
 import ar.edu.itba.paw.webapp.utils.ResponseUtil;
-import java.util.Arrays;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -48,32 +46,18 @@ public class SpecialtyController {
 
     LOGGER.debug("Listing specialties, page: {}", specialtyQuery.getPage());
 
-    List<Specialty> specialties = Arrays.asList(Specialty.values());
-    Map<Specialty, Integer> specialtiesPopularity = doctorService.getUsedSpecialties(
-        specialtyQuery.getName(),
-        specialtyQuery.getLocalDate(),
-        specialtyQuery.getFromTimeEnum(),
-        specialtyQuery.getToTimeEnum(),
-        specialtyQuery.getSpecialtiesEnum(),
-        specialtyQuery.getCities(),
-        specialtyQuery.getHealthInsurancesEnum(),
-        specialtyQuery.getMinRating()
-    );
-
-    // Compare by ordinal or by popularity
-    Comparator<SpecialtyDto> comparator =
-        specialtyQuery.sortByPopularity()
-            ? Comparator.comparingInt(SpecialtyDto::getPopularity)
-            : Comparator.comparingInt(s -> Specialty.valueOf(s.getCode()).ordinal());
-
-    if (specialtyQuery.reversed()) {
-      comparator = comparator.reversed();
-    }
-
-    // Merge both collections to the map, missing specialties will have a popularity of 0
-    if (!specialtyQuery.hasFilters()) {
-      specialties.forEach(specialty -> specialtiesPopularity.putIfAbsent(specialty, 0));
-    }
+    Map<Specialty, Integer> specialtiesPopularity =
+        doctorService.getUsedSpecialties(
+            specialtyQuery.getName(),
+            specialtyQuery.getLocalDate(),
+            specialtyQuery.getFromTimeEnum(),
+            specialtyQuery.getToTimeEnum(),
+            specialtyQuery.getSpecialtiesEnum(),
+            specialtyQuery.getCities(),
+            specialtyQuery.getHealthInsurancesEnum(),
+            specialtyQuery.getMinRating(),
+            specialtyQuery.sortByPopularity(),
+            specialtyQuery.reversed());
 
     List<SpecialtyDto> specialtyDtoList =
         specialtiesPopularity.entrySet().stream()
@@ -81,7 +65,6 @@ public class SpecialtyController {
                 entry ->
                     SpecialtyDto.fromSpecialty(
                         uriInfo, messageSource, entry.getKey(), entry.getValue()))
-            .sorted(comparator)
             .collect(Collectors.toList());
 
     Page<SpecialtyDto> specialtyPage =
@@ -119,7 +102,7 @@ public class SpecialtyController {
     Specialty specialty = specialties[id];
     int popularity =
         doctorService
-            .getUsedSpecialties(null, null, null, null, null, null, null, null)
+            .getUsedSpecialties(null, null, null, null, null, null, null, null, null, null)
             .getOrDefault(specialty, 0);
 
     LOGGER.debug("returning specialty with id {}", id);

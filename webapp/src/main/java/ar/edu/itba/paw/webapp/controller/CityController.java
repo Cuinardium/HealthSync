@@ -52,22 +52,13 @@ public class CityController {
             cityQuery.getSpecialtiesEnum(),
             cityQuery.getCities(),
             cityQuery.getHealthInsurancesEnum(),
-            cityQuery.getMinRating());
-
-    // Compare by alphabetical or by popularity
-    Comparator<CityDto> comparator =
-        cityQuery.sortByPopularity()
-            ? Comparator.comparingInt(CityDto::getPopularity)
-            : Comparator.comparing(CityDto::getName);
-
-    if (cityQuery.reversed()) {
-      comparator = comparator.reversed();
-    }
+            cityQuery.getMinRating(),
+            cityQuery.sortByPopularity(),
+            cityQuery.reversed());
 
     List<CityDto> cities =
         citiesPopularity.entrySet().stream()
             .map(entry -> CityDto.fromCity(entry.getKey(), entry.getValue()))
-            .sorted(comparator)
             .collect(Collectors.toList());
 
     Page<CityDto> cityDtoPage = new Page<>(cities, cityQuery.getPage(), cityQuery.getPageSize());

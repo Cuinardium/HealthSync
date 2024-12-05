@@ -75,7 +75,9 @@ public interface DoctorService {
       Set<Specialty> specialties,
       Set<String> cities,
       Set<HealthInsurance> healthInsurance,
-      Integer minRating);
+      Integer minRating,
+      Boolean sortByPopularity,
+      Boolean reversed);
 
   public Map<HealthInsurance, Integer> getUsedHealthInsurances(
       String name,
@@ -85,7 +87,9 @@ public interface DoctorService {
       Set<Specialty> specialties,
       Set<String> cities,
       Set<HealthInsurance> healthInsurance,
-      Integer minRating);
+      Integer minRating,
+      Boolean sortByPopularity,
+      Boolean reversed);
 
   // Gets all cities used by doctors & qty of appearences
   public Map<String, Integer> getUsedCities(
@@ -96,7 +100,9 @@ public interface DoctorService {
       Set<Specialty> specialties,
       Set<String> cities,
       Set<HealthInsurance> healthInsurance,
-      Integer minRating);
+      Integer minRating,
+      Boolean sortByPopularity,
+      Boolean reversed);
 
   // ================= Tasks =================
 

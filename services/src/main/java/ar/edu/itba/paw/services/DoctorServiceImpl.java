@@ -12,6 +12,7 @@ import ar.edu.itba.paw.models.*;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.*;
+import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -211,10 +212,41 @@ public class DoctorServiceImpl implements DoctorService {
       Set<Specialty> specialties,
       Set<String> cities,
       Set<HealthInsurance> healthInsurance,
-      Integer minRating) {
-    return doctorDao.getUsedHealthInsurances(
-        name, date, fromTime, toTime, specialties, cities, healthInsurance, minRating
-    );
+      Integer minRating,
+      Boolean sortByPopularity,
+      Boolean reversed) {
+
+    Map<HealthInsurance, Integer> healthInsurancePopularity =
+        doctorDao.getUsedHealthInsurances(
+            name, date, fromTime, toTime, specialties, cities, healthInsurance, minRating);
+
+    boolean hasFilters =
+        hasFilters(name, date, fromTime, toTime, specialties, cities, healthInsurance, minRating);
+
+    if (!hasFilters) {
+      Arrays.stream(HealthInsurance.values())
+          .forEach(h -> healthInsurancePopularity.putIfAbsent(h, 0));
+    }
+
+    if (sortByPopularity == null || reversed == null) {
+      return healthInsurancePopularity;
+    }
+
+    // Compare by ordinal or by popularity
+    Comparator<Map.Entry<HealthInsurance, Integer>> comparator =
+        sortByPopularity
+            ? Comparator.comparingInt(Map.Entry::getValue)
+            : Comparator.comparingInt(h -> HealthInsurance.valueOf(h.getKey().name()).ordinal());
+
+    if (reversed) {
+      comparator = comparator.reversed();
+    }
+
+    return healthInsurancePopularity.entrySet().stream()
+        .sorted(comparator)
+        .collect(
+            Collectors.toMap(
+                Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));
   }
 
   @Transactional(readOnly = true)
@@ -227,10 +259,39 @@ public class DoctorServiceImpl implements DoctorService {
       Set<Specialty> specialties,
       Set<String> cities,
       Set<HealthInsurance> healthInsurance,
-      Integer minRating) {
-    return doctorDao.getUsedSpecialties(
-        name, date, fromTime, toTime, specialties, cities, healthInsurance, minRating
-    );
+      Integer minRating,
+      Boolean sortByPopularity,
+      Boolean reversed) {
+    Map<Specialty, Integer> specialtiesPopularity =
+        doctorDao.getUsedSpecialties(
+            name, date, fromTime, toTime, specialties, cities, healthInsurance, minRating);
+
+    boolean hasFilters =
+        hasFilters(name, date, fromTime, toTime, specialties, cities, healthInsurance, minRating);
+
+    if (!hasFilters) {
+      Arrays.stream(Specialty.values()).forEach(s -> specialtiesPopularity.putIfAbsent(s, 0));
+    }
+
+    if (sortByPopularity == null || reversed == null) {
+      return specialtiesPopularity;
+    }
+
+    // Compare by ordinal or by popularity
+    Comparator<Map.Entry<Specialty, Integer>> comparator =
+        sortByPopularity
+            ? Comparator.comparingInt(Map.Entry::getValue)
+            : Comparator.comparingInt(s -> Specialty.valueOf(s.getKey().name()).ordinal());
+
+    if (reversed) {
+      comparator = comparator.reversed();
+    }
+
+    return specialtiesPopularity.entrySet().stream()
+        .sorted(comparator)
+        .collect(
+            Collectors.toMap(
+                Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));
   }
 
   @Transactional(readOnly = true)
@@ -243,10 +304,28 @@ public class DoctorServiceImpl implements DoctorService {
       Set<Specialty> specialties,
       Set<String> cities,
       Set<HealthInsurance> healthInsurance,
-      Integer minRating) {
-    return doctorDao.getUsedCities(
-        name, date, fromTime, toTime, specialties, cities, healthInsurance, minRating
-    );
+      Integer minRating,
+      Boolean sortByPopularity,
+      Boolean reversed) {
+    Map<String, Integer> citiesPopularity =
+        doctorDao.getUsedCities(
+            name, date, fromTime, toTime, specialties, cities, healthInsurance, minRating);
+
+    // Compare by alphabetical or by popularity
+    Comparator<Map.Entry<String, Integer>> comparator =
+        sortByPopularity
+            ? Comparator.comparingInt(Map.Entry::getValue)
+            : Map.Entry.comparingByKey();
+
+    if (reversed) {
+      comparator = comparator.reversed();
+    }
+
+    return citiesPopularity.entrySet().stream()
+        .sorted(comparator)
+        .collect(
+            Collectors.toMap(
+                Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));
   }
 
   // ================= Tasks =================
@@ -265,5 +344,26 @@ public class DoctorServiceImpl implements DoctorService {
 
     // Delete all vacations that have ended
     doctorDao.deleteOldVacations(today, now);
+  }
+
+  // ======================== Private methods ========================
+
+  private boolean hasFilters(
+      String name,
+      LocalDate date,
+      ThirtyMinuteBlock fromTime,
+      ThirtyMinuteBlock toTime,
+      Set<Specialty> specialties,
+      Set<String> cities,
+      Set<HealthInsurance> healthInsurance,
+      Integer minRating) {
+    return name != null
+        || date != null
+        || fromTime != null
+        || toTime != null
+        || (specialties != null && !specialties.isEmpty())
+        || (cities != null && !cities.isEmpty())
+        || (healthInsurance != null && !healthInsurance.isEmpty())
+        || minRating != null;
   }
 }

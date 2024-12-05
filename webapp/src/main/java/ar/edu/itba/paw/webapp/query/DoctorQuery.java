@@ -146,17 +146,6 @@ public class DoctorQuery extends PageQuery {
     this.minRating = minRating;
   }
 
-  public boolean hasFilters() {
-    return name != null
-        || date != null
-        || fromTime != null
-        || toTime != null
-        || (specialties != null && !specialties.isEmpty())
-        || (cities != null && !cities.isEmpty())
-        || (healthInsurances != null && !healthInsurances.isEmpty())
-        || minRating != null;
-  }
-
   @Override
   public String toString() {
     return "{"
