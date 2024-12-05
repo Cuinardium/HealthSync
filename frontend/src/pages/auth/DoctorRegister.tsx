@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {
   Form,
   Button,
@@ -33,6 +33,7 @@ import {
 import { FaLocationDot, FaUser, FaUserDoctor } from "react-icons/fa6";
 
 import HealthInsurancePicker from "../../components/doctors/HealthInsurancePicker";
+import PlaceAutocomplete from "../../components/doctors/PlaceAutocomplete";
 
 const DoctorRegister = () => {
   const { t } = useTranslation();
@@ -41,14 +42,19 @@ const DoctorRegister = () => {
   const {
     register,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isSubmitting },
     setError,
     control,
+    clearErrors,
+    setValue,
+    watch,
   } = useForm<DoctorRegisterForm>({
     defaultValues: {
       specialty: "",
     },
   });
+
+  const address = watch("address");
 
   const { data: specialties } = useSpecialties({
     sort: "standard",
@@ -58,6 +64,17 @@ const DoctorRegister = () => {
     sort: "standard",
     order: "asc",
   });
+
+  useEffect(() => {
+    const validation = validateAddress(address);
+    if (isSubmitting) {
+      if (validation !== true) {
+        setError("address", {
+          message: validation,
+        });
+      }
+    }
+  }, [isSubmitting, address, setError]);
 
   const onSuccess = () => {
     navigate("/register-successful");
@@ -87,6 +104,34 @@ const DoctorRegister = () => {
       return;
     }
     createDoctorMutation.mutate(data);
+  };
+
+  const handlePlaceSelect = (address: string, city: string) => {
+    if (city) {
+      setValue("city", city);
+    }
+
+    const validationCity = validateCity(city);
+    if (validationCity !== true) {
+      setError("city", {
+        message: validationCity,
+      });
+    } else {
+      clearErrors("city");
+    }
+
+    if (address) {
+      setValue("address", address);
+    }
+
+    const validationAddress = validateAddress(address);
+    if (validationAddress !== true) {
+      setError("address", {
+        message: validationAddress,
+      });
+    } else {
+      clearErrors("address");
+    }
   };
 
   return (
@@ -204,20 +249,12 @@ const DoctorRegister = () => {
 
             <Row className="mb-3">
               <Col>
-                <Form.Group controlId="formAddress">
+                <Form.Group>
                   <Form.Label>{t("form.address")}</Form.Label>
-                  <Form.Control
-                    {...register("address", {
-                      validate: validateAddress,
-                    })}
-                    type="text"
-                    name="address"
-                    placeholder={t("form.address_hint")}
-                    isInvalid={!!errors.address}
+                  <PlaceAutocomplete
+                    onPlaceSelect={handlePlaceSelect}
+                    error={errors.address?.message}
                   />
-                  <Form.Control.Feedback type="invalid">
-                    {errors.address && t(errors.address.message ?? "")}
-                  </Form.Control.Feedback>
                 </Form.Group>
               </Col>
 
@@ -229,9 +266,9 @@ const DoctorRegister = () => {
                       validate: validateCity,
                     })}
                     type="text"
-                    name="city"
                     placeholder={t("form.city_hint")}
                     isInvalid={!!errors.city}
+                    readOnly
                   />
                   <Form.Control.Feedback type="invalid">
                     {errors.city && t(errors.city.message ?? "")}

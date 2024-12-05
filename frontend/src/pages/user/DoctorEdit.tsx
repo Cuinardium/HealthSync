@@ -35,6 +35,7 @@ import {
   validateSpecialty,
 } from "../../api/validation/validations";
 import HealthInsurancePicker from "../../components/doctors/HealthInsurancePicker";
+import PlaceAutocomplete from "../../components/doctors/PlaceAutocomplete";
 
 const DoctorEdit = () => {
   const navigate = useNavigate();
@@ -51,6 +52,10 @@ const DoctorEdit = () => {
   const [imageURL, setImageURL] = useState<string>(doctorDefault);
   const [showSuccess, setShowSuccess] = useState<boolean>(false);
 
+  const [defaultAddress, setDefaultAddress] = useState<string | undefined>(
+    undefined,
+  );
+
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   const handleButtonClick = () => {
@@ -61,11 +66,12 @@ const DoctorEdit = () => {
 
   const {
     register,
-    formState: { errors },
+    formState: { errors, isSubmitting },
     setValue,
     handleSubmit,
     watch,
     setError,
+    clearErrors,
     control,
   } = useForm<DoctorEditForm>();
 
@@ -127,9 +133,50 @@ const DoctorEdit = () => {
         ),
       );
 
+      setDefaultAddress(doctor.address);
+
       setImageURL(doctor.image ? doctor.image : doctorDefault);
     }
   }, [user, loading, isDoctor, setValue, healthInsurances, specialties]);
+
+  useEffect(() => {
+    const validation = validateAddress(address);
+    if (isSubmitting) {
+      if (validation !== true) {
+        setError("address", {
+          message: validation,
+        });
+      }
+    }
+  }, [isSubmitting, address, setError]);
+
+  const handlePlaceSelect = (address: string, city: string) => {
+    if (address) {
+      setValue("address", address);
+    }
+
+    const validationAddress = validateAddress(address);
+    if (validationAddress !== true) {
+      setError("address", {
+        message: validationAddress,
+      });
+    } else {
+      clearErrors("address");
+    }
+
+    if (city) {
+      setValue("city", city);
+    }
+
+    const validationCity = validateCity(city);
+    if (validationCity !== true) {
+      setError("city", {
+        message: validationCity,
+      });
+    } else {
+      clearErrors("city");
+    }
+  };
 
   const onSuccess = () => {
     setShowSuccess(true);
@@ -309,19 +356,11 @@ const DoctorEdit = () => {
                     <Col>
                       <Form.Group>
                         <Form.Label>{t("form.address")}</Form.Label>
-                        <Form.Control
-                          {...register("address", {
-                            validate: validateAddress,
-                          })}
-                          id="address"
-                          name="address"
-                          type="text"
-                          placeholder={t("form.address_hint")}
-                          isInvalid={!!errors.address}
+                        <PlaceAutocomplete
+                          onPlaceSelect={handlePlaceSelect}
+                          error={errors.address?.message}
+                          defaultValue={defaultAddress}
                         />
-                        <Form.Control.Feedback type="invalid">
-                          {errors.address && t(errors.address.message ?? "")}
-                        </Form.Control.Feedback>
                       </Form.Group>
                     </Col>
                     <Col>
@@ -336,6 +375,7 @@ const DoctorEdit = () => {
                           type="text"
                           placeholder={t("form.city_hint")}
                           isInvalid={!!errors.city}
+                          readOnly
                         />
                         <Form.Control.Feedback type="invalid">
                           {errors.city && t(errors.city.message ?? "")}
