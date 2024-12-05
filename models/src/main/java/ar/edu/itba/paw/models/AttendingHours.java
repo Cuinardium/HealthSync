@@ -15,25 +15,6 @@ public class AttendingHours {
   @MapsId("doctorId")
   private Doctor doctor;
 
-  // TODO: populate this
-  public static final Set<AttendingHours> DEFAULT_ATTENDING_HOURS = new HashSet<>();
-
-  // Default attending hours, monday to friday, 8am to 6pm
-  //  public static final AttendingHours DEFAULT_ATTENDING_HOURS =
-  //      new AttendingHours(
-  //          ThirtyMinuteBlock.fromRange(ThirtyMinuteBlock.BLOCK_08_00,
-  // ThirtyMinuteBlock.BLOCK_17_30),
-  //          ThirtyMinuteBlock.fromRange(ThirtyMinuteBlock.BLOCK_08_00,
-  // ThirtyMinuteBlock.BLOCK_17_30),
-  //          ThirtyMinuteBlock.fromRange(ThirtyMinuteBlock.BLOCK_08_00,
-  // ThirtyMinuteBlock.BLOCK_17_30),
-  //          ThirtyMinuteBlock.fromRange(ThirtyMinuteBlock.BLOCK_08_00,
-  // ThirtyMinuteBlock.BLOCK_17_30),
-  //          ThirtyMinuteBlock.fromRange(ThirtyMinuteBlock.BLOCK_08_00,
-  // ThirtyMinuteBlock.BLOCK_17_30),
-  //          new ArrayList<>(),
-  //          new ArrayList<>());
-
   protected AttendingHours() {
     // Solo para hibernate
   }

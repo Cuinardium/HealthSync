@@ -118,7 +118,6 @@ public class PatientServiceImplTest {
     Assert.assertEquals(PATIENT, patient);
   }
 
-  // TODO: make a more specific exception
   @Test(expected = IllegalStateException.class)
   public void testCreatePatientAlreadyExists()
       throws PatientAlreadyExistsException, EmailInUseException {

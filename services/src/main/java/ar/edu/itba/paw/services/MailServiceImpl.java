@@ -10,6 +10,8 @@ import java.util.Locale;
 import java.util.Map;
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.support.ResourceBundleMessageSource;
@@ -23,6 +25,8 @@ import org.thymeleaf.spring4.SpringTemplateEngine;
 
 @Service
 public class MailServiceImpl implements MailService {
+
+  private static final Logger LOGGER = LoggerFactory.getLogger(MailServiceImpl.class);
 
   private static final String FROM = "noreply@healthsync.com";
 
@@ -65,7 +69,7 @@ public class MailServiceImpl implements MailService {
       helper.setText(htmlBody, true);
       mailSender.send(message);
     } catch (MessagingException e) {
-      // TODO: error handling
+      LOGGER.error("Error sending email", e);
     }
   }
 
@@ -252,7 +256,7 @@ public class MailServiceImpl implements MailService {
         appointment.getDoctor().getFirstName() + " " + appointment.getDoctor().getLastName();
 
     String baseUrl = env.getProperty("webapp.baseUrl");
-    String reviewUrl = baseUrl + "detailed-doctor/" + appointment.getDoctor().getId() ;
+    String reviewUrl = baseUrl + "detailed-doctor/" + appointment.getDoctor().getId();
 
     // Load model
     templateModel.put("baseUrl", baseUrl);

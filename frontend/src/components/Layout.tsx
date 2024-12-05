@@ -120,7 +120,6 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
   }, [getTitle]);
 
   if (loading) {
-    // TODO: esta bien esto?
     return (
       <div>
         <Helmet>

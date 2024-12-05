@@ -42,8 +42,6 @@ public class AppointmentDaoJpa implements AppointmentDao {
       throw new AppointmentAlreadyExistsException();
     }
 
-    // TODO: check that appointment is in future
-
     final Appointment app =
         new Appointment.Builder(patient, doctor, date, timeBlock, description).build();
 

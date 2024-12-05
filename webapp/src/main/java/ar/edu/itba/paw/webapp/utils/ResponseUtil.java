@@ -20,7 +20,7 @@ public final class ResponseUtil {
       String next =
           uri.getRequestUriBuilder()
               .replaceQueryParam(
-                  "page", page.getCurrentPage() + 2) // TODO: por q Page usa 0 como inicial
+                  "page", page.getCurrentPage() + 2)
               .toString();
       responseBuilder.link(next, "next");
     }
@@ -28,7 +28,7 @@ public final class ResponseUtil {
       String prev =
           uri.getRequestUriBuilder()
               .replaceQueryParam(
-                  "page", page.getCurrentPage()) // TODO: porque Page usa 0 como inicial
+                  "page", page.getCurrentPage())
               .toString();
       responseBuilder.link(prev, "prev");
     }

@@ -241,7 +241,6 @@ public class Doctor extends User {
     private Set<Vacation> vacations = Collections.emptySet();
     private Boolean isVerified = false;
 
-    // TODO: set defaults
     private Float rating;
     private Integer ratingCount;
 

@@ -94,7 +94,6 @@ public enum Specialty {
     return messageID;
   }
 
-  // TODO: check for range?
   public static Specialty getSpecialty(int specialtyCode) {
     return Specialty.values()[specialtyCode];
   }

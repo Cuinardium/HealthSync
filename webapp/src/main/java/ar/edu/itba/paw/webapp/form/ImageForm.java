@@ -39,7 +39,7 @@ public class ImageForm {
         return "image/png";
       case "jpeg":
       case "jpg":
-      default: // TODO: throw excep?
+      default:
         return "image/jpeg";
     }
   }

@@ -47,11 +47,9 @@ public class Page<T> {
       return null;
     }
 
-    return content.size() == 0 ? 1 : (int) Math.ceil((double) totalContentCount / pageSize);
+    return content.isEmpty() ? 1 : (int) Math.ceil((double) totalContentCount / pageSize);
   }
 
-  // TODO: revisar, esto esta asi pq contamos las paginas desde 0 aca, pero desde 1 en el controller
-  // ...
   public boolean hasNext() {
     return (this.getCurrentPage() < (this.getTotalPages() - 1));
   }

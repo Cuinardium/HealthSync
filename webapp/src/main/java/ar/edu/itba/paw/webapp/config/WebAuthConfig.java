@@ -104,7 +104,6 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
     return source;
   }
 
-  // TODO: agregar filtros por tipo de autenticacion clase 2 min 45
   @Override
   protected void configure(final HttpSecurity http) throws Exception {
     http.sessionManagement()

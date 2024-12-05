@@ -37,15 +37,7 @@ public class ImageServiceImplTest {
     Assert.assertEquals(IMAGE, image);
   }
 
-  // TODO: no lo puedo testear, si update image retorna void
-  @Test
-  public void testUpdateImage() {
-    // 1. Precondiciones
-    // 2. Ejercitar la class under test
-    // 3. Meaningful assertions
-  }
 
-  // TODO: cng excep
   @Test(expected = RuntimeException.class)
   public void testUpdateImageDoesNotExist() throws ImageNotFoundException {
     // 1. Precondiciones

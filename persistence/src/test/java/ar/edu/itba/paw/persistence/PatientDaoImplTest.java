@@ -87,7 +87,6 @@ public class PatientDaoImplTest {
     jdbcTemplate = new JdbcTemplate(ds);
   }
 
-  // TODO: ADDRESS COLLITION ON EMAIL
   @Test
   public void testCreatePatient() throws PatientAlreadyExistsException {
     // 1. Precondiciones
