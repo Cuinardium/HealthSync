@@ -48,7 +48,12 @@ const DoctorCalendar: React.FC<DoctorCalendarProps> = ({
   });
   const [to, setTo] = useState(() => {
     const to = new Date();
+    to.setHours(0, 0, 0, 0);
     to.setMonth(to.getMonth() + 1);
+
+    // Set date to first day of the month
+    to.setDate(1);
+
     return to;
   });
 
@@ -86,11 +91,11 @@ const DoctorCalendar: React.FC<DoctorCalendarProps> = ({
       newFrom = today;
     }
 
-    // Last day of the month
+    // First day of the month
     let newTo = new Date(newFrom);
     newTo.setMonth(newTo.getMonth() + 1);
-    newTo.setDate(newTo.getDate() - 1);
     newTo.setHours(0, 0, 0, 0);
+    newTo.setDate(1);
 
     setFrom(newFrom);
     setTo(newTo);
