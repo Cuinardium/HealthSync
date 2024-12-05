@@ -3,7 +3,7 @@ import { Breadcrumb, Col, Container } from "react-bootstrap";
 import { useDoctor } from "../../hooks/doctorHooks";
 
 import ReviewList from "../../components/reviews/ReviewList";
-import React, {useEffect, useState} from "react";
+import React, { useEffect, useState } from "react";
 import { useUser } from "../../context/UserContext";
 import AppointmentForm from "../../components/appointments/AppointmentForm";
 import { useTranslation } from "react-i18next";
@@ -11,6 +11,7 @@ import DetailedDoctorCard from "../../components/doctors/DetailedDoctorCard";
 import DoctorCalendar from "../../components/doctors/DoctorCalendar";
 import { Patient } from "../../api/patient/Patient";
 import DetailedDoctorCardPlaceholder from "../../components/doctors/DetailedDoctorCardPlaceholder";
+import DoctorLocationMap from "../../components/doctors/DoctorLocationMap";
 
 interface LocationState {
   from: Location;
@@ -54,6 +55,8 @@ const DoctorDetails: React.FC = () => {
     return null;
   });
 
+  const [showMap, setShowMap] = useState<boolean>(false);
+
   const [showAppointmentForm, setShowAppointmentForm] = useState<boolean>(
     () => {
       const state = location.state as LocationState;
@@ -96,7 +99,11 @@ const DoctorDetails: React.FC = () => {
           <Breadcrumb.Item active>{t("detailedDoctor.title")}</Breadcrumb.Item>
         </Breadcrumb>
         <h1>{t("detailedDoctor.title")}</h1>
-        {(isLoading || loading || !doctor) ? <DetailedDoctorCardPlaceholder/>  : <DetailedDoctorCard doctor={doctor} />}
+        {isLoading || loading || !doctor ? (
+          <DetailedDoctorCardPlaceholder />
+        ) : (
+          <DetailedDoctorCard doctor={doctor} onMapClick={() => setShowMap(true)} />
+        )}
 
         {doctor && doctorId && (
           <>
@@ -140,6 +147,13 @@ const DoctorDetails: React.FC = () => {
                 </div>
               </>
             )}
+
+            <DoctorLocationMap
+              address={doctor.address}
+              city={doctor.city}
+              show={showMap}
+              onHide={() => setShowMap(false)}
+            />
 
             <ReviewList doctorId={doctorId} canReview={doctor.canReview} />
           </>

@@ -1,5 +1,5 @@
 import React from "react";
-import { Card, Image, Stack, Row, Col } from "react-bootstrap";
+import { Card, Image, Stack, Row, Col, Button } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import Rating from "./Rating";
@@ -18,9 +18,10 @@ import { FaEnvelope } from "react-icons/fa";
 
 interface DoctorCardProps {
   doctor: Doctor;
+  onMapClick: () => void;
 }
 
-const DoctorCard: React.FC<DoctorCardProps> = ({ doctor }) => {
+const DoctorCard: React.FC<DoctorCardProps> = ({ doctor, onMapClick }) => {
   const { t } = useTranslation();
 
   const navigate = useNavigate();
@@ -112,6 +113,9 @@ const DoctorCard: React.FC<DoctorCardProps> = ({ doctor }) => {
                 <h5 className="d-flex flex-row align-items-center mb-2">
                   {t("detailedDoctor.modal.location")}
                   <FaMapLocationDot className="ms-1" />
+                  <Button variant="link" onClick={onMapClick}>
+                    {t("detailedDoctor.map")}
+                  </Button>
                 </h5>
 
                 <Card.Subtitle className="text-muted mb-2">
