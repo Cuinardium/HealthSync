@@ -92,7 +92,7 @@ const DoctorCard: React.FC<DoctorCardProps> = ({ doctor }) => {
           </div>
         </div>
         <div className="mb-3 w-auto d-flex flex-row align-items-center">
-          <strong className="me-2">
+          <strong className="me-2 text-nowrap">
             {t(
               doctor.healthInsurances.length > 1
                 ? "detailedDoctor.insurances"
