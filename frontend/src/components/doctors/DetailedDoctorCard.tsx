@@ -72,7 +72,7 @@ const DoctorCard: React.FC<DoctorCardProps> = ({ doctor, onMapClick }) => {
                 <h5 className="mb-3">{t("detailedDoctor.specialties")}</h5>
                 <Stack direction="horizontal" gap={2} className="mb-2">
                   <div
-                    className="chip badge rounded-pill"
+                    className="cardChip badge rounded-pill"
                     style={{
                       cursor: "pointer",
                     }}
@@ -96,7 +96,7 @@ const DoctorCard: React.FC<DoctorCardProps> = ({ doctor, onMapClick }) => {
                     {doctor.healthInsurances.map((insurance) => (
                       <Col key={insurance}>
                         <div
-                          className="chip badge rounded-pill"
+                          className="cardChip badge rounded-pill"
                           style={{
                             cursor: "pointer",
                           }}

@@ -124,7 +124,7 @@ const DoctorCard: React.FC<DoctorCardProps> = ({ doctor, isDoctor }) => {
             {doctor.healthInsurances.map((healthInsurance) => (
               <div
                 key={healthInsurance}
-                className="chip badge rounded-pill"
+                className="cardChip badge rounded-pill"
                 style={{
                   cursor: "pointer",
                 }}
@@ -151,7 +151,7 @@ const DoctorCard: React.FC<DoctorCardProps> = ({ doctor, isDoctor }) => {
           <Stack direction="horizontal" gap={3}>
             <strong>{t("detailedDoctor.specialties")}:</strong>{" "}
             <div
-              className="chip badge rounded-pill"
+              className="cardChip badge rounded-pill"
               style={{
                 cursor: "pointer",
               }}
