@@ -5,7 +5,7 @@ import { useTranslation } from "react-i18next";
 import { useAvailableHours } from "../../hooks/doctorHooks";
 import { formatDate, formatDatePrettyLong } from "../../api/util/dateUtils";
 import React, { useState } from "react";
-import { Alert, Card, Col, Row } from "react-bootstrap";
+import {Alert, Card, Col, Row, Spinner} from "react-bootstrap";
 import { useDoctorQueryContext } from "../../context/DoctorQueryContext";
 import useLocale from "../../hooks/useLocale";
 
@@ -57,7 +57,7 @@ const DoctorCalendar: React.FC<DoctorCalendarProps> = ({
     return to;
   });
 
-  const { data: availableHours } = useAvailableHours(
+  const { data: availableHours, isLoading } = useAvailableHours(
     doctorId,
     from,
     to,
@@ -139,7 +139,10 @@ const DoctorCalendar: React.FC<DoctorCalendarProps> = ({
                   </div>
                 </Col>
               ))}
-            {(!availableHours ||
+            {isLoading && (
+                <Spinner animation="border" role="status" variant="primary"/>
+            )}
+            {!isLoading && (!availableHours ||
               availableHours[formatDate(selectedDate)]?.length === 0) && (
               <Alert variant="info" className="text-center w-75">
                 {t("detailedDoctor.noAppointmentsAvailable")}
