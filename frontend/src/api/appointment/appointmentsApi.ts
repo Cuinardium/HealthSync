@@ -97,12 +97,9 @@ export async function createAppointment(
     return await getAppointment(appointmentId as string);
   } catch (error: any) {
     if (error.response?.status === 409) {
-      console.log(error);
       if (error.response.data?.message.toLowerCase().includes("doctor")) {
-        console.log("DoctorNotAvailable");
         throw new DoctorNotAvailable();
       } else {
-        console.log("PatientNotAvailable");
         throw new PatientNotAvailable();
       }
     }
