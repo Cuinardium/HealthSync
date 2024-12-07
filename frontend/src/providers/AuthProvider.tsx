@@ -109,6 +109,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       const newAccessToken = await renewAccessToken(refreshToken);
 
       if (!newAccessToken) {
+        logout();
+        setLoading(false);
         return null;
       }
 
@@ -118,6 +120,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     } catch (error) {
       // Refresh token is invalid, log out
       logout();
+      setLoading(false);
       return null;
     }
   }, [refreshToken, logout]);
