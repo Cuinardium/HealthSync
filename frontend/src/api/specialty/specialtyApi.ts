@@ -26,6 +26,21 @@ export async function getSpecialties(query: SpecialtyQuery): Promise<Specialty[]
   );
 }
 
+export async function getPopularSpecialties(query : SpecialtyQuery) : Promise<Specialty[]> {
+  const initialQuery = {
+    ...query,
+    page: 1,
+    sort: "popularity",
+  };
+
+  const response = await axios.get<Specialty[]>(SPECIALTY_ENDPOINT, {
+    params: initialQuery,
+    headers: { Accept: SPECIALTY_LIST_CONTENT_TYPE },
+  });
+
+  return response.data
+}
+
 
 // =========== specialties/{id} =======
 

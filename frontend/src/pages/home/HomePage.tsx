@@ -17,6 +17,7 @@ import {Link, useNavigate} from 'react-router-dom';
 import {Button, Form, Stack} from "react-bootstrap";
 import {FaMagnifyingGlass} from "react-icons/fa6";
 import {useDoctorQueryContext} from "../../context/DoctorQueryContext";
+import SpecialtiesCarousel from "./SpecialtiesCarousel";
 
 const homeUrl = '/';
 
@@ -51,6 +52,7 @@ const HomePage = () => {
 
         navigate('/doctor-dashboard');
     };
+
 
     return (
         <div>
@@ -113,6 +115,8 @@ const HomePage = () => {
             {/*        </a>*/}
             {/*    </div>*/}
             {/*</div>*/}
+
+            <SpecialtiesCarousel/>
 
             <section className="about generalPadding border-top">
                 <div className="aboutCircleContainer">
