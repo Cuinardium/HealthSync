@@ -284,8 +284,8 @@ const DoctorRegister = () => {
 
             <Row className="mb-3">
               <Col>
-                <Form.Group controlId="formSpecialty">
-                  <Form.Label>{t("form.specialization")}</Form.Label>
+                <Form.Group>
+                  <Form.Label htmlFor="specialty" >{t("form.specialization")}</Form.Label>
                   <Form.Select
                     {...register("specialty", {
                       validate: (value) =>

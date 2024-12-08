@@ -123,6 +123,7 @@ const DoctorFilters: React.FC<DoctorFiltersProps> = ({
           <Stack direction="horizontal" gap={2}>
             {t("filters.title")}
             <Button
+              data-testid="resetButton"
               variant="outline-danger"
               className="ms-auto"
               onClick={handleReset}
@@ -133,7 +134,7 @@ const DoctorFilters: React.FC<DoctorFiltersProps> = ({
         </Card.Title>
 
         <Form.Group className="mb-3">
-          <Form.Label>{t("form.city")}</Form.Label>
+          <Form.Label htmlFor="city">{t("form.city")}</Form.Label>
           <Select
             isMulti
             components={animatedCityComponents}
@@ -148,7 +149,9 @@ const DoctorFilters: React.FC<DoctorFiltersProps> = ({
         </Form.Group>
 
         <Form.Group className="mb-3">
-          <Form.Label>{t("form.healthcare")}</Form.Label>
+          <Form.Label htmlFor="healthInsurance">
+            {t("form.healthcare")}
+          </Form.Label>
           <Select
             isMulti
             components={animatedHealthInsuranceComponents}
@@ -163,7 +166,9 @@ const DoctorFilters: React.FC<DoctorFiltersProps> = ({
         </Form.Group>
 
         <Form.Group className="mb-3">
-          <Form.Label>{t("form.specialization")}</Form.Label>
+          <Form.Label htmlFor="specialty">
+            {t("form.specialization")}
+          </Form.Label>
           <Select
             isMulti
             components={animatedSpecialtyComponents}
@@ -196,9 +201,11 @@ const DoctorFilters: React.FC<DoctorFiltersProps> = ({
         </Card.Subtitle>
 
         <Form.Group className="mb-3">
-          <Form.Label>{t("vacation.date")}</Form.Label>
+          <Form.Label htmlFor="date"
+          >{t("vacation.date")}</Form.Label>
           <Form.Control
             type="date"
+            id="date"
             min={new Date().toISOString().split("T")[0]}
             value={query.date ? query.date.toISOString().split("T")[0] : ""}
             onChange={(e) => {
@@ -229,7 +236,9 @@ const DoctorFilters: React.FC<DoctorFiltersProps> = ({
           <>
             <Row className="mb-3">
               <Col>
-                <Form.Label>{t("vacation.fromTime")}</Form.Label>
+                <Form.Label htmlFor="fromTime">
+                  {t("vacation.fromTime")}
+                </Form.Label>
                 <Form.Select
                   value={query.fromTime || ""}
                   onChange={(e) => setFromTime(e.target.value as Time)}
@@ -242,7 +251,7 @@ const DoctorFilters: React.FC<DoctorFiltersProps> = ({
                 </Form.Select>
               </Col>
               <Col>
-                <Form.Label>{t("vacation.toTime")}</Form.Label>
+                <Form.Label htmlFor="toTime">{t("vacation.toTime")}</Form.Label>
                 <Form.Select
                   value={query.toTime || ""}
                   onChange={(e) => setToTime(e.target.value as Time)}
