@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { getSpecialties, getSpecialty } from "../api/specialty/specialtyApi";
+import {getPopularSpecialties, getSpecialties, getSpecialty} from "../api/specialty/specialtyApi";
 import { Specialty, SpecialtyQuery } from "../api/specialty/Specialty";
 import { queryClient } from "../api/queryClient";
 
@@ -16,6 +16,17 @@ export function useSpecialties(specialtyQuery: SpecialtyQuery) {
     },
     queryClient,
   );
+}
+
+export function usePopularSpecialties(specialtyQuery: SpecialtyQuery) {
+    return useQuery<Specialty[], Error>(
+        {
+        queryKey: ["popularSpecialties", specialtyQuery],
+        queryFn: () => getPopularSpecialties(specialtyQuery),
+        staleTime: STALE_TIME,
+        },
+        queryClient,
+    );
 }
 
 // ========== useSpecialty ==========
