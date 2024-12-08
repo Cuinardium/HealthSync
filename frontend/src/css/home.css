@@ -57,12 +57,24 @@ section{
 .carouselCard{
     height: 20rem;
     margin: 0 3px;
+    overflow: hidden; /* Ensures the image doesn't exceed the card boundaries */
+    position: relative;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    cursor: pointer;
 }
 
-.carouselImg{
-    height: inherit;
-    width: inherit;
-    object-fit: cover;
+.carouselCard:hover {
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); /* Adds a shadow for a lifted effect */
+}
+
+.carouselImg {
+    transition: transform 0.5s ease; /* Smooth zoom effect */
+    width: 100%;
+    height: 100%;
+}
+
+.carouselCard:hover .carouselImg {
+    transform: scale(1.2); /* Zooms the image */
 }
 
 .cardImageOverlay{
