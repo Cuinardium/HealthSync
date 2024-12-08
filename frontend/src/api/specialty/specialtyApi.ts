@@ -31,6 +31,7 @@ export async function getPopularSpecialties(query : SpecialtyQuery) : Promise<Sp
     ...query,
     page: 1,
     sort: "popularity",
+    order: "desc",
   };
 
   const response = await axios.get<Specialty[]>(SPECIALTY_ENDPOINT, {
