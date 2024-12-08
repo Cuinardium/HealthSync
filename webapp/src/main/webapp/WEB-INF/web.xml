@@ -95,6 +95,16 @@
         <servlet-name>default</servlet-name>
         <url-pattern>/static/*</url-pattern>
     </servlet-mapping>
+
+    <servlet>
+        <servlet-name>favicon</servlet-name>
+        <jsp-file>/favicon.ico</jsp-file>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>favicon</servlet-name>
+        <url-pattern>/favicon.ico</url-pattern>
+    </servlet-mapping>
+
     <servlet>
         <servlet-name>index</servlet-name>
         <jsp-file>/index.html</jsp-file>
@@ -103,4 +113,5 @@
         <servlet-name>index</servlet-name>
         <url-pattern>/*</url-pattern>
     </servlet-mapping>
+
 </web-app>
