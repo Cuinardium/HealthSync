@@ -87,39 +87,6 @@ const HomePage = () => {
                 </div>
             </div>
 
-
-            {/*<div className="categories generalPadding">*/}
-            {/*    <h2>{categories}</h2>*/}
-            {/*    <div className="carousel slide" id="recipeCarousel" data-bs-ride="carousel">*/}
-            {/*        <a className="carouselNavButton" href="#recipeCarousel" role="button" data-bs-slide="prev">*/}
-            {/*            <i className="fa-solid fa-angle-left"></i>*/}
-            {/*        </a>*/}
-            {/*        <div className="carousel-inner" role="listbox">*/}
-            {/*            /!* Iterate through categories to generate carousel items *!/*/}
-            {/*            {categories.map((specialty, index) => {*/}
-            {/*                // Define these variables dynamically based on your API response*/}
-            {/*                const specialistImg = '/path/to/specialist/image';  // Replace with actual image path*/}
-            {/*                const specialtyName = 'Specialty Name';  // Replace with actual specialty name*/}
-            {/*                const altSpecialistImg = `Image of ${specialtyName.toLowerCase()}`;*/}
-            {/*                return (*/}
-            {/*                    <div className={`carousel-item ${index === 0 ? 'active' : ''}`} key={specialty.id}>*/}
-            {/*                        <div className="card">*/}
-            {/*                            <div className="card-img">*/}
-            {/*                                <img src={specialistImg} className="img-fluid" alt={altSpecialistImg} />*/}
-            {/*                            </div>*/}
-            {/*                            <div className="card-img-overlay">{specialtyName.toLowerCase()}</div>*/}
-            {/*                            <a href={`${doctorDashboardFilteredUrl}${specialty.ordinal}`} className="stretched-link"></a>*/}
-            {/*                        </div>*/}
-            {/*                    </div>*/}
-            {/*                );*/}
-            {/*            })}*/}
-            {/*        </div>*/}
-            {/*        <a className="carouselNavButton" href="#recipeCarousel" role="button" data-bs-slide="next">*/}
-            {/*            <i className="fa-solid fa-angle-right"></i>*/}
-            {/*        </a>*/}
-            {/*    </div>*/}
-            {/*</div>*/}
-
             <SpecialtiesCarousel/>
 
             <section className="about generalPadding border-top">
