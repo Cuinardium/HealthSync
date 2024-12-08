@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {Helmet} from "react-helmet-async";
 import Image from 'react-bootstrap/Image';
 
@@ -40,7 +40,7 @@ const HomePage = () => {
     const altCircle2 = t('home.alt.circle2');
     const altCircle3 = t('home.alt.circle3');
 
-    const { setName } = useDoctorQueryContext();
+    const { setName, resetQuery } = useDoctorQueryContext();
 
     const [searchName, setSearchName] = useState<string | undefined>("");
 
@@ -52,6 +52,10 @@ const HomePage = () => {
 
         navigate('/doctor-dashboard');
     };
+
+    useEffect(() => {
+        resetQuery();
+    }, [resetQuery]);
 
 
     return (
