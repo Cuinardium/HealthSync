@@ -133,7 +133,7 @@ const DoctorCalendar: React.FC<DoctorCalendarProps> = ({
                 <Col key={time} xs={4} sm={4} md={4} lg={3} xl={2}>
                   <div
                     onClick={() => onSelected(selectedDate, time as Time)}
-                    className="chip badge rounded-pill"
+                    className="cardChip badge rounded-pill"
                   >
                     {time}
                   </div>
