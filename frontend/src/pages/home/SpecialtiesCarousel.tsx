@@ -56,6 +56,10 @@ const SpecialtiesCarousel: React.FC = () => {
         return <div>Error loading specialties</div>;
     }
 
+    if (!isSuccess || specialties.length === 0) {
+        return null;
+    }
+
     return (
         <Carousel
             swipeable={true}

@@ -39,7 +39,7 @@ export async function getPopularSpecialties(query : SpecialtyQuery) : Promise<Sp
     headers: { Accept: SPECIALTY_LIST_CONTENT_TYPE },
   });
 
-  return response.data
+  return response.data.filter((specialty) => specialty.popularity > 0);
 }
 
 
