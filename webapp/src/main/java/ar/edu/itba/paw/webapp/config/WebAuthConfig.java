@@ -98,7 +98,15 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
         Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
     configuration.addAllowedHeader(CorsConfiguration.ALL);
     configuration.setExposedHeaders(
-        Arrays.asList("Authorization", "Link", "Location", "ETag", "Total-Elements", "X-Jwt", "X-Refresh", "Content-Disposition"));
+        Arrays.asList(
+            "Authorization",
+            "Link",
+            "Location",
+            "ETag",
+            "Total-Elements",
+            "X-Jwt",
+            "X-Refresh",
+            "Content-Disposition"));
     UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
     source.registerCorsConfiguration("/**", configuration);
     return source;
@@ -138,7 +146,7 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
 
         // patients
         .antMatchers(HttpMethod.POST, "/api/patients")
-        .permitAll()      
+        .permitAll()
 
         // ------------- Appointments ------
         .antMatchers(HttpMethod.POST, "/api/appointments")
@@ -174,25 +182,20 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
         .antMatchers("/api/**")
         .authenticated()
         .and()
-          .cors()
+        .cors()
         .and()
-          .csrf().disable()
+        .csrf()
+        .disable()
         .exceptionHandling()
-          .authenticationEntryPoint(authenticationEntryPoint())
-          .accessDeniedHandler(accessDeniedHandler())
+        .authenticationEntryPoint(authenticationEntryPoint())
+        .accessDeniedHandler(accessDeniedHandler())
         .and()
-          .addFilterBefore(basicAuthFilter, UsernamePasswordAuthenticationFilter.class)
-          .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
+        .addFilterBefore(basicAuthFilter, UsernamePasswordAuthenticationFilter.class)
+        .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
   }
 
   @Override
   public void configure(final WebSecurity web) throws Exception {
-    web.ignoring()
-        .antMatchers(
-            "/css/**",
-            "/js/**",
-            "/img/**",
-            "/icons/**",
-            "/errors/**"); // TODO ver cosas con las que no matcheen
+    web.ignoring().antMatchers("/css/**", "/js/**", "/img/**", "/icons/**", "/errors/**");
   }
 }

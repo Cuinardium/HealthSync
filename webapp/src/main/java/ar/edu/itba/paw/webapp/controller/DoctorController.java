@@ -179,7 +179,6 @@ public class DoctorController {
               .build();
     }
 
-    // TODO: delete attending hours and email from method signature
     doctor =
         doctorService.updateDoctor(
             doctorId,
@@ -273,7 +272,6 @@ public class DoctorController {
                                     ThirtyMinuteBlock.fromBeginning(hour))))
             .collect(Collectors.toSet());
 
-    // TODO: create a method in doctorService to update attending hours
     doctorService.updateDoctor(
         doctorId,
         doctor.getEmail(),

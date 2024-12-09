@@ -111,7 +111,6 @@ public class PatientController {
     Patient patient =
         patientService.getPatientById(patientId).orElseThrow(PatientNotFoundException::new);
 
-    // TODO: Delete email from method signature
     patientService.updatePatient(
         patientId,
         patient.getEmail(),
