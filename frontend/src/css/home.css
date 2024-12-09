@@ -54,35 +54,30 @@ section{
     flex-direction: column;
 }
 
-.carouselContainer{
-    display: flex;
-    flex-direction: row;
-    flex-wrap: nowrap;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.carouselNavButton{
-    color: #223E6A;
-    font-size: 1.5rem;
-    margin: 0.2rem;
-}
-
-.card{
-    margin: 0 3px;
-}
-
-.card-img{
+.carouselCard{
     height: 20rem;
+    margin: 0 3px;
+    overflow: hidden; /* Ensures the image doesn't exceed the card boundaries */
+    position: relative;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    cursor: pointer;
 }
 
-.img-fluid{
-    height: 100%;
+.carouselCard:hover {
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); /* Adds a shadow for a lifted effect */
+}
+
+.carouselImg {
+    transition: transform 0.5s ease; /* Smooth zoom effect */
     width: 100%;
-    object-fit: cover;
+    height: 100%;
 }
 
-.card-img-overlay{
+.carouselCard:hover .carouselImg {
+    transform: scale(1.2); /* Zooms the image */
+}
+
+.cardImageOverlay{
     color: white;
     text-shadow: 1px 1px 3px #000000;
     font-size: 2rem;
@@ -134,44 +129,4 @@ p{
     align-items: center;
     padding: 0 3%;
     max-width: 28rem;
-}
-
-@media screen and (max-width: 767px) {
-    .carousel-inner .carousel-item > .card {
-        display: none;
-    }
-    .carousel-inner .carousel-item > .card:first-child {
-        display: block;
-    }
-}
-
-.carousel-inner .carousel-item.active,
-.carousel-inner .carousel-item-next,
-.carousel-inner .carousel-item-prev {
-    display: flex;
-}
-
-/* medium and up screens */
-@media screen and (min-width: 768px) {
-
-    .carousel-inner .carousel-item-end.active,
-    .carousel-inner .carousel-item-next {
-        transform: translateX(25%);
-    }
-
-    .carousel-inner .carousel-item-start.active,
-    .carousel-inner .carousel-item-prev {
-        transform: translateX(-25%);
-    }
-}
-
-.carousel-inner .carousel-item-end,
-.carousel-inner .carousel-item-start {
-    transform: translateX(0);
-}
-
-@media screen and (max-width: 1120px){
-    div.card-img-overlay{
-        font-size: 1.6rem;
-    }
 }
