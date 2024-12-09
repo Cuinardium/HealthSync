@@ -86,7 +86,6 @@ const SpecialtiesCarousel: React.FC = () => {
             draggable={true}
             showDots={true}
             responsive={responsive}
-            ssr={true} // means to render carousel on server-side.
             infinite={true}
             keyBoardControl={true}
         >
@@ -96,7 +95,9 @@ const SpecialtiesCarousel: React.FC = () => {
                     <Card.Img className='carouselImg' variant="top"
                               src={require(`../../img/carousel/${specialty.code.toLowerCase()}.jpg`)}/>
                     <Card.ImgOverlay className='cardImageOverlay'>
-                        <Card.Title>{specialty.name}</Card.Title>
+                        <Card.Title>
+                            {t(`specialty.${specialty.code.replace(/_/g, ".").toLowerCase()}`)}
+                        </Card.Title>
                     </Card.ImgOverlay>
                 </Card>
             ))}
