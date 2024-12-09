@@ -133,6 +133,6 @@ public class IndicationController {
 
     final IndicationDto indicationDto = IndicationDto.fromIndication(uriInfo, indication);
 
-    return Response.ok(indicationDto).build();
+    return ResponseUtil.setImmutable(Response.ok(indicationDto)).build();
   }
 }

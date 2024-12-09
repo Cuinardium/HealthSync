@@ -10,6 +10,8 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
 
 import ar.edu.itba.paw.webapp.utils.FileUtil;
+import ar.edu.itba.paw.webapp.utils.ResponseUtil;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,7 +52,7 @@ public class FileController {
 
     String contentType = getFileContentType(file.getName());
 
-    return Response.ok(file.getBytes(), contentType)
+    return ResponseUtil.setImmutable(Response.ok(file.getBytes(), contentType))
         .header("Content-Disposition", "attachment; filename=\"" + file.getName() + "\"")
         .build();
   }

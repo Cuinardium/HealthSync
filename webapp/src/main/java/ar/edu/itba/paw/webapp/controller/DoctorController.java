@@ -225,7 +225,7 @@ public class DoctorController {
   @GET
   @Path("/{doctorId:\\d+}/attendinghours")
   @Produces(VndType.APPLICATION_ATTENDING_HOURS_LIST)
-  public Response getAttendingHours(@PathParam("doctorId") final long doctorId)
+  public Response getAttendingHours(@Context Request request, @PathParam("doctorId") final long doctorId)
       throws DoctorNotFoundException {
 
     Doctor doctor = doctorService.getDoctorById(doctorId).orElseThrow(DoctorNotFoundException::new);
@@ -237,11 +237,13 @@ public class DoctorController {
     }
 
     Set<AttendingHours> attendingHours = doctor.getAttendingHours();
+    
+    EntityTag eTag = new EntityTag(Integer.toString(attendingHours.hashCode()));
 
     List<AttendingHoursDto> attendingHoursDtoList =
         AttendingHoursDto.fromAttendingHours(attendingHours);
 
-    return Response.ok(new GenericEntity<List<AttendingHoursDto>>(attendingHoursDtoList) {})
+    return ResponseUtil.setEtagCache(Response.ok(new GenericEntity<List<AttendingHoursDto>>(attendingHoursDtoList) {}), request, eTag)
         .build();
   }
 

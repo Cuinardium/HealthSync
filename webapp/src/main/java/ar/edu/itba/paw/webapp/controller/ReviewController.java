@@ -114,6 +114,6 @@ public class ReviewController {
     }
 
     final ReviewDto reviewDto = ReviewDto.fromReview(uriInfo, review);
-    return Response.ok(reviewDto).build();
+    return ResponseUtil.setImmutable(Response.ok(reviewDto)).build();
   }
 }
