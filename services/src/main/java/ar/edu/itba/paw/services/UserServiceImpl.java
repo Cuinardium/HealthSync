@@ -53,15 +53,7 @@ public class UserServiceImpl implements UserService {
     try {
 
       if (image != null) {
-        // Si la pfp es null -> insertamos imagen
-        // si la pfp no es null -> la actualizamos para pisar la vieja
-        if (image.getImageId() == null) {
-          image = imageService.uploadImage(image);
-        } else {
-
-          image.setImageId(old_image.getImageId());
-          image = imageService.updateImage(image);
-        }
+        image = imageService.uploadImage(image);
       }
 
       return userDao.updateUserInfo(

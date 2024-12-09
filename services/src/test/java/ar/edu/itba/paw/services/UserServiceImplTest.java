@@ -140,7 +140,7 @@ public class UserServiceImplTest {
             .image(IMAGE_NEW)
             .build();
     Mockito.when(userDao.getUserById(Mockito.eq(ID))).thenReturn(Optional.of(USER));
-    Mockito.when(imageService.updateImage(IMAGE_NEW)).thenReturn(IMAGE_NEW);
+    Mockito.when(imageService.uploadImage(IMAGE_NEW)).thenReturn(IMAGE_NEW);
     Mockito.when(
             userDao.updateUserInfo(
                 Mockito.eq(ID),
@@ -174,7 +174,7 @@ public class UserServiceImplTest {
             .image(IMAGE_NEW)
             .build();
 
-    Mockito.when(imageService.updateImage(IMAGE_NEW)).thenReturn(IMAGE_NEW);
+    Mockito.when(imageService.uploadImage(IMAGE_NEW)).thenReturn(IMAGE_NEW);
 
     Mockito.when(userDao.getUserById(Mockito.eq(ID))).thenReturn(Optional.of(USER));
     Mockito.when(
