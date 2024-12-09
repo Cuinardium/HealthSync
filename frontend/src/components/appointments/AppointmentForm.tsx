@@ -217,7 +217,10 @@ const AppointmentForm: React.FC<AppointmentFormProps> = ({
         )}
       </Modal>
 
-      <Modal show={showSuccess} onHide={handleHide}>
+      <Modal show={showSuccess} onHide={() => {
+        setShowSuccess(false);
+        handleHide();
+      }}>
         <Modal.Header closeButton>
           <Modal.Title>{t("appointment.successfull.modal.title")}</Modal.Title>
         </Modal.Header>
