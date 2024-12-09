@@ -111,7 +111,7 @@ public class DoctorDaoImplTest {
               .ratingCount(INSERTED_DOCTOR_RATING_COUNT)
               .isVerified(true)
               .build();
-  private static final Long AUX_DOCTOR_ID = 8L;
+  private static final Long AUX_DOCTOR_ID = 2L;
   private static final String AUX_DOCTOR_EMAIL = "notdoctor_1@email.com";
   private static final String AUX_DOCTOR_PASSWORD = "notdoctor_password";
   private static final String AUX_DOCTOR_FIRST_NAME = "notdoctor_first_name";
@@ -122,23 +122,42 @@ public class DoctorDaoImplTest {
   private static final Specialty AUX_DOCTOR_SPECIALTY = Specialty.NEPHROLOGY;
   private static final String AUX_DOCTOR_CITY = "Caseros";
   private static final String AUX_DOCTOR_ADDRESS = "notdoctor_address";
+
+  private static final Set<AttendingHours> AUX_INSERTED_DOCTOR_ATTENDING_HOURS =
+  new HashSet<>(
+      Arrays.asList(
+          new AttendingHours(
+              INSERTED_DOCTOR_ID, DayOfWeek.MONDAY, ThirtyMinuteBlock.BLOCK_00_00),
+          new AttendingHours(
+              INSERTED_DOCTOR_ID, DayOfWeek.TUESDAY, ThirtyMinuteBlock.BLOCK_02_00),
+          new AttendingHours(
+              INSERTED_DOCTOR_ID, DayOfWeek.WEDNESDAY, ThirtyMinuteBlock.BLOCK_02_00),
+          new AttendingHours(
+              INSERTED_DOCTOR_ID, DayOfWeek.THURSDAY, ThirtyMinuteBlock.BLOCK_02_00),
+          new AttendingHours(
+              INSERTED_DOCTOR_ID, DayOfWeek.FRIDAY, ThirtyMinuteBlock.BLOCK_02_00),
+          new AttendingHours(
+              INSERTED_DOCTOR_ID, DayOfWeek.SATURDAY, ThirtyMinuteBlock.BLOCK_02_00),
+          new AttendingHours(
+              INSERTED_DOCTOR_ID, DayOfWeek.SUNDAY, ThirtyMinuteBlock.BLOCK_02_00)));
+
   private static final Set<AttendingHours> AUX_DOCTOR_ATTENDING_HOURS =
       new HashSet<>(
           Arrays.asList(
               new AttendingHours(
-                  INSERTED_DOCTOR_ID, DayOfWeek.MONDAY, ThirtyMinuteBlock.BLOCK_00_00),
+                AUX_DOCTOR_ID, DayOfWeek.MONDAY, ThirtyMinuteBlock.BLOCK_00_00),
               new AttendingHours(
-                  INSERTED_DOCTOR_ID, DayOfWeek.TUESDAY, ThirtyMinuteBlock.BLOCK_02_00),
+                AUX_DOCTOR_ID, DayOfWeek.TUESDAY, ThirtyMinuteBlock.BLOCK_02_00),
               new AttendingHours(
-                  INSERTED_DOCTOR_ID, DayOfWeek.WEDNESDAY, ThirtyMinuteBlock.BLOCK_02_00),
+                AUX_DOCTOR_ID, DayOfWeek.WEDNESDAY, ThirtyMinuteBlock.BLOCK_02_00),
               new AttendingHours(
-                  INSERTED_DOCTOR_ID, DayOfWeek.THURSDAY, ThirtyMinuteBlock.BLOCK_02_00),
+                AUX_DOCTOR_ID, DayOfWeek.THURSDAY, ThirtyMinuteBlock.BLOCK_02_00),
               new AttendingHours(
-                  INSERTED_DOCTOR_ID, DayOfWeek.FRIDAY, ThirtyMinuteBlock.BLOCK_02_00),
+                AUX_DOCTOR_ID, DayOfWeek.FRIDAY, ThirtyMinuteBlock.BLOCK_02_00),
               new AttendingHours(
-                  INSERTED_DOCTOR_ID, DayOfWeek.SATURDAY, ThirtyMinuteBlock.BLOCK_02_00),
+                AUX_DOCTOR_ID, DayOfWeek.SATURDAY, ThirtyMinuteBlock.BLOCK_02_00),
               new AttendingHours(
-                  INSERTED_DOCTOR_ID, DayOfWeek.SUNDAY, ThirtyMinuteBlock.BLOCK_02_00)));
+                AUX_DOCTOR_ID, DayOfWeek.SUNDAY, ThirtyMinuteBlock.BLOCK_02_00)));
   private static final Locale AUX_LOCALE = new Locale("en");
   @Autowired private DataSource ds;
 
@@ -181,7 +200,7 @@ public class DoctorDaoImplTest {
     em.flush();
 
     // 3. Meaningful assertions
-    // Assert.assertEquals(AUX_DOCTOR_ID, doctor.getId());
+    Assert.assertEquals(AUX_DOCTOR_ID, doctor.getId());
     Assert.assertEquals(AUX_DOCTOR_EMAIL, doctor.getEmail());
     Assert.assertEquals(AUX_DOCTOR_PASSWORD, doctor.getPassword());
     Assert.assertEquals(AUX_DOCTOR_FIRST_NAME, doctor.getFirstName());
@@ -237,7 +256,7 @@ public class DoctorDaoImplTest {
             AUX_DOCTOR_CITY,
             AUX_DOCTOR_ADDRESS,
             AUX_DOCTOR_INSURANCES,
-            AUX_DOCTOR_ATTENDING_HOURS);
+            AUX_INSERTED_DOCTOR_ATTENDING_HOURS);
     // 3. Meaningful assertions
     Assert.assertEquals(INSERTED_DOCTOR_ID, doctor.getId());
     Assert.assertEquals(INSERTED_DOCTOR_EMAIL, doctor.getEmail());
@@ -249,7 +268,7 @@ public class DoctorDaoImplTest {
     Assert.assertEquals(AUX_DOCTOR_CITY, doctor.getCity());
     Assert.assertEquals(AUX_DOCTOR_ADDRESS, doctor.getAddress());
     Assert.assertEquals(AUX_DOCTOR_INSURANCES, doctor.getHealthInsurances());
-    Assert.assertEquals(AUX_DOCTOR_ATTENDING_HOURS, doctor.getAttendingHours());
+    Assert.assertEquals(AUX_INSERTED_DOCTOR_ATTENDING_HOURS, doctor.getAttendingHours());
     Assert.assertEquals(INSERTED_LOCALE, doctor.getLocale());
   }
 

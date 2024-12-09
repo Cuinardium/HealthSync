@@ -32,6 +32,9 @@ dist/
 .idea/
 *.iml
 
+# VsCode
+.vscode/
+
 # Unit test reports
 TEST*.xml
 
