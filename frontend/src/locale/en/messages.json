@@ -768,6 +768,10 @@
       "size": "File size must be less than 10MB.",
       "type": "File type must be png, jpg, jpeg, or pdf."
     },
+    "image": {
+      "size":"Img size must be less than 2MB.",
+      "type":"Img type must be png, jpg, or jpeg."
+    },
     "review": {
       "description": {
         "required": "Description is required.",

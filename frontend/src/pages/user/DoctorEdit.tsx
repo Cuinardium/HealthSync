@@ -271,7 +271,7 @@ const DoctorEdit = () => {
                           type="invalid"
                           style={{ display: "block" }}
                         >
-                          {errors.image.message}
+                          {errors.image && t(errors.image.message?? "")}
                         </Form.Control.Feedback>
                       )}
                     </Form.Group>

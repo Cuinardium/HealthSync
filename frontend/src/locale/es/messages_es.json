@@ -769,6 +769,10 @@
       "type": "El archivo seleccionado debe ser png, jpg, jpeg o pdf.",
       "size": "El archivo seleccionado es demasiado grande. El tamaño máximo permitido es de 10MB."
     },
+    "image": {
+      "size":"El tamaño máximo permitido es de 2MB.",
+      "type":"El tipo de archivo debe ser png, jpg o jpeg."
+    },
     "review": {
       "description": {
         "required": "La descripción es obligatoria.",
