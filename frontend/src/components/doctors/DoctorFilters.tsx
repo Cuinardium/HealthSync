@@ -145,6 +145,7 @@ const DoctorFilters: React.FC<DoctorFiltersProps> = ({
             onChange={(selected) =>
               setCity(selected ? selected.map((s) => s.value) : [])
             }
+            placeholder={t("form.city_filter_hint")}
           />
         </Form.Group>
 
@@ -162,6 +163,7 @@ const DoctorFilters: React.FC<DoctorFiltersProps> = ({
             onChange={(selected) =>
               setHealthInsurance(selected ? selected.map((s) => s.value) : [])
             }
+            placeholder={t("form.healthcare_hint")}
           />
         </Form.Group>
 
@@ -179,6 +181,7 @@ const DoctorFilters: React.FC<DoctorFiltersProps> = ({
             onChange={(selected) =>
               setSpecialty(selected ? selected.map((s) => s.value) : [])
             }
+            placeholder={t("form.specialization_hint")}
           />
         </Form.Group>
 
