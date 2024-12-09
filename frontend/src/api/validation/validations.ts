@@ -114,7 +114,7 @@ export function validateCity(city: string | null): string | true {
   if (!city || city.trim() === "") {
     return "validation.city.required";
   }
-  if (city.length < 1 || city.length > 20) {
+  if (city.length < 1 || city.length > 50) {
     return "validation.city.invalidLength";
   }
   if (!/^[a-zA-Z0-9. ñÑáÁéÉíÍóÓúÚ]+$/.test(city)) {

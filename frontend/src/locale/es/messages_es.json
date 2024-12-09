@@ -729,7 +729,7 @@
     },
     "city": {
       "required": "La ciudad es obligatoria.",
-      "invalidLength": "La ciudad debe tener entre 1 y 20 caracteres.",
+      "invalidLength": "La ciudad debe tener entre 1 y 50 caracteres.",
       "invalidFormat": "La ciudad solo puede contener letras, números, espacios y puntos."
     },
     "address": {

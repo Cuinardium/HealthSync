@@ -728,7 +728,7 @@
     },
     "city": {
       "required": "City is required.",
-      "invalidLength": "City must be between 1 and 20 characters long.",
+      "invalidLength": "City must be between 1 and 50 characters long.",
       "invalidFormat": "City can only contain letters, numbers, spaces, and dots."
     },
     "address": {

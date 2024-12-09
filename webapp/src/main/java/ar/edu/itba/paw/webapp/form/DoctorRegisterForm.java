@@ -42,7 +42,7 @@ public class DoctorRegisterForm extends UserRegisterForm {
       healthInsurances;
 
   @NotNull(message = "NotNull.doctorForm.city")
-  @Size(min = 1, max = 20, message = "Size.doctorForm.city")
+  @Size(min = 1, max = 50, message = "Size.doctorForm.city")
   @Pattern(regexp = "[a-zA-Z0-9. ñÑáÁéÉíÍóÓúÚ]+", message = "Pattern.doctorForm.city")
   @FormDataParam("city")
   private String city;
