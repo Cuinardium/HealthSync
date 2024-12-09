@@ -94,7 +94,9 @@ const DoctorProfile = () => {
                 </Col>
                 <Col className="profileItem">
                   <Form.Label>{t("form.locale")}</Form.Label>
-                  <div className="chip">{doctor?.locale}</div>
+                  <div className="chip">
+                    {t(`locale.${doctor?.locale}`)}
+                    </div>
                 </Col>
               </Row>
             </div>
