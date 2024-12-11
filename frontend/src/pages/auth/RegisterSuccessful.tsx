@@ -28,7 +28,7 @@ const RegisterSuccessful = () => {
                     {t("register_success.didnt_get_mail")}
                   </b>
                 </Col>
-                <Col className="d-flex justify-content-start">
+                <Col className="d-flex justify-content-center">
                   <Link to={"/resend-token"}>{t("register_success.resend_mail")}</Link>
                 </Col>
               </Row>
