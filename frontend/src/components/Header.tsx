@@ -69,15 +69,13 @@ const Header: React.FC<HeaderProps> = ({
         <div className="buttons">
           {showCheckDoctor && (
             <Link to={dashboardUrl} className="headerLink">
-              {t("home.checkDoctor")}
-              <FaUserDoctor />
+              {t("home.checkDoctor")} <FaUserDoctor />
             </Link>
           )}
           {user && (
             <>
               <Link to={myAppointmentsUrl} className="headerLink">
-                {t("home.myAppointments")}
-                <FaCalendarCheck />
+                {t("home.myAppointments")} <FaCalendarCheck />
               </Link>
               {hasNotifications && <FaCircle className="notification" />}
             </>
