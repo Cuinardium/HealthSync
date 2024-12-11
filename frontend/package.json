@@ -57,6 +57,7 @@
     ]
   },
   "devDependencies": {
+    "@babel/plugin-transform-private-property-in-object": "^7.25.9",
     "@tanstack/eslint-plugin-query": "^5.51.15"
   }
 }
