@@ -60,9 +60,10 @@
     "cancelDesc": "Razón de la cancelación",
     "status": "Estado",
     "indication": "Indicaciones",
+    "errorIndication": "Ocurrió un error al mandar el mensaje",
     "noIndications": "No hay indicaciones todavia",
     "moreIndications": "Ver más",
-    "addIndication": "Dar indicaciones",
+    "addIndication": "Enviar mensaje",
     "details": "Ver detalles",
     "doctorDetails": "Ver doctor",
     "error": "Hubo un error al cargar los turnos"

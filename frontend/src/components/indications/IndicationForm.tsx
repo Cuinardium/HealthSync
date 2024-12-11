@@ -36,15 +36,18 @@ const IndicationForm: React.FC<CreateIndicationFormProps> = ({
   const [fileName, setFileName] = useState<string | null>(null);
 
   const indications = watch("indications");
-
+  const [showError, setShowError] = useState<boolean>(false);
+  
   const onSuccess = () => {
     reset();
     setFileName(null);
+    setValue("indications", "");
+    setShowError(false);
     onSuccessCallback();
   };
 
   const onError = (error: AxiosError) => {
-    alert(`Failed to create indication: ${error.message}`);
+    setShowError(true);
   };
 
   const createIndicationMutation = useCreateIndication(
@@ -158,12 +161,18 @@ const IndicationForm: React.FC<CreateIndicationFormProps> = ({
           )}
         </Button>
       </Stack>
-
+        
       {/* Error Message */}
       <p className="text-danger mt-2">
         {errors.indications && t(errors.indications.message ?? "")}{" "}
         {errors.file && t(errors.file.message ?? "")}
       </p>
+
+      {showError &&  <p className="text-danger mt-2">
+        {t("appointment.errorIndication")}
+        </p>
+      }
+
     </Form>
   );
 };

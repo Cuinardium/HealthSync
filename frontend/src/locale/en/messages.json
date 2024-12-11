@@ -60,9 +60,10 @@
     "cancelDesc": "Cancel Reason",
     "status": "Status",
     "indication": "Indications",
+    "errorIndication": "An error occurred while sending message",
     "noIndications": "No indications yet",
     "moreIndications": "Load more",
-    "addIndication": "Give Indication",
+    "addIndication": "Send message",
     "details": "See details",
     "doctorDetails": "See doctor",
     "error": "An error occurred while loading the appointment"
