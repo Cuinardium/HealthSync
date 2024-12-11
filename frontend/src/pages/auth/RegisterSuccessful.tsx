@@ -23,7 +23,7 @@ const RegisterSuccessful = () => {
                 {t("register_success.description")}
               </h5>
               <Row className="mt-5">
-                <Col className=" d-flex justify-content-end">
+                <Col className="d-flex justify-content-end">
                   <b className="text-end">
                     {t("register_success.didnt_get_mail")}
                   </b>

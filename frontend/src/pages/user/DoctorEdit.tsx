@@ -375,7 +375,7 @@ const DoctorEdit = () => {
                           type="text"
                           placeholder={t("form.city_hint")}
                           isInvalid={!!errors.city}
-                          readOnly
+                          disabled={true}
                         />
                         <Form.Control.Feedback type="invalid">
                           {errors.city && t(errors.city.message ?? "")}
