@@ -70,10 +70,6 @@ const SpecialtiesCarousel: React.FC = () => {
         );
     }
 
-    if (error) {
-        return <div>Error loading specialties</div>;
-    }
-
     if (error || !isSuccess || specialties.length === 0) {
         return null;
     }
