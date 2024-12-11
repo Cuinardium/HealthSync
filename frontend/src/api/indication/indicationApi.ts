@@ -110,7 +110,7 @@ export async function getFile(
 // ========= auxiliary functions =========
 
 export function mapDetails(indicationResp: IndicationResponse): Indication {
-  const date = new Date(indicationResp.date);
+  const date = new Date(indicationResp.date + "T00:00:00");
 
   return {
     creatorId: indicationResp.links.find((link) => link.rel === "creator")?.href.split("/").pop() as string,
