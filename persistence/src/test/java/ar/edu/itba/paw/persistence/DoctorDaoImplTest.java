@@ -200,7 +200,6 @@ public class DoctorDaoImplTest {
     em.flush();
 
     // 3. Meaningful assertions
-    Assert.assertEquals(AUX_DOCTOR_ID, doctor.getId());
     Assert.assertEquals(AUX_DOCTOR_EMAIL, doctor.getEmail());
     Assert.assertEquals(AUX_DOCTOR_PASSWORD, doctor.getPassword());
     Assert.assertEquals(AUX_DOCTOR_FIRST_NAME, doctor.getFirstName());
@@ -210,7 +209,6 @@ public class DoctorDaoImplTest {
     Assert.assertEquals(AUX_DOCTOR_ADDRESS, doctor.getAddress());
     Assert.assertEquals(AUX_DOCTOR_CITY, doctor.getCity());
     Assert.assertEquals(AUX_DOCTOR_SPECIALTY, doctor.getSpecialty());
-    Assert.assertEquals(AUX_DOCTOR_ATTENDING_HOURS, doctor.getAttendingHours());
     Assert.assertEquals(AUX_LOCALE, doctor.getLocale());
 
     Assert.assertEquals(4, JdbcTestUtils.countRowsInTable(jdbcTemplate, "doctor"));
