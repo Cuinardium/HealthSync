@@ -21,6 +21,13 @@ const DoctorDashboard: React.FC = () => {
     }
   };
 
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === "Enter") {
+      event.preventDefault();
+      applyName();
+    }
+  };
+
   return (
     <Container className="d-flex justify-content-center align-items-start mt-5 mb-5">
       <Col className="me-5" md={3} lg={3}>
@@ -33,6 +40,7 @@ const DoctorDashboard: React.FC = () => {
             placeholder={t("doctorDashboard.placeholder.search")}
             value={searchName}
             onChange={(e) => setSearchName(e.target.value)}
+            onKeyDown={handleKeyDown}
           />
           <Button onClick={applyName} variant="primary">
             <FaMagnifyingGlass />
