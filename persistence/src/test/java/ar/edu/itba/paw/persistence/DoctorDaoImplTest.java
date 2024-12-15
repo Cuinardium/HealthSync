@@ -111,7 +111,7 @@ public class DoctorDaoImplTest {
               .ratingCount(INSERTED_DOCTOR_RATING_COUNT)
               .isVerified(true)
               .build();
-  private static final Long AUX_DOCTOR_ID = 2L;
+  private static final Long AUX_DOCTOR_ID = 1L;
   private static final String AUX_DOCTOR_EMAIL = "notdoctor_1@email.com";
   private static final String AUX_DOCTOR_PASSWORD = "notdoctor_password";
   private static final String AUX_DOCTOR_FIRST_NAME = "notdoctor_first_name";
