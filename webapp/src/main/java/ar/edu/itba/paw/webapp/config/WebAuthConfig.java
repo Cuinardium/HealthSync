@@ -116,6 +116,8 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
   protected void configure(final HttpSecurity http) throws Exception {
     http.sessionManagement()
         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+        // Disable spring security cache
+        .and().headers().cacheControl().disable()
         .and()
         .authorizeRequests()
 
@@ -196,6 +198,6 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
 
   @Override
   public void configure(final WebSecurity web) throws Exception {
-    web.ignoring().antMatchers("/css/**", "/js/**", "/img/**", "/icons/**", "/errors/**");
+    web.ignoring().antMatchers("/static/**");
   }
 }
