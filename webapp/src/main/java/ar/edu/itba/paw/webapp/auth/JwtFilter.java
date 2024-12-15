@@ -68,6 +68,7 @@ public class JwtFilter extends OncePerRequestFilter {
       }
 
       response.setHeader(JwtUtil.TOKEN_HEADER, jwtUtil.generateAccessToken(user));
+      response.setHeader(JwtUtil.REFRESH_TOKEN_HEADER, jwtUtil.generateRefreshToken(user));
     }
 
     final UsernamePasswordAuthenticationToken authentication =
