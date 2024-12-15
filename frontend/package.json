@@ -3,6 +3,7 @@
   "homepage": "/paw-2023a-02",
   "version": "0.1.0",
   "private": true,
+  "type": "module",
   "dependencies": {
     "@tanstack/react-query": "^5.51.21",
     "@types/jest": "^27.5.2",
@@ -33,7 +34,8 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "postbuild": "node add-jsp-no-cookies-directive.js"
   },
   "eslintConfig": {
     "extends": [
