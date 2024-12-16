@@ -8,7 +8,7 @@ const __dirname = path.dirname(__filename);
 // React build output directory
 const buildDir = path.join(__dirname, 'build');
 
-const filesToModify = ['index.html', 'favicon.ico'];
+const filesToModify = ['index.html'];
 
 const noCookiesDirective = '<%@ page session="false" %>\n';
 
