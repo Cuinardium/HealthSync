@@ -39,8 +39,7 @@ public class MailServiceImpl implements MailService {
   // For i18n enums
   private final MessageSource messageSource;
 
-  // To get urls from application.properties
-  private Environment env;
+  private final String baseUrl;
 
   @Autowired
   public MailServiceImpl(
@@ -53,7 +52,15 @@ public class MailServiceImpl implements MailService {
     this.templateEngine = templateEngine;
     this.mailMessageSource = mailMessageSource;
     this.messageSource = messageSource;
-    this.env = env;
+
+    String baseUrl = env.getProperty("WEBAPP_BASEURL");
+
+    // Add trailing slash if not present
+    if (!baseUrl.endsWith("/")) {
+      baseUrl += "/";
+    }
+
+    this.baseUrl = baseUrl;
   }
 
   private void sendHtmlMessage(String to, String subject, String htmlBody) {
@@ -102,8 +109,6 @@ public class MailServiceImpl implements MailService {
             appointment.getPatient().getHealthInsurance().getMessageID(), null, locale);
     String patientEmail = appointment.getPatient().getEmail();
 
-    String baseUrl = env.getProperty("webapp.baseUrl");
-
     String appointmentUrl = baseUrl + "detailed-appointment/" + appointment.getId();
 
     // Load model
@@ -148,7 +153,7 @@ public class MailServiceImpl implements MailService {
     String cancelDescription = appointment.getCancelDesc();
 
     // Load model
-    templateModel.put("baseUrl", env.getProperty("webapp.baseUrl"));
+    templateModel.put("baseUrl", baseUrl);
     templateModel.put("userName", patientName);
     templateModel.put("userMail", patientEmail);
     templateModel.put("userHealthcare", patientHealthInsurance);
@@ -189,7 +194,7 @@ public class MailServiceImpl implements MailService {
     String doctorCity = appointment.getDoctor().getCity();
 
     // Load model
-    templateModel.put("baseUrl", env.getProperty("webapp.baseUrl"));
+    templateModel.put("baseUrl", baseUrl);
     templateModel.put("userName", patientName);
     templateModel.put("userMail", patientEmail);
     templateModel.put("docName", doctorName);
@@ -219,8 +224,6 @@ public class MailServiceImpl implements MailService {
     String patientEmail = appointment.getPatient().getEmail();
     String doctorName =
         appointment.getDoctor().getFirstName() + " " + appointment.getDoctor().getLastName();
-
-    String baseUrl = env.getProperty("webapp.baseUrl");
 
     String doctorUrl = baseUrl + "detailed-doctor/" + appointment.getDoctor().getId();
 
@@ -255,7 +258,6 @@ public class MailServiceImpl implements MailService {
     String doctorName =
         appointment.getDoctor().getFirstName() + " " + appointment.getDoctor().getLastName();
 
-    String baseUrl = env.getProperty("webapp.baseUrl");
     String reviewUrl = baseUrl + "detailed-doctor/" + appointment.getDoctor().getId();
 
     // Load model
@@ -281,8 +283,6 @@ public class MailServiceImpl implements MailService {
     String name = user.getFirstName() + " " + user.getLastName();
 
     Map<String, Object> templateModel = new HashMap<>();
-
-    String baseUrl = env.getProperty("webapp.baseUrl");
 
     String confirmationUrl = baseUrl + "verify";
 

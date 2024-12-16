@@ -20,7 +20,7 @@ import org.thymeleaf.templateresolver.ITemplateResolver;
 @ComponentScan({"ar.edu.itba.paw.interfaces.services"})
 public class MailConfig {
 
-  // get property from application.properties
+  // get property from env variables
   @Autowired private Environment env;
 
   @Bean
@@ -29,8 +29,8 @@ public class MailConfig {
     mailSender.setHost("smtp.gmail.com");
     mailSender.setPort(587);
 
-    mailSender.setUsername(env.getProperty("mail.username"));
-    mailSender.setPassword(env.getProperty("mail.password"));
+    mailSender.setUsername(env.getProperty("MAIL_USERNAME"));
+    mailSender.setPassword(env.getProperty("MAIL_PASSWORD"));
 
     Properties properties = mailSender.getJavaMailProperties();
     properties.put("mail.transport.protocol", "smtp");

@@ -42,13 +42,12 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
       "ar.edu.itba.paw.persistence"
     })
 @Configuration
-@PropertySource("classpath:application.properties")
 public class WebConfig extends WebMvcConfigurerAdapter {
 
   @Value("classpath:schema.sql")
   private Resource schemaSql;
 
-  // get properties from application.properties
+  // get properties from env variables
   @Autowired private Environment env;
 
   @Bean
@@ -56,9 +55,9 @@ public class WebConfig extends WebMvcConfigurerAdapter {
     final SimpleDriverDataSource ds = new SimpleDriverDataSource();
 
     ds.setDriverClass(org.postgresql.Driver.class);
-    ds.setUrl(env.getProperty("datasource.url"));
-    ds.setUsername(env.getProperty("datasource.user"));
-    ds.setPassword(env.getProperty("datasource.password"));
+    ds.setUrl(env.getProperty("DATASOURCE_URL"));
+    ds.setUsername(env.getProperty("DATASOURCE_USER"));
+    ds.setPassword(env.getProperty("DATASOURCE_PASSWORD"));
 
     return ds;
   }

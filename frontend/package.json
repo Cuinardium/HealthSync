@@ -1,6 +1,5 @@
 {
   "name": "frontend",
-  "homepage": "/paw-2023a-02",
   "version": "0.1.0",
   "private": true,
   "type": "module",

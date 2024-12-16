@@ -40,9 +40,6 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class WebAuthConfig extends WebSecurityConfigurerAdapter {
 
-  @Value("classpath:openssl-key")
-  private Resource openSSLKey;
-
   @Value("classpath:jwtPK")
   private Resource jwtPKRes;
 
