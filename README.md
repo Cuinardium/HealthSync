@@ -30,7 +30,7 @@ Before starting the application, ensure you have configured the required environ
 
 Once the variables are set, start the application by running the following command in the root directory:
 ```sh
-docker compose up-d
+docker compose up -d
 ```
 
 This will:
