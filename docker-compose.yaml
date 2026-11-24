@@ -17,10 +17,37 @@ services:
           MAIL_USERNAME: ${MAIL_USERNAME}
           MAIL_PASSWORD: ${MAIL_PASSWORD}
           WEBAPP_BASEURL: ${PUBLIC_URL}
+          CATALINA_OPTS: >-
+            -Xms64m -Xmx192m
+            -XX:MaxMetaspaceSize=96m
+            -XX:ReservedCodeCacheSize=48m
+            -XX:TieredStopAtLevel=1
+            -Xss512k
+            -XX:+UseSerialGC
+            -XX:+ExitOnOutOfMemoryError
+        mem_limit: 448m
+
+        # Hardening
+        user: "10001:10001"
+        read_only: true
+        tmpfs:
+          - /usr/local/tomcat/work:size=16m,uid=10001,gid=10001
+          - /usr/local/tomcat/temp:size=16m,uid=10001,gid=10001
+          - /tmp:size=16m
+        volumes:
+          - logs_tomcat:/usr/local/tomcat/logs
+          - logs_app:/usr/local/tomcat/webapps/logs
+        cap_drop: [ALL]
+        security_opt: ["no-new-privileges:true"]
+        pids_limit: 200
+        logging:
+          driver: json-file
+          options: { max-size: "10m", max-file: "3" }
+        networks: [backend, egress]
 
         restart: unless-stopped
         ports:
-          - "8080:8080"
+          - "127.0.0.1:8080:8080"
 
     db:
         image: postgres:14
@@ -31,5 +58,20 @@ services:
           POSTGRES_DB: healthsync
         volumes:
           - db_data:/var/lib/postgresql/data
+        security_opt: ["no-new-privileges:true"]
+        logging:
+          driver: json-file
+          options: { max-size: "10m", max-file: "3" }
+        networks: [backend]
+
+networks:
+  # DB only: no route outside
+  backend:
+    internal: true
+  # webapp: internet egress (SMTP) + published port
+  egress: {}
+
 volumes:
   db_data:
+  logs_tomcat:
+  logs_app:

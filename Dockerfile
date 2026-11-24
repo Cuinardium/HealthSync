@@ -25,17 +25,23 @@ ENV REACT_APP_PUBLIC_URL=/ \
 # Build the application using Maven
 RUN mvn clean package
 
-# Deploy in Tomcat 8.5.100 image
+# Deploy in Tomcat 8.5.100 image (hardened: non-root, pre-expanded WAR, no sample apps)
 FROM tomcat:8.5.100-jdk8
 
-# Set working directory in the container
+RUN rm -rf /usr/local/tomcat/webapps/* /usr/local/tomcat/webapps.dist \
+ && groupadd -g 10001 tomcat \
+ && useradd -u 10001 -g tomcat -M -d /usr/local/tomcat -s /usr/sbin/nologin tomcat
+
+# Expand the WAR at build time so the root filesystem can be read-only at runtime
+COPY --from=builder /app/webapp/target/webapp.war /tmp/ROOT.war
+RUN mkdir -p /usr/local/tomcat/webapps/ROOT /usr/local/tomcat/webapps/logs /usr/local/tomcat/conf/Catalina/localhost \
+ && cd /usr/local/tomcat/webapps/ROOT && jar xf /tmp/ROOT.war && rm /tmp/ROOT.war \
+ && chown -R tomcat:tomcat /usr/local/tomcat/logs /usr/local/tomcat/work /usr/local/tomcat/temp \
+      /usr/local/tomcat/webapps/logs /usr/local/tomcat/conf/Catalina
+
+# logback writes to ./logs relative to this directory
 WORKDIR /usr/local/tomcat/webapps/
+USER 10001:10001
 
-# Copy the built WAR file from the builder stage
-COPY --from=builder /app/webapp/target/webapp.war ./ROOT.war
-
-# Expose the default Tomcat port
 EXPOSE 8080
-
-# Start the Tomcat server
 CMD ["catalina.sh", "run"]
